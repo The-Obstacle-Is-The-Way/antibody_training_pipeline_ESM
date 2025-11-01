@@ -314,7 +314,7 @@ test_datasets/harvey/
 3. Report failure count and IDs in summary
 4. **Do NOT halt** entire pipeline for individual failures
 
-**Expected failure rate:** <1% (based on Jain/Shehata experience)
+**Expected failure rate:** <1% (based on Jain/Shehata experience; actual run on 2025-11-01 saw 453 failures = 0.32%)
 
 ### Sequence Length Outliers
 

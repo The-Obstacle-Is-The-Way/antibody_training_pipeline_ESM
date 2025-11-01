@@ -137,7 +137,7 @@ From Harvey et al. 2022 (line 220):
   - CDR3_nogaps: 270 nulls
 - These sequences cannot be IMGT-numbered by ANARCI
 - Expected to fail during preprocessing (~0.27% failure rate)
-- **After removing failures: ~141,097 sequences** (still exceeds Novo's ">140,000")
+- **Actual preprocessing result (2025-11-01):** 141,021 successfully annotated sequences (99.68%), 453 failures logged (`test_datasets/harvey/failed_sequences.txt`)
 
 ---
 

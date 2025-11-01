@@ -158,7 +158,7 @@ label
 **Pre-existing data quality issues:**
 - 377 sequences (0.27%) have null CDRs in HuggingFace dataset
 - These will fail ANARCI annotation (expected behavior)
-- After preprocessing: ~141,097 sequences (still >140K for Novo replication)
+- After preprocessing: 141,021 sequences (still >140K for Novo replication)
 
 ---
 
@@ -334,9 +334,26 @@ bcad113 Remove Excel source files from git tracking
 **Expected outcomes:**
 - Success rate: 99.73% (377 sequences have null CDRs in HuggingFace)
 - Expected failures: ~377 sequences (0.27%) - these already failed in HuggingFace preprocessing
-- Successful sequences: ~141,097 (still exceeds Novo's ">140,000" threshold)
+- Successful sequences: 141,021 (still exceeds Novo's ">140,000" threshold)
 - Failures: Log to `test_datasets/harvey/failed_sequences.txt`
 - Output: 6 fragment files (VHH, H-CDR1/2/3, H-CDRs, H-FWRs)
+
+**Execution (2025-11-01 13:59):**
+- Input sequences: 141,474
+- Successfully annotated: **141,021** (99.68%)
+- Failures logged: **453** (0.32%) → `test_datasets/harvey/failed_sequences.txt`
+  - 377 sequences with null CDRs (pre-existing in HuggingFace)
+  - 75 additional ANARCI rejections (non-IMGT-numberable nanobodies)
+- Output fragment CSVs (each 141,021 rows):
+  - `VHH_only_harvey.csv`
+  - `H-CDR1_harvey.csv`
+  - `H-CDR2_harvey.csv`
+  - `H-CDR3_harvey.csv`
+  - `H-CDRs_harvey.csv`
+  - `H-FWRs_harvey.csv`
+- Label distribution preserved: 69,262 low (49.1%), 71,759 high (50.9%)
+- Sequence length summary (VHH): 102-137 aa, mean 120.8 aa
+- Validation: `python3 scripts/validate_fragments.py` ✅ PASS
 
 ### 2. Sequence Length Filtering
 
