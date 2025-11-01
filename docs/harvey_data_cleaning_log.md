@@ -132,7 +132,7 @@ Label distribution:
   High polyreactivity: 71759 (50.9%)
 
 Fragment files created: 6 (VHH-specific)
-Output directory: /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/test_datasets/harvey
+Output directory: test_datasets/harvey
 
 ======================================================================
 [DONE] Harvey Preprocessing Complete!
