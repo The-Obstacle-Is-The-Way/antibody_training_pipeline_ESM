@@ -164,10 +164,10 @@ def convert_excel_to_csv(..., interactive: bool = True):
 
 | Subset | Count | Percentage |
 |--------|-------|------------|
-| IgG memory | 146 | 36.3% |
-| Long-lived plasma cells (LLPCs) | 145 | 36.1% |
-| IgM memory | 65 | 16.2% |
-| Naïve | 44 | 10.9% |
+| IgG memory | 146 | 36.7% |
+| Long-lived plasma cells (LLPCs) | 143 | 35.9% |
+| IgM memory | 65 | 16.3% |
+| Naïve | 44 | 11.1% |
 
 ---
 
