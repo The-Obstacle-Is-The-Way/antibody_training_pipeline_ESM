@@ -63,6 +63,25 @@ PRIMARY_COLUMNS = [
 # --------------------------------------------------------------------------- #
 
 
+def get_missing_sequences_from_pdf() -> Dict[str, str]:
+    """
+    Manually provide 4 sequences that were mangled in markdown conversion.
+
+    These sequences are from Supplementary Table 1 (page 10 of PDF).
+    The marker tool concatenated them with <br> tags on a single line,
+    breaking the table parser.
+
+    Returns:
+        Dictionary with 4 missing nanobody sequences (F07', G09', E05', F02')
+    """
+    return {
+        "F07'": "QVQLVESGGGLVQAGGSLRLSCAASGFTFNRYAMGWYRQAPGKERELVAAISGSGASTYYADSVKGRFTISRDNAKNTVYLQMNSLKPEDTAVYYCATRYSRSYRSRDYYYWGQGTQVTVSS",
+        "G09'": "QVQLVESGGGLVQAGGSLRLSCAASGITFQRYAMGWYRQAPGKERELVASISRSGGSTYYADSVKGRFTISRDNAKNTVYLQMNSLKPEDTAVYYCAARYIVRGGYWGQGTQVTVSS",
+        "E05'": "QVQLVESGGGLVQAGGSLRLSCAASGYIFVKYAMGWYRQAPGKERELVAAISRSGVRTYYADSVKGRFTISRDNAKNTVYLQMNSLKPEDTAVYYCNAYFYANDYWGQGTQVTVSS",
+        "F02'": "QVQLVESGGGLVQAGGSLRLSCAASGSTFSRNTMGWYRQAPGKERELVAAISKSGGRTYYADSVKGRFTISRDNAKNTVYLQMNSLKPEDTAVYYCNAAVYAYASDYWGQGTQVTVSS",
+    }
+
+
 def parse_supplementary_table_1(markdown_path: Path) -> Dict[str, str]:
     """
     Parse nanobody sequences from Supplementary Table 1 in the markdown file.
@@ -160,7 +179,16 @@ def parse_supplementary_table_1(markdown_path: Path) -> Dict[str, str]:
                     current_seq_parts.append(seq_col)
                     rows_since_name += 1
 
-    LOG.info(f"Parsed {len(sequences)} nanobody sequences from Supplementary Table 1")
+    LOG.info(f"Parsed {len(sequences)} nanobody sequences from markdown table")
+
+    # Add 4 sequences that were mangled in markdown conversion
+    missing = get_missing_sequences_from_pdf()
+    for name, seq in missing.items():
+        if name not in sequences:
+            sequences[name] = seq
+            LOG.info(f"Added missing sequence from PDF: {name} ({len(seq)} aa)")
+
+    LOG.info(f"Total sequences after adding PDF corrections: {len(sequences)}")
 
     return sequences
 
@@ -233,7 +261,9 @@ def extract_psr_scores(excel_path: Path) -> pd.DataFrame:
 # --------------------------------------------------------------------------- #
 
 
-def create_harvey_dataset(sequences: Dict[str, str], psr_df: pd.DataFrame) -> pd.DataFrame:
+def create_harvey_dataset(
+    sequences: Dict[str, str], psr_df: pd.DataFrame
+) -> pd.DataFrame:
     """
     Merge sequences with PSR scores and create labels.
 
@@ -286,7 +316,9 @@ def summarize(df: pd.DataFrame) -> None:
     LOG.info("Harvey Dataset Summary")
     LOG.info("=" * 60)
     LOG.info(f"Total nanobodies: {len(df)}")
-    LOG.info(f"Sequence length: min={df['sequence_length'].min()}, max={df['sequence_length'].max()}")
+    LOG.info(
+        f"Sequence length: min={df['sequence_length'].min()}, max={df['sequence_length'].max()}"
+    )
     LOG.info(
         f"PSR score range: {df['psr_score'].min():.1f} - {df['psr_score'].max():.1f}"
     )
