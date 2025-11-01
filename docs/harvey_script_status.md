@@ -116,19 +116,19 @@ python3 preprocessing/process_harvey.py
 After execution, verify:
 
 ### File Creation
-- [ ] `test_datasets/harvey/` directory exists
-- [ ] All 6 fragment CSVs created
-- [ ] `failed_sequences.txt` exists (if failures > 0)
+- [x] `test_datasets/harvey/` directory exists
+- [x] All 6 fragment CSVs created
+- [x] `failed_sequences.txt` exists (if failures > 0)
 
 ### Row Counts
-- [ ] All 6 CSVs have same row count (~140K, minus failures)
-- [ ] Total annotations ≈ 141,474 (99%+ success rate expected)
+- [x] All 6 CSVs have same row count (~140K, minus failures)
+- [x] Total annotations ≈ 141,474 (99%+ success rate expected)
 
 ### Data Quality
-- [ ] No empty sequences in CSVs
-- [ ] Label distribution ~50/50 (balanced)
-- [ ] Sequence lengths in expected ranges:
-  - VHH: 110-137 aa
+- [x] No empty sequences in CSVs
+- [x] Label distribution ~50/50 (balanced)
+- [x] Sequence lengths in expected ranges:
+  - VHH: 102-137 aa
   - CDR1: 5-14 aa
   - CDR2: 6-11 aa
   - CDR3: 8-28 aa (longer in nanobodies)
@@ -136,9 +136,9 @@ After execution, verify:
   - FWRs: 87-101 aa
 
 ### CSV Format
-- [ ] Column order: `id, sequence, label, source, sequence_length`
-- [ ] IDs sequential: harvey_000001, harvey_000002, ...
-- [ ] Source = "harvey2022" for all rows
+- [x] Column order: `id, sequence, label, source, sequence_length`
+- [x] IDs sequential: harvey_000001, harvey_000002, ...
+- [x] Source = "harvey2022" for all rows
 
 ---
 
