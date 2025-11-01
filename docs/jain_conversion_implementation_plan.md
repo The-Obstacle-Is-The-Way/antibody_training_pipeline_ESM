@@ -3,7 +3,7 @@
 **Issue:** #2 - Jain dataset preprocessing
 **Author:** Ray (ray/learning branch)
 **Date:** 2025-11-01
-**Status:** Phase 1 (Excel-to-CSV conversion) - Planning
+**Status:** Phase 1 (Excel-to-CSV conversion) – ✅ Completed, awaiting PR integration
 
 ---
 
@@ -227,8 +227,9 @@ abituzumab,QVQLQQSGGE...,DIQMTQSPSS...,0,jain2017,0.166666,1.137375
    - Emit console summary: counts per flag category, threshold usage, any dropped antibodies (should be zero after filtering metadata rows)
 
 7. **Document & log conversion**
-   - Append SHA256 checksum, row counts, label distribution to `docs/jain_conversion_verification_report.md` (new file)
+   - Append SHA256 checksum, row counts, label distribution to `docs/jain_conversion_verification_report.md`
    - Update data cleaning log with any anomalies (missing values, sequences trimmed, etc.)
+   - Run `python3 scripts/validate_jain_conversion.py` and capture output for provenance
 
 5. **Data validation**
    - Check for missing sequences

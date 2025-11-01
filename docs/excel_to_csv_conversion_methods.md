@@ -1,19 +1,25 @@
 # Excel to CSV Conversion Methods & Validation
 
-**Purpose:** Document all available methods for converting Shehata Excel files to CSV with validation.
+**Purpose:** Document all available methods for converting supplementary Excel files (Shehata & Jain datasets) to CSV with validation.
 
-**Date:** 2025-10-31
-**Issue:** #3 - Shehata dataset preprocessing
+**Last Updated:** 2025-11-01  
+**Related Issues:** #3 (Shehata), #2 (Jain)
 
 ---
 
 ## Overview of Methods
 
-### Method 1: Python Script (RECOMMENDED) ⭐
+### Method 1a: Python Script – Shehata (RECOMMENDED) ⭐
 - **Tool:** `scripts/convert_shehata_excel_to_csv.py`
 - **Pros:** Full control, validation built-in, reproducible, transparent
 - **Cons:** Requires Python environment
 - **Validation:** Multi-method cross-checking with `validate_shehata_conversion.py`
+
+### Method 1b: Python Script – Jain (RECOMMENDED) ⭐
+- **Tool:** `scripts/convert_jain_excel_to_csv.py`
+- **Pros:** Deterministic flag derivation (Table 1 thresholds), full provenance columns, label handling consistent with Sakhnini et al.
+- **Cons:** Requires Python environment
+- **Validation:** `scripts/validate_jain_conversion.py` (rebuilds pipeline & checks SHA256)
 
 ### Method 2: CLI Tools
 - **Tools:** `in2csv`, `ssconvert`, `xlsx2csv`
@@ -27,7 +33,7 @@
 
 ---
 
-## Method 1: Python Script (DETAILED)
+## Method 1a: Shehata Python Script (DETAILED)
 
 ### Installation
 
@@ -39,7 +45,7 @@ pip show pandas openpyxl
 pip install pandas openpyxl
 ```
 
-### Usage
+### Usage (Shehata)
 
 ```bash
 cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
@@ -55,7 +61,7 @@ python3 scripts/convert_shehata_excel_to_csv.py
 4. Validates sequences
 5. Saves to `test_datasets/shehata.csv`
 
-### Validation
+### Validation (Shehata)
 
 ```bash
 # Run multi-method validation
@@ -72,13 +78,53 @@ python3 scripts/validate_shehata_conversion.py
 - ✓ Calculates checksums for integrity
 - ✓ Reports summary statistics
 
-### Output Example
+### Output Example (Shehata)
 
 ```csv
 id,heavy_seq,light_seq,label,psr_score,b_cell_subset,source
 ADI-38502,EVQLLESGGGLVKPGGSLRLSCAASGFIFSDYSMNWVRQAPGKGLEWVS...,DIVMTQSPSTLSASVGDRVTITCRASQSISSWLAWYQQKPGKAPKLLIYK...,0,0.0,IgG memory,shehata2019
 ADI-38501,EVQLLESGGGLVQPGGSLRLSCAASGFTFSSYSMNWVRQAPGKGLEWVS...,DIVMTQSPATLSLSPGERATLSCRASQSISTYLAWYQQKPGQAPRLLIY...,0,0.023184,IgG memory,shehata2019
 ```
+
+---
+
+## Method 1b: Jain Python Script (DETAILED)
+
+### Usage (Jain)
+
+```bash
+cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
+
+# Generate canonical Jain dataset
+python3 scripts/convert_jain_excel_to_csv.py --verbose
+```
+
+**What it does:**
+1. Loads SD01/SD02/SD03 spreadsheets (metadata, VH/VL sequences, biophysical assays)
+2. Sanitizes amino acid sequences (removes gaps/whitespace/non-standard residues)
+3. Applies Jain Table 1 thresholds (four developability flag clusters)
+4. Emits `test_datasets/jain.csv` with explicit `flags_total`, `flag_category`, nullable `label`, and supporting assay columns
+
+### Validation (Jain)
+
+```bash
+python3 scripts/validate_jain_conversion.py
+```
+
+**Checks performed:**
+- Re-runs the conversion pipeline in-memory and asserts equality with the CSV (`assert_frame_equal`)
+- Reports flag/label distributions (specific 67 / mild 67 / non_specific 3)
+- Confirms VH/VL sequences contain only valid residues (`ACDEFGHIKLMNPQRSTVWYX`)
+- Prints Table 1 threshold clauses and SHA256 checksum (`b1a6d7399260aef1a894743877a726caa248d12d948b8216822cb2a5b9bc96a3`)
+
+### Output Example (Jain)
+
+```csv
+id,heavy_seq,light_seq,flags_total,flag_category,label,flag_self_interaction,flag_chromatography,flag_polyreactivity,flag_stability,source,smp,ova,bvp_elisa,...
+abituzumab,QVQLQQSGGELAKPGASVKVSCKASGYTFSSFWMHWVRQAPGQGLEWIGYINPRSGYTEYNEIFRDKATMTTDTSTSTAYMELSSLRSEDTAVYYCASFLGRGAMDYWGQGTTVTVSS,DIQMTQSPSSLSASVGDRVTITCRASQDISNYLAWYQQKPGKAPKLLIYYTSKIHSGVPSRFSGSGSGTDYTFTISSLQPEDIATYYCQQGNTFPYTFGQGTKVEIK,1,mild,,False,False,True,False,jain2017,0.166666,1.137375,2.720799,...
+```
+
+`label` uses pandas nullable integers: `0` for specific, `1` for ≥4 flags (non-specific), blank for mild (1–3 flags).
 
 ---
 
