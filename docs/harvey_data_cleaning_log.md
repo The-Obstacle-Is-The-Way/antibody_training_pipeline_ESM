@@ -152,7 +152,7 @@ label
 
 **Sequence length range:** 52-137 amino acids
 - Typical nanobody VHH: 110-130 aa
-- Some outliers (short: 53aa, long: 137aa)
+- Some outliers (short: 52aa, long: 137aa)
 - Median: 120.6 aa (within expected range)
 
 ---
@@ -213,7 +213,7 @@ bcad113 Remove Excel source files from git tracking
 - High: FACS-sorted for strong PSR binding
 - Clear bimodal separation ensures clean labels
 
-**Dataset balance:** 50.8% low, 49.2% high - **excellent for ML**
+**Dataset balance:** 49.3% low, 50.7% high - **excellent for ML**
 
 ---
 
