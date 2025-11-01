@@ -130,6 +130,15 @@ From Harvey et al. 2022 (line 220):
 - High polyreactivity (label=1): 71,772 sequences (50.7%)
 - **Balanced dataset** suitable for binary classification
 
+**Data Quality Issues:**
+- **377 sequences (0.27%)** have null values in pre-extracted CDR columns
+  - CDR1_nogaps: 30 nulls
+  - CDR2_nogaps: 82 nulls
+  - CDR3_nogaps: 270 nulls
+- These sequences cannot be IMGT-numbered by ANARCI
+- Expected to fail during preprocessing (~0.27% failure rate)
+- **After removing failures: ~141,097 sequences** (still exceeds Novo's ">140,000")
+
 ---
 
 ## Dataset Versions: Wrong vs. Correct

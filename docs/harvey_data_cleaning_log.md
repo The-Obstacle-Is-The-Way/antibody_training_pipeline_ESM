@@ -155,6 +155,11 @@ label
 - Some outliers (short: 52aa, long: 137aa)
 - Median: 120.6 aa (within expected range)
 
+**Pre-existing data quality issues:**
+- 377 sequences (0.27%) have null CDRs in HuggingFace dataset
+- These will fail ANARCI annotation (expected behavior)
+- After preprocessing: ~141,097 sequences (still >140K for Novo replication)
+
 ---
 
 ### 2025-11-01 04:09-04:10 - Cleanup
@@ -327,8 +332,10 @@ bcad113 Remove Excel source files from git tracking
 - Validates sequence quality (ANARCI will fail on invalid sequences)
 
 **Expected outcomes:**
-- Success rate: >99% (based on Jain/Shehata experience)
-- Failures: Log and skip (likely low-quality sequences)
+- Success rate: 99.73% (377 sequences have null CDRs in HuggingFace)
+- Expected failures: ~377 sequences (0.27%) - these already failed in HuggingFace preprocessing
+- Successful sequences: ~141,097 (still exceeds Novo's ">140,000" threshold)
+- Failures: Log to `test_datasets/harvey/failed_sequences.txt`
 - Output: 6 fragment files (VHH, H-CDR1/2/3, H-CDRs, H-FWRs)
 
 ### 2. Sequence Length Filtering
