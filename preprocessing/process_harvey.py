@@ -94,7 +94,7 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
     df = pd.read_csv(csv_path)
 
     print(f"  Total nanobodies: {len(df)}")
-    print(f"  Annotating sequences with ANARCI (IMGT scheme)...")
+    print("  Annotating sequences with ANARCI (IMGT scheme)...")
 
     results = []
     failures = []
@@ -212,8 +212,8 @@ def main():
     print("=" * 70)
     print(f"\nInput:  {csv_path}")
     print(f"Output: {output_dir}/")
-    print(f"Method: ANARCI (IMGT numbering scheme)")
-    print(f"Note:   Nanobodies (VHH) - no light chain fragments")
+    print("Method: ANARCI (IMGT numbering scheme)")
+    print("Note:   Nanobodies (VHH) - no light chain fragments")
     print()
 
     # Process dataset
@@ -228,23 +228,23 @@ def main():
     print("=" * 70)
 
     print(f"\nAnnotated nanobodies: {len(df_annotated)}")
-    print(f"Label distribution:")
+    print("Label distribution:")
     for label, count in df_annotated["label"].value_counts().sort_index().items():
         label_name = "Low polyreactivity" if label == 0 else "High polyreactivity"
         print(f"  {label_name}: {count} ({count/len(df_annotated)*100:.1f}%)")
 
-    print(f"\nFragment files created: 6 (VHH-specific)")
+    print("\nFragment files created: 6 (VHH-specific)")
     print(f"Output directory: {output_dir.absolute()}")
 
     print("\n" + "=" * 70)
     print("[DONE] Harvey Preprocessing Complete!")
     print("=" * 70)
 
-    print(f"\nNext steps:")
-    print(f"  1. Test loading fragments with data.load_local_data()")
-    print(f"  2. Run model inference on fragment-specific CSVs")
-    print(f"  3. Compare results with paper (Sakhnini et al. 2025)")
-    print(f"  4. Create PR to close Issue #4")
+    print("\nNext steps:")
+    print("  1. Test loading fragments with data.load_local_data()")
+    print("  2. Run model inference on fragment-specific CSVs")
+    print("  3. Compare results with paper (Sakhnini et al. 2025)")
+    print("  4. Create PR to close Issue #4")
 
 
 if __name__ == "__main__":
