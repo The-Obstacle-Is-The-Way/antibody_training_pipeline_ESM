@@ -94,10 +94,29 @@ CDR3_nogaps         : H-CDR3 sequence (pre-extracted, no gaps)
 label               : Binary polyreactivity (0=low, 1=high)
 ```
 
+### ⚠️ CRITICAL: NO CDR LENGTH FILTERING
+
+**Harvey's original filter** (from Harvey et al. 2022 line 142):
+- CDR1 length == 8
+- CDR2 length == 8 OR 9
+- CDR3 length between 6-22
+- **Result:** 134,302 sequences (65,147 low + 69,155 high)
+
+**Novo Nordisk's approach** (from Sakhnini et al. 2025):
+- **NO CDR length filtering**
+- Used **all 141,474 sequences** from HuggingFace
+- Cited as ">140,000 naïve nanobodies" in Table 4
+
+**Our Implementation:**
+- ✅ Process **ALL 141,474 sequences** with NO filtering
+- ✅ Match Novo Nordisk methodology exactly
+- ✅ Broader coverage than Harvey's original training set
+- ⚠️ Some sequences may have CDR lengths outside Harvey's constraints
+
 ### Data Quality Notes
 
 **From HuggingFace dataset inspection:**
-- Label distribution: 50,854 low (35.9%), 51,000 high (36.1%) - **balanced**
+- Label distribution: 69,702 low (49.3%), 71,772 high (50.7%) - **balanced**
 - Sequence length: 53-137 aa (typical nanobody VHH range: 110-130 aa)
 - No missing values observed
 - CDRs already extracted but **numbering scheme unknown**

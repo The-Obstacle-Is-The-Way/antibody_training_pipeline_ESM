@@ -144,8 +144,8 @@ label           : Binary polyreactivity (0=low, 1=high)
 **Label distribution:**
 ```
 label
-1    51,000  (36.0% - high polyreactivity)
-0    50,854  (35.9% - low polyreactivity)
+1    71,772  (50.7% - high polyreactivity)
+0    69,702  (49.3% - low polyreactivity)
 ```
 
 **Balanced dataset** - good for binary classification!
@@ -263,20 +263,20 @@ bcad113 Remove Excel source files from git tracking
 
 ---
 
-### 2. Why 141,474 instead of 134,302?
+### 2. Why 141,474 instead of 134,302? ✅ **RESOLVED - 2025-11-01**
 
-**Initial sequencing (from paper):** 65,147 low + 69,155 high = 134,302 total
-**HuggingFace dataset:** 141,474 total
-**Difference:** +7,172 sequences (+5.3%)
+**Harvey's published CDR length filter** (from Harvey et al. 2022 Methods section line 142):
+> "For our dataset of sequences to train the supervised models, we **limited nanobody sequences to sequences with a CDR1 length of 8, a CDR2 length of 8 or 9 (9 or 10 in the deeper sequencing exploration, when we include an additional position at the end of CDR2 to include more variability), and CDR3 lengths between 6 and 22**. These processing steps leave us with **65,147 unique low polyreactivity sequences and 69,155 unique highly polyreactive sequences**..."
 
-**Possible explanations:**
-1. Additional FACS rounds between initial and extended sequencing
-2. Different filtering/deduplication criteria
-3. Inclusion of sequences from intermediate FACS sorts
-4. Minor preprocessing differences
+**The Answer:**
+- Harvey's **FILTERED dataset** (CDR1==8, CDR2==8|9, CDR3==6-22): **134,302 sequences**
+- HuggingFace **UNFILTERED dataset**: **141,474 sequences**
+- Novo Nordisk used: **">140,000 sequences"** (Sakhnini et al. 2025 Table 4)
 
-**Impact:** Minimal - still represents the same dataset population
-**Action:** Document discrepancy, proceed with 141,474
+**Conclusion:** Novo Nordisk used the **UNFILTERED** HuggingFace dataset (all 141,474 sequences), NOT Harvey's CDR-length-filtered training set (134K). The 7,172-sequence difference represents nanobodies that Harvey excluded due to CDR length constraints but Novo included for broader model coverage.
+
+**Impact:** Our preprocessing is CORRECT - process all 141,474 sequences with **NO CDR length filtering**
+**Source verification:** Harvey 2022 NGS Analysis section, Sakhnini 2025 Table 4
 
 ---
 

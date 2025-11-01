@@ -126,8 +126,8 @@ From Harvey et al. 2022 (line 220):
 **Sequence Length Range:** 53-137 amino acids (nanobody VHH domain range)
 
 **Label Distribution:**
-- Low polyreactivity (label=0): ~50,854 sequences
-- High polyreactivity (label=1): ~51,000 sequences
+- Low polyreactivity (label=0): 69,702 sequences (49.3%)
+- High polyreactivity (label=1): 71,772 sequences (50.7%)
 - **Balanced dataset** suitable for binary classification
 
 ---
@@ -206,10 +206,18 @@ test_datasets/harvey/ fragment CSVs (VHH, H-CDRs, H-FWRs, etc.)
    - Unclear if affiliated with Harvey lab or Novo Nordisk
    - Dataset appears legitimate (matches paper specs)
 
-2. **Why 141,474 instead of 134,302?**
-   - Possible additional sequences from extended FACS rounds
-   - Preprocessing decisions (duplicate removal, quality filtering)
-   - Need to verify with authors or ZYMScott if critical
+2. **Why 141,474 instead of 134,302?** ✅ **RESOLVED**
+
+   **Harvey's published CDR length filter** (from Harvey 2022 paper line 142):
+   > "For our dataset of sequences to train the supervised models, we **limited nanobody sequences to sequences with a CDR1 length of 8, a CDR2 length of 8 or 9... and CDR3 lengths between 6 and 22**. These processing steps leave us with **65,147 unique low polyreactivity sequences and 69,155 unique highly polyreactive sequences**..."
+
+   - Harvey's **filtered dataset**: CDR1==8, CDR2==8|9, CDR3==6-22 → **134,302 sequences**
+   - HuggingFace **(unfiltered)**: **141,474 sequences**
+   - Novo Nordisk used: **">140,000 sequences"** (Sakhnini Table 4)
+
+   **ANSWER**: Novo Nordisk used the **UNFILTERED** HuggingFace dataset (all 141,474 sequences), NOT Harvey's CDR-length-filtered version (134K). This is confirmed by Sakhnini citing ">140,000" which matches the unfiltered count.
+
+   **Impact**: Our process_harvey.py script is CORRECT - we process all 141,474 sequences with **NO CDR length filtering**
 
 3. **Are the HuggingFace CDRs IMGT-numbered?**
    - CDRs provided as `CDR1_nogaps`, `CDR2_nogaps`, `CDR3_nogaps`

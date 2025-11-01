@@ -58,7 +58,7 @@ ARHATSYAMDYW
 ARGGDYDDDAMDYW
 ```
 
-**Observation**: ALL CDR3s end with W (tryptophan) or Y (tyrosine) — classic J-region anchor residues at IMGT position 118.
+**Observation**: ALL 450 CDR3s end with W (tryptophan), with 335/450 (74%) showing YW pattern and 104/450 (23%) showing VW pattern — W is the J-region anchor residue at IMGT position 118.
 
 **Reference**: Lines 1-20 of `reference_repos/AIMS_manuscripts/app_data/mouse_IgA.dat`
 
