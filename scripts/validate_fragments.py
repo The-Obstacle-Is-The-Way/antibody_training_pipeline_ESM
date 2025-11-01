@@ -55,6 +55,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
 
     # Validate each CSV file
     required_columns = {"id", "sequence", "label", "source"}
+    optional_columns = {"sequence_length"}  # Added in newer preprocessing scripts
     all_row_counts = []
 
     for csv_file in csv_files:
@@ -125,13 +126,15 @@ def validate_label_distribution(csv_path: Path):
     return stats
 
 
-def print_validation_report(dataset_name: str, dataset_dir: Path):
+def print_validation_report(
+    dataset_name: str, dataset_dir: Path, expected_fragments: int = 16
+):
     """Print comprehensive validation report."""
     print("=" * 60)
     print(f"{dataset_name.upper()} Dataset Validation")
     print("=" * 60)
 
-    results = validate_fragment_directory(dataset_dir)
+    results = validate_fragment_directory(dataset_dir, expected_fragments)
 
     # Print file count
     print(f"\nFragment files: {results['stats'].get('num_files', 0)}")
@@ -178,15 +181,16 @@ def print_validation_report(dataset_name: str, dataset_dir: Path):
 def main():
     """Validate all processed datasets."""
     datasets = [
-        ("jain", Path("test_datasets/jain")),
-        ("shehata", Path("test_datasets/shehata")),
+        ("jain", Path("test_datasets/jain"), 16),  # Full antibodies (VH+VL)
+        ("shehata", Path("test_datasets/shehata"), 16),  # Full antibodies (VH+VL)
+        ("harvey", Path("test_datasets/harvey"), 6),  # Nanobodies (VHH only)
     ]
 
     all_valid = True
 
-    for name, path in datasets:
+    for name, path, expected_frags in datasets:
         if path.exists():
-            valid = print_validation_report(name, path)
+            valid = print_validation_report(name, path, expected_frags)
             all_valid = all_valid and valid
             print()
         else:
