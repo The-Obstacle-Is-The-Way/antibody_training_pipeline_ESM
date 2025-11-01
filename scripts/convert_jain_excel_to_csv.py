@@ -75,22 +75,46 @@ class AssayThreshold:
 
 ASSAY_CLUSTERS: Dict[str, List[AssayThreshold]] = {
     "flag_self_interaction": [
-        AssayThreshold("psr_smp", 0.27, operator.gt, ">", "Poly-Specificity Reagent (PSR) SMP Score (0-1)"),
-        AssayThreshold("acsins_dlmax_nm", 11.8, operator.gt, ">", "Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average"),
-        AssayThreshold("csi_bli_nm", 0.01, operator.gt, ">", "CSI-BLI Delta Response (nm)"),
+        AssayThreshold(
+            "psr_smp",
+            0.27,
+            operator.gt,
+            ">",
+            "Poly-Specificity Reagent (PSR) SMP Score (0-1)",
+        ),
+        AssayThreshold(
+            "acsins_dlmax_nm",
+            11.8,
+            operator.gt,
+            ">",
+            "Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average",
+        ),
+        AssayThreshold(
+            "csi_bli_nm", 0.01, operator.gt, ">", "CSI-BLI Delta Response (nm)"
+        ),
         AssayThreshold("cic_min", 10.1, operator.gt, ">", "CIC Retention Time (Min)"),
     ],
     "flag_chromatography": [
         AssayThreshold("hic_min", 11.7, operator.gt, ">", "HIC Retention Time (Min)a"),
-        AssayThreshold("smac_min", 12.8, operator.gt, ">", "SMAC Retention Time (Min)a"),
-        AssayThreshold("sgac_sins_mM", 370.0, operator.lt, "<", "SGAC-SINS AS100 ((NH4)2SO4 mM)"),
+        AssayThreshold(
+            "smac_min", 12.8, operator.gt, ">", "SMAC Retention Time (Min)a"
+        ),
+        AssayThreshold(
+            "sgac_sins_mM", 370.0, operator.lt, "<", "SGAC-SINS AS100 ((NH4)2SO4 mM)"
+        ),
     ],
     "flag_polyreactivity": [
         AssayThreshold("elisa_fold", 1.9, operator.gt, ">", "ELISA"),
         AssayThreshold("bvp_elisa_fold", 4.3, operator.gt, ">", "BVP ELISA"),
     ],
     "flag_stability": [
-        AssayThreshold("as_slope_pct_per_day", 0.08, operator.gt, ">", "Slope for Accelerated Stability"),
+        AssayThreshold(
+            "as_slope_pct_per_day",
+            0.08,
+            operator.gt,
+            ">",
+            "Slope for Accelerated Stability",
+        ),
     ],
 }
 
@@ -129,6 +153,7 @@ PRIMARY_COLUMNS = [
 # Utility helpers
 # --------------------------------------------------------------------------- #
 
+
 def sanitize_sequence(seq: object) -> object:
     """
     Sanitize a VH/VL amino acid sequence.
@@ -144,13 +169,20 @@ def sanitize_sequence(seq: object) -> object:
     return seq_str or pd.NA
 
 
-def load_excel_frame(path: Path, expected_unique: Iterable[str] | None = None) -> pd.DataFrame:
+def load_excel_frame(
+    path: Path, expected_unique: Iterable[str] | None = None
+) -> pd.DataFrame:
     """Read an Excel worksheet and optionally validate set membership."""
     df = pd.read_excel(path)
     if expected_unique is not None:
         missing = set(expected_unique) - set(df["Name"].dropna())
         if missing:
-            LOG.warning("File %s is missing %d expected names (e.g. %s)", path, len(missing), list(sorted(missing))[:3])
+            LOG.warning(
+                "File %s is missing %d expected names (e.g. %s)",
+                path,
+                len(missing),
+                list(sorted(missing))[:3],
+            )
     return df
 
 
@@ -188,7 +220,10 @@ def ensure_output_directory(path: Path) -> None:
 # Conversion pipeline
 # --------------------------------------------------------------------------- #
 
-def convert_jain_dataset(sd01_path: Path, sd02_path: Path, sd03_path: Path) -> pd.DataFrame:
+
+def convert_jain_dataset(
+    sd01_path: Path, sd02_path: Path, sd03_path: Path
+) -> pd.DataFrame:
     """Convert the Jain supplementary files to a cleaned, merged DataFrame."""
     LOG.info("Reading SD01 metadata from %s", sd01_path)
     sd01 = pd.read_excel(sd01_path)
@@ -207,7 +242,9 @@ def convert_jain_dataset(sd01_path: Path, sd02_path: Path, sd03_path: Path) -> p
     sd01 = sd01[sd01["Name"].isin(valid_names)].reset_index(drop=True)
     sd03 = sd03[sd03["Name"].isin(valid_names)].reset_index(drop=True)
 
-    LOG.info("  Retained %d property rows after filtering to valid antibody names", len(sd03))
+    LOG.info(
+        "  Retained %d property rows after filtering to valid antibody names", len(sd03)
+    )
 
     # Rename columns for ease of use.
     sd03 = sd03.rename(columns=COLUMN_RENAME)
@@ -235,7 +272,9 @@ def convert_jain_dataset(sd01_path: Path, sd02_path: Path, sd03_path: Path) -> p
 
     merged["flags_total"] = merged[list(ASSAY_CLUSTERS.keys())].sum(axis=1)
     merged["flag_category"] = merged["flags_total"].apply(assign_flag_category)
-    merged["label"] = merged["flag_category"].map({"specific": 0, "non_specific": 1}).astype("Int64")
+    merged["label"] = (
+        merged["flag_category"].map({"specific": 0, "non_specific": 1}).astype("Int64")
+    )
 
     # Map supporting columns for historical compatibility.
     merged["source"] = "jain2017"
@@ -260,7 +299,10 @@ def summarize(df: pd.DataFrame) -> None:
     LOG.info("  Total antibodies: %d", len(df))
     LOG.info(
         "  Flag distribution: %s",
-        ", ".join(f"{k}={v}" for k, v in df["flag_category"].value_counts().sort_index().items()),
+        ", ".join(
+            f"{k}={v}"
+            for k, v in df["flag_category"].value_counts().sort_index().items()
+        ),
     )
     label_counts = df["label"].value_counts(dropna=False)
     label_summary: List[str] = []
@@ -295,7 +337,9 @@ def summarize(df: pd.DataFrame) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Convert Jain supplementary Excel files to CSV.")
+    parser = argparse.ArgumentParser(
+        description="Convert Jain supplementary Excel files to CSV."
+    )
     parser.add_argument(
         "--sd01",
         type=Path,
