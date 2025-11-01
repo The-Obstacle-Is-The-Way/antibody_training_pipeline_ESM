@@ -5,7 +5,6 @@ Validate fragment extraction results.
 This script validates that fragment CSV files were correctly generated
 from the preprocessing pipeline.
 
-Author: Ray
 Date: 2025-11-01
 """
 
