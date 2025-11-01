@@ -94,8 +94,8 @@ models/
 logs/
 outputs/
 
-# Literature markdown conversions (for personal reference only)
-literature/markdown/
+# Literature files (PDFs, markdown conversions - for personal reference only)
+literature/
 
 # Raw data files (download from paper supplementary materials)
 test_datasets/*.xlsx
