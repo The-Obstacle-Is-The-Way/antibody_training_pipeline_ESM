@@ -123,7 +123,7 @@ From Harvey et al. 2022 (line 220):
 - `CDR3_nogaps`: H-CDR3 sequence (no gaps)
 - `label`: Binary polyreactivity label (0=low, 1=high)
 
-**Sequence Length Range:** 53-137 amino acids (nanobody VHH domain range)
+**Sequence Length Range:** 52-137 amino acids (nanobody VHH domain range)
 
 **Label Distribution:**
 - Low polyreactivity (label=0): 69,702 sequences (49.3%)

@@ -134,7 +134,7 @@ dataset = load_dataset('ZYMScott/polyreaction')
 
 **Columns:**
 ```
-seq             : Full nanobody VHH sequence (53-137 amino acids)
+seq             : Full nanobody VHH sequence (52-137 amino acids)
 CDR1_nogaps     : H-CDR1 sequence (pre-extracted, no gaps)
 CDR2_nogaps     : H-CDR2 sequence (pre-extracted, no gaps)
 CDR3_nogaps     : H-CDR3 sequence (pre-extracted, no gaps)
@@ -150,7 +150,7 @@ label
 
 **Balanced dataset** - good for binary classification!
 
-**Sequence length range:** 53-137 amino acids
+**Sequence length range:** 52-137 amino acids
 - Typical nanobody VHH: 110-130 aa
 - Some outliers (short: 53aa, long: 137aa)
 - Median: 120.6 aa (within expected range)
@@ -333,7 +333,7 @@ bcad113 Remove Excel source files from git tracking
 
 ### 2. Sequence Length Filtering
 
-**HuggingFace range:** 53-137 aa
+**HuggingFace range:** 52-137 aa
 **Typical nanobody range:** 110-130 aa
 
 **Decision:** **No filtering** - keep all sequences

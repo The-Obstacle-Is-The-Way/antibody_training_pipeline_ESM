@@ -87,7 +87,7 @@ Therefore, for Harvey we extract **VHH-specific fragments only**:
 
 ### Current Column Structure
 ```
-seq                 : Full nanobody VHH sequence (53-137 aa)
+seq                 : Full nanobody VHH sequence (52-137 aa)
 CDR1_nogaps         : H-CDR1 sequence (pre-extracted, no gaps)
 CDR2_nogaps         : H-CDR2 sequence (pre-extracted, no gaps)
 CDR3_nogaps         : H-CDR3 sequence (pre-extracted, no gaps)
@@ -117,7 +117,7 @@ label               : Binary polyreactivity (0=low, 1=high)
 
 **From HuggingFace dataset inspection:**
 - Label distribution: 69,702 low (49.3%), 71,772 high (50.7%) - **balanced**
-- Sequence length: 53-137 aa (typical nanobody VHH range: 110-130 aa)
+- Sequence length: 52-137 aa (typical nanobody VHH range: 110-130 aa)
 - No missing values observed
 - CDRs already extracted but **numbering scheme unknown**
 
@@ -319,7 +319,7 @@ test_datasets/harvey/
 ### Sequence Length Outliers
 
 **Nanobody expected range:** 110-130 aa
-**Dataset actual range:** 53-137 aa (from HuggingFace inspection)
+**Dataset actual range:** 52-137 aa (from HuggingFace inspection)
 
 **Short sequences (< 100 aa):**
 - Possibly truncated or incomplete nanobodies

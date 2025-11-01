@@ -44,8 +44,8 @@ Please audit `preprocessing/process_harvey.py` against the following specificati
 
 **CSV Format (all files):**
 ```csv
-id,sequence,label,source
-harvey_000001,QVQLVESGG...,1,harvey2022
+id,sequence,label,source,sequence_length
+harvey_000001,QVQLVESGG...,1,harvey2022,127
 ```
 
 **Columns:**
@@ -53,6 +53,7 @@ harvey_000001,QVQLVESGG...,1,harvey2022
 - `sequence`: Fragment sequence (CDR, FWR, or full VHH)
 - `label`: Binary polyreactivity (0=low, 1=high)
 - `source`: Dataset provenance ("harvey2022")
+- `sequence_length`: Fragment length in amino acids
 
 ### Expected Performance
 - **Processing time:** 10-30 minutes (141K sequences)
@@ -105,7 +106,7 @@ Harvey script should be **similar to** `preprocessing/process_shehata.py` BUT:
   - `H-CDR3` → `cdr3_aa_H`
   - `H-CDRs` → `cdrs_H`
   - `H-FWRs` → `fwrs_H`
-- [ ] All files have 4 columns: id, sequence, label, source
+- [ ] All files have 5 columns: id, sequence, label, source, sequence_length
 - [ ] Source is "harvey2022" (not "harvey2025" or other)
 
 ### 4. Error Handling
