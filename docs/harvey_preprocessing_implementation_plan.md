@@ -2,7 +2,15 @@
 
 **Date:** 2025-11-01
 **Issue:** #4 – Harvey dataset preprocessing
-**Status:** 📋 Planning phase – awaiting approval before implementation
+**Status:** ⚠️ **DATASET SOURCE VERIFICATION REQUIRED**
+
+---
+
+## ⚠️ Dataset Source Verification Issue (2025-11-01 17:30)
+
+**UPDATE:** Plan remains valid but dataset source requires verification. HuggingFace version (ZYMScott/polyreaction) identified as Harvey+GP-nano combined dataset, not pure Harvey 2022. Awaiting confirmation of correct source for Novo Nordisk replication.
+
+**Note:** Processing methodology documented below is correct and ready for use once correct dataset is verified.
 
 ---
 

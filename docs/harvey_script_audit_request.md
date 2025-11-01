@@ -6,6 +6,14 @@
 
 ---
 
+## ⚠️ Dataset Source Verification Issue (2025-11-01 17:30)
+
+**NOTE:** Audit findings remain valid for processing methodology. Dataset source subsequently identified as requiring verification (HuggingFace ZYMScott/polyreaction = Harvey+GP-nano combined dataset, not pure Harvey 2022).
+
+**Script validity:** Processing logic is correct and ready for use once correct dataset source is verified.
+
+---
+
 ## Request
 
 Please audit `preprocessing/process_harvey.py` against the following specifications:

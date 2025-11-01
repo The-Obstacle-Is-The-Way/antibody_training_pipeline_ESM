@@ -2,13 +2,38 @@
 
 **Date:** 2025-11-01
 **Script:** `preprocessing/process_harvey.py`
-**Status:** ✅ **COMPLETED (RUN 2025-11-01 13:59)**
+**Status:** ⚠️ **ON HOLD - DATASET SOURCE VERIFICATION REQUIRED**
 
 ---
 
-## Summary
+## ⚠️ Dataset Source Issue Identified (2025-11-01 17:30)
 
-Harvey preprocessing script has been created, audited, and executed. Processing of the full HuggingFace download (141,474 nanobodies) completed successfully with a 99.68% annotation rate.
+**CRITICAL FINDING:** The preprocessing was completed successfully on HuggingFace dataset (ZYMScott/polyreaction), but subsequent verification revealed this is **NOT the pure Harvey 2022 dataset**.
+
+**Issue:**
+- HuggingFace `ZYMScott/polyreaction` = **Harvey + GP-nano COMBINED dataset**
+- Created by NbBench team (Zhang et al. 2025, arxiv:2505.02022) as a curated benchmark
+- Combines two studies: Harvey et al. 2022 [52] + GP-nano (Zhou et al. 2024) [53]
+- Novo Nordisk likely used the **original Harvey dataset** (available by request only)
+
+**Scripts remain valid:**
+- ✅ `process_harvey.py` - methodology and ANARCI processing correct
+- ✅ `download_harvey_dataset.py` - needs correct source URL only
+- ✅ All processing logic - ready for correct dataset when available
+
+**Next steps:**
+1. ✅ Verify with team if original Harvey dataset is available
+2. ⬜ If not: Request from Harvey/Marks/Kruse lab
+3. ⬜ Update download script with correct source
+4. ⬜ Re-run processing on verified dataset
+
+---
+
+## Original Processing Summary (HuggingFace version - for reference)
+
+**⚠️ NOTE:** The results below document processing of the HuggingFace dataset which may not be the correct source for Novo Nordisk replication. Treat as methodology validation only.
+
+Harvey preprocessing script has been created, audited, and executed. Processing of the HuggingFace download (141,474 nanobodies) completed successfully with a 99.68% annotation rate.
 
 ---
 

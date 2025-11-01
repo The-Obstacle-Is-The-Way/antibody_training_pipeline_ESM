@@ -2,7 +2,20 @@
 
 **Date:** 2025-11-01
 **Issue:** #4 – Harvey dataset preprocessing
-**Status:** 📋 Discovery phase complete, preprocessing pending
+**Status:** ⚠️ **DATASET SOURCE VERIFICATION REQUIRED**
+
+---
+
+## ⚠️ Dataset Source Verification Issue (2025-11-01 17:30)
+
+**CRITICAL UPDATE:** This log documents processing of HuggingFace dataset (ZYMScott/polyreaction) which was later identified as a **Harvey + GP-nano combined dataset**, not the pure Harvey 2022 data.
+
+**Finding:**
+- HuggingFace source is a curated NbBench benchmark mixing Harvey [52] + GP-nano [53]
+- Original Harvey dataset is request-only ("available from corresponding author upon request")
+- Awaiting verification of correct source for Novo Nordisk replication
+
+**Note:** Processing methodology documented below remains valid. Only input data source requires verification.
 
 ---
 
