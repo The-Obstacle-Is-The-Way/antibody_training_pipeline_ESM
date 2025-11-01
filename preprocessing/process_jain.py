@@ -23,7 +23,6 @@ Fragments extracted:
 15. All-FWRs (H-FWRs + L-FWRs)
 16. Full (VH + VL = same as #13 for compatibility)
 
-Author: Ray
 Date: 2025-11-01
 Issue: #2 - Jain dataset preprocessing
 """
