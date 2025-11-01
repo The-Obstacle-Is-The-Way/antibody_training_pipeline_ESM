@@ -85,32 +85,49 @@ The Sakhnini et al. 2025 paper uses this dataset as a **test set** for evaluatin
 ### Expected Output
 
 After running the conversion scripts, we expect:
-- **137 antibodies** (from SD01/SD02/SD03 intersection)
-- Columns: `id`, `heavy_seq`, `light_seq`, `label`, `source`, `smp`, `ova`
+- **137 antibodies** (strict SD01∩SD02∩SD03 match after dropping SD03 metadata rows)
+- Columns (ordered):
+  - `id`, `heavy_seq`, `light_seq`
+  - `flags_total`, `flag_category`, `label`
+  - `source`, `smp`, `ova`, `bvp_elisa`
+  - Supporting assay columns (`psr`, `acsins`, `csi_bli`, `cic`, `hic`, `smac`, `sgac_sins`, `as_slope`) for reproducibility
+  - Optional QC columns (`heavy_seq_length`, `light_seq_length`)
 - Source label: `jain2017`
 
 **Column Derivation (RESOLVED 2025-11-01):**
-- `id`: From SD01/SD02/SD03 'Name' column
-- `heavy_seq`: From SD02 'VH' column
-- `light_seq`: From SD02 'VL' column
-- `label`: Binary classification derived from flag count:
-  - 0 = Specific (0 flags)
-  - 1 = Non-specific (≥4 flags)
-  - **Exclude:** 1-3 flags (mildly non-specific) during training
-- `source`: "jain2017"
-- `smp`: From SD03 'Poly-Specificity Reagent (PSR) SMP Score (0-1)' column
-- `ova`: From SD03 'ELISA' column (NOT 'BVP ELISA' - see analysis below)
+- `id`: SD0X `Name`
+- `heavy_seq` / `light_seq`: SD02 `VH` / `VL` (sanitized for gaps/whitespace)
+- `flags_total`: Integer count (0–4) produced by Table 1 thresholds (see below)
+- `flag_category`: `specific` (0), `mild` (1–3), `non_specific` (4)
+- `label`: Binary view used by Sakhnini
+  - 0 → `specific`
+  - 1 → `non_specific`
+  - `NaN` → `mild` (kept in CSV but excluded during model evaluation)
+- `source`: Constant `"jain2017"`
+- `smp`: SD03 `Poly-Specificity Reagent (PSR) SMP Score (0-1)`
+- `ova`: SD03 `ELISA` fold-over-background (matches original column semantics)
+- `bvp_elisa`: SD03 `BVP ELISA` (needed for flag audit)
+- Remaining assay columns: direct passthrough from SD03 with standardized snake_case names
+- QC columns: derived lengths and any anomaly flags emitted by converter (optional)
 
 **Flag Calculation (for `label` column):**
 
 Flags are calculated from 4 assay groups using 90th percentile thresholds of approved antibodies:
 
-1. **Polyreactivity (ELISA, BVP):** Flag if ELISA > 1.9 OR BVP > 4.3
-2. **Self-Interaction (PSR, CSI, AC-SINS, CIC):** Flag if PSR > 0.26 OR others exceed thresholds
-3. **Chromatography (SGAC100, SMAC, HIC):** Flag if any exceeds threshold
-4. **Stability (AS):** Flag if AS exceeds threshold
+| Cluster | Assays | Threshold (approved 90th percentile) | Condition | Flag logic |
+|---------|--------|---------------------------------------|-----------|------------|
+| Self-interaction / cross-interaction | PSR SMP, AC-SINS Δλ, CSI-BLI, CIC | 0.27, 11.8 nm, 0.01 RU, 10.1 min | `>` for all | Flag = 1 if **any** exceed |
+| Chromatography / salt stress | HIC, SMAC, SGAC-SINS | 11.7 min, 12.8 min, 370 mM | `>`, `>`, `<` respectively | Flag = 1 if HIC/SMAC exceed or SGAC-SINS falls below |
+| Polyreactivity / plate binding | ELISA, BVP ELISA | 1.9, 4.3 fold-over-background | `>` | Flag = 1 if ELISA or BVP exceeds |
+| Accelerated stability | AS SEC slope | 0.08 % loss/day | `>` | Flag = 1 if AS exceeds |
 
-Total flags: 0-4, where ≥4 = non-specific (label=1)
+- `flags_total` = sum of cluster flags (range 0–4)
+- `flag_category` assignment:
+  - 0 → `specific`
+  - 1–3 → `mild`
+  - 4 → `non_specific`
+- `label` = 0 for `specific`, 1 for `non_specific`, `NaN` for `mild`
+- Additional metadata (approved-antibody percentile calculations) available in `docs/jain_conversion_verification_report.md` (to be generated)
 
 ### Processed Data Workflow
 

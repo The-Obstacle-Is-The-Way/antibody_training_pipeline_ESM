@@ -88,65 +88,75 @@ id,heavy_seq,light_seq,label,source,smp,ova
 abituzumab,QVQLQQSGGE...,DIQMTQSPSS...,0,jain2017,0.166666,1.137375
 ```
 
-**Column Definitions:**
-- `id`: Antibody name (from SD01/SD02/SD03 'Name' column)
-- `heavy_seq`: VH sequence (from SD02 'VH' column)
-- `light_seq`: VL sequence (from SD02 'VL' column)
-- `label`: Binary classification
-  - 0 = Specific (0 ELISA flags)
-  - 1 = Non-specific (≥4 ELISA flags)
-  - **Note:** Mildly non-specific (1-3 flags) should be INCLUDED but may be filtered later during preprocessing
-- `source`: "jain2017"
-- `smp`: PSR SMP Score from SD03 'Poly-Specificity Reagent (PSR) SMP Score (0-1)' column
-- `ova`: **TBD** - Need to determine which SD03 column maps to 'ova'
-  - Possible candidates: 'ELISA', 'BVP ELISA'
-  - Existing `jain.csv` has ova range: -0.002 to 1.274
-  - PNAS 'ELISA' range: 0.889 to 14.459
-  - PNAS 'BVP ELISA' range: 1.028 to 22.746
-  - **Hypothesis**: May need log transformation or normalization
+**Column Definitions (planned for v2):**
+- `id`: Antibody name (SD0X `Name`)
+- `heavy_seq`: VH sequence (SD02 `VH`)
+- `light_seq`: VL sequence (SD02 `VL`)
+- `flags_total`: Integer count 0–4 derived from Table 1 thresholds
+- `flag_category`: One of `specific`, `mild`, `non_specific`
+- `label`: Binary label used by Sakhnini pipeline
+  - 0 for `specific`
+  - 1 for `non_specific`
+  - `NaN` for `mild` (explicitly excluded downstream)
+- `source`: Literal `"jain2017"`
+- `smp`: PSR SMP score (SD03 `Poly-Specificity Reagent (PSR) SMP Score (0-1)`)
+- `ova`: **ELISA fold-over-background** (SD03 `ELISA`) — retained to preserve prior schema (`ova` ≈ ovalbumin ligand in original flag panel)
+- `bvp_elisa`: SD03 `BVP ELISA` (new column to make flag calculation auditable)
+- `acsins`, `csi`, `cic`, `hic`, `smac`, `sgac_sins`, `as_slope`: optional passthrough columns so validations can be rerun without re-reading Excel (see conversion script design)
+- `heavy_seq_length` / `light_seq_length`: optional QC metrics (remove if file size becomes unwieldy)
 
 ### ✅ RESOLVED: ELISA Flag Derivation
 
-**BREAKTHROUGH (2025-11-01):** Successfully determined flag derivation methodology from Jain et al. 2017 PNAS paper!
+**BREAKTHROUGH (2025-11-01):** Successfully recovered the complete flag derivation methodology from Jain et al. 2017 PNAS paper (Table 1, converted to markdown at `literature/markdown/jain-et-al-2017-biophysical-properties-of-the-clinical-stage-antibody-landscape/`).
 
 #### Flag Derivation Methodology (Table 1)
 
 **Threshold Calculation:**
-- Thresholds are set at **90th percentile** of **APPROVED antibodies only** (48 antibodies)
-- Represents "10% worst values among approved drugs" (Lipinski approach)
-- Each assay group contributes **0 or 1 flag** to total flag count
+- Thresholds are set at the **90th percentile of APPROVED antibodies** (48 molecules) to capture the “10% worst values among approved drugs” (Lipinski-style heuristic).
+- Within each assay cluster, **any** metric breaching its threshold triggers a **single flag** for that cluster.
+- SGAC-SINS is the only assay where **lower** values are undesirable (`< 370 mM` raises the flag); all other assays are flagged when **greater** than the limit.
 
-**Assay Groups (4 groups = max 4 flags):**
+**Assay Clusters (maximum 4 flags per antibody):**
 
-1. **Polyreactivity Group (ELISA, BVP):**
-   - ELISA threshold: **1.9** (calculated: 1.883 from approved 90th percentile)
-   - BVP threshold: **4.3** (calculated: 4.278 from approved 90th percentile)
-   - **Flag = 1 if ELISA > 1.9 OR BVP > 4.3**
+1. **Self-Interaction / Cross-Interaction**  
+   | Assay | Threshold | Units | Flag condition |
+   |-------|-----------|-------|----------------|
+   | PSR SMP | 0.27 ± 0.06 | unitless | `>` |
+   | AC-SINS | 11.8 ± 6.2 | Δλ (nm) | `>` |
+   | CSI-BLI | 0.01 ± 0.02 | response units | `>` |
+   | CIC | 10.1 ± 0.5 | min | `>` |
+   **Cluster flag:** 1 if **any** of {PSR, AC-SINS, CSI-BLI, CIC} exceed threshold.
 
-2. **Self-Interaction Group (PSR, CSI, AC-SINS, CIC):**
-   - PSR SMP threshold: **0.26** (calculated: 0.263 from approved 90th percentile)
-   - **Flag = 1 if any assay in group exceeds threshold**
+2. **Chromatography / Salt Stress**  
+   | Assay | Threshold | Units | Flag condition |
+   |-------|-----------|-------|----------------|
+   | HIC | 11.7 ± 0.6 | min | `>` |
+   | SMAC | 12.8 ± 1.2 | min | `>` |
+   | SGAC-SINS | 370 ± 133 | mM | `<` (lower salt tolerance is bad) |
+   **Cluster flag:** 1 if **any** of {HIC, SMAC} exceed or SGAC-SINS falls below threshold.
 
-3. **Chromatography Group (SGAC100, SMAC, HIC):**
-   - Thresholds TBD (need full Table 1 from main paper)
-   - **Flag = 1 if any assay in group exceeds threshold**
+3. **Polyreactivity / Plate Binding**  
+   | Assay | Threshold | Units | Flag condition |
+   |-------|-----------|-------|----------------|
+   | ELISA | 1.9 ± 1.0 | fold-over-background | `>` |
+   | BVP ELISA | 4.3 ± 2.2 | fold-over-background | `>` |
+   **Cluster flag:** 1 if ELISA > 1.9 **or** BVP > 4.3.
 
-4. **Stability Group (AS):**
-   - AS threshold TBD
-   - **Flag = 1 if AS exceeds threshold**
+4. **Accelerated Stability (AS)**  
+   | Assay | Threshold | Units | Flag condition |
+   |-------|-----------|-------|----------------|
+   | AS (SEC slope) | 0.08 ± 0.03 | % monomer loss per day | `>` |
+   **Cluster flag:** 1 if AS exceeds threshold.
 
-**Total Flags per Antibody:**
-- Range: 0 to 4 flags
-- 0 flags = Specific
-- 1-3 flags = Mildly non-specific
-- ≥4 flags = Non-specific (for binary classification)
+**Label Mapping for Sakhnini-style evaluation:**
+- `flags == 0` → Specific (label = 0)
+- `flags >= 4` → Non-specific (label = 1)
+- `flags in {1,2,3}` → Mildly non-specific (keep in CSV with `label = 0` or NaN, but filter out before binary evaluation as Sakhnini does)
 
-**Source References:**
-- Jain et al. 2017 PNAS, Table 1 (main paper)
-- PNAS Supporting Information PDF, Page 2 (assay grouping methodology)
-- Web search confirmation of ELISA/BVP thresholds
-
-**Status:** ELISA/BVP/PSR thresholds confirmed. Need to extract remaining 9 assay thresholds from main paper Table 1.
+**Provenance Links:**
+- Main paper markdown: `literature/markdown/jain-et-al-2017-biophysical-properties-of-the-clinical-stage-antibody-landscape/jain-et-al-2017-biophysical-properties-of-the-clinical-stage-antibody-landscape.md`
+- Supporting info PDF: `literature/pdf/pnas.201616408si.pdf`
+- Threshold confirmation script snapshots stored under `docs/` (see Data Cleaning Log, forthcoming).
 
 ---
 
@@ -193,11 +203,32 @@ abituzumab,QVQLQQSGGE...,DIQMTQSPSS...,0,jain2017,0.166666,1.137375
    })
    ```
 
-4. **Handle label derivation**
-   - **Option A:** Leave as NaN and document as requiring manual annotation
-   - **Option B:** Use threshold on ELISA score (need to determine threshold)
-   - **Option C:** Check if Jain paper supplementary has flag data
-   - **Recommendation:** Start with Option A, document issue
+4. **Compute assay thresholds and flag counts**
+   - Load Table 1 thresholds (hard-coded dict in script with provenance comment pointing to markdown path)
+   - Normalize column names (strip whitespace, ensure consistent casing)
+   - Apply sign corrections:
+     ```python
+     chromatography_flags = (
+         (row['HIC Retention Time (Min)a'] > 11.7)
+         or (row['SMAC Retention Time (Min)a'] > 12.8)
+         or (row['SGAC-SINS AS100 ((NH4)2SO4 mM)'] < 370)
+     )
+     ```
+   - Count boolean flags across four clusters → `flags_total`
+   - Map to category (`specific` / `mild` / `non_specific`) and binary label (0 / NaN / 1)
+
+5. **Assemble final DataFrame**
+   - Merge sequences + metadata + flags
+   - Insert additional derived columns (`heavy_seq_length`, etc.) for QA
+   - Order columns to keep backwards compatibility: `id,heavy_seq,light_seq,label,flags_total,flag_category,source,smp,ova,bvp_elisa,...`
+
+6. **Write CSV**
+   - Save to `test_datasets/jain.csv` (overwrite existing) and optionally `jain_raw_joined.csv` for archival
+   - Emit console summary: counts per flag category, threshold usage, any dropped antibodies (should be zero after filtering metadata rows)
+
+7. **Document & log conversion**
+   - Append SHA256 checksum, row counts, label distribution to `docs/jain_conversion_verification_report.md` (new file)
+   - Update data cleaning log with any anomalies (missing values, sequences trimmed, etc.)
 
 5. **Data validation**
    - Check for missing sequences
