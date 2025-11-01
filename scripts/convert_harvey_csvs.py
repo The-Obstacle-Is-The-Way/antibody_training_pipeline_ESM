@@ -101,7 +101,9 @@ def convert_harvey_csvs(
     print(f"\nCombined dataset: {len(df_combined)} sequences")
     print(f"  High polyreactivity (label=1): {(df_combined['label'] == 1).sum()}")
     print(f"  Low polyreactivity (label=0): {(df_combined['label'] == 0).sum()}")
-    print(f"  Balance: {(df_combined['label'] == 1).sum() / len(df_combined) * 100:.1f}% high")
+    print(
+        f"  Balance: {(df_combined['label'] == 1).sum() / len(df_combined) * 100:.1f}% high"
+    )
 
     # Sequence length stats
     seq_lengths = df_combined["seq"].str.len()
