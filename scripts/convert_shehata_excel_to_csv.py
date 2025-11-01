@@ -13,9 +13,10 @@ Date: 2025-10-31
 Issue: #3 - Shehata dataset preprocessing
 """
 
-import pandas as pd
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import pandas as pd
 
 
 def sanitize_sequence(seq: str) -> str:
@@ -35,7 +36,7 @@ def sanitize_sequence(seq: str) -> str:
         return seq
 
     # Remove gap characters (common in IMGT-numbered sequences)
-    seq = str(seq).replace('-', '')
+    seq = str(seq).replace("-", "")
 
     # Remove whitespace
     seq = seq.strip()
@@ -56,23 +57,29 @@ def validate_sequences(df: pd.DataFrame) -> dict:
     valid_aa = set("ACDEFGHIKLMNPQRSTVWY")
 
     validation = {
-        'total_sequences': len(df),
-        'missing_vh': df['heavy_seq'].isna().sum(),
-        'missing_vl': df['light_seq'].isna().sum(),
-        'invalid_vh': 0,
-        'invalid_vl': 0,
-        'vh_length_range': (df['heavy_seq'].str.len().min(), df['heavy_seq'].str.len().max()),
-        'vl_length_range': (df['light_seq'].str.len().min(), df['light_seq'].str.len().max()),
+        "total_sequences": len(df),
+        "missing_vh": df["heavy_seq"].isna().sum(),
+        "missing_vl": df["light_seq"].isna().sum(),
+        "invalid_vh": 0,
+        "invalid_vl": 0,
+        "vh_length_range": (
+            df["heavy_seq"].str.len().min(),
+            df["heavy_seq"].str.len().max(),
+        ),
+        "vl_length_range": (
+            df["light_seq"].str.len().min(),
+            df["light_seq"].str.len().max(),
+        ),
     }
 
     # Check for invalid amino acids (after sanitization, there should be none)
-    for idx, seq in df['heavy_seq'].dropna().items():
+    for idx, seq in df["heavy_seq"].dropna().items():
         if not set(seq).issubset(valid_aa):
-            validation['invalid_vh'] += 1
+            validation["invalid_vh"] += 1
 
-    for idx, seq in df['light_seq'].dropna().items():
+    for idx, seq in df["light_seq"].dropna().items():
         if not set(seq).issubset(valid_aa):
-            validation['invalid_vl'] += 1
+            validation["invalid_vl"] += 1
 
     return validation
 
@@ -81,7 +88,7 @@ def convert_excel_to_csv(
     excel_path: str,
     output_path: str,
     psr_threshold: float = None,
-    interactive: bool = True
+    interactive: bool = True,
 ) -> pd.DataFrame:
     """
     Convert mmc2.xlsx to CSV format matching jain.csv structure.
@@ -105,15 +112,15 @@ def convert_excel_to_csv(
 
     # Sanitize sequences BEFORE any analysis
     print("\nSanitizing sequences (removing gaps and invalid characters)...")
-    vh_original = df_excel['VH Protein'].copy()
-    vl_original = df_excel['VL Protein'].copy()
+    vh_original = df_excel["VH Protein"].copy()
+    vl_original = df_excel["VL Protein"].copy()
 
-    df_excel['VH Protein'] = df_excel['VH Protein'].apply(sanitize_sequence)
-    df_excel['VL Protein'] = df_excel['VL Protein'].apply(sanitize_sequence)
+    df_excel["VH Protein"] = df_excel["VH Protein"].apply(sanitize_sequence)
+    df_excel["VL Protein"] = df_excel["VL Protein"].apply(sanitize_sequence)
 
     # Count gaps removed
-    gaps_vh = sum(str(s).count('-') if pd.notna(s) else 0 for s in vh_original)
-    gaps_vl = sum(str(s).count('-') if pd.notna(s) else 0 for s in vl_original)
+    gaps_vh = sum(str(s).count("-") if pd.notna(s) else 0 for s in vh_original)
+    gaps_vl = sum(str(s).count("-") if pd.notna(s) else 0 for s in vl_original)
 
     if gaps_vh > 0 or gaps_vl > 0:
         print(f"  Removed {gaps_vh} gap characters from VH sequences")
@@ -121,16 +128,16 @@ def convert_excel_to_csv(
 
     # Drop rows without sequence information (Excel footnotes / metadata)
     before_drop = len(df_excel)
-    df_excel = df_excel.dropna(subset=['VH Protein', 'VL Protein'], how='all')
+    df_excel = df_excel.dropna(subset=["VH Protein", "VL Protein"], how="all")
     dropped = before_drop - len(df_excel)
     if dropped:
         print(f"  Dropped {dropped} rows without VH/VL sequences (metadata/footnotes)")
 
     # Convert PSR scores to numeric and drop entries without measurements
-    psr_numeric = pd.to_numeric(df_excel['PSR Score'], errors='coerce')
+    psr_numeric = pd.to_numeric(df_excel["PSR Score"], errors="coerce")
     invalid_psr_mask = psr_numeric.isna()
     if invalid_psr_mask.any():
-        dropped_ids = df_excel.loc[invalid_psr_mask, 'Clone name'].tolist()
+        dropped_ids = df_excel.loc[invalid_psr_mask, "Clone name"].tolist()
         dropped_list = ", ".join(dropped_ids)
         print(
             f"  Dropping {invalid_psr_mask.sum()} antibodies without numeric PSR scores: "
@@ -160,10 +167,14 @@ def convert_excel_to_csv(
 
         if interactive:
             # Ask user to confirm
-            response = input(f"\n  Use threshold {suggested_threshold:.4f}? [y/n/custom]: ").strip().lower()
-            if response == 'y':
+            response = (
+                input(f"\n  Use threshold {suggested_threshold:.4f}? [y/n/custom]: ")
+                .strip()
+                .lower()
+            )
+            if response == "y":
                 psr_threshold = suggested_threshold
-            elif response == 'custom':
+            elif response == "custom":
                 psr_threshold = float(input("  Enter custom threshold: "))
             else:
                 print("  Using PSR > 0 as threshold (any polyreactivity)")
@@ -171,20 +182,24 @@ def convert_excel_to_csv(
         else:
             # Non-interactive mode: use suggested threshold
             psr_threshold = suggested_threshold
-            print(f"\n  Using suggested threshold (non-interactive mode): {suggested_threshold:.4f}")
+            print(
+                f"\n  Using suggested threshold (non-interactive mode): {suggested_threshold:.4f}"
+            )
 
     print(f"\nUsing PSR threshold: {psr_threshold}")
 
     # Create DataFrame matching jain.csv format
-    df_csv = pd.DataFrame({
-        'id': df_excel['Clone name'],
-        'heavy_seq': df_excel['VH Protein'],
-        'light_seq': df_excel['VL Protein'],
-        'label': (psr_numeric > psr_threshold).astype(int),
-        'psr_score': psr_numeric,
-        'b_cell_subset': df_excel['B cell subset'],
-        'source': 'shehata2019'
-    })
+    df_csv = pd.DataFrame(
+        {
+            "id": df_excel["Clone name"],
+            "heavy_seq": df_excel["VH Protein"],
+            "light_seq": df_excel["VL Protein"],
+            "label": (psr_numeric > psr_threshold).astype(int),
+            "psr_score": psr_numeric,
+            "b_cell_subset": df_excel["B cell subset"],
+            "source": "shehata2019",
+        }
+    )
 
     # Validate
     print("\nValidating sequences...")
@@ -198,20 +213,20 @@ def convert_excel_to_csv(
     print(f"  VH length range: {validation['vh_length_range']}")
     print(f"  VL length range: {validation['vl_length_range']}")
 
-    if validation['invalid_vh'] > 0 or validation['invalid_vl'] > 0:
+    if validation["invalid_vh"] > 0 or validation["invalid_vl"] > 0:
         print("\n  ⚠️  WARNING: Some sequences still invalid after sanitization!")
         print("  This may indicate non-standard amino acids or other issues.")
 
     # Label distribution
     print("\nLabel distribution:")
-    label_dist = df_csv['label'].value_counts().sort_index()
+    label_dist = df_csv["label"].value_counts().sort_index()
     for label, count in label_dist.items():
         label_name = "Specific" if label == 0 else "Non-specific"
         print(f"  {label_name} (label={label}): {count} ({count/len(df_csv)*100:.1f}%)")
 
     # B cell subset distribution
     print("\nB cell subset distribution:")
-    subset_dist = df_csv['b_cell_subset'].value_counts()
+    subset_dist = df_csv["b_cell_subset"].value_counts()
     for subset, count in subset_dist.items():
         print(f"  {subset}: {count}")
 
@@ -225,14 +240,16 @@ def convert_excel_to_csv(
 
 def compare_with_original(csv_df: pd.DataFrame, excel_path: str):
     """Compare CSV output with original Excel for validation."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("VALIDATION: Comparing CSV with original Excel")
-    print("="*60)
+    print("=" * 60)
 
     df_excel = pd.read_excel(excel_path)
-    df_excel['VH Protein'] = df_excel['VH Protein'].apply(sanitize_sequence)
-    df_excel['VL Protein'] = df_excel['VL Protein'].apply(sanitize_sequence)
-    df_excel = df_excel.dropna(subset=['VH Protein', 'VL Protein'], how='all').reset_index(drop=True)
+    df_excel["VH Protein"] = df_excel["VH Protein"].apply(sanitize_sequence)
+    df_excel["VL Protein"] = df_excel["VL Protein"].apply(sanitize_sequence)
+    df_excel = df_excel.dropna(
+        subset=["VH Protein", "VL Protein"], how="all"
+    ).reset_index(drop=True)
 
     # Check row counts
     print(f"\nRow count check:")
@@ -243,8 +260,8 @@ def compare_with_original(csv_df: pd.DataFrame, excel_path: str):
     # Spot check sequences
     print(f"\nSpot checking first 3 sequences...")
     for i in range(min(3, len(csv_df))):
-        excel_vh = df_excel.loc[i, 'VH Protein']
-        csv_vh = csv_df.loc[i, 'heavy_seq']
+        excel_vh = df_excel.loc[i, "VH Protein"]
+        csv_vh = csv_df.loc[i, "heavy_seq"]
         match = excel_vh == csv_vh
         print(f"  Row {i}: {'✓' if match else '✗'} VH match")
         if not match:
@@ -264,25 +281,23 @@ def main():
         print("Please run this script from the repository root.")
         sys.exit(1)
 
-    print("="*60)
+    print("=" * 60)
     print("Shehata Dataset: Excel → CSV Conversion")
-    print("="*60)
+    print("=" * 60)
     print(f"\nInput:  {excel_path}")
     print(f"Output: {output_path}")
 
     # Convert
     df_csv = convert_excel_to_csv(
-        str(excel_path),
-        str(output_path),
-        psr_threshold=None  # Will prompt user
+        str(excel_path), str(output_path), psr_threshold=None  # Will prompt user
     )
 
     # Validate
     compare_with_original(df_csv, str(excel_path))
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("✓ Conversion complete!")
-    print("="*60)
+    print("=" * 60)
     print(f"\nNext steps:")
     print(f"  1. Review {output_path}")
     print(f"  2. Compare with test_datasets/jain.csv format")

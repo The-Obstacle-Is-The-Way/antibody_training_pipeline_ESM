@@ -31,19 +31,17 @@ Issue: #2 - Jain dataset preprocessing
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
 import pandas as pd
 import riot_na
 from tqdm.auto import tqdm
-
 
 # Initialize ANARCI for amino acid annotation (IMGT scheme)
 annotator = riot_na.create_riot_aa()
 
 
 def annotate_sequence(
-    seq_id: str,
-    sequence: str,
-    chain: str
+    seq_id: str, sequence: str, chain: str
 ) -> Optional[Dict[str, str]]:
     """
     Annotate a single amino acid sequence using ANARCI (IMGT).
@@ -56,36 +54,40 @@ def annotate_sequence(
     Returns:
         Dictionary with extracted fragments, or None if annotation fails
     """
-    assert chain in ('H', 'L'), "chain must be 'H' or 'L'"
+    assert chain in ("H", "L"), "chain must be 'H' or 'L'"
 
     try:
         annotation = annotator.run_on_sequence(seq_id, sequence)
 
         # Extract all fragments
         fragments = {
-            f'full_seq_{chain}': annotation.sequence_alignment_aa,
-            f'fwr1_aa_{chain}': annotation.fwr1_aa,
-            f'cdr1_aa_{chain}': annotation.cdr1_aa,
-            f'fwr2_aa_{chain}': annotation.fwr2_aa,
-            f'cdr2_aa_{chain}': annotation.cdr2_aa,
-            f'fwr3_aa_{chain}': annotation.fwr3_aa,
-            f'cdr3_aa_{chain}': annotation.cdr3_aa,
-            f'fwr4_aa_{chain}': annotation.fwr4_aa,
+            f"full_seq_{chain}": annotation.sequence_alignment_aa,
+            f"fwr1_aa_{chain}": annotation.fwr1_aa,
+            f"cdr1_aa_{chain}": annotation.cdr1_aa,
+            f"fwr2_aa_{chain}": annotation.fwr2_aa,
+            f"cdr2_aa_{chain}": annotation.cdr2_aa,
+            f"fwr3_aa_{chain}": annotation.fwr3_aa,
+            f"cdr3_aa_{chain}": annotation.cdr3_aa,
+            f"fwr4_aa_{chain}": annotation.fwr4_aa,
         }
 
         # Create concatenated fragments
-        fragments[f'cdrs_{chain}'] = ''.join([
-            fragments[f'cdr1_aa_{chain}'],
-            fragments[f'cdr2_aa_{chain}'],
-            fragments[f'cdr3_aa_{chain}']
-        ])
+        fragments[f"cdrs_{chain}"] = "".join(
+            [
+                fragments[f"cdr1_aa_{chain}"],
+                fragments[f"cdr2_aa_{chain}"],
+                fragments[f"cdr3_aa_{chain}"],
+            ]
+        )
 
-        fragments[f'fwrs_{chain}'] = ''.join([
-            fragments[f'fwr1_aa_{chain}'],
-            fragments[f'fwr2_aa_{chain}'],
-            fragments[f'fwr3_aa_{chain}'],
-            fragments[f'fwr4_aa_{chain}']
-        ])
+        fragments[f"fwrs_{chain}"] = "".join(
+            [
+                fragments[f"fwr1_aa_{chain}"],
+                fragments[f"fwr2_aa_{chain}"],
+                fragments[f"fwr3_aa_{chain}"],
+                fragments[f"fwr4_aa_{chain}"],
+            ]
+        )
 
         return fragments
 
@@ -114,18 +116,10 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
 
     for idx, row in tqdm(df.iterrows(), total=len(df), desc="Annotating"):
         # Annotate heavy chain
-        heavy_frags = annotate_sequence(
-            f"{row['id']}_VH",
-            row['heavy_seq'],
-            'H'
-        )
+        heavy_frags = annotate_sequence(f"{row['id']}_VH", row["heavy_seq"], "H")
 
         # Annotate light chain
-        light_frags = annotate_sequence(
-            f"{row['id']}_VL",
-            row['light_seq'],
-            'L'
-        )
+        light_frags = annotate_sequence(f"{row['id']}_VL", row["light_seq"], "L")
 
         if heavy_frags is None or light_frags is None:
             print(f"  Skipping {row['id']} - annotation failed")
@@ -133,20 +127,20 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
 
         # Combine all fragments and metadata
         result = {
-            'id': row['id'],
-            'label': row['label'],
-            'smp': row['smp'],
-            'ova': row['ova'],
-            'source': row['source'],
+            "id": row["id"],
+            "label": row["label"],
+            "smp": row["smp"],
+            "ova": row["ova"],
+            "source": row["source"],
         }
 
         result.update(heavy_frags)
         result.update(light_frags)
 
         # Create paired/combined fragments
-        result['vh_vl'] = result['full_seq_H'] + result['full_seq_L']
-        result['all_cdrs'] = result['cdrs_H'] + result['cdrs_L']
-        result['all_fwrs'] = result['fwrs_H'] + result['fwrs_L']
+        result["vh_vl"] = result["full_seq_H"] + result["full_seq_L"]
+        result["all_cdrs"] = result["cdrs_H"] + result["cdrs_L"]
+        result["all_fwrs"] = result["fwrs_H"] + result["fwrs_L"]
 
         results.append(result)
 
@@ -172,36 +166,29 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
     # Define all 16 fragment types
     fragments = {
         # 1-2: Full variable domains
-        'VH_only': ('full_seq_H', 'heavy_seq'),
-        'VL_only': ('full_seq_L', 'light_seq'),
-
+        "VH_only": ("full_seq_H", "heavy_seq"),
+        "VL_only": ("full_seq_L", "light_seq"),
         # 3-5: Heavy CDRs
-        'H-CDR1': ('cdr1_aa_H', 'h_cdr1'),
-        'H-CDR2': ('cdr2_aa_H', 'h_cdr2'),
-        'H-CDR3': ('cdr3_aa_H', 'h_cdr3'),
-
+        "H-CDR1": ("cdr1_aa_H", "h_cdr1"),
+        "H-CDR2": ("cdr2_aa_H", "h_cdr2"),
+        "H-CDR3": ("cdr3_aa_H", "h_cdr3"),
         # 6-8: Light CDRs
-        'L-CDR1': ('cdr1_aa_L', 'l_cdr1'),
-        'L-CDR2': ('cdr2_aa_L', 'l_cdr2'),
-        'L-CDR3': ('cdr3_aa_L', 'l_cdr3'),
-
+        "L-CDR1": ("cdr1_aa_L", "l_cdr1"),
+        "L-CDR2": ("cdr2_aa_L", "l_cdr2"),
+        "L-CDR3": ("cdr3_aa_L", "l_cdr3"),
         # 9-10: Concatenated CDRs
-        'H-CDRs': ('cdrs_H', 'h_cdrs'),
-        'L-CDRs': ('cdrs_L', 'l_cdrs'),
-
+        "H-CDRs": ("cdrs_H", "h_cdrs"),
+        "L-CDRs": ("cdrs_L", "l_cdrs"),
         # 11-12: Concatenated FWRs
-        'H-FWRs': ('fwrs_H', 'h_fwrs'),
-        'L-FWRs': ('fwrs_L', 'l_fwrs'),
-
+        "H-FWRs": ("fwrs_H", "h_fwrs"),
+        "L-FWRs": ("fwrs_L", "l_fwrs"),
         # 13: Paired variable domains
-        'VH+VL': ('vh_vl', 'paired_variable_domains'),
-
+        "VH+VL": ("vh_vl", "paired_variable_domains"),
         # 14-15: All CDRs/FWRs
-        'All-CDRs': ('all_cdrs', 'all_cdrs'),
-        'All-FWRs': ('all_fwrs', 'all_fwrs'),
-
+        "All-CDRs": ("all_cdrs", "all_cdrs"),
+        "All-FWRs": ("all_fwrs", "all_fwrs"),
         # 16: Full (alias for VH+VL for compatibility)
-        'Full': ('vh_vl', 'full_sequence'),
+        "Full": ("vh_vl", "full_sequence"),
     }
 
     print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
@@ -210,14 +197,16 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
         output_path = output_dir / f"{fragment_name}_jain.csv"
 
         # Create fragment-specific CSV with standardized column names
-        fragment_df = pd.DataFrame({
-            'id': df['id'],
-            'sequence': df[column_name],
-            'label': df['label'],
-            'smp': df['smp'],
-            'ova': df['ova'],
-            'source': df['source'],
-        })
+        fragment_df = pd.DataFrame(
+            {
+                "id": df["id"],
+                "sequence": df[column_name],
+                "label": df["label"],
+                "smp": df["smp"],
+                "ova": df["ova"],
+                "source": df["source"],
+            }
+        )
 
         fragment_df.to_csv(output_path, index=False)
 
@@ -237,9 +226,9 @@ def main():
         print("Please ensure jain.csv exists in test_datasets/")
         sys.exit(1)
 
-    print("="*60)
+    print("=" * 60)
     print("Jain Dataset: Fragment Extraction")
-    print("="*60)
+    print("=" * 60)
     print(f"\nInput:  {csv_path}")
     print(f"Output: {output_dir}/")
     print(f"Method: ANARCI (IMGT numbering scheme)")
@@ -252,22 +241,22 @@ def main():
     create_fragment_csvs(df_annotated, output_dir)
 
     # Validation summary
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Fragment Extraction Summary")
-    print("="*60)
+    print("=" * 60)
 
     print(f"\nAnnotated antibodies: {len(df_annotated)}")
     print(f"Label distribution:")
-    for label, count in df_annotated['label'].value_counts().sort_index().items():
+    for label, count in df_annotated["label"].value_counts().sort_index().items():
         label_name = "Specific" if label == 0 else "Non-specific"
         print(f"  {label_name}: {count} ({count/len(df_annotated)*100:.1f}%)")
 
     print(f"\nFragment files created: 16")
     print(f"Output directory: {output_dir.absolute()}")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("✓ Jain Fragment Extraction Complete!")
-    print("="*60)
+    print("=" * 60)
 
     print(f"\nNext steps:")
     print(f"  1. Test loading fragments with data.load_local_data()")
