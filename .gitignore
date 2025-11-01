@@ -101,3 +101,4 @@ literature/
 test_datasets/*.xlsx
 test_datasets/*.xls
 test_datasets/*.pdf
+reference_repos/
