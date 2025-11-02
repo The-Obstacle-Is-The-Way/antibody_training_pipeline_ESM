@@ -507,6 +507,15 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> Optional[Dict[s
     """
     Annotate a single amino acid sequence using ANARCI (IMGT).
 
+    Uses strict IMGT boundaries:
+    - CDR-H3: positions 105-117 (EXCLUDES position 118, which is FR4 J-anchor)
+    - CDR-H2: positions 56-65 (fixed IMGT)
+    - CDR-H1: positions 27-38 (fixed IMGT)
+
+    Note: Position 118 (J-Trp/Phe) is conserved FR4, NOT CDR.
+    Boughter's published .dat files include position 118, but we use
+    strict IMGT for biological correctness and ML best practices.
+
     From Sakhnini et al. 2025, Section 4.3:
     "The primary sequences were annotated in the CDRs using ANARCI
     following the IMGT numbering scheme"
