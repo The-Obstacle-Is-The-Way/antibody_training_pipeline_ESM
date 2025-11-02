@@ -150,4 +150,4 @@ def load_data(config: Dict) -> Tuple[List[str], List[int]]:
             label_column=data_config["label_column"],
         )
     else:
-        raise ValueError(f"Unknown data source: {source}")
+        raise ValueError(f"Unknown data source: {data_config['source']}")

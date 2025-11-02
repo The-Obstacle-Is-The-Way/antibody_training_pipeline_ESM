@@ -115,7 +115,6 @@ def main():
     classifier.fit(X_train_embedded, y_train)
 
     train_acc = classifier.score(X_train_embedded, y_train)
-    y_train_pred = classifier.predict(X_train_embedded)
 
     logger.info(f"  Training Accuracy: {train_acc:.4f}")
 
