@@ -171,16 +171,19 @@ def perform_cross_validation(
     cv_params['batch_size'] = config['training'].get('batch_size', 32)
     cv_classifier = BinaryClassifier(cv_params)
     
+    # FIXED: Pass full BinaryClassifier object (includes StandardScaler) instead of bare LogisticRegression
+    # This ensures CV uses the same preprocessing pipeline as training/testing
+
     # Accuracy
-    scores = cross_val_score(cv_classifier.classifier, X, y, cv=cv, scoring='accuracy')
+    scores = cross_val_score(cv_classifier, X, y, cv=cv, scoring='accuracy')
     cv_results['cv_accuracy'] = {'mean': scores.mean(), 'std': scores.std()}
-    
+
     # F1 score
-    scores = cross_val_score(cv_classifier.classifier, X, y, cv=cv, scoring='f1')
+    scores = cross_val_score(cv_classifier, X, y, cv=cv, scoring='f1')
     cv_results['cv_f1'] = {'mean': scores.mean(), 'std': scores.std()}
-    
+
     # ROC AUC
-    scores = cross_val_score(cv_classifier.classifier, X, y, cv=cv, scoring='roc_auc')
+    scores = cross_val_score(cv_classifier, X, y, cv=cv, scoring='roc_auc')
     cv_results['cv_roc_auc'] = {'mean': scores.mean(), 'std': scores.std()}
     
     # Log results

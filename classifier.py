@@ -25,13 +25,14 @@ class BinaryClassifier:
         
         # Get class_weight parameter if provided, otherwise use None (default)
         class_weight = params.get('class_weight', None)
-        
+
         self.classifier = LogisticRegression(
-            random_state=params['random_state'], 
+            random_state=params['random_state'],
             max_iter=params['max_iter'],
-            class_weight="balanced"
+            class_weight=class_weight  # FIXED: Use the parameter from config!
         )
         print(f"Classifier initialized with random state: {random_state}, class_weight: {class_weight}")
+        print(f"  VERIFICATION: LogisticRegression.class_weight = {self.classifier.class_weight}")
         self.random_state = random_state
         self.is_fitted = False
         self.device = self.embedding_extractor.device

@@ -12,7 +12,7 @@ data:
   dataset_name: "boughter_vh"
   train_file: ./train_datasets/boughter/VH_only_boughter_training.csv  # Boughter VH training data (filtered)
   val_file: null    # No validation set - use CV instead
-  test_file: ./test_datasets/jain/VH_only_jain.csv   # Jain VH test data
+  test_file: ./test_datasets/jain/VH_only_jain_test.csv   # Jain VH test data (94 curated antibodies, no NaNs)
 
   # Data format options
   sequence_column: "sequence"  # Column name for protein sequences
@@ -30,7 +30,7 @@ classifier:
   type: "logistic_regression"  # Novo uses LogisticReg
   max_iter: 1000              # Maximum iterations for convergence
   random_state: 42            # Seed for reproducibility
-  class_weight: "balanced"    # Handle any minor class imbalance
+  class_weight: null          # None - Boughter is already balanced (48.5%/51.5%)
 
   # Cross-validation settings (performed on training data only)
   cv_folds: 10                # Novo uses 10-fold CV
