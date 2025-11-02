@@ -8,8 +8,8 @@
 # Boughter Note: Original Boughter files include position 118; we use strict IMGT
 # Fragment Description: h_cdr2
 # Reference: See docs/cdr_boundary_first_principles_audit.md
-# Total Sequences: 859
-# Training Sequences: 746
+# Total Sequences: 837
+# Training Sequences: 728
 id,sequence,label,subset,num_flags,flag_category,include_in_training,source,sequence_length
 flu_000001,INPNTGVT,,flu,1,mild,False,boughter2020,8
 flu_000002,ISSSSAYI,0.0,flu,0,specific,True,boughter2020,8
@@ -46,14 +46,12 @@ flu_000032,MKSDNGGGAT,,flu,2,mild,False,boughter2020,10
 flu_000033,IHYAWSP,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000034,ISSASASI,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000035,INQGGSEK,0.0,flu,0,specific,True,boughter2020,8
-flu_000036,VKQDGSDK,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000037,IRSKRYGGTT,1.0,flu,5,non_specific,True,boughter2020,10
 flu_000038,IYNRKTT,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000039,ISWNSGAI,,flu,1,mild,False,boughter2020,8
 flu_000040,IIPILGTA,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000041,IYHSGST,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000042,ISAGGGST,1.0,flu,6,non_specific,True,boughter2020,8
-flu_000043,ITAIFGTT,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000044,IIPIFGTP,1.0,flu,4,non_specific,True,boughter2020,8
 flu_000045,VSDSGGIT,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000046,INPGGGRT,1.0,flu,6,non_specific,True,boughter2020,8
@@ -76,7 +74,6 @@ flu_000062,ISSSSSYI,1.0,flu,5,non_specific,True,boughter2020,8
 flu_000063,VFKTGTT,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000064,ITPLFGTS,,flu,1,mild,False,boughter2020,8
 flu_000065,ISAYTANT,1.0,flu,4,non_specific,True,boughter2020,8
-flu_000066,IYYAGST,0.0,flu,0,specific,True,boughter2020,7
 flu_000067,ITSSDSPISE,1.0,flu,6,non_specific,True,boughter2020,10
 flu_000068,LNPSDSYP,1.0,flu,4,non_specific,True,boughter2020,8
 flu_000069,INKEGSEK,0.0,flu,0,specific,True,boughter2020,8
@@ -104,7 +101,6 @@ flu_000090,INPSRGTT,0.0,flu,0,specific,True,boughter2020,8
 flu_000091,INPTRGTT,,flu,1,mild,False,boughter2020,8
 flu_000092,INPSRGTT,,flu,1,mild,False,boughter2020,8
 flu_000093,MNKEGGEK,,flu,1,mild,False,boughter2020,8
-flu_000094,ISTYNGNS,,flu,1,mild,False,boughter2020,8
 flu_000095,LNPKRGTT,,flu,1,mild,False,boughter2020,8
 flu_000096,IYYSGNI,1.0,flu,4,non_specific,True,boughter2020,7
 flu_000097,ISWNSDSI,0.0,flu,0,specific,True,boughter2020,8
@@ -122,7 +118,6 @@ flu_000108,INSAGTSK,1.0,flu,5,non_specific,True,boughter2020,8
 flu_000109,ISYDGYNK,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000110,INSGGNFK,1.0,flu,5,non_specific,True,boughter2020,8
 flu_000111,MYYSGRT,1.0,flu,4,non_specific,True,boughter2020,7
-flu_000112,MYYSGST,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000113,VYYSGGT,,flu,3,mild,False,boughter2020,7
 flu_000114,VYYTGGT,1.0,flu,5,non_specific,True,boughter2020,7
 flu_000115,VYYTGGT,1.0,flu,5,non_specific,True,boughter2020,7
@@ -158,7 +153,6 @@ flu_000144,VSGTGGTT,1.0,flu,5,non_specific,True,boughter2020,8
 flu_000145,ITSTGNAK,,flu,1,mild,False,boughter2020,8
 flu_000146,ISYDGSNT,,flu,2,mild,False,boughter2020,8
 flu_000147,IIPSGTYT,1.0,flu,6,non_specific,True,boughter2020,8
-flu_000148,INHSGST,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000149,IRNKANSFIT,1.0,flu,5,non_specific,True,boughter2020,10
 flu_000150,IIAIFGTA,1.0,flu,5,non_specific,True,boughter2020,8
 flu_000151,ITPIDGIP,1.0,flu,5,non_specific,True,boughter2020,8
@@ -178,7 +172,6 @@ flu_000164,IYSDGTT,1.0,flu,4,non_specific,True,boughter2020,7
 flu_000165,ISSDGTT,1.0,flu,5,non_specific,True,boughter2020,7
 flu_000166,ISNSGATI,,flu,1,mild,False,boughter2020,8
 flu_000167,IIPRLGRT,1.0,flu,5,non_specific,True,boughter2020,8
-flu_000168,ITASGXER,0.0,flu,0,specific,True,boughter2020,8
 flu_000169,IWYDGSNK,1.0,flu,5,non_specific,True,boughter2020,8
 flu_000170,IYYSGST,0.0,flu,0,specific,True,boughter2020,7
 flu_000171,ISWNSGSM,0.0,flu,0,specific,True,boughter2020,8
@@ -192,7 +185,6 @@ flu_000178,INSDGSST,,flu,2,mild,False,boughter2020,8
 flu_000179,INPNSGGT,0.0,flu,0,specific,True,boughter2020,8
 flu_000180,IYSNGNA,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000181,ILYDGSST,0.0,flu,0,specific,True,boughter2020,8
-flu_000182,INPDSGAT,,flu,2,mild,False,boughter2020,8
 flu_000183,IFYNGKT,0.0,flu,0,specific,True,boughter2020,7
 flu_000184,ISASGDRT,0.0,flu,0,specific,True,boughter2020,8
 flu_000185,ISHDGSEK,0.0,flu,0,specific,True,boughter2020,8
@@ -217,12 +209,10 @@ flu_000205,AGIKPNSYTT,0.0,flu,0,specific,True,boughter2020,10
 flu_000206,INWDGGRT,0.0,flu,0,specific,True,boughter2020,8
 flu_000208,ISGDGVDT,0.0,flu,0,specific,True,boughter2020,8
 flu_000209,INYNGRT,0.0,flu,0,specific,True,boughter2020,7
-flu_000210,TKQDGTDA,0.0,flu,0,specific,True,boughter2020,8
 flu_000211,VTHTGST,0.0,flu,0,specific,True,boughter2020,7
 flu_000212,IYYDSGST,1.0,flu,4,non_specific,True,boughter2020,8
 flu_000214,ITSKDEK,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000215,INYNGRT,0.0,flu,0,specific,True,boughter2020,7
-flu_000216,IKEDGSEK,0.0,flu,0,specific,True,boughter2020,8
 flu_000217,IQGEGNEK,,flu,1,mild,False,boughter2020,8
 flu_000219,IDGSGGTT,0.0,flu,0,specific,True,boughter2020,8
 flu_000220,MYHSGST,1.0,flu,5,non_specific,True,boughter2020,7
@@ -259,7 +249,6 @@ flu_000261,ISWNSGNI,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000262,ISWNRGHI,0.0,flu,0,specific,True,boughter2020,8
 flu_000263,IDPTDSFS,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000264,IYSDGSI,0.0,flu,0,specific,True,boughter2020,7
-flu_000265,LYYSGST,1.0,flu,5,non_specific,True,boughter2020,7
 flu_000266,ISWDGDSA,,flu,1,mild,False,boughter2020,8
 flu_000269,INQDGSEK,,flu,2,mild,False,boughter2020,8
 flu_000270,ISFDGRNK,1.0,flu,5,non_specific,True,boughter2020,8
@@ -285,12 +274,10 @@ flu_000294,SNWDGEIT,,flu,2,mild,False,boughter2020,8
 flu_000297,ISWNSYSR,,flu,1,mild,False,boughter2020,8
 flu_000300,ISDDGNTK,,flu,2,mild,False,boughter2020,8
 flu_000301,ISDSTGTV,,flu,1,mild,False,boughter2020,8
-flu_000302,IFTXSRYI,,flu,1,mild,False,boughter2020,8
 flu_000303,ISGDGRMT,0.0,flu,0,specific,True,boughter2020,8
 flu_000304,FGDSATKT,0.0,flu,0,specific,True,boughter2020,8
 flu_000306,ITSSGNTI,,flu,1,mild,False,boughter2020,8
 flu_000307,ISATGGST,1.0,flu,4,non_specific,True,boughter2020,8
-flu_000308,IFXXSRYI,,flu,1,mild,False,boughter2020,8
 flu_000309,MSYSGNA,,flu,1,mild,False,boughter2020,7
 flu_000310,VSTSGGDT,1.0,flu,4,non_specific,True,boughter2020,8
 flu_000311,ISSGGRDI,,flu,1,mild,False,boughter2020,8
@@ -303,7 +290,6 @@ flu_000317,ISTSGGIT,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000318,LTSTGDT,,flu,1,mild,False,boughter2020,7
 flu_000319,ISGSGIST,1.0,flu,6,non_specific,True,boughter2020,8
 flu_000320,ISDSGYST,,flu,1,mild,False,boughter2020,8
-flu_000321,LYHSGRT,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000322,IYYSGST,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000323,IYHSGNT,1.0,flu,6,non_specific,True,boughter2020,7
 flu_000324,IKSNTDGGAT,0.0,flu,0,specific,True,boughter2020,10
@@ -377,7 +363,6 @@ hiv_cntrl_000046,INHSGST,,hiv_cntrl,1,mild,False,boughter2020,7
 hiv_plos_000004,IYHNGNT,1.0,hiv_plos,7,non_specific,True,boughter2020,7
 hiv_plos_000013,IIPMFGTS,1.0,hiv_plos,7,non_specific,True,boughter2020,8
 hiv_plos_000023,ISYSGST,1.0,hiv_plos,7,non_specific,True,boughter2020,7
-hiv_plos_000031,IFTTTTTV,1.0,hiv_plos,7,non_specific,True,boughter2020,8
 hiv_plos_000043,FDPEDGET,0.0,hiv_plos,0,specific,True,boughter2020,8
 hiv_plos_000045,IIPMFVNI,1.0,hiv_plos,7,non_specific,True,boughter2020,8
 gut_hiv_000004,ISYDGNRE,,gut_hiv,3,mild,False,boughter2020,8
@@ -410,7 +395,6 @@ mouse_iga_000018,IDPANGNT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000019,INPNNGGT,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000020,ISDGGSYT,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000021,INPNYGTT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
-mouse_iga_000022,IYPXSGNT,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000023,ISSGSSTI,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000024,ISYDGSN,1.0,mouse_iga,7,non_specific,True,boughter2020,7
 mouse_iga_000025,IYPRSGNT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
@@ -421,7 +405,6 @@ mouse_iga_000029,ISSGGSYT,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000030,INPNNGGT,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000031,ISSGSSTI,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000032,IDPANGNT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
-mouse_iga_000033,IDPXNGDT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000034,ISYDGSN,0.0,mouse_iga,0,specific,True,boughter2020,7
 mouse_iga_000035,ISSSGST,0.0,mouse_iga,0,specific,True,boughter2020,7
 mouse_iga_000036,ISDGGSYT,0.0,mouse_iga,0,specific,True,boughter2020,8
@@ -656,7 +639,6 @@ mouse_iga_000264,ISSGSSSI,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000265,INYDGSN,0.0,mouse_iga,0,specific,True,boughter2020,7
 mouse_iga_000266,IRLKSDNYAT,0.0,mouse_iga,0,specific,True,boughter2020,10
 mouse_iga_000267,INYDGSN,0.0,mouse_iga,0,specific,True,boughter2020,7
-mouse_iga_000268,IRLKSDNYAT,0.0,mouse_iga,0,specific,True,boughter2020,10
 mouse_iga_000269,IRNKANGYTT,0.0,mouse_iga,0,specific,True,boughter2020,10
 mouse_iga_000270,ISPNNANS,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000271,IFPSNGRT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
@@ -665,7 +647,6 @@ mouse_iga_000273,INPNNGGT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000274,IRLKSENYAT,0.0,mouse_iga,0,specific,True,boughter2020,10
 mouse_iga_000275,MNYDGTT,0.0,mouse_iga,0,specific,True,boughter2020,7
 mouse_iga_000276,INPYNGDT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
-mouse_iga_000277,XKNKANGYTT,0.0,mouse_iga,0,specific,True,boughter2020,10
 mouse_iga_000278,ISDGGGYT,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000279,IRNKANNHAT,1.0,mouse_iga,7,non_specific,True,boughter2020,10
 mouse_iga_000280,ITYGGGRT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
@@ -683,7 +664,6 @@ mouse_iga_000291,IYYDGSS,0.0,mouse_iga,0,specific,True,boughter2020,7
 mouse_iga_000292,INYDGSN,1.0,mouse_iga,7,non_specific,True,boughter2020,7
 mouse_iga_000293,ISDGGSYT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000294,INYDGSN,1.0,mouse_iga,7,non_specific,True,boughter2020,7
-mouse_iga_000295,IDPNSGGT,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000296,IRNRANGYTT,1.0,mouse_iga,7,non_specific,True,boughter2020,10
 mouse_iga_000297,IYPKNGGN,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000298,ISSGSSTI,0.0,mouse_iga,0,specific,True,boughter2020,8
@@ -727,7 +707,6 @@ mouse_iga_000335,IRTKSNNYAT,0.0,mouse_iga,0,specific,True,boughter2020,10
 mouse_iga_000336,ISYDGSN,1.0,mouse_iga,7,non_specific,True,boughter2020,7
 mouse_iga_000337,ISYDGSN,0.0,mouse_iga,0,specific,True,boughter2020,7
 mouse_iga_000338,ISGGGGNT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
-mouse_iga_000339,XDPSXXET,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000340,IRLKSDNYAT,0.0,mouse_iga,0,specific,True,boughter2020,10
 mouse_iga_000341,ISYDGSN,1.0,mouse_iga,7,non_specific,True,boughter2020,7
 mouse_iga_000342,IRLKSDNYAT,1.0,mouse_iga,7,non_specific,True,boughter2020,10
@@ -782,7 +761,6 @@ mouse_iga_000390,ISDGGSYT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000391,ISDGGSYT,0.0,mouse_iga,0,specific,True,boughter2020,8
 mouse_iga_000392,ISDGGSYT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000393,IFPGSGST,1.0,mouse_iga,7,non_specific,True,boughter2020,8
-mouse_iga_000394,IYPXSGNT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000395,ISSGGSYT,1.0,mouse_iga,7,non_specific,True,boughter2020,8
 mouse_iga_000396,ISYDGSN,1.0,mouse_iga,7,non_specific,True,boughter2020,7
 mouse_iga_000397,ISSSGST,0.0,mouse_iga,0,specific,True,boughter2020,7

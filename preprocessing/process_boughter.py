@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """
-Boughter Dataset Stage 2: ANARCI Annotation & Fragment Extraction
+Boughter Dataset Processing: ANARCI Annotation & Quality Control (Stages 2 + 3)
 
 Processes boughter.csv from Stage 1, annotates with ANARCI using strict IMGT
-numbering, and creates 16 fragment-specific CSV files.
+numbering, applies post-annotation quality control, and creates 16 fragment-specific
+CSV files.
+
+Pipeline:
+    Stage 2: ANARCI annotation with strict IMGT boundaries
+    Stage 3: Post-annotation quality control (filter X in CDRs, empty CDRs)
 
 Usage:
     python3 preprocessing/process_boughter.py
@@ -12,8 +17,15 @@ Inputs:
     test_datasets/boughter.csv - Output from Stage 1
 
 Outputs:
-    test_datasets/boughter/*_boughter.csv - 16 fragment-specific files
-    test_datasets/boughter/annotation_failures.log - Failed annotations
+    test_datasets/boughter/*_boughter.csv - 16 fragment-specific files (clean data)
+    test_datasets/boughter/annotation_failures.log - Failed annotations (Stage 2)
+
+Expected Results:
+    Stage 1 input:  ~1167 sequences
+    Stage 2 output: ~859 sequences (73.6% - expected due to corrupted HIV sequences)
+    Stage 3 output: ~837 sequences (97.4% - removes X in CDRs)
+
+See docs/accuracy_verification_report.md for validation of methodology.
 """
 
 import sys
@@ -298,6 +310,66 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
     print(f"\n✓ All {len(fragments)} fragment files created in: {output_dir}")
 
 
+def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Stage 3: Post-annotation quality control.
+
+    Following Boughter et al. 2020 methodology (seq_loader.py)
+    and 2025 industry best practices (Harvey 2022, AbSet 2024).
+
+    Removes:
+    1. Sequences with X (unknown amino acid) in ANY CDR
+    2. Sequences with empty ("") CDRs
+
+    This is done AFTER ANARCI annotation to maximize
+    information extraction from raw data.
+
+    See docs/accuracy_verification_report.md for rationale.
+    """
+    print("\n" + "=" * 70)
+    print("Stage 3: Post-annotation Quality Control")
+    print("=" * 70)
+    print(f"Input sequences: {len(df)}")
+    print()
+
+    cdr_columns = [
+        'cdr1_aa_H', 'cdr2_aa_H', 'cdr3_aa_H',
+        'cdr1_aa_L', 'cdr2_aa_L', 'cdr3_aa_L'
+    ]
+
+    df_clean = df.copy()
+    total_filtered = 0
+
+    # Track sequences removed for each reason
+    sequences_with_X = set()
+    sequences_with_empty = set()
+
+    # First pass: identify sequences with X in ANY CDR
+    for col in cdr_columns:
+        has_X = df_clean[df_clean[col].str.contains("X", na=False)]
+        if len(has_X) > 0:
+            sequences_with_X.update(has_X['id'].tolist())
+
+    # Second pass: identify sequences with empty CDRs
+    for col in cdr_columns:
+        is_empty = df_clean[df_clean[col] == ""]
+        if len(is_empty) > 0:
+            sequences_with_empty.update(is_empty['id'].tolist())
+
+    # Remove all problematic sequences
+    problematic_ids = sequences_with_X | sequences_with_empty
+    df_clean = df_clean[~df_clean['id'].isin(problematic_ids)]
+
+    print(f"Sequences with X in ANY CDR: {len(sequences_with_X)}")
+    print(f"Sequences with empty CDRs:    {len(sequences_with_empty)}")
+    print(f"Total unique sequences removed: {len(problematic_ids)}")
+    print()
+    print(f"Output sequences: {len(df_clean)}")
+    print(f"Retention rate: {len(df_clean)/len(df)*100:.1f}%")
+
+    return df_clean
+
+
 def print_annotation_stats(df: pd.DataFrame):
     """Print CDR length distributions and annotation statistics."""
     print("\n" + "=" * 70)
@@ -344,23 +416,31 @@ def main():
     df = pd.read_csv(input_csv)
     print(f"\nLoaded {len(df)} antibodies from Stage 1")
 
-    # Annotate all sequences
+    # Stage 2: Annotate all sequences
     df_annotated = annotate_all(df)
 
-    # Print CDR statistics
-    print_annotation_stats(df_annotated)
+    # Stage 3: Quality control filtering
+    df_clean = filter_quality_issues(df_annotated)
 
-    # Create 16 fragment CSVs
+    # Print CDR statistics (on clean data)
+    print_annotation_stats(df_clean)
+
+    # Create 16 fragment CSVs (from clean data)
     output_dir = Path("test_datasets/boughter")
-    create_fragment_csvs(df_annotated, output_dir)
+    create_fragment_csvs(df_clean, output_dir)
 
     print("\n" + "=" * 70)
-    print("Stage 2 Complete - Boughter Dataset Ready!")
+    print("Boughter Dataset Processing Complete!")
     print("=" * 70)
+    print("\nPipeline Summary:")
+    print(f"  Stage 1 (Translation):  {len(df)} sequences")
+    print(f"  Stage 2 (ANARCI):       {len(df_annotated)} sequences ({len(df_annotated)/len(df)*100:.1f}%)")
+    print(f"  Stage 3 (Quality QC):   {len(df_clean)} sequences ({len(df_clean)/len(df)*100:.1f}%)")
     print("\nNext steps:")
     print("  1. Verify fragment files in test_datasets/boughter/")
     print("  2. Check annotation_failures.log for any issues")
-    print("  3. Use fragment files for ESM embedding and training")
+    print("  3. Review quality metrics in validation report")
+    print("  4. Use fragment files for ESM embedding and training")
 
 
 if __name__ == "__main__":
