@@ -117,14 +117,19 @@ def validate_translation(protein_seq: str) -> bool:
     """
     Validate that translation produced reasonable antibody sequence.
 
-    Strict validation to reject junk sequences before ANARCI annotation.
-    ANARCI will fail on sequences with stop codons or excessive unknowns.
+    Lenient validation - ANARCI will do strict validation in Stage 2.
+    We only reject completely broken translations.
+
+    Boughter sequences include:
+    - Signal peptides
+    - Leading N's (unknown bases) → X's and stop codons
+    - Constant regions (full-length antibodies)
+    - ANARCI will extract the V-domain from these
 
     Checks:
-    1. Length in expected range for variable domains (90-200 aa)
-    2. No stop codons (*)
-    3. Limited unknown amino acids (<5% X's from N bases)
-    4. Contains standard amino acids
+    1. Sequence exists and has reasonable length (50-500 aa)
+    2. Contains at least SOME valid amino acids
+    3. Not completely garbage (>50% valid standard amino acids)
 
     Returns:
         True if valid, False otherwise
@@ -132,25 +137,22 @@ def validate_translation(protein_seq: str) -> bool:
     if not protein_seq:
         return False
 
-    # Check length - variable domains are typically 110-130 aa
-    # Allow 90-200 to handle signal peptides and slight variations
-    if len(protein_seq) < 90 or len(protein_seq) > 200:
+    # Allow wide range: 50-500 aa
+    # Includes signal peptides + V-domain + constant regions
+    # ANARCI will extract just the V-domain
+    if len(protein_seq) < 50 or len(protein_seq) > 500:
         return False
 
-    # Reject sequences with stop codons
-    if "*" in protein_seq:
-        return False
+    # Allow stop codons (*) and X's - common in Boughter data
+    # ANARCI will skip leading N's and extract clean V-domain
 
-    # Reject sequences with excessive unknown amino acids (X from N bases)
-    x_count = protein_seq.count("X")
-    x_ratio = x_count / len(protein_seq)
-    if x_ratio > 0.05:  # Reject if >5% unknown
-        return False
-
-    # Check that sequence contains mostly standard amino acids
+    # Check that sequence has at least 50% standard amino acids
+    # This rejects completely broken translations
     standard_aa = set("ACDEFGHIKLMNPQRSTVWY")
-    valid_chars = sum(1 for aa in protein_seq if aa in standard_aa or aa == "X")
-    if valid_chars < len(protein_seq) * 0.95:
+    valid_count = sum(1 for aa in protein_seq if aa in standard_aa)
+    valid_ratio = valid_count / len(protein_seq)
+
+    if valid_ratio < 0.50:  # Reject if <50% valid
         return False
 
     return True
