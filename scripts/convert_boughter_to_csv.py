@@ -24,11 +24,30 @@ from Bio.Seq import Seq
 # Canonical framework-1 motifs for human/mouse VH/VL domains
 VDOMAIN_MOTIFS: Sequence[str] = (
     # Heavy-chain FR1 motifs
-    "EVQ", "QVQ", "QVL", "QVR", "QVK", "EVQL", "QVQL", "EVKM", "EQLV",
+    "EVQ",
+    "QVQ",
+    "QVL",
+    "QVR",
+    "QVK",
+    "EVQL",
+    "QVQL",
+    "EVKM",
+    "EQLV",
     # Light-chain FR1 motifs (kappa/lambda)
-    "EIVLT", "DIVMT", "DIQMT", "QSVLT", "QAVLT", "QIVLT", "EIVMT", "DITMT",
+    "EIVLT",
+    "DIVMT",
+    "DIQMT",
+    "QSVLT",
+    "QAVLT",
+    "QIVLT",
+    "EIVMT",
+    "DITMT",
     # Generic VH/VL patterns observed across datasets
-    "QVLV", "QVV", "EVLV", "EVTV", "EQLV"
+    "QVLV",
+    "QVV",
+    "EVLV",
+    "EVTV",
+    "EQLV",
 )
 
 
@@ -121,7 +140,7 @@ def find_best_atg_translation(dna_seq: str) -> Optional[str]:
     # Find all ATG positions in first 300bp
     atg_positions = []
     for i in range(0, min(300, len(dna_seq) - 2)):
-        if dna_seq[i:i+3] == "ATG":
+        if dna_seq[i : i + 3] == "ATG":
             atg_positions.append(i)
 
     if not atg_positions:
@@ -138,7 +157,7 @@ def find_best_atg_translation(dna_seq: str) -> Optional[str]:
             protein_str = str(protein)
 
             # Skip if doesn't start with M
-            if not protein_str or protein_str[0] != 'M':
+            if not protein_str or protein_str[0] != "M":
                 continue
 
             # Skip if too short (signal + V-domain should be at least 100 aa)
@@ -150,9 +169,9 @@ def find_best_atg_translation(dna_seq: str) -> Optional[str]:
             has_motif = any(motif in window for motif in VDOMAIN_MOTIFS)
 
             # Score based on quality in first 150 aa (signal + V-domain)
-            first_150 = protein_str[:min(150, len(protein_str))]
-            x_count_first = first_150.count('X')
-            stop_count_first = first_150.count('*')
+            first_150 = protein_str[: min(150, len(protein_str))]
+            x_count_first = first_150.count("X")
+            stop_count_first = first_150.count("*")
 
             # Heavily penalize X's, stops, or lack of motif in V-domain region
             score = 1000 - (x_count_first * 100) - (stop_count_first * 200)
@@ -160,7 +179,7 @@ def find_best_atg_translation(dna_seq: str) -> Optional[str]:
                 score -= 500
 
             # Bonus for typical antibody signal peptide patterns
-            if protein_str.startswith('MGW') or protein_str.startswith('MGA'):
+            if protein_str.startswith("MGW") or protein_str.startswith("MGA"):
                 score += 50
 
             if score > best_score:
@@ -279,7 +298,7 @@ def validate_translation(protein_seq: str) -> bool:
         return False
 
     # Check first 150 aa (V-domain region that ANARCI will extract)
-    first_150 = protein_seq[:min(150, len(protein_seq))]
+    first_150 = protein_seq[: min(150, len(protein_seq))]
 
     # Must be mostly standard amino acids (>80% valid)
     # Allow some X's from sequencing uncertainty
@@ -291,7 +310,7 @@ def validate_translation(protein_seq: str) -> bool:
         return False
 
     # Reject if stop codons in first 150 aa (would truncate V-domain)
-    if '*' in first_150:
+    if "*" in first_150:
         return False
 
     return True

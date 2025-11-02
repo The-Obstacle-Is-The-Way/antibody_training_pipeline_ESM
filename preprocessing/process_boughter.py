@@ -333,8 +333,12 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     print()
 
     cdr_columns = [
-        'cdr1_aa_H', 'cdr2_aa_H', 'cdr3_aa_H',
-        'cdr1_aa_L', 'cdr2_aa_L', 'cdr3_aa_L'
+        "cdr1_aa_H",
+        "cdr2_aa_H",
+        "cdr3_aa_H",
+        "cdr1_aa_L",
+        "cdr2_aa_L",
+        "cdr3_aa_L",
     ]
 
     df_clean = df.copy()
@@ -348,17 +352,17 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     for col in cdr_columns:
         has_X = df_clean[df_clean[col].str.contains("X", na=False)]
         if len(has_X) > 0:
-            sequences_with_X.update(has_X['id'].tolist())
+            sequences_with_X.update(has_X["id"].tolist())
 
     # Second pass: identify sequences with empty CDRs
     for col in cdr_columns:
         is_empty = df_clean[df_clean[col] == ""]
         if len(is_empty) > 0:
-            sequences_with_empty.update(is_empty['id'].tolist())
+            sequences_with_empty.update(is_empty["id"].tolist())
 
     # Remove all problematic sequences
     problematic_ids = sequences_with_X | sequences_with_empty
-    df_clean = df_clean[~df_clean['id'].isin(problematic_ids)]
+    df_clean = df_clean[~df_clean["id"].isin(problematic_ids)]
 
     print(f"Sequences with X in ANY CDR: {len(sequences_with_X)}")
     print(f"Sequences with empty CDRs:    {len(sequences_with_empty)}")
@@ -440,8 +444,12 @@ def main():
     print("=" * 70)
     print("\nPipeline Summary:")
     print(f"  Stage 1 (Translation):  {len(df)} sequences")
-    print(f"  Stage 2 (ANARCI):       {len(df_annotated)} sequences ({len(df_annotated)/len(df)*100:.1f}%)")
-    print(f"  Stage 3 (Quality QC):   {len(df_clean)} sequences ({len(df_clean)/len(df)*100:.1f}%)")
+    print(
+        f"  Stage 2 (ANARCI):       {len(df_annotated)} sequences ({len(df_annotated)/len(df)*100:.1f}%)"
+    )
+    print(
+        f"  Stage 3 (Quality QC):   {len(df_clean)} sequences ({len(df_clean)/len(df)*100:.1f}%)"
+    )
     print("\nNext steps:")
     print("  1. Verify fragment files in test_datasets/boughter/")
     print("  2. Check annotation_failures.log for any issues")
