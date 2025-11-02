@@ -30,7 +30,7 @@
 | 1 | `scripts/convert_boughter_to_csv.py` | Translate paired DNA FASTA + flags, apply Novo label rules | `test_datasets/boughter.csv`, `translation_failures.log` |
 | 2 | `preprocessing/process_boughter.py` | ANARCI IMGT numbering, fragment extraction | 16 fragment CSVs, `annotation_failures.log` |
 | 3 | `process_boughter.py` (Stage 3) | Post-annotation QC (X/empty CDR filters) | Clean fragment CSVs, pipeline summary |
-| Validation | `scripts/validate_boughter.py` | End-to-end checks, summary metrics | `validation_report.txt` |
+| Validation | `scripts/validate_boughter_conversion.py` | End-to-end pipeline validation (Stages 1-3) | `validation_report.txt` |
 
 ### 2.1 Hybrid DNA Translation (Stage 1)
 
@@ -123,10 +123,16 @@ All fragment CSVs (`VH_only`, `VL_only`, `H-CDR1`, …, `Full`) include:
 - `qc_filtered_sequences.txt` enumerates all 45 filtered IDs
 - Cross-check: Removing those IDs from Stage 2 output reproduces final 1065 sequences
 
-### 4.4 Validation Script (`validate_boughter.py`)
+### 4.4 Validation Scripts
 
-- Confirms Stage counts, label balance, fragment presence
+**Conversion Validation (`validate_boughter_conversion.py`)**
+- Validates complete pipeline: Stage 1 (DNA translation) → Stage 2 (ANARCI) → Stage 3 (QC)
+- Confirms stage counts, label balance, fragment presence
 - Reports stop/X statistics for transparency (expected because raw DNA contains primer remnants)
+
+**Fragment Validation (`validate_fragments.py`)**
+- Generic validator that checks all datasets (Jain, Shehata, Harvey, Boughter)
+- Verifies fragment CSV structure, column integrity, label distribution
 
 ---
 
