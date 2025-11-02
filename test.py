@@ -137,10 +137,29 @@ class ModelTester:
         if label_col not in df.columns:
             raise ValueError(f"Label column '{label_col}' not found in dataset. Available columns: {list(df.columns)}")
         
+        # CRITICAL VALIDATION: Check for NaN labels (P0 bug fix)
+        nan_count = df[label_col].isna().sum()
+        if nan_count > 0:
+            raise ValueError(
+                f"CRITICAL: Dataset contains {nan_count} NaN labels! "
+                f"This will corrupt evaluation metrics. "
+                f"Please use the curated test file (e.g., VH_only_jain_test.csv with no NaNs)"
+            )
+
+        # For Jain test set, validate expected size (94 antibodies)
+        if 'jain' in data_path.lower() and 'test' in data_path.lower():
+            expected_size = 94
+            if len(df) != expected_size:
+                self.logger.warning(
+                    f"WARNING: Jain test set has {len(df)} antibodies, expected {expected_size}. "
+                    f"Ensure you're using the correct curated test file."
+                )
+
         sequences = df[sequence_col].tolist()
         labels = df[label_col].tolist()
-        
+
         self.logger.info(f"Loaded {len(sequences)} samples from {data_path} (sequence_col='{sequence_col}', label_col='{label_col}')")
+        self.logger.info(f"  Label distribution: {pd.Series(labels).value_counts().to_dict()}")
         return sequences, labels
     
     def embed_sequences(self, sequences: List[str], model: BinaryClassifier, dataset_name: str) -> np.ndarray:
