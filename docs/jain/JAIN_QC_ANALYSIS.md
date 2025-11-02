@@ -295,3 +295,93 @@ No filtered datasets created yet (awaiting decision on filtering approach).
 **Analysis Date**: 2025-11-02
 **Analyst**: Claude Code
 **Status**: ✅ Ready for decision on filtering approach
+
+---
+
+## ⚡ TEST RESULTS: 94-Antibody Set (2025-11-02)
+
+### Our Results (94 antibodies, fixed >=3 threshold)
+
+**Confusion Matrix:**
+```
+                Predicted
+             0          1
+True 0      36         31    = 67 specific
+     1      11         16    = 27 non-specific
+                          = 94 TOTAL
+```
+
+**Metrics:**
+- Accuracy: **55.3%**
+- Precision: 0.34
+- Recall: 0.59
+- F1: 0.43
+- ROC-AUC: 0.53
+
+### Comparison to Benchmarks
+
+| Metric | Ours (94) | Novo (86) | Hybri (86) |
+|--------|-----------|-----------|------------|
+| **Accuracy** | **55.3%** | **68.6%** ✓ | **65.1%** ✓ |
+| Specific recall | 53.7% (36/67) | 70.2% (40/57) | 67.2% (39/58) |
+| Non-specific recall | 59.3% (16/27) | 65.5% (19/29) | 60.7% (17/28) |
+| Sample size | 94 | 86 | 86 |
+| Class balance | 71:29 | 66:34 | 67:33 |
+
+### Performance Gap Analysis
+
+**Gap to Novo:** -13.3 percentage points
+**Gap to Hybri:** -9.8 percentage points
+
+**Key Observations:**
+1. ✅ Test set is functional (no crashes, reasonable results)
+2. ✅ Major improvement from previous 3 non-specific → 27 (bug fix working!)
+3. ✅ Non-specific sample size very close (27 vs 29)
+4. ❌ Both classes underperforming vs benchmarks
+5. ❌ 8 extra antibodies in our set (potential QC issues)
+
+### Hypotheses for Performance Gap
+
+1. **QC Filtering Differences (Most Likely)**
+   - We have 8 extra antibodies (94 vs 86)
+   - May include problematic cases (length outliers, annotation failures)
+   - Crenezumab (CDR H3 = 3 residues), fletikumab, secukinumab identified
+
+2. **Preprocessing Differences**
+   - ANARCI version/configuration
+   - Gap character handling
+   - V-domain reconstruction method
+
+3. **Model Differences**
+   - Boughter-trained model vs their training set
+   - Different class balance during training
+   - Different hyperparameters
+
+4. **Embedding Differences**
+   - ESM-1v version
+   - Batch size effects
+   - Pooling strategy
+
+### Next Actions
+
+**Priority 1: QC Filtering Test**
+- Remove top 3 outliers (crenezumab, fletikumab, secukinumab) → 91 antibodies
+- Remove top 10 outliers → 84 antibodies
+- Compare performance improvement
+
+**Priority 2: Error Analysis**
+- Identify which specific antibodies are misclassified
+- Check if outliers are contributing to errors
+- Compare our errors to Novo's confusion matrix
+
+**Priority 3: Model Investigation**
+- Check if Boughter model is appropriate for Jain evaluation
+- Consider retraining on Jain-compatible data
+
+---
+
+**Test Date**: 2025-11-02
+**Model**: boughter_vh_esm1v_logreg.pkl
+**Test Set**: VH_only_jain_test.csv (94 antibodies)
+**Results Dir**: test_results/jain_fixed_94ab/
+**Status**: ⏸️ **PAUSED FOR REVIEW** - Awaiting decision on QC filtering approach
