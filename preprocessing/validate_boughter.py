@@ -95,8 +95,7 @@ def validate_stage1_output() -> Dict:
             df[(df["flag_category"] == category) & df["include_in_training"]]
         )
         print(
-            f"  {category:15s}: {count:4d} ({pct:5.2f}%) - "
-            f"{included} in training"
+            f"  {category:15s}: {count:4d} ({pct:5.2f}%) - " f"{included} in training"
         )
 
     # Training set balance
@@ -301,9 +300,7 @@ def generate_report(stage1_results: Dict, stage2_results: Dict):
                 f"⚠️  Annotation success rate "
                 f"({stage2_results['success_rate']:.2f}%) below 95% target"
             )
-            report_lines.append(
-                "   Consider investigating failures before proceeding"
-            )
+            report_lines.append("   Consider investigating failures before proceeding")
     else:
         report_lines.append("❌ Pipeline incomplete or failed")
 

@@ -84,9 +84,13 @@ def annotate_sequence(
 
         # Validate that we got at least SOME fragments
         # If all CDRs are empty, annotation failed
-        if not any([fragments[f"cdr1_aa_{chain}"],
-                   fragments[f"cdr2_aa_{chain}"],
-                   fragments[f"cdr3_aa_{chain}"]]):
+        if not any(
+            [
+                fragments[f"cdr1_aa_{chain}"],
+                fragments[f"cdr2_aa_{chain}"],
+                fragments[f"cdr3_aa_{chain}"],
+            ]
+        ):
             print(f"  ANARCI returned no CDRs for {seq_id} ({chain} chain)")
             return None
 
@@ -248,6 +252,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
     # Get processing date
     from datetime import datetime
+
     processing_date = datetime.now().strftime("%Y-%m-%d")
 
     for fragment_name, (column_name, description) in fragments.items():
@@ -284,7 +289,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 """
 
         # Write metadata + CSV
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(metadata)
             fragment_df.to_csv(f, index=False)
 
