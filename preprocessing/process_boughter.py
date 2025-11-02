@@ -32,7 +32,7 @@ See docs/accuracy_verification_report.md for validation of methodology.
 
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Optional
 
 import pandas as pd
 import riot_na
@@ -98,15 +98,17 @@ def annotate_sequence(
 
         # Reconstruct full V-domain from fragments (avoids constant region garbage)
         # This is gap-free and clean (P0 fix + constant region removal)
-        fragments[f"full_seq_{chain}"] = "".join([
-            fragments[f"fwr1_aa_{chain}"],
-            fragments[f"cdr1_aa_{chain}"],
-            fragments[f"fwr2_aa_{chain}"],
-            fragments[f"cdr2_aa_{chain}"],
-            fragments[f"fwr3_aa_{chain}"],
-            fragments[f"cdr3_aa_{chain}"],
-            fragments[f"fwr4_aa_{chain}"],
-        ])
+        fragments[f"full_seq_{chain}"] = "".join(
+            [
+                fragments[f"fwr1_aa_{chain}"],
+                fragments[f"cdr1_aa_{chain}"],
+                fragments[f"fwr2_aa_{chain}"],
+                fragments[f"cdr2_aa_{chain}"],
+                fragments[f"fwr3_aa_{chain}"],
+                fragments[f"cdr3_aa_{chain}"],
+                fragments[f"fwr4_aa_{chain}"],
+            ]
+        )
 
         # Validate that we got at least SOME fragments
         # If all CDRs are empty, annotation failed

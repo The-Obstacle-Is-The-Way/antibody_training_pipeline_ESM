@@ -9,23 +9,23 @@ Matches the exact approach from Sakhnini et al. 2025:
 This is the CORRECT, simple approach that achieves Novo's benchmarks.
 """
 
+import logging
 import os
 import pickle
-import logging
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    roc_auc_score,
     classification_report,
     confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
 )
+from sklearn.model_selection import StratifiedKFold, cross_val_score
+
 from model import ESMEmbeddingExtractor
 
 # Setup logging
@@ -87,8 +87,8 @@ def main():
     )
     logger.info(f"  max_iter: {max_iter}")
     logger.info(f"  random_state: {random_state}")
-    logger.info(f"  class_weight: None (Boughter is balanced)")
-    logger.info(f"  StandardScaler: NO ✅ (matching Novo)")
+    logger.info("  class_weight: None (Boughter is balanced)")
+    logger.info("  StandardScaler: NO ✅ (matching Novo)")
 
     # 10-fold cross-validation (matching Novo)
     logger.info("\nPerforming 10-fold cross-validation...")
@@ -97,9 +97,7 @@ def main():
     cv_accuracy = cross_val_score(
         classifier, X_train_embedded, y_train, cv=cv, scoring="accuracy"
     )
-    cv_f1 = cross_val_score(
-        classifier, X_train_embedded, y_train, cv=cv, scoring="f1"
-    )
+    cv_f1 = cross_val_score(classifier, X_train_embedded, y_train, cv=cv, scoring="f1")
     cv_roc_auc = cross_val_score(
         classifier, X_train_embedded, y_train, cv=cv, scoring="roc_auc"
     )
@@ -109,9 +107,7 @@ def main():
     logger.info("=" * 80)
     logger.info(f"  Accuracy: {cv_accuracy.mean():.4f} (+/- {cv_accuracy.std()*2:.4f})")
     logger.info(f"  F1 Score: {cv_f1.mean():.4f} (+/- {cv_f1.std()*2:.4f})")
-    logger.info(
-        f"  ROC AUC:  {cv_roc_auc.mean():.4f} (+/- {cv_roc_auc.std()*2:.4f})"
-    )
+    logger.info(f"  ROC AUC:  {cv_roc_auc.mean():.4f} (+/- {cv_roc_auc.std()*2:.4f})")
     logger.info(f"  Individual fold accuracies: {cv_accuracy}")
 
     # Train final model on full training set
@@ -147,9 +143,7 @@ def main():
     logger.info(f"  Precision: {precision_score(y_jain, y_jain_pred):.4f}")
     logger.info(f"  Recall:    {recall_score(y_jain, y_jain_pred):.4f}")
     logger.info(f"  F1 Score:  {f1_score(y_jain, y_jain_pred):.4f}")
-    logger.info(
-        f"  ROC AUC:   {roc_auc_score(y_jain, y_jain_proba[:, 1]):.4f}"
-    )
+    logger.info(f"  ROC AUC:   {roc_auc_score(y_jain, y_jain_proba[:, 1]):.4f}")
     logger.info("\n  Classification Report:")
     logger.info(f"\n{classification_report(y_jain, y_jain_pred)}")
     logger.info("\n  Confusion Matrix:")
