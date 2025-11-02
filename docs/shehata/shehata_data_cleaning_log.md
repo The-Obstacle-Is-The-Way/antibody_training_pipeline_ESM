@@ -1,10 +1,25 @@
 # Shehata Dataset Data Cleaning Log
 
-**Date:** 2025-10-31
+**Date:** 2025-10-31 (Phase 1) | 2025-11-02 (Phase 2 issue discovered)
 **Issue:** #3 - Shehata dataset preprocessing
 **Files Modified:**
 - `scripts/convert_shehata_excel_to_csv.py`
 - `scripts/validate_shehata_conversion.py`
+
+---
+
+## ⚠️ UPDATE (2025-11-02): Phase 2 Gap Character Issue
+
+**Phase 1 Status:** ✅ FIXED (base CSV gap-free)
+**Phase 2 Status:** ❌ NEW ISSUE FOUND (fragment CSVs contain gaps)
+
+**Problem:** While Phase 1 correctly sanitized gaps from `shehata.csv`, Phase 2 fragment extraction (`preprocessing/process_shehata.py`) re-introduced gaps by using `annotation.sequence_alignment_aa` instead of `annotation.sequence_aa`.
+
+**Affected:** 13 VH, 4 VL, 17 Full sequences in fragment CSVs
+
+**See:** `docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md` for complete analysis
+
+**This log documents Phase 1 fixes only. Phase 2 requires separate fix.**
 
 ---
 

@@ -314,23 +314,60 @@ Next highest (labeled specific):
 
 ---
 
-## Testing Checklist Before PR
+## Testing Checklist Post-Fix
 
-- [ ] No gap characters in ANY fragment CSV
-- [ ] ESM embedding works on all fragments
-- [ ] Label distribution: 391/7 split maintained
-- [ ] All 398 sequences in all 16 files
+### Phase 1: Gap Character Elimination
+- [ ] No `-` characters in VH_only_shehata.csv (was 13, should be 0)
+- [ ] No `-` characters in VL_only_shehata.csv (was 4, should be 0)
+- [ ] No `-` characters in Full_shehata.csv (was 17, should be 0)
+- [ ] No `-` characters in VH+VL_shehata.csv (was 17, should be 0)
+- [ ] All CDR/FWR files remain gap-free (already correct)
+- [ ] Validation script `validate_shehata_conversion.py` updated with gap checks
+
+### Phase 2: ESM Embedding Compatibility
+- [ ] Load all 17 previously-affected sequences
+- [ ] ESM embedding works without errors/warnings
+- [ ] No placeholder "M" sequences generated
+- [ ] No zero embeddings returned
+- [ ] Verify embedding dimensions (1280 for ESM-1v)
+
+### Phase 3: Data Integrity
+- [ ] Label distribution: 391 specific / 7 non-specific maintained
+- [ ] All 398 sequences present in all 16 files
+- [ ] Sequence lengths match expected ranges (documented in completion report)
+- [ ] PSR scores preserved correctly
+- [ ] B cell subset metadata intact
+
+### Phase 4: Integration Testing
+- [ ] Test load with `data.load_local_data()` on all 16 fragment types
 - [ ] Spot-check 10 sequences against mmc2.xlsx
-- [ ] Compare with paper Figure 3C-D statistics
-- [ ] Test load with data.load_local_data()
+- [ ] Compare with paper Figure 3C-D statistics (if available)
 - [ ] Run through existing model (if available)
+
+### Phase 5: Documentation
+- [ ] Update `shehata_phase2_completion_report.md` with fix notes
+- [ ] Mark P0 blocker as resolved in this document
+- [ ] Add gap detection to standard validation checklist
+- [ ] Document lessons learned for Harvey/Boughter preprocessing
 
 ---
 
 ## Conclusion
 
 **PRIMARY BLOCKER:** Gap characters in fragment sequences (P0)
-**CONFIDENCE:** High - clear technical error with definitive fix
-**RISK TO DISCORD CRITICISM:** **ELIMINATED after fix**
+**ROOT CAUSE:** Using `annotation.sequence_alignment_aa` instead of `annotation.sequence_aa`
+**VALIDATION:** ✅ Confirmed real bug (not hallucinated) via first principles analysis
+**AFFECTED SEQUENCES:** 13 VH, 4 VL, 17 Full (specific IDs documented above)
+**CONFIDENCE:** High - clear technical error with one-line fix
+**RISK TO DISCORD CRITICISM:** **ELIMINATED after fix + validation**
 
-After fixing P0, implementation will be technically sound and defensible.
+**Current State:** ❌ Phase 2 fragments BROKEN (will fail ESM embedding)
+**Post-Fix State:** ✅ Phase 2 fragments READY (ESM-compatible, paper-reproducible)
+
+**IMPORTANT:** This analysis supersedes `shehata_phase2_completion_report.md` until fix is applied and validated.
+
+After fixing P0, implementation will be:
+- Technically sound ✓
+- Discord criticism-proof ✓
+- Paper-reproducible ✓
+- Production-ready ✓

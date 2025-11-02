@@ -1,17 +1,37 @@
 # Shehata Dataset Phase 2 Completion Report
 
-**Date:** 2025-10-31
+**Date:** 2025-10-31 (Original) | 2025-11-02 (P0 Blocker Discovered)
 **Issue:** #3 - Shehata dataset preprocessing (Phase 2)
-**Status:** ✅ **COMPLETE**
+**Status:** ⚠️ **P0 BLOCKER FOUND** (See `SHEHATA_BLOCKER_ANALYSIS.md`)
 
 ---
 
-## Executive Summary
+## ⚠️ CRITICAL UPDATE (2025-11-02)
 
-✅ **All 16 fragment types successfully extracted and validated**
-✅ **ANARCI re-annotation using IMGT scheme complete (riot_na v4.0.5)**
+**P0 BLOCKER DISCOVERED:** Gap characters in fragment sequences will cause ESM embedding failures.
+
+**Affected Files:**
+- `VH_only_shehata.csv`: 13 sequences with gaps
+- `VL_only_shehata.csv`: 4 sequences with gaps
+- `Full_shehata.csv`: 17 sequences with gaps
+- `VH+VL_shehata.csv`: 17 sequences with gaps
+
+**Root Cause:** `preprocessing/process_shehata.py:63` uses `annotation.sequence_alignment_aa` (IMGT-aligned with gaps) instead of `annotation.sequence_aa` (gap-free).
+
+**Impact:** ESM-1v embedding will fail validation at `model.py:36`, producing garbage embeddings for 17 antibodies.
+
+**Status:** ❌ Phase 2 NOT production-ready until fix applied
+
+**See:** `docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md` for full analysis
+
+---
+
+## Executive Summary (Original - SUPERSEDED)
+
+⚠️ **All 16 fragment types extracted** (but VH/VL/Full contain gaps)
+⚠️ **ANARCI re-annotation complete** (but used wrong field)
 ✅ **Output format compatible with existing pipeline**
-✅ **Ready for model training and inference**
+❌ **NOT ready for model training/inference** (will fail ESM embedding)
 
 ---
 

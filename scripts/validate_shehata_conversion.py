@@ -129,6 +129,65 @@ def calculate_checksum(filepath: str) -> str:
     return sha256.hexdigest()
 
 
+def validate_fragment_csvs(fragments_dir: Path) -> bool:
+    """
+    Validate fragment CSV files for gap characters.
+
+    Critical check: ESM-1v cannot handle gap characters.
+    This prevents P0 blocker regression.
+
+    Args:
+        fragments_dir: Path to directory containing fragment CSVs
+
+    Returns:
+        True if all files are gap-free, False otherwise
+    """
+    print("\n" + "="*60)
+    print("Fragment CSV Gap Validation (P0 Blocker Check)")
+    print("="*60)
+
+    if not fragments_dir.exists():
+        print(f"  ℹ Fragment directory not found: {fragments_dir}")
+        print(f"  (Run preprocessing/process_shehata.py to generate fragments)")
+        return True  # Not an error if fragments haven't been generated yet
+
+    fragment_files = list(fragments_dir.glob('*.csv'))
+    if not fragment_files:
+        print(f"  ℹ No fragment CSV files found in {fragments_dir}")
+        return True
+
+    print(f"\n  Checking {len(fragment_files)} fragment files for gap characters...")
+
+    all_clean = True
+    gap_files = []
+
+    for file in sorted(fragment_files):
+        df = pd.read_csv(file)
+        gap_count = df['sequence'].str.contains('-', na=False).sum()
+
+        if gap_count > 0:
+            all_clean = False
+            gap_files.append((file.name, gap_count))
+            print(f"    ✗ {file.name}: {gap_count} sequences with gaps")
+        else:
+            print(f"    ✓ {file.name}: gap-free")
+
+    print()
+    if all_clean:
+        print("  ✓ SUCCESS: All fragment files are gap-free")
+        print("  ✓ ESM-1v embedding compatibility confirmed")
+        return True
+    else:
+        print("  ✗ FAILURE: Gap characters detected in fragment files")
+        print("  ✗ This is a P0 blocker - ESM-1v will fail validation")
+        print("\n  Affected files:")
+        for filename, count in gap_files:
+            print(f"    - {filename}: {count} sequences")
+        print("\n  Fix: Use annotation.sequence_aa instead of sequence_alignment_aa")
+        print("  See: docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md")
+        return False
+
+
 def main():
     excel_path = Path("test_datasets/mmc2.xlsx")
     csv_path = Path("test_datasets/shehata.csv")
@@ -214,8 +273,15 @@ def main():
         print(f"    Missing light_seq: {df_csv['light_seq'].isna().sum()}")
         print(f"    Missing labels: {df_csv['label'].isna().sum()}")
 
+    # Validate fragment CSVs (P0 blocker check)
+    fragments_dir = Path("test_datasets/shehata")
+    fragments_valid = validate_fragment_csvs(fragments_dir)
+
     print("\n" + "="*60)
-    print("✓ Validation Complete")
+    if fragments_valid:
+        print("✓ Validation Complete - All Checks Passed")
+    else:
+        print("✗ Validation Failed - P0 Blocker Detected")
     print("="*60)
 
 

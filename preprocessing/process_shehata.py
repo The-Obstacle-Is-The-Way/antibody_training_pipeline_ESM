@@ -60,7 +60,7 @@ def annotate_sequence(
 
         # Extract all fragments
         fragments = {
-            f"full_seq_{chain}": annotation.sequence_alignment_aa,
+            f"full_seq_{chain}": annotation.sequence_aa,  # Gap-free sequence (not alignment)
             f"fwr1_aa_{chain}": annotation.fwr1_aa,
             f"cdr1_aa_{chain}": annotation.cdr1_aa,
             f"fwr2_aa_{chain}": annotation.fwr2_aa,
