@@ -139,7 +139,7 @@ def load_data(config: Dict) -> Tuple[List[str], List[int]]:
         )
     elif data_config['source'] == "local":
         return load_local_data(
-            data_config['file_path'],
+            data_config['train_file'],  # Fixed: was 'file_path', config uses 'train_file'
             text_column=data_config['sequence_column'],
             label_column=data_config['label_column']
         )
