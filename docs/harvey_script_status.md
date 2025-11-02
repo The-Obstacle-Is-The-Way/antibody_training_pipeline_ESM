@@ -112,7 +112,7 @@ harvey_000001,QVQLVESGG...,1,harvey2022,127
 
 ### Run Command
 ```bash
-cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
+# From project root directory
 
 # Recommended: Run in tmux/screen (may take 10-120 minutes)
 tmux new -s harvey_processing
