@@ -85,38 +85,90 @@ def parse_yn_flags(flag_path: Path) -> List[int]:
     return flags
 
 
-def find_first_atg(dna_seq: str) -> Optional[int]:
+def find_best_atg_translation(dna_seq: str) -> Optional[str]:
     """
-    Find the first in-frame ATG (start codon) in DNA sequence.
+    Find the best ATG-based translation by trying multiple ATG positions.
 
-    Boughter raw sequences have:
-    - Leading N's and primer remnants before the actual antibody sequence
-    - The real antibody starts at the first ATG (signal peptide)
+    Boughter raw sequences have leading N's and primers. We need to find
+    the correct ATG that marks the start of the antibody signal peptide.
+
+    Strategy:
+    1. Find all ATG codons in first 300bp
+    2. Try translating from each
+    3. Return the translation with:
+       - Starts with M
+       - Minimal X's and stops
+       - Looks like an antibody (signal peptide or VH/VL start)
 
     Args:
         dna_seq: DNA nucleotide sequence string
 
     Returns:
-        Position of first ATG, or None if not found
+        Best translated protein sequence, or None if no good translation found
     """
     dna_seq = dna_seq.upper()
 
-    # Search for ATG starting from beginning
-    # Most Boughter sequences have ATG within first 200 bp
+    # Find all ATG positions in first 300bp
+    atg_positions = []
     for i in range(0, min(300, len(dna_seq) - 2)):
         if dna_seq[i:i+3] == "ATG":
-            return i
+            atg_positions.append(i)
 
-    return None
+    if not atg_positions:
+        return None
+
+    # Try each ATG and score the results
+    best_protein = None
+    best_score = -1
+
+    for atg_pos in atg_positions:
+        try:
+            trimmed_dna = dna_seq[atg_pos:]
+            protein = Seq(trimmed_dna).translate(table=1, to_stop=False)
+            protein_str = str(protein)
+
+            # Skip if doesn't start with M
+            if not protein_str or protein_str[0] != 'M':
+                continue
+
+            # Skip if too short
+            if len(protein_str) < 100:
+                continue
+
+            # Score based on quality
+            x_count = protein_str.count('X')
+            stop_count = protein_str.count('*')
+
+            # Count X's and stops in first 150 aa (antibody should be clean here)
+            first_150 = protein_str[:min(150, len(protein_str))]
+            x_count_first = first_150.count('X')
+            stop_count_first = first_150.count('*')
+
+            # Heavily penalize X's and stops in first 150 aa
+            score = 1000 - (x_count_first * 100) - (stop_count_first * 200) - (x_count * 2)
+
+            # Bonus for having typical antibody signal peptide patterns
+            # Signal peptides often contain: MGW, MGA, or similar
+            if protein_str.startswith('MGW') or protein_str.startswith('MGA'):
+                score += 50
+
+            if score > best_score:
+                best_score = score
+                best_protein = protein_str
+
+        except Exception:
+            continue
+
+    return best_protein
 
 
 def translate_dna_to_protein(dna_seq: str) -> Optional[str]:
     """
-    Translate DNA sequence to protein, trimming to first ATG start codon.
+    Translate DNA sequence to protein, finding the best ATG start position.
 
     Boughter raw sequences contain leading N's and primer sequences that
-    cause frameshifts and premature stop codons. We must find the first
-    in-frame ATG (start of signal peptide) and translate from there.
+    cause frameshifts and premature stop codons. We must find the correct
+    ATG (start of signal peptide) by trying multiple candidates.
 
     This is the CRITICAL fix for Stage 1 translation accuracy.
     Without this, ~88% of HIV sequences fail ANARCI annotation.
@@ -130,23 +182,13 @@ def translate_dna_to_protein(dna_seq: str) -> Optional[str]:
     try:
         dna_seq = dna_seq.upper()
 
-        # Find first ATG (start codon for signal peptide)
-        atg_pos = find_first_atg(dna_seq)
+        # Try ATG-based translation first
+        protein = find_best_atg_translation(dna_seq)
 
-        if atg_pos is not None:
-            # Trim to start from first ATG
-            trimmed_dna = dna_seq[atg_pos:]
+        if protein is not None:
+            return protein
 
-            # Translate from ATG
-            protein = Seq(trimmed_dna).translate(table=1, to_stop=False)
-            protein_str = str(protein)
-
-            # Validate: should start with M (methionine) and have minimal X's
-            if protein_str[0] == 'M' and protein_str.count('X') < len(protein_str) * 0.05:
-                return protein_str
-
-        # Fallback: if ATG trimming failed or produced bad result,
-        # try raw translation (for sequences that don't need trimming)
+        # Fallback: try raw translation for sequences without clear ATG
         protein = Seq(dna_seq).translate(table=1, to_stop=False)
         return str(protein)
 
