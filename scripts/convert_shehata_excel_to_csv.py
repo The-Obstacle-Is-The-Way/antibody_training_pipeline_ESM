@@ -271,19 +271,7 @@ def compare_with_original(csv_df: pd.DataFrame, excel_path: str):
 
 
 def main():
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        description="Convert Shehata Excel dataset to CSV format"
-    )
-    parser.add_argument(
-        "--non-interactive",
-        action="store_true",
-        help="Run without prompts (auto-accept suggested threshold)",
-    )
-    args = parser.parse_args()
-
-    # Paths
+    """Main entry point for command-line execution."""
     excel_path = Path("test_datasets/mmc2.xlsx")
     output_path = Path("test_datasets/shehata.csv")
 
@@ -298,12 +286,12 @@ def main():
     print(f"\nInput:  {excel_path}")
     print(f"Output: {output_path}")
 
-    # Convert
+    # Convert (non-interactive: uses suggested threshold automatically)
     df_csv = convert_excel_to_csv(
         str(excel_path),
         str(output_path),
-        psr_threshold=None,  # Will use suggested threshold
-        interactive=not args.non_interactive,  # Disable prompts if --non-interactive
+        psr_threshold=None,  # Will calculate suggested threshold
+        interactive=False,  # No prompts - auto-accept threshold
     )
 
     # Validate
