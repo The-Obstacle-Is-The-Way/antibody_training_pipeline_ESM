@@ -244,10 +244,10 @@ but boundaries deviate:
 for CDR2, igblast alignment boundaries vary per sequence
 (not fixed imgt 56–65 or chothia 52–56).
 
-solutions:
-1. trim pos 118 from boughter CDR3s for strict imgt
-2. add --cdr3-include-118 flag to match their boundaries
-3. email novo for clarification (or wait for code release)
+solution:
+- Use strict IMGT (CDR3 = 105-117, excludes position 118)
+- Position 118 is FR4 J-anchor (conserved), not CDR
+- Document discrepancy with Boughter's published files
 
 documented full investigation: [link to this file when pushed]
 ```
@@ -376,7 +376,7 @@ After first-principles analysis, we determined the correct approach:
 **Implementation:**
 - **Use ANARCI with strict IMGT** boundaries (CDR3 = 105-117)
 - **Document discrepancy**: Boughter's published files include position 118; we use strict IMGT
-- **Optional flag**: `--cdr3-include-118` for compatibility testing only (not production)
+- **Single standard**: No compatibility modes, strict IMGT only
 
 **Rationale independence:**
 - Our decision is based on first principles, NOT on replicating Novo
