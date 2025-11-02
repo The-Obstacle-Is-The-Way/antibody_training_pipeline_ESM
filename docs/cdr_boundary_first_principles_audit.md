@@ -340,6 +340,29 @@ documented full audit: docs/cdr_boundary_first_principles_audit.md
 
 3. **CDR2 boundaries?**
    - **Use IMGT fixed 56-65** - standard definition
+   - **Variable CDR2 lengths are normal** - Harvey et al. 2022 confirms this
+
+### CDR2 Variable Lengths (NEW FINDING - 2025-11-02)
+
+**Harvey et al. 2022 Methods (line 142)**:
+> "The nanobody sequences were aligned using ANARCI with standard IMGT numbering to identify the CDR regions. For our dataset... we limited nanobody sequences to sequences with a CDR1 length of 8, **a CDR2 length of 8 or 9 (9 or 10... when we include an additional position at the end of CDR2 to include more variability)**"
+
+**Key Finding:**
+- Harvey explicitly used **ANARCI with IMGT numbering**
+- Harvey observed **variable CDR2 lengths (8-10 residues)**
+- This is **NORMAL biological variation** (deletions/insertions)
+- ANARCI/IMGT handles this with gaps for deletions
+
+**What This Means:**
+- Hybri's observation ("some CDR2s are shorter") is **CORRECT and EXPECTED**
+- Variable CDR2 lengths are **real antibody diversity**, not an error
+- ANARCI assigns fixed IMGT positions (56-65), but sequences can have gaps
+- All test datasets use this approach
+
+**Resolution:**
+- Use **ANARCI standard IMGT numbering** (positions 56-65)
+- Accept variable sequence lengths (natural deletions/insertions)
+- This is consistent across ALL datasets (Boughter, Harvey, Jain, Shehata)
 
 ---
 
@@ -348,11 +371,12 @@ documented full audit: docs/cdr_boundary_first_principles_audit.md
 1. **IMGT Numbering**: http://www.imgt.org/IMGTScientificChart/Numbering/IMGTIGVLsuperfamily.html
 2. **Boughter et al. 2020** (eLife): https://elifesciences.org/articles/61393
 3. **Sakhnini et al. 2025** (preprint): https://www.biorxiv.org/content/10.1101/2025.04.28.650927
-4. **AIMS repository**: https://github.com/ctboughter/AIMS_manuscripts
+4. **Harvey et al. 2022** (Nat Commun): doi:10.1038/s41467-022-30534-y - CRITICAL for CDR2 variable length confirmation
+5. **AIMS repository**: https://github.com/ctboughter/AIMS_manuscripts
 
 ---
 
-*Audit version: 1.0*
-*Conducted: 2025-11-01*
+*Audit version: 2.0*
+*Conducted: 2025-11-01, Updated: 2025-11-02*
 *Method: First-principles independent verification*
-*Investigator: John H. Jung, MD*
+*Status: ✅ **ALL QUESTIONS RESOLVED (CDR3 + CDR2)***

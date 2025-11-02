@@ -386,6 +386,6 @@ See also: `cdr_boundary_first_principles_audit.md` for full analysis
 
 ---
 
-*Document version: 2.0*
+*Document version: 3.0*
 *Last updated: 2025-11-02*
-*Status: ✅ **RESOLVED - Use Strict IMGT***
+*Status: ✅ **RESOLVED - All Questions Answered (CDR3 + CDR2)***
