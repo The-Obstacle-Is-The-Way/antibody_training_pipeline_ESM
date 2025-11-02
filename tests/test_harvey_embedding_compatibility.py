@@ -22,9 +22,10 @@ Issue: #4 - Harvey dataset preprocessing
 P0 Fix: preprocessing/process_harvey.py:48
 """
 
-import pandas as pd
-from pathlib import Path
 import sys
+from pathlib import Path
+
+import pandas as pd
 
 # Valid amino acids for ESM-1v model (from model.py:86)
 VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWYX")
@@ -72,11 +73,11 @@ def test_gap_characters():
             print(f"  ✓ {file_name}: gap-free ({len(df)} sequences)")
 
     if all_clean:
-        print(f"\n  ✓ PASS: All Harvey fragments are gap-free")
+        print("\n  ✓ PASS: All Harvey fragments are gap-free")
         print(f"  ✓ Total sequences validated: {total_sequences}")
         return True
     else:
-        print(f"\n  ✗ FAIL: Gap characters detected - P0 blocker still present!")
+        print("\n  ✗ FAIL: Gap characters detected - P0 blocker still present!")
         return False
 
 
@@ -130,11 +131,11 @@ def test_amino_acid_validation():
             total_sequences += len(df)
 
     if all_valid:
-        print(f"\n  ✓ PASS: All sequences contain only valid amino acids")
+        print("\n  ✓ PASS: All sequences contain only valid amino acids")
         print(f"  ✓ Total sequences validated: {total_sequences}")
         return True
     else:
-        print(f"\n  ✗ FAIL: Invalid amino acids detected")
+        print("\n  ✗ FAIL: Invalid amino acids detected")
         return False
 
 
@@ -158,7 +159,7 @@ def test_previously_affected_sequences():
     df = pd.read_csv(vhh_file)
 
     # Sample check: First 5 sequences
-    print(f"\n  Checking sample sequences from VHH_only_harvey.csv:")
+    print("\n  Checking sample sequences from VHH_only_harvey.csv:")
     all_clean = True
 
     for idx in range(min(5, len(df))):
@@ -177,13 +178,13 @@ def test_previously_affected_sequences():
 
     print(f"\n  Total sequences: {len(df)}")
     print(f"  Sequences with gaps: {total_gaps}")
-    print(f"  Before P0 fix: 12,116 sequences had gaps (8.6%)")
+    print("  Before P0 fix: 12,116 sequences had gaps (8.6%)")
 
     if total_gaps == 0 and all_clean:
-        print(f"\n  ✓ PASS: P0 fix successfully eliminated all gaps")
+        print("\n  ✓ PASS: P0 fix successfully eliminated all gaps")
         return True
     else:
-        print(f"\n  ✗ FAIL: Gaps still present after fix")
+        print("\n  ✗ FAIL: Gaps still present after fix")
         return False
 
 
@@ -218,12 +219,12 @@ def test_model_validation_logic():
 
     if len(invalid_sequences) == 0:
         print(f"  ✓ All {len(df)} sequences passed model validation")
-        print(f"  ✓ PASS: Dataset is ESM-1v compatible")
+        print("  ✓ PASS: Dataset is ESM-1v compatible")
         return True
     else:
         print(f"  ✗ {len(invalid_sequences)} sequences failed validation")
         print(f"  ✗ First failed sequence: {invalid_sequences[0][0]}")
-        print(f"  ✗ FAIL: Dataset NOT compatible with ESM-1v")
+        print("  ✗ FAIL: Dataset NOT compatible with ESM-1v")
         return False
 
 
@@ -268,7 +269,9 @@ def test_data_integrity():
             expected_rows = len(df)
 
         if len(df) != expected_rows:
-            print(f"    ✗ {file_name}: row count mismatch ({len(df)} vs {expected_rows})")
+            print(
+                f"    ✗ {file_name}: row count mismatch ({len(df)} vs {expected_rows})"
+            )
             all_valid = False
         else:
             print(f"    ✓ {file_name}: {len(df)} rows")
@@ -279,22 +282,28 @@ def test_data_integrity():
         df = pd.read_csv(vhh_file)
         label_counts = df["label"].value_counts().sort_index()
 
-        print(f"\n  Label distribution:")
-        print(f"    Low polyreactivity (0): {label_counts.get(0, 0)} ({label_counts.get(0, 0)/len(df)*100:.1f}%)")
-        print(f"    High polyreactivity (1): {label_counts.get(1, 0)} ({label_counts.get(1, 0)/len(df)*100:.1f}%)")
+        print("\n  Label distribution:")
+        print(
+            f"    Low polyreactivity (0): {label_counts.get(0, 0)} ({label_counts.get(0, 0)/len(df)*100:.1f}%)"
+        )
+        print(
+            f"    High polyreactivity (1): {label_counts.get(1, 0)} ({label_counts.get(1, 0)/len(df)*100:.1f}%)"
+        )
 
         # Check if balanced (should be ~50/50)
         balance = label_counts.get(1, 0) / len(df)
         if 0.48 <= balance <= 0.52:
-            print(f"    ✓ Dataset is balanced")
+            print("    ✓ Dataset is balanced")
         else:
-            print(f"    ⚠ Dataset may be imbalanced")
+            print("    ⚠ Dataset may be imbalanced")
 
     if all_valid and expected_rows is not None:
-        print(f"\n  ✓ PASS: All {len(expected_files)} files present with {expected_rows} rows")
+        print(
+            f"\n  ✓ PASS: All {len(expected_files)} files present with {expected_rows} rows"
+        )
         return True
     else:
-        print(f"\n  ✗ FAIL: Data integrity issues detected")
+        print("\n  ✗ FAIL: Data integrity issues detected")
         return False
 
 
