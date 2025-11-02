@@ -146,7 +146,9 @@ def validate_stage2_output() -> Dict:
     if failure_log_path.exists():
         failures_log = failure_log_path.read_text().strip()
         if failures_log:
-            failure_ids = [line.strip() for line in failures_log.split("\n") if line.strip()]
+            failure_ids = [
+                line.strip() for line in failures_log.split("\n") if line.strip()
+            ]
 
     stage2_failures = len(failure_ids)
     stage2_annotated = stage1_count - stage2_failures
@@ -155,7 +157,9 @@ def validate_stage2_output() -> Dict:
     print(f"\n✓ ANARCI Annotation Success:")
     print(f"  Stage 1 input:          {stage1_count} sequences")
     print(f"  Stage 2 annotated:      {stage2_annotated} sequences")
-    print(f"  Stage 2 failures:       {stage2_failures} ({stage2_failures / stage1_count * 100:.2f}%)")
+    print(
+        f"  Stage 2 failures:       {stage2_failures} ({stage2_failures / stage1_count * 100:.2f}%)"
+    )
     target_met = stage2_success_rate >= 95.0
     status = "✅ PASS" if target_met else "❌ FAIL"
     print(f"  Success rate:           {stage2_success_rate:.2f}%  ({status})")
@@ -169,12 +173,16 @@ def validate_stage2_output() -> Dict:
             qc_ids = [line.strip() for line in qc_text.split("\n") if line.strip()]
     stage3_removed = len(qc_ids)
     stage3_retained = stage2_annotated - stage3_removed
-    stage3_retention = (stage3_retained / stage2_annotated) * 100 if stage2_annotated else 0.0
+    stage3_retention = (
+        (stage3_retained / stage2_annotated) * 100 if stage2_annotated else 0.0
+    )
 
     print(f"\n✓ Stage 3 (Post-Annotation QC):")
     print(f"  Sequences entering Stage 3: {stage2_annotated}")
     print(f"  Filtered (X/empty CDRs):    {stage3_removed}")
-    print(f"  Final clean sequences:      {stage3_retained} ({stage3_retention:.2f}% retention)")
+    print(
+        f"  Final clean sequences:      {stage3_retained} ({stage3_retention:.2f}% retention)"
+    )
 
     # Load final fragment (VH) to confirm counts
     df_vh = pd.read_csv(vh_file, comment="#")
