@@ -1,172 +1,0 @@
-2025-11-02 17:52:20,062 - INFO - PHASE 1 TESTING: Confirming StandardScaler Hypothesis
-2025-11-02 17:52:20,062 - INFO - ================================================================================
-2025-11-02 17:52:20,062 - INFO - This test validates whether removing StandardScaler restores Novo's performance.
-2025-11-02 17:52:20,062 - INFO - 
-2025-11-02 17:52:20,062 - INFO - ================================================================================
-2025-11-02 17:52:20,062 - INFO - TEST 1: No StandardScaler + Our Hyperparameters (max_iter=1000, random_state=42)
-2025-11-02 17:52:20,062 - INFO - ================================================================================
-2025-11-02 17:52:20,068 - INFO - Loaded 914 training samples
-2025-11-02 17:52:20,068 - WARNING - Embeddings not cached, computing fresh embeddings...
-Some weights of EsmModel were not initialized from the model checkpoint at facebook/esm1v_t33_650M_UR90S_1 and are newly initialized: ['contact_head.regression.bias', 'contact_head.regression.weight', 'pooler.dense.bias', 'pooler.dense.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-11-02 17:52:30,239 - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 loaded on mps with batch_size=8
-2025-11-02 17:52:30,240 - INFO - Extracting embeddings for 914 sequences with batch_size=8...
-Processing batches:   0%|          | 0/115 [00:00<?, ?it/s]Processing batches:   1%|          | 1/115 [00:00<01:03,  1.79it/s]Processing batches:   2%|▏         | 2/115 [00:00<00:52,  2.16it/s]Processing batches:   3%|▎         | 3/115 [00:01<00:41,  2.72it/s]Processing batches:   3%|▎         | 4/115 [00:01<00:39,  2.80it/s]Processing batches:   4%|▍         | 5/115 [00:01<00:39,  2.79it/s]Processing batches:   5%|▌         | 6/115 [00:02<00:49,  2.21it/s]Processing batches:   6%|▌         | 7/115 [00:02<00:42,  2.57it/s]Processing batches:   7%|▋         | 8/115 [00:03<00:37,  2.89it/s]Processing batches:   8%|▊         | 9/115 [00:03<00:41,  2.57it/s]Processing batches:   9%|▊         | 10/115 [00:03<00:37,  2.82it/s]Processing batches:  10%|▉         | 11/115 [00:04<00:37,  2.78it/s]Processing batches:  10%|█         | 12/115 [00:04<00:33,  3.07it/s]Processing batches:  11%|█▏        | 13/115 [00:04<00:31,  3.27it/s]Processing batches:  12%|█▏        | 14/115 [00:05<00:32,  3.09it/s]Processing batches:  13%|█▎        | 15/115 [00:05<00:30,  3.31it/s]Processing batches:  14%|█▍        | 16/115 [00:05<00:33,  2.97it/s]Processing batches:  15%|█▍        | 17/115 [00:05<00:30,  3.21it/s]Processing batches:  16%|█▌        | 18/115 [00:06<00:27,  3.49it/s]Processing batches:  17%|█▋        | 19/115 [00:06<00:26,  3.60it/s]Processing batches:  17%|█▋        | 20/115 [00:06<00:25,  3.71it/s]Processing batches:  18%|█▊        | 21/115 [00:06<00:25,  3.75it/s]Processing batches:  19%|█▉        | 22/115 [00:07<00:32,  2.88it/s]Processing batches:  20%|██        | 23/115 [00:07<00:29,  3.11it/s]Processing batches:  21%|██        | 24/115 [00:08<00:27,  3.27it/s]Processing batches:  22%|██▏       | 25/115 [00:08<00:26,  3.45it/s]Processing batches:  23%|██▎       | 26/115 [00:08<00:24,  3.71it/s]Processing batches:  23%|██▎       | 27/115 [00:08<00:23,  3.76it/s]Processing batches:  24%|██▍       | 28/115 [00:09<00:25,  3.42it/s]Processing batches:  25%|██▌       | 29/115 [00:09<00:24,  3.57it/s]Processing batches:  26%|██▌       | 30/115 [00:09<00:23,  3.69it/s]Processing batches:  27%|██▋       | 31/115 [00:09<00:21,  3.85it/s]Processing batches:  28%|██▊       | 32/115 [00:10<00:21,  3.89it/s]Processing batches:  29%|██▊       | 33/115 [00:10<00:22,  3.63it/s]Processing batches:  30%|██▉       | 34/115 [00:10<00:21,  3.70it/s]Processing batches:  30%|███       | 35/115 [00:10<00:21,  3.72it/s]Processing batches:  31%|███▏      | 36/115 [00:11<00:20,  3.78it/s]Processing batches:  32%|███▏      | 37/115 [00:11<00:20,  3.79it/s]Processing batches:  33%|███▎      | 38/115 [00:11<00:20,  3.83it/s]Processing batches:  34%|███▍      | 39/115 [00:11<00:19,  3.82it/s]Processing batches:  35%|███▍      | 40/115 [00:12<00:19,  3.83it/s]Processing batches:  36%|███▌      | 41/115 [00:12<00:19,  3.85it/s]Processing batches:  37%|███▋      | 42/115 [00:12<00:19,  3.80it/s]Processing batches:  37%|███▋      | 43/115 [00:13<00:18,  3.84it/s]Processing batches:  38%|███▊      | 44/115 [00:13<00:18,  3.80it/s]Processing batches:  39%|███▉      | 45/115 [00:13<00:18,  3.83it/s]Processing batches:  40%|████      | 46/115 [00:13<00:18,  3.82it/s]Processing batches:  41%|████      | 47/115 [00:14<00:17,  3.86it/s]Processing batches:  42%|████▏     | 48/115 [00:14<00:17,  3.83it/s]Processing batches:  43%|████▎     | 49/115 [00:14<00:17,  3.88it/s]Processing batches:  43%|████▎     | 50/115 [00:14<00:16,  4.00it/s]Processing batches:  44%|████▍     | 51/115 [00:15<00:15,  4.01it/s]Processing batches:  45%|████▌     | 52/115 [00:15<00:18,  3.36it/s]Processing batches:  46%|████▌     | 53/115 [00:15<00:20,  3.01it/s]Processing batches:  47%|████▋     | 54/115 [00:16<00:18,  3.33it/s]Processing batches:  48%|████▊     | 55/115 [00:16<00:16,  3.54it/s]Processing batches:  49%|████▊     | 56/115 [00:16<00:15,  3.79it/s]Processing batches:  50%|████▉     | 57/115 [00:16<00:16,  3.41it/s]Processing batches:  50%|█████     | 58/115 [00:17<00:15,  3.68it/s]Processing batches:  51%|█████▏    | 59/115 [00:17<00:14,  3.88it/s]Processing batches:  52%|█████▏    | 60/115 [00:17<00:15,  3.57it/s]Processing batches:  53%|█████▎    | 61/115 [00:17<00:14,  3.79it/s]Processing batches:  54%|█████▍    | 62/115 [00:18<00:13,  3.95it/s]Processing batches:  55%|█████▍    | 63/115 [00:18<00:12,  4.07it/s]Processing batches:  56%|█████▌    | 64/115 [00:18<00:12,  4.19it/s]Processing batches:  57%|█████▋    | 65/115 [00:18<00:11,  4.29it/s]Processing batches:  57%|█████▋    | 66/115 [00:19<00:13,  3.66it/s]Processing batches:  58%|█████▊    | 67/115 [00:19<00:12,  3.89it/s]Processing batches:  59%|█████▉    | 68/115 [00:19<00:11,  3.97it/s]Processing batches:  60%|██████    | 69/115 [00:19<00:11,  4.13it/s]Processing batches:  61%|██████    | 70/115 [00:20<00:10,  4.19it/s]Processing batches:  62%|██████▏   | 71/115 [00:20<00:10,  4.16it/s]Processing batches:  63%|██████▎   | 72/115 [00:20<00:10,  4.26it/s]Processing batches:  63%|██████▎   | 73/115 [00:20<00:09,  4.35it/s]Processing batches:  64%|██████▍   | 74/115 [00:21<00:09,  4.39it/s]Processing batches:  65%|██████▌   | 75/115 [00:21<00:09,  4.44it/s]Processing batches:  66%|██████▌   | 76/115 [00:21<00:09,  4.31it/s]Processing batches:  67%|██████▋   | 77/115 [00:21<00:08,  4.32it/s]Processing batches:  68%|██████▊   | 78/115 [00:21<00:08,  4.35it/s]Processing batches:  69%|██████▊   | 79/115 [00:22<00:08,  4.35it/s]Processing batches:  70%|██████▉   | 80/115 [00:22<00:08,  4.23it/s]Processing batches:  70%|███████   | 81/115 [00:22<00:07,  4.31it/s]Processing batches:  71%|███████▏  | 82/115 [00:22<00:07,  4.37it/s]Processing batches:  72%|███████▏  | 83/115 [00:23<00:07,  4.39it/s]Processing batches:  73%|███████▎  | 84/115 [00:23<00:06,  4.44it/s]Processing batches:  74%|███████▍  | 85/115 [00:23<00:06,  4.33it/s]Processing batches:  75%|███████▍  | 86/115 [00:23<00:06,  4.39it/s]Processing batches:  76%|███████▌  | 87/115 [00:24<00:06,  4.39it/s]Processing batches:  77%|███████▋  | 88/115 [00:24<00:06,  4.39it/s]Processing batches:  77%|███████▋  | 89/115 [00:24<00:05,  4.41it/s]Processing batches:  78%|███████▊  | 90/115 [00:24<00:05,  4.28it/s]Processing batches:  79%|███████▉  | 91/115 [00:24<00:05,  4.33it/s]Processing batches:  80%|████████  | 92/115 [00:25<00:05,  4.35it/s]Processing batches:  81%|████████  | 93/115 [00:25<00:05,  4.40it/s]Processing batches:  82%|████████▏ | 94/115 [00:25<00:04,  4.45it/s]Processing batches:  83%|████████▎ | 95/115 [00:25<00:04,  4.46it/s]Processing batches:  83%|████████▎ | 96/115 [00:26<00:04,  4.48it/s]Processing batches:  84%|████████▍ | 97/115 [00:26<00:04,  4.48it/s]Processing batches:  85%|████████▌ | 98/115 [00:26<00:03,  4.48it/s]Processing batches:  86%|████████▌ | 99/115 [00:26<00:03,  4.36it/s]Processing batches:  87%|████████▋ | 100/115 [00:26<00:03,  4.40it/s]Processing batches:  88%|████████▊ | 101/115 [00:27<00:03,  4.46it/s]Processing batches:  89%|████████▊ | 102/115 [00:27<00:02,  4.46it/s]Processing batches:  90%|████████▉ | 103/115 [00:27<00:02,  4.46it/s]Processing batches:  90%|█████████ | 104/115 [00:27<00:02,  4.49it/s]Processing batches:  91%|█████████▏| 105/115 [00:28<00:02,  4.46it/s]Processing batches:  92%|█████████▏| 106/115 [00:28<00:02,  4.47it/s]Processing batches:  93%|█████████▎| 107/115 [00:28<00:01,  4.47it/s]Processing batches:  94%|█████████▍| 108/115 [00:28<00:01,  4.47it/s]Processing batches:  95%|█████████▍| 109/115 [00:28<00:01,  4.48it/s]Processing batches:  96%|█████████▌| 110/115 [00:29<00:01,  4.48it/s]Processing batches:  97%|█████████▋| 111/115 [00:29<00:00,  4.46it/s]Processing batches:  97%|█████████▋| 112/115 [00:29<00:00,  4.47it/s]Processing batches:  98%|█████████▊| 113/115 [00:29<00:00,  4.43it/s]Processing batches:  99%|█████████▉| 114/115 [00:30<00:00,  4.41it/s]Processing batches: 100%|██████████| 115/115 [00:30<00:00,  4.49it/s]Processing batches: 100%|██████████| 115/115 [00:30<00:00,  3.79it/s]
-2025-11-02 17:53:00,580 - INFO - Computed embeddings: shape=(914, 1280)
-2025-11-02 17:53:00,580 - INFO - Classifier settings:
-2025-11-02 17:53:00,580 - INFO -   - max_iter: 1000
-2025-11-02 17:53:00,580 - INFO -   - random_state: 42
-2025-11-02 17:53:00,580 - INFO -   - class_weight: None
-2025-11-02 17:53:00,580 - INFO -   - StandardScaler: NO ✅
-2025-11-02 17:53:00,580 - INFO - 
-Running 10-fold cross-validation...
-2025-11-02 17:53:01,375 - INFO - 
-================================================================================
-2025-11-02 17:53:01,375 - INFO - RESULTS - Test 1:
-2025-11-02 17:53:01,375 - INFO -   CV Accuracy: 0.6662 (+/- 0.0926)
-2025-11-02 17:53:01,375 - INFO -   Individual fold scores: [0.67391304 0.72826087 0.65217391 0.7173913  0.62637363 0.63736264
- 0.74725275 0.6043956  0.62637363 0.64835165]
-2025-11-02 17:53:01,375 - INFO - ================================================================================
-2025-11-02 17:53:01,375 - INFO - 
-Training final model on full training set...
-2025-11-02 17:53:01,455 - INFO -   Training Accuracy: 0.7407
-2025-11-02 17:53:01,455 - INFO - 
-Testing on Jain dataset...
-2025-11-02 17:53:01,458 - INFO - Loaded 94 Jain test samples
-2025-11-02 17:53:01,458 - WARNING - Jain embeddings not cached, computing...
-Some weights of EsmModel were not initialized from the model checkpoint at facebook/esm1v_t33_650M_UR90S_1 and are newly initialized: ['contact_head.regression.bias', 'contact_head.regression.weight', 'pooler.dense.bias', 'pooler.dense.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-11-02 17:53:03,123 - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 loaded on mps with batch_size=8
-2025-11-02 17:53:03,124 - INFO - Extracting embeddings for 94 sequences with batch_size=8...
-Processing batches:   0%|          | 0/12 [00:00<?, ?it/s]Processing batches:   8%|▊         | 1/12 [00:00<00:02,  3.83it/s]Processing batches:  17%|█▋        | 2/12 [00:00<00:02,  3.88it/s]Processing batches:  25%|██▌       | 3/12 [00:00<00:02,  4.16it/s]Processing batches:  33%|███▎      | 4/12 [00:00<00:01,  4.11it/s]Processing batches:  42%|████▏     | 5/12 [00:01<00:01,  4.07it/s]Processing batches:  50%|█████     | 6/12 [00:01<00:01,  4.21it/s]Processing batches:  58%|█████▊    | 7/12 [00:01<00:01,  4.28it/s]Processing batches:  67%|██████▋   | 8/12 [00:01<00:00,  4.36it/s]Processing batches:  75%|███████▌  | 9/12 [00:02<00:00,  4.33it/s]Processing batches:  83%|████████▎ | 10/12 [00:02<00:00,  4.26it/s]Processing batches:  92%|█████████▏| 11/12 [00:02<00:00,  4.28it/s]Processing batches: 100%|██████████| 12/12 [00:02<00:00,  3.65it/s]Processing batches: 100%|██████████| 12/12 [00:02<00:00,  4.03it/s]
-2025-11-02 17:53:06,103 - INFO - 
-  Jain Test Accuracy: 0.6809
-2025-11-02 17:53:06,104 - INFO - 
-  Classification Report:
-2025-11-02 17:53:06,106 - INFO - 
-              precision    recall  f1-score   support
-
-         0.0       0.82      0.70      0.76        67
-         1.0       0.46      0.63      0.53        27
-
-    accuracy                           0.68        94
-   macro avg       0.64      0.67      0.64        94
-weighted avg       0.72      0.68      0.69        94
-
-2025-11-02 17:53:06,107 - INFO - 
-
-================================================================================
-2025-11-02 17:53:06,107 - INFO - TEST 2: No StandardScaler + sklearn Defaults (max_iter=100, no random_state)
-2025-11-02 17:53:06,107 - INFO - ================================================================================
-2025-11-02 17:53:06,109 - WARNING - Embeddings not cached, computing fresh embeddings...
-Some weights of EsmModel were not initialized from the model checkpoint at facebook/esm1v_t33_650M_UR90S_1 and are newly initialized: ['contact_head.regression.bias', 'contact_head.regression.weight', 'pooler.dense.bias', 'pooler.dense.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-11-02 17:53:07,430 - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 loaded on mps with batch_size=8
-2025-11-02 17:53:07,430 - INFO - Extracting embeddings for 914 sequences with batch_size=8...
-Processing batches:   0%|          | 0/115 [00:00<?, ?it/s]Processing batches:   1%|          | 1/115 [00:00<00:40,  2.84it/s]Processing batches:   2%|▏         | 2/115 [00:00<00:34,  3.25it/s]Processing batches:   3%|▎         | 3/115 [00:00<00:31,  3.55it/s]Processing batches:   3%|▎         | 4/115 [00:01<00:29,  3.73it/s]Processing batches:   4%|▍         | 5/115 [00:01<00:29,  3.79it/s]Processing batches:   5%|▌         | 6/115 [00:01<00:31,  3.48it/s]Processing batches:   6%|▌         | 7/115 [00:01<00:30,  3.60it/s]Processing batches:   7%|▋         | 8/115 [00:02<00:29,  3.69it/s]Processing batches:   8%|▊         | 9/115 [00:02<00:29,  3.56it/s]Processing batches:   9%|▊         | 10/115 [00:02<00:29,  3.59it/s]Processing batches:  10%|▉         | 11/115 [00:03<00:28,  3.67it/s]Processing batches:  10%|█         | 12/115 [00:03<00:27,  3.72it/s]Processing batches:  11%|█▏        | 13/115 [00:03<00:27,  3.76it/s]Processing batches:  12%|█▏        | 14/115 [00:03<00:27,  3.71it/s]Processing batches:  13%|█▎        | 15/115 [00:04<00:26,  3.71it/s]Processing batches:  14%|█▍        | 16/115 [00:04<00:27,  3.66it/s]Processing batches:  15%|█▍        | 17/115 [00:04<00:26,  3.73it/s]Processing batches:  16%|█▌        | 18/115 [00:04<00:24,  3.91it/s]Processing batches:  17%|█▋        | 19/115 [00:05<00:24,  3.91it/s]Processing batches:  17%|█▋        | 20/115 [00:05<00:24,  3.91it/s]Processing batches:  18%|█▊        | 21/115 [00:05<00:24,  3.90it/s]Processing batches:  19%|█▉        | 22/115 [00:05<00:24,  3.77it/s]Processing batches:  20%|██        | 23/115 [00:06<00:24,  3.81it/s]Processing batches:  21%|██        | 24/115 [00:06<00:24,  3.77it/s]Processing batches:  22%|██▏       | 25/115 [00:06<00:24,  3.66it/s]Processing batches:  23%|██▎       | 26/115 [00:06<00:23,  3.86it/s]Processing batches:  23%|██▎       | 27/115 [00:07<00:22,  3.86it/s]Processing batches:  24%|██▍       | 28/115 [00:07<00:23,  3.75it/s]Processing batches:  25%|██▌       | 29/115 [00:07<00:22,  3.75it/s]Processing batches:  26%|██▌       | 30/115 [00:08<00:22,  3.81it/s]Processing batches:  27%|██▋       | 31/115 [00:08<00:21,  3.93it/s]Processing batches:  28%|██▊       | 32/115 [00:08<00:21,  3.95it/s]Processing batches:  29%|██▊       | 33/115 [00:08<00:20,  4.00it/s]Processing batches:  30%|██▉       | 34/115 [00:09<00:20,  3.94it/s]Processing batches:  30%|███       | 35/115 [00:09<00:20,  3.89it/s]Processing batches:  31%|███▏      | 36/115 [00:09<00:20,  3.89it/s]Processing batches:  32%|███▏      | 37/115 [00:09<00:20,  3.85it/s]Processing batches:  33%|███▎      | 38/115 [00:10<00:19,  3.89it/s]Processing batches:  34%|███▍      | 39/115 [00:10<00:19,  3.85it/s]Processing batches:  35%|███▍      | 40/115 [00:10<00:19,  3.79it/s]Processing batches:  36%|███▌      | 41/115 [00:10<00:19,  3.85it/s]Processing batches:  37%|███▋      | 42/115 [00:11<00:19,  3.83it/s]Processing batches:  37%|███▋      | 43/115 [00:11<00:18,  3.85it/s]Processing batches:  38%|███▊      | 44/115 [00:11<00:18,  3.81it/s]Processing batches:  39%|███▉      | 45/115 [00:11<00:18,  3.83it/s]Processing batches:  40%|████      | 46/115 [00:12<00:18,  3.79it/s]Processing batches:  41%|████      | 47/115 [00:12<00:17,  3.83it/s]Processing batches:  42%|████▏     | 48/115 [00:12<00:17,  3.82it/s]Processing batches:  43%|████▎     | 49/115 [00:12<00:16,  3.91it/s]Processing batches:  43%|████▎     | 50/115 [00:13<00:16,  4.06it/s]Processing batches:  44%|████▍     | 51/115 [00:13<00:15,  4.08it/s]Processing batches:  45%|████▌     | 52/115 [00:13<00:15,  4.08it/s]Processing batches:  46%|████▌     | 53/115 [00:13<00:14,  4.15it/s]Processing batches:  47%|████▋     | 54/115 [00:14<00:14,  4.23it/s]Processing batches:  48%|████▊     | 55/115 [00:14<00:14,  4.29it/s]Processing batches:  49%|████▊     | 56/115 [00:14<00:13,  4.35it/s]Processing batches:  50%|████▉     | 57/115 [00:14<00:13,  4.31it/s]Processing batches:  50%|█████     | 58/115 [00:15<00:13,  4.35it/s]Processing batches:  51%|█████▏    | 59/115 [00:15<00:12,  4.38it/s]Processing batches:  52%|█████▏    | 60/115 [00:15<00:12,  4.38it/s]Processing batches:  53%|█████▎    | 61/115 [00:15<00:12,  4.39it/s]Processing batches:  54%|█████▍    | 62/115 [00:15<00:11,  4.44it/s]Processing batches:  55%|█████▍    | 63/115 [00:16<00:11,  4.48it/s]Processing batches:  56%|█████▌    | 64/115 [00:16<00:11,  4.49it/s]Processing batches:  57%|█████▋    | 65/115 [00:16<00:11,  4.50it/s]Processing batches:  57%|█████▋    | 66/115 [00:16<00:11,  4.45it/s]Processing batches:  58%|█████▊    | 67/115 [00:17<00:10,  4.49it/s]Processing batches:  59%|█████▉    | 68/115 [00:17<00:10,  4.52it/s]Processing batches:  60%|██████    | 69/115 [00:17<00:10,  4.52it/s]Processing batches:  61%|██████    | 70/115 [00:17<00:10,  4.48it/s]Processing batches:  62%|██████▏   | 71/115 [00:17<00:09,  4.50it/s]Processing batches:  63%|██████▎   | 72/115 [00:18<00:09,  4.53it/s]Processing batches:  63%|██████▎   | 73/115 [00:18<00:09,  4.54it/s]Processing batches:  64%|██████▍   | 74/115 [00:18<00:09,  4.54it/s]Processing batches:  65%|██████▌   | 75/115 [00:18<00:08,  4.53it/s]Processing batches:  66%|██████▌   | 76/115 [00:19<00:08,  4.39it/s]Processing batches:  67%|██████▋   | 77/115 [00:19<00:08,  4.39it/s]Processing batches:  68%|██████▊   | 78/115 [00:19<00:08,  4.43it/s]Processing batches:  69%|██████▊   | 79/115 [00:19<00:08,  4.44it/s]Processing batches:  70%|██████▉   | 80/115 [00:19<00:07,  4.47it/s]Processing batches:  70%|███████   | 81/115 [00:20<00:07,  4.50it/s]Processing batches:  71%|███████▏  | 82/115 [00:20<00:07,  4.51it/s]Processing batches:  72%|███████▏  | 83/115 [00:20<00:07,  4.50it/s]Processing batches:  73%|███████▎  | 84/115 [00:20<00:06,  4.52it/s]Processing batches:  74%|███████▍  | 85/115 [00:21<00:06,  4.39it/s]Processing batches:  75%|███████▍  | 86/115 [00:21<00:06,  4.44it/s]Processing batches:  76%|███████▌  | 87/115 [00:21<00:06,  4.46it/s]Processing batches:  77%|███████▋  | 88/115 [00:21<00:06,  4.42it/s]Processing batches:  77%|███████▋  | 89/115 [00:21<00:05,  4.46it/s]Processing batches:  78%|███████▊  | 90/115 [00:22<00:05,  4.48it/s]Processing batches:  79%|███████▉  | 91/115 [00:22<00:05,  4.49it/s]Processing batches:  80%|████████  | 92/115 [00:22<00:05,  4.50it/s]Processing batches:  81%|████████  | 93/115 [00:22<00:04,  4.51it/s]Processing batches:  82%|████████▏ | 94/115 [00:23<00:04,  4.53it/s]Processing batches:  83%|████████▎ | 95/115 [00:23<00:04,  4.53it/s]Processing batches:  83%|████████▎ | 96/115 [00:23<00:04,  4.54it/s]Processing batches:  84%|████████▍ | 97/115 [00:23<00:03,  4.54it/s]Processing batches:  85%|████████▌ | 98/115 [00:23<00:03,  4.51it/s]Processing batches:  86%|████████▌ | 99/115 [00:24<00:03,  4.40it/s]Processing batches:  87%|████████▋ | 100/115 [00:24<00:03,  4.44it/s]Processing batches:  88%|████████▊ | 101/115 [00:24<00:03,  4.48it/s]Processing batches:  89%|████████▊ | 102/115 [00:24<00:02,  4.49it/s]Processing batches:  90%|████████▉ | 103/115 [00:25<00:02,  4.52it/s]Processing batches:  90%|█████████ | 104/115 [00:25<00:02,  4.54it/s]Processing batches:  91%|█████████▏| 105/115 [00:25<00:02,  4.55it/s]Processing batches:  92%|█████████▏| 106/115 [00:25<00:01,  4.55it/s]Processing batches:  93%|█████████▎| 107/115 [00:25<00:01,  4.55it/s]Processing batches:  94%|█████████▍| 108/115 [00:26<00:01,  4.55it/s]Processing batches:  95%|█████████▍| 109/115 [00:26<00:01,  4.57it/s]Processing batches:  96%|█████████▌| 110/115 [00:26<00:01,  4.57it/s]Processing batches:  97%|█████████▋| 111/115 [00:26<00:00,  4.56it/s]Processing batches:  97%|█████████▋| 112/115 [00:27<00:00,  4.57it/s]Processing batches:  98%|█████████▊| 113/115 [00:27<00:00,  4.59it/s]Processing batches:  99%|█████████▉| 114/115 [00:27<00:00,  4.59it/s]Processing batches: 100%|██████████| 115/115 [00:27<00:00,  4.17it/s]
-2025-11-02 17:53:34,993 - INFO - Classifier settings:
-2025-11-02 17:53:34,993 - INFO -   - max_iter: 100 (sklearn default)
-2025-11-02 17:53:34,993 - INFO -   - random_state: None (no seed)
-2025-11-02 17:53:34,994 - INFO -   - class_weight: None (sklearn default)
-2025-11-02 17:53:34,994 - INFO -   - StandardScaler: NO ✅
-2025-11-02 17:53:34,994 - INFO - 
-Running 10-fold cross-validation...
-/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-2025-11-02 17:53:35,380 - INFO - 
-================================================================================
-2025-11-02 17:53:35,380 - INFO - RESULTS - Test 2:
-2025-11-02 17:53:35,380 - INFO -   CV Accuracy: 0.6651 (+/- 0.0957)
-2025-11-02 17:53:35,380 - INFO -   Individual fold scores: [0.67391304 0.72826087 0.65217391 0.7173913  0.62637363 0.63736264
- 0.74725275 0.59340659 0.62637363 0.64835165]
-2025-11-02 17:53:35,380 - INFO - ================================================================================
-/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:465: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-2025-11-02 17:53:35,431 - WARNING - Jain embeddings not cached, computing...
-Some weights of EsmModel were not initialized from the model checkpoint at facebook/esm1v_t33_650M_UR90S_1 and are newly initialized: ['contact_head.regression.bias', 'contact_head.regression.weight', 'pooler.dense.bias', 'pooler.dense.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-11-02 17:53:36,663 - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 loaded on mps with batch_size=8
-2025-11-02 17:53:36,664 - INFO - Extracting embeddings for 94 sequences with batch_size=8...
-Processing batches:   0%|          | 0/12 [00:00<?, ?it/s]Processing batches:   8%|▊         | 1/12 [00:00<00:02,  3.96it/s]Processing batches:  17%|█▋        | 2/12 [00:00<00:02,  3.93it/s]Processing batches:  25%|██▌       | 3/12 [00:00<00:02,  4.19it/s]Processing batches:  33%|███▎      | 4/12 [00:00<00:01,  4.12it/s]Processing batches:  42%|████▏     | 5/12 [00:01<00:01,  4.10it/s]Processing batches:  50%|█████     | 6/12 [00:01<00:01,  4.24it/s]Processing batches:  58%|█████▊    | 7/12 [00:01<00:01,  4.31it/s]Processing batches:  67%|██████▋   | 8/12 [00:01<00:00,  4.39it/s]Processing batches:  75%|███████▌  | 9/12 [00:02<00:00,  4.44it/s]Processing batches:  83%|████████▎ | 10/12 [00:02<00:00,  4.32it/s]Processing batches:  92%|█████████▏| 11/12 [00:02<00:00,  4.38it/s]Processing batches: 100%|██████████| 12/12 [00:02<00:00,  4.57it/s]Processing batches: 100%|██████████| 12/12 [00:02<00:00,  4.33it/s]
-2025-11-02 17:53:39,435 - INFO - 
-  Training Accuracy: 0.7407
-2025-11-02 17:53:39,435 - INFO -   Jain Test Accuracy: 0.6702
-2025-11-02 17:53:39,436 - INFO - 
-
-================================================================================
-2025-11-02 17:53:39,436 - INFO - COMPARISON: Phase 1 Tests vs Baseline vs Novo Benchmark
-2025-11-02 17:53:39,436 - INFO - ================================================================================
-2025-11-02 17:53:39,436 - INFO - 
-    | Configuration          | CV Accuracy | Train Accuracy | Jain Accuracy | Status |
-    |------------------------|-------------|----------------|---------------|--------|
-    | **Baseline (with StandardScaler)** | 63.88%      | 95.62%         | 55.32%        | ❌ Current |
-    | **Test 1 (no scaler, max_iter=1000)** | 66.62%      | 74.07%         | 68.09%        | ⚠️ Phase 1.1 |
-    | **Test 2 (no scaler, sklearn defaults)** | 66.51%      | 74.07%         | 67.02%        | ⚠️ Phase 1.2 |
-    | **Novo Benchmark (2025)** | 71.00%      | ~75-80% (est.) | 69.00%        | ✅ Target |
-    
-2025-11-02 17:53:39,436 - WARNING - 
-================================================================================
-2025-11-02 17:53:39,436 - WARNING - ⚠️ HYPOTHESIS NOT FULLY CONFIRMED
-2025-11-02 17:53:39,436 - WARNING - ================================================================================
-2025-11-02 17:53:39,436 - WARNING - CV accuracy improved to 66.62%, but still below Novo's 71%.
-2025-11-02 17:53:39,436 - WARNING - Additional investigations needed:
-2025-11-02 17:53:39,436 - WARNING - 1. Check Boughter dataset filtering (0 vs >3 flags parsing)
-2025-11-02 17:53:39,436 - WARNING - 2. Verify ESM 1v model checkpoint version
-2025-11-02 17:53:39,436 - WARNING - 3. Check random seed effects on CV splits
-2025-11-02 17:53:39,436 - WARNING - 4. Verify label distribution matches Novo's
-2025-11-02 17:53:39,438 - INFO - 
-Results saved to PHASE1_TEST_RESULTS.md
-2025-11-02 17:53:39,439 - INFO - 
-PHASE 1 TESTING COMPLETE

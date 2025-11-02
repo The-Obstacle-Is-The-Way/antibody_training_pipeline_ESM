@@ -182,8 +182,7 @@ def perform_cross_validation(
     cv_params["batch_size"] = config["training"].get("batch_size", 32)
     cv_classifier = BinaryClassifier(cv_params)
 
-    # FIXED: Pass full BinaryClassifier object (includes StandardScaler) instead of bare LogisticRegression
-    # This ensures CV uses the same preprocessing pipeline as training/testing
+    # Use full BinaryClassifier for CV (no StandardScaler - matches Novo methodology)
 
     # Accuracy
     scores = cross_val_score(cv_classifier, X, y, cv=cv, scoring="accuracy")

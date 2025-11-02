@@ -3,7 +3,6 @@ from typing import Dict
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
 
 from model import ESMEmbeddingExtractor
 
@@ -31,7 +30,6 @@ class BinaryClassifier:
         self.embedding_extractor = ESMEmbeddingExtractor(
             params["model_name"], params["device"], batch_size
         )
-        self.scaler = StandardScaler()
 
         # Get class_weight parameter if provided, otherwise use None (default)
         class_weight = params.get("class_weight", None)
@@ -102,11 +100,8 @@ class BinaryClassifier:
             X: Array of ESM-1V embeddings
             y: Array of labels
         """
-        # Scale the embeddings
-        X_scaled = self.scaler.fit_transform(X)
-
-        # Fit the classifier
-        self.classifier.fit(X_scaled, y)
+        # Fit the classifier directly on embeddings (no scaling per Novo methodology)
+        self.classifier.fit(X, y)
         self.is_fitted = True
         logger.info(f"Classifier fitted on {len(X)} samples")
 
@@ -123,8 +118,7 @@ class BinaryClassifier:
         if not self.is_fitted:
             raise ValueError("Classifier must be fitted before making predictions")
 
-        X_scaled = self.scaler.transform(X)
-        return self.classifier.predict(X_scaled)
+        return self.classifier.predict(X)
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
         """
@@ -139,8 +133,7 @@ class BinaryClassifier:
         if not self.is_fitted:
             raise ValueError("Classifier must be fitted before making predictions")
 
-        X_scaled = self.scaler.transform(X)
-        return self.classifier.predict_proba(X_scaled)
+        return self.classifier.predict_proba(X)
 
     def score(self, X: np.ndarray, y: np.ndarray) -> float:
         """
@@ -156,8 +149,7 @@ class BinaryClassifier:
         if not self.is_fitted:
             raise ValueError("Classifier must be fitted before scoring")
 
-        X_scaled = self.scaler.transform(X)
-        return self.classifier.score(X_scaled, y)
+        return self.classifier.score(X, y)
 
     def __getstate__(self):
         """Custom pickle method - don't save the ESM model"""

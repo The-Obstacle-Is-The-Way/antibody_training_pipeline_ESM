@@ -1,96 +1,0 @@
-2025-11-02 17:55:07,325 - INFO - ================================================================================
-2025-11-02 17:55:07,325 - INFO - NOVO NORDISK METHODOLOGY - SIMPLIFIED TRAINING
-2025-11-02 17:55:07,325 - INFO - ================================================================================
-2025-11-02 17:55:07,325 - INFO - Approach: ESM 1v embeddings → LogisticRegression (no scaling)
-2025-11-02 17:55:07,325 - INFO - 
-2025-11-02 17:55:07,325 - INFO - Loading training data (Boughter VH)...
-2025-11-02 17:55:07,327 - INFO -   Loaded 914 training samples
-2025-11-02 17:55:07,327 - INFO -   Label distribution: [443 471] (48.5% / 51.5%)
-2025-11-02 17:55:07,327 - INFO - Computing embeddings for 914 sequences...
-Some weights of EsmModel were not initialized from the model checkpoint at facebook/esm1v_t33_650M_UR90S_1 and are newly initialized: ['contact_head.regression.bias', 'contact_head.regression.weight', 'pooler.dense.bias', 'pooler.dense.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-11-02 17:55:13,706 - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 loaded on mps with batch_size=8
-2025-11-02 17:55:13,706 - INFO - Extracting embeddings for 914 sequences with batch_size=8...
-Processing batches:   0%|          | 0/115 [00:00<?, ?it/s]Processing batches:   1%|          | 1/115 [00:00<01:00,  1.87it/s]Processing batches:   2%|▏         | 2/115 [00:00<00:49,  2.29it/s]Processing batches:   3%|▎         | 3/115 [00:01<00:39,  2.86it/s]Processing batches:   3%|▎         | 4/115 [00:01<00:36,  3.04it/s]Processing batches:   4%|▍         | 5/115 [00:01<00:35,  3.10it/s]Processing batches:   5%|▌         | 6/115 [00:02<00:36,  3.02it/s]Processing batches:   6%|▌         | 7/115 [00:02<00:32,  3.29it/s]Processing batches:   7%|▋         | 8/115 [00:02<00:30,  3.50it/s]Processing batches:   8%|▊         | 9/115 [00:02<00:33,  3.21it/s]Processing batches:   9%|▊         | 10/115 [00:03<00:31,  3.38it/s]Processing batches:  10%|▉         | 11/115 [00:03<00:32,  3.20it/s]Processing batches:  10%|█         | 12/115 [00:03<00:29,  3.44it/s]Processing batches:  11%|█▏        | 13/115 [00:04<00:28,  3.63it/s]Processing batches:  12%|█▏        | 14/115 [00:04<00:30,  3.33it/s]Processing batches:  13%|█▎        | 15/115 [00:04<00:28,  3.52it/s]Processing batches:  14%|█▍        | 16/115 [00:04<00:29,  3.36it/s]Processing batches:  15%|█▍        | 17/115 [00:05<00:27,  3.54it/s]Processing batches:  16%|█▌        | 18/115 [00:05<00:25,  3.78it/s]Processing batches:  17%|█▋        | 19/115 [00:05<00:25,  3.84it/s]Processing batches:  17%|█▋        | 20/115 [00:05<00:24,  3.90it/s]Processing batches:  18%|█▊        | 21/115 [00:06<00:24,  3.92it/s]Processing batches:  19%|█▉        | 22/115 [00:06<00:26,  3.53it/s]Processing batches:  20%|██        | 23/115 [00:06<00:25,  3.66it/s]Processing batches:  21%|██        | 24/115 [00:07<00:24,  3.70it/s]Processing batches:  22%|██▏       | 25/115 [00:07<00:23,  3.91it/s]Processing batches:  23%|██▎       | 26/115 [00:07<00:21,  4.07it/s]Processing batches:  23%|██▎       | 27/115 [00:07<00:21,  4.04it/s]Processing batches:  24%|██▍       | 28/115 [00:08<00:24,  3.60it/s]Processing batches:  25%|██▌       | 29/115 [00:08<00:22,  3.75it/s]Processing batches:  26%|██▌       | 30/115 [00:08<00:22,  3.82it/s]Processing batches:  27%|██▋       | 31/115 [00:08<00:21,  3.98it/s]Processing batches:  28%|██▊       | 32/115 [00:09<00:20,  3.99it/s]Processing batches:  29%|██▊       | 33/115 [00:09<00:21,  3.76it/s]Processing batches:  30%|██▉       | 34/115 [00:09<00:21,  3.81it/s]Processing batches:  30%|███       | 35/115 [00:09<00:20,  3.83it/s]Processing batches:  31%|███▏      | 36/115 [00:10<00:20,  3.87it/s]Processing batches:  32%|███▏      | 37/115 [00:10<00:20,  3.87it/s]Processing batches:  33%|███▎      | 38/115 [00:10<00:19,  3.92it/s]Processing batches:  34%|███▍      | 39/115 [00:10<00:19,  3.90it/s]Processing batches:  35%|███▍      | 40/115 [00:11<00:19,  3.92it/s]Processing batches:  36%|███▌      | 41/115 [00:11<00:18,  3.97it/s]Processing batches:  37%|███▋      | 42/115 [00:11<00:18,  3.92it/s]Processing batches:  37%|███▋      | 43/115 [00:11<00:18,  3.93it/s]Processing batches:  38%|███▊      | 44/115 [00:12<00:18,  3.90it/s]Processing batches:  39%|███▉      | 45/115 [00:12<00:17,  3.92it/s]Processing batches:  40%|████      | 46/115 [00:12<00:17,  3.90it/s]Processing batches:  41%|████      | 47/115 [00:12<00:17,  3.93it/s]Processing batches:  42%|████▏     | 48/115 [00:13<00:17,  3.90it/s]Processing batches:  43%|████▎     | 49/115 [00:13<00:16,  3.97it/s]Processing batches:  43%|████▎     | 50/115 [00:13<00:15,  4.09it/s]Processing batches:  44%|████▍     | 51/115 [00:13<00:15,  4.10it/s]Processing batches:  45%|████▌     | 52/115 [00:14<00:17,  3.51it/s]Processing batches:  46%|████▌     | 53/115 [00:14<00:18,  3.44it/s]Processing batches:  47%|████▋     | 54/115 [00:14<00:16,  3.71it/s]Processing batches:  48%|████▊     | 55/115 [00:15<00:15,  3.91it/s]Processing batches:  49%|████▊     | 56/115 [00:15<00:14,  4.09it/s]Processing batches:  50%|████▉     | 57/115 [00:15<00:16,  3.51it/s]Processing batches:  50%|█████     | 58/115 [00:15<00:15,  3.77it/s]Processing batches:  51%|█████▏    | 59/115 [00:16<00:14,  3.97it/s]Processing batches:  52%|█████▏    | 60/115 [00:16<00:14,  3.73it/s]Processing batches:  53%|█████▎    | 61/115 [00:16<00:14,  3.84it/s]Processing batches:  54%|█████▍    | 62/115 [00:16<00:13,  4.03it/s]Processing batches:  55%|█████▍    | 63/115 [00:17<00:12,  4.18it/s]Processing batches:  56%|█████▌    | 64/115 [00:17<00:11,  4.29it/s]Processing batches:  57%|█████▋    | 65/115 [00:17<00:11,  4.36it/s]Processing batches:  57%|█████▋    | 66/115 [00:17<00:12,  3.99it/s]Processing batches:  58%|█████▊    | 67/115 [00:18<00:11,  4.15it/s]Processing batches:  59%|█████▉    | 68/115 [00:18<00:10,  4.28it/s]Processing batches:  60%|██████    | 69/115 [00:18<00:10,  4.36it/s]Processing batches:  61%|██████    | 70/115 [00:18<00:10,  4.35it/s]Processing batches:  62%|██████▏   | 71/115 [00:18<00:09,  4.42it/s]Processing batches:  63%|██████▎   | 72/115 [00:19<00:09,  4.36it/s]Processing batches:  63%|██████▎   | 73/115 [00:19<00:09,  4.42it/s]Processing batches:  64%|██████▍   | 74/115 [00:19<00:09,  4.46it/s]Processing batches:  65%|██████▌   | 75/115 [00:19<00:08,  4.49it/s]Processing batches:  66%|██████▌   | 76/115 [00:20<00:08,  4.35it/s]Processing batches:  67%|██████▋   | 77/115 [00:20<00:08,  4.39it/s]Processing batches:  68%|██████▊   | 78/115 [00:20<00:08,  4.43it/s]Processing batches:  69%|██████▊   | 79/115 [00:20<00:08,  4.45it/s]Processing batches:  70%|██████▉   | 80/115 [00:20<00:07,  4.49it/s]Processing batches:  70%|███████   | 81/115 [00:21<00:07,  4.50it/s]Processing batches:  71%|███████▏  | 82/115 [00:21<00:07,  4.52it/s]Processing batches:  72%|███████▏  | 83/115 [00:21<00:07,  4.53it/s]Processing batches:  73%|███████▎  | 84/115 [00:21<00:06,  4.55it/s]Processing batches:  74%|███████▍  | 85/115 [00:22<00:06,  4.43it/s]Processing batches:  75%|███████▍  | 86/115 [00:22<00:06,  4.47it/s]Processing batches:  76%|███████▌  | 87/115 [00:22<00:06,  4.44it/s]Processing batches:  77%|███████▋  | 88/115 [00:22<00:06,  4.43it/s]Processing batches:  77%|███████▋  | 89/115 [00:22<00:05,  4.47it/s]Processing batches:  78%|███████▊  | 90/115 [00:23<00:05,  4.49it/s]Processing batches:  79%|███████▉  | 91/115 [00:23<00:05,  4.50it/s]Processing batches:  80%|████████  | 92/115 [00:23<00:05,  4.50it/s]Processing batches:  81%|████████  | 93/115 [00:23<00:04,  4.51it/s]Processing batches:  82%|████████▏ | 94/115 [00:24<00:04,  4.53it/s]Processing batches:  83%|████████▎ | 95/115 [00:24<00:04,  4.54it/s]Processing batches:  83%|████████▎ | 96/115 [00:24<00:04,  4.56it/s]Processing batches:  84%|████████▍ | 97/115 [00:24<00:03,  4.56it/s]Processing batches:  85%|████████▌ | 98/115 [00:24<00:03,  4.53it/s]Processing batches:  86%|████████▌ | 99/115 [00:25<00:03,  4.41it/s]Processing batches:  87%|████████▋ | 100/115 [00:25<00:03,  4.45it/s]Processing batches:  88%|████████▊ | 101/115 [00:25<00:03,  4.49it/s]Processing batches:  89%|████████▊ | 102/115 [00:25<00:02,  4.49it/s]Processing batches:  90%|████████▉ | 103/115 [00:26<00:02,  4.52it/s]Processing batches:  90%|█████████ | 104/115 [00:26<00:02,  4.54it/s]Processing batches:  91%|█████████▏| 105/115 [00:26<00:02,  4.55it/s]Processing batches:  92%|█████████▏| 106/115 [00:26<00:01,  4.57it/s]Processing batches:  93%|█████████▎| 107/115 [00:26<00:01,  4.57it/s]Processing batches:  94%|█████████▍| 108/115 [00:27<00:01,  4.56it/s]Processing batches:  95%|█████████▍| 109/115 [00:27<00:01,  4.52it/s]Processing batches:  96%|█████████▌| 110/115 [00:27<00:01,  4.54it/s]Processing batches:  97%|█████████▋| 111/115 [00:27<00:00,  4.54it/s]Processing batches:  97%|█████████▋| 112/115 [00:28<00:00,  4.56it/s]Processing batches:  98%|█████████▊| 113/115 [00:28<00:00,  4.58it/s]Processing batches:  99%|█████████▉| 114/115 [00:28<00:00,  4.58it/s]Processing batches: 100%|██████████| 115/115 [00:28<00:00,  4.75it/s]Processing batches: 100%|██████████| 115/115 [00:28<00:00,  4.01it/s]
-2025-11-02 17:55:42,377 - INFO - Embeddings computed: shape=(914, 1280)
-2025-11-02 17:55:42,378 - INFO - 
-Initializing LogisticRegression...
-2025-11-02 17:55:42,378 - INFO -   max_iter: 1000
-2025-11-02 17:55:42,378 - INFO -   random_state: 42
-2025-11-02 17:55:42,378 - INFO -   class_weight: None (Boughter is balanced)
-2025-11-02 17:55:42,378 - INFO -   StandardScaler: NO ✅ (matching Novo)
-2025-11-02 17:55:42,378 - INFO - 
-Performing 10-fold cross-validation...
-2025-11-02 17:55:44,115 - INFO - 
-================================================================================
-2025-11-02 17:55:44,116 - INFO - CROSS-VALIDATION RESULTS:
-2025-11-02 17:55:44,116 - INFO - ================================================================================
-2025-11-02 17:55:44,116 - INFO -   Accuracy: 0.6662 (+/- 0.0926)
-2025-11-02 17:55:44,116 - INFO -   F1 Score: 0.6768 (+/- 0.0926)
-2025-11-02 17:55:44,116 - INFO -   ROC AUC:  0.7408 (+/- 0.0908)
-2025-11-02 17:55:44,116 - INFO -   Individual fold accuracies: [0.67391304 0.72826087 0.65217391 0.7173913  0.62637363 0.63736264
- 0.74725275 0.6043956  0.62637363 0.64835165]
-2025-11-02 17:55:44,116 - INFO - 
-Training final model on full training set...
-2025-11-02 17:55:44,183 - INFO -   Training Accuracy: 0.7407
-2025-11-02 17:55:44,183 - INFO - 
-Evaluating on Jain test set...
-2025-11-02 17:55:44,185 - INFO -   Loaded 94 Jain test samples
-2025-11-02 17:55:44,186 - INFO - Computing embeddings for 94 sequences...
-Some weights of EsmModel were not initialized from the model checkpoint at facebook/esm1v_t33_650M_UR90S_1 and are newly initialized: ['contact_head.regression.bias', 'contact_head.regression.weight', 'pooler.dense.bias', 'pooler.dense.weight']
-You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
-2025-11-02 17:55:45,446 - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 loaded on mps with batch_size=8
-2025-11-02 17:55:45,446 - INFO - Extracting embeddings for 94 sequences with batch_size=8...
-Processing batches:   0%|          | 0/12 [00:00<?, ?it/s]Processing batches:   8%|▊         | 1/12 [00:00<00:02,  4.26it/s]Processing batches:  17%|█▋        | 2/12 [00:00<00:02,  4.08it/s]Processing batches:  25%|██▌       | 3/12 [00:00<00:02,  4.30it/s]Processing batches:  33%|███▎      | 4/12 [00:00<00:01,  4.36it/s]Processing batches:  42%|████▏     | 5/12 [00:01<00:01,  4.26it/s]Processing batches:  50%|█████     | 6/12 [00:01<00:01,  4.35it/s]Processing batches:  58%|█████▊    | 7/12 [00:01<00:01,  4.40it/s]Processing batches:  67%|██████▋   | 8/12 [00:01<00:00,  4.46it/s]Processing batches:  75%|███████▌  | 9/12 [00:02<00:00,  4.49it/s]Processing batches:  83%|████████▎ | 10/12 [00:02<00:00,  4.24it/s]Processing batches:  92%|█████████▏| 11/12 [00:02<00:00,  4.34it/s]Processing batches: 100%|██████████| 12/12 [00:02<00:00,  4.07it/s]Processing batches: 100%|██████████| 12/12 [00:02<00:00,  4.26it/s]
-2025-11-02 17:55:48,265 - INFO - Embeddings computed: shape=(94, 1280)
-2025-11-02 17:55:48,266 - INFO - 
-================================================================================
-2025-11-02 17:55:48,266 - INFO - JAIN TEST RESULTS:
-2025-11-02 17:55:48,266 - INFO - ================================================================================
-2025-11-02 17:55:48,266 - INFO -   Accuracy:  0.6809
-2025-11-02 17:55:48,267 - INFO -   Precision: 0.4595
-2025-11-02 17:55:48,268 - INFO -   Recall:    0.6296
-2025-11-02 17:55:48,268 - INFO -   F1 Score:  0.5312
-2025-11-02 17:55:48,269 - INFO -   ROC AUC:   0.6379
-2025-11-02 17:55:48,269 - INFO - 
-  Classification Report:
-2025-11-02 17:55:48,271 - INFO - 
-              precision    recall  f1-score   support
-
-         0.0       0.82      0.70      0.76        67
-         1.0       0.46      0.63      0.53        27
-
-    accuracy                           0.68        94
-   macro avg       0.64      0.67      0.64        94
-weighted avg       0.72      0.68      0.69        94
-
-2025-11-02 17:55:48,271 - INFO - 
-  Confusion Matrix:
-2025-11-02 17:55:48,272 - INFO - 
-[[47 20]
- [10 17]]
-2025-11-02 17:55:48,272 - INFO - 
-================================================================================
-2025-11-02 17:55:48,272 - INFO - COMPARISON WITH NOVO BENCHMARK:
-2025-11-02 17:55:48,272 - INFO - ================================================================================
-2025-11-02 17:55:48,272 - INFO - 
-    | Metric        | Our Results | Novo (2025) | Gap      | Status |
-    |---------------|-------------|-------------|----------|--------|
-    | CV Accuracy   |  66.62%   | 71.00%      | -4.38% | ⚠️ |
-    | Train Acc     |  74.07%   | ~75-80%     | -        | ✅ |
-    | Jain Test     |  68.09%   | 69.00%      | -0.91% | ✅ |
-    
-2025-11-02 17:55:48,272 - INFO - 
-Saving model to ./models/novo_simple_logreg.pkl...
-2025-11-02 17:55:48,272 - INFO -   Model saved successfully
-2025-11-02 17:55:48,272 - INFO - 
-================================================================================
-2025-11-02 17:55:48,272 - INFO - TRAINING COMPLETE
-2025-11-02 17:55:48,272 - INFO - ================================================================================
-2025-11-02 17:55:48,272 - INFO - ✅ CV Accuracy:     66.62%
-2025-11-02 17:55:48,272 - INFO - ✅ Training Acc:    74.07%
-2025-11-02 17:55:48,272 - INFO - ✅ Jain Test Acc:   68.09%
-2025-11-02 17:55:48,272 - INFO - ✅ Model saved:     ./models/novo_simple_logreg.pkl
-2025-11-02 17:55:48,272 - INFO - 
-2025-11-02 17:55:48,272 - INFO - Novo Nordisk methodology successfully reproduced! 🎯
-2025-11-02 17:55:48,272 - INFO - ================================================================================
