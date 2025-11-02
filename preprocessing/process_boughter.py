@@ -216,10 +216,11 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Define all 16 fragment types
+    # Using standard naming: VH_only, VL_only (matches other datasets)
     fragments = {
         # 1-2: Full variable domains
-        "VH": ("full_seq_H", "heavy_variable_domain"),
-        "VL": ("full_seq_L", "light_variable_domain"),
+        "VH_only": ("full_seq_H", "heavy_variable_domain"),
+        "VL_only": ("full_seq_L", "light_variable_domain"),
         # 3-5: Heavy CDRs
         "H-CDR1": ("cdr1_aa_H", "h_cdr1"),
         "H-CDR2": ("cdr2_aa_H", "h_cdr2"),
@@ -245,6 +246,10 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
     print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
+    # Get processing date
+    from datetime import datetime
+    processing_date = datetime.now().strftime("%Y-%m-%d")
+
     for fragment_name, (column_name, description) in fragments.items():
         output_path = output_dir / f"{fragment_name}_boughter.csv"
 
@@ -263,7 +268,26 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
             }
         )
 
-        fragment_df.to_csv(output_path, index=False)
+        # Write metadata header as comments, then CSV data
+        metadata = f"""# Boughter Dataset - {fragment_name} Fragment
+# Processing Date: {processing_date}
+# CDR Extraction Method: ANARCI (IMGT numbering, strict)
+# CDR-H3 Boundary: positions 105-117 (EXCLUDES position 118 - FR4 J-anchor)
+# CDR-H2 Boundary: positions 56-65 (fixed IMGT, variable lengths are normal)
+# CDR-H1 Boundary: positions 27-38 (fixed IMGT)
+# Boundary Rationale: Position 118 is FR4 J-anchor (conserved W/F), not CDR
+# Boughter Note: Original Boughter files include position 118; we use strict IMGT
+# Fragment Description: {description}
+# Reference: See docs/cdr_boundary_first_principles_audit.md
+# Total Sequences: {len(fragment_df)}
+# Training Sequences: {len(fragment_df[fragment_df['include_in_training']])}
+"""
+
+        # Write metadata + CSV
+        with open(output_path, 'w') as f:
+            f.write(metadata)
+            fragment_df.to_csv(f, index=False)
+
         print(f"  ✓ {fragment_name:12s} -> {output_path.name}")
 
     print(f"\n✓ All {len(fragments)} fragment files created in: {output_dir}")
