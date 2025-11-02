@@ -856,15 +856,16 @@ def main():
 
 ### Stage 3.3: Expected Results
 
-**Pipeline progression:**
-- Stage 1: 1167 sequences (DNA translation)
-- Stage 2: 859 sequences (ANARCI annotation - 73.6%)
-- Stage 3: ~750-800 sequences (after X/empty filtering)
+**Pipeline progression (ACTUAL RESULTS):**
+- Stage 1: 1117 sequences (DNA translation from 1171 raw - 95.4% success)
+- Stage 2: 1110 sequences (ANARCI annotation - 99.4% success)
+- Stage 3: 1065 sequences (after X/empty filtering - 95.9% retention)
+- Training: 914 sequences (after excluding 1-3 flag mild category)
 
 **This matches:**
-- Boughter's 1053 analyzed sequences (from ~1138 in .dat files)
-- Novo's ~1000 sequences (from Figure S1)
-- Our current 746 training sequences (we're actually close!)
+- Boughter's published raw data (1171 sequences total)
+- Novo's ">1000" specification (Figure S1)
+- Novo's balanced training set (443 specific + 471 non-specific = 914 total)
 
 **Why Stage 3 is necessary:**
 - HIV sequences have leading N's → X's in protein → X's in CDRs
