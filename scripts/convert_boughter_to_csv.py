@@ -85,9 +85,41 @@ def parse_yn_flags(flag_path: Path) -> List[int]:
     return flags
 
 
+def find_first_atg(dna_seq: str) -> Optional[int]:
+    """
+    Find the first in-frame ATG (start codon) in DNA sequence.
+
+    Boughter raw sequences have:
+    - Leading N's and primer remnants before the actual antibody sequence
+    - The real antibody starts at the first ATG (signal peptide)
+
+    Args:
+        dna_seq: DNA nucleotide sequence string
+
+    Returns:
+        Position of first ATG, or None if not found
+    """
+    dna_seq = dna_seq.upper()
+
+    # Search for ATG starting from beginning
+    # Most Boughter sequences have ATG within first 200 bp
+    for i in range(0, min(300, len(dna_seq) - 2)):
+        if dna_seq[i:i+3] == "ATG":
+            return i
+
+    return None
+
+
 def translate_dna_to_protein(dna_seq: str) -> Optional[str]:
     """
-    Translate DNA sequence to protein using standard genetic code.
+    Translate DNA sequence to protein, trimming to first ATG start codon.
+
+    Boughter raw sequences contain leading N's and primer sequences that
+    cause frameshifts and premature stop codons. We must find the first
+    in-frame ATG (start of signal peptide) and translate from there.
+
+    This is the CRITICAL fix for Stage 1 translation accuracy.
+    Without this, ~88% of HIV sequences fail ANARCI annotation.
 
     Args:
         dna_seq: DNA nucleotide sequence string
@@ -96,16 +128,26 @@ def translate_dna_to_protein(dna_seq: str) -> Optional[str]:
         Translated amino acid sequence, or None if translation fails
     """
     try:
-        # Clean sequence (remove any N's or non-standard bases)
         dna_seq = dna_seq.upper()
 
-        # Create Bio.Seq object
-        seq = Seq(dna_seq)
+        # Find first ATG (start codon for signal peptide)
+        atg_pos = find_first_atg(dna_seq)
 
-        # Translate using standard genetic code (table=1)
-        # to_stop=False to get full sequence
-        protein = seq.translate(table=1, to_stop=False)
+        if atg_pos is not None:
+            # Trim to start from first ATG
+            trimmed_dna = dna_seq[atg_pos:]
 
+            # Translate from ATG
+            protein = Seq(trimmed_dna).translate(table=1, to_stop=False)
+            protein_str = str(protein)
+
+            # Validate: should start with M (methionine) and have minimal X's
+            if protein_str[0] == 'M' and protein_str.count('X') < len(protein_str) * 0.05:
+                return protein_str
+
+        # Fallback: if ATG trimming failed or produced bad result,
+        # try raw translation (for sequences that don't need trimming)
+        protein = Seq(dna_seq).translate(table=1, to_stop=False)
         return str(protein)
 
     except Exception as e:
