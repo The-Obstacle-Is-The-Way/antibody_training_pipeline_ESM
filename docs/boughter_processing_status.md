@@ -128,78 +128,45 @@
 
 ## Implementation Decision (Based on First Principles)
 
-### Option 1: ANARCI with Strict IMGT (Conservative)
+**Decision Made**: Use ANARCI with Strict IMGT Numbering
 
 **Approach**:
 ```python
 # Use ANARCI with standard IMGT boundaries
-# CDR3: 105-117 (no position 118)
-# CDR2: 56-65 (fixed)
+# CDR-H3: 105-117 (EXCLUDES position 118 - it's FR4 J-anchor)
+# CDR-H2: 56-65 (fixed IMGT positions, natural length variation OK)
+# CDR-H1: 27-38 (fixed IMGT)
+# CDR-L3: 105-117 (fixed IMGT)
+# CDR-L2: 56-65 (fixed IMGT)
+# CDR-L1: 27-38 (fixed IMGT)
 ```
 
-**Pros**:
-- Standard, reproducible methodology
-- Matches IMGT specification
-- Matches what Novo stated in paper
+**Why This Decision**:
 
-**Cons**:
-- CDR sequences won't match Boughter's published data
-- May not match Novo's actual implementation
-- Validation against Boughter data will show mismatches
+1. **Biology**: Position 118 is FR4 (framework), not CDR
+   - Conserved J-anchor (W or F in all antibodies)
+   - Germline-encoded, NOT hypervariable
+   - Does NOT contact antigen
 
-### Option 2: Replicate Boughter's IgBLAST Method (Exact Match)
+2. **Machine Learning**: Position 118 provides zero information
+   - No sequence variance to learn from
+   - Including it pollutes variable region signal
 
-**Approach**:
-```python
-# Translate DNA → protein
-# Run igblast alignment
-# Parse CDR boundaries from igblast output
-# Use pairwise2 for J-gene alignment (CDR3)
-```
+3. **Standardization**: IMGT is the international standard
+   - All test datasets use ANARCI/IMGT (Harvey, Jain, Shehata)
+   - Harvey explicitly confirms ANARCI with IMGT numbering
+   - Cross-dataset comparability requires consistency
 
-**Pros**:
-- CDR sequences exactly match Boughter's published data
-- No ambiguity about boundaries
-- Can validate against mouse_IgA.dat
+4. **CDR2 Variable Lengths Are Normal**:
+   - Harvey et al. 2022: "CDR2 length of 8 or 9 (9 or 10... to include more variability)"
+   - This is REAL biological variation, not an error
+   - ANARCI/IMGT handles this with gaps for deletions
 
-**Cons**:
-- Complex implementation (requires igblast + custom parsing)
-- May not match what Novo actually did
-- Requires J-gene reference files
-
-### Option 3: ANARCI + Position 118 Extension (Hybrid)
-
-**Approach**:
-```python
-# Use ANARCI for CDR1, CDR2, FWRs
-# Extend CDR3 to include position 118 (custom modification)
-# Document this choice explicitly
-```
-
-**Pros**:
-- Simpler than full igblast replication
-- CDR3 matches Boughter's data
-- ANARCI handles most complexity
-
-**Cons**:
-- Still doesn't solve CDR2 variable boundary issue
-- Requires ANARCI modification
-- May not match Novo's exact method
-
-### Option 4: Wait for Novo's Code Release
-
-**Status** (from Discord):
-- Hybri: "wait for novo's code? [...] we can't know the logic behind it if they don't disclose it"
-- Mentioned "2 weeks" for code release
-
-**Pros**:
-- Get exact methodology from source
-- No guesswork
-- Perfect replication
-
-**Cons**:
-- Unknown timeline (may be delayed)
-- Blocks progress
+**What About Boughter's Published Data?**:
+- Boughter's `.dat` files include position 118 (from IgBLAST method)
+- This is fine for their biochemical analysis
+- For ML prediction, we use strict IMGT (biologically correct)
+- Document this discrepancy explicitly
 
 ---
 
