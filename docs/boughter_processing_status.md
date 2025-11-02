@@ -277,40 +277,14 @@ boughter_note: Original Boughter files include position 118; we use strict IMGT
 reference: See docs/cdr_boundary_first_principles_audit.md
 ```
 
-### Parallel Track: Request Clarification
+### Note on Novo's Methodology
 
-**Email to Novo Authors** (draft):
-```
-Subject: Clarification on Boughter Dataset CDR Extraction Boundaries
+**Our decision is independent of what Novo did**:
+- Strict IMGT (105-117) is the biologically and methodologically correct approach
+- We use this standard regardless of Novo's actual implementation
+- If Novo used different boundaries, that would be a methodological limitation in their work
 
-Dear Dr. Sakhnini, Dr. Lorenzen, Dr. Vendruscolo, and Dr. Granata,
-
-We are replicating your excellent work on antibody non-specificity
-prediction (Sakhnini et al. 2025). We have a technical question
-regarding the Boughter dataset preprocessing:
-
-Your paper states: "sequences were annotated in the CDRs using ANARCI
-following the IMGT numbering scheme" (Section 4.3).
-
-However, Boughter's published mouse_IgA.dat file shows CDR-H3
-sequences ending with W (e.g., "ARRGYYYGSFDYW"), suggesting position
-118 is included. Standard IMGT CDR-H3 is positions 105-117 (excluding
-position 118, which is FR4 J-anchor).
-
-Could you clarify:
-1. Did you use CDR3 boundaries 105-117 (strict IMGT) or 105-118
-   (Boughter's igblast-based)?
-2. For CDR2, did you use fixed IMGT 56-65 or variable igblast
-   alignment boundaries?
-3. Did you re-extract CDRs or use Boughter's pre-processed data?
-
-This would help us ensure exact replication of your methodology.
-
-Thank you for your time and for making your work publicly available.
-
-Best regards,
-[Name]
-```
+**Optional**: If you want to understand Novo's exact methodology for academic interest, you can email the authors. However, this is NOT required for implementation - we proceed with the correct approach (strict IMGT).
 
 ---
 
