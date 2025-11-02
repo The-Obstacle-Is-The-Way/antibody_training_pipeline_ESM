@@ -45,7 +45,7 @@ def annotate_sequence(seq_id: str, sequence: str) -> Optional[Dict[str, str]]:
 
         # Extract all heavy chain fragments
         fragments = {
-            "full_seq_H": annotation.sequence_alignment_aa,
+            "full_seq_H": annotation.sequence_aa,  # Gap-free sequence (P0 fix)
             "fwr1_aa_H": annotation.fwr1_aa,
             "cdr1_aa_H": annotation.cdr1_aa,
             "fwr2_aa_H": annotation.fwr2_aa,
