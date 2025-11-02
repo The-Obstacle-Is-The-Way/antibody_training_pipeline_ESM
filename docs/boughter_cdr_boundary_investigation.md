@@ -304,6 +304,55 @@ documented full investigation: [link to this file when pushed]
 
 ---
 
+## CDR2 Variable Boundaries - CRITICAL FINDING
+
+### What Hybri Observed (Discord, Nov 1):
+> "then there's a problem with CDR2 ... some CDR2s are shorter than what they're supposed to be ! ... it's not [consistent], I should understand why some CDR2s aren't matching the anarci numbering"
+
+### Harvey et al. 2022 Confirms This is NORMAL
+
+From Harvey et al. 2022 Methods (line 142):
+> "The nanobody sequences were aligned using ANARCI with standard IMGT numbering to identify the CDR regions. For our dataset of sequences to train the supervised models, we limited nanobody sequences to sequences with a **CDR1 length of 8, a CDR2 length of 8 or 9 (9 or 10 in the deeper sequencing exploration, when we include an additional position at the end of CDR2 to include more variability)**, and CDR3 lengths between 6 and 22."
+
+**Key Insights:**
+1. **Harvey used ANARCI with IMGT numbering** (explicitly stated)
+2. **Harvey observed variable CDR2 lengths** (8-10 residues)
+3. **This is REAL biological variation**, not an error
+4. **ANARCI/IMGT correctly handles this** with gaps for deletions, insertion codes for insertions
+
+### Why CDR2 Length Varies
+
+**IMGT positions are fixed (56-65)**, but:
+- Some antibodies have **natural deletions** → shorter CDR2
+- Some antibodies have **natural insertions** → longer CDR2
+- ANARCI assigns IMGT position numbers, using gaps where deletions occur
+- This is **normal antibody diversity**
+
+**Example:**
+```
+Antibody A: CDR2 = AASSTSGN (8 residues, deletion at position 60)
+Antibody B: CDR2 = AASSTDSSGN (10 residues, standard length)
+```
+
+Both use IMGT positions 56-65, but Antibody A has a gap at position 60.
+
+### Resolution for CDR2
+
+✅ **Use ANARCI standard IMGT numbering (positions 56-65)**
+
+**Why:**
+- **IMGT positions are fixed**, but sequences naturally vary in length
+- **ANARCI handles this correctly** using gaps
+- **All test datasets use ANARCI/IMGT** (Harvey, Jain, Shehata confirm this)
+- **Variable lengths are expected** - this is antibody diversity, not a problem
+
+**What Hybri saw is CORRECT behavior:**
+- Some CDR2s ARE shorter (natural deletions)
+- ANARCI correctly identifies this
+- This is biology, not a bug!
+
+---
+
 ## Resolution (2025-11-02)
 
 ### Final Decision: Strict IMGT (CDR-H3 = 105-117, Excluding Position 118)
