@@ -6,11 +6,11 @@ Processes raw Boughter DNA FASTA files, translates to protein, applies
 Novo Nordisk flagging strategy, and outputs combined CSV.
 
 Usage:
-    python3 preprocessing/convert_boughter_to_csv.py
+    python3 scripts/convert_boughter_to_csv.py
 
 Outputs:
     test_datasets/boughter.csv - Combined dataset with Novo flagging
-    test_datasets/boughter/translation_failures.log - Failed sequences
+    test_datasets/boughter_raw/translation_failures.log - Failed sequences
 """
 
 import sys
