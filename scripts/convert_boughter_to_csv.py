@@ -159,19 +159,20 @@ def validate_translation(protein_seq: str) -> bool:
     """
     Validate that translation produced reasonable antibody sequence.
 
+    After ATG-based trimming, sequences should be much cleaner.
     Lenient validation - ANARCI will do strict validation in Stage 2.
-    We only reject completely broken translations.
 
-    Boughter sequences include:
-    - Signal peptides
-    - Leading N's (unknown bases) → X's and stop codons
+    Antibody sequences include:
+    - Signal peptide (starts with M)
+    - Variable domain (VH or VL)
     - Constant regions (full-length antibodies)
-    - ANARCI will extract the V-domain from these
+    - ANARCI will extract just the V-domain
 
     Checks:
     1. Sequence exists and has reasonable length (50-500 aa)
-    2. Contains at least SOME valid amino acids
-    3. Not completely garbage (>50% valid standard amino acids)
+    2. Starts with M (methionine - from ATG start codon)
+    3. Contains mostly valid amino acids (>80% standard AA)
+    4. Minimal X's and stops (some trailing junk is OK)
 
     Returns:
         True if valid, False otherwise
@@ -181,20 +182,20 @@ def validate_translation(protein_seq: str) -> bool:
 
     # Allow wide range: 50-500 aa
     # Includes signal peptides + V-domain + constant regions
-    # ANARCI will extract just the V-domain
     if len(protein_seq) < 50 or len(protein_seq) > 500:
         return False
 
-    # Allow stop codons (*) and X's - common in Boughter data
-    # ANARCI will skip leading N's and extract clean V-domain
+    # Should start with M (from ATG start codon)
+    if protein_seq[0] != 'M':
+        return False
 
-    # Check that sequence has at least 50% standard amino acids
-    # This rejects completely broken translations
+    # Check that sequence has at least 80% standard amino acids
+    # (Allow some trailing X's and stops from sequencing artifacts)
     standard_aa = set("ACDEFGHIKLMNPQRSTVWY")
     valid_count = sum(1 for aa in protein_seq if aa in standard_aa)
     valid_ratio = valid_count / len(protein_seq)
 
-    if valid_ratio < 0.50:  # Reject if <50% valid
+    if valid_ratio < 0.80:  # Reject if <80% valid
         return False
 
     return True
