@@ -93,3 +93,53 @@ Notable antibodies (≥4 flags / label 1): **bimagrumab**, **briakinumab**, **
 1. Update downstream preprocessing / evaluation to ignore mild (`label` = `<NA>`) entries when performing binary classification, mirroring Sakhnini et al. 2025.
 2. Regenerate fragment CSVs via `python3 preprocessing/process_jain.py` once PR is updated to the new canonical dataset.
 3. Append these validation results to future PR descriptions for traceability.
+
+---
+
+## ✅ FIX APPLIED (2025-11-02)
+
+### Issue Identified
+
+After comparing with Hybri's Discord replication and Novo's results, discovered that flag threshold was incorrectly set:
+
+- **Bug**: `scripts/convert_jain_excel_to_csv.py:207` used `>= 4` threshold
+- **Correct**: Should be `>= 3` threshold (matches Novo/Hybri methodology)
+- **Impact**: Only 3 non-specific antibodies instead of 27
+
+### Fix Implemented
+
+**File Modified**: `scripts/convert_jain_excel_to_csv.py`
+
+```python
+# Line 207 - BEFORE (WRONG):
+if total_flags >= 4:
+    return "non_specific"
+
+# Line 207 - AFTER (FIXED):
+if total_flags >= 3:  # Fixed: Changed from >=4 to >=3 (matches Novo/Hybri)
+    return "non_specific"
+```
+
+### Files Regenerated
+
+1. ✅ `test_datasets/jain.csv` - Regenerated with correct labels
+2. ✅ All 16 fragment files in `test_datasets/jain/` - Regenerated
+3. ✅ `test_datasets/jain/VH_only_jain_test.csv` - Now has 94 antibodies (was 70)
+
+### Validation After Fix
+
+| Check | Before Fix | After Fix |
+|-------|------------|-----------|
+| Flag distribution | specific 67 / mild 67 / non_specific **3** | specific 67 / mild 43 / non_specific **27** |
+| Label distribution | 0→67, `<NA>`→67, 1→**3** | 0→67, `<NA>`→43, 1→**27** |
+| Test set size | **70** (67+3) | **94** (67+27) |
+| Class imbalance | 95.7% : 4.3% | 71.3% : 28.7% |
+| Comparison to Novo | 3 vs 29 (**26 off**) | 27 vs 29 (**2 off**) ✅ |
+
+**Notable antibodies (>=3 flags / label 1)**: Now includes 27 antibodies with 3-4 flags, matching Novo's methodology.
+
+### References
+
+- See `docs/jain/FINAL_JAIN_ANALYSIS.md` for complete analysis
+- See `docs/jain/JAIN_FIX_PLAN.md` for implementation details
+- Discord evidence: Hybri's replication used >=3 threshold, matched Novo's 86-antibody test set
