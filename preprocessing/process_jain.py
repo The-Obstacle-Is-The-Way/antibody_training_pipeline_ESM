@@ -59,8 +59,8 @@ def annotate_sequence(
         annotation = annotator.run_on_sequence(seq_id, sequence)
 
         # Extract all fragments
+        # Note: We extract individual fragments first, then reconstruct full V-domain
         fragments = {
-            f"full_seq_{chain}": annotation.sequence_alignment_aa,
             f"fwr1_aa_{chain}": annotation.fwr1_aa,
             f"cdr1_aa_{chain}": annotation.cdr1_aa,
             f"fwr2_aa_{chain}": annotation.fwr2_aa,
@@ -69,6 +69,19 @@ def annotate_sequence(
             f"cdr3_aa_{chain}": annotation.cdr3_aa,
             f"fwr4_aa_{chain}": annotation.fwr4_aa,
         }
+
+        # Reconstruct full V-domain from fragments (gap-free, P0 fix)
+        # This avoids gap characters from sequence_alignment_aa
+        # Same fix as applied to Harvey/Shehata/Boughter datasets
+        fragments[f"full_seq_{chain}"] = "".join([
+            fragments[f"fwr1_aa_{chain}"],
+            fragments[f"cdr1_aa_{chain}"],
+            fragments[f"fwr2_aa_{chain}"],
+            fragments[f"cdr2_aa_{chain}"],
+            fragments[f"fwr3_aa_{chain}"],
+            fragments[f"cdr3_aa_{chain}"],
+            fragments[f"fwr4_aa_{chain}"],
+        ])
 
         # Create concatenated fragments
         fragments[f"cdrs_{chain}"] = "".join(
