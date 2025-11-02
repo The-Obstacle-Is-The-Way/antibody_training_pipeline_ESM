@@ -326,7 +326,8 @@ reference: See docs/cdr_boundary_first_principles_audit.md
 ### Resolved Questions:
 - ✅ **CDR3 boundary**: Use 105-117 (strict IMGT, EXCLUDE position 118)
 - ✅ **Position 118 treatment**: Excluded (it's FR4 J-anchor, not CDR)
-- ✅ **CDR2 boundary**: Use 56-65 (fixed IMGT)
+- ✅ **CDR2 boundary**: Use 56-65 (fixed IMGT positions, variable lengths are normal biology)
+- ✅ **CDR2 variable lengths**: Harvey et al. 2022 confirms this is expected with ANARCI/IMGT
 - ✅ **Rationale**: Biological correctness + ML best practices + standardization
 
 ### Implementation Decision:
