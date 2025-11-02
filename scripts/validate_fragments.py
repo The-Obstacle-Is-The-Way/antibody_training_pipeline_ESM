@@ -112,7 +112,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
 
 def validate_label_distribution(csv_path: Path):
     """Validate label distribution matches expected pattern."""
-    df = pd.read_csv(csv_path)
+    df = pd.read_csv(csv_path, comment="#")
 
     stats = {
         "total": len(df),
@@ -184,6 +184,7 @@ def main():
         ("jain", Path("test_datasets/jain"), 16),  # Full antibodies (VH+VL)
         ("shehata", Path("test_datasets/shehata"), 16),  # Full antibodies (VH+VL)
         ("harvey", Path("test_datasets/harvey"), 6),  # Nanobodies (VHH only)
+        ("boughter", Path("test_datasets/boughter"), 16),  # Full antibodies (VH+VL)
     ]
 
     all_valid = True
