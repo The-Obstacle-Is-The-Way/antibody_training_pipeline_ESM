@@ -19,11 +19,13 @@ Inputs:
 Outputs:
     test_datasets/boughter/*_boughter.csv - 16 fragment-specific files (clean data)
     test_datasets/boughter/annotation_failures.log - Failed annotations (Stage 2)
+    test_datasets/boughter/qc_filtered_sequences.txt - QC-filtered sequences (Stage 3)
 
-Expected Results:
-    Stage 1 input:  ~1167 sequences
-    Stage 2 output: ~859 sequences (73.6% - expected due to corrupted HIV sequences)
-    Stage 3 output: ~837 sequences (97.4% - removes X in CDRs)
+Actual Results:
+    Stage 1 input:  1117 sequences (95.4% DNA translation success from 1171 raw)
+    Stage 2 output: 1110 sequences (99.4% ANARCI annotation success)
+    Stage 3 output: 1065 sequences (95.9% retention after QC filtering)
+    Training data:  914 sequences (443 specific + 471 non-specific)
 
 See docs/accuracy_verification_report.md for validation of methodology.
 """
