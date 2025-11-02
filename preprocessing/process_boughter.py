@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 import sys
-from pathlib import PosixPath
-from pathlib import Path
+from itertools import chain
+from pathlib import Path, PosixPath
 from typing import Any
 
-from more_itertools import batched
-from tqdm.auto import tqdm
-from itertools import chain
+import Bio
 import pandas as pd
 import riot_na
-import Bio
 from Bio.SeqIO import parse
-
+from more_itertools import batched
+from tqdm.auto import tqdm
 
 annotator = riot_na.create_riot_nt()
 
