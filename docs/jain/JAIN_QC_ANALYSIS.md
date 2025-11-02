@@ -385,3 +385,102 @@ True 0      36         31    = 67 specific
 **Test Set**: VH_only_jain_test.csv (94 antibodies)
 **Results Dir**: test_results/jain_fixed_94ab/
 **Status**: ⏸️ **PAUSED FOR REVIEW** - Awaiting decision on QC filtering approach
+
+---
+
+## ⚡ QC FILTERING EXPERIMENT: 91-Antibody Test (2025-11-02)
+
+### Hypothesis
+
+Removing the 3 high-confidence QC outliers (crenezumab, fletikumab, secukinumab) should improve model performance by eliminating problematic sequences.
+
+### Method
+
+**Antibodies Removed**:
+1. **crenezumab** (VH=112 aa, z=2.29) - Literature-confirmed CDR H3 with only 3 residues
+2. **fletikumab** (VH=127 aa, z=2.59) - Extreme length outlier
+3. **secukinumab** (VH=127 aa, z=2.59) - Extreme length outlier
+
+All 3 antibodies were labeled as **specific (label=0)** in the test set.
+
+**Test Set Composition After Removal**:
+- Total: 91 antibodies
+- Specific (label=0): 64 antibodies
+- Non-specific (label=1): 27 antibodies
+- Class balance: 70.3% : 29.7%
+
+### Results Comparison
+
+| Metric | Baseline (94 ab) | QC-Filtered (91 ab) | Change |
+|--------|------------------|---------------------|--------|
+| **Accuracy** | **55.31%** | **54.95%** | **-0.36%** ❌ |
+| Precision | 0.3404 | 0.3478 | +0.0074 |
+| Recall | 0.5926 | 0.5926 | 0.0000 |
+| F1 | 0.4324 | 0.4384 | +0.0060 |
+| ROC-AUC | 0.5300 | 0.5284 | -0.0016 |
+
+**Confusion Matrices**:
+
+```
+Baseline (94 antibodies):      QC-Filtered (91 antibodies):
+[[36, 31]                       [[34, 30]
+ [11, 16]]                       [11, 16]]
+```
+
+### Detailed Impact Analysis
+
+**Specific Class (label=0)**:
+- Total: 67 → 64 (-3 removed)
+- True Positives: 36 → 34 (-2)
+- False Negatives: 31 → 30 (-1)
+- Recall: 53.7% → 53.1% (-0.6%)
+
+**Non-Specific Class (label=1)**:
+- Total: 27 → 27 (unchanged)
+- True Positives: 16 → 16 (unchanged)
+- False Positives: 11 → 11 (unchanged)
+- Recall: 59.3% → 59.3% (unchanged)
+
+**Fate of Removed Outliers**:
+- 2 were **correctly classified** as specific (true positives lost)
+- 1 was **incorrectly classified** as non-specific (false positive removed)
+
+Net effect: -2 TP, -1 FP = **-0.36% accuracy**
+
+### Conclusion
+
+❌ **QC FILTERING DID NOT IMPROVE PERFORMANCE**
+
+**Key Findings**:
+
+1. **ESM-1v embeddings are robust to length outliers**: The model handled extreme length variations (VH=112-127 vs mean=119) without degradation. Two of the three extreme outliers were correctly classified.
+
+2. **The 13.3% gap to Novo (68.6%) is NOT primarily due to QC filtering**: Removing high-confidence problematic sequences had minimal impact on performance.
+
+3. **Performance gap likely due to other factors**:
+   - **Model differences**: Different training data, hyperparameters, or architectures
+   - **Preprocessing differences**: ANARCI version/settings, gap handling, V-domain reconstruction
+   - **Embedding differences**: ESM version, pooling strategy, batch effects
+
+4. **The 8-antibody gap mystery remains unsolved**: We can only confidently identify 3 QC issues, not 8. Novo's exact QC criteria are unclear.
+
+### Recommendation
+
+🎯 **Next Priority: Model & Preprocessing Investigation**
+
+Instead of further QC filtering, focus on:
+1. **Verify Boughter model provenance**: Is this the correct model for Jain evaluation?
+2. **Compare preprocessing pipelines**: Investigate ANARCI settings, gap handling
+3. **Check ESM embedding extraction**: Version, pooling method, batch size effects
+4. **Consider retraining**: If model mismatch is severe
+
+The QC approach was scientifically sound but did not resolve the performance gap. The issue lies elsewhere in the pipeline.
+
+---
+
+**Test Date**: 2025-11-02
+**Model**: boughter_vh_esm1v_logreg.pkl
+**Test Sets**:
+- Baseline: VH_only_jain_test.csv (94 antibodies) → test_results/jain_fixed_94ab/
+- QC-Filtered: VH_only_jain_test.csv (91 antibodies) → test_results/jain_qc3_91ab/
+**Status**: ✅ **QC EXPERIMENT COMPLETE** - Filtering not effective, investigate model/preprocessing next
