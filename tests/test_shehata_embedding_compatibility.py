@@ -12,7 +12,6 @@ Date: 2025-11-02
 
 import sys
 from pathlib import Path
-from typing import List, Tuple
 
 import pandas as pd
 
@@ -237,7 +236,7 @@ def test_data_integrity():
                 print(f"  ✅ {filename}: 398 rows")
 
     if all_exist and all_398:
-        print(f"\n✅ PASS: All 16 fragment files exist with 398 rows each")
+        print("\n✅ PASS: All 16 fragment files exist with 398 rows each")
         return True
     else:
         print("\n❌ FAIL: Data integrity issues detected")
