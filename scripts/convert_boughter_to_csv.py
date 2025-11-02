@@ -284,20 +284,17 @@ def validate_translation(protein_seq: str) -> bool:
     """
     Validate that translation produced reasonable antibody sequence.
 
-    After ATG-based trimming and scoring, sequences should be cleaner.
-    Lenient validation - ANARCI will do strict validation in Stage 2.
+    Accepts BOTH sequence types from Boughter data:
+    1. Full-length (HIV/gut): Signal peptide + V-domain, starts with M, 150-500 aa
+    2. V-domain only (mouse/flu): Just V-domain, starts with Q/E/D, 95-160 aa
 
-    Antibody sequences include:
-    - Signal peptide (starts with M)
-    - Variable domain (VH or VL)
-    - Constant regions (full-length antibodies)
-    - ANARCI will extract just the V-domain
+    Lenient validation - ANARCI will do strict structural validation in Stage 2.
 
     Checks:
-    1. Sequence exists and has reasonable length (100-500 aa)
-    2. Starts with M (methionine - from ATG start codon)
-    3. First 150 aa are mostly clean (>90% valid - this is the V-domain region)
-    4. Allow trailing junk - sequencing artifacts after constant region
+    1. Sequence exists and has reasonable length (95-500 aa)
+    2. Can start with M (full-length) OR Q/E/D (V-domain only)
+    3. First 150 aa are mostly clean (>80% valid standard amino acids)
+    4. No stop codons in first 150 aa (would truncate V-domain)
 
     Returns:
         True if valid, False otherwise
@@ -305,30 +302,25 @@ def validate_translation(protein_seq: str) -> bool:
     if not protein_seq:
         return False
 
-    # Require at least 100 aa (signal + V-domain minimum)
-    # Max 500 aa (full antibody with constant regions)
-    if len(protein_seq) < 100 or len(protein_seq) > 500:
+    # Accept wide length range to accommodate both types:
+    # - V-domain only: ~95-160 aa (mouse/flu)
+    # - Full-length: ~150-500 aa (signal + V-domain + constant regions)
+    if len(protein_seq) < 95 or len(protein_seq) > 500:
         return False
 
-    # Must start with M (from ATG start codon)
-    if protein_seq[0] != 'M':
-        return False
-
-    # Check first 150 aa (signal + V-domain) for quality
-    # This is what ANARCI will work with
+    # Check first 150 aa (V-domain region that ANARCI will extract)
     first_150 = protein_seq[:min(150, len(protein_seq))]
 
+    # Must be mostly standard amino acids (>80% valid)
+    # Allow some X's from sequencing uncertainty
     standard_aa = set("ACDEFGHIKLMNPQRSTVWY")
     valid_count = sum(1 for aa in first_150 if aa in standard_aa)
     valid_ratio = valid_count / len(first_150)
 
-    # Require >90% valid amino acids in V-domain region
-    # (Allow a few X's from sequencing uncertainty)
-    if valid_ratio < 0.90:
+    if valid_ratio < 0.80:
         return False
 
-    # Reject if stop codons (*) in first 150 aa
-    # (These would truncate the V-domain)
+    # Reject if stop codons in first 150 aa (would truncate V-domain)
     if '*' in first_150:
         return False
 
