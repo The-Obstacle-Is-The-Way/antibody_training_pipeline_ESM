@@ -204,7 +204,7 @@ def evaluate_cluster_flags(row: pd.Series) -> Dict[str, bool]:
 
 def assign_flag_category(total_flags: int) -> str:
     """Map numerical flag counts to categorical buckets."""
-    if total_flags >= 4:
+    if total_flags >= 3:  # Fixed: Changed from >=4 to >=3 (matches Novo/Hybri)
         return "non_specific"
     if total_flags == 0:
         return "specific"
