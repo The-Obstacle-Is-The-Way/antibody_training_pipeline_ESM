@@ -20,12 +20,12 @@ Stage 1: convert_boughter_to_csv.py - DNA Translation
 Stage 2: process_boughter.py - ANARCI Annotation
   Input:  test_datasets/boughter.csv
   Process: ANARCI annotation with strict IMGT numbering
-  Expected: ~859/1167 success (73.6%) - includes X-containing sequences
+  Actual:  1110/1117 success (99.4%) - high success with hybrid translation
 
 Stage 3: process_boughter.py - Post-Annotation Quality Control (NEW - 2025 Best Practice)
   Input:  Annotated sequences from Stage 2
   Process: Filter X-containing CDRs, filter empty CDRs
-  Expected: ~750-800 clean sequences
+  Actual:  1065 clean sequences (95.9% retention after QC)
   Output: test_datasets/boughter/*.csv (16 fragment-specific CSVs)
 
 Following Boughter et al. 2020 (seq_loader.py) and 2025 industry standards
