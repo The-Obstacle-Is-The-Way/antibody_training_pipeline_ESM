@@ -358,7 +358,6 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     ]
 
     df_clean = df.copy()
-    total_filtered = 0
 
     # Track sequences removed for each reason
     sequences_with_X = set()
