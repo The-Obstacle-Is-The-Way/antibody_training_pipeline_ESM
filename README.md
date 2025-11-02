@@ -109,7 +109,7 @@ The Shehata dataset (Shehata et al. 2019) provides a critical test set of 398 hu
 - `test_datasets/shehata.csv` - Full paired VH+VL sequences (398 antibodies)
 - `test_datasets/shehata/*.csv` - 16 fragment-specific files (VH, VL, H-CDR1, H-CDR2, H-CDR3, L-CDR1, L-CDR2, L-CDR3, H-CDRs, L-CDRs, H-FWRs, L-FWRs, VH+VL, All-CDRs, All-FWRs, Full)
 
-**Methodology:** All sequences are annotated using ANARCI with IMGT numbering scheme, following the exact procedure described in Sakhnini et al. 2025 (Section 4.3). For detailed information about data sources and preprocessing steps, see [`docs/shehata_data_sources.md`](docs/shehata_data_sources.md).
+**Methodology:** All sequences are annotated using ANARCI with IMGT numbering scheme, following the exact procedure described in Sakhnini et al. 2025 (Section 4.3). For detailed information about data sources and preprocessing steps, see [`docs/shehata/shehata_data_sources.md`](docs/shehata/shehata_data_sources.md).
 
 ---
 
