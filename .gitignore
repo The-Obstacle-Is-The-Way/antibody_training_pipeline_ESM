@@ -101,5 +101,7 @@ literature/
 test_datasets/*.xlsx
 test_datasets/*.xls
 test_datasets/*.pdf
-test_datasets/boughter_raw/
 reference_repos/
+
+# Boughter raw DNA files (large, downloadable from public sources)
+train_datasets/boughter_raw/
