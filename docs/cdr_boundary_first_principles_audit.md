@@ -299,22 +299,47 @@ documented full audit: docs/cdr_boundary_first_principles_audit.md
 
 ---
 
-## Open Questions
+## Final Conclusion (Updated 2025-11-02)
+
+### Decision: Use Strict IMGT (CDR-H3 = 105-117, Excluding Position 118)
+
+**From first principles analysis:**
+
+**Biology:**
+- Position 118 is **Framework Region 4**, not CDR
+- It's a **conserved J-anchor** (W or F in all antibodies)
+- It's **germline-encoded**, not variable
+- It **does NOT contact antigen** (β-strand, not loop)
+
+**Machine Learning:**
+- Position 118 has **zero predictive information** (constant)
+- Including it **pollutes the variable region signal**
+- **Standard practice**: Exclude conserved positions
+
+**Methodology:**
+- **IMGT is the international standard**
+- **All other datasets** (Harvey, Jain, Shehata) use strict IMGT
+- **Cross-dataset comparability** requires consistent boundaries
+- **Reproducibility** requires standardized definitions
+
+**Implementation:**
+- **Default**: ANARCI with strict IMGT (CDR3 = 105-117)
+- **Optional flag**: `--cdr3-include-118` for compatibility testing only
+- **Document**: Boughter's published files include position 118; we use strict IMGT
+
+### Answered Questions
 
 1. **Why did Boughter include position 118?**
-   - Functional/structural rationale?
-   - IgBLAST default behavior?
-   - Intentional choice?
+   - For biochemical/biophysical analysis (different use case than ML prediction)
+   - IgBLAST alignment behavior includes J-anchor
+   - Not wrong for their analysis, but not optimal for ML
 
-2. **What did Novo actually use?**
-   - Boughter's 105-118 boundaries as-is?
-   - Re-extracted with ANARCI 105-117?
-   - Email authors or wait for code release
+2. **What should WE use?**
+   - **Strict IMGT (105-117)** - biologically and methodologically correct
+   - Independent of what Novo did
 
-3. **CDR2 length discrepancies?**
-   - IgBLAST alignment-based (variable per sequence)
-   - vs IMGT fixed 56-65
-   - vs Chothia 52-56
+3. **CDR2 boundaries?**
+   - **Use IMGT fixed 56-65** - standard definition
 
 ---
 

@@ -304,6 +304,39 @@ documented full investigation: [link to this file when pushed]
 
 ---
 
-*Document version: 1.0*
-*Last updated: 2025-11-01*
-*Status: Pending independent verification*
+## Resolution (2025-11-02)
+
+### Final Decision: Strict IMGT (CDR-H3 = 105-117, Excluding Position 118)
+
+After first-principles analysis, we determined the correct approach:
+
+**Why exclude position 118:**
+1. **Biological**: Position 118 is FR4 (Framework Region 4), NOT CDR
+   - It's the conserved J-anchor (W or F in all antibodies)
+   - It's germline-encoded, not hypervariable
+   - It does NOT contact antigen (β-strand, not loop)
+
+2. **Machine Learning**: Position 118 provides ZERO predictive information
+   - It's conserved (no variance to learn from)
+   - Including it pollutes the variable region signal
+
+3. **Standardization**: IMGT is the international standard
+   - All other datasets (Harvey, Jain, Shehata) use strict IMGT
+   - Cross-dataset comparability requires consistent boundaries
+
+**Implementation:**
+- **Use ANARCI with strict IMGT** boundaries (CDR3 = 105-117)
+- **Document discrepancy**: Boughter's published files include position 118; we use strict IMGT
+- **Optional flag**: `--cdr3-include-118` for compatibility testing only (not production)
+
+**Rationale independence:**
+- Our decision is based on first principles, NOT on replicating Novo
+- If Novo used different boundaries, that would be a methodological limitation in their work
+
+See also: `cdr_boundary_first_principles_audit.md` for full analysis
+
+---
+
+*Document version: 2.0*
+*Last updated: 2025-11-02*
+*Status: ✅ **RESOLVED - Use Strict IMGT***
