@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 """
-Boughter Dataset Validation Script
+Boughter Dataset Conversion Validation Script
 
-Validates the processed Boughter dataset to ensure quality and correctness.
+Validates the complete Boughter processing pipeline from DNA FASTA to fragments.
 
 Usage:
-    python3 preprocessing/validate_boughter.py
+    python3 scripts/validate_boughter_conversion.py
 
 Checks:
-1. ANARCI annotation success rate (target: >95%)
-2. CDR length distributions vs expected ranges
-3. Sequence quality metrics (no stop codons, limited X's)
-4. Training set balance
-5. Fragment file integrity
+1. Stage 1: DNA translation success rate and sequence quality
+2. Stage 2: ANARCI annotation success rate (target: >95%)
+3. Stage 3: Post-QC filtering and retention
+4. CDR length distributions vs expected ranges
+5. Training set balance (Novo flagging strategy)
+6. Fragment file integrity
 
 Outputs:
     - Console report with validation results
