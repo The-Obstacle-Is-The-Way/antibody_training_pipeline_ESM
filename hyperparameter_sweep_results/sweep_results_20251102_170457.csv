@@ -1,0 +1,2 @@
+C,penalty,solver,class_weight,cv_accuracy_mean,cv_accuracy_std,cv_f1_mean,cv_f1_std,cv_roc_auc_mean,cv_roc_auc_std,cv_precision_mean,cv_recall_mean,train_accuracy_mean,train_accuracy_std,overfitting_gap
+0.001,l2,lbfgs,balanced,0.6641065456282848,0.05101116100697162,0.6681511658452559,0.054752064830781565,0.7276625295508274,0.04409719765090873,0.68093533925802,0.6602836879432624,0.7105512737507131,0.0055309061409996845,0.04644472812242839
