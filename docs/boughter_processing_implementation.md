@@ -509,12 +509,18 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> Optional[Dict[s
 
     Uses strict IMGT boundaries:
     - CDR-H3: positions 105-117 (EXCLUDES position 118, which is FR4 J-anchor)
-    - CDR-H2: positions 56-65 (fixed IMGT)
+    - CDR-H2: positions 56-65 (fixed IMGT positions, variable lengths OK)
     - CDR-H1: positions 27-38 (fixed IMGT)
 
     Note: Position 118 (J-Trp/Phe) is conserved FR4, NOT CDR.
     Boughter's published .dat files include position 118, but we use
     strict IMGT for biological correctness and ML best practices.
+
+    Note: CDR2 length naturally varies (8-11 residues typical).
+    IMGT positions are fixed (56-65), but sequences can have gaps
+    for deletions or insertion codes. Harvey et al. 2022 confirms
+    this is expected with ANARCI/IMGT numbering. This is normal
+    antibody diversity, not an error.
 
     From Sakhnini et al. 2025, Section 4.3:
     "The primary sequences were annotated in the CDRs using ANARCI
