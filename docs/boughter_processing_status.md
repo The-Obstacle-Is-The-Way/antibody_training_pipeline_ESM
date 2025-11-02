@@ -228,20 +228,21 @@
 ```python
 # convert_boughter_to_csv.py
 # - Translate DNA → protein ✅
+# - Validate sequences (reject stop codons, excessive X's) ✅
 # - Apply Novo flagging ✅
 # - Output: boughter.csv ✅
 
 # process_boughter.py
-# - Use ANARCI with IMGT numbering ✅
-# - Default: CDR3 = 105-117 (strict IMGT)
-# - Flag: --cdr3-include-118 (Boughter compat mode)
-# - Document choice in CSV metadata
-# - Output: 16 fragment CSVs
+# - Use ANARCI with strict IMGT numbering ✅
+# - CDR3 = 105-117 (strict IMGT, excludes position 118)
+# - Handle ANARCI failures gracefully (no crashes on None)
+# - Add metadata to all output CSVs
+# - Output: 16 fragment CSVs with proper naming (VH_only, VL_only, etc.)
 
 # validate_boughter.py
-# - Check ANARCI success rate
+# - Check ANARCI success rate (target: >95%)
 # - Compare CDR lengths to expected ranges
-# - Log discrepancies vs Boughter's published data
+# - Verify sequence quality metrics
 # - Generate validation report
 ```
 
@@ -291,9 +292,10 @@ reference: See docs/cdr_boundary_first_principles_audit.md
 
 2. **Write `process_boughter.py`**:
    - Implement Stage 2 (ANARCI annotation)
-   - Default: strict IMGT boundaries
-   - Add `--cdr3-include-118` flag for compatibility
-   - Generate 16 fragment CSVs
+   - Use strict IMGT boundaries (CDR3 = 105-117)
+   - Handle ANARCI failures gracefully
+   - Add metadata blocks to all CSVs
+   - Generate 16 fragment CSVs with proper naming
 
 3. **Write `validate_boughter.py`**:
    - Verify ANARCI success rate >95%
@@ -334,7 +336,7 @@ reference: See docs/cdr_boundary_first_principles_audit.md
 - ✅ **Use ANARCI with strict IMGT boundaries**
 - ✅ **Position 118 is Framework Region 4** (conserved, provides no ML information)
 - ✅ **Document discrepancy** with Boughter's published files (which include position 118)
-- ✅ **Add `--cdr3-include-118` flag** for compatibility testing ONLY (not for production)
+- ✅ **CDR3 = 105-117 (strict IMGT)** - No compatibility modes, single standard
 
 ### What About Novo's Methodology?
 **We don't need to know** - Our implementation is based on:
