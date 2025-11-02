@@ -4,8 +4,8 @@ Hyperparameter Sweep for Boughter LogisticRegression Model
 
 Goal: Find optimal C, penalty, and solver to match Novo's 71% 10-CV accuracy
 
-Current performance: 67.5% ± 8.9%
-Target: 71.0% (Novo's benchmark)
+Current performance (no StandardScaler): ~68% CV, 68.09% Jain test
+Target: 71.0% CV (Novo's benchmark)
 """
 
 import logging
@@ -16,7 +16,6 @@ import pandas as pd
 import yaml
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold, cross_validate
-from sklearn.preprocessing import StandardScaler
 
 from model import ESMEmbeddingExtractor
 
@@ -70,9 +69,8 @@ class HyperparameterSweep:
         )
         logger.info(f"{'='*70}")
 
-        # Scale embeddings
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(self.embeddings)
+        # Use embeddings directly (no scaling - matches Novo methodology)
+        X = self.embeddings
 
         # Create classifier with specified hyperparameters
         try:
@@ -91,7 +89,7 @@ class HyperparameterSweep:
 
             cv_results = cross_validate(
                 clf,
-                X_scaled,
+                X,
                 self.labels,
                 cv=cv,
                 scoring=["accuracy", "f1", "roc_auc", "precision", "recall"],
@@ -173,8 +171,8 @@ class HyperparameterSweep:
         logger.info(f"\n{'='*70}")
         logger.info("STARTING HYPERPARAMETER SWEEP")
         logger.info(f"Total configurations to test: {len(sweep_grid)}")
-        logger.info("Baseline: 67.5% ± 8.9% (current)")
-        logger.info("Target: 71.0% (Novo benchmark)")
+        logger.info("Baseline: ~68% CV, 68.09% Jain (no StandardScaler)")
+        logger.info("Target: 71.0% CV (Novo benchmark)")
         logger.info(f"{'='*70}\n")
 
         for i, params in enumerate(sweep_grid, 1):
@@ -219,7 +217,7 @@ class HyperparameterSweep:
             f"CV Accuracy: {best['cv_accuracy_mean']:.4f} ± {best['cv_accuracy_std']:.4f}"
         )
         logger.info(
-            f"Improvement over baseline: {(best['cv_accuracy_mean'] - 0.675) * 100:+.2f}%"
+            f"Improvement over baseline (~68%): {(best['cv_accuracy_mean'] - 0.68) * 100:+.2f}%"
         )
         logger.info(
             f"Gap to Novo (71%): {(0.71 - best['cv_accuracy_mean']) * 100:.2f}%"
@@ -253,5 +251,5 @@ class HyperparameterSweep:
 
 
 if __name__ == "__main__":
-    sweep = HyperparameterSweep("config_boughter.yaml")
+    sweep = HyperparameterSweep("configs/config.yaml")
     results = sweep.run_sweep()

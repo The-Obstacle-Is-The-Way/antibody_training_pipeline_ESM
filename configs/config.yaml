@@ -28,6 +28,11 @@ data:
 # Classifier configuration - matches Novo Nordisk methodology
 classifier:
   type: "logistic_regression"  # Novo uses LogisticReg
+
+  # LogisticRegression hyperparameters (verified optimal via sweep)
+  C: 1.0                      # Inverse regularization strength (optimal from sweep)
+  penalty: "l2"               # Regularization type: l1, l2, elasticnet, or none (optimal from sweep)
+  solver: "lbfgs"             # Optimization algorithm: lbfgs, liblinear, saga, etc (optimal from sweep)
   max_iter: 1000              # Maximum iterations for convergence
   random_state: 42            # Seed for reproducibility
   class_weight: null          # None - Boughter is already balanced (48.5%/51.5%)

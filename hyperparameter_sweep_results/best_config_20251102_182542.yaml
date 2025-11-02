@@ -1,0 +1,8 @@
+C: 1.0
+class_weight: balanced
+cv_accuracy: 0.6749522216913522
+cv_accuracy_std: 0.044498000463626175
+max_iter: 1000
+penalty: l2
+random_state: 42
+solver: lbfgs

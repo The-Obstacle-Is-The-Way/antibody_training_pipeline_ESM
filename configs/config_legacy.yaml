@@ -27,13 +27,18 @@ data:
 # Classifier configuration
 classifier:
   type: "logistic_regression"
-  max_iter: 1000              # Maximum iterations for logistic regression
+
+  # LogisticRegression hyperparameters
+  C: 1.0                      # Inverse regularization strength
+  penalty: "l2"               # Regularization type: l1, l2, elasticnet, or none
+  solver: "lbfgs"             # Optimization algorithm: lbfgs, liblinear, saga, etc
+  max_iter: 1000              # Maximum iterations for convergence
   random_state: 42            # Random seed for reproducibility
-  class_weight: "None"    # Class weight for logistic regression
+  class_weight: null          # Class weight for logistic regression
 
   # Cross-validation settings (performed on training data only)
   cv_folds: 10                # Number of folds for cross-validation on training data
-  stratify: false              # Whether to use stratified CV
+  stratify: true              # Whether to use stratified CV
 
 # Training configuration
 training:

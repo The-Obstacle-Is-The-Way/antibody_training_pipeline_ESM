@@ -31,27 +31,41 @@ class BinaryClassifier:
             params["model_name"], params["device"], batch_size
         )
 
-        # Get class_weight parameter if provided, otherwise use None (default)
+        # Get all LogisticRegression hyperparameters from config (with defaults)
         class_weight = params.get("class_weight", None)
+        C = params.get("C", 1.0)
+        penalty = params.get("penalty", "l2")
+        solver = params.get("solver", "lbfgs")
 
         self.classifier = LogisticRegression(
+            C=C,
+            penalty=penalty,
+            solver=solver,
             random_state=params["random_state"],
             max_iter=params["max_iter"],
-            class_weight=class_weight,  # FIXED: Use the parameter from config!
+            class_weight=class_weight,
         )
         print(
-            f"Classifier initialized with random state: {random_state}, class_weight: {class_weight}"
+            f"Classifier initialized: C={C}, penalty={penalty}, solver={solver}, "
+            f"random_state={random_state}, class_weight={class_weight}"
         )
         print(
-            f"  VERIFICATION: LogisticRegression.class_weight = {self.classifier.class_weight}"
+            f"  VERIFICATION: LogisticRegression config = "
+            f"C={self.classifier.C}, penalty={self.classifier.penalty}, "
+            f"solver={self.classifier.solver}, class_weight={self.classifier.class_weight}"
         )
+
+        # Store all hyperparameters for recreation and sklearn compatibility
         self.random_state = random_state
         self.is_fitted = False
         self.device = self.embedding_extractor.device
-        self.model_name = params["model_name"]  # Store for recreation
+        self.model_name = params["model_name"]
         self.max_iter = params["max_iter"]
         self.class_weight = class_weight
-        self.batch_size = batch_size  # Store for recreation
+        self.C = C
+        self.penalty = penalty
+        self.solver = solver
+        self.batch_size = batch_size
 
         # Store all params for sklearn compatibility
         self._params = params
@@ -71,6 +85,9 @@ class BinaryClassifier:
             "random_state": self.random_state,
             "max_iter": self.max_iter,
             "class_weight": self.class_weight,
+            "C": self.C,
+            "penalty": self.penalty,
+            "solver": self.solver,
             "model_name": self.model_name,
             "device": self.device,
             "batch_size": self.batch_size,
