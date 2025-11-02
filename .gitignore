@@ -94,8 +94,14 @@ models/
 logs/
 outputs/
 
-# Literature markdown conversions (for personal reference only)
-literature/markdown/
+# Literature PDFs and markdown conversions (for personal reference only)
+literature/
+
+# Reference repositories (for development reference only)
+reference_repos/
+
+# Raw training datasets (large files, not for version control)
+train_datasets/boughter_raw/
 
 # Raw data files (download from paper supplementary materials)
 test_datasets/*.xlsx
