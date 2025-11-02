@@ -264,9 +264,8 @@ cdr3 = "ARRGYYYGSFDYW"  # 13 residues, has W
 ### Immediate
 
 1. ✅ Document this discrepancy (this file)
-2. ⬜ Create compatibility flag in our extractor: `--cdr3-include-118`
-3. ⬜ Email Novo authors for clarification on exact boundaries used
-4. ⬜ Post concise Discord message explaining findings
+2. ✅ Use strict IMGT (CDR3 = 105-117) as single standard
+3. ✅ Post concise Discord message explaining findings
 
 ### For Discord (Draft)
 
@@ -288,11 +287,10 @@ implications:
 • boughter reference has: ARRGYYYGSFDYW (has W)
 • mismatch breaks validation
 
-solutions:
-1. extend to pos 118 to match boughter/novo
-2. trim pos 118 from reference data
-3. add --cdr3-include-118 compat flag
-4. email novo for clarification
+solution:
+- Use strict IMGT (CDR3 = 105-117, excludes position 118)
+- Position 118 is FR4 J-anchor (conserved), not CDR
+- Document discrepancy with Boughter's published files
 
 documented full audit: docs/cdr_boundary_first_principles_audit.md
 ```
@@ -323,8 +321,8 @@ documented full audit: docs/cdr_boundary_first_principles_audit.md
 - **Reproducibility** requires standardized definitions
 
 **Implementation:**
-- **Default**: ANARCI with strict IMGT (CDR3 = 105-117)
-- **Optional flag**: `--cdr3-include-118` for compatibility testing only
+- **Use ANARCI with strict IMGT** (CDR3 = 105-117, excludes position 118)
+- **Single standard**: No compatibility modes, strict IMGT only
 - **Document**: Boughter's published files include position 118; we use strict IMGT
 
 ### Answered Questions

@@ -117,12 +117,14 @@ def validate_translation(protein_seq: str) -> bool:
     """
     Validate that translation produced reasonable antibody sequence.
 
-    Very lenient validation - ANARCI will do the real validation in Stage 2.
-    We just reject completely broken translations.
+    Strict validation to reject junk sequences before ANARCI annotation.
+    ANARCI will fail on sequences with stop codons or excessive unknowns.
 
     Checks:
-    1. Protein sequence is not empty
-    2. Has at least some amino acids (>20 aa)
+    1. Length in expected range for variable domains (90-200 aa)
+    2. No stop codons (*)
+    3. Limited unknown amino acids (<5% X's from N bases)
+    4. Contains standard amino acids
 
     Returns:
         True if valid, False otherwise
@@ -130,12 +132,27 @@ def validate_translation(protein_seq: str) -> bool:
     if not protein_seq:
         return False
 
-    # Very lenient - just check it's not completely empty
-    # ANARCI will extract V-domain in Stage 2
-    if len(protein_seq) < 20:
+    # Check length - variable domains are typically 110-130 aa
+    # Allow 90-200 to handle signal peptides and slight variations
+    if len(protein_seq) < 90 or len(protein_seq) > 200:
         return False
 
-    # Allow stop codons and X (from N bases) - ANARCI will handle it
+    # Reject sequences with stop codons
+    if "*" in protein_seq:
+        return False
+
+    # Reject sequences with excessive unknown amino acids (X from N bases)
+    x_count = protein_seq.count("X")
+    x_ratio = x_count / len(protein_seq)
+    if x_ratio > 0.05:  # Reject if >5% unknown
+        return False
+
+    # Check that sequence contains mostly standard amino acids
+    standard_aa = set("ACDEFGHIKLMNPQRSTVWY")
+    valid_chars = sum(1 for aa in protein_seq if aa in standard_aa or aa == "X")
+    if valid_chars < len(protein_seq) * 0.95:
+        return False
+
     return True
 
 
