@@ -94,14 +94,9 @@ models/
 logs/
 outputs/
 
-# Literature files (PDFs, markdown conversions - for personal reference only)
-literature/
+# Literature markdown conversions (for personal reference only)
+literature/markdown/
 
 # Raw data files (download from paper supplementary materials)
 test_datasets/*.xlsx
 test_datasets/*.xls
-test_datasets/*.pdf
-reference_repos/
-
-# Boughter raw DNA files (large, downloadable from public sources)
-train_datasets/boughter_raw/
