@@ -80,7 +80,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
                     results["valid"] = False
 
             # Check for null values in critical columns
-            for col in ["id", "sequence", "label"]:
+            for col in ["id", "sequence"]:
                 if col in df.columns:
                     nulls = df[col].isna().sum()
                     if nulls > 0:
@@ -88,6 +88,14 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
                             f"{csv_file.name}: {nulls} null values in '{col}'"
                         )
                         results["valid"] = False
+
+            # Check for null labels (warning only - valid for held-out sequences)
+            if "label" in df.columns:
+                nulls = df["label"].isna().sum()
+                if nulls > 0:
+                    results["warnings"].append(
+                        f"{csv_file.name}: {nulls} null/held-out labels"
+                    )
 
             # Track row counts
             all_row_counts.append(len(df))
