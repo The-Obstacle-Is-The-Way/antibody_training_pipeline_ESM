@@ -65,19 +65,32 @@ def annotate_sequence(
     try:
         annotation = annotator.run_on_sequence(seq_id, sequence)
 
-        # Extract all fragments
+        # Extract all fragments, converting None to empty string
+        # ANARCI returns None for regions it cannot identify
+        def safe_str(value):
+            """Convert None to empty string, preserve actual strings."""
+            return value if value is not None else ""
+
         fragments = {
-            f"full_seq_{chain}": annotation.sequence_alignment_aa,
-            f"fwr1_aa_{chain}": annotation.fwr1_aa,
-            f"cdr1_aa_{chain}": annotation.cdr1_aa,
-            f"fwr2_aa_{chain}": annotation.fwr2_aa,
-            f"cdr2_aa_{chain}": annotation.cdr2_aa,
-            f"fwr3_aa_{chain}": annotation.fwr3_aa,
-            f"cdr3_aa_{chain}": annotation.cdr3_aa,
-            f"fwr4_aa_{chain}": annotation.fwr4_aa,
+            f"full_seq_{chain}": safe_str(annotation.sequence_alignment_aa),
+            f"fwr1_aa_{chain}": safe_str(annotation.fwr1_aa),
+            f"cdr1_aa_{chain}": safe_str(annotation.cdr1_aa),
+            f"fwr2_aa_{chain}": safe_str(annotation.fwr2_aa),
+            f"cdr2_aa_{chain}": safe_str(annotation.cdr2_aa),
+            f"fwr3_aa_{chain}": safe_str(annotation.fwr3_aa),
+            f"cdr3_aa_{chain}": safe_str(annotation.cdr3_aa),
+            f"fwr4_aa_{chain}": safe_str(annotation.fwr4_aa),
         }
 
-        # Create concatenated fragments
+        # Validate that we got at least SOME fragments
+        # If all CDRs are empty, annotation failed
+        if not any([fragments[f"cdr1_aa_{chain}"],
+                   fragments[f"cdr2_aa_{chain}"],
+                   fragments[f"cdr3_aa_{chain}"]]):
+            print(f"  ANARCI returned no CDRs for {seq_id} ({chain} chain)")
+            return None
+
+        # Create concatenated fragments (safe now - no None values)
         fragments[f"cdrs_{chain}"] = "".join(
             [
                 fragments[f"cdr1_aa_{chain}"],
