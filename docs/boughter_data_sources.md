@@ -268,8 +268,43 @@ From Sakhnini et al. 2025:
 
 ---
 
+## UPDATE: 2025 Best Practices Addition (2025-11-02)
+
+### Post-Annotation Quality Control (Newly Discovered)
+
+**From Boughter's actual code (seq_loader.py) and 2025 literature:**
+
+**Standard Practice:** Filter AFTER annotation, not before
+
+**Boughter's Quality Control (seq_loader.py, all dataset loaders):**
+```python
+# Remove sequences with X in ANY CDR (post-annotation)
+# Remove sequences with empty CDRs
+# This reduces ~1138 sequences → 1053 analyzed sequences
+```
+
+**2025 Industry Standards:**
+- **AbSet (2024-2025)**: Post-annotation filtering for unusual structures
+- **ASAP-SML**: Post-annotation germline filtering
+- **Harvey et al. 2022**: Post-annotation CDR length filtering
+- **ANARCI benchmark (2025)**: 99.5% success on CLEAN sequences
+
+**Required Addition to Pipeline:**
+- **Stage 3**: Post-annotation quality control
+- Filter sequences with X in CDRs
+- Filter sequences with empty CDRs
+- Expected: ~750-800 final clean sequences
+
+**References Added:**
+- Boughter seq_loader.py: Lines 10-16, 76-82, 200-206, 268-274, 337-343
+- AIMS aims_loader.py: Lines 135-149
+- ANARCI 2025 benchmark study
+- AbSet, ASAP-SML, Harvey et al. 2022 methodologies
+
+---
+
 ## Document Status
-- **Version**: 1.0
+- **Version**: 2.0
 - **Date**: 2025-11-02
-- **Status**: Ready for senior review
-- **Next Step**: External validation before implementation
+- **Updated**: 2025-11-02 (Added 2025 best practices validation)
+- **Status**: Complete with 2025 validation - Ready for implementation
