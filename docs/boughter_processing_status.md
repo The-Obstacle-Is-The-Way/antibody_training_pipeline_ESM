@@ -221,13 +221,26 @@ Did Novo include or exclude IMGT position 118 in CDR3?
 
 ## Recommendation
 
-### Immediate Action: Implement Option 1 + Documentation
+### Decision: Use Strict IMGT (CDR-H3 = 105-117, Excluding Position 118)
 
-**Rationale**:
-1. Option 1 (ANARCI strict IMGT) is **defensible and reproducible**
-2. We can **document the discrepancy explicitly**
-3. We can **add Option 3 as a flag** for compatibility mode
-4. We can **update when Novo releases code**
+**This is the correct approach based on first principles:**
+
+**Biological Rationale:**
+1. **Position 118 is Framework Region 4 (FR4)**, not CDR
+   - IMGT official definition: "Position 118 - The J-Region Anchor (J-TRP or J-PHE in G strand)"
+   - It's a conserved β-strand structural anchor, NOT a hypervariable loop
+2. **Position 118 is conserved (W or F)** across all antibodies
+   - Provides ZERO information for machine learning
+   - Including it pollutes the variable region signal
+3. **CDR = "Complementarity-Determining Region"**
+   - By definition, must be VARIABLE (determines specificity)
+   - Position 118 is GERMLINE-ENCODED and DOES NOT VARY
+
+**Methodological Rationale:**
+1. **IMGT is the international standard** (CDR-H3 = 105-117)
+2. **All other datasets use strict IMGT** (Harvey, Jain, Shehata)
+3. **Cross-dataset comparability** requires consistent boundaries
+4. **Reproducibility** requires standardized definitions
 
 **Implementation Plan**:
 ```python
@@ -256,11 +269,12 @@ Did Novo include or exclude IMGT position 118 in CDR3?
 ```
 # Metadata
 processing_date: 2025-11-02
-cdr_extraction_method: ANARCI (IMGT numbering)
-cdr3_boundary: 105-117 (strict IMGT) OR 105-118 (Boughter compat)
+cdr_extraction_method: ANARCI (IMGT numbering, strict)
+cdr3_boundary: 105-117 (strict IMGT, position 118 excluded)
 cdr2_boundary: 56-65 (fixed IMGT)
-known_discrepancy: See docs/boughter_cdr_boundary_investigation.md
-novo_replication_status: Partial (awaiting Novo code release)
+boundary_rationale: Position 118 is FR4 J-anchor (conserved), not CDR
+boughter_note: Original Boughter files include position 118; we use strict IMGT
+reference: See docs/cdr_boundary_first_principles_audit.md
 ```
 
 ### Parallel Track: Request Clarification
