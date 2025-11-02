@@ -201,7 +201,7 @@ def validate_translation(protein_seq: str) -> bool:
     """
     Validate that translation produced reasonable antibody sequence.
 
-    After ATG-based trimming, sequences should be much cleaner.
+    After ATG-based trimming and scoring, sequences should be cleaner.
     Lenient validation - ANARCI will do strict validation in Stage 2.
 
     Antibody sequences include:
@@ -211,10 +211,10 @@ def validate_translation(protein_seq: str) -> bool:
     - ANARCI will extract just the V-domain
 
     Checks:
-    1. Sequence exists and has reasonable length (50-500 aa)
+    1. Sequence exists and has reasonable length (100-500 aa)
     2. Starts with M (methionine - from ATG start codon)
-    3. Contains mostly valid amino acids (>80% standard AA)
-    4. Minimal X's and stops (some trailing junk is OK)
+    3. First 150 aa are mostly clean (>90% valid - this is the V-domain region)
+    4. Allow trailing junk - sequencing artifacts after constant region
 
     Returns:
         True if valid, False otherwise
@@ -222,22 +222,31 @@ def validate_translation(protein_seq: str) -> bool:
     if not protein_seq:
         return False
 
-    # Allow wide range: 50-500 aa
-    # Includes signal peptides + V-domain + constant regions
-    if len(protein_seq) < 50 or len(protein_seq) > 500:
+    # Require at least 100 aa (signal + V-domain minimum)
+    # Max 500 aa (full antibody with constant regions)
+    if len(protein_seq) < 100 or len(protein_seq) > 500:
         return False
 
-    # Should start with M (from ATG start codon)
+    # Must start with M (from ATG start codon)
     if protein_seq[0] != 'M':
         return False
 
-    # Check that sequence has at least 80% standard amino acids
-    # (Allow some trailing X's and stops from sequencing artifacts)
-    standard_aa = set("ACDEFGHIKLMNPQRSTVWY")
-    valid_count = sum(1 for aa in protein_seq if aa in standard_aa)
-    valid_ratio = valid_count / len(protein_seq)
+    # Check first 150 aa (signal + V-domain) for quality
+    # This is what ANARCI will work with
+    first_150 = protein_seq[:min(150, len(protein_seq))]
 
-    if valid_ratio < 0.80:  # Reject if <80% valid
+    standard_aa = set("ACDEFGHIKLMNPQRSTVWY")
+    valid_count = sum(1 for aa in first_150 if aa in standard_aa)
+    valid_ratio = valid_count / len(first_150)
+
+    # Require >90% valid amino acids in V-domain region
+    # (Allow a few X's from sequencing uncertainty)
+    if valid_ratio < 0.90:
+        return False
+
+    # Reject if stop codons (*) in first 150 aa
+    # (These would truncate the V-domain)
+    if '*' in first_150:
         return False
 
     return True
