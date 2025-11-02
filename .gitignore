@@ -101,4 +101,5 @@ literature/
 test_datasets/*.xlsx
 test_datasets/*.xls
 test_datasets/*.pdf
+test_datasets/boughter_raw/
 reference_repos/

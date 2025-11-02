@@ -309,7 +309,8 @@ def print_dataset_stats(df: pd.DataFrame):
 def main():
     """Main processing pipeline."""
     # Define dataset structure
-    base_dir = Path("test_datasets/boughter")
+    # Raw data is in boughter_raw/ (not committed to git)
+    base_dir = Path("test_datasets/boughter_raw")
 
     subsets = {
         "flu": {
@@ -378,7 +379,7 @@ def main():
 
     # Save failure log if any
     if all_failures:
-        failure_log = base_dir / "translation_failures.log"
+        failure_log = Path("test_datasets/boughter_raw/translation_failures.log")
         failure_log.write_text("\n".join(all_failures))
         print(f"✓ Failure log saved to: {failure_log}")
 
