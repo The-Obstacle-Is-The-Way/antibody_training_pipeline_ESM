@@ -30,7 +30,7 @@
 | 1 | `scripts/convert_boughter_to_csv.py` | Translate paired DNA FASTA + flags, apply Novo label rules | `test_datasets/boughter.csv`, `translation_failures.log` |
 | 2 | `preprocessing/process_boughter.py` | ANARCI IMGT numbering, fragment extraction | 16 fragment CSVs, `annotation_failures.log` |
 | 3 | `process_boughter.py` (Stage 3) | Post-annotation QC (X/empty CDR filters) | Clean fragment CSVs, pipeline summary |
-| Validation | `preprocessing/validate_boughter.py` | End-to-end checks, summary metrics | `validation_report.txt` |
+| Validation | `scripts/validate_boughter.py` | End-to-end checks, summary metrics | `validation_report.txt` |
 
 ### 2.1 Hybrid DNA Translation (Stage 1)
 

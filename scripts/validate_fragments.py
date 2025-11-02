@@ -60,7 +60,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
 
     for csv_file in csv_files:
         try:
-            df = pd.read_csv(csv_file)
+            df = pd.read_csv(csv_file, comment="#")
 
             # Check required columns
             missing_cols = required_columns - set(df.columns)
