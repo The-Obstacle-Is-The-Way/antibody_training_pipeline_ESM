@@ -1,0 +1,22 @@
+Boughter Dataset Validation Report
+======================================================================
+
+Stage 1: DNA Translation & Novo Flagging
+----------------------------------------------------------------------
+Total sequences:       1167
+Translation loss:      4 (0.34%)
+Quality issues:        1487
+Training set size:     982
+
+Stage 2: ANARCI Annotation & Fragment Extraction
+----------------------------------------------------------------------
+Annotated sequences:   859
+Annotation failures:   308
+Success rate:          73.61%
+Target (>95%):         FAIL ❌
+Fragment files:        16/16
+
+Overall Status
+----------------------------------------------------------------------
+⚠️  Annotation success rate (73.61%) below 95% target
+   Consider investigating failures before proceeding
