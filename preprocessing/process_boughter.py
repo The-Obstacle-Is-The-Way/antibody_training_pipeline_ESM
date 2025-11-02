@@ -14,12 +14,12 @@ Usage:
     python3 preprocessing/process_boughter.py
 
 Inputs:
-    test_datasets/boughter.csv - Output from Stage 1
+    train_datasets/boughter.csv - Output from Stage 1
 
 Outputs:
-    test_datasets/boughter/*_boughter.csv - 16 fragment-specific files (clean data)
-    test_datasets/boughter/annotation_failures.log - Failed annotations (Stage 2)
-    test_datasets/boughter/qc_filtered_sequences.txt - QC-filtered sequences (Stage 3)
+    train_datasets/boughter/*_boughter.csv - 16 fragment-specific files (clean data)
+    train_datasets/boughter/annotation_failures.log - Failed annotations (Stage 2)
+    train_datasets/boughter/qc_filtered_sequences.txt - QC-filtered sequences (Stage 3)
 
 Actual Results:
     Stage 1 input:  1117 sequences (95.4% DNA translation success from 1171 raw)
@@ -214,7 +214,7 @@ def annotate_all(df: pd.DataFrame) -> pd.DataFrame:
         print(f"  Failure rate: {failure_rate:.2f}%")
 
         # Write failures to log
-        failure_log = Path("test_datasets/boughter/annotation_failures.log")
+        failure_log = Path("train_datasets/boughter/annotation_failures.log")
         failure_log.write_text("\n".join(failures))
         print(f"  Failed IDs written to: {failure_log}")
 
@@ -371,7 +371,7 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     print(f"Total unique sequences removed: {len(problematic_ids)}")
 
     if problematic_ids:
-        qc_log = Path("test_datasets/boughter/qc_filtered_sequences.txt")
+        qc_log = Path("train_datasets/boughter/qc_filtered_sequences.txt")
         qc_log.write_text("\n".join(sorted(problematic_ids)))
         print(f"Filtered IDs written to: {qc_log}")
 
@@ -414,7 +414,7 @@ def print_annotation_stats(df: pd.DataFrame):
 def main():
     """Main processing pipeline."""
     # Load Stage 1 output
-    input_csv = Path("test_datasets/boughter.csv")
+    input_csv = Path("train_datasets/boughter.csv")
 
     if not input_csv.exists():
         print(f"ERROR: {input_csv} not found!")
@@ -438,7 +438,7 @@ def main():
     print_annotation_stats(df_clean)
 
     # Create 16 fragment CSVs (from clean data)
-    output_dir = Path("test_datasets/boughter")
+    output_dir = Path("train_datasets/boughter")
     create_fragment_csvs(df_clean, output_dir)
 
     print("\n" + "=" * 70)
@@ -453,7 +453,7 @@ def main():
         f"  Stage 3 (Quality QC):   {len(df_clean)} sequences ({len(df_clean)/len(df)*100:.1f}%)"
     )
     print("\nNext steps:")
-    print("  1. Verify fragment files in test_datasets/boughter/")
+    print("  1. Verify fragment files in train_datasets/boughter/")
     print("  2. Check annotation_failures.log for any issues")
     print("  3. Review quality metrics in validation report")
     print("  4. Use fragment files for ESM embedding and training")

@@ -9,8 +9,8 @@ Usage:
     python3 scripts/convert_boughter_to_csv.py
 
 Outputs:
-    test_datasets/boughter.csv - Combined dataset with Novo flagging
-    test_datasets/boughter_raw/translation_failures.log - Failed sequences
+    train_datasets/boughter.csv - Combined dataset with Novo flagging
+    train_datasets/boughter_raw/translation_failures.log - Failed sequences
 """
 
 import sys
@@ -487,7 +487,7 @@ def main():
     """Main processing pipeline."""
     # Define dataset structure
     # Raw data is in boughter_raw/ (not committed to git)
-    base_dir = Path("test_datasets/boughter_raw")
+    base_dir = Path("train_datasets/boughter_raw")
 
     subsets = {
         "flu": {
@@ -550,13 +550,13 @@ def main():
     print_dataset_stats(df)
 
     # Save output
-    output_path = Path("test_datasets/boughter.csv")
+    output_path = Path("train_datasets/boughter.csv")
     df.to_csv(output_path, index=False)
     print(f"\n✓ Output saved to: {output_path}")
 
     # Save failure log if any
     if all_failures:
-        failure_log = Path("test_datasets/boughter_raw/translation_failures.log")
+        failure_log = Path("train_datasets/boughter_raw/translation_failures.log")
         failure_log.write_text("\n".join(all_failures))
         print(f"✓ Failure log saved to: {failure_log}")
 

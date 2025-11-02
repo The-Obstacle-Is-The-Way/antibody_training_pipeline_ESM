@@ -17,7 +17,7 @@ Checks:
 
 Outputs:
     - Console report with validation results
-    - test_datasets/boughter/validation_report.txt
+    - train_datasets/boughter/validation_report.txt
 """
 
 import sys
@@ -33,7 +33,7 @@ def validate_stage1_output() -> Dict:
     print("Stage 1 Validation: DNA Translation & Novo Flagging")
     print("=" * 70)
 
-    csv_path = Path("test_datasets/boughter.csv")
+    csv_path = Path("train_datasets/boughter.csv")
 
     if not csv_path.exists():
         return {
@@ -128,7 +128,7 @@ def validate_stage2_output() -> Dict:
     print("=" * 70)
 
     # Check if Stage 2 has been run
-    output_dir = Path("test_datasets/boughter")
+    output_dir = Path("train_datasets/boughter")
     vh_file = output_dir / "VH_only_boughter.csv"
 
     if not vh_file.exists():
@@ -138,7 +138,7 @@ def validate_stage2_output() -> Dict:
         }
 
     # Load Stage 1 input
-    df_stage1 = pd.read_csv("test_datasets/boughter.csv")
+    df_stage1 = pd.read_csv("train_datasets/boughter.csv")
 
     stage1_count = len(df_stage1)
     # Stage 2 failures from log (if present)
@@ -347,7 +347,7 @@ def generate_report(stage1_results: Dict, stage2_results: Dict):
     print(report_text)
 
     # Save report
-    report_path = Path("test_datasets/boughter/validation_report.txt")
+    report_path = Path("train_datasets/boughter/validation_report.txt")
     report_path.write_text(report_text)
     print(f"\n✓ Validation report saved to: {report_path}")
 
