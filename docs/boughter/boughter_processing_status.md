@@ -20,6 +20,25 @@
   - HIV_nat: 128 | HIV_cntrl: 44 | HIV_plos: 40 | Gut_hiv: 72
 - **Novo parity check**: Dataset size (>1000) and label balance match Sakhnini et al. (2025). Remaining gaps are confined to the HIV control/PLOS subsets (see §5.2).
 - **Artifacts generated**: 16 fragment CSVs (VH/VL, individual CDRs, concatenations, FWRs, paired chains) ready for ESM-2 embedding.
+- **P0 Fix Applied (2025-11-02)**: V-domain reconstruction from fragments to eliminate gap characters and constant region contamination. See `docs/boughter/BOUGHTER_P0_FIX_REPORT.md` for details.
+
+---
+
+## 1.1 P0 Blocker Fix (2025-11-02)
+
+**Issue Discovered**: Original preprocessing used `annotation.sequence_alignment_aa` (with gaps) and later `annotation.sequence_aa` (with constant region garbage) for VH/VL/Full sequences.
+
+**Impact**:
+- **Gap contamination**: 13 sequences (1.2%) contained `-` gap characters → ESM-1v validation failure
+- **Stop codon contamination**: 241 sequences (22.6%) contained `*` stop codons from constant region → ESM-1v validation failure
+
+**Fix Applied**: V-domain reconstruction by concatenating ANARCI fragments (FWR1+CDR1+FWR2+CDR2+FWR3+CDR3+FWR4)
+
+**Result**: ✅ All 1,065 sequences now gap-free and ESM-1v compatible (5/5 tests passing)
+
+**Test Suite**: `tests/test_boughter_embedding_compatibility.py` validates gap detection, amino acid validation, and ESM model compatibility.
+
+**Detailed Report**: See `docs/boughter/BOUGHTER_P0_FIX_REPORT.md`
 
 ---
 
