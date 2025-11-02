@@ -3,20 +3,21 @@ Boughter Dataset Validation Report
 
 Stage 1: DNA Translation & Novo Flagging
 ----------------------------------------------------------------------
-Total sequences:       1167
-Translation loss:      4 (0.34%)
-Quality issues:        1487
-Training set size:     982
+Total sequences:       1117
+Translation loss:      54 (4.61%)
+Quality issues:        873
+Training set size:     948
 
 Stage 2: ANARCI Annotation & Fragment Extraction
 ----------------------------------------------------------------------
-Annotated sequences:   859
-Annotation failures:   308
-Success rate:          73.61%
-Target (>95%):         FAIL ❌
+Stage 2 annotated:     1110
+Stage 2 failures:      7
+Stage 2 success rate:  99.37%
+Target (>95%):         PASS ✅
+Stage 3 removed:       45
+Stage 3 retention:     95.95%
 Fragment files:        16/16
 
 Overall Status
 ----------------------------------------------------------------------
-⚠️  Annotation success rate (73.61%) below 95% target
-   Consider investigating failures before proceeding
+✅ Dataset is READY for ML training

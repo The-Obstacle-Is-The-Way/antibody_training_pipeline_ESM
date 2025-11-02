@@ -363,6 +363,12 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     print(f"Sequences with X in ANY CDR: {len(sequences_with_X)}")
     print(f"Sequences with empty CDRs:    {len(sequences_with_empty)}")
     print(f"Total unique sequences removed: {len(problematic_ids)}")
+
+    if problematic_ids:
+        qc_log = Path("test_datasets/boughter/qc_filtered_sequences.txt")
+        qc_log.write_text("\n".join(sorted(problematic_ids)))
+        print(f"Filtered IDs written to: {qc_log}")
+
     print()
     print(f"Output sequences: {len(df_clean)}")
     print(f"Retention rate: {len(df_clean)/len(df)*100:.1f}%")

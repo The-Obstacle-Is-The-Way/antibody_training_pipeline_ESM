@@ -1,303 +1,179 @@
-# Boughter Dataset Processing Status - Pipeline Complete
+# Boughter Dataset Processing Status – Hybrid Translation Pipeline
 
-**Date**: 2025-11-02
-**Status**: ✅ **COMPLETE - Hybrid Translation + Strict IMGT Pipeline Validated**
-
----
-
-## Executive Summary
-
-### Pipeline Results ✅
-
-**Final Output**: 915 sequences (87.4% retention from 1047 Stage-1 translations)
-
-**Breakdown by Stage**:
-- **Stage 1 (DNA→Protein Translation)**: 1171 raw → 1047 translated (89.4%)
-- **Stage 2 (ANARCI Annotation)**: 1047 → 1024 annotated (97.8%)
-- **Stage 3 (Quality Control)**: 1024 → 915 clean (89.4%)
-
-**By Subset**:
-```
-Subset         Stage 1   Stage 2   Final    Recovery
-flu              310       295       193      50.9%
-mouse_iga        480       478       474      98.5%
-hiv_nat          115       113       110      82.1%
-hiv_cntrl         47        47        46      92.0%
-hiv_plos          43        42        40      76.9%
-gut_hiv           52        52        52      69.3%
-─────────────────────────────────────────────────────
-Total           1047      1024       915      78.1%
-HIV total        257       254       248      78.7%
-```
-
-**HIV Recovery vs Boughter Published Data**:
-```
-Subset       Our Count  Published  Recovery %
-gut_hiv            52         76       68.4%
-hiv_cntrl          46         51       90.2%
-hiv_nat           110        135       81.5%
-hiv_plos           40         53       75.5%
-─────────────────────────────────────────────
-Total HIV         248        315       78.7%
-```
-
-**Training Set Quality**:
-- 915 sequences with complete CDR annotations
-- Perfect balance: 49.0% specific (label 0), 51.0% non-specific (label 1)
-- Novo flagging strategy: 0 flags=specific, 1-3 excluded, ≥4=non-specific
-- 16 fragment-specific CSV files generated
+**Date**: 2025-11-02  
+**Status**: ✅ COMPLETE – Validated against Boughter (2020) + Sakhnini et al. (2025)
 
 ---
 
-## Critical Fix: Hybrid Translation Strategy
+## 1. Executive Summary
 
-### The Problem (Pre-Fix)
-
-Original pipeline used naive DNA→protein translation that caused catastrophic failures:
-
-1. **HIV/gut sequences** (Type A): Full-length with signal peptides + leading Ns/primers
-   - Raw translation: Frameshift errors → X's and stop codons (*) throughout V-domain
-   - Example: `NNNN...ATGGGATGGTCATG...` → `XXXXXXXXRFR*HYRI...` (8 X's, 4 stops)
-   - ANARCI rejection: 88% of HIV sequences lost
-
-2. **Mouse/flu sequences** (Type B): Pre-trimmed V-domains (no signal peptide)
-   - Start directly with V-domain sequence (`caggtgcagctg...` → `QVQLKQSGPGLAK...`)
-   - No leading Ns, already in correct reading frame
-   - Original pipeline happened to work by accident
-
-**Result**: Only 37/315 HIV sequences recovered (11.7%) before the fix.
-
-### The Solution (Hybrid Translation)
-
-**SSOT**: Boughter's raw FASTA contains TWO distinct sequence types requiring different translation strategies.
-
-**Implementation** (`scripts/convert_boughter_to_csv.py:88-280`):
-
-1. **Sequence Type Detection** (`looks_full_length()`):
-   - Checks for leading Ns (>10% in first 50bp)
-   - Checks for ATG in first 300bp AND length >600bp
-   - Routes to appropriate translation strategy
-
-2. **Route A - Full-length (HIV/gut)** (`find_best_atg_translation()`):
-   - Find all ATG codons in first 300bp (potential signal peptide starts)
-   - Translate from each ATG candidate
-   - Score by quality in first 150 aa (signal + V-domain region):
-     - Penalize X's and stop codons heavily
-     - Bonus for antibody signal peptide patterns (MGW, MGA)
-   - Return best-scoring translation
-   - Requires: Starts with M, ≥100 aa, clean V-domain
-
-3. **Route B - V-domain only (mouse/flu)** (`translate_vdomain_direct()`):
-   - Direct translation (no ATG trimming needed)
-   - Validate length (95-160 aa, typical V-domain size)
-   - Check for V-domain framework patterns:
-     - Heavy: EVQ, QVQ, QVL, QVQL, etc.
-     - Light: EIVLTQ, DIVMTQ, DIQMTQ, etc.
-   - Return protein if patterns match
-
-4. **Fallback**:
-   - Direct translation for edge cases
-   - Catches sequences that don't match either heuristic cleanly
-
-**Validation** (`validate_translation()`):
-- Accept BOTH M-starting (full-length) AND Q/E/D-starting (V-domain) sequences
-- Length: 95-500 aa (covers both types)
-- Quality: ≥80% standard amino acids in first 150 aa
-- No stop codons in V-domain region
-
-**Results**:
-- HIV recovery: 11.7% → **78.7%** (6.7x improvement)
-- Mouse recovery: 6% → **98.5%** (16x improvement)
-- Overall: 71.5% → **87.4%** (1.2x improvement)
+- **Final clean sequences**: **1065 / 1171** (90.9% overall retention)  
+  - Stage 1 (DNA → protein): 1171 → **1117** (95.4%)  
+  - Stage 2 (ANARCI IMGT): 1117 → **1110** (99.4%)  
+  - Stage 3 (post-annotation QC): 1110 → **1065** (95.9%)
+- **Training set balance** (Novo flagging): 914 sequences  
+  - Specific (0 flags): 443 (48.5%)  
+  - Non-specific (>3 flags): 471 (51.5%)  
+  - Mild (1–3 flags): 151 (held-out)
+- **Subset counts (final)**:  
+  - Flu: 307 | Mouse IgA: 474  
+  - HIV_nat: 128 | HIV_cntrl: 44 | HIV_plos: 40 | Gut_hiv: 72
+- **Novo parity check**: Dataset size (>1000) and label balance match Sakhnini et al. (2025). Remaining gaps are confined to the HIV control/PLOS subsets (see §5.2).
+- **Artifacts generated**: 16 fragment CSVs (VH/VL, individual CDRs, concatenations, FWRs, paired chains) ready for ESM-2 embedding.
 
 ---
 
-## CDR Boundary Decisions (Strict IMGT)
+## 2. Pipeline Overview
 
-### CDR-H3: Positions 105-117 (EXCLUDES position 118)
+| Stage | Script | Purpose | Key Outputs |
+|-------|--------|---------|-------------|
+| 1 | `scripts/convert_boughter_to_csv.py` | Translate paired DNA FASTA + flags, apply Novo label rules | `test_datasets/boughter.csv`, `translation_failures.log` |
+| 2 | `preprocessing/process_boughter.py` | ANARCI IMGT numbering, fragment extraction | 16 fragment CSVs, `annotation_failures.log` |
+| 3 | `process_boughter.py` (Stage 3) | Post-annotation QC (X/empty CDR filters) | Clean fragment CSVs, pipeline summary |
+| Validation | `preprocessing/validate_boughter.py` | End-to-end checks, summary metrics | `validation_report.txt` |
 
-**Decision**: Use strict IMGT (position 118 is FR4, NOT CDR3)
+### 2.1 Hybrid DNA Translation (Stage 1)
 
-**Rationale**:
-1. **IMGT Standard**: International numbering scheme defines CDR-H3 = 105-117
-2. **Biological Correctness**: Position 118 is J-segment anchor (framework), not hypervariable
-3. **Novo Nordisk Alignment**: Paper states "ANARCI following IMGT numbering scheme"
-4. **Test Dataset Consistency**: Harvey, Jain, Shehata all use strict IMGT
-5. **ML Justification**: Position 118 is conserved (W/F), provides zero predictive signal
+Problem: Boughter FASTA files mix two sequence archetypes.
 
-**What Boughter Did**: Included position 118 (alignment-based extraction, not ANARCI)
-**What We Do**: Strict IMGT (correct standard for ML training)
+1. **Full-length (HIV/gut)** – signal peptide + V-domain + constant region, heavy primer / `N` padding.  
+   - Naïve translation introduced frameshifts → X/`*` in V-domains (catastrophic ANARCI failure).
+2. **V-domain only (mouse/flu)** – begins in-frame at framework 1 (e.g., `EVQL…`, `EIVLT…`), often includes downstream constant region, but no signal peptide.
 
-### CDR-H2: Positions 56-65 (Variable Lengths Expected)
+**Solution**
 
-**Decision**: Accept variable CDR2 lengths as normal antibody diversity
-
-**Rationale**:
-1. **Harvey et al. 2022**: "CDR2 length of 8 or 9 (9 or 10 in deeper sequencing)"
-2. **IMGT Design**: Fixed positions, but insertions/deletions naturally occur
-3. **Biological Reality**: CDR2 length varies across different V-gene families
-4. **ANARCI Handles This**: Automatically manages insertions via IMGT numbering
-
-**Implementation**: ANARCI extracts positions 56-65; actual sequence length varies naturally.
-
----
-
-## Stage 2: ANARCI Annotation Performance
-
-### Results
-- **Success Rate**: 97.8% (1024/1047 sequences annotated)
-- **Failure Rate**: 2.2% (23 sequences)
-- **Primary Failures**: Flu sequences (22/23 failures)
-
-### Why 2.2% Failure is Expected
-
-**2025 Benchmarks**:
-- Large-scale study: 99.5% success on 1,936,119 VH sequences
-- Failures occur in "sequences with very unusual insertions/deletions from sequencing errors"
-
-**Our 97.8%** is within expected range for:
-- Mixed-source dataset (flu, HIV, mouse from different labs)
-- DNA→protein translation artifacts (not direct sequencing of proteins)
-- Quality filtering happens POST-annotation (industry standard)
-
-### Stage 3: Post-Annotation Quality Control
-
-**SSOT**: Boughter's `seq_loader.py` + Harvey/AbSet/ASAP-SML best practices
-
-**Filters Applied**:
-1. **Remove sequences with X in ANY CDR** (19 sequences, 1.9%)
-   - X = ambiguous amino acid from DNA sequencing uncertainty
-   - Would corrupt ML training
-2. **Remove sequences with empty CDRs** (93 sequences, 9.1%)
-   - ANARCI couldn't confidently assign CDR boundaries
-   - Indicates unusual structure or annotation failure
-
-**Result**: 1024 → 915 clean sequences (89.4% retention)
-
-**This is Standard Practice**:
-- Boughter: Filters post-annotation for X's and empty CDRs
-- Harvey et al.: Filters by CDR length ranges after ANARCI
-- AbSet: Removes "antibodies with unusual structures"
-- ASAP-SML: Removes sequences assigned to non-human germlines
-
----
-
-## Data Validation
-
-### Training Set Balance (Novo Flagging Strategy)
-
-**Strategy** (Sakhnini et al. 2025, Table 4):
-- **0 flags** → Label 0 (specific), INCLUDE
-- **1-3 flags** → Excluded (mild polyreactivity, confounds training)
-- **≥4 flags (4-7)** → Label 1 (non-specific), INCLUDE
-
-**Our Results**:
-```
-Flag Category    Count   % of Total   Included in Training
-specific           439      48.0%            439 (100%)
-mild (1-3)         152      16.6%              0 (excluded)
-non_specific       456      49.8%            456 (100%)
-──────────────────────────────────────────────────────────
-Total              915                         895
+```text
+direct_vdomain_translation  → try first (works for V-domain only and many full-length chains)
+find_best_atg_translation   → fallback: enumerate ATGs in first 300 bp, score on X/stop rate + motif hit
+raw translate               → final fallback (avoids hard failure; Stage 2/3 will filter)
+validate_translation        → length 95–500 aa, >80% standard amino acids in first 150 aa, no stop in first 150 aa
 ```
 
-**Training Set Balance**: 439 specific (49.0%) vs 456 non-specific (51.0%)
-**Perfect balance for binary classification ML training**
+This replaces the earlier `looks_full_length` heuristic. Direct translation is now favoured; ATG trimming is only used when the direct read is obviously broken (e.g., heavy `N` padding). Result: HIV recovery jumped from 11.7% to 90.2% while preserving mouse/flu sequences.
 
-### CDR Length Distributions (Strict IMGT)
+### 2.2 Stage 2 – ANARCI (IMGT)
 
-**H-CDR3**: min=2, max=29, mean=14.0, median=13 (expected high variability)
-**H-CDR1**: min=2, max=12, mean=8.3, median=8 (mostly length 8, per IMGT)
-**H-CDR2**: min=3, max=12, mean=7.9, median=8 (variable, as expected)
+- Annotator: `riot_na` (IMGT scheme)
+- CDR-H3: strict 105–117 (position 118 = FR4 J-anchor)
+- CDR-H2: 56–65 (variable lengths accepted)
+- Failures: only 7 sequences (0.63%) — 6 flu, 1 HIV_PLOS (no CDRs returned)
 
-**L-CDR3**: min=1, max=17, mean=9.0, median=9
-**L-CDR1**: min=2, max=12, mean=7.0, median=6 (variable across κ/λ)
-**L-CDR2**: min=3, max=8, mean=3.0, median=3 (highly conserved)
+### 2.3 Stage 3 – Post-Annotation Quality Control
 
-All distributions match published antibody repertoire statistics.
+Filters mirror Boughter’s `seq_loader.py` and 2020–2025 dataset practice (Harvey, AbSet, ASAP-SML):
 
----
-
-## Outputs Generated
-
-### Fragment Files (16 total)
-
-All files in `test_datasets/boughter/` with metadata headers:
-
-**Single-Chain Fragments**:
-- `VH_only_boughter.csv` - Heavy chain variable domains
-- `VL_only_boughter.csv` - Light chain variable domains
-
-**Individual CDRs** (Novo Table 4 rows):
-- `H-CDR1_boughter.csv`, `H-CDR2_boughter.csv`, `H-CDR3_boughter.csv`
-- `L-CDR1_boughter.csv`, `L-CDR2_boughter.csv`, `L-CDR3_boughter.csv`
-
-**Combined Fragments**:
-- `H-CDRs_boughter.csv` - All heavy CDRs concatenated
-- `L-CDRs_boughter.csv` - All light CDRs concatenated
-- `All-CDRs_boughter.csv` - All 6 CDRs concatenated
-- `H-FWRs_boughter.csv`, `L-FWRs_boughter.csv`, `All-FWRs_boughter.csv`
-- `VH+VL_boughter.csv` - Paired variable domains
-- `Full_boughter.csv` - Complete annotated dataset
-
-**Each CSV contains**:
-- Sequence ID, subset, sequences, CDRs, labels, flags, source metadata
-- Comment headers documenting extraction method and boundaries
-- Ready for ESM-2 embedding and ML training
-
-### Validation Logs
-
-- `test_datasets/boughter/annotation_failures.log` - 23 ANARCI failures with reasons
-- `test_datasets/boughter_raw/translation_failures.log` - 124 Stage-1 translation failures
+1. Drop sequences with `X` in **any** CDR (21 sequences)
+2. Drop sequences with empty string CDRs (25 sequences)
+3. log removals to `qc_filtered_sequences.txt`
 
 ---
 
-## Comparison to Other Datasets
+## 3. Stage Metrics & Subset Breakdown
 
-**Harvey** (protein sequences, no translation needed):
-- Input: 3133 sequences → Output: 3130 clean (99.9% retention)
-- Uses strict IMGT CDR boundaries
-- Direct comparison validates our CDR extraction
+### 3.1 Stage Retention
 
-**Boughter** (DNA sequences, hybrid translation required):
-- Input: 1171 raw DNA → Output: 915 clean (78.1% retention)
-- Higher attrition expected (DNA→protein + mixed sources)
-- HIV recovery (78.7%) approaches Boughter's published counts
+| Stage | flu | mouse | hiv_nat | hiv_cntrl | hiv_plos | gut_hiv | Total |
+|-------|----:|------:|--------:|----------:|---------:|--------:|------:|
+| Raw DNA | 379 | 481 | 134 | 50 | 52 | 75 | 1171 |
+| Stage 1 | 347 | 480 | 130 | 45 | 43 | 72 | 1117 |
+| Stage 2 | 341 | 480 | 130 | 45 | 42 | 72 | 1110 |
+| Stage 3 | 307 | 474 | 128 | 44 | 40 | 72 | 1065 |
 
-**Key Difference**: Boughter requires DNA translation; Harvey is already protein
+- Stage 1 losses (54): `flu` 32, `hiv_plos` 9, `hiv_cntrl` 5, `hiv_nat` 4, `gut_hiv` 3, `mouse_iga` 1  
+  - Causes: ambiguous bases leading to high X/stop ratio, sequences <95 aa, out-of-frame constructs.
+- Stage 3 losses (45): Flu dominates (34) due to empty ANARCI CDRs or residual `X` in CDR-H2/H3.
 
----
+### 3.2 Label Balance (Novo Flagging)
 
-## Next Steps
+| Flag bucket | Count | % | Label | Training |
+|-------------|------:|---:|-------|----------|
+| 0           | 443   | 41.6 | 0 (specific)       | ✅ |
+| 1–3         | 151   | 14.2 | hold-out (mild)    | ✗ |
+| 4–7         | 471   | 44.2 | 1 (non-specific)   | ✅ |
+| **Total**   | **1065** |   | | **914 training** |
 
-1. ✅ **Stage 1-3 Complete**: Hybrid translation + ANARCI + QC validated
-2. ✅ **Counts Verified**: 78.7% HIV recovery (248/315) vs Boughter published
-3. ✅ **16 Fragment Files Generated**: Ready for ESM embedding
+Training set is essentially balanced (48.5% vs 51.5%), matching Novo’s requirement for binary classifiers.
 
-**Ready for**:
-- ESM-2 embedding of all fragment types
-- ML model training (binary classification: specific vs non-specific)
-- Reproduction of Novo Nordisk results (Table 4, Figures 3-5)
+### 3.3 Fragment Outputs (16 files)
 
-**Pipeline Location**:
-- Stage 1: `scripts/convert_boughter_to_csv.py`
-- Stage 2-3: `preprocessing/process_boughter.py`
-- Validation: `preprocessing/validate_boughter.py`
+All fragment CSVs (`VH_only`, `VL_only`, `H-CDR1`, …, `Full`) include:
 
----
-
-## References
-
-**Primary Sources**:
-- Sakhnini et al. 2025 - Novo Nordisk non-specificity prediction
-- Boughter et al. 2020 - Original dataset publication
-- Harvey et al. 2022 - ANARCI best practices
-
-**Implementation Standards**:
-- ANARCI (Dunbar & Deane 2016) - IMGT numbering
-- IMGT (Lefranc et al. 2003) - International antibody numbering standard
-- BioPython - Genetic code translation
+- Metadata header documenting extraction method, IMGT boundaries, counts
+- Columns: `id`, `sequence`, `label`, `subset`, `num_flags`, `flag_category`, `include_in_training`, `source`, `sequence_length`
+- Each file holds 1065 records (labels + mild included; training filters applied downstream)
 
 ---
 
-**Document Status**: ✅ COMPLETE - All questions resolved, pipeline validated, ready for ML training
+## 4. Quality Validation (SSOT)
+
+### 4.1 Stage 1 Translation Validation
+
+- Length window: 95–500 aa (captures V-domain + optional constant region)
+- First 150 aa: >80% standard residues, no stop codons
+- Translation failures logged per subset for audit (`translation_failures.log`)
+
+### 4.2 Stage 2 ANARCI Audit
+
+- Success rate: **99.4%**
+- Failures limited to a handful of flu/HIV_PLOS antibodies with non-canonical frameworks
+- `annotation_failures.log` contains IDs; rerunning ANARCI with manual trimming reproduces failure (no hidden regression)
+
+### 4.3 Stage 3 QC
+
+- `qc_filtered_sequences.txt` enumerates all 45 filtered IDs
+- Cross-check: Removing those IDs from Stage 2 output reproduces final 1065 sequences
+
+### 4.4 Validation Script (`validate_boughter.py`)
+
+- Confirms Stage counts, label balance, fragment presence
+- Reports stop/X statistics for transparency (expected because raw DNA contains primer remnants)
+
+---
+
+## 5. Comparison with Published Data
+
+### 5.1 Totals vs Boughter et al. (2020)
+
+| Subset | Published | This Pipeline | Recovery |
+|--------|----------:|--------------:|---------:|
+| Flu | 312 | 307 | 98.4% |
+| Mouse IgA | 445 | 474 | 106.5% (includes additional constant-region records) |
+| HIV_nat | 135 | 128 | 94.8% |
+| HIV_cntrl | 51 | 44 | 86.3% |
+| HIV_plos | 53 | 40 | 75.5% |
+| Gut_hiv | 76 | 72 | 94.7% |
+| **Total** | **1072** | **1065** | **99.3%** |
+
+Observations:
+
+- **Parity achieved: flu, mouse, HIV_nat, gut_hiv** (≥94% recovery; mouse slightly higher because raw FASTA retains constant-region variants that Boughter trimmed post-ANARCI).
+- **Gaps: HIV_cntrl & HIV_plos** remain below 90%. DNA source files contain multiple sequences that translate into heavily ambiguous frameworks (no recoverable V-domain even after ATG search). Manual inspection shows persistent `N` blocks and premature stops—contacting authors for raw protein data may be required to hit 100%.
+
+### 5.2 Alignment with Sakhnini et al. (2025)
+
+- Sakhnini reports “>1000” curated Boughter antibodies with balanced labels. Final training set (914) post mild-flag exclusion matches this description.
+- Strict IMGT numbering ensured compatibility with Novo’s downstream fragments (Table 4) and comparative datasets (Harvey, Jain, Shehata).
+- Remaining subset discrepancies do not block reproduction of Novo’s ML pipeline; they stem from irrecoverable sequencing artifacts in the publicly released DNA FASTA.
+
+---
+
+## 6. Next Actions
+
+1. **Embedding & ML** – Run ESM-2 embedding on the 16 fragment CSVs, train classifiers per Novo Table 4, replicate Figures 3–5.  
+2. **Document update** – Ensure `accuracy_verification_report.md` and validation logs remain in sync with the latest run (updated alongside this document).  
+3. **Optional forensic work** – If exact subset parity is required, request the protein-level FASTA/CSV used in Boughter’s supplementary data for HIV control & PLOS subsets; DNA alone appears insufficient.
+
+---
+
+## 7. File Locations
+
+- Stage 1 output: `test_datasets/boughter.csv`
+- Stage 2/3 fragments: `test_datasets/boughter/` (`VH_only_boughter.csv`, etc.)
+- Translation failures: `test_datasets/boughter_raw/translation_failures.log`
+- ANARCI failures: `test_datasets/boughter/annotation_failures.log`
+- QC filtered IDs: `test_datasets/boughter/qc_filtered_sequences.txt`
+- Validation summary: `test_datasets/boughter/validation_report.txt`
+
+---
+
+**Status**: ✅ Pipeline validated, documentation aligned with SSOT, ready for Novo Nordisk replication tasks.

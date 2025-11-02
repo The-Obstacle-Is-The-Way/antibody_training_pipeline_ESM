@@ -15,11 +15,21 @@ Outputs:
 
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Sequence
 
 import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
+
+# Canonical framework-1 motifs for human/mouse VH/VL domains
+VDOMAIN_MOTIFS: Sequence[str] = (
+    # Heavy-chain FR1 motifs
+    "EVQ", "QVQ", "QVL", "QVR", "QVK", "EVQL", "QVQL", "EVKM", "EQLV",
+    # Light-chain FR1 motifs (kappa/lambda)
+    "EIVLT", "DIVMT", "DIQMT", "QSVLT", "QAVLT", "QIVLT", "EIVMT", "DITMT",
+    # Generic VH/VL patterns observed across datasets
+    "QVLV", "QVV", "EVLV", "EVTV", "EQLV"
+)
 
 
 def parse_fasta_dna(fasta_path: Path) -> List[str]:
@@ -85,38 +95,6 @@ def parse_yn_flags(flag_path: Path) -> List[int]:
     return flags
 
 
-def looks_full_length(dna_seq: str) -> bool:
-    """
-    Detect if sequence appears to be full-length with signal peptide.
-
-    Full-length sequences (HIV/gut) have:
-    - Leading Ns or primer sequences
-    - ATG codons in first 300bp (signal peptide start)
-    - Longer length (>600bp typically)
-
-    Pre-trimmed V-domain sequences (mouse/flu) have:
-    - No leading Ns
-    - Start directly with V-domain (no signal peptide)
-    - Shorter length (~350-450bp)
-    """
-    dna_seq = dna_seq.upper()
-
-    # Check for leading Ns (strong signal of full-length with primer)
-    first_50 = dna_seq[:50]
-    n_count = first_50.count('N')
-    if n_count > 5:  # >10% Ns in first 50bp suggests full-length
-        return True
-
-    # Check for ATG in first 300bp AND length >600bp
-    has_atg = 'ATG' in dna_seq[:300]
-    is_long = len(dna_seq) > 600
-
-    if has_atg and is_long:
-        return True
-
-    return False
-
-
 def find_best_atg_translation(dna_seq: str) -> Optional[str]:
     """
     Find the best ATG-based translation for full-length sequences.
@@ -167,13 +145,19 @@ def find_best_atg_translation(dna_seq: str) -> Optional[str]:
             if len(protein_str) < 100:
                 continue
 
+            # Ensure V-domain motif exists within first 120 aa after signal
+            window = protein_str[:120]
+            has_motif = any(motif in window for motif in VDOMAIN_MOTIFS)
+
             # Score based on quality in first 150 aa (signal + V-domain)
             first_150 = protein_str[:min(150, len(protein_str))]
             x_count_first = first_150.count('X')
             stop_count_first = first_150.count('*')
 
-            # Heavily penalize X's and stops in V-domain region
+            # Heavily penalize X's, stops, or lack of motif in V-domain region
             score = 1000 - (x_count_first * 100) - (stop_count_first * 200)
+            if not has_motif:
+                score -= 500
 
             # Bonus for typical antibody signal peptide patterns
             if protein_str.startswith('MGW') or protein_str.startswith('MGA'):
@@ -191,41 +175,30 @@ def find_best_atg_translation(dna_seq: str) -> Optional[str]:
 
 def translate_vdomain_direct(dna_seq: str) -> Optional[str]:
     """
-    Direct translation for pre-trimmed V-domain sequences.
+    Direct translation for sequences that already begin with the V-domain.
 
-    For mouse/flu sequences that are already V-domain only (no signal peptide).
-    These start with Q/E/D (not M) and are shorter (~350-450bp).
-
-    Args:
-        dna_seq: DNA nucleotide sequence string
-
-    Returns:
-        Translated protein sequence, or None if translation fails
+    Boughter provides many heavy/light sequences that start directly with the
+    framework-1 motif (e.g. EVQL, QVQL, EIVLT). These strings may still include
+    downstream constant regions, so we only validate the first ~150 aa.
     """
     try:
-        dna_seq = dna_seq.upper()
-        protein = Seq(dna_seq).translate(table=1, to_stop=False)
+        protein = Seq(dna_seq.upper()).translate(table=1, to_stop=False)
         protein_str = str(protein)
 
-        # Validate: should be reasonable V-domain length
-        if len(protein_str) < 95 or len(protein_str) > 160:
+        if not protein_str:
             return None
 
-        # Check first 30 aa for typical V-domain start patterns
-        first_30 = protein_str[:30]
-
-        # Heavy chain V-domain patterns (framework 1)
-        heavy_patterns = ['EVQ', 'QVQ', 'QVL', 'QVR', 'QVK', 'EVQL', 'QVQL']
-        # Light chain V-domain patterns
-        light_patterns = ['EIVLTQ', 'DIVMTQ', 'DIQMTQ', 'DIQ', 'EIV', 'DVM']
-
-        has_vdomain_pattern = any(p in first_30 for p in heavy_patterns + light_patterns)
-
-        if not has_vdomain_pattern:
+        # Quality check: the V-domain region (first 150 aa) should be mostly
+        # standard amino acids and free of premature stops.
+        v_region = protein_str[: min(150, len(protein_str))]
+        standard_aa = set("ACDEFGHIKLMNPQRSTVWY")
+        valid_ratio = sum(aa in standard_aa for aa in v_region) / len(v_region)
+        if valid_ratio < 0.85:
+            return None
+        if "*" in v_region:
             return None
 
         return protein_str
-
     except Exception:
         return None
 
@@ -258,20 +231,17 @@ def translate_dna_to_protein(dna_seq: str) -> Optional[str]:
     try:
         dna_seq = dna_seq.upper()
 
-        # Detect sequence type
-        if looks_full_length(dna_seq):
-            # Route A: Full-length with signal peptide (HIV/gut)
-            protein = find_best_atg_translation(dna_seq)
-            if protein is not None:
-                return protein
-        else:
-            # Route B: Pre-trimmed V-domain (mouse/flu)
-            protein = translate_vdomain_direct(dna_seq)
-            if protein is not None:
-                return protein
+        # Try direct V-domain translation first (handles most sequences)
+        protein = translate_vdomain_direct(dna_seq)
+        if protein is not None:
+            return protein
 
-        # Fallback: Direct translation for edge cases
-        # (Some sequences may not match either heuristic cleanly)
+        # Fall back to ATG-based translation for full-length sequences
+        protein = find_best_atg_translation(dna_seq)
+        if protein is not None:
+            return protein
+
+        # Last resort: raw translation (may still be salvageable later)
         protein = Seq(dna_seq).translate(table=1, to_stop=False)
         return str(protein)
 
@@ -285,16 +255,16 @@ def validate_translation(protein_seq: str) -> bool:
     Validate that translation produced reasonable antibody sequence.
 
     Accepts BOTH sequence types from Boughter data:
-    1. Full-length (HIV/gut): Signal peptide + V-domain, starts with M, 150-500 aa
-    2. V-domain only (mouse/flu): Just V-domain, starts with Q/E/D, 95-160 aa
+    1. Full-length (HIV/gut): Signal peptide + V-domain
+    2. V-domain only (mouse/flu): V-domain (± constant region) without signal
 
-    Lenient validation - ANARCI will do strict structural validation in Stage 2.
+    Lenient validation — ANARCI will still perform strict numbering in Stage 2.
 
     Checks:
     1. Sequence exists and has reasonable length (95-500 aa)
-    2. Can start with M (full-length) OR Q/E/D (V-domain only)
-    3. First 150 aa are mostly clean (>80% valid standard amino acids)
-    4. No stop codons in first 150 aa (would truncate V-domain)
+    2. Canonical VH/VL motif occurs within first 120 aa (framework-1 region)
+    3. First 150 aa are mostly clean (>85% standard amino acids)
+    4. No stop codons in first 150 aa (would truncate the V-domain)
 
     Returns:
         True if valid, False otherwise

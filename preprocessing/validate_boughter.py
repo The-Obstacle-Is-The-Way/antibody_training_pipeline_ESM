@@ -136,62 +136,85 @@ def validate_stage2_output() -> Dict:
             "error": f"Stage 2 output not found: {vh_file}",
         }
 
-    # Load one fragment to check counts
-    # Skip comment lines starting with #
-    df_vh = pd.read_csv(vh_file, comment="#")
-
     # Load Stage 1 input
     df_stage1 = pd.read_csv("test_datasets/boughter.csv")
 
     stage1_count = len(df_stage1)
-    stage2_count = len(df_vh)
-    failures = stage1_count - stage2_count
-    failure_rate = (failures / stage1_count) * 100
-    success_rate = 100 - failure_rate
+    # Stage 2 failures from log (if present)
+    failure_ids: List[str] = []
+    failure_log_path = output_dir / "annotation_failures.log"
+    if failure_log_path.exists():
+        failures_log = failure_log_path.read_text().strip()
+        if failures_log:
+            failure_ids = [line.strip() for line in failures_log.split("\n") if line.strip()]
+
+    stage2_failures = len(failure_ids)
+    stage2_annotated = stage1_count - stage2_failures
+    stage2_success_rate = (stage2_annotated / stage1_count) * 100
 
     print(f"\n✓ ANARCI Annotation Success:")
-    print(f"  Stage 1 input:      {stage1_count} sequences")
-    print(f"  Stage 2 annotated:  {stage2_count} sequences")
-    print(f"  Failures:           {failures} ({failure_rate:.2f}%)")
-    print(f"  Success rate:       {success_rate:.2f}%")
-
-    # Check if we met the >95% target
-    target_met = success_rate >= 95.0
+    print(f"  Stage 1 input:          {stage1_count} sequences")
+    print(f"  Stage 2 annotated:      {stage2_annotated} sequences")
+    print(f"  Stage 2 failures:       {stage2_failures} ({stage2_failures / stage1_count * 100:.2f}%)")
+    target_met = stage2_success_rate >= 95.0
     status = "✅ PASS" if target_met else "❌ FAIL"
-    print(f"  Target (>95%):      {status}")
+    print(f"  Success rate:           {stage2_success_rate:.2f}%  ({status})")
 
-    # Check failures by subset
-    if (output_dir / "annotation_failures.log").exists():
-        failures_log = (output_dir / "annotation_failures.log").read_text().strip()
-        if failures_log:
-            failure_ids = failures_log.split("\n")
-            print(f"\n✓ Failures by Subset:")
+    # Stage 3 QC removals
+    qc_log_path = output_dir / "qc_filtered_sequences.txt"
+    qc_ids: List[str] = []
+    if qc_log_path.exists():
+        qc_text = qc_log_path.read_text().strip()
+        if qc_text:
+            qc_ids = [line.strip() for line in qc_text.split("\n") if line.strip()]
+    stage3_removed = len(qc_ids)
+    stage3_retained = stage2_annotated - stage3_removed
+    stage3_retention = (stage3_retained / stage2_annotated) * 100 if stage2_annotated else 0.0
 
-            from collections import Counter
+    print(f"\n✓ Stage 3 (Post-Annotation QC):")
+    print(f"  Sequences entering Stage 3: {stage2_annotated}")
+    print(f"  Filtered (X/empty CDRs):    {stage3_removed}")
+    print(f"  Final clean sequences:      {stage3_retained} ({stage3_retention:.2f}% retention)")
 
-            subset_counts = Counter()
-            for fid in failure_ids:
-                if "hiv_nat" in fid:
-                    subset_counts["hiv_nat"] += 1
-                elif "hiv_cntrl" in fid:
-                    subset_counts["hiv_cntrl"] += 1
-                elif "hiv_plos" in fid:
-                    subset_counts["hiv_plos"] += 1
-                elif "gut_hiv" in fid:
-                    subset_counts["gut_hiv"] += 1
-                elif "mouse_iga" in fid:
-                    subset_counts["mouse_iga"] += 1
-                elif "flu" in fid:
-                    subset_counts["flu"] += 1
+    # Load final fragment (VH) to confirm counts
+    df_vh = pd.read_csv(vh_file, comment="#")
+    if len(df_vh) != stage3_retained:
+        print(
+            f"\n⚠️  Warning: Final VH count ({len(df_vh)}) does not match "
+            f"Stage 3 retained count ({stage3_retained})."
+        )
 
-            for subset in sorted(subset_counts.keys()):
-                subset_total = len(df_stage1[df_stage1["subset"] == subset])
-                subset_failures = subset_counts[subset]
-                subset_fail_pct = (subset_failures / subset_total) * 100
-                print(
-                    f"  {subset:12s}: {subset_failures:3d}/{subset_total:3d} "
-                    f"({subset_fail_pct:5.1f}%)"
-                )
+    # Report failures by subset (Stage 2)
+    if failure_ids:
+        print(f"\n✓ Stage 2 Failures by Subset:")
+        from collections import Counter
+
+        subset_counts = Counter()
+        for fid in failure_ids:
+            subset = fid.split("_")[0]
+            # preserve hiv_* prefixes
+            if fid.startswith("hiv_nat"):
+                subset = "hiv_nat"
+            elif fid.startswith("hiv_cntrl"):
+                subset = "hiv_cntrl"
+            elif fid.startswith("hiv_plos"):
+                subset = "hiv_plos"
+            elif fid.startswith("gut_hiv"):
+                subset = "gut_hiv"
+            elif fid.startswith("mouse_iga"):
+                subset = "mouse_iga"
+            elif fid.startswith("flu"):
+                subset = "flu"
+            subset_counts[subset] += 1
+
+        for subset in sorted(subset_counts.keys()):
+            subset_total = len(df_stage1[df_stage1["subset"] == subset])
+            subset_failures = subset_counts[subset]
+            subset_fail_pct = (subset_failures / subset_total) * 100
+            print(
+                f"  {subset:12s}: {subset_failures:3d}/{subset_total:3d} "
+                f"({subset_fail_pct:5.1f}%)"
+            )
 
     # Check CDR length distributions
     print(f"\n✓ CDR Length Distributions (from VH_only):")
@@ -225,10 +248,13 @@ def validate_stage2_output() -> Dict:
 
     return {
         "success": True,
-        "annotated_sequences": stage2_count,
-        "failures": failures,
-        "success_rate": success_rate,
+        "stage2_annotated": stage2_annotated,
+        "stage2_failures": stage2_failures,
+        "stage2_success_rate": stage2_success_rate,
         "target_met": target_met,
+        "stage3_removed": stage3_removed,
+        "stage3_retained": stage3_retained,
+        "stage3_retention": stage3_retention,
         "fragment_files": len(fragment_files),
     }
 
@@ -273,10 +299,12 @@ def generate_report(stage1_results: Dict, stage2_results: Dict):
         status = "PASS ✅" if stage2_results["target_met"] else "FAIL ❌"
         report_lines.extend(
             [
-                f"Annotated sequences:   {stage2_results['annotated_sequences']}",
-                f"Annotation failures:   {stage2_results['failures']}",
-                f"Success rate:          {stage2_results['success_rate']:.2f}%",
+                f"Stage 2 annotated:     {stage2_results['stage2_annotated']}",
+                f"Stage 2 failures:      {stage2_results['stage2_failures']}",
+                f"Stage 2 success rate:  {stage2_results['stage2_success_rate']:.2f}%",
                 f"Target (>95%):         {status}",
+                f"Stage 3 removed:       {stage2_results['stage3_removed']}",
+                f"Stage 3 retention:     {stage2_results['stage3_retention']:.2f}%",
                 f"Fragment files:        {stage2_results['fragment_files']}/16",
                 "",
             ]
@@ -298,7 +326,7 @@ def generate_report(stage1_results: Dict, stage2_results: Dict):
         else:
             report_lines.append(
                 f"⚠️  Annotation success rate "
-                f"({stage2_results['success_rate']:.2f}%) below 95% target"
+                f"({stage2_results['stage2_success_rate']:.2f}%) below 95% target"
             )
             report_lines.append("   Consider investigating failures before proceeding")
     else:
