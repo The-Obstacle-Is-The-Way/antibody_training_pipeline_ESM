@@ -148,7 +148,7 @@ def filter_vl_failures(df: pd.DataFrame) -> pd.DataFrame:
     # Check VL annotation for each antibody
     df['vl_annotates'] = df.apply(check_vl_annotation, axis=1)
 
-    vl_failures = df[~df['vl_annotates']]['Name'].tolist()
+    vl_failures = df[~df['vl_annotates']]['id'].tolist()
     print(f"  VL annotation failures: {len(vl_failures)}")
     if vl_failures:
         print(f"    Failed: {', '.join(vl_failures[:5])}" +
@@ -169,11 +169,11 @@ def remove_high_flags(df: pd.DataFrame, min_flag: int = 8) -> pd.DataFrame:
     print(f"\nRemoving antibodies with flags >= {min_flag}...")
     print(f"  Starting: {len(df)} antibodies")
 
-    high_flag_abs = df[df['total_flags'] >= min_flag]['Name'].tolist()
+    high_flag_abs = df[df['total_flags'] >= min_flag]['id'].tolist()
     print(f"  Antibodies with flags >= {min_flag}: {len(high_flag_abs)}")
     if high_flag_abs:
         for ab in high_flag_abs:
-            flags = df[df['Name'] == ab]['total_flags'].values[0]
+            flags = df[df['id'] == ab]['total_flags'].values[0]
             print(f"    {ab}: {flags} flags")
 
     # Keep only antibodies with flags < min_flag
