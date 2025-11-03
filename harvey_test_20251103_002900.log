@@ -1,0 +1,21 @@
+============================================================
+HARVEY DATASET TEST - PSR Threshold 0.5495
+============================================================
+Start time: 2025-11-03 00:29:01
+
+Loading model from models/boughter_vh_esm1v_logreg.pkl...
+Some weights of EsmModel were not initialized from the model checkpoint at facebook/esm1v_t33_650M_UR90S_1 and are newly initialized: ['contact_head.regression.bias', 'contact_head.regression.weight', 'pooler.dense.bias', 'pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+✓ Model loaded (device: mps)
+
+Novo Benchmark (from Figure S14):
+  Confusion Matrix: [[19778, 49962], [4186, 67633]]
+  Accuracy: 61.7%
+
+Loading Harvey dataset from test_datasets/harvey/VHH_only_harvey.csv...
+  Dataset size: 141021 sequences
+  Class distribution: {1: 71759, 0: 69262}
+
+Extracting ESM-1v embeddings...
+  (This will take ~20-30 minutes for 141k sequences)
+Processing batches:   0%|          | 0/17628 [00:00<?, ?it/s]Processing batches:   0%|          | 1/17628 [00:00<2:12:15,  2.22it/s]Processing batches:   0%|          | 2/17628 [00:00<1:32:01,  3.19it/s]Processing batches:   0%|          | 3/17628 [00:00<1:19:16,  3.71it/s]Processing batches:   0%|          | 4/17628 [00:01<1:13:06,  4.02it/s]Processing batches:   0%|          | 5/17628 [00:01<1:10:05,  4.19it/s]Processing batches:   0%|          | 6/17628 [00:01<1:08:32,  4.29it/s]Processing batches:   0%|          | 7/17628 [00:01<1:06:58,  4.38it/s]Processing batches:   0%|          | 8/17628 [00:01<1:07:43,  4.34it/s]Processing batches:   0%|          | 9/17628 [00:02<1:06:50,  4.39it/s]Processing batches:   0%|          | 10/17628 [00:02<1:05:57,  4.45it/s]Processing batches:   0%|          | 11/17628 [00:02<1:05:56,  4.45it/s]Processing batches:   0%|          | 12/17628 [00:02<1:05:35,  4.48it/s]
