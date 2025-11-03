@@ -31,7 +31,7 @@ import logging
 import operator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Dict, Iterable, List, Tuple
+from typing import Callable, Dict, Iterable, List
 
 import pandas as pd
 

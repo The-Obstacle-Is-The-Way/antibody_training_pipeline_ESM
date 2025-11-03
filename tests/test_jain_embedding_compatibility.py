@@ -193,7 +193,9 @@ def test_stop_codons():
         if stop_count > 0:
             print(f"  ✗ {file_name}: {stop_count} sequences with stop codons")
             # Show first few problematic sequences
-            stop_seqs = df[df["sequence"].str.contains(r"\*", na=False, regex=True)].head(3)
+            stop_seqs = df[
+                df["sequence"].str.contains(r"\*", na=False, regex=True)
+            ].head(3)
             for idx, row in stop_seqs.iterrows():
                 print(f"    ID: {row['id']}")
             all_clean = False
@@ -333,13 +335,17 @@ def test_data_integrity():
         mild_count = df["label"].isna().sum()
 
         print(f"\n  Total sequences: {len(df)}")
-        print(f"  Label distribution:")
-        print(f"    Specific (0):     {specific_count} ({specific_count/len(df)*100:.1f}%)")
-        print(f"    Non-specific (1): {nonspecific_count} ({nonspecific_count/len(df)*100:.1f}%)")
+        print("  Label distribution:")
+        print(
+            f"    Specific (0):     {specific_count} ({specific_count/len(df)*100:.1f}%)"
+        )
+        print(
+            f"    Non-specific (1): {nonspecific_count} ({nonspecific_count/len(df)*100:.1f}%)"
+        )
         print(f"    Mild (NaN):       {mild_count} ({mild_count/len(df)*100:.1f}%)")
 
         # Expected: 67 specific, 3 non-specific, 67 mild
-        print(f"\n  Expected distribution: 67 specific, 3 non-specific, 67 mild")
+        print("\n  Expected distribution: 67 specific, 3 non-specific, 67 mild")
 
         if specific_count == 67 and nonspecific_count == 3 and mild_count == 67:
             print("    ✓ Label distribution matches expected")
@@ -350,7 +356,7 @@ def test_data_integrity():
         # For model testing, we use only specific (67) + non-specific (3) = 70
         test_count = specific_count + nonspecific_count
         print(f"\n  Test set size (excluding mild): {test_count} sequences")
-        print(f"    Expected: 70 sequences (67 + 3)")
+        print("    Expected: 70 sequences (67 + 3)")
 
         if test_count == 70:
             print("    ✓ Test set size matches expected")
