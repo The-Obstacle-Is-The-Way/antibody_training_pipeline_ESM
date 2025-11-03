@@ -47,7 +47,12 @@ def main():
     
     with open(model_path, 'rb') as f:
         model = pickle.load(f)
+
+    # Override batch_size for large-scale inference on MPS
+    model.embedding_extractor.batch_size = 2
+
     print(f"✓ Model loaded (device: {model.device})")
+    print(f"  Batch size: {model.embedding_extractor.batch_size}")
     print()
     
     # Novo benchmark
