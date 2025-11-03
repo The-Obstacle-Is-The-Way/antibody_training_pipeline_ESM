@@ -1,0 +1,71 @@
+# Configuration file for Boughter Training - Novo Nordisk Reproduction
+# Train on Boughter dataset, test on Jain dataset
+
+# Model configuration
+model:
+  name: "facebook/esm1v_t33_650M_UR90S_1"  # ESM-1V model from HuggingFace (pretrained)
+  device: "mps"  # [cuda, cpu, mps] - use MPS for Apple Silicon
+
+# Data configuration
+data:
+  source: "local"
+  dataset_name: "boughter_vh"
+  train_file: ./train_datasets/boughter/VH_only_boughter_training.csv  # Boughter VH training data (filtered)
+  val_file: null    # No validation set - use CV instead
+  test_file: VH_only_jain_test_QC_REMOVED.csv   # Jain VH test data (91 antibodies after QC, 3 length outliers removed)
+
+  # Data format options
+  sequence_column: "sequence"  # Column name for protein sequences
+  label_column: "label"       # Column name for binary labels
+
+  # Data preprocessing
+  max_sequence_length: 1024   # Maximum sequence length for ESM tokenizer
+
+  # Data storage
+  save_embeddings: true       # Cache embeddings for faster re-runs
+  embeddings_cache_dir: "./embeddings_cache"
+
+# Classifier configuration - matches Novo Nordisk methodology
+classifier:
+  type: "logistic_regression"  # Novo uses LogisticReg
+
+  # LogisticRegression hyperparameters (verified optimal via sweep)
+  C: 1.0                      # Inverse regularization strength (optimal from sweep)
+  penalty: "l2"               # Regularization type: l1, l2, elasticnet, or none (optimal from sweep)
+  solver: "lbfgs"             # Optimization algorithm: lbfgs, liblinear, saga, etc (optimal from sweep)
+  max_iter: 1000              # Maximum iterations for convergence
+  random_state: 42            # Seed for reproducibility
+  class_weight: null          # None - Boughter is already balanced (48.5%/51.5%)
+
+  # Cross-validation settings (performed on training data only)
+  cv_folds: 10                # Novo uses 10-fold CV
+  stratify: true              # Stratified CV for balanced folds
+
+# Training configuration
+training:
+  # Evaluation metrics
+  metrics: ["accuracy", "precision", "recall", "f1", "roc_auc"]
+
+  # Model saving
+  save_model: true
+  model_name: "boughter_vh_esm1v_logreg"  # Model name
+  model_save_dir: "./models"
+
+  # Logging
+  log_level: "INFO"
+  log_file: "./logs/boughter_training.log"
+
+  # Performance optimization
+  batch_size: 8              # Batch size for embedding extraction
+  num_workers: 4              # Number of workers for data loading
+
+# Experiment tracking
+experiment:
+  name: "boughter_novo_reproduction"
+  description: "Train ESM-1v VH-based LogisticReg on Boughter, test on Jain (Novo Nordisk reproduction)"
+  tags: ["boughter", "jain", "esm1v", "novo", "reproduction"]
+
+# Hardware configuration
+hardware:
+  gpu_memory_fraction: 0.8
+  clear_cache_frequency: 100
