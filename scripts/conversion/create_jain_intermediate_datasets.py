@@ -53,11 +53,25 @@ def load_private_elisa(xlsx_path: str) -> pd.DataFrame:
     return df
 
 
-def load_public_data(csv_path: str) -> pd.DataFrame:
-    """Load public Jain dataset with sequences and other assay groups."""
-    print(f"Loading public data: {csv_path}")
-    df = pd.read_csv(csv_path)
-    print(f"  Loaded {len(df)} antibodies with sequences + other assays")
+def load_public_data(sd01_path: str, sd02_path: str, sd03_path: str) -> pd.DataFrame:
+    """Load public Jain dataset from raw Excel files (SD01/SD02/SD03)."""
+    print(f"Loading SD01 (metadata): {sd01_path}")
+    sd01 = pd.read_excel(sd01_path)
+    print(f"  Loaded {len(sd01)} antibodies")
+
+    print(f"Loading SD02 (sequences): {sd02_path}")
+    sd02 = pd.read_excel(sd02_path)
+    print(f"  Loaded {len(sd02)} sequences")
+
+    print(f"Loading SD03 (assays): {sd03_path}")
+    sd03 = pd.read_excel(sd03_path, sheet_name='Results-12-assays')
+    print(f"  Loaded {len(sd03)} antibodies with assay data")
+
+    # Merge SD01 + SD02 + SD03 on 'Name'
+    df = sd01.merge(sd02[['Name', 'VH', 'VL']], on='Name', how='inner')
+    df = df.merge(sd03, on='Name', how='inner')
+
+    print(f"  Merged: {len(df)} antibodies with sequences + assays")
     return df
 
 
@@ -134,7 +148,7 @@ def calculate_disaggregated_flags(df: pd.DataFrame) -> pd.DataFrame:
 def check_vl_annotation(row) -> bool:
     """Check if VL sequence can be annotated by ANARCI."""
     try:
-        annotation = annotator.run_on_sequence(f"{row['id']}_VL", row['VL'])
+        annotation = annotator.run_on_sequence(f"{row['Name']}_VL", row['VL'])
         return True
     except Exception:
         return False
@@ -148,7 +162,7 @@ def filter_vl_failures(df: pd.DataFrame) -> pd.DataFrame:
     # Check VL annotation for each antibody
     df['vl_annotates'] = df.apply(check_vl_annotation, axis=1)
 
-    vl_failures = df[~df['vl_annotates']]['id'].tolist()
+    vl_failures = df[~df['vl_annotates']]['Name'].tolist()
     print(f"  VL annotation failures: {len(vl_failures)}")
     if vl_failures:
         print(f"    Failed: {', '.join(vl_failures[:5])}" +
@@ -169,11 +183,11 @@ def remove_high_flags(df: pd.DataFrame, min_flag: int = 8) -> pd.DataFrame:
     print(f"\nRemoving antibodies with flags >= {min_flag}...")
     print(f"  Starting: {len(df)} antibodies")
 
-    high_flag_abs = df[df['total_flags'] >= min_flag]['id'].tolist()
+    high_flag_abs = df[df['total_flags'] >= min_flag]['Name'].tolist()
     print(f"  Antibodies with flags >= {min_flag}: {len(high_flag_abs)}")
     if high_flag_abs:
         for ab in high_flag_abs:
-            flags = df[df['id'] == ab]['total_flags'].values[0]
+            flags = df[df['Name'] == ab]['total_flags'].values[0]
             print(f"    {ab}: {flags} flags")
 
     # Keep only antibodies with flags < min_flag
@@ -189,31 +203,32 @@ def save_dataset(df: pd.DataFrame, output_path: str, description: str):
     """Save dataset with summary statistics."""
     df.to_csv(output_path, index=False)
 
-    label_counts = df['label'].value_counts()
-    n_specific = label_counts.get(0, 0)
-    n_nonspecific = label_counts.get(1, 0)
-
     print(f"\n✓ Saved: {output_path}")
     print(f"  {description}")
     print(f"  Total: {len(df)} antibodies")
-    print(f"  Specific (label=0): {n_specific} ({n_specific/len(df)*100:.1f}%)")
-    print(f"  Non-specific (label=1): {n_nonspecific} ({n_nonspecific/len(df)*100:.1f}%)")
+
+    # Only print label distribution if label column exists
+    if 'label' in df.columns:
+        label_counts = df['label'].value_counts()
+        n_specific = label_counts.get(0, 0)
+        n_nonspecific = label_counts.get(1, 0)
+        print(f"  Specific (label=0): {n_specific} ({n_specific/len(df)*100:.1f}%)")
+        print(f"  Non-specific (label=1): {n_nonspecific} ({n_nonspecific/len(df)*100:.1f}%)")
 
 
 def main():
     # Paths
     private_elisa_path = "test_datasets/Private_Jain2017_ELISA_indiv.xlsx"
-    public_data_path = "test_datasets/Public-jain-pnas-NO-ELISA-indiv.csv"
+    sd01_path = "test_datasets/jain-pnas.1616408114.sd01.xlsx"
+    sd02_path = "test_datasets/jain-pnas.1616408114.sd02.xlsx"
+    sd03_path = "test_datasets/jain-pnas.1616408114.sd03.xlsx"
     output_dir = Path("test_datasets/jain")
 
     # Check inputs exist
-    if not Path(private_elisa_path).exists():
-        print(f"Error: {private_elisa_path} not found!")
-        sys.exit(1)
-
-    if not Path(public_data_path).exists():
-        print(f"Error: {public_data_path} not found!")
-        sys.exit(1)
+    for path in [private_elisa_path, sd01_path, sd02_path, sd03_path]:
+        if not Path(path).exists():
+            print(f"Error: {path} not found!")
+            sys.exit(1)
 
     # Create output directory
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -224,15 +239,11 @@ def main():
 
     # Load data
     df_private = load_private_elisa(private_elisa_path)
-    df_public = load_public_data(public_data_path)
+    df_public = load_public_data(sd01_path, sd02_path, sd03_path)
 
-    # Rename columns for consistency
-    df_private = df_private.rename(columns={'Name': 'id'})
-    df_public = df_public.rename(columns={'heavy_seq': 'VH', 'light_seq': 'VL'})
-
-    # Merge on id
+    # Merge on Name
     print(f"\nMerging private ELISA + public data...")
-    df = df_public.merge(df_private, on='id', how='inner')
+    df = df_public.merge(df_private, on='Name', how='inner')
     print(f"  Merged: {len(df)} antibodies")
 
     if len(df) != 137:
@@ -242,8 +253,9 @@ def main():
     df = calculate_disaggregated_flags(df)
 
     # STEP 1: Save full 137 dataset with flags
-    df_137 = df[['id', 'total_flags', 'elisa_flags', 'flag_self_interaction',
+    df_137 = df[['Name', 'total_flags', 'elisa_flags', 'flag_self_interaction',
                   'flag_chromatography', 'flag_stability']].copy()
+    df_137 = df_137.rename(columns={'Name': 'id'})
 
     save_dataset(
         df_137,
@@ -254,8 +266,8 @@ def main():
     # STEP 2: Remove VL annotation failures
     df_94 = filter_vl_failures(df)
 
-    df_94_save = df_94[['id', 'VH', 'total_flags', 'elisa_flags', 'label']].copy()
-    df_94_save = df_94_save.rename(columns={'VH': 'vh_sequence'})
+    df_94_save = df_94[['Name', 'VH', 'total_flags', 'elisa_flags', 'label']].copy()
+    df_94_save = df_94_save.rename(columns={'Name': 'id', 'VH': 'vh_sequence'})
 
     save_dataset(
         df_94_save,
