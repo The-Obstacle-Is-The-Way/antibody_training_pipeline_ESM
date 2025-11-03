@@ -21,7 +21,7 @@ import sys
 from train import train_model
 
 
-def setup_directories(config_path: str = "config.yaml"):
+def setup_directories(config_path: str = "configs/config.yaml"):
     """Create necessary directories for the pipeline"""
     import yaml
 
@@ -119,8 +119,8 @@ The pipeline will:
     parser.add_argument(
         "config",
         nargs="?",
-        default="config.yaml",
-        help="Path to configuration YAML file (default: config.yaml)",
+        default="configs/config.yaml",
+        help="Path to configuration YAML file (default: configs/config.yaml)",
     )
 
     parser.add_argument(

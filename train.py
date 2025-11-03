@@ -232,7 +232,7 @@ def save_model(
     return model_path
 
 
-def train_model(config_path: str = "config.yaml") -> Dict[str, Any]:
+def train_model(config_path: str = "configs/config.yaml") -> Dict[str, Any]:
     """
     Main training function
 
@@ -320,7 +320,7 @@ def train_model(config_path: str = "config.yaml") -> Dict[str, Any]:
 if __name__ == "__main__":
     import sys
 
-    config_path = sys.argv[1] if len(sys.argv) > 1 else "config.yaml"
+    config_path = sys.argv[1] if len(sys.argv) > 1 else "configs/config.yaml"
     results = train_model(config_path)
 
     print("Training completed successfully!")
