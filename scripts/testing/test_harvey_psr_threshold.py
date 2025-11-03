@@ -4,12 +4,16 @@ Test Harvey Dataset with PSR Threshold
 This tests our trained model on the Harvey dataset (141,021 nanobodies)
 using the PSR-specific threshold (0.5495) discovered from Shehata analysis.
 """
+import sys
+import os
+# Add project root to path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
 import pickle
 import pandas as pd
 import numpy as np
 from sklearn.metrics import confusion_matrix, accuracy_score
 import time
-import sys
 
 def print_metrics(y_true, y_pred, dataset_name):
     """Calculate and print performance metrics"""

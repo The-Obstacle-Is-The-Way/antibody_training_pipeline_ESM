@@ -57,6 +57,7 @@ embeddings_cache/*
 # Logs
 logs/*
 !logs/.gitkeep
+*_test_*.log
 
 # Models
 models/*
