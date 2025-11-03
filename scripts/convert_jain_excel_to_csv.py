@@ -132,7 +132,7 @@ PRIMARY_COLUMNS = [
     "flag_stability",
     "source",
     "smp",
-    "ova",
+    "elisa",
     "bvp_elisa",
     "psr_smp",
     "acsins_dlmax_nm",
@@ -276,10 +276,10 @@ def convert_jain_dataset(
         merged["flag_category"].map({"specific": 0, "non_specific": 1}).astype("Int64")
     )
 
-    # Map supporting columns for historical compatibility.
+    # Map supporting columns for compatibility with classifier expectations.
     merged["source"] = "jain2017"
     merged["smp"] = merged["psr_smp"]
-    merged["ova"] = merged["elisa_fold"]
+    merged["elisa"] = merged["elisa_fold"]
     merged["bvp_elisa"] = merged["bvp_elisa_fold"]
 
     return merged

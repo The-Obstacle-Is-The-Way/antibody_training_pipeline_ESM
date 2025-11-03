@@ -89,7 +89,7 @@ After running the conversion scripts, we expect:
 - Columns (ordered):
   - `id`, `heavy_seq`, `light_seq`
   - `flags_total`, `flag_category`, `label`
-  - `source`, `smp`, `ova`, `bvp_elisa`
+  - `source`, `smp`, `elisa`, `bvp_elisa`
   - Supporting assay columns (`psr`, `acsins`, `csi_bli`, `cic`, `hic`, `smac`, `sgac_sins`, `as_slope`) for reproducibility
   - Optional QC columns (`heavy_seq_length`, `light_seq_length`)
 - Source label: `jain2017`
@@ -105,7 +105,7 @@ After running the conversion scripts, we expect:
   - `NaN` → `mild` (kept in CSV but excluded during model evaluation)
 - `source`: Constant `"jain2017"`
 - `smp`: SD03 `Poly-Specificity Reagent (PSR) SMP Score (0-1)`
-- `ova`: SD03 `ELISA` fold-over-background (matches original column semantics)
+- `elisa`: SD03 `ELISA` fold-over-background (polyreactivity against 6 antigens: cardiolipin, KLH, LPS, ssDNA, dsDNA, insulin)
 - `bvp_elisa`: SD03 `BVP ELISA` (needed for flag audit)
 - Remaining assay columns: direct passthrough from SD03 with standardized snake_case names
 - QC columns: derived lengths and any anomaly flags emitted by converter (optional)

@@ -144,7 +144,7 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
             "id": row["id"],
             "label": row["label"],
             "smp": row["smp"],
-            "ova": row["ova"],
+            "elisa": row["elisa"],
             "source": row["source"],
         }
 
@@ -217,7 +217,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
                 "sequence": df[column_name],
                 "label": df["label"],
                 "smp": df["smp"],
-                "ova": df["ova"],
+                "elisa": df["elisa"],
                 "source": df["source"],
             }
         )
