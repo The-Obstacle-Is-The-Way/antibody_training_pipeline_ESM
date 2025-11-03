@@ -157,3 +157,50 @@ This will generate:
 3. From a different source entirely
 
 **Solution:** This documentation and conversion scripts ensure we create the correct dataset from the authoritative PNAS source files.
+
+## ELISA Data Limitation (Identified 2025-11-03)
+
+**Summary:** The publicly available Jain PNAS supplementary files contain only aggregated ELISA values, not per-antigen measurements. This represents a potential deviation from Novo's methodology.
+
+### What the Experimental Protocol Did
+
+From Jain et al. 2017 PNAS Supplementary Information:
+> "six different antigens, cardiolipin (50 μg/mL), KLH (5 μg/mL), LPS (10 μg/mL), ssDNA (1 μg/mL), dsDNA (1 μg/mL), and insulin (5 μg/mL), were coated onto ELISA plates individually at 50 μL per well"
+
+**Each antibody was tested against 6 separate antigens in individual wells.**
+
+### What's in Public SD03 File
+
+The public PNAS SD03 supplementary file contains:
+- Single `ELISA` column (fold-over-background, aggregated across antigens)
+- Single `BVP ELISA` column
+- **NO individual per-antigen columns** (cardiolipin, KLH, LPS, ssDNA, dsDNA, insulin)
+
+Confirmed by inspection:
+```bash
+python3 -c "import pandas as pd; df = pd.read_excel('test_datasets/jain-pnas.1616408114.sd03.xlsx'); print(df.columns.tolist())"
+# Output: ['Name', 'HEK Titer (mg/L)', 'Fab Tm by DSF (°C)', ..., 'ELISA', 'BVP ELISA']
+# No individual antigen columns present
+```
+
+### Methodology Implications
+
+**Our approach (publicly reproducible):**
+- Use aggregated `ELISA` column from SD03
+- Flag polyreactivity if aggregated value > 1.9 fold-over-background
+- Matches what's available in public supplementary files
+
+**Potential Novo approach (per Hybri comment 2025-11-03):**
+- May have obtained disaggregated per-antigen values via author communication
+- Flag polyreactivity if **any of 6 individual antigens** exceeds threshold
+- More sensitive (OR logic across 6 measurements vs. single aggregated value)
+
+**Impact:** Using max-of-6-values (Novo) vs aggregated-value (us) could produce different polyreactivity flags, affecting the flag_polyreactivity cluster and overall label assignment.
+
+### Verification Status
+
+- ✅ **Confirmed:** Public SD03 contains only aggregated ELISA column
+- ⚠️ **Unconfirmed:** Whether Novo used disaggregated per-antigen data
+- 📝 **Action:** Document as known limitation; we use publicly available data
+
+**Reference:** Discord discussion with Hybri, 2025-11-03, where Novo methodology was clarified as using "6 individual ELISA raw values" obtained via email with paper authors.
