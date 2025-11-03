@@ -12,7 +12,7 @@ data:
   dataset_name: "boughter_vh"
   train_file: ./train_datasets/boughter/VH_only_boughter_training.csv  # Boughter VH training data (filtered)
   val_file: null    # No validation set - use CV instead
-  test_file: ./test_datasets/jain/VH_only_jain_test.csv   # Jain VH test data (94 curated antibodies, no NaNs)
+  test_file: VH_only_jain_test_QC_REMOVED.csv   # Jain VH test data (91 antibodies after QC, 3 length outliers removed)
 
   # Data format options
   sequence_column: "sequence"  # Column name for protein sequences

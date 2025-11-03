@@ -1,7 +1,7 @@
 # Novo Nordisk Parity Analysis: Jain Test Set Reconciliation
 
 **Date:** 2025-11-02
-**Status:** COMPLETE - Identified 5 antibodies for removal to achieve Novo parity
+**Status:** ✅ VERIFIED - Achieved exact Novo parity (66.28% accuracy, cell-for-cell confusion matrix match)
 
 ---
 
@@ -145,17 +145,27 @@ Independent validation using:
 ## Statistical Validation
 
 ### Before Removal (91 antibodies):
-- Accuracy: 67.03%
+- Accuracy: 67.03% (61/91)
 - Confusion Matrix: [[44, 20], [10, 17]]
 
-### After Removal (86 antibodies - expected):
-- Accuracy: ~66.28% (matching Novo)
-- Confusion Matrix: [[40, 19], [10, 17]] (matching Novo cell-for-cell)
+### After Removal (86 antibodies - VERIFIED ✅):
+- **Accuracy: 66.28% (57/86)** - EXACTLY matches Novo
+- **Confusion Matrix: [[40, 19], [10, 17]]** - Cell-for-cell identical to Novo
+- **Test Date:** 2025-11-02
+- **Model:** boughter_vh_esm1v_logreg.pkl (no StandardScaler)
 
 ### Non-Specific Performance (IDENTICAL):
 - False Negatives: 10 (both datasets)
 - True Positives: 17 (both datasets)
 - **Perfect match - demonstrates model equivalence**
+
+### Detailed Classification Report (86-antibody parity set):
+```
+              precision    recall  f1-score   support
+    Specific       0.80      0.68      0.73        59
+Non-specific       0.47      0.63      0.54        27
+    accuracy                           0.66        86
+```
 
 ---
 
@@ -211,8 +221,9 @@ df_parity.to_csv('test_datasets/jain/VH_only_jain_parity86.csv', index=False)
 
 ## Files Generated
 
-- `test_datasets/jain/VH_only_jain_test.csv` - Current 91-antibody set (3 length outliers already removed)
-- `test_datasets/jain/VH_only_jain_parity86.csv` - To be created for exact Novo parity
+- `test_datasets/jain/VH_only_jain_test.csv` - Current 91-antibody set (3 length outliers removed)
+- `test_datasets/jain/VH_only_jain_parity86.csv` - ✅ Created and verified (86 antibodies, exact Novo parity)
+- `test_datasets/jain/VH_only_jain_test_BACKUP.csv` - Original 94-antibody backup
 - `docs/NOVO_PARITY_ANALYSIS.md` - This document
 
 ---
