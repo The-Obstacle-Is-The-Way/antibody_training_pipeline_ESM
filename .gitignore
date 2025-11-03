@@ -93,3 +93,5 @@ data/
 models/
 logs/
 outputs/
+literature/
+reference_repos/
