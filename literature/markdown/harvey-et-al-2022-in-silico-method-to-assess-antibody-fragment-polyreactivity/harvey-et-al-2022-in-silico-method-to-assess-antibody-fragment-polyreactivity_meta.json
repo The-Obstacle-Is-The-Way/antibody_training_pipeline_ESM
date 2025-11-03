@@ -1,0 +1,1532 @@
+{
+  "table_of_contents": [
+    {
+      "title": "An in silico method to assess antibody\nfragment polyreactivity",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          37.83203125,
+          112.4896240234375
+        ],
+        [
+          497.0546875,
+          112.4896240234375
+        ],
+        [
+          497.0546875,
+          167.44464111328125
+        ],
+        [
+          37.83203125,
+          167.44464111328125
+        ]
+      ]
+    },
+    {
+      "title": "Results",
+      "heading_level": null,
+      "page_id": 1,
+      "polygon": [
+        [
+          305.857421875,
+          46.78216552734375
+        ],
+        [
+          343.13372802734375,
+          46.78216552734375
+        ],
+        [
+          343.13372802734375,
+          58.17596435546875
+        ],
+        [
+          305.857421875,
+          58.17596435546875
+        ]
+      ]
+    },
+    {
+      "title": "Enrichment of na\u00efve library for polyreactive clones",
+      "heading_level": null,
+      "page_id": 1,
+      "polygon": [
+        [
+          306.1417236328125,
+          59.33465576171875
+        ],
+        [
+          514.224609375,
+          59.33465576171875
+        ],
+        [
+          514.224609375,
+          68.89385986328125
+        ],
+        [
+          306.1417236328125,
+          68.89385986328125
+        ]
+      ]
+    },
+    {
+      "title": "Development of computational method",
+      "heading_level": null,
+      "page_id": 2,
+      "polygon": [
+        [
+          39.685001373291016,
+          594.0224609375
+        ],
+        [
+          200.80078125,
+          594.0224609375
+        ],
+        [
+          200.80078125,
+          604.064453125
+        ],
+        [
+          39.685001373291016,
+          604.064453125
+        ]
+      ]
+    },
+    {
+      "title": "Quantitative scoring of nanobody polyreactivity",
+      "heading_level": null,
+      "page_id": 4,
+      "polygon": [
+        [
+          39.4326171875,
+          272.6787109375
+        ],
+        [
+          235.431640625,
+          272.6787109375
+        ],
+        [
+          235.431640625,
+          282.720703125
+        ],
+        [
+          39.4326171875,
+          282.720703125
+        ]
+      ]
+    },
+    {
+      "title": "Model performance at predicting polyreactivity of closely\nrelated sequences",
+      "heading_level": null,
+      "page_id": 4,
+      "polygon": [
+        [
+          306.1417236328125,
+          143.29150390625
+        ],
+        [
+          543.6171875,
+          143.29150390625
+        ],
+        [
+          543.6171875,
+          164.92041015625
+        ],
+        [
+          306.1417236328125,
+          164.92041015625
+        ]
+      ]
+    },
+    {
+      "title": "Polyreactivity reduction of a functional clone",
+      "heading_level": null,
+      "page_id": 6,
+      "polygon": [
+        [
+          39.287109375,
+          519.09375
+        ],
+        [
+          224.2275390625,
+          519.09375
+        ],
+        [
+          224.2275390625,
+          529.908203125
+        ],
+        [
+          39.287109375,
+          529.908203125
+        ]
+      ]
+    },
+    {
+      "title": "Discussion",
+      "heading_level": null,
+      "page_id": 8,
+      "polygon": [
+        [
+          306.1417236328125,
+          142.712158203125
+        ],
+        [
+          360.2267150878906,
+          142.712158203125
+        ],
+        [
+          360.2267150878906,
+          154.29229736328125
+        ],
+        [
+          306.1417236328125,
+          154.29229736328125
+        ]
+      ]
+    },
+    {
+      "title": "Methods",
+      "heading_level": null,
+      "page_id": 9,
+      "polygon": [
+        [
+          39.685001373291016,
+          227.8759765625
+        ],
+        [
+          84.04326629638672,
+          227.8759765625
+        ],
+        [
+          84.04326629638672,
+          240.2353515625
+        ],
+        [
+          39.685001373291016,
+          240.2353515625
+        ]
+      ]
+    },
+    {
+      "title": "Generation of insect cell membrane polyreactivity reagent",
+      "heading_level": null,
+      "page_id": 9,
+      "polygon": [
+        [
+          39.4326171875,
+          239.84912109375
+        ],
+        [
+          276.3193359375,
+          239.84912109375
+        ],
+        [
+          276.3193359375,
+          250.66357421875
+        ],
+        [
+          39.4326171875,
+          250.66357421875
+        ]
+      ]
+    },
+    {
+      "title": "Yeast sorting",
+      "heading_level": null,
+      "page_id": 9,
+      "polygon": [
+        [
+          39.21435546875,
+          518.70751953125
+        ],
+        [
+          93.05030822753906,
+          518.70751953125
+        ],
+        [
+          93.05030822753906,
+          529.52197265625
+        ],
+        [
+          39.21435546875,
+          529.52197265625
+        ]
+      ]
+    },
+    {
+      "title": "Deep sequencing",
+      "heading_level": null,
+      "page_id": 9,
+      "polygon": [
+        [
+          305.857421875,
+          196.3016357421875
+        ],
+        [
+          375.701171875,
+          196.3016357421875
+        ],
+        [
+          375.701171875,
+          207.45025634765625
+        ],
+        [
+          305.857421875,
+          207.45025634765625
+        ]
+      ]
+    },
+    {
+      "title": "NGS analysis and sequence processing",
+      "heading_level": null,
+      "page_id": 9,
+      "polygon": [
+        [
+          306.1417236328125,
+          325.2060546875
+        ],
+        [
+          462.71484375,
+          325.2060546875
+        ],
+        [
+          462.71484375,
+          336.0205078125
+        ],
+        [
+          306.1417236328125,
+          336.0205078125
+        ]
+      ]
+    },
+    {
+      "title": "Supervised model development",
+      "heading_level": null,
+      "page_id": 9,
+      "polygon": [
+        [
+          306.1417236328125,
+          496.6923828125
+        ],
+        [
+          435.068359375,
+          496.6923828125
+        ],
+        [
+          435.068359375,
+          507.5068359375
+        ],
+        [
+          306.1417236328125,
+          507.5068359375
+        ]
+      ]
+    },
+    {
+      "title": "Yeast plasmid transformation",
+      "heading_level": null,
+      "page_id": 10,
+      "polygon": [
+        [
+          39.578125,
+          46.854583740234375
+        ],
+        [
+          160.08273315429688,
+          46.854583740234375
+        ],
+        [
+          160.08273315429688,
+          57.88629150390625
+        ],
+        [
+          39.578125,
+          57.88629150390625
+        ]
+      ]
+    },
+    {
+      "title": "Anti-VHH Antibody Staining",
+      "heading_level": null,
+      "page_id": 10,
+      "polygon": [
+        [
+          39.396240234375,
+          196.6878662109375
+        ],
+        [
+          151.037109375,
+          196.6878662109375
+        ],
+        [
+          151.037109375,
+          208.40228271484375
+        ],
+        [
+          39.396240234375,
+          208.40228271484375
+        ]
+      ]
+    },
+    {
+      "title": "Recombinant nanobody expression and purification",
+      "heading_level": null,
+      "page_id": 10,
+      "polygon": [
+        [
+          38.92333984375,
+          303.5771484375
+        ],
+        [
+          250.13870239257812,
+          303.5771484375
+        ],
+        [
+          250.13870239257812,
+          314.77783203125
+        ],
+        [
+          38.92333984375,
+          314.77783203125
+        ]
+      ]
+    },
+    {
+      "title": "Nanobody polyreactivity ELISA assays",
+      "heading_level": null,
+      "page_id": 10,
+      "polygon": [
+        [
+          39.21435546875,
+          689.8076171875
+        ],
+        [
+          194.3984375,
+          689.8076171875
+        ],
+        [
+          194.3984375,
+          700.6220703125
+        ],
+        [
+          39.21435546875,
+          700.6220703125
+        ]
+      ]
+    },
+    {
+      "title": "AC-SINS experiments",
+      "heading_level": null,
+      "page_id": 10,
+      "polygon": [
+        [
+          306.1417236328125,
+          229.03466796875
+        ],
+        [
+          393.453125,
+          229.03466796875
+        ],
+        [
+          393.453125,
+          239.84912109375
+        ],
+        [
+          306.1417236328125,
+          239.84912109375
+        ]
+      ]
+    },
+    {
+      "title": "AHEAD orthogonal replication",
+      "heading_level": null,
+      "page_id": 10,
+      "polygon": [
+        [
+          306.1417236328125,
+          443.392578125
+        ],
+        [
+          430.994140625,
+          443.392578125
+        ],
+        [
+          430.994140625,
+          454.9794921875
+        ],
+        [
+          306.1417236328125,
+          454.9794921875
+        ]
+      ]
+    },
+    {
+      "title": "Polyspecifity Reagent Analytical Staining",
+      "heading_level": null,
+      "page_id": 10,
+      "polygon": [
+        [
+          306.1417236328125,
+          689.4763031005859
+        ],
+        [
+          472.318359375,
+          689.4763031005859
+        ],
+        [
+          472.318359375,
+          700.6220703125
+        ],
+        [
+          306.1417236328125,
+          700.6220703125
+        ]
+      ]
+    },
+    {
+      "title": "AT118i4h32 AT1R binding assay",
+      "heading_level": null,
+      "page_id": 11,
+      "polygon": [
+        [
+          39.4326171875,
+          164.727294921875
+        ],
+        [
+          166.6234130859375,
+          164.727294921875
+        ],
+        [
+          166.6234130859375,
+          175.927978515625
+        ],
+        [
+          39.4326171875,
+          175.927978515625
+        ]
+      ]
+    },
+    {
+      "title": "AT118i4h32 saturation-binding experiments",
+      "heading_level": null,
+      "page_id": 11,
+      "polygon": [
+        [
+          39.21435546875,
+          378.698974609375
+        ],
+        [
+          216.515625,
+          378.698974609375
+        ],
+        [
+          216.515625,
+          389.899658203125
+        ],
+        [
+          39.21435546875,
+          389.899658203125
+        ]
+      ]
+    },
+    {
+      "title": "AT1R signaling assay",
+      "heading_level": null,
+      "page_id": 11,
+      "polygon": [
+        [
+          39.396240234375,
+          528.36328125
+        ],
+        [
+          123.40081024169922,
+          528.36328125
+        ],
+        [
+          123.40081024169922,
+          539.9501953125
+        ],
+        [
+          39.396240234375,
+          539.9501953125
+        ]
+      ]
+    },
+    {
+      "title": "Radioligand binding assays",
+      "heading_level": null,
+      "page_id": 11,
+      "polygon": [
+        [
+          39.287109375,
+          625.693359375
+        ],
+        [
+          149.47718811035156,
+          625.693359375
+        ],
+        [
+          149.47718811035156,
+          637.2802734375
+        ],
+        [
+          39.287109375,
+          637.2802734375
+        ]
+      ]
+    },
+    {
+      "title": "Protein crystallization and structure determination",
+      "heading_level": null,
+      "page_id": 11,
+      "polygon": [
+        [
+          306.1417236328125,
+          186.1630859375
+        ],
+        [
+          515.09765625,
+          186.1630859375
+        ],
+        [
+          515.09765625,
+          196.9775390625
+        ],
+        [
+          306.1417236328125,
+          196.9775390625
+        ]
+      ]
+    },
+    {
+      "title": "Thermal shift assay",
+      "heading_level": null,
+      "page_id": 11,
+      "polygon": [
+        [
+          306.1417236328125,
+          550.37841796875
+        ],
+        [
+          384.72265625,
+          550.37841796875
+        ],
+        [
+          384.72265625,
+          561.96533203125
+        ],
+        [
+          306.1417236328125,
+          561.96533203125
+        ]
+      ]
+    },
+    {
+      "title": "Statistical methods",
+      "heading_level": null,
+      "page_id": 11,
+      "polygon": [
+        [
+          306.1417236328125,
+          689.03515625
+        ],
+        [
+          383.9671936035156,
+          689.03515625
+        ],
+        [
+          383.9671936035156,
+          700.6220703125
+        ],
+        [
+          306.1417236328125,
+          700.6220703125
+        ]
+      ]
+    },
+    {
+      "title": "Reporting summary",
+      "heading_level": null,
+      "page_id": 12,
+      "polygon": [
+        [
+          38.4140625,
+          47.1201171875
+        ],
+        [
+          120.8082504272461,
+          47.1201171875
+        ],
+        [
+          120.8082504272461,
+          58.2242431640625
+        ],
+        [
+          38.4140625,
+          58.2242431640625
+        ]
+      ]
+    },
+    {
+      "title": "Data availability",
+      "heading_level": null,
+      "page_id": 12,
+      "polygon": [
+        [
+          38.92333984375,
+          88.3502197265625
+        ],
+        [
+          122.51856994628906,
+          88.3502197265625
+        ],
+        [
+          122.51856994628906,
+          100.71759033203125
+        ],
+        [
+          38.92333984375,
+          100.71759033203125
+        ]
+      ]
+    },
+    {
+      "title": "Code availability",
+      "heading_level": null,
+      "page_id": 12,
+      "polygon": [
+        [
+          39.105224609375,
+          162.8927001953125
+        ],
+        [
+          124.38961791992188,
+          162.8927001953125
+        ],
+        [
+          124.38961791992188,
+          175.72235107421875
+        ],
+        [
+          39.105224609375,
+          175.72235107421875
+        ]
+      ]
+    },
+    {
+      "title": "References",
+      "heading_level": null,
+      "page_id": 12,
+      "polygon": [
+        [
+          39.35986328125,
+          238.111083984375
+        ],
+        [
+          96.03515625,
+          238.111083984375
+        ],
+        [
+          96.03515625,
+          250.67034912109375
+        ],
+        [
+          39.35986328125,
+          250.67034912109375
+        ]
+      ]
+    },
+    {
+      "title": "",
+      "heading_level": null,
+      "page_id": 13,
+      "polygon": [
+        [
+          40.196533203125,
+          22.377227783203125
+        ],
+        [
+          70.098388671875,
+          22.377227783203125
+        ],
+        [
+          70.098388671875,
+          34.302093505859375
+        ],
+        [
+          40.196533203125,
+          34.302093505859375
+        ]
+      ]
+    },
+    {
+      "title": "Acknowledgements",
+      "heading_level": null,
+      "page_id": 13,
+      "polygon": [
+        [
+          39.177978515625,
+          687.87646484375
+        ],
+        [
+          139.0621337890625,
+          687.87646484375
+        ],
+        [
+          139.0621337890625,
+          701.00830078125
+        ],
+        [
+          39.177978515625,
+          701.00830078125
+        ]
+      ]
+    },
+    {
+      "title": "Author contributions",
+      "heading_level": null,
+      "page_id": 13,
+      "polygon": [
+        [
+          306.1417236328125,
+          292.183349609375
+        ],
+        [
+          414.8793029785156,
+          292.183349609375
+        ],
+        [
+          414.8793029785156,
+          304.542724609375
+        ],
+        [
+          306.1417236328125,
+          304.542724609375
+        ]
+      ]
+    },
+    {
+      "title": "Competing interests",
+      "heading_level": null,
+      "page_id": 13,
+      "polygon": [
+        [
+          306.1417236328125,
+          452.662109375
+        ],
+        [
+          409.49224853515625,
+          452.662109375
+        ],
+        [
+          409.49224853515625,
+          465.021484375
+        ],
+        [
+          306.1417236328125,
+          465.021484375
+        ]
+      ]
+    },
+    {
+      "title": "Additional information",
+      "heading_level": null,
+      "page_id": 13,
+      "polygon": [
+        [
+          305.275390625,
+          559.64794921875
+        ],
+        [
+          423.6025390625,
+          559.64794921875
+        ],
+        [
+          423.6025390625,
+          572.77978515625
+        ],
+        [
+          305.275390625,
+          572.77978515625
+        ]
+      ]
+    }
+  ],
+  "page_stats": [
+    {
+      "page_id": 0,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          212
+        ],
+        [
+          "Line",
+          70
+        ],
+        [
+          "TableCell",
+          9
+        ],
+        [
+          "Text",
+          5
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "Table",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 1,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          401
+        ],
+        [
+          "Line",
+          132
+        ],
+        [
+          "Text",
+          4
+        ],
+        [
+          "PageFooter",
+          3
+        ],
+        [
+          "SectionHeader",
+          2
+        ],
+        [
+          "PageHeader",
+          1
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "TextInlineMath",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ],
+        [
+          "Reference",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 2,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          466
+        ],
+        [
+          "Line",
+          201
+        ],
+        [
+          "Text",
+          4
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ],
+        [
+          "Reference",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 3,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          565
+        ],
+        [
+          "Line",
+          240
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "Text",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "TextInlineMath",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ],
+        [
+          "Reference",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 4,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          365
+        ],
+        [
+          "Line",
+          130
+        ],
+        [
+          "Text",
+          9
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "SectionHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 5,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          133
+        ],
+        [
+          "Line",
+          39
+        ],
+        [
+          "Text",
+          5
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Reference",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 6,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          203
+        ],
+        [
+          "Line",
+          62
+        ],
+        [
+          "Text",
+          6
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "Figure",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "Reference",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 7,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          389
+        ],
+        [
+          "Line",
+          148
+        ],
+        [
+          "Text",
+          3
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "Caption",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ],
+        [
+          "Reference",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 8,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          361
+        ],
+        [
+          "Line",
+          130
+        ],
+        [
+          "Text",
+          9
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "SectionHeader",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 9,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          355
+        ],
+        [
+          "Line",
+          127
+        ],
+        [
+          "Text",
+          8
+        ],
+        [
+          "SectionHeader",
+          6
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 10,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          370
+        ],
+        [
+          "Line",
+          126
+        ],
+        [
+          "Text",
+          8
+        ],
+        [
+          "SectionHeader",
+          7
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 11,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          406
+        ],
+        [
+          "Line",
+          125
+        ],
+        [
+          "Text",
+          14
+        ],
+        [
+          "SectionHeader",
+          7
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 12,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          551
+        ],
+        [
+          "Line",
+          127
+        ],
+        [
+          "ListItem",
+          38
+        ],
+        [
+          "SectionHeader",
+          4
+        ],
+        [
+          "PageFooter",
+          3
+        ],
+        [
+          "Text",
+          3
+        ],
+        [
+          "ListGroup",
+          2
+        ],
+        [
+          "PageHeader",
+          1
+        ],
+        [
+          "Reference",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 13,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          420
+        ],
+        [
+          "Line",
+          122
+        ],
+        [
+          "ListItem",
+          22
+        ],
+        [
+          "Text",
+          9
+        ],
+        [
+          "SectionHeader",
+          5
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "PageHeader",
+          1
+        ],
+        [
+          "ListGroup",
+          1
+        ],
+        [
+          "Reference",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 14,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          44
+        ],
+        [
+          "Line",
+          16
+        ],
+        [
+          "PageHeader",
+          2
+        ],
+        [
+          "Text",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    }
+  ],
+  "debug_data_path": "debug_data/harvey-et-al-2022-in-silico-method-to-assess-antibody-fragment-polyreactivity"
+}

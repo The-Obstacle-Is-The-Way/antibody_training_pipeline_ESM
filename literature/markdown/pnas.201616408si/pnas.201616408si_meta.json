@@ -1,0 +1,700 @@
+{
+  "table_of_contents": [
+    {
+      "title": "Supporting Information",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          37.41943359375,
+          48.101165771484375
+        ],
+        [
+          253.4539031982422,
+          48.101165771484375
+        ],
+        [
+          253.4539031982422,
+          90.1903076171875
+        ],
+        [
+          37.41943359375,
+          90.1903076171875
+        ]
+      ]
+    },
+    {
+      "title": "Jain et al. 10.1073/pnas.1616408114",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          37.705078125,
+          85.59283447265625
+        ],
+        [
+          241.083984375,
+          85.59283447265625
+        ],
+        [
+          241.083984375,
+          98.89593505859375
+        ],
+        [
+          37.705078125,
+          98.89593505859375
+        ]
+      ]
+    },
+    {
+      "title": "CIC",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          36.4910888671875,
+          103.801025390625
+        ],
+        [
+          51.6302490234375,
+          103.801025390625
+        ],
+        [
+          51.6302490234375,
+          114.697265625
+        ],
+        [
+          36.4910888671875,
+          114.697265625
+        ]
+      ]
+    },
+    {
+      "title": "PSR Binding Assay",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          37.1337890625,
+          197.088134765625
+        ],
+        [
+          112.25830078125,
+          197.088134765625
+        ],
+        [
+          112.25830078125,
+          207.793212890625
+        ],
+        [
+          37.1337890625,
+          207.793212890625
+        ]
+      ]
+    },
+    {
+      "title": "CSI-BLI",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          37.6336669921875,
+          352.694091796875
+        ],
+        [
+          67.412109375,
+          352.694091796875
+        ],
+        [
+          67.412109375,
+          363.399169921875
+        ],
+        [
+          37.6336669921875,
+          363.399169921875
+        ]
+      ]
+    },
+    {
+      "title": "AC-SINS",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          38.133544921875,
+          445.7900390625
+        ],
+        [
+          71.4825439453125,
+          445.7900390625
+        ],
+        [
+          71.4825439453125,
+          456.4951171875
+        ],
+        [
+          38.133544921875,
+          456.4951171875
+        ]
+      ]
+    },
+    {
+      "title": "SGAC-SINS",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          37.705078125,
+          558.9580078125
+        ],
+        [
+          81.551513671875,
+          558.9580078125
+        ],
+        [
+          81.551513671875,
+          569.6630859375
+        ],
+        [
+          37.705078125,
+          569.6630859375
+        ]
+      ]
+    },
+    {
+      "title": "Tm Using DSF",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          299.9267578125,
+          104.0877685546875
+        ],
+        [
+          358.1982421875,
+          104.0877685546875
+        ],
+        [
+          358.1982421875,
+          114.411376953125
+        ],
+        [
+          299.9267578125,
+          114.411376953125
+        ]
+      ]
+    },
+    {
+      "title": "SMAC",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          300.78369140625,
+          183.89794921875
+        ],
+        [
+          325.92041015625,
+          183.89794921875
+        ],
+        [
+          325.92041015625,
+          194.794189453125
+        ],
+        [
+          300.78369140625,
+          194.794189453125
+        ]
+      ]
+    },
+    {
+      "title": "AS SEC Slope",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          300.498046875,
+          264.568359375
+        ],
+        [
+          354.7705078125,
+          264.568359375
+        ],
+        [
+          354.7705078125,
+          275.2734375
+        ],
+        [
+          300.498046875,
+          275.2734375
+        ]
+      ]
+    },
+    {
+      "title": "HIC",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          301.0693359375,
+          354.605712890625
+        ],
+        [
+          316.494140625,
+          354.605712890625
+        ],
+        [
+          316.494140625,
+          365.693115234375
+        ],
+        [
+          301.0693359375,
+          365.693115234375
+        ]
+      ]
+    },
+    {
+      "title": "BVP Assay",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          301.35498046875,
+          464.90625
+        ],
+        [
+          343.63037109375,
+          464.90625
+        ],
+        [
+          343.63037109375,
+          475.611328125
+        ],
+        [
+          301.35498046875,
+          475.611328125
+        ]
+      ]
+    },
+    {
+      "title": "ELISA",
+      "heading_level": null,
+      "page_id": 0,
+      "polygon": [
+        [
+          299.64111328125,
+          666.0087890625
+        ],
+        [
+          323.401611328125,
+          666.0087890625
+        ],
+        [
+          323.401611328125,
+          676.7138671875
+        ],
+        [
+          299.64111328125,
+          676.7138671875
+        ]
+      ]
+    },
+    {
+      "title": "Table S1. Comparison between HEK samples and clinical material for subset of nine antibodies",
+      "heading_level": null,
+      "page_id": 5,
+      "polygon": [
+        [
+          37.276611328125,
+          50.9447021484375
+        ],
+        [
+          398.2189025878906,
+          50.9447021484375
+        ],
+        [
+          398.2189025878906,
+          59.604736328125
+        ],
+        [
+          37.276611328125,
+          59.604736328125
+        ]
+      ]
+    },
+    {
+      "title": "Dataset S1. List of 137 antibodies used in this study",
+      "heading_level": null,
+      "page_id": 6,
+      "polygon": [
+        [
+          37.99072265625,
+          257.113037109375
+        ],
+        [
+          238.084716796875,
+          257.113037109375
+        ],
+        [
+          238.084716796875,
+          266.3638916015625
+        ],
+        [
+          37.99072265625,
+          266.3638916015625
+        ]
+      ]
+    },
+    {
+      "title": "Dataset S1",
+      "heading_level": null,
+      "page_id": 6,
+      "polygon": [
+        [
+          38.381099700927734,
+          282.346435546875
+        ],
+        [
+          72.64965057373047,
+          282.346435546875
+        ],
+        [
+          72.64965057373047,
+          290.757568359375
+        ],
+        [
+          38.381099700927734,
+          290.757568359375
+        ]
+      ]
+    },
+    {
+      "title": "Dataset S2",
+      "heading_level": null,
+      "page_id": 6,
+      "polygon": [
+        [
+          38.381099700927734,
+          339.38287353515625
+        ],
+        [
+          72.83935546875,
+          339.38287353515625
+        ],
+        [
+          72.83935546875,
+          347.9150390625
+        ],
+        [
+          38.381099700927734,
+          347.9150390625
+        ]
+      ]
+    }
+  ],
+  "page_stats": [
+    {
+      "page_id": 0,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          295
+        ],
+        [
+          "Line",
+          116
+        ],
+        [
+          "SectionHeader",
+          13
+        ],
+        [
+          "Text",
+          11
+        ],
+        [
+          "PageFooter",
+          2
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 1,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          291
+        ],
+        [
+          "Line",
+          85
+        ],
+        [
+          "Text",
+          8
+        ],
+        [
+          "Equation",
+          3
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 2,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          9
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Line",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 3,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          19
+        ],
+        [
+          "Line",
+          4
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "FigureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 4,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          17
+        ],
+        [
+          "Line",
+          3
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Picture",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "Figure",
+          1
+        ],
+        [
+          "Text",
+          1
+        ],
+        [
+          "PictureGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 5,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "TableCell",
+          325
+        ],
+        [
+          "Span",
+          279
+        ],
+        [
+          "Line",
+          51
+        ],
+        [
+          "Table",
+          2
+        ],
+        [
+          "Text",
+          2
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "SectionHeader",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "TableGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    },
+    {
+      "page_id": 6,
+      "text_extraction_method": "pdftext",
+      "block_counts": [
+        [
+          "Span",
+          59
+        ],
+        [
+          "TableCell",
+          26
+        ],
+        [
+          "Line",
+          24
+        ],
+        [
+          "Text",
+          4
+        ],
+        [
+          "SectionHeader",
+          3
+        ],
+        [
+          "PageFooter",
+          2
+        ],
+        [
+          "Table",
+          1
+        ],
+        [
+          "Caption",
+          1
+        ],
+        [
+          "TableGroup",
+          1
+        ]
+      ],
+      "block_metadata": {
+        "llm_request_count": 0,
+        "llm_error_count": 0,
+        "llm_tokens_used": 0,
+        "previous_text": "",
+        "previous_type": "",
+        "previous_order": 0
+      }
+    }
+  ],
+  "debug_data_path": "debug_data/pnas.201616408si"
+}
