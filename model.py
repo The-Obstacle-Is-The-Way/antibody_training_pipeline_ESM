@@ -159,6 +159,8 @@ class ESMEmbeddingExtractor:
         return np.array(embeddings_list)
 
     def _clear_gpu_cache(self):
-        """Clear GPU cache if using CUDA"""
+        """Clear GPU cache for CUDA or MPS devices"""
         if str(self.device).startswith("cuda"):
             torch.cuda.empty_cache()
+        elif str(self.device).startswith("mps"):
+            torch.mps.empty_cache()
