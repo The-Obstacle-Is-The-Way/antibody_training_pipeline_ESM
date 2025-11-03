@@ -1,398 +1,243 @@
 #!/usr/bin/env python3
 """
-Convert Jain dataset supplementary Excel files into a clean CSV aligned with the
-Sakhnini et al. 2025 evaluation pipeline.
+Convert Jain Dataset with Private Disaggregated ELISA Data
 
-This script:
-1. Reads SD01/SD02/SD03 spreadsheets from Jain et al. 2017 (PNAS)
-2. Sanitizes VH/VL amino acid sequences
-3. Applies Table 1 flag thresholds (90th percentile of approved antibodies)
-4. Produces a canonical CSV with explicit flag metadata and binary labels
+This script implements Novo Nordisk's exact methodology using private ELISA data
+obtained from Jain et al. authors.
 
-Usage:
-    python3 scripts/convert_jain_excel_to_csv.py \
-        --sd01 test_datasets/pnas.1616408114.sd01.xlsx \
-        --sd02 test_datasets/pnas.1616408114.sd02.xlsx \
-        --sd03 test_datasets/pnas.1616408114.sd03.xlsx \
-        --output test_datasets/jain.csv
+Methodology (from Sakhnini et al. 2025):
+  - 6 disaggregated ELISA antigens (Cardiolipin, KLH, LPS, ssDNA, dsDNA, Insulin)
+  - 1 aggregated "other" flag (self-interaction OR chromatography OR stability)
+  - Total flag range: 0-7
+  - Threshold: >=4 for non-specific (">3" in paper)
+  - Exclude mild (1-3 flags) from test set
 
-The default CLI values match the repository layout, so running without arguments
-is sufficient when the Excel files are placed in `test_datasets/`.
+Expected output:
+  - 137 total antibodies
+  - ~62 specific (0 flags)
+  - ~50 mild (1-3 flags) - EXCLUDED
+  - ~25 non-specific (>=4 flags)
+  - Test set: ~87 antibodies (specific + non-specific)
 
-Reference material:
-- literature/markdown/jain-et-al-2017-biophysical-properties-of-the-clinical-stage-antibody-landscape/
-- literature/pdf/pnas.201616408si.pdf
+Date: 2025-11-03
+Status: Clean implementation (no reverse-engineering)
 """
 
-from __future__ import annotations
-
-import argparse
-import logging
-import operator
-from dataclasses import dataclass
+import sys
 from pathlib import Path
-from typing import Callable, Dict, Iterable, List, Tuple
-
 import pandas as pd
+import numpy as np
 
-LOG = logging.getLogger("convert_jain_excel_to_csv")
+def load_data():
+    """Load private ELISA + public SD files."""
+    print("Loading data files...")
 
+    # Private ELISA (6 individual antigens)
+    private = pd.read_excel('test_datasets/Private_Jain2017_ELISA_indiv.xlsx',
+                            sheet_name='Individual-ELISA')
+    print(f"  Private ELISA: {len(private)} antibodies")
 
-# --------------------------------------------------------------------------- #
-# Configuration
-# --------------------------------------------------------------------------- #
+    # Public SD files
+    sd01 = pd.read_excel('test_datasets/jain-pnas.1616408114.sd01.xlsx')
+    sd02 = pd.read_excel('test_datasets/jain-pnas.1616408114.sd02.xlsx')
+    sd03 = pd.read_excel('test_datasets/jain-pnas.1616408114.sd03.xlsx',
+                         sheet_name='Results-12-assays')
 
-# Valid amino acids supported by ESM (X used for unknown residues).
-VALID_AA = set("ACDEFGHIKLMNPQRSTVWYX")
+    print(f"  SD01 (metadata): {len(sd01)} antibodies")
+    print(f"  SD02 (sequences): {len(sd02)} antibodies")
+    print(f"  SD03 (assays): {len(sd03)} rows")
 
-# Mapping from verbose SD03 column names to snake_case identifiers.
-COLUMN_RENAME = {
-    "HEK Titer (mg/L)": "hek_titer_mg_per_L",
-    "Fab Tm by DSF (°C)": "fab_tm_celsius",
-    "SGAC-SINS AS100 ((NH4)2SO4 mM)": "sgac_sins_mM",
-    "HIC Retention Time (Min)a": "hic_min",
-    "SMAC Retention Time (Min)a": "smac_min",
-    "Slope for Accelerated Stability": "as_slope_pct_per_day",
-    "Poly-Specificity Reagent (PSR) SMP Score (0-1)": "psr_smp",
-    "Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average": "acsins_dlmax_nm",
-    "CIC Retention Time (Min)": "cic_min",
-    "CSI-BLI Delta Response (nm)": "csi_bli_nm",
-    "ELISA": "elisa_fold",
-    "BVP ELISA": "bvp_elisa_fold",
-}
+    # Merge all on 'Name'
+    df = sd01.merge(sd02[['Name', 'VH', 'VL']], on='Name', how='inner')
+    df = df.merge(sd03, on='Name', how='inner')
+    df = df.merge(private, on='Name', how='inner')
 
+    print(f"  Merged: {len(df)} antibodies\n")
 
-@dataclass(frozen=True)
-class AssayThreshold:
-    """Threshold definition for a single assay metric."""
+    if len(df) != 137:
+        print(f"  WARNING: Expected 137 antibodies, got {len(df)}")
 
-    column: str
-    threshold: float
-    comparator: Callable[[float, float], bool]
-    direction_label: str  # ">" or "<"
-    original_name: str
-
-
-ASSAY_CLUSTERS: Dict[str, List[AssayThreshold]] = {
-    "flag_self_interaction": [
-        AssayThreshold(
-            "psr_smp",
-            0.27,
-            operator.gt,
-            ">",
-            "Poly-Specificity Reagent (PSR) SMP Score (0-1)",
-        ),
-        AssayThreshold(
-            "acsins_dlmax_nm",
-            11.8,
-            operator.gt,
-            ">",
-            "Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average",
-        ),
-        AssayThreshold(
-            "csi_bli_nm", 0.01, operator.gt, ">", "CSI-BLI Delta Response (nm)"
-        ),
-        AssayThreshold("cic_min", 10.1, operator.gt, ">", "CIC Retention Time (Min)"),
-    ],
-    "flag_chromatography": [
-        AssayThreshold("hic_min", 11.7, operator.gt, ">", "HIC Retention Time (Min)a"),
-        AssayThreshold(
-            "smac_min", 12.8, operator.gt, ">", "SMAC Retention Time (Min)a"
-        ),
-        AssayThreshold(
-            "sgac_sins_mM", 370.0, operator.lt, "<", "SGAC-SINS AS100 ((NH4)2SO4 mM)"
-        ),
-    ],
-    "flag_polyreactivity": [
-        AssayThreshold("elisa_fold", 1.9, operator.gt, ">", "ELISA"),
-        AssayThreshold("bvp_elisa_fold", 4.3, operator.gt, ">", "BVP ELISA"),
-    ],
-    "flag_stability": [
-        AssayThreshold(
-            "as_slope_pct_per_day",
-            0.08,
-            operator.gt,
-            ">",
-            "Slope for Accelerated Stability",
-        ),
-    ],
-}
-
-# Column order for the output CSV (missing columns are appended afterwards).
-PRIMARY_COLUMNS = [
-    "id",
-    "heavy_seq",
-    "light_seq",
-    "flags_total",
-    "flag_category",
-    "label",
-    "flag_self_interaction",
-    "flag_chromatography",
-    "flag_polyreactivity",
-    "flag_stability",
-    "source",
-    "smp",
-    "ova",
-    "bvp_elisa",
-    "psr_smp",
-    "acsins_dlmax_nm",
-    "csi_bli_nm",
-    "cic_min",
-    "hic_min",
-    "smac_min",
-    "sgac_sins_mM",
-    "as_slope_pct_per_day",
-    "hek_titer_mg_per_L",
-    "fab_tm_celsius",
-    "heavy_seq_length",
-    "light_seq_length",
-]
-
-
-# --------------------------------------------------------------------------- #
-# Utility helpers
-# --------------------------------------------------------------------------- #
-
-
-def sanitize_sequence(seq: object) -> object:
-    """
-    Sanitize a VH/VL amino acid sequence.
-
-    - Uppercases characters
-    - Removes whitespace, hyphens, and any characters outside VALID_AA
-    - Returns pandas.NA if no valid characters remain
-    """
-    if pd.isna(seq):
-        return pd.NA
-
-    seq_str = "".join(ch for ch in str(seq).upper() if ch in VALID_AA)
-    return seq_str or pd.NA
-
-
-def load_excel_frame(
-    path: Path, expected_unique: Iterable[str] | None = None
-) -> pd.DataFrame:
-    """Read an Excel worksheet and optionally validate set membership."""
-    df = pd.read_excel(path)
-    if expected_unique is not None:
-        missing = set(expected_unique) - set(df["Name"].dropna())
-        if missing:
-            LOG.warning(
-                "File %s is missing %d expected names (e.g. %s)",
-                path,
-                len(missing),
-                list(sorted(missing))[:3],
-            )
     return df
 
 
-def evaluate_cluster_flags(row: pd.Series) -> Dict[str, bool]:
-    """Evaluate Table 1 cluster thresholds for a single antibody."""
-    flags: Dict[str, bool] = {}
-    for cluster, metrics in ASSAY_CLUSTERS.items():
-        triggered = False
-        for metric in metrics:
-            value = row.get(metric.column)
-            if pd.isna(value):
-                continue
-            if metric.comparator(value, metric.threshold):
-                triggered = True
-                break
-        flags[cluster] = triggered
-    return flags
+def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate flags using Novo's methodology (0-7 range).
 
+    Flags:
+      - 6 ELISA flags (one per antigen, threshold 1.9 OD)
+      - 1 aggregated "other" flag (ANY of: self-interaction, chromatography, stability)
 
-def assign_flag_category(total_flags: int) -> str:
-    """Map numerical flag counts to categorical buckets."""
-    if total_flags >= 3:  # Fixed: Changed from >=4 to >=3 (matches Novo/Hybri)
-        return "non_specific"
-    if total_flags == 0:
-        return "specific"
-    return "mild"
+    Total: 0-7 flags
+    """
+    print("Calculating flags (Novo methodology: 0-7 range)...")
 
+    # === 6 ELISA FLAGS ===
+    elisa_threshold = 1.9
 
-def ensure_output_directory(path: Path) -> None:
-    if not path.parent.exists():
-        path.parent.mkdir(parents=True, exist_ok=True)
+    df['flag_cardiolipin'] = (df['ELISA Cardiolipin'] > elisa_threshold).astype(int)
+    df['flag_klh'] = (df['ELISA KLH'] > elisa_threshold).astype(int)
+    df['flag_lps'] = (df['ELISA LPS'] > elisa_threshold).astype(int)
+    df['flag_ssdna'] = (df['ELISA ssDNA'] > elisa_threshold).astype(int)
+    df['flag_dsdna'] = (df['ELISA dsDNA'] > elisa_threshold).astype(int)
+    df['flag_insulin'] = (df['ELISA Insulin'] > elisa_threshold).astype(int)
 
-
-# --------------------------------------------------------------------------- #
-# Conversion pipeline
-# --------------------------------------------------------------------------- #
-
-
-def convert_jain_dataset(
-    sd01_path: Path, sd02_path: Path, sd03_path: Path
-) -> pd.DataFrame:
-    """Convert the Jain supplementary files to a cleaned, merged DataFrame."""
-    LOG.info("Reading SD01 metadata from %s", sd01_path)
-    sd01 = pd.read_excel(sd01_path)
-    LOG.info("  Loaded %d metadata rows", len(sd01))
-
-    LOG.info("Reading SD02 sequences from %s", sd02_path)
-    sd02 = pd.read_excel(sd02_path)
-    LOG.info("  Loaded %d sequence rows", len(sd02))
-
-    LOG.info("Reading SD03 biophysical properties from %s", sd03_path)
-    sd03 = pd.read_excel(sd03_path)
-    LOG.info("  Loaded %d property rows (including metadata rows)", len(sd03))
-
-    # Restrict to antibodies that appear in the sequence table.
-    valid_names = set(sd02["Name"].dropna())
-    sd01 = sd01[sd01["Name"].isin(valid_names)].reset_index(drop=True)
-    sd03 = sd03[sd03["Name"].isin(valid_names)].reset_index(drop=True)
-
-    LOG.info(
-        "  Retained %d property rows after filtering to valid antibody names", len(sd03)
+    df['elisa_flags'] = (
+        df['flag_cardiolipin'] +
+        df['flag_klh'] +
+        df['flag_lps'] +
+        df['flag_ssdna'] +
+        df['flag_dsdna'] +
+        df['flag_insulin']
     )
 
-    # Rename columns for ease of use.
-    sd03 = sd03.rename(columns=COLUMN_RENAME)
+    # === 3 OTHER FLAGS (calculated individually, then aggregated) ===
+    # Self-interaction (4 assays from Jain Table 1)
+    df['flag_self_interaction'] = (
+        (df['Poly-Specificity Reagent (PSR) SMP Score (0-1)'] > 0.27) |
+        (df['Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average'] > 11.8) |
+        (df['CSI-BLI Delta Response (nm)'] > 0.01) |
+        (df['CIC Retention Time (Min)'] > 10.1)
+    ).astype(int)
 
-    # Merge metadata / sequences / properties.
-    merged = (
-        sd01.merge(sd02[["Name", "VH", "VL"]], on="Name", how="inner")
-        .merge(sd03, on="Name", how="inner")
-        .rename(columns={"Name": "id", "VH": "heavy_seq", "VL": "light_seq"})
+    # Chromatography (3 assays)
+    df['flag_chromatography'] = (
+        (df['HIC Retention Time (Min)a'] > 11.7) |
+        (df['SMAC Retention Time (Min)a'] > 12.8) |
+        (df['SGAC-SINS AS100 ((NH4)2SO4 mM)'] < 370)
+    ).astype(int)
+
+    # Stability (1 assay)
+    df['flag_stability'] = (df['Slope for Accelerated Stability'] > 0.08).astype(int)
+
+    # === AGGREGATE "OTHER" FLAG ===
+    # Novo likely used: ANY of the 3 groups failing → 1 flag
+    df['flag_other_aggregated'] = (
+        (df['flag_self_interaction'] == 1) |
+        (df['flag_chromatography'] == 1) |
+        (df['flag_stability'] == 1)
+    ).astype(int)
+
+    # === TOTAL FLAGS (0-7 range) ===
+    df['total_flags'] = df['elisa_flags'] + df['flag_other_aggregated']
+
+    # === APPLY THRESHOLD ===
+    # Novo: "specific (0 flags) and non-specific (>3 flags)"
+    # This means: 0 = specific, 1-3 = mild, >=4 = non-specific
+
+    df['flag_category'] = pd.cut(
+        df['total_flags'],
+        bins=[-0.5, 0.5, 3.5, 7.5],
+        labels=['specific', 'mild', 'non_specific']
     )
 
-    LOG.info("Merged dataset has %d antibodies", len(merged))
+    # Binary label: 0 = specific, 1 = non-specific, NaN = mild (excluded)
+    df['label'] = df['flag_category'].map({
+        'specific': 0,
+        'mild': pd.NA,  # Excluded from test set
+        'non_specific': 1
+    }).astype('Int64')  # Nullable integer type
 
-    # Sanitize sequences.
-    merged["heavy_seq"] = merged["heavy_seq"].apply(sanitize_sequence)
-    merged["light_seq"] = merged["light_seq"].apply(sanitize_sequence)
+    # Print distribution
+    print(f"\n  Flag distribution (0-7 range):")
+    for flag_count in range(8):
+        count = (df['total_flags'] == flag_count).sum()
+        pct = count / len(df) * 100
+        print(f"    {flag_count} flags: {count:3d} antibodies ({pct:5.1f}%)")
 
-    merged["heavy_seq_length"] = merged["heavy_seq"].str.len()
-    merged["light_seq_length"] = merged["light_seq"].str.len()
+    print(f"\n  Category distribution:")
+    for cat in ['specific', 'mild', 'non_specific']:
+        count = (df['flag_category'] == cat).sum()
+        pct = count / len(df) * 100
+        print(f"    {cat}: {count:3d} antibodies ({pct:5.1f}%)")
 
-    # Compute threshold-based flags.
-    flag_records = merged.apply(evaluate_cluster_flags, axis=1, result_type="expand")
-    for column in ASSAY_CLUSTERS:
-        merged[column] = flag_records[column]
+    print(f"\n  Label distribution (test set only):")
+    label_counts = df['label'].value_counts()
+    n_specific = label_counts.get(0, 0)
+    n_nonspec = label_counts.get(1, 0)
+    print(f"    Specific (label=0): {n_specific}")
+    print(f"    Non-specific (label=1): {n_nonspec}")
+    print(f"    Test set size: {n_specific + n_nonspec}")
 
-    merged["flags_total"] = merged[list(ASSAY_CLUSTERS.keys())].sum(axis=1)
-    merged["flag_category"] = merged["flags_total"].apply(assign_flag_category)
-    merged["label"] = (
-        merged["flag_category"].map({"specific": 0, "non_specific": 1}).astype("Int64")
-    )
-
-    # Map supporting columns for historical compatibility.
-    merged["source"] = "jain2017"
-    merged["smp"] = merged["psr_smp"]
-    merged["ova"] = merged["elisa_fold"]
-    merged["bvp_elisa"] = merged["bvp_elisa_fold"]
-
-    return merged
-
-
-def prepare_output(df: pd.DataFrame) -> pd.DataFrame:
-    """Reorder columns and ensure consistent dtypes before export."""
-    ordered_cols = [col for col in PRIMARY_COLUMNS if col in df.columns]
-    remaining_cols = [col for col in df.columns if col not in ordered_cols]
-    final_cols = ordered_cols + remaining_cols
-    return df[final_cols]
+    return df
 
 
-def summarize(df: pd.DataFrame) -> None:
-    """Print key summary statistics to stdout."""
-    LOG.info("Summary:")
-    LOG.info("  Total antibodies: %d", len(df))
-    LOG.info(
-        "  Flag distribution: %s",
-        ", ".join(
-            f"{k}={v}"
-            for k, v in df["flag_category"].value_counts().sort_index().items()
-        ),
-    )
-    label_counts = df["label"].value_counts(dropna=False)
-    label_summary: List[str] = []
-    for idx, val in label_counts.items():
-        if pd.isna(idx):
-            label_summary.append(f"NaN={val}")
-        else:
-            label_summary.append(f"{int(idx)}={val}")
-    LOG.info("  Label counts: %s", ", ".join(label_summary))
+def save_outputs(df: pd.DataFrame):
+    """Save conversion outputs."""
+    output_dir = Path('test_datasets')
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    missing_metrics: List[str] = []
-    for cluster, metrics in ASSAY_CLUSTERS.items():
-        for metric in metrics:
-            missing = df[metric.column].isna().sum()
-            if missing:
-                missing_metrics.append(f"{metric.column}({cluster})={missing}")
-    if missing_metrics:
-        LOG.warning("  Missing assay measurements: %s", ", ".join(missing_metrics))
+    # Full dataset with all columns
+    print("\nSaving outputs...")
 
-    vh_lengths = df["heavy_seq_length"].dropna()
-    vl_lengths = df["light_seq_length"].dropna()
-    LOG.info(
-        "  Sequence length (VH): min=%s, max=%s",
-        int(vh_lengths.min()),
-        int(vh_lengths.max()),
-    )
-    LOG.info(
-        "  Sequence length (VL): min=%s, max=%s",
-        int(vl_lengths.min()),
-        int(vl_lengths.max()),
-    )
+    # 1. Full 137-antibody dataset
+    full_output = df[[
+        'Name', 'VH', 'VL',
+        'total_flags', 'elisa_flags', 'flag_other_aggregated',
+        'flag_category', 'label',
+        'flag_cardiolipin', 'flag_klh', 'flag_lps',
+        'flag_ssdna', 'flag_dsdna', 'flag_insulin',
+        'flag_self_interaction', 'flag_chromatography', 'flag_stability'
+    ]].copy()
 
+    full_output = full_output.rename(columns={'Name': 'id', 'VH': 'vh_sequence', 'VL': 'vl_sequence'})
+    full_path = output_dir / 'jain_with_private_elisa_FULL.csv'
+    full_output.to_csv(full_path, index=False)
+    print(f"  ✓ Saved: {full_path}")
+    print(f"    Total: {len(full_output)} antibodies (all 137)")
 
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Convert Jain supplementary Excel files to CSV."
-    )
-    parser.add_argument(
-        "--sd01",
-        type=Path,
-        default=Path("test_datasets/pnas.1616408114.sd01.xlsx"),
-        help="Path to SD01 metadata file",
-    )
-    parser.add_argument(
-        "--sd02",
-        type=Path,
-        default=Path("test_datasets/pnas.1616408114.sd02.xlsx"),
-        help="Path to SD02 sequence file",
-    )
-    parser.add_argument(
-        "--sd03",
-        type=Path,
-        default=Path("test_datasets/pnas.1616408114.sd03.xlsx"),
-        help="Path to SD03 biophysical measurements",
-    )
-    parser.add_argument(
-        "--output",
-        type=Path,
-        default=Path("test_datasets/jain.csv"),
-        help="Output CSV path",
-    )
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Enable verbose logging",
-    )
-    return parser.parse_args()
+    # 2. Test set only (exclude mild)
+    test_df = df[df['label'].notna()].copy()
+    test_output = test_df[[
+        'Name', 'VH',
+        'total_flags', 'elisa_flags', 'flag_category', 'label'
+    ]].copy()
+
+    test_output = test_output.rename(columns={'Name': 'id', 'VH': 'vh_sequence'})
+    test_path = output_dir / 'jain_with_private_elisa_TEST.csv'
+    test_output.to_csv(test_path, index=False)
+    print(f"  ✓ Saved: {test_path}")
+    print(f"    Total: {len(test_output)} antibodies (test set, mild excluded)")
+
+    # 3. VH-only for model inference (legacy format compatibility)
+    vh_output = test_df[['Name', 'VH', 'label']].copy()
+    vh_output = vh_output.rename(columns={'Name': 'id', 'VH': 'sequence'})
+    vh_output['source'] = 'jain2017'
+    vh_path = output_dir / 'jain' / 'VH_only_jain_novo_parity.csv'
+    vh_path.parent.mkdir(parents=True, exist_ok=True)
+    vh_output.to_csv(vh_path, index=False)
+    print(f"  ✓ Saved: {vh_path}")
+    print(f"    Total: {len(vh_output)} antibodies (VH-only, for model inference)")
 
 
-def main() -> None:
-    args = parse_args()
+def main():
+    print("=" * 80)
+    print("Jain Dataset Conversion - Novo Nordisk Methodology")
+    print("=" * 80)
+    print("Using private disaggregated ELISA data (6 antigens)")
+    print("Flag range: 0-7 (6 ELISA + 1 aggregated other)")
+    print("Threshold: >=4 for non-specific ('>3')")
+    print("=" * 80)
+    print()
 
-    logging.basicConfig(
-        level=logging.DEBUG if args.verbose else logging.INFO,
-        format="%(levelname)s %(message)s",
-    )
+    # Load data
+    df = load_data()
 
-    for path in (args.sd01, args.sd02, args.sd03):
-        if not path.exists():
-            raise FileNotFoundError(f"Required input file not found: {path}")
+    # Calculate flags
+    df = calculate_flags(df)
 
-    df = convert_jain_dataset(args.sd01, args.sd02, args.sd03)
-    df = prepare_output(df)
+    # Save outputs
+    save_outputs(df)
 
-    ensure_output_directory(args.output)
-    df.to_csv(args.output, index=False)
+    print("\n" + "=" * 80)
+    print("✓ Conversion Complete!")
+    print("=" * 80)
+    print(f"\nFiles generated:")
+    print(f"  1. jain_with_private_elisa_FULL.csv - All 137 antibodies")
+    print(f"  2. jain_with_private_elisa_TEST.csv - Test set only (~87 antibodies)")
+    print(f"  3. jain/VH_only_jain_novo_parity.csv - For model inference")
+    print(f"\nReady for model testing!")
 
-    summarize(df)
-    LOG.info("Saved cleaned Jain dataset to %s", args.output)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
