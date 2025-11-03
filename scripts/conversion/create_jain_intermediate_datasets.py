@@ -254,8 +254,8 @@ def main():
     # STEP 2: Remove VL annotation failures
     df_94 = filter_vl_failures(df)
 
-    df_94_save = df_94[['Name', 'VH', 'total_flags', 'elisa_flags', 'label']].copy()
-    df_94_save = df_94_save.rename(columns={'Name': 'id', 'VH': 'vh_sequence'})
+    df_94_save = df_94[['id', 'VH', 'total_flags', 'elisa_flags', 'label']].copy()
+    df_94_save = df_94_save.rename(columns={'VH': 'vh_sequence'})
 
     save_dataset(
         df_94_save,
