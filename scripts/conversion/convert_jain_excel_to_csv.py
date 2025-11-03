@@ -1,26 +1,30 @@
 #!/usr/bin/env python3
 """
-Convert Jain Dataset with Private Disaggregated ELISA Data
+Convert Jain Dataset with Private Disaggregated ELISA Data + Public BVP Data
 
-This script implements Novo Nordisk's exact methodology using private ELISA data
-obtained from Jain et al. authors.
+This script implements Novo Nordisk's exact methodology using:
+  - Private ELISA data (6 disaggregated antigens) from Jain et al. authors
+  - Public BVP + biophysical assays from Jain et al. 2017 supplementary SD03
 
-Methodology (from Sakhnini et al. 2025):
-  - 6 disaggregated ELISA antigens (Cardiolipin, KLH, LPS, ssDNA, dsDNA, Insulin)
-  - 1 aggregated "other" flag (self-interaction OR chromatography OR stability)
-  - Total flag range: 0-7
+CORRECTED Methodology (from Sakhnini et al. 2025):
+  - Flags 1-6: Individual ELISA antigens (Cardiolipin, KLH, LPS, ssDNA, dsDNA, Insulin)
+  - Flag 7: BVP ELISA (from public SD03)
+  - Flag 8: Self-interaction (ANY of 4 assays)
+  - Flag 9: Chromatography (ANY of 3 assays)
+  - Flag 10: Stability (1 assay)
+  - Total flag range: 0-10 (NOT 0-7!)
   - Threshold: >=4 for non-specific (">3" in paper)
   - Exclude mild (1-3 flags) from test set
 
 Expected output:
   - 137 total antibodies
-  - ~62 specific (0 flags)
-  - ~50 mild (1-3 flags) - EXCLUDED
-  - ~25 non-specific (>=4 flags)
-  - Test set: ~87 antibodies (specific + non-specific)
+  - ~60-70 specific (0 flags)
+  - ~30-40 mild (1-3 flags) - EXCLUDED
+  - ~20-30 non-specific (>=4 flags)
+  - Test set: ~80-90 antibodies (specific + non-specific, target ~86)
 
 Date: 2025-11-03
-Status: Clean implementation (no reverse-engineering)
+Status: CORRECTED - Fixed missing BVP and collapsed flags bugs
 """
 
 import sys
@@ -62,17 +66,20 @@ def load_data():
 
 def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Calculate flags using Novo's methodology (0-7 range).
+    Calculate flags using CORRECTED Novo methodology (0-10 range).
 
     Flags:
-      - 6 ELISA flags (one per antigen, threshold 1.9 OD)
-      - 1 aggregated "other" flag (ANY of: self-interaction, chromatography, stability)
+      - Flags 1-6: Individual ELISA antigens (threshold 1.9 OD each)
+      - Flag 7: BVP ELISA (threshold 4.3 fold-over-background)
+      - Flag 8: Self-interaction (ANY of 4 assays)
+      - Flag 9: Chromatography (ANY of 3 assays)
+      - Flag 10: Stability (1 assay)
 
-    Total: 0-7 flags
+    Total: 0-10 flags (NO AGGREGATION!)
     """
-    print("Calculating flags (Novo methodology: 0-7 range)...")
+    print("Calculating flags (CORRECTED Novo methodology: 0-10 range)...")
 
-    # === 6 ELISA FLAGS ===
+    # === FLAGS 1-6: ELISA (from private data) ===
     elisa_threshold = 1.9
 
     df['flag_cardiolipin'] = (df['ELISA Cardiolipin'] > elisa_threshold).astype(int)
@@ -91,8 +98,13 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
         df['flag_insulin']
     )
 
-    # === 3 OTHER FLAGS (calculated individually, then aggregated) ===
-    # Self-interaction (4 assays from Jain Table 1)
+    # === FLAG 7: BVP (from public SD03) ===
+    # CRITICAL BUG FIX: This was missing in original implementation!
+    bvp_threshold = 4.3
+    df['flag_bvp'] = (df['BVP ELISA'] > bvp_threshold).astype(int)
+
+    # === FLAG 8: Self-interaction (from public SD03) ===
+    # ANY of 4 assays from Jain Table 1 exceeds threshold → 1 flag
     df['flag_self_interaction'] = (
         (df['Poly-Specificity Reagent (PSR) SMP Score (0-1)'] > 0.27) |
         (df['Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average'] > 11.8) |
@@ -100,26 +112,26 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
         (df['CIC Retention Time (Min)'] > 10.1)
     ).astype(int)
 
-    # Chromatography (3 assays)
+    # === FLAG 9: Chromatography (from public SD03) ===
+    # ANY of 3 assays exceeds threshold → 1 flag
     df['flag_chromatography'] = (
         (df['HIC Retention Time (Min)a'] > 11.7) |
         (df['SMAC Retention Time (Min)a'] > 12.8) |
         (df['SGAC-SINS AS100 ((NH4)2SO4 mM)'] < 370)
     ).astype(int)
 
-    # Stability (1 assay)
+    # === FLAG 10: Stability (from public SD03) ===
     df['flag_stability'] = (df['Slope for Accelerated Stability'] > 0.08).astype(int)
 
-    # === AGGREGATE "OTHER" FLAG ===
-    # Novo likely used: ANY of the 3 groups failing → 1 flag
-    df['flag_other_aggregated'] = (
-        (df['flag_self_interaction'] == 1) |
-        (df['flag_chromatography'] == 1) |
-        (df['flag_stability'] == 1)
-    ).astype(int)
-
-    # === TOTAL FLAGS (0-7 range) ===
-    df['total_flags'] = df['elisa_flags'] + df['flag_other_aggregated']
+    # === TOTAL FLAGS (0-10 range) ===
+    # CRITICAL BUG FIX: Sum ALL 10 individual flags (NOT aggregated!)
+    df['total_flags'] = (
+        df['elisa_flags'] +           # 0-6
+        df['flag_bvp'] +              # 0-1
+        df['flag_self_interaction'] + # 0-1
+        df['flag_chromatography'] +   # 0-1
+        df['flag_stability']          # 0-1
+    )
 
     # === APPLY THRESHOLD ===
     # Novo: "specific (0 flags) and non-specific (>3 flags)"
@@ -127,7 +139,7 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
 
     df['flag_category'] = pd.cut(
         df['total_flags'],
-        bins=[-0.5, 0.5, 3.5, 7.5],
+        bins=[-0.5, 0.5, 3.5, 10.5],  # Updated upper bound for 0-10 range
         labels=['specific', 'mild', 'non_specific']
     )
 
@@ -139,11 +151,11 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
     }).astype('Int64')  # Nullable integer type
 
     # Print distribution
-    print(f"\n  Flag distribution (0-7 range):")
-    for flag_count in range(8):
+    print(f"\n  Flag distribution (0-10 range):")
+    for flag_count in range(11):  # 0-10 inclusive
         count = (df['total_flags'] == flag_count).sum()
         pct = count / len(df) * 100
-        print(f"    {flag_count} flags: {count:3d} antibodies ({pct:5.1f}%)")
+        print(f"    {flag_count:2d} flags: {count:3d} antibodies ({pct:5.1f}%)")
 
     print(f"\n  Category distribution:")
     for cat in ['specific', 'mild', 'non_specific']:
@@ -173,10 +185,11 @@ def save_outputs(df: pd.DataFrame):
     # 1. Full 137-antibody dataset
     full_output = df[[
         'Name', 'VH', 'VL',
-        'total_flags', 'elisa_flags', 'flag_other_aggregated',
+        'total_flags', 'elisa_flags',
         'flag_category', 'label',
         'flag_cardiolipin', 'flag_klh', 'flag_lps',
         'flag_ssdna', 'flag_dsdna', 'flag_insulin',
+        'flag_bvp',
         'flag_self_interaction', 'flag_chromatography', 'flag_stability'
     ]].copy()
 
@@ -199,24 +212,15 @@ def save_outputs(df: pd.DataFrame):
     print(f"  ✓ Saved: {test_path}")
     print(f"    Total: {len(test_output)} antibodies (test set, mild excluded)")
 
-    # 3. VH-only for model inference (legacy format compatibility)
-    vh_output = test_df[['Name', 'VH', 'label']].copy()
-    vh_output = vh_output.rename(columns={'Name': 'id', 'VH': 'sequence'})
-    vh_output['source'] = 'jain2017'
-    vh_path = output_dir / 'jain' / 'VH_only_jain_novo_parity.csv'
-    vh_path.parent.mkdir(parents=True, exist_ok=True)
-    vh_output.to_csv(vh_path, index=False)
-    print(f"  ✓ Saved: {vh_path}")
-    print(f"    Total: {len(vh_output)} antibodies (VH-only, for model inference)")
-
 
 def main():
     print("=" * 80)
-    print("Jain Dataset Conversion - Novo Nordisk Methodology")
+    print("Jain Dataset Conversion - CORRECTED Novo Nordisk Methodology")
     print("=" * 80)
-    print("Using private disaggregated ELISA data (6 antigens)")
-    print("Flag range: 0-7 (6 ELISA + 1 aggregated other)")
+    print("Using private disaggregated ELISA data (6 antigens) + public BVP")
+    print("Flag range: 0-10 (6 ELISA + BVP + self + chrom + stability)")
     print("Threshold: >=4 for non-specific ('>3')")
+    print("BUGS FIXED: Added BVP flag, removed flag aggregation")
     print("=" * 80)
     print()
 
@@ -234,9 +238,9 @@ def main():
     print("=" * 80)
     print(f"\nFiles generated:")
     print(f"  1. jain_with_private_elisa_FULL.csv - All 137 antibodies")
-    print(f"  2. jain_with_private_elisa_TEST.csv - Test set only (~87 antibodies)")
-    print(f"  3. jain/VH_only_jain_novo_parity.csv - For model inference")
-    print(f"\nReady for model testing!")
+    print(f"  2. jain_with_private_elisa_TEST.csv - Test set only (94 antibodies)")
+    print(f"\nNext step:")
+    print(f"  Run preprocessing/process_jain.py to generate fragments")
 
 
 if __name__ == '__main__':

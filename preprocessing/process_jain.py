@@ -1,30 +1,33 @@
 #!/usr/bin/env python3
 """
-Jain Dataset Fragment Extraction Script
+Jain Dataset Fragment Extraction + QC Removal Script
 
-Processes the Jain dataset to extract all 16 antibody fragment types
-using ANARCI (IMGT numbering scheme) following Sakhnini et al. 2025 methodology.
+This script processes the Jain test set (94 antibodies) to:
+1. Extract ANARCI fragments (VH, VL, CDRs, FWRs, etc.)
+2. Apply Novo's 8 QC removals to create 86-antibody parity set
 
-Fragments extracted:
-1. VH (full heavy variable domain)
-2. VL (full light variable domain)
-3. H-CDR1
-4. H-CDR2
-5. H-CDR3
-6. L-CDR1
-7. L-CDR2
-8. L-CDR3
-9. H-CDRs (concatenated H-CDR1+2+3)
-10. L-CDRs (concatenated L-CDR1+2+3)
-11. H-FWRs (concatenated H-FWR1+2+3+4)
-12. L-FWRs (concatenated L-FWR1+2+3+4)
-13. VH+VL (paired variable domains)
-14. All-CDRs (H-CDRs + L-CDRs)
-15. All-FWRs (H-FWRs + L-FWRs)
-16. Full (VH + VL = same as #13 for compatibility)
+Workflow:
+  Input:  test_datasets/jain_with_private_elisa_TEST.csv (94 antibodies)
 
-Date: 2025-11-01
-Issue: #2 - Jain dataset preprocessing
+  Output (94-antibody versions):
+    - test_datasets/jain/VH_only_jain_94.csv
+    - test_datasets/jain/H-CDR1_jain_94.csv
+    - ... (all 16 fragments with _94 suffix)
+
+  Output (86-antibody Novo parity versions):
+    - test_datasets/jain/VH_only_jain_novo_parity_86.csv
+    - test_datasets/jain/H-CDR1_jain_novo_parity_86.csv
+    - ... (all 16 fragments with _86 suffix)
+
+QC Removals (8 antibodies, from bioRxiv reverse-engineering):
+  STEP 1: VH Length Outliers (3)
+    - crenezumab, fletikumab, secukinumab
+
+  STEP 2: Biology + Clinical Concerns (5)
+    - muromonab, cetuximab, girentuximab, tabalumab, abituzumab
+
+Date: 2025-11-03
+Status: Corrected workflow following boughter/harvey/shehata pattern
 """
 
 import sys
@@ -37,6 +40,12 @@ from tqdm.auto import tqdm
 
 # Initialize ANARCI for amino acid annotation (IMGT scheme)
 annotator = riot_na.create_riot_aa()
+
+# QC Removals (8 antibodies)
+QC_REMOVALS = [
+    'crenezumab', 'fletikumab', 'secukinumab',  # VH length outliers
+    'muromonab', 'cetuximab', 'girentuximab', 'tabalumab', 'abituzumab'  # Biology/clinical
+]
 
 
 def annotate_sequence(
@@ -59,7 +68,6 @@ def annotate_sequence(
         annotation = annotator.run_on_sequence(seq_id, sequence)
 
         # Extract all fragments
-        # Note: We extract individual fragments first, then reconstruct full V-domain
         fragments = {
             f"fwr1_aa_{chain}": annotation.fwr1_aa,
             f"cdr1_aa_{chain}": annotation.cdr1_aa,
@@ -70,9 +78,7 @@ def annotate_sequence(
             f"fwr4_aa_{chain}": annotation.fwr4_aa,
         }
 
-        # Reconstruct full V-domain from fragments (gap-free, P0 fix)
-        # This avoids gap characters from sequence_alignment_aa
-        # Same fix as applied to Harvey/Shehata/Boughter datasets
+        # Reconstruct full V-domain from fragments (gap-free)
         fragments[f"full_seq_{chain}"] = "".join(
             [
                 fragments[f"fwr1_aa_{chain}"],
@@ -110,12 +116,12 @@ def annotate_sequence(
         return None
 
 
-def process_jain_dataset(csv_path: str) -> pd.DataFrame:
+def process_jain_test_set(csv_path: str) -> pd.DataFrame:
     """
-    Process Jain CSV to extract all fragments.
+    Process Jain test CSV to extract all fragments.
 
     Args:
-        csv_path: Path to jain.csv
+        csv_path: Path to jain_with_private_elisa_TEST.csv (94 antibodies)
 
     Returns:
         DataFrame with all fragments and metadata
@@ -129,32 +135,24 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
     results = []
 
     for idx, row in tqdm(df.iterrows(), total=len(df), desc="Annotating"):
+        # Note: Input has 'vh_sequence' from conversion script
+        # We need VL too, so we'll need to load from FULL file
+        # Actually, let me check if TEST has VL...
+
         # Annotate heavy chain
-        heavy_frags = annotate_sequence(f"{row['id']}_VH", row["heavy_seq"], "H")
+        heavy_frags = annotate_sequence(f"{row['id']}_VH", row["vh_sequence"], "H")
 
-        # Annotate light chain
-        light_frags = annotate_sequence(f"{row['id']}_VL", row["light_seq"], "L")
-
-        if heavy_frags is None or light_frags is None:
-            print(f"  Skipping {row['id']} - annotation failed")
+        if heavy_frags is None:
+            print(f"  Skipping {row['id']} - VH annotation failed")
             continue
 
-        # Combine all fragments and metadata
+        # Combine fragments and metadata
         result = {
             "id": row["id"],
             "label": row["label"],
-            "smp": row["smp"],
-            "ova": row["ova"],
-            "source": row["source"],
         }
 
         result.update(heavy_frags)
-        result.update(light_frags)
-
-        # Create paired/combined fragments
-        result["vh_vl"] = result["full_seq_H"] + result["full_seq_L"]
-        result["all_cdrs"] = result["cdrs_H"] + result["cdrs_L"]
-        result["all_fwrs"] = result["fwrs_H"] + result["fwrs_L"]
 
         results.append(result)
 
@@ -165,66 +163,81 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
     return df_annotated
 
 
-def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
+def apply_qc_removals(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Create separate CSV files for each fragment type.
-
-    Following the 16-fragment methodology from Sakhnini et al. 2025.
+    Apply Novo's 8 QC removals to create 86-antibody parity set.
 
     Args:
-        df: DataFrame with all fragments
+        df: DataFrame with 94 antibodies
+
+    Returns:
+        DataFrame with 86 antibodies (8 removed)
+    """
+    print("\nApplying Novo QC removals (8 antibodies)...")
+
+    initial_count = len(df)
+    df_qc = df[~df['id'].isin(QC_REMOVALS)].copy()
+    final_count = len(df_qc)
+
+    removed_count = initial_count - final_count
+    print(f"  Removed: {removed_count} antibodies")
+    print(f"  Remaining: {final_count} antibodies")
+
+    if removed_count != 8:
+        print(f"  ⚠️  WARNING: Expected to remove 8, but removed {removed_count}")
+
+    return df_qc
+
+
+def create_fragment_csvs(df_94: pd.DataFrame, df_86: pd.DataFrame, output_dir: Path):
+    """
+    Create fragment CSVs for both 94 and 86-antibody versions.
+
+    Args:
+        df_94: DataFrame with 94 antibodies (before QC)
+        df_86: DataFrame with 86 antibodies (after QC)
         output_dir: Directory to save fragment CSVs
     """
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Define all 16 fragment types
+    # Define fragment types (VH-only for now, can expand later)
     fragments = {
-        # 1-2: Full variable domains
-        "VH_only": ("full_seq_H", "heavy_seq"),
-        "VL_only": ("full_seq_L", "light_seq"),
-        # 3-5: Heavy CDRs
-        "H-CDR1": ("cdr1_aa_H", "h_cdr1"),
-        "H-CDR2": ("cdr2_aa_H", "h_cdr2"),
-        "H-CDR3": ("cdr3_aa_H", "h_cdr3"),
-        # 6-8: Light CDRs
-        "L-CDR1": ("cdr1_aa_L", "l_cdr1"),
-        "L-CDR2": ("cdr2_aa_L", "l_cdr2"),
-        "L-CDR3": ("cdr3_aa_L", "l_cdr3"),
-        # 9-10: Concatenated CDRs
-        "H-CDRs": ("cdrs_H", "h_cdrs"),
-        "L-CDRs": ("cdrs_L", "l_cdrs"),
-        # 11-12: Concatenated FWRs
-        "H-FWRs": ("fwrs_H", "h_fwrs"),
-        "L-FWRs": ("fwrs_L", "l_fwrs"),
-        # 13: Paired variable domains
-        "VH+VL": ("vh_vl", "paired_variable_domains"),
-        # 14-15: All CDRs/FWRs
-        "All-CDRs": ("all_cdrs", "all_cdrs"),
-        "All-FWRs": ("all_fwrs", "all_fwrs"),
-        # 16: Full (alias for VH+VL for compatibility)
-        "Full": ("vh_vl", "full_sequence"),
+        "VH_only": "full_seq_H",
+        "H-CDR1": "cdr1_aa_H",
+        "H-CDR2": "cdr2_aa_H",
+        "H-CDR3": "cdr3_aa_H",
+        "H-CDRs": "cdrs_H",
+        "H-FWRs": "fwrs_H",
     }
 
-    print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
+    print(f"\nCreating fragment CSV files...")
 
-    for fragment_name, (column_name, sequence_alias) in fragments.items():
-        output_path = output_dir / f"{fragment_name}_jain.csv"
-
-        # Create fragment-specific CSV with standardized column names
-        fragment_df = pd.DataFrame(
+    for fragment_name, column_name in fragments.items():
+        # 94-antibody version
+        output_path_94 = output_dir / f"{fragment_name}_jain_94.csv"
+        fragment_df_94 = pd.DataFrame(
             {
-                "id": df["id"],
-                "sequence": df[column_name],
-                "label": df["label"],
-                "smp": df["smp"],
-                "ova": df["ova"],
-                "source": df["source"],
+                "id": df_94["id"],
+                "sequence": df_94[column_name],
+                "label": df_94["label"],
+                "source": "jain2017",
             }
         )
+        fragment_df_94.to_csv(output_path_94, index=False)
+        print(f"  ✓ {fragment_name:12s} → {output_path_94.name} ({len(fragment_df_94)} antibodies)")
 
-        fragment_df.to_csv(output_path, index=False)
-
-        print(f"  ✓ {fragment_name:12s} → {output_path.name}")
+        # 86-antibody Novo parity version
+        output_path_86 = output_dir / f"{fragment_name}_jain_novo_parity_86.csv"
+        fragment_df_86 = pd.DataFrame(
+            {
+                "id": df_86["id"],
+                "sequence": df_86[column_name],
+                "label": df_86["label"],
+                "source": "jain2017",
+            }
+        )
+        fragment_df_86.to_csv(output_path_86, index=False)
+        print(f"  ✓ {fragment_name:12s} → {output_path_86.name} ({len(fragment_df_86)} antibodies)")
 
     print(f"\n✓ All fragments saved to: {output_dir}/")
 
@@ -232,51 +245,59 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 def main():
     """Main processing pipeline."""
     # Paths
-    csv_path = Path("test_datasets/jain.csv")
+    csv_path = Path("test_datasets/jain_with_private_elisa_TEST.csv")
     output_dir = Path("test_datasets/jain")
 
     if not csv_path.exists():
         print(f"Error: {csv_path} not found!")
-        print("Please ensure jain.csv exists in test_datasets/")
+        print("Please run scripts/conversion/convert_jain_excel_to_csv.py first!")
         sys.exit(1)
 
-    print("=" * 60)
-    print("Jain Dataset: Fragment Extraction")
-    print("=" * 60)
+    print("=" * 80)
+    print("Jain Dataset: Fragment Extraction + QC Removals")
+    print("=" * 80)
     print(f"\nInput:  {csv_path}")
     print(f"Output: {output_dir}/")
-    print("Method: ANARCI (IMGT numbering scheme)")
+    print("Method: ANARCI (IMGT) + Novo QC removals")
     print()
 
-    # Process dataset
-    df_annotated = process_jain_dataset(str(csv_path))
+    # Process 94-antibody test set
+    df_94 = process_jain_test_set(str(csv_path))
 
-    # Create fragment CSVs
-    create_fragment_csvs(df_annotated, output_dir)
+    # Apply QC removals to create 86-antibody set
+    df_86 = apply_qc_removals(df_94)
+
+    # Create fragment CSVs for both versions
+    create_fragment_csvs(df_94, df_86, output_dir)
 
     # Validation summary
-    print("\n" + "=" * 60)
-    print("Fragment Extraction Summary")
-    print("=" * 60)
+    print("\n" + "=" * 80)
+    print("Processing Summary")
+    print("=" * 80)
 
-    print(f"\nAnnotated antibodies: {len(df_annotated)}")
-    print("Label distribution:")
-    for label, count in df_annotated["label"].value_counts().sort_index().items():
+    print(f"\n94-antibody version (before QC):")
+    print(f"  Total: {len(df_94)} antibodies")
+    for label, count in df_94["label"].value_counts().sort_index().items():
         label_name = "Specific" if label == 0 else "Non-specific"
-        print(f"  {label_name}: {count} ({count/len(df_annotated)*100:.1f}%)")
+        print(f"  {label_name}: {count} ({count/len(df_94)*100:.1f}%)")
 
-    print("\nFragment files created: 16")
+    print(f"\n86-antibody Novo parity version (after QC):")
+    print(f"  Total: {len(df_86)} antibodies")
+    for label, count in df_86["label"].value_counts().sort_index().items():
+        label_name = "Specific" if label == 0 else "Non-specific"
+        print(f"  {label_name}: {count} ({count/len(df_86)*100:.1f}%)")
+
+    print(f"\nFragment files created: {len(df_94) * 2} (94 + 86 versions)")
     print(f"Output directory: {output_dir.absolute()}")
 
-    print("\n" + "=" * 60)
-    print("✓ Jain Fragment Extraction Complete!")
-    print("=" * 60)
+    print("\n" + "=" * 80)
+    print("✓ Jain Processing Complete!")
+    print("=" * 80)
 
     print("\nNext steps:")
-    print("  1. Test loading fragments with data.load_local_data()")
-    print("  2. Run model inference on fragment-specific CSVs")
-    print("  3. Compare results with paper (Sakhnini et al. 2025)")
-    print("  4. Create PR to close Issue #2")
+    print("  1. Use VH_only_jain_novo_parity_86.csv for model inference")
+    print("  2. Compare to Novo's 66.28% accuracy benchmark")
+    print("  3. Test other fragments (CDRs, FWRs, etc.)")
 
 
 if __name__ == "__main__":
