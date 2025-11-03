@@ -242,9 +242,8 @@ def main():
     df = calculate_disaggregated_flags(df)
 
     # STEP 1: Save full 137 dataset with flags
-    df_137 = df[['Name', 'total_flags', 'elisa_flags', 'flag_self_interaction',
+    df_137 = df[['id', 'total_flags', 'elisa_flags', 'flag_self_interaction',
                   'flag_chromatography', 'flag_stability']].copy()
-    df_137 = df_137.rename(columns={'Name': 'id'})
 
     save_dataset(
         df_137,
