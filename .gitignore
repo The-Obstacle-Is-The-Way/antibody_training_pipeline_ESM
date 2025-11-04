@@ -95,3 +95,7 @@ logs/
 outputs/
 literature/
 reference_repos/
+
+# Source data files (Excel) - do not track
+test_datasets/*.xlsx
+test_datasets/**/*.xlsx
