@@ -204,7 +204,12 @@ def main():
 
     if not csv_path.exists():
         print(f"Error: {csv_path} not found!")
-        print("Please run scripts/download_harvey_dataset.py first.")
+        print(
+            "Please run scripts/convert_harvey_csvs.py to generate from official Harvey CSVs."
+        )
+        print(
+            "Source CSVs should be copied from: reference_repos/harvey_official_repo/backend/app/experiments/"
+        )
         sys.exit(1)
 
     print("=" * 70)
