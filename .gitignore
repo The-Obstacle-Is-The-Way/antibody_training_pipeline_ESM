@@ -107,3 +107,7 @@ train_datasets/boughter_raw/
 # Raw data files (download from paper supplementary materials)
 test_datasets/*.xlsx
 test_datasets/*.xls
+
+# Source data files (Excel) - do not track
+test_datasets/*.xlsx
+test_datasets/**/*.xlsx
