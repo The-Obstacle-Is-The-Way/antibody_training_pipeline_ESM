@@ -1,30 +1,25 @@
 #!/usr/bin/env python3
 """
-Convert Jain Dataset with Private Disaggregated ELISA Data + Public BVP Data
+Convert Jain Dataset with Private Disaggregated ELISA Data
 
-This script implements Novo Nordisk's exact methodology using:
-  - Private ELISA data (6 disaggregated antigens) from Jain et al. authors
-  - Public BVP + biophysical assays from Jain et al. 2017 supplementary SD03
+CORRECTED Novo Nordisk Methodology (ELISA-ONLY):
+  - Use ONLY the 6 ELISA antigens for flag calculation (0-6 range)
+  - Threshold: >=4 ELISA flags for non-specific (">3" in paper)
+  - Exclude mild (ELISA 1-3 flags) from test set
 
-CORRECTED Methodology (from Sakhnini et al. 2025):
-  - Flags 1-6: Individual ELISA antigens (Cardiolipin, KLH, LPS, ssDNA, dsDNA, Insulin)
-  - Flag 7: BVP ELISA (from public SD03)
-  - Flag 8: Self-interaction (ANY of 4 assays)
-  - Flag 9: Chromatography (ANY of 3 assays)
-  - Flag 10: Stability (1 assay)
-  - Total flag range: 0-10 (NOT 0-7!)
-  - Threshold: >=4 for non-specific (">3" in paper)
-  - Exclude mild (1-3 flags) from test set
+This replaces the WRONG total_flags (0-10) methodology!
 
 Expected output:
-  - 137 total antibodies
-  - ~60-70 specific (0 flags)
-  - ~30-40 mild (1-3 flags) - EXCLUDED
-  - ~20-30 non-specific (>=4 flags)
-  - Test set: ~80-90 antibodies (specific + non-specific, target ~86)
+  - FULL.csv: 137 antibodies with all flags
+  - 116-ELISA-ONLY.csv: 116 antibodies (94 ELISA=0 + 22 ELISA>=4)
+
+Evidence for ELISA-only:
+  - Figure S13 shows x-axis "ELISA flag" (singular) with range 0-6
+  - Table 2: "ELISA with a panel of 6 ligands"
+  - Paper repeatedly refers to "non-specificity ELISA flags"
 
 Date: 2025-11-03
-Status: CORRECTED - Fixed missing BVP and collapsed flags bugs
+Status: CORRECTED - Using ELISA-only (NOT total flags!)
 """
 
 import sys
@@ -66,20 +61,25 @@ def load_data():
 
 def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Calculate flags using CORRECTED Novo methodology (0-10 range).
+    Calculate flags using ELISA-ONLY methodology (Novo's actual approach).
 
-    Flags:
-      - Flags 1-6: Individual ELISA antigens (threshold 1.9 OD each)
-      - Flag 7: BVP ELISA (threshold 4.3 fold-over-background)
-      - Flag 8: Self-interaction (ANY of 4 assays)
-      - Flag 9: Chromatography (ANY of 3 assays)
-      - Flag 10: Stability (1 assay)
+    ELISA Flags (0-6 range):
+      - Flag per antigen: Cardiolipin, KLH, LPS, ssDNA, dsDNA, Insulin
+      - Threshold: 1.9 OD per antigen
+      - Sum: 0-6 flags
 
-    Total: 0-10 flags (NO AGGREGATION!)
+    Non-ELISA flags (for reference, NOT used for labeling):
+      - BVP, self-interaction, chromatography, stability
+      - These are calculated but NOT used in mild exclusion!
+
+    Labels (ELISA-ONLY):
+      - Specific: ELISA = 0
+      - Mild (EXCLUDED): ELISA 1-3
+      - Non-specific: ELISA >= 4
     """
-    print("Calculating flags (CORRECTED Novo methodology: 0-10 range)...")
+    print("Calculating flags (CORRECTED: ELISA-ONLY methodology)...")
 
-    # === FLAGS 1-6: ELISA (from private data) ===
+    # === ELISA FLAGS (0-6 range) ===
     elisa_threshold = 1.9
 
     df['flag_cardiolipin'] = (df['ELISA Cardiolipin'] > elisa_threshold).astype(int)
@@ -98,13 +98,10 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
         df['flag_insulin']
     )
 
-    # === FLAG 7: BVP (from public SD03) ===
-    # CRITICAL BUG FIX: This was missing in original implementation!
+    # === NON-ELISA FLAGS (for reference only, NOT used for labeling) ===
     bvp_threshold = 4.3
     df['flag_bvp'] = (df['BVP ELISA'] > bvp_threshold).astype(int)
 
-    # === FLAG 8: Self-interaction (from public SD03) ===
-    # ANY of 4 assays from Jain Table 1 exceeds threshold → 1 flag
     df['flag_self_interaction'] = (
         (df['Poly-Specificity Reagent (PSR) SMP Score (0-1)'] > 0.27) |
         (df['Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average'] > 11.8) |
@@ -112,34 +109,28 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
         (df['CIC Retention Time (Min)'] > 10.1)
     ).astype(int)
 
-    # === FLAG 9: Chromatography (from public SD03) ===
-    # ANY of 3 assays exceeds threshold → 1 flag
     df['flag_chromatography'] = (
         (df['HIC Retention Time (Min)a'] > 11.7) |
         (df['SMAC Retention Time (Min)a'] > 12.8) |
         (df['SGAC-SINS AS100 ((NH4)2SO4 mM)'] < 370)
     ).astype(int)
 
-    # === FLAG 10: Stability (from public SD03) ===
     df['flag_stability'] = (df['Slope for Accelerated Stability'] > 0.08).astype(int)
 
-    # === TOTAL FLAGS (0-10 range) ===
-    # CRITICAL BUG FIX: Sum ALL 10 individual flags (NOT aggregated!)
+    # Total flags (for reference)
     df['total_flags'] = (
-        df['elisa_flags'] +           # 0-6
-        df['flag_bvp'] +              # 0-1
-        df['flag_self_interaction'] + # 0-1
-        df['flag_chromatography'] +   # 0-1
-        df['flag_stability']          # 0-1
+        df['elisa_flags'] +
+        df['flag_bvp'] +
+        df['flag_self_interaction'] +
+        df['flag_chromatography'] +
+        df['flag_stability']
     )
 
-    # === APPLY THRESHOLD ===
-    # Novo: "specific (0 flags) and non-specific (>3 flags)"
-    # This means: 0 = specific, 1-3 = mild, >=4 = non-specific
-
+    # === LABELING (ELISA-ONLY!) ===
+    # CRITICAL: Use ELISA flags for categorization, NOT total flags!
     df['flag_category'] = pd.cut(
-        df['total_flags'],
-        bins=[-0.5, 0.5, 3.5, 10.5],  # Updated upper bound for 0-10 range
+        df['elisa_flags'],  # <-- ELISA-ONLY!
+        bins=[-0.5, 0.5, 3.5, 6.5],
         labels=['specific', 'mild', 'non_specific']
     )
 
@@ -148,28 +139,36 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
         'specific': 0,
         'mild': pd.NA,  # Excluded from test set
         'non_specific': 1
-    }).astype('Int64')  # Nullable integer type
+    }).astype('Int64')
 
     # Print distribution
-    print(f"\n  Flag distribution (0-10 range):")
-    for flag_count in range(11):  # 0-10 inclusive
-        count = (df['total_flags'] == flag_count).sum()
+    print(f"\n  ELISA flag distribution (0-6 range):")
+    for flag_count in range(7):  # 0-6 inclusive
+        count = (df['elisa_flags'] == flag_count).sum()
         pct = count / len(df) * 100
-        print(f"    {flag_count:2d} flags: {count:3d} antibodies ({pct:5.1f}%)")
+        print(f"    {flag_count} ELISA flags: {count:3d} antibodies ({pct:5.1f}%)")
 
-    print(f"\n  Category distribution:")
+    print(f"\n  Category distribution (ELISA-ONLY):")
     for cat in ['specific', 'mild', 'non_specific']:
         count = (df['flag_category'] == cat).sum()
         pct = count / len(df) * 100
         print(f"    {cat}: {count:3d} antibodies ({pct:5.1f}%)")
 
-    print(f"\n  Label distribution (test set only):")
+    print(f"\n  Label distribution (ELISA-ONLY test set):")
     label_counts = df['label'].value_counts()
     n_specific = label_counts.get(0, 0)
     n_nonspec = label_counts.get(1, 0)
-    print(f"    Specific (label=0): {n_specific}")
-    print(f"    Non-specific (label=1): {n_nonspec}")
-    print(f"    Test set size: {n_specific + n_nonspec}")
+    print(f"    Specific (ELISA=0): {n_specific}")
+    print(f"    Non-specific (ELISA>=4): {n_nonspec}")
+    print(f"    Test set size: {n_specific + n_nonspec} (target: 116)")
+
+    # Show comparison to total flags
+    print(f"\n  Comparison: ELISA-only vs Total flags:")
+    elisa_mild = (df['elisa_flags'].between(1, 3)).sum()
+    total_mild = (df['total_flags'].between(1, 3)).sum()
+    print(f"    Mild by ELISA (1-3): {elisa_mild} antibodies")
+    print(f"    Mild by Total (1-3): {total_mild} antibodies")
+    print(f"    Difference: {total_mild - elisa_mild} antibodies")
 
     return df
 
@@ -179,13 +178,12 @@ def save_outputs(df: pd.DataFrame):
     output_dir = Path('test_datasets')
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Full dataset with all columns
     print("\nSaving outputs...")
 
-    # 1. Full 137-antibody dataset
+    # 1. FULL 137-antibody dataset
     full_output = df[[
         'Name', 'VH', 'VL',
-        'total_flags', 'elisa_flags',
+        'elisa_flags', 'total_flags',
         'flag_category', 'label',
         'flag_cardiolipin', 'flag_klh', 'flag_lps',
         'flag_ssdna', 'flag_dsdna', 'flag_insulin',
@@ -199,28 +197,29 @@ def save_outputs(df: pd.DataFrame):
     print(f"  ✓ Saved: {full_path}")
     print(f"    Total: {len(full_output)} antibodies (all 137)")
 
-    # 2. Test set only (exclude mild)
+    # 2. 116-antibody ELISA-ONLY test set (exclude ELISA mild 1-3)
     test_df = df[df['label'].notna()].copy()
     test_output = test_df[[
-        'Name', 'VH',
-        'total_flags', 'elisa_flags', 'flag_category', 'label'
+        'Name', 'VH', 'VL',
+        'elisa_flags', 'total_flags',
+        'flag_category', 'label'
     ]].copy()
 
-    test_output = test_output.rename(columns={'Name': 'id', 'VH': 'vh_sequence'})
-    test_path = output_dir / 'jain_with_private_elisa_TEST.csv'
+    test_output = test_output.rename(columns={'Name': 'id', 'VH': 'vh_sequence', 'VL': 'vl_sequence'})
+    test_path = output_dir / 'jain_ELISA_ONLY_116.csv'
     test_output.to_csv(test_path, index=False)
     print(f"  ✓ Saved: {test_path}")
-    print(f"    Total: {len(test_output)} antibodies (test set, mild excluded)")
+    print(f"    Total: {len(test_output)} antibodies (ELISA-only test set)")
+    print(f"    Distribution: {(test_output['label']==0).sum()} specific / {(test_output['label']==1).sum()} non-specific")
 
 
 def main():
     print("=" * 80)
-    print("Jain Dataset Conversion - CORRECTED Novo Nordisk Methodology")
+    print("Jain Dataset Conversion - CORRECTED ELISA-ONLY Methodology")
     print("=" * 80)
-    print("Using private disaggregated ELISA data (6 antigens) + public BVP")
-    print("Flag range: 0-10 (6 ELISA + BVP + self + chrom + stability)")
-    print("Threshold: >=4 for non-specific ('>3')")
-    print("BUGS FIXED: Added BVP flag, removed flag aggregation")
+    print("Using ELISA-ONLY flags (6 antigens, 0-6 range)")
+    print("Threshold: >=4 ELISA flags for non-specific")
+    print("Exclude: ELISA 1-3 as 'mild' (NOT total_flags 1-3!)")
     print("=" * 80)
     print()
 
@@ -238,9 +237,9 @@ def main():
     print("=" * 80)
     print(f"\nFiles generated:")
     print(f"  1. jain_with_private_elisa_FULL.csv - All 137 antibodies")
-    print(f"  2. jain_with_private_elisa_TEST.csv - Test set only (94 antibodies)")
+    print(f"  2. jain_ELISA_ONLY_116.csv - ELISA-only test set (116 antibodies)")
     print(f"\nNext step:")
-    print(f"  Run preprocessing/process_jain.py to generate fragments")
+    print(f"  Investigate what QC Novo applied to get from 116 → 86")
 
 
 if __name__ == '__main__':
