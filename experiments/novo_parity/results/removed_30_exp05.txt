@@ -1,0 +1,33 @@
+# Experiment 05: Removed 30 Antibodies (Top by Composite Risk)
+# Sorted by risk score descending
+
+lirilumab
+basiliximab
+glembatumumab
+urelumab
+drozitumab
+tremelimumab
+nimotuzumab
+pembrolizumab
+atezolizumab
+ipilimumab
+ocrelizumab
+tralokinumab
+rituximab
+eldelumab
+fezakinumab
+tigatuzumab
+seribantumab
+dinutuximab
+enokizumab
+lumiliximab
+bevacizumab
+benralizumab
+siltuximab
+tabalumab
+nivolumab
+lebrikizumab
+crenezumab
+galiximab
+veltuzumab
+tovetumab

@@ -1,0 +1,81 @@
+{
+  "permutation_id": "P5g",
+  "description": "Swap weakest PSR: olaratumab \u2192 glembatumumab (AC-SINS=28.88)",
+  "tier_a": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "glembatumumab"
+  ],
+  "tier_b": [
+    "infliximab"
+  ],
+  "reclassified_ids": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "glembatumumab",
+    "infliximab"
+  ],
+  "removed_ids": [
+    "olaratumab",
+    "basiliximab",
+    "rituximab",
+    "benralizumab",
+    "dinutuximab",
+    "pembrolizumab",
+    "fezakinumab",
+    "reslizumab",
+    "ipilimumab",
+    "lirilumab",
+    "muromonab",
+    "abituzumab",
+    "rilotumumab",
+    "tralokinumab",
+    "tremelimumab",
+    "lumiliximab",
+    "nivolumab",
+    "radretumab",
+    "tigatuzumab",
+    "zanolimumab",
+    "enokizumab",
+    "obinutuzumab",
+    "crenezumab",
+    "atezolizumab",
+    "pinatuzumab",
+    "pertuzumab",
+    "bapineuzumab",
+    "ramucirumab",
+    "bevacizumab",
+    "polatuzumab"
+  ],
+  "confusion_matrix": [
+    [
+      40,
+      19
+    ],
+    [
+      9,
+      18
+    ]
+  ],
+  "accuracy": 0.6744186046511628,
+  "novo_cm": [
+    [
+      40,
+      19
+    ],
+    [
+      10,
+      17
+    ]
+  ],
+  "novo_accuracy": 0.6628,
+  "difference_cells": 2,
+  "exact_match": false,
+  "tn_match": true,
+  "fp_match": true,
+  "fn_diff": -1,
+  "tp_diff": 1,
+  "timestamp": "2025-11-03T23:28:42.372542"
+}

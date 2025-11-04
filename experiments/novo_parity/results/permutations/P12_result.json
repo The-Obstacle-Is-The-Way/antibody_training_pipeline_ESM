@@ -1,0 +1,58 @@
+{
+  "permutation_id": "P12",
+  "description": "AC-SINS throughout",
+  "reclassification_strategy": "R5",
+  "removal_strategy": "S5",
+  "reclassified_ids": [
+    "bavituximab",
+    "bimagrumab",
+    "drozitumab",
+    "infliximab",
+    "tremelimumab"
+  ],
+  "removed_ids": [
+    "urelumab",
+    "glembatumumab",
+    "basiliximab",
+    "seribantumab",
+    "lirilumab",
+    "ocrelizumab",
+    "atezolizumab",
+    "ipilimumab",
+    "crenezumab",
+    "benralizumab",
+    "pembrolizumab",
+    "tigatuzumab",
+    "veltuzumab",
+    "tralokinumab",
+    "ganitumab",
+    "otelixizumab",
+    "dinutuximab",
+    "radretumab",
+    "siltuximab",
+    "fezakinumab",
+    "nivolumab",
+    "muromonab",
+    "otlertuzumab",
+    "tovetumab",
+    "rituximab",
+    "rilotumumab",
+    "trastuzumab",
+    "tabalumab",
+    "obinutuzumab",
+    "daratumumab"
+  ],
+  "confusion_matrix": [
+    [
+      41,
+      18
+    ],
+    [
+      11,
+      16
+    ]
+  ],
+  "accuracy": 0.6627906976744186,
+  "exact_match": false,
+  "timestamp": "2025-11-03T23:11:15.013636"
+}

@@ -1,0 +1,70 @@
+{
+  "permutation_id": "P5e-S4",
+  "description": "eldelumab reclassification + PSR with (1-Tm) tiebreaker",
+  "reclassification": {
+    "tier_a_psr": [
+      "bimagrumab",
+      "bavituximab",
+      "ganitumab"
+    ],
+    "tier_b_tm": [
+      "eldelumab"
+    ],
+    "tier_c_clinical": [
+      "infliximab"
+    ]
+  },
+  "removal_strategy": "PSR primary, (1-Tm) secondary for PSR=0",
+  "reclassified_ids": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "eldelumab",
+    "infliximab"
+  ],
+  "removed_ids": [
+    "olaratumab",
+    "basiliximab",
+    "rituximab",
+    "benralizumab",
+    "dinutuximab",
+    "pembrolizumab",
+    "fezakinumab",
+    "reslizumab",
+    "ipilimumab",
+    "lirilumab",
+    "muromonab",
+    "abituzumab",
+    "glembatumumab",
+    "rilotumumab",
+    "tralokinumab",
+    "tremelimumab",
+    "lumiliximab",
+    "nivolumab",
+    "radretumab",
+    "tigatuzumab",
+    "zanolimumab",
+    "enokizumab",
+    "obinutuzumab",
+    "crenezumab",
+    "atezolizumab",
+    "pinatuzumab",
+    "anifrolumab",
+    "drozitumab",
+    "girentuximab",
+    "bevacizumab"
+  ],
+  "confusion_matrix": [
+    [
+      40,
+      19
+    ],
+    [
+      10,
+      17
+    ]
+  ],
+  "accuracy": 0.6627906976744186,
+  "exact_match_to_novo": true,
+  "timestamp": "2025-11-03T23:33:17.127730"
+}

@@ -1,0 +1,58 @@
+{
+  "permutation_id": "P6",
+  "description": "Pure PSR reclassification",
+  "reclassification_strategy": "R3",
+  "removal_strategy": "S1",
+  "reclassified_ids": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "olaratumab",
+    "basiliximab"
+  ],
+  "removed_ids": [
+    "lirilumab",
+    "glembatumumab",
+    "urelumab",
+    "infliximab",
+    "drozitumab",
+    "tremelimumab",
+    "nimotuzumab",
+    "pembrolizumab",
+    "atezolizumab",
+    "ipilimumab",
+    "ocrelizumab",
+    "tralokinumab",
+    "rituximab",
+    "eldelumab",
+    "fezakinumab",
+    "seribantumab",
+    "tigatuzumab",
+    "dinutuximab",
+    "enokizumab",
+    "lumiliximab",
+    "bevacizumab",
+    "benralizumab",
+    "siltuximab",
+    "tabalumab",
+    "nivolumab",
+    "lebrikizumab",
+    "crenezumab",
+    "galiximab",
+    "veltuzumab",
+    "tovetumab"
+  ],
+  "confusion_matrix": [
+    [
+      42,
+      17
+    ],
+    [
+      8,
+      19
+    ]
+  ],
+  "accuracy": 0.7093023255813954,
+  "exact_match": false,
+  "timestamp": "2025-11-03T23:10:59.499441"
+}

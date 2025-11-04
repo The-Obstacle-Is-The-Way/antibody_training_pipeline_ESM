@@ -1,0 +1,58 @@
+{
+  "permutation_id": "P8",
+  "description": "AC-SINS reclassification",
+  "reclassification_strategy": "R5",
+  "removal_strategy": "S1",
+  "reclassified_ids": [
+    "bavituximab",
+    "bimagrumab",
+    "drozitumab",
+    "infliximab",
+    "tremelimumab"
+  ],
+  "removed_ids": [
+    "lirilumab",
+    "basiliximab",
+    "glembatumumab",
+    "urelumab",
+    "nimotuzumab",
+    "olaratumab",
+    "pembrolizumab",
+    "atezolizumab",
+    "ipilimumab",
+    "ocrelizumab",
+    "tralokinumab",
+    "rituximab",
+    "eldelumab",
+    "fezakinumab",
+    "seribantumab",
+    "tigatuzumab",
+    "dinutuximab",
+    "enokizumab",
+    "ganitumab",
+    "lumiliximab",
+    "bevacizumab",
+    "benralizumab",
+    "siltuximab",
+    "tabalumab",
+    "nivolumab",
+    "lebrikizumab",
+    "crenezumab",
+    "galiximab",
+    "veltuzumab",
+    "tovetumab"
+  ],
+  "confusion_matrix": [
+    [
+      42,
+      17
+    ],
+    [
+      11,
+      16
+    ]
+  ],
+  "accuracy": 0.6744186046511628,
+  "exact_match": false,
+  "timestamp": "2025-11-03T23:11:04.665714"
+}

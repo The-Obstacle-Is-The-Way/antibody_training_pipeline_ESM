@@ -1,0 +1,81 @@
+{
+  "permutation_id": "P5e",
+  "description": "Swap weakest PSR: olaratumab \u2192 eldelumab (lowest Tm=59.50)",
+  "tier_a": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "eldelumab"
+  ],
+  "tier_b": [
+    "infliximab"
+  ],
+  "reclassified_ids": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "eldelumab",
+    "infliximab"
+  ],
+  "removed_ids": [
+    "olaratumab",
+    "basiliximab",
+    "rituximab",
+    "benralizumab",
+    "dinutuximab",
+    "pembrolizumab",
+    "fezakinumab",
+    "reslizumab",
+    "ipilimumab",
+    "lirilumab",
+    "muromonab",
+    "abituzumab",
+    "glembatumumab",
+    "rilotumumab",
+    "tralokinumab",
+    "tremelimumab",
+    "lumiliximab",
+    "nivolumab",
+    "radretumab",
+    "tigatuzumab",
+    "zanolimumab",
+    "enokizumab",
+    "obinutuzumab",
+    "crenezumab",
+    "atezolizumab",
+    "pinatuzumab",
+    "efalizumab",
+    "bapineuzumab",
+    "ramucirumab",
+    "bevacizumab"
+  ],
+  "confusion_matrix": [
+    [
+      39,
+      20
+    ],
+    [
+      10,
+      17
+    ]
+  ],
+  "accuracy": 0.6511627906976745,
+  "novo_cm": [
+    [
+      40,
+      19
+    ],
+    [
+      10,
+      17
+    ]
+  ],
+  "novo_accuracy": 0.6628,
+  "difference_cells": 2,
+  "exact_match": false,
+  "tn_match": false,
+  "fp_match": false,
+  "fn_diff": 0,
+  "tp_diff": 0,
+  "timestamp": "2025-11-03T23:28:37.445220"
+}

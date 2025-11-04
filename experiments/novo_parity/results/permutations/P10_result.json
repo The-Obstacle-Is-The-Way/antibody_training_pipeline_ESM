@@ -1,0 +1,58 @@
+{
+  "permutation_id": "P10",
+  "description": "Pure PSR throughout",
+  "reclassification_strategy": "R3",
+  "removal_strategy": "S3",
+  "reclassified_ids": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "olaratumab",
+    "basiliximab"
+  ],
+  "removed_ids": [
+    "rituximab",
+    "benralizumab",
+    "dinutuximab",
+    "pembrolizumab",
+    "fezakinumab",
+    "reslizumab",
+    "ipilimumab",
+    "lirilumab",
+    "muromonab",
+    "abituzumab",
+    "glembatumumab",
+    "rilotumumab",
+    "tralokinumab",
+    "tremelimumab",
+    "lumiliximab",
+    "nivolumab",
+    "radretumab",
+    "tigatuzumab",
+    "zanolimumab",
+    "enokizumab",
+    "obinutuzumab",
+    "crenezumab",
+    "atezolizumab",
+    "pinatuzumab",
+    "pertuzumab",
+    "bapineuzumab",
+    "ramucirumab",
+    "bevacizumab",
+    "polatuzumab",
+    "eculizumab"
+  ],
+  "confusion_matrix": [
+    [
+      40,
+      19
+    ],
+    [
+      8,
+      19
+    ]
+  ],
+  "accuracy": 0.686046511627907,
+  "exact_match": false,
+  "timestamp": "2025-11-03T23:11:09.883578"
+}

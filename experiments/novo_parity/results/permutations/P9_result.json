@@ -1,0 +1,58 @@
+{
+  "permutation_id": "P9",
+  "description": "Atezolizumab + PSR-weighted",
+  "reclassification_strategy": "R2",
+  "removal_strategy": "S2",
+  "reclassified_ids": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "olaratumab",
+    "atezolizumab"
+  ],
+  "removed_ids": [
+    "basiliximab",
+    "lirilumab",
+    "glembatumumab",
+    "tremelimumab",
+    "urelumab",
+    "infliximab",
+    "drozitumab",
+    "nimotuzumab",
+    "pembrolizumab",
+    "rituximab",
+    "ipilimumab",
+    "fezakinumab",
+    "dinutuximab",
+    "tralokinumab",
+    "benralizumab",
+    "tigatuzumab",
+    "ocrelizumab",
+    "enokizumab",
+    "eldelumab",
+    "lumiliximab",
+    "seribantumab",
+    "nivolumab",
+    "crenezumab",
+    "bevacizumab",
+    "reslizumab",
+    "siltuximab",
+    "tabalumab",
+    "lebrikizumab",
+    "rilotumumab",
+    "galiximab"
+  ],
+  "confusion_matrix": [
+    [
+      43,
+      16
+    ],
+    [
+      8,
+      19
+    ]
+  ],
+  "accuracy": 0.7209302325581395,
+  "exact_match": false,
+  "timestamp": "2025-11-03T23:11:07.257900"
+}
