@@ -174,9 +174,9 @@ Result: Confusion matrix [[40,19],[10,17]], 66.28% accuracy ✅
     - jain_86_p5e_s2.csv, jain_86_p5e_s4.csv, jain_86_p5f.csv, jain_86_p5g.csv, jain_86_p5h.csv
   - `results/` - **28 total files** (not 3!):
     - Root: 3 files (removed_30_exp05.txt, audit_exp05.json, report_exp05.md)
-    - results/permutations/: 14 JSON/CSV files
-    - results/permutations/targeted/: 11 JSON files
-  - `scripts/` - 7 Python files (batch/targeted permutation testing, experiments)
+    - results/permutations/: 16 files (JSON/CSV)
+    - results/permutations/targeted/: 9 files (JSON)
+  - `scripts/` - **4 Python files**: run_exp05_inference.py, targeted_permutation_test.py, exp_05_psr_hybrid_parity.py, batch_permutation_test.py
   - **6 markdown files** (not including non-existent NOVO_PARITY_EXPERIMENTS.md):
     - EXACT_MATCH_FOUND.md
     - EXPERIMENTS_LOG.md
@@ -696,7 +696,7 @@ Before execution, we need agreement on:
 
 ## Appendix: File Count Summary (CORRECTED)
 
-### To ADD from ray/novo-parity-experiments (39 files):
+### To ADD from ray/novo-parity-experiments (57 files):
 
 **Core Files** (5):
 - preprocessing/preprocess_jain_p5e_s2.py (from process_jain.py)
@@ -705,13 +705,13 @@ Before execution, we need agreement on:
 - test_datasets/jain/jain_86_novo_parity.csv
 - test_datasets/jain/README.md
 
-**Experiments Archive** (30 files, 648KB):
+**Experiments Archive** (47 files, 648KB):
 - experiments/novo_parity/datasets/*.csv (**9 files**, not 7!)
 - experiments/novo_parity/results/ (**28 files total**, not 3!):
   - Root: 3 files (removed_30_exp05.txt, audit_exp05.json, report_exp05.md)
-  - permutations/: 14 files
-  - permutations/targeted/: 11 files
-- experiments/novo_parity/scripts/*.py (7 files)
+  - permutations/: 16 files
+  - permutations/targeted/: 9 files
+- experiments/novo_parity/scripts/*.py (4 files)
 - experiments/novo_parity/*.md (**6 files**):
   - EXACT_MATCH_FOUND.md
   - EXPERIMENTS_LOG.md
@@ -721,12 +721,12 @@ Before execution, we need agreement on:
   - REVERSE_ENGINEERING_SUCCESS.md
   - **⚠️ NOT INCLUDING**: NOVO_PARITY_EXPERIMENTS.md (doesn't exist!)
 
-**Legacy Archive** (4):
+**Legacy Archive** (5 files):
 - scripts/conversion/legacy/README.md
 - scripts/conversion/legacy/convert_jain_excel_to_csv_OLD_BACKUP.py
-- scripts/conversion/legacy/convert_jain_excel_to_csv_TOTAL_FLAGS_WRONG.py
-- scripts/conversion/legacy/process_jain_OLD_94to86.py.bak
-- test_datasets/jain/archive/*.csv (2 files)
+- scripts/conversion/legacy/convert_jain_excel_to_csv_TOTAL_FLAGS_WRONG.py (3 files)
+- test_datasets/jain/archive/jain_ELISA_ONLY_116_with_zscores.csv
+- test_datasets/jain/archive/jain_116_qc_candidates.csv (2 files)
 
 ### To RENAME in feat/jain-preprocessing:
 - **NONE!** (Zero breaking changes!)
