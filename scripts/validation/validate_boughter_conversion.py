@@ -77,7 +77,7 @@ def validate_stage1_output() -> Dict:
     # Length distribution
     heavy_len = df["heavy_seq"].str.len()
     light_len = df["light_seq"].str.len()
-    print(f"\n✓ Sequence Length Ranges:")
+    print("\n✓ Sequence Length Ranges:")
     print(
         f"  Heavy: {heavy_len.min()}-{heavy_len.max()} aa "
         f"(mean: {heavy_len.mean():.1f})"
@@ -88,7 +88,7 @@ def validate_stage1_output() -> Dict:
     )
 
     # Check Novo flagging distribution
-    print(f"\n✓ Novo Flagging Strategy:")
+    print("\n✓ Novo Flagging Strategy:")
     for category in ["specific", "mild", "non_specific"]:
         count = len(df[df["flag_category"] == category])
         pct = count / len(df) * 100
@@ -101,7 +101,7 @@ def validate_stage1_output() -> Dict:
 
     # Training set balance
     training_df = df[df["include_in_training"]]
-    print(f"\n✓ Training Set Balance:")
+    print("\n✓ Training Set Balance:")
     print(f"  Total training:    {len(training_df)}")
     if len(training_df) > 0:
         label_counts = training_df["label"].value_counts()
@@ -155,7 +155,7 @@ def validate_stage2_output() -> Dict:
     stage2_annotated = stage1_count - stage2_failures
     stage2_success_rate = (stage2_annotated / stage1_count) * 100
 
-    print(f"\n✓ ANARCI Annotation Success:")
+    print("\n✓ ANARCI Annotation Success:")
     print(f"  Stage 1 input:          {stage1_count} sequences")
     print(f"  Stage 2 annotated:      {stage2_annotated} sequences")
     print(
@@ -178,7 +178,7 @@ def validate_stage2_output() -> Dict:
         (stage3_retained / stage2_annotated) * 100 if stage2_annotated else 0.0
     )
 
-    print(f"\n✓ Stage 3 (Post-Annotation QC):")
+    print("\n✓ Stage 3 (Post-Annotation QC):")
     print(f"  Sequences entering Stage 3: {stage2_annotated}")
     print(f"  Filtered (X/empty CDRs):    {stage3_removed}")
     print(
@@ -195,7 +195,7 @@ def validate_stage2_output() -> Dict:
 
     # Report failures by subset (Stage 2)
     if failure_ids:
-        print(f"\n✓ Stage 2 Failures by Subset:")
+        print("\n✓ Stage 2 Failures by Subset:")
         from collections import Counter
 
         subset_counts = Counter()
@@ -226,7 +226,7 @@ def validate_stage2_output() -> Dict:
             )
 
     # Check CDR length distributions
-    print(f"\n✓ CDR Length Distributions (from VH_only):")
+    print("\n✓ CDR Length Distributions (from VH_only):")
     h_cdr1_file = output_dir / "H-CDR1_boughter.csv"
     h_cdr2_file = output_dir / "H-CDR2_boughter.csv"
     h_cdr3_file = output_dir / "H-CDR3_boughter.csv"

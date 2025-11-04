@@ -13,7 +13,6 @@ Outputs:
     train_datasets/boughter_raw/translation_failures.log - Failed sequences
 """
 
-import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 

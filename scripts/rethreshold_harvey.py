@@ -16,7 +16,6 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 # Add parent directory to path for classifier import
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from classifier import BinaryClassifier
 
 
 def load_model(model_path: str):
@@ -93,7 +92,11 @@ def main():
         sensitivity = tp / (tp + fn) if (tp + fn) > 0 else 0
         specificity = tn / (tn + fp) if (tn + fp) > 0 else 0
         precision = tp / (tp + fp) if (tp + fp) > 0 else 0
-        f1 = 2 * (precision * sensitivity) / (precision + sensitivity) if (precision + sensitivity) > 0 else 0
+        f1 = (
+            2 * (precision * sensitivity) / (precision + sensitivity)
+            if (precision + sensitivity) > 0
+            else 0
+        )
 
         # Store results
         results[threshold] = {
@@ -111,11 +114,11 @@ def main():
 
         # Print results
         print(f"Accuracy: {accuracy:.4f} ({accuracy*100:.2f}%)")
-        print(f"\nConfusion Matrix:")
+        print("\nConfusion Matrix:")
         print(f"[[{tn:5d}, {fp:5d}],")
         print(f" [{fn:5d}, {tp:5d}]]")
-        print(f"\n                Predicted")
-        print(f"                Spec    Non-spec")
+        print("\n                Predicted")
+        print("                Spec    Non-spec")
         print(f"True    Spec    {tn:5d}     {fp:5d}      ({tn+fp} specific)")
         print(f"        Non-spec {fn:4d}     {tp:5d}      ({fn+tp} non-specific)")
         print(f"\nSensitivity: {sensitivity:.4f} ({sensitivity*100:.2f}%)")
@@ -139,7 +142,7 @@ def main():
     print(f"Sensitivity change: {sens_diff:+.2f}pp")
     print(f"Specificity change: {spec_diff:+.2f}pp")
 
-    print(f"\nConfusion matrix changes:")
+    print("\nConfusion matrix changes:")
     cm_diff = r2["cm"] - r1["cm"]
     print(f"[[{cm_diff[0,0]:+4d}, {cm_diff[0,1]:+4d}],")
     print(f" [{cm_diff[1,0]:+4d}, {cm_diff[1,1]:+4d}]]")
@@ -162,7 +165,7 @@ def main():
         print(f"Gap: {acc_gap:+.2f}pp")
 
         cm_diff = r["cm"] - novo_cm
-        print(f"\nConfusion matrix difference from Novo:")
+        print("\nConfusion matrix difference from Novo:")
         print(f"[[{cm_diff[0,0]:+5d}, {cm_diff[0,1]:+5d}],")
         print(f" [{cm_diff[1,0]:+5d}, {cm_diff[1,1]:+5d}]]")
 
@@ -173,18 +176,20 @@ def main():
     output_path = "test_results/harvey_threshold_comparison.csv"
     Path("test_results").mkdir(exist_ok=True)
 
-    comparison_df = pd.DataFrame({
-        "threshold": list(results.keys()),
-        "accuracy": [r["accuracy"] for r in results.values()],
-        "sensitivity": [r["sensitivity"] for r in results.values()],
-        "specificity": [r["specificity"] for r in results.values()],
-        "precision": [r["precision"] for r in results.values()],
-        "f1_score": [r["f1"] for r in results.values()],
-        "tn": [r["tn"] for r in results.values()],
-        "fp": [r["fp"] for r in results.values()],
-        "fn": [r["fn"] for r in results.values()],
-        "tp": [r["tp"] for r in results.values()],
-    })
+    comparison_df = pd.DataFrame(
+        {
+            "threshold": list(results.keys()),
+            "accuracy": [r["accuracy"] for r in results.values()],
+            "sensitivity": [r["sensitivity"] for r in results.values()],
+            "specificity": [r["specificity"] for r in results.values()],
+            "precision": [r["precision"] for r in results.values()],
+            "f1_score": [r["f1"] for r in results.values()],
+            "tn": [r["tn"] for r in results.values()],
+            "fp": [r["fp"] for r in results.values()],
+            "fn": [r["fn"] for r in results.values()],
+            "tp": [r["tp"] for r in results.values()],
+        }
+    )
 
     comparison_df.to_csv(output_path, index=False)
     print(f"\n✓ Results saved to: {output_path}")

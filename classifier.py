@@ -122,7 +122,9 @@ class BinaryClassifier:
         self.is_fitted = True
         logger.info(f"Classifier fitted on {len(X)} samples")
 
-    def predict(self, X: np.ndarray, threshold: float = 0.5, assay_type: Optional[str] = None) -> np.ndarray:
+    def predict(
+        self, X: np.ndarray, threshold: float = 0.5, assay_type: Optional[str] = None
+    ) -> np.ndarray:
         """
         Predict the labels for the data
 
@@ -148,14 +150,16 @@ class BinaryClassifier:
 
         # Dataset-specific threshold mapping
         ASSAY_THRESHOLDS = {
-            'ELISA': 0.5,      # Training data type (Boughter, Jain)
-            'PSR': 0.5495,     # PSR assay type (Shehata, Harvey) - EXACT Novo parity
+            "ELISA": 0.5,  # Training data type (Boughter, Jain)
+            "PSR": 0.5495,  # PSR assay type (Shehata, Harvey) - EXACT Novo parity
         }
 
         # Determine which threshold to use
         if assay_type is not None:
             if assay_type not in ASSAY_THRESHOLDS:
-                raise ValueError(f"Unknown assay_type '{assay_type}'. Must be one of: {list(ASSAY_THRESHOLDS.keys())}")
+                raise ValueError(
+                    f"Unknown assay_type '{assay_type}'. Must be one of: {list(ASSAY_THRESHOLDS.keys())}"
+                )
             threshold = ASSAY_THRESHOLDS[assay_type]
 
         # Get probabilities and apply threshold

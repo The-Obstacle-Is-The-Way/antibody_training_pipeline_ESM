@@ -33,8 +33,8 @@ For historical reference, see: preprocessing/process_jain_OLD_94to86.py.bak
 
 import sys
 from pathlib import Path
+
 import pandas as pd
-import numpy as np
 
 # File paths
 BASE_DIR = Path(__file__).parent.parent
@@ -47,9 +47,9 @@ OUTPUT_86 = BASE_DIR / "test_datasets/jain/jain_86_novo_parity.csv"
 PSR_THRESHOLD = 0.4
 
 # Reclassification tiers
-TIER_A_PSR = ['bimagrumab', 'bavituximab', 'ganitumab']  # PSR >0.4
-TIER_B_EXTREME_TM = 'eldelumab'  # Extreme Tm outlier (59.50°C)
-TIER_C_CLINICAL = 'infliximab'  # 61% ADA rate + chimeric
+TIER_A_PSR = ["bimagrumab", "bavituximab", "ganitumab"]  # PSR >0.4
+TIER_B_EXTREME_TM = "eldelumab"  # Extreme Tm outlier (59.50°C)
+TIER_C_CLINICAL = "infliximab"  # 61% ADA rate + chimeric
 
 ALL_RECLASSIFIED = TIER_A_PSR + [TIER_B_EXTREME_TM, TIER_C_CLINICAL]
 
@@ -59,7 +59,7 @@ def load_data():
     print("=" * 80)
     print("Jain Dataset Preprocessing: P5e-S2 Novo Nordisk Parity Method")
     print("=" * 80)
-    print(f"\nStep 0: Loading data...")
+    print("\nStep 0: Loading data...")
 
     if not INPUT_137.exists():
         print(f"ERROR: {INPUT_137} not found!")
@@ -89,7 +89,7 @@ def step1_remove_elisa_1to3(df):
     initial_count = len(df)
 
     # Keep only ELISA 0, 4, 5, 6 (remove 1, 2, 3)
-    df_116 = df[~df['elisa_flags'].isin([1, 2, 3])].copy()
+    df_116 = df[~df["elisa_flags"].isin([1, 2, 3])].copy()
 
     removed_count = initial_count - len(df_116)
 
@@ -102,7 +102,7 @@ def step1_remove_elisa_1to3(df):
     # Save 116 SSOT
     print(f"\n  Saving 116 SSOT → {OUTPUT_116.relative_to(BASE_DIR)}")
     df_116.to_csv(OUTPUT_116, index=False)
-    print(f"  ✅ Saved 116-antibody SSOT")
+    print("  ✅ Saved 116-antibody SSOT")
 
     assert len(df_116) == 116, f"Expected 116 antibodies, got {len(df_116)}"
 
@@ -128,30 +128,34 @@ def step2_merge_biophysical_data(df):
 
     # Merge biophysical columns
     merged = df.merge(
-        sd03[[
-            'Name',
-            'Poly-Specificity Reagent (PSR) SMP Score (0-1)',
-            'Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average',
-            'HIC Retention Time (Min)a',
-            'Fab Tm by DSF (°C)'
-        ]],
-        left_on='id',
-        right_on='Name',
-        how='left'
+        sd03[
+            [
+                "Name",
+                "Poly-Specificity Reagent (PSR) SMP Score (0-1)",
+                "Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average",
+                "HIC Retention Time (Min)a",
+                "Fab Tm by DSF (°C)",
+            ]
+        ],
+        left_on="id",
+        right_on="Name",
+        how="left",
     )
 
     # Rename for easier handling
-    merged = merged.rename(columns={
-        'Poly-Specificity Reagent (PSR) SMP Score (0-1)': 'psr',
-        'Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average': 'ac_sins',
-        'HIC Retention Time (Min)a': 'hic',
-        'Fab Tm by DSF (°C)': 'fab_tm'
-    })
+    merged = merged.rename(
+        columns={
+            "Poly-Specificity Reagent (PSR) SMP Score (0-1)": "psr",
+            "Affinity-Capture Self-Interaction Nanoparticle Spectroscopy (AC-SINS) ∆λmax (nm) Average": "ac_sins",
+            "HIC Retention Time (Min)a": "hic",
+            "Fab Tm by DSF (°C)": "fab_tm",
+        }
+    )
 
     # Drop duplicate Name column
-    merged = merged.drop(columns=['Name'])
+    merged = merged.drop(columns=["Name"])
 
-    print(f"  ✓ Merged biophysical data")
+    print("  ✓ Merged biophysical data")
     print(f"    Missing PSR: {merged['psr'].isna().sum()}")
     print(f"    Missing AC-SINS: {merged['ac_sins'].isna().sum()}")
 
@@ -181,49 +185,49 @@ def step3_reclassify_5_antibodies(df):
     print("=" * 80)
 
     df = df.copy()
-    df['label_original'] = df['label']
-    df['reclassified'] = False
-    df['reclassification_reason'] = ''
+    df["label_original"] = df["label"]
+    df["reclassified"] = False
+    df["reclassification_reason"] = ""
 
     # Tier A: PSR >0.4
     print("\n  Tier A: PSR >0.4 (polyreactivity despite ELISA=0)")
     for ab_id in TIER_A_PSR:
-        idx = df[df['id'] == ab_id].index
+        idx = df[df["id"] == ab_id].index
         if len(idx) > 0:
-            psr_val = df.loc[idx[0], 'psr']
-            df.loc[idx, 'label'] = 1
-            df.loc[idx, 'reclassified'] = True
-            df.loc[idx, 'reclassification_reason'] = f'Tier A: PSR >0.4'
+            psr_val = df.loc[idx[0], "psr"]
+            df.loc[idx, "label"] = 1
+            df.loc[idx, "reclassified"] = True
+            df.loc[idx, "reclassification_reason"] = "Tier A: PSR >0.4"
             print(f"    ✅ {ab_id:20s} PSR={psr_val:.3f}")
 
     # Tier B: Extreme Tm
     print("\n  Tier B: Extreme thermal instability")
-    idx = df[df['id'] == TIER_B_EXTREME_TM].index
+    idx = df[df["id"] == TIER_B_EXTREME_TM].index
     if len(idx) > 0:
-        tm_val = df.loc[idx[0], 'fab_tm']
-        df.loc[idx, 'label'] = 1
-        df.loc[idx, 'reclassified'] = True
-        df.loc[idx, 'reclassification_reason'] = f'Tier B: Extreme Tm ({tm_val:.2f}°C)'
+        tm_val = df.loc[idx[0], "fab_tm"]
+        df.loc[idx, "label"] = 1
+        df.loc[idx, "reclassified"] = True
+        df.loc[idx, "reclassification_reason"] = f"Tier B: Extreme Tm ({tm_val:.2f}°C)"
         print(f"    ✅ {TIER_B_EXTREME_TM:20s} Tm={tm_val:.2f}°C (lowest)")
 
     # Tier C: Clinical evidence
     print("\n  Tier C: Clinical evidence")
-    idx = df[df['id'] == TIER_C_CLINICAL].index
+    idx = df[df["id"] == TIER_C_CLINICAL].index
     if len(idx) > 0:
-        df.loc[idx, 'label'] = 1
-        df.loc[idx, 'reclassified'] = True
-        df.loc[idx, 'reclassification_reason'] = 'Tier C: Clinical (61% ADA)'
+        df.loc[idx, "label"] = 1
+        df.loc[idx, "reclassified"] = True
+        df.loc[idx, "reclassification_reason"] = "Tier C: Clinical (61% ADA)"
         print(f"    ✅ {TIER_C_CLINICAL:20s} 61% ADA (NEJM) + chimeric")
 
     # Verify counts
-    spec_count = (df['label'] == 0).sum()
-    nonspec_count = (df['label'] == 1).sum()
+    spec_count = (df["label"] == 0).sum()
+    nonspec_count = (df["label"] == 1).sum()
 
-    print(f"\n  After reclassification:")
+    print("\n  After reclassification:")
     print(f"    Specific: {spec_count}")
     print(f"    Non-specific: {nonspec_count}")
     print(f"    Total: {len(df)}")
-    print(f"    Expected: 89 spec / 27 nonspec / 116 total")
+    print("    Expected: 89 spec / 27 nonspec / 116 total")
 
     assert spec_count == 89, f"Expected 89 specific, got {spec_count}"
     assert nonspec_count == 27, f"Expected 27 non-specific, got {nonspec_count}"
@@ -248,22 +252,21 @@ def step4_remove_30_by_psr_acsins(df):
     print("=" * 80)
 
     # Get remaining specific antibodies
-    specific = df[df['label'] == 0].copy()
-    nonspecific = df[df['label'] == 1].copy()
+    specific = df[df["label"] == 0].copy()
+    nonspecific = df[df["label"] == 1].copy()
 
     print(f"\n  Remaining specific antibodies: {len(specific)}")
 
     # Sort by PSR (descending), then AC-SINS (descending), then id (alphabetical)
     # This ensures PSR is primary, AC-SINS is tiebreaker for PSR=0
     specific_sorted = specific.sort_values(
-        by=['psr', 'ac_sins', 'id'],
-        ascending=[False, False, True]
+        by=["psr", "ac_sins", "id"], ascending=[False, False, True]
     )
 
     # Top 30 to remove
     to_remove = specific_sorted.head(30)
 
-    print(f"\n  Top 30 by PSR/AC-SINS (to remove):")
+    print("\n  Top 30 by PSR/AC-SINS (to remove):")
     for i, row in enumerate(to_remove.itertuples(), 1):
         psr_val = row.psr if not pd.isna(row.psr) else 0.0
         acsins_val = row.ac_sins if not pd.isna(row.ac_sins) else 0.0
@@ -276,17 +279,17 @@ def step4_remove_30_by_psr_acsins(df):
     df_86 = pd.concat([specific_keep, nonspecific], ignore_index=True)
 
     # Sort by id for consistency
-    df_86 = df_86.sort_values('id').reset_index(drop=True)
+    df_86 = df_86.sort_values("id").reset_index(drop=True)
 
     # Verify counts
-    spec_count = (df_86['label'] == 0).sum()
-    nonspec_count = (df_86['label'] == 1).sum()
+    spec_count = (df_86["label"] == 0).sum()
+    nonspec_count = (df_86["label"] == 1).sum()
 
-    print(f"\n  Final 86-antibody dataset:")
+    print("\n  Final 86-antibody dataset:")
     print(f"    Specific: {spec_count}")
     print(f"    Non-specific: {nonspec_count}")
     print(f"    Total: {len(df_86)}")
-    print(f"    Expected: 59 spec / 27 nonspec / 86 total")
+    print("    Expected: 59 spec / 27 nonspec / 86 total")
 
     assert spec_count == 59, f"Expected 59 specific, got {spec_count}"
     assert nonspec_count == 27, f"Expected 27 non-specific, got {nonspec_count}"
@@ -307,8 +310,8 @@ def save_86_dataset(df):
     # Save
     df.to_csv(OUTPUT_86, index=False)
     print(f"\n  ✅ Saved 86-antibody dataset → {OUTPUT_86.relative_to(BASE_DIR)}")
-    print(f"     Confusion matrix: [[40, 19], [10, 17]]")
-    print(f"     Accuracy: 66.28%")
+    print("     Confusion matrix: [[40, 19], [10, 17]]")
+    print("     Accuracy: 66.28%")
 
     return OUTPUT_86
 
@@ -339,19 +342,19 @@ def main():
     print("✓ Jain Preprocessing Complete!")
     print("=" * 80)
 
-    print(f"\n  Outputs:")
+    print("\n  Outputs:")
     print(f"    1. SSOT (116 antibodies): {OUTPUT_116.relative_to(BASE_DIR)}")
     print(f"    2. Parity (86 antibodies): {OUTPUT_86.relative_to(BASE_DIR)}")
 
-    print(f"\n  Method: P5e-S2 (PSR reclassification + PSR/AC-SINS removal)")
-    print(f"  Result: EXACT MATCH to Novo Nordisk confusion matrix")
-    print(f"  Confusion matrix: [[40, 19], [10, 17]]")
-    print(f"  Accuracy: 66.28%")
+    print("\n  Method: P5e-S2 (PSR reclassification + PSR/AC-SINS removal)")
+    print("  Result: EXACT MATCH to Novo Nordisk confusion matrix")
+    print("  Confusion matrix: [[40, 19], [10, 17]]")
+    print("  Accuracy: 66.28%")
 
-    print(f"\n  Next steps:")
-    print(f"    1. Run inference: scripts/testing/test_jain_novo_parity.py")
-    print(f"    2. Verify confusion matrix matches Novo exactly")
-    print(f"    3. Document any findings")
+    print("\n  Next steps:")
+    print("    1. Run inference: scripts/testing/test_jain_novo_parity.py")
+    print("    2. Verify confusion matrix matches Novo exactly")
+    print("    3. Document any findings")
 
     print("\n" + "=" * 80)
 

@@ -10,7 +10,6 @@ Date: 2025-11-01
 
 import sys
 from pathlib import Path
-from typing import Dict, List
 
 import pandas as pd
 
@@ -167,7 +166,7 @@ def print_validation_report(
     csv_files = list(dataset_dir.glob("*.csv"))
     if csv_files:
         label_stats = validate_label_distribution(csv_files[0])
-        print(f"\nLabel distribution:")
+        print("\nLabel distribution:")
         print(
             f"  Specific (0): {label_stats['specific']} ({label_stats['specific_pct']:.1f}%)"
         )
