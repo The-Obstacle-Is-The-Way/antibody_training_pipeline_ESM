@@ -50,10 +50,12 @@ def test_elisa_threshold(model, threshold=1.3):
     sd03 = pd.read_csv(JAIN_SD03)
 
     # Merge to get continuous ELISA values
-    merged = df116.merge(sd03[['Name', 'ELISA']], left_on='id', right_on='Name', how='left')
+    merged = df116.merge(
+        sd03[["Name", "ELISA"]], left_on="id", right_on="Name", how="left"
+    )
 
     # Apply threshold
-    df_86 = merged[merged['ELISA'] <= threshold].copy()
+    df_86 = merged[merged["ELISA"] <= threshold].copy()
 
     print(f"\n116 → ELISA <= {threshold} → {len(df_86)} antibodies")
     print(f"  Specific: {(df_86['label']==0).sum()}")
@@ -61,22 +63,22 @@ def test_elisa_threshold(model, threshold=1.3):
 
     # Generate embeddings
     print("\nGenerating embeddings...")
-    sequences = df_86['vh_sequence'].tolist()
+    sequences = df_86["vh_sequence"].tolist()
     X = model.embedding_extractor.extract_batch_embeddings(sequences)
 
     # Predict
-    y_true = df_86['label'].values
+    y_true = df_86["label"].values
     y_pred = model.predict(X)
 
     # Metrics
     cm = confusion_matrix(y_true, y_pred)
     acc = accuracy_score(y_true, y_pred)
 
-    print(f"\nResults:")
+    print("\nResults:")
     print(f"  Confusion Matrix: {cm.tolist()}")
     print(f"  Accuracy: {acc*100:.2f}%")
 
-    print(f"\nComparison to Novo:")
+    print("\nComparison to Novo:")
     print(f"  Novo CM:  {NOVO_CM.tolist()}")
     print(f"  Ours:     {cm.tolist()}")
     print(f"  Match: {'✅ YES' if np.array_equal(cm, NOVO_CM) else '❌ NO'}")
@@ -87,7 +89,7 @@ def test_elisa_threshold(model, threshold=1.3):
 def test_p5e_s2(model):
     """Test P5e-S2 approach"""
     print(f"\n{'='*60}")
-    print(f"TEST 2: P5e-S2 Method (PSR Reclassification + Removal)")
+    print("TEST 2: P5e-S2 Method (PSR Reclassification + Removal)")
     print(f"{'='*60}")
 
     # Load P5e-S2 dataset
@@ -99,22 +101,22 @@ def test_p5e_s2(model):
 
     # Generate embeddings
     print("\nGenerating embeddings...")
-    sequences = df['vh_sequence'].tolist()
+    sequences = df["vh_sequence"].tolist()
     X = model.embedding_extractor.extract_batch_embeddings(sequences)
 
     # Predict
-    y_true = df['label'].values
+    y_true = df["label"].values
     y_pred = model.predict(X)
 
     # Metrics
     cm = confusion_matrix(y_true, y_pred)
     acc = accuracy_score(y_true, y_pred)
 
-    print(f"\nResults:")
+    print("\nResults:")
     print(f"  Confusion Matrix: {cm.tolist()}")
     print(f"  Accuracy: {acc*100:.2f}%")
 
-    print(f"\nComparison to Novo:")
+    print("\nComparison to Novo:")
     print(f"  Novo CM:  {NOVO_CM.tolist()}")
     print(f"  Ours:     {cm.tolist()}")
     print(f"  Match: {'✅ YES' if np.array_equal(cm, NOVO_CM) else '❌ NO'}")
@@ -123,9 +125,9 @@ def test_p5e_s2(model):
 
 
 def main():
-    print("="*60)
+    print("=" * 60)
     print("ELISA THRESHOLD HYPOTHESIS TEST")
-    print("="*60)
+    print("=" * 60)
     print("\nHypothesis (Hybri): Novo used simple ELISA threshold (1.3-1.5)")
     print("Counter (Ours): Novo used P5e-S2 (PSR reclassification + removal)\n")
 
@@ -146,8 +148,10 @@ def main():
     print("|--------|---|----------|----------|------------------|")
 
     for result in [result_elisa_13, result_elisa_15, result_p5e]:
-        match = "✅" if np.array_equal(result['cm'], NOVO_CM) else "❌"
-        print(f"| {result['method']:12s} | {result['n']:2d} | {result['acc']*100:5.2f}% | {match:8s} | {result['cm'].tolist()} |")
+        match = "✅" if np.array_equal(result["cm"], NOVO_CM) else "❌"
+        print(
+            f"| {result['method']:12s} | {result['n']:2d} | {result['acc']*100:5.2f}% | {match:8s} | {result['cm'].tolist()} |"
+        )
 
     print(f"\nNovo benchmark: {NOVO_CM.tolist()}, {NOVO_ACC*100:.2f}%")
 
@@ -155,7 +159,7 @@ def main():
     print("CONCLUSION")
     print(f"{'='*60}\n")
 
-    if np.array_equal(result_p5e['cm'], NOVO_CM):
+    if np.array_equal(result_p5e["cm"], NOVO_CM):
         print("✅ P5e-S2 achieves EXACT Novo parity")
         print("❌ Simple ELISA thresholds do NOT match")
         print("\nHybri's hypothesis: REJECTED")
