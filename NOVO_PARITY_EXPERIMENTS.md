@@ -456,6 +456,137 @@ Verify clinical trial failures:
 
 ---
 
+## 🔬 BREAKTHROUGH: JAIN 2017 PNAS SUPPLEMENTAL DATA
+
+**Date**: 2025-11-03
+**Discovery**: Converted raw Jain PNAS .xlsx files (SD01, SD02, SD03) to CSV and found **actual biophysical measurements**!
+
+### 📊 SD03 Contains Gold Standard Biophysical Assays:
+
+**Key Columns**:
+- **PSR (Poly-Specificity Reagent)**: 0-1 score, >0.4 = high polyreactivity
+- **AC-SINS (Affinity-Capture Self-Interaction Nanoparticle Spectroscopy)**: ∆λmax (nm), >20 = strong self-interaction/aggregation
+- **HIC Retention Time**: Hydrophobic interaction chromatography, >10 min = hydrophobic
+- **Fab Tm by DSF**: Thermal stability, <65°C = unstable
+- **SGAC-SINS**: Salt-gradient aggregation propensity
+- **ELISA**: Raw ELISA OD values (not just 0-6 flags!)
+- **BVP ELISA**: Baculovirus particle ELISA (orthogonal polyreactivity assay)
+
+### 🧪 Research Logic: ELISA First, Then Biophysics QC
+
+**What Novo LIKELY Did (Industry Standard Workflow)**:
+
+```
+Step 1: ELISA Primary Filter
+  137 total → Remove mild (ELISA 1-3) → 116 (94 spec / 22 nonspec)
+
+Step 2: Biophysical QC (Secondary/Confirmatory)
+  116 → Calculate composite risk from PSR + AC-SINS + HIC + Tm
+       → Remove/reclassify high-risk antibodies → 86 (59 spec / 27 nonspec)
+```
+
+**Why this makes sense**:
+- ELISA is PRIMARY polyreactivity assay (most sensitive)
+- PSR, AC-SINS, HIC are SECONDARY/orthogonal confirmatory assays
+- Standard pharma workflow: categorize first, then apply developability filters
+- Composite risk scoring is industry best practice (multiple orthogonal measurements)
+
+---
+
+### 📊 Biophysical Data Analysis: The 116 ELISA-Only Set
+
+**High PSR (>0.4) in our 116 set:**
+
+| Antibody | Label | ELISA | PSR Score | Notes |
+|----------|-------|-------|-----------|-------|
+| ixekizumab | 1 (nonspec) | 6 | 0.810 | Already caught by ELISA ✅ |
+| bococizumab | 1 (nonspec) | 6 | 0.760 | Known failure case, ELISA caught it ✅ |
+| bimagrumab | 0 (spec) | 0 | 0.697 | ⚠️ ELISA missed it! |
+| cixutumumab | 1 (nonspec) | 6 | 0.657 | ELISA caught it ✅ |
+| lenzilumab | 1 (nonspec) | 6 | 0.655 | ELISA caught it ✅ |
+| emibetuzumab | 1 (nonspec) | 6 | 0.643 | ELISA caught it ✅ |
+| bavituximab | 0 (spec) | 0 | 0.557 | ⚠️ ELISA missed it! |
+| briakinumab | 1 (nonspec) | 4 | 0.556 | ELISA caught it ✅ |
+| ganitumab | 0 (spec) | 0 | 0.553 | ⚠️ ELISA missed it! |
+| gantenerumab | 1 (nonspec) | 6 | 0.553 | ELISA caught it ✅ |
+| patritumab | 1 (nonspec) | 4 | 0.520 | ELISA caught it ✅ |
+| olaratumab | 0 (spec) | 0 | 0.483 | ⚠️ ELISA missed it! |
+
+**Key Finding**: 8/12 high-PSR antibodies were correctly caught by ELISA. But **4 specific antibodies have PSR >0.4 despite ELISA=0**!
+
+**The 4 ELISA-discordant cases:**
+1. bimagrumab (PSR=0.697, total_flags=4)
+2. bavituximab (PSR=0.557, total_flags=2)
+3. ganitumab (PSR=0.553, total_flags=2)
+4. olaratumab (PSR=0.483, total_flags=2)
+
+---
+
+### 🧮 Composite Biophysical Risk Scoring
+
+**Formula**: Risk = PSR_norm + AC-SINS_norm + HIC_norm + (1 - Tm_norm)
+
+Each metric normalized 0-1 within the 94 specific antibodies, then summed.
+
+**Top 10 Riskiest Specific Antibodies** (from 116 set):
+
+| Rank | Antibody | Risk Score | PSR | AC-SINS | HIC | Tm | Notes |
+|------|----------|------------|-----|---------|-----|----|-------|
+| 1 | bavituximab | 2.74 | 0.557 | Extreme | High | 59.5°C | All metrics bad |
+| 2 | lirilumab | 2.57 | 0.183 | High | Extreme | 69.0°C | HIC retention problem |
+| 3 | bimagrumab | 2.40 | 0.697 | Extreme | Med | 72.0°C | PSR + AC-SINS |
+| 4 | basiliximab | 2.40 | 0.397 | Extreme | Low | 60.5°C | AC-SINS + low Tm |
+| 5 | glembatumumab | 2.11 | 0.166 | Extreme | High | 72.0°C | AC-SINS + HIC |
+| 6 | urelumab | 1.95 | 0.0 | Extreme | Med | 74.5°C | AC-SINS only |
+| 7 | infliximab | 1.95 | 0.0 | Extreme | Med | 81.5°C | AC-SINS (+ 61% ADA!) |
+| 8 | drozitumab | 1.93 | 0.0 | Extreme | Low | 68.0°C | AC-SINS only |
+| 9 | tremelimumab | 1.84 | 0.145 | Extreme | High | 71.5°C | AC-SINS + HIC |
+| 10 | nimotuzumab | 1.83 | 0.0 | Low | Extreme | 68.5°C | HIC retention problem |
+
+**Notable**: Infliximab (#7) has high composite risk + literature evidence (61% ADA, aggregation). Atezolizumab is #13 with known aggregation issues.
+
+---
+
+### 🎯 Hypothesis: Composite Risk Threshold for 116→86
+
+**Math Requirements**:
+- Start: 94 specific + 22 non-specific = 116
+- Target: 59 specific + 27 non-specific = 86
+- Need: Remove 35 specific, add 5 non-specific (net: -30 antibodies)
+
+**Approach**:
+1. **Reclassify 4-5 high-PSR specific → non-specific** (ELISA discordant cases)
+   - bimagrumab, bavituximab, ganitumab, olaratumab
+   - Plus 1 more: infliximab or atezolizumab?
+
+2. **Remove top 30-35 by composite risk**
+   - Use composite risk threshold to identify developability failures
+   - Orthogonal biophysical evidence trumps ELISA=0
+
+---
+
+### 🧪 Experiments to Test (Using Real Biophysics)
+
+**Experiment 11**: PSR Threshold Reclassification
+- Reclassify all ELISA=0 with PSR >0.4 → non-specific
+- See if this explains the +5 non-specific shift
+
+**Experiment 12**: Composite Risk Top-35 Removal
+- Remove top 35 specific antibodies by composite risk score
+- Check if remaining distribution matches 59/27
+
+**Experiment 13**: Combined PSR + Risk Removal
+- Reclassify 4 PSR-discordant → non-specific
+- Remove next 30-31 by composite risk
+- Should yield 59/27 exactly
+
+**Experiment 14**: Sensitivity Analysis
+- Vary PSR threshold (0.3, 0.4, 0.5, 0.6)
+- Vary risk threshold
+- Find optimal combination that hits 59/27
+
+---
+
 ## 📊 RESULTS TRACKING
 
 ### Confusion Matrix Comparison Template
