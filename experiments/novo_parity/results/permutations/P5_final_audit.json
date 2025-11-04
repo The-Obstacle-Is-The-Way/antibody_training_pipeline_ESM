@@ -1,0 +1,75 @@
+{
+  "permutation_id": "P5",
+  "permutation_name": "PSR-Hybrid Reclassification + Pure PSR Removal",
+  "reclassification_strategy": "R1",
+  "removal_strategy": "S3",
+  "reclassified_ids": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "olaratumab",
+    "infliximab"
+  ],
+  "removed_ids": [
+    "basiliximab",
+    "rituximab",
+    "benralizumab",
+    "dinutuximab",
+    "pembrolizumab",
+    "fezakinumab",
+    "reslizumab",
+    "ipilimumab",
+    "lirilumab",
+    "muromonab",
+    "abituzumab",
+    "glembatumumab",
+    "rilotumumab",
+    "tralokinumab",
+    "tremelimumab",
+    "lumiliximab",
+    "nivolumab",
+    "radretumab",
+    "tigatuzumab",
+    "zanolimumab",
+    "enokizumab",
+    "obinutuzumab",
+    "crenezumab",
+    "atezolizumab",
+    "pinatuzumab",
+    "pertuzumab",
+    "bapineuzumab",
+    "ramucirumab",
+    "bevacizumab",
+    "polatuzumab"
+  ],
+  "confusion_matrix": [
+    [
+      40,
+      19
+    ],
+    [
+      9,
+      18
+    ]
+  ],
+  "accuracy": 0.6744186046511628,
+  "match_to_novo": {
+    "target_cm": [
+      [
+        40,
+        19
+      ],
+      [
+        10,
+        17
+      ]
+    ],
+    "target_accuracy": 0.6628,
+    "difference_cells": 2,
+    "tn_match": true,
+    "fp_match": true,
+    "fn_diff": -1,
+    "tp_diff": 1
+  },
+  "notes": "Best match to Novo. Top row (specific antibodies) PERFECT. Only 1 non-specific antibody differs (likely ixekizumab)."
+}

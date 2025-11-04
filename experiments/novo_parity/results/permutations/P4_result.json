@@ -1,0 +1,58 @@
+{
+  "permutation_id": "P4",
+  "description": "Remove by total_flags",
+  "reclassification_strategy": "R1",
+  "removal_strategy": "S4",
+  "reclassified_ids": [
+    "bimagrumab",
+    "bavituximab",
+    "ganitumab",
+    "olaratumab",
+    "infliximab"
+  ],
+  "removed_ids": [
+    "glembatumumab",
+    "atezolizumab",
+    "rilotumumab",
+    "eldelumab",
+    "seribantumab",
+    "fezakinumab",
+    "drozitumab",
+    "pembrolizumab",
+    "lirilumab",
+    "ipilimumab",
+    "enokizumab",
+    "ocrelizumab",
+    "urelumab",
+    "basiliximab",
+    "tremelimumab",
+    "bevacizumab",
+    "lebrikizumab",
+    "gemtuzumab",
+    "galiximab",
+    "bapineuzumab",
+    "rituximab",
+    "lampalizumab",
+    "tralokinumab",
+    "benralizumab",
+    "otelixizumab",
+    "dinutuximab",
+    "nimotuzumab",
+    "palivizumab",
+    "otlertuzumab",
+    "panobacumab"
+  ],
+  "confusion_matrix": [
+    [
+      42,
+      17
+    ],
+    [
+      9,
+      18
+    ]
+  ],
+  "accuracy": 0.6976744186046512,
+  "exact_match": false,
+  "timestamp": "2025-11-03T23:09:25.471637"
+}

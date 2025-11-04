@@ -1,0 +1,104 @@
+{
+  "experiment_id": "exp_05",
+  "experiment_name": "PSR-Hybrid Parity Approach",
+  "timestamp": "2025-11-03T22:30:45.421622",
+  "script": "experiments/novo_parity/scripts/exp_05_psr_hybrid_parity.py",
+  "input_files": [
+    "test_datasets/jain_ELISA_ONLY_116.csv",
+    "test_datasets/jain_sd03.csv"
+  ],
+  "output_file": "experiments/novo_parity/datasets/jain_86_exp05.csv",
+  "method": {
+    "step_1": "Reclassify 5 specific \u2192 non-specific",
+    "step_2": "Remove top 30 specific by composite risk"
+  },
+  "parameters": {
+    "psr_flip_threshold": 0.4,
+    "composite_risk_formula": "PSR_norm + AC-SINS_norm + HIC_norm + (1 - Tm_norm)",
+    "tier_a_rationale": "ELISA=0 but PSR >0.4 (polyreactivity missed by ELISA)",
+    "tier_b_rationale": "61% ADA (NEJM) + aggregation + chimeric"
+  },
+  "reclassified_ids": {
+    "tier_a_psr_based": [
+      {
+        "id": "bavituximab",
+        "psr": 0.5570368731420577,
+        "reason": "Tier A: PSR=0.557 >0.4 despite ELISA=0"
+      },
+      {
+        "id": "bimagrumab",
+        "psr": 0.6965555618675863,
+        "reason": "Tier A: PSR=0.697 >0.4 despite ELISA=0"
+      },
+      {
+        "id": "ganitumab",
+        "psr": 0.5528448378515598,
+        "reason": "Tier A: PSR=0.553 >0.4 despite ELISA=0"
+      },
+      {
+        "id": "olaratumab",
+        "psr": 0.4831425745388005,
+        "reason": "Tier A: PSR=0.483 >0.4 despite ELISA=0"
+      }
+    ],
+    "tier_b_clinical": [
+      {
+        "id": "infliximab",
+        "reason": "Tier B: 61% ADA (NEJM) + aggregation + chimeric"
+      }
+    ]
+  },
+  "removed_ids": [
+    "lirilumab",
+    "basiliximab",
+    "glembatumumab",
+    "urelumab",
+    "drozitumab",
+    "tremelimumab",
+    "nimotuzumab",
+    "pembrolizumab",
+    "atezolizumab",
+    "ipilimumab",
+    "ocrelizumab",
+    "tralokinumab",
+    "rituximab",
+    "eldelumab",
+    "fezakinumab",
+    "tigatuzumab",
+    "seribantumab",
+    "dinutuximab",
+    "enokizumab",
+    "lumiliximab",
+    "bevacizumab",
+    "benralizumab",
+    "siltuximab",
+    "tabalumab",
+    "nivolumab",
+    "lebrikizumab",
+    "crenezumab",
+    "galiximab",
+    "veltuzumab",
+    "tovetumab"
+  ],
+  "counts": {
+    "step_0_start": {
+      "total": 116,
+      "specific": 94,
+      "non_specific": 22
+    },
+    "step_1_after_reclassification": {
+      "total": 116,
+      "specific": 89,
+      "non_specific": 27
+    },
+    "step_2_final": {
+      "total": 86,
+      "specific": 59,
+      "non_specific": 27
+    }
+  },
+  "validation": {
+    "target_distribution": "59 specific / 27 non-specific = 86 total",
+    "achieved": "\u2705 EXACT MATCH"
+  }
+}

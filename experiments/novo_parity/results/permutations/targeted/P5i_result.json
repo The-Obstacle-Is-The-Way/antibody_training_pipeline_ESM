@@ -1,0 +1,81 @@
+{
+  "permutation_id": "P5i",
+  "description": "Swap borderline FN: bavituximab \u2192 basiliximab",
+  "tier_a": [
+    "bimagrumab",
+    "basiliximab",
+    "ganitumab",
+    "olaratumab"
+  ],
+  "tier_b": [
+    "infliximab"
+  ],
+  "reclassified_ids": [
+    "bimagrumab",
+    "basiliximab",
+    "ganitumab",
+    "olaratumab",
+    "infliximab"
+  ],
+  "removed_ids": [
+    "bavituximab",
+    "rituximab",
+    "benralizumab",
+    "dinutuximab",
+    "pembrolizumab",
+    "fezakinumab",
+    "reslizumab",
+    "ipilimumab",
+    "lirilumab",
+    "muromonab",
+    "abituzumab",
+    "glembatumumab",
+    "rilotumumab",
+    "tralokinumab",
+    "tremelimumab",
+    "lumiliximab",
+    "nivolumab",
+    "radretumab",
+    "tigatuzumab",
+    "zanolimumab",
+    "enokizumab",
+    "obinutuzumab",
+    "crenezumab",
+    "atezolizumab",
+    "pinatuzumab",
+    "pertuzumab",
+    "bapineuzumab",
+    "ramucirumab",
+    "bevacizumab",
+    "polatuzumab"
+  ],
+  "confusion_matrix": [
+    [
+      40,
+      19
+    ],
+    [
+      8,
+      19
+    ]
+  ],
+  "accuracy": 0.686046511627907,
+  "novo_cm": [
+    [
+      40,
+      19
+    ],
+    [
+      10,
+      17
+    ]
+  ],
+  "novo_accuracy": 0.6628,
+  "difference_cells": 4,
+  "exact_match": false,
+  "tn_match": true,
+  "fp_match": true,
+  "fn_diff": -2,
+  "tp_diff": 2,
+  "timestamp": "2025-11-03T23:28:47.322433"
+}
