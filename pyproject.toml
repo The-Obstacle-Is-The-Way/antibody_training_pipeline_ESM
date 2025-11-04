@@ -8,24 +8,23 @@ version = "1.0.0"
 description = "Antibody developability analysis using ESM protein language model"
 requires-python = ">=3.9"
 dependencies = [
-    "torch>=2.6.0",
-    "tqdm",
-    "transformers>=4.30.0",
-    "numpy>=1.24.0",
-    "pandas>=2.0.0",
-    "scikit-learn>=1.3.0",
-    "tqdm>=4.65.0",
-    "PyYAML>=6.0.0",
+    "biopython>=1.80",
+    "datasets>=4.2.0",
+    "jupyterlab>=4.4.9",
     "matplotlib>=3.7.0",
     "more-itertools",
-    "riot_na",
-    "seaborn>=0.12.0",
-    "scipy>=1.10.0",
-    "pandas",
+    "numpy>=1.24.0",
+    "pandas>=2.0.0",
+    "plotly",
     "pyparsing>=3.0.0",
-    'plotly',
-    "jupyterlab>=4.4.9",
-    "datasets>=4.2.0",
+    "PyYAML>=6.0.0",
+    "riot_na",
+    "scikit-learn>=1.3.0",
+    "scipy>=1.10.0",
+    "seaborn>=0.12.0",
+    "torch>=2.6.0",
+    "tqdm>=4.65.0",
+    "transformers>=4.30.0",
 ]
 
 [project.optional-dependencies]

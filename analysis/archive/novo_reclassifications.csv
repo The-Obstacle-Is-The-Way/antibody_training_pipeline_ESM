@@ -1,0 +1,15 @@
+id,original_category,elisa_flags,total_flags,model_prob
+atezolizumab,specific,0,3,0.5952402796688767
+bimagrumab,specific,0,4,0.5404186083588688
+eldelumab,specific,0,3,0.1757225081641562
+glembatumumab,specific,0,3,0.6642970451504058
+infliximab,specific,0,3,0.2992889212552097
+rilotumumab,specific,0,3,0.5821100870981658
+seribantumab,specific,0,3,0.6592924348421887
+etrolizumab,mild,2,4,0.2307508382973787
+figitumumab,mild,3,6,0.4051127887805846
+foralumab,mild,2,5,0.5487002639985233
+guselkumab,mild,1,4,0.6450523476877813
+ozanezumab,mild,3,6,0.5301609163289216
+ranibizumab,mild,1,4,0.4164613705161365
+visilizumab,mild,3,6,0.469611602968764

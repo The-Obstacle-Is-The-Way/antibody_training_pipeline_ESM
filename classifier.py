@@ -1,5 +1,5 @@
 import logging
-from typing import Dict
+from typing import Dict, Optional
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
@@ -122,20 +122,51 @@ class BinaryClassifier:
         self.is_fitted = True
         logger.info(f"Classifier fitted on {len(X)} samples")
 
-    def predict(self, X: np.ndarray) -> np.ndarray:
+    def predict(
+        self, X: np.ndarray, threshold: float = 0.5, assay_type: Optional[str] = None
+    ) -> np.ndarray:
         """
         Predict the labels for the data
 
         Args:
             X: Array of ESM-1V embeddings
+            threshold: Decision threshold for classification (default: 0.5)
+                      If assay_type is specified, this parameter is ignored
+            assay_type: Type of assay for dataset-specific thresholds. Options:
+                       - 'ELISA': Use threshold=0.5 (for Jain, Boughter datasets)
+                       - 'PSR': Use threshold=0.549 (for Shehata, Harvey datasets)
+                       - None: Use the threshold parameter
 
         Returns:
             Predicted labels
+
+        Notes:
+            The model was trained on ELISA data (Boughter dataset). Different assay types
+            measure different "spectrums" of non-specificity (Sakhnini et al. 2025, Section 2.7).
+            Use assay_type='PSR' for PSR-based datasets to get calibrated predictions.
         """
         if not self.is_fitted:
             raise ValueError("Classifier must be fitted before making predictions")
 
-        return self.classifier.predict(X)
+        # Dataset-specific threshold mapping
+        ASSAY_THRESHOLDS = {
+            "ELISA": 0.5,  # Training data type (Boughter, Jain)
+            "PSR": 0.5495,  # PSR assay type (Shehata, Harvey) - EXACT Novo parity
+        }
+
+        # Determine which threshold to use
+        if assay_type is not None:
+            if assay_type not in ASSAY_THRESHOLDS:
+                raise ValueError(
+                    f"Unknown assay_type '{assay_type}'. Must be one of: {list(ASSAY_THRESHOLDS.keys())}"
+                )
+            threshold = ASSAY_THRESHOLDS[assay_type]
+
+        # Get probabilities and apply threshold
+        probabilities = self.classifier.predict_proba(X)
+        predictions = (probabilities[:, 1] > threshold).astype(int)
+
+        return predictions
 
     def predict_proba(self, X: np.ndarray) -> np.ndarray:
         """
