@@ -403,3 +403,120 @@ Even with our best match (85 antibodies), we need to:
 **Remaining Gap**: Need to understand 4-antibody class shift and 1-antibody total gap
 
 **Recommendation**: Proceed with 85-antibody ELISA-only set OR investigate the 4-antibody discrepancy further
+
+---
+
+## 🧮 SIMPLE REMOVAL MATH (Post Email Draft)
+
+### The Core Question
+
+**Can Novo's 116→86 transition be explained by simple removal alone?**
+
+Or did they also **reclassify** antibodies between specific/non-specific?
+
+---
+
+### The Numbers
+
+**Current State** (Our 116-antibody ELISA-only set):
+```
+116 total antibodies
+├─ 94 specific (label=0, ELISA=0)
+└─ 22 non-specific (label=1, ELISA≥4)
+```
+
+**Target State** (Novo's reported 86-antibody set):
+```
+86 total antibodies
+├─ 59 specific (label=0)
+└─ 27 non-specific (label=1)
+```
+
+**Gap**: 30 antibodies removed (116 - 86 = 30)
+
+---
+
+### The Math Problem
+
+**If Novo ONLY removed antibodies (no reclassification):**
+
+```
+Specific:     94 → 59 = 35 removed
+Non-specific: 22 → 27 = -5 removed ❌ IMPOSSIBLE!
+```
+
+**You cannot go from 22 → 27 by removing antibodies!**
+
+This proves Novo did **NOT** simply remove 30 antibodies. They also:
+1. **Reclassified** some antibodies, OR
+2. Used **different flag thresholds** than us, OR
+3. Had **different ELISA data** than we obtained
+
+---
+
+### Our QC Candidates (24 antibodies identified)
+
+**Distribution by label:**
+```
+21 specific (label=0)    - chimeric/discontinued/withdrawn/outliers
+ 3 non-specific (label=1) - cixutumumab, dalotuzumab, robatumumab
+──────────────────────
+24 total QC candidates
+```
+
+**If we remove all 24 QC candidates:**
+```
+Current:  94 specific + 22 non-specific = 116
+Remove:   21 specific +  3 non-specific = 24
+Result:   73 specific + 19 non-specific = 92
+
+Target:   59 specific + 27 non-specific = 86
+Still need: -14 specific, +8 non-specific, -6 total
+```
+
+**This STILL doesn't work!** Even after removing our 24 QC candidates:
+- We'd have 73 specific (need 59 → remove 14 more)
+- We'd have 19 non-specific (need 27 → ADD 8 more!)
+
+---
+
+### The Only Way This Works
+
+**Novo must have:**
+
+1. **Removed 35 specific antibodies** total (not just 21)
+   - Our 21 QC candidates
+   - PLUS 14 more specific antibodies
+
+2. **Reclassified 5 antibodies** from specific → non-specific
+   - Explains going from 22 → 27 non-specific
+
+**Alternative explanation:**
+```
+Start with:     94 specific + 22 non-specific = 116
+
+Step 1: Reclassify 5 antibodies (spec → nonspec)
+After:          89 specific + 27 non-specific = 116
+
+Step 2: Remove 30 specific antibodies
+Final:          59 specific + 27 non-specific = 86 ✓
+```
+
+This would mean Novo found **5 antibodies with ELISA=0** that they considered non-specific based on:
+- Other assays (polyreactivity, aggregation, etc.)
+- Clinical/biological issues (chimeric, withdrawn, failed trials)
+- Manual curation
+
+---
+
+### Why This Matters
+
+**Simple removal CANNOT explain the transition.**
+
+The +5 non-specific shift is the smoking gun that proves Novo either:
+- Used different flag calculation (ELISA threshold ≥3 vs ≥4?)
+- Used additional criteria beyond ELISA to label antibodies
+- Had slightly different ELISA data than we obtained from Max
+- Reported CV metrics instead of a fixed test set
+
+**This is why we need to email the authors!**
