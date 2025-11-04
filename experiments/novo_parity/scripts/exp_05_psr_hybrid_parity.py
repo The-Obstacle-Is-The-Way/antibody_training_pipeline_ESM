@@ -26,10 +26,9 @@ from pathlib import Path
 
 import pandas as pd
 
-# File paths
-BASE_DIR = Path(
-    "/Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM"
-)
+# File paths (resolve relative to script location)
+SCRIPT_DIR = Path(__file__).resolve().parent
+BASE_DIR = SCRIPT_DIR.parent.parent.parent  # experiments/novo_parity/scripts -> repo root
 INPUT_116 = BASE_DIR / "test_datasets/jain_ELISA_ONLY_116.csv"
 INPUT_SD03 = BASE_DIR / "test_datasets/jain_sd03.csv"
 OUTPUT_DIR = BASE_DIR / "experiments/novo_parity"
