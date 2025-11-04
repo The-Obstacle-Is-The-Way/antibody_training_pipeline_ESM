@@ -41,6 +41,39 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 - **Web Application Interface**: A simple frontend application to make the prediction tool accessible to users without a programming background.
 
 ---
+
+# Jain Dataset Processing
+
+This repository includes two complementary approaches for processing the Jain 2017 test dataset:
+
+## 1. P5e-S2 Preprocessing Pipeline (`preprocessing/preprocess_jain_p5e_s2.py`)
+**Purpose**: Dataset curation (137→116→86 antibodies)
+
+Implements the **exact Novo Nordisk methodology** discovered through systematic permutation testing:
+```
+137 antibodies (jain_with_private_elisa_FULL.csv)
+  ↓ Remove ELISA 1-3 (mild aggregators)
+116 antibodies (jain_ELISA_ONLY_116.csv) — SSOT
+  ↓ P5e-S2: PSR-based reclassification + PSR/AC-SINS removal
+86 antibodies (jain_86_novo_parity.csv) — EXACT Novo parity
+```
+
+**Result**: Confusion matrix [[40,19],[10,17]], 66.28% accuracy (exact match to Novo)
+
+**Provenance**: See `experiments/novo_parity/` for complete reverse engineering documentation.
+
+## 2. Fragment Extraction (`preprocessing/process_jain.py`)
+**Purpose**: Feature engineering (extract 16 antibody fragments)
+
+Uses ANARCI (IMGT numbering) to extract CDRs, FWRs, and paired domains following Sakhnini et al. 2025:
+- Individual: VH, VL, H-CDR1/2/3, L-CDR1/2/3, H-FWR1/2/3/4, L-FWR1/2/3/4
+- Concatenated: H-CDRs, L-CDRs, H-FWRs, L-FWRs, All-CDRs, All-FWRs, VH+VL, Full
+
+These operations are **complementary**, not alternatives:
+1. Run P5e-S2 preprocessing to create canonical 86-antibody test set
+2. Run fragment extraction to generate 16 variant datasets for training/testing
+
+---
 # Installation & Setup
 To get started, clone the repository and set up the Python environment.
 1. Clone the Repository
