@@ -38,25 +38,25 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--csv",
         type=Path,
-        default=Path("test_datasets/jain.csv"),
+        default=Path("test_datasets/jain/processed/jain.csv"),
         help="Path to the converted CSV file.",
     )
     parser.add_argument(
         "--sd01",
         type=Path,
-        default=Path("test_datasets/pnas.1616408114.sd01.xlsx"),
+        default=Path("test_datasets/jain/raw/jain-pnas.1616408114.sd01.xlsx"),
         help="Path to SD01 metadata file.",
     )
     parser.add_argument(
         "--sd02",
         type=Path,
-        default=Path("test_datasets/pnas.1616408114.sd02.xlsx"),
+        default=Path("test_datasets/jain/raw/jain-pnas.1616408114.sd02.xlsx"),
         help="Path to SD02 sequence file.",
     )
     parser.add_argument(
         "--sd03",
         type=Path,
-        default=Path("test_datasets/pnas.1616408114.sd03.xlsx"),
+        default=Path("test_datasets/jain/raw/jain-pnas.1616408114.sd03.xlsx"),
         help="Path to SD03 property file.",
     )
     return parser.parse_args()

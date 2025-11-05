@@ -38,10 +38,10 @@ import pandas as pd
 
 # File paths
 BASE_DIR = Path(__file__).parent.parent
-INPUT_137 = BASE_DIR / "test_datasets/jain_with_private_elisa_FULL.csv"
-INPUT_SD03 = BASE_DIR / "test_datasets/jain_sd03.csv"
-OUTPUT_116 = BASE_DIR / "test_datasets/jain_ELISA_ONLY_116.csv"
-OUTPUT_86 = BASE_DIR / "test_datasets/jain/jain_86_novo_parity.csv"
+INPUT_137 = BASE_DIR / "test_datasets/jain/processed/jain_with_private_elisa_FULL.csv"
+INPUT_SD03 = BASE_DIR / "test_datasets/jain/processed/jain_sd03.csv"
+OUTPUT_116 = BASE_DIR / "test_datasets/jain/processed/jain_ELISA_ONLY_116.csv"
+OUTPUT_86 = BASE_DIR / "test_datasets/jain/canonical/jain_86_novo_parity.csv"
 
 # P5e-S2 Method Constants
 PSR_THRESHOLD = 0.4

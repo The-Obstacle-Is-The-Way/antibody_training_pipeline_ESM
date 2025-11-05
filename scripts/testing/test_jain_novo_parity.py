@@ -36,8 +36,8 @@ def main():
     print()
 
     # Load Novo parity test set (86 antibodies)
-    print("Loading test set: test_datasets/jain/jain_86_novo_parity.csv")
-    df = pd.read_csv("test_datasets/jain/jain_86_novo_parity.csv")
+    print("Loading test set: test_datasets/jain/canonical/jain_86_novo_parity.csv")
+    df = pd.read_csv("test_datasets/jain/canonical/jain_86_novo_parity.csv")
     print(f"✅ Test set loaded: {len(df)} antibodies")
     print(f"   - Specific (label=0): {(df['label']==0).sum()}")
     print(f"   - Non-specific (label=1): {(df['label']==1).sum()}")
