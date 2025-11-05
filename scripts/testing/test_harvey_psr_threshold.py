@@ -70,7 +70,7 @@ def main():
     print()
 
     # Load Harvey data
-    harvey_file = "test_datasets/harvey/VHH_only_harvey.csv"
+    harvey_file = "test_datasets/harvey/fragments/VHH_only_harvey.csv"
     print(f"Loading Harvey dataset from {harvey_file}...")
     sys.stdout.flush()
 

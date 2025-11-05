@@ -45,7 +45,7 @@ def evaluate_with_threshold(y_true, y_proba, threshold: float):
 def main():
     # Paths
     model_path = "models/boughter_vh_esm1v_logreg.pkl"
-    data_path = "test_datasets/harvey/VHH_only_harvey.csv"
+    data_path = "test_datasets/harvey/fragments/VHH_only_harvey.csv"
 
     if not Path(model_path).exists():
         print(f"Error: Model not found at {model_path}")

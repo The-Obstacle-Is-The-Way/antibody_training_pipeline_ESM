@@ -42,7 +42,7 @@ def test_gap_characters():
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    harvey_dir = Path("test_datasets/harvey")
+    harvey_dir = Path("test_datasets/harvey/fragments")
     fragment_files = [
         "VHH_only_harvey.csv",
         "H-CDR1_harvey.csv",
@@ -93,7 +93,7 @@ def test_amino_acid_validation():
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    harvey_dir = Path("test_datasets/harvey")
+    harvey_dir = Path("test_datasets/harvey/fragments")
 
     # Check critical files for VHH-based model
     test_files = [
@@ -150,7 +150,7 @@ def test_previously_affected_sequences():
     print("TEST 3: Previously Affected Sequences (Spot Check)")
     print("=" * 70)
 
-    vhh_file = Path("test_datasets/harvey/VHH_only_harvey.csv")
+    vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
 
     if not vhh_file.exists():
         print(f"  ✗ FAIL: {vhh_file} not found")
@@ -200,7 +200,7 @@ def test_model_validation_logic():
     print("=" * 70)
     print("  Simulating model.py:86-90 validation logic...")
 
-    vhh_file = Path("test_datasets/harvey/VHH_only_harvey.csv")
+    vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
 
     if not vhh_file.exists():
         print(f"  ✗ FAIL: {vhh_file} not found")
@@ -239,7 +239,7 @@ def test_data_integrity():
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    harvey_dir = Path("test_datasets/harvey")
+    harvey_dir = Path("test_datasets/harvey/fragments")
     expected_files = [
         "VHH_only_harvey.csv",
         "H-CDR1_harvey.csv",
