@@ -30,7 +30,7 @@ The Boughter dataset processing script had the **EXACT SAME P0 BLOCKER** as Harv
 
 ### The Double Bug
 
-**File:** `preprocessing/process_boughter.py`
+**File:** `preprocessing/boughter/stage2_stage3_annotation_qc.py`
 
 **Bug 1 (Line 89 - Original Code):** Using wrong ANARCI attribute
 
@@ -196,7 +196,7 @@ fragments[f"full_seq_{chain}"] = "".join([...])
 ### Step 2: Regenerate All Boughter Fragments
 
 ```bash
-python3 preprocessing/process_boughter.py
+python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 ```
 
 **Runtime:** ~2-3 minutes

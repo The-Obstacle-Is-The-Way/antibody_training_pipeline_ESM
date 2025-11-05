@@ -1,33 +1,39 @@
 #!/usr/bin/env python3
 """
-Boughter Dataset Processing: ANARCI Annotation & Quality Control (Stages 2 + 3)
+Boughter Dataset Preprocessing - Stages 2+3: ANARCI Annotation & Quality Control
 
 Processes boughter.csv from Stage 1, annotates with ANARCI using strict IMGT
 numbering, applies post-annotation quality control, and creates 16 fragment-specific
-CSV files.
+CSV files with include_in_training flags.
 
-Pipeline:
+Pipeline Position: Stages 2+3 of 3
+    Stage 1 → boughter.csv (1,117 sequences)
+    Stages 2+3 (this script) → 16 fragment CSVs (1,065 sequences each)
+    Training subset: VH_only_boughter_training.csv (914 sequences)
+
+Pipeline Flow:
     Stage 2: ANARCI annotation with strict IMGT boundaries
     Stage 3: Post-annotation quality control (filter X in CDRs, empty CDRs)
 
 Usage:
-    python3 preprocessing/process_boughter.py
+    python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 
 Inputs:
-    train_datasets/boughter.csv - Output from Stage 1
+    train_datasets/boughter.csv - Output from Stage 1 (1,117 sequences)
 
 Outputs:
-    train_datasets/boughter/*_boughter.csv - 16 fragment-specific files (clean data)
+    train_datasets/boughter/*_boughter.csv - 16 fragment CSVs (1,065 rows each)
+    train_datasets/boughter/VH_only_boughter_training.csv - Training subset (914 rows)
     train_datasets/boughter/annotation_failures.log - Failed annotations (Stage 2)
     train_datasets/boughter/qc_filtered_sequences.txt - QC-filtered sequences (Stage 3)
 
-Actual Results:
-    Stage 1 input:  1117 sequences (95.4% DNA translation success from 1171 raw)
-    Stage 2 output: 1110 sequences (99.4% ANARCI annotation success)
-    Stage 3 output: 1065 sequences (95.9% retention after QC filtering)
-    Training data:  914 sequences (443 specific + 471 non-specific)
+Results Summary:
+    Stage 1 input:  1,117 sequences (95.4% DNA translation success from 1,171 raw)
+    Stage 2 output: 1,110 sequences (99.4% ANARCI annotation success, 7 failures)
+    Stage 3 output: 1,065 sequences (95.9% retention after QC, 45 filtered)
+    Training data:  914 sequences (443 specific + 471 non-specific, 151 excluded)
 
-See docs/accuracy_verification_report.md for validation of methodology.
+Reference: See docs/boughter/boughter_data_sources.md for complete methodology
 """
 
 import sys

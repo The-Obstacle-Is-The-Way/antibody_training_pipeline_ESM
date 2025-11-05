@@ -1,18 +1,33 @@
 #!/usr/bin/env python3
 """
-Boughter Dataset Stage 1: DNA Translation & CSV Conversion
+Boughter Dataset Preprocessing - Stage 1: DNA Translation & Novo Flagging
 
-Processes raw Boughter DNA FASTA files, translates to protein, applies
-Novo Nordisk flagging strategy, and outputs combined CSV.
+Processes raw Boughter DNA FASTA files, translates to protein sequences, applies
+Novo Nordisk flagging strategy, and outputs combined CSV for downstream processing.
+
+Pipeline Position: Stage 1 of 3
+    Stage 1 (this script) → boughter.csv (1,117 sequences)
+    Stage 2+3 → Fragment CSVs (1,065 sequences, 16 fragments)
 
 Usage:
-    python3 scripts/convert_boughter_to_csv.py
+    python3 preprocessing/boughter/stage1_dna_translation.py
+
+Inputs:
+    train_datasets/boughter_raw/*.txt - Raw DNA FASTA files (1,171 sequences)
 
 Outputs:
-    train_datasets/boughter.csv - Combined dataset with Novo flagging
-    train_datasets/boughter_raw/translation_failures.log - Failed sequences
+    train_datasets/boughter.csv - Combined dataset (1,117 sequences, 95.4% translation success)
+    train_datasets/boughter_raw/translation_failures.log - Failed sequences (54 failures)
+
+Novo Nordisk Flagging Strategy:
+    - 0 flags: Specific (label=0, include in training)
+    - 1-3 flags: Mildly polyreactive (exclude from training)
+    - 4+ flags: Non-specific (label=1, include in training)
+
+Reference: See docs/boughter/boughter_data_sources.md for methodology
 """
 
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional, Sequence
 

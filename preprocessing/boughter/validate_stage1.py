@@ -1,23 +1,30 @@
 #!/usr/bin/env python3
 """
-Boughter Dataset Conversion Validation Script
+Boughter Dataset Preprocessing - Stage 1 Validator
 
-Validates the complete Boughter processing pipeline from DNA FASTA to fragments.
+Validates that Stage 1 (DNA → Protein translation) completed successfully,
+with correct translation, sequence counts, and data integrity.
+
+Pipeline Position: Validates Stage 1 output
+    Stage 1 → boughter.csv (1,117 sequences) ← VALIDATED BY THIS SCRIPT
+    Stages 2+3 → Fragment CSVs (1,065 sequences)
 
 Usage:
-    python3 scripts/validate_boughter_conversion.py
+    python3 preprocessing/boughter/validate_stage1.py
 
-Checks:
-1. Stage 1: DNA translation success rate and sequence quality
-2. Stage 2: ANARCI annotation success rate (target: >95%)
-3. Stage 3: Post-QC filtering and retention
-4. CDR length distributions vs expected ranges
-5. Training set balance (Novo flagging strategy)
-6. Fragment file integrity
+Validation Checks:
+    1. train_datasets/boughter.csv exists and is readable
+    2. Sequence count: 1,117 (95.4% translation success from 1,171 raw)
+    3. All sequences contain valid protein characters (ACDEFGHIKLMNPQRSTVWY)
+    4. Required columns present: id, subset, heavy, light, label, num_flags, flag_category
+    5. Labels are valid (0=specific, 1=non-specific)
+    6. Novo flagging applied correctly (0 flags → 0, 4+ flags → 1)
 
 Outputs:
     - Console report with validation results
     - train_datasets/boughter/validation_report.txt
+
+Reference: See docs/boughter/boughter_data_sources.md for Stage 1 methodology
 """
 
 import sys
