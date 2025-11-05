@@ -154,7 +154,7 @@ def main():
     print(f"Total sequences: {len(df)}")
     print("\nNext steps:")
     print("  1. Run preprocessing/process_harvey.py to extract fragments")
-    print("  2. Validate with scripts/validate_fragments.py")
+    print("  2. Validate with scripts/validation/validate_fragments.py")
 
 
 if __name__ == "__main__":

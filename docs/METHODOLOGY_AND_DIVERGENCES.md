@@ -130,7 +130,7 @@ Jain et al. 2017 Table 1 defines **4 assay groups**, each contributing 0 or 1 fl
 
 ✅ **Uses ONLY publicly available data**
 
-- **Script**: `scripts/convert_jain_excel_to_csv.py:160-232`
+- **Script**: `scripts/conversion/convert_jain_excel_to_csv.py:160-232`
 - **Flag calculation**: Jain Table 1 methodology (4 groups → max 4 flags)
 - **Threshold**: `>= 3` (flags 3-4 = non-specific)
 - **Test set**: 67 specific + 27 non-specific = **94 antibodies**

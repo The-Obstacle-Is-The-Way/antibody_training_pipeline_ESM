@@ -177,7 +177,7 @@ if not all(aa in valid_aas for aa in seq) or len(seq) < 1:
 ### Where Do Gaps Come From?
 
 **Phase 1 (Excel → CSV):** ✅ CORRECT
-- `scripts/convert_shehata_excel_to_csv.py:21-46` has `sanitize_sequence()`
+- `scripts/conversion/convert_shehata_excel_to_csv.py:21-46` has `sanitize_sequence()`
 - Removes all `-` characters from input sequences
 - `test_datasets/shehata/processed/shehata.csv` is gap-free ✓
 

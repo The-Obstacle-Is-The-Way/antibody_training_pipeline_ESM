@@ -34,7 +34,7 @@ After downloading the raw Excel files, run the preprocessing scripts to generate
 
 ```bash
 # Phase 1: Convert Excel to CSV
-python3 scripts/convert_shehata_excel_to_csv.py
+python3 scripts/conversion/convert_shehata_excel_to_csv.py
 
 # Phase 2: Extract antibody fragments
 python3 preprocessing/process_shehata.py

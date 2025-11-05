@@ -27,7 +27,7 @@
 ```
 
 **Regression Prevention:**
-- Enhanced `scripts/validate_shehata_conversion.py` with gap detection
+- Enhanced `scripts/validation/validate_shehata_conversion.py` with gap detection
 - Automatic validation runs on all 16 fragment CSVs
 - Prevents P0 blocker from re-occurring
 
@@ -179,7 +179,7 @@ Next highest (labeled specific):
 **Severity:** P1 (labels likely correct, but need confirmation)
 
 **Mitigation:**
-- Threshold documented: `scripts/convert_shehata_excel_to_csv.py:163`
+- Threshold documented: `scripts/conversion/convert_shehata_excel_to_csv.py:163`
 - Check paper supplement for non-specific antibody IDs
 - If IDs match, threshold is validated
 - If IDs differ, adjust threshold to match paper's exact cutoff
@@ -326,7 +326,7 @@ Next highest (labeled specific):
    - Test ESM embedding on all 17 previously-affected sequences
 
 2. **Add gap detection to validation**
-   - **File:** `scripts/validate_shehata_conversion.py`
+   - **File:** `scripts/validation/validate_shehata_conversion.py`
    - Add fragment-level validation function
    - Assert no `-` characters in any fragment CSV
    - Prevent regression
@@ -366,7 +366,7 @@ Next highest (labeled specific):
 - [ ] No `-` characters in Full_shehata.csv (was 17, should be 0)
 - [ ] No `-` characters in VH+VL_shehata.csv (was 17, should be 0)
 - [ ] All CDR/FWR files remain gap-free (already correct)
-- [ ] Validation script `validate_shehata_conversion.py` updated with gap checks
+- [ ] Validation script `scripts/validation/validate_shehata_conversion.py` updated with gap checks
 
 ### Phase 2: ESM Embedding Compatibility
 - [ ] Load all 17 previously-affected sequences

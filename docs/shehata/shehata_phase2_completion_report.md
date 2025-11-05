@@ -25,7 +25,7 @@ Gap characters in fragment sequences have been **ELIMINATED**.
 ```
 
 **Regression Prevention:**
-- `scripts/validate_shehata_conversion.py` now includes fragment gap validation
+- `scripts/validation/validate_shehata_conversion.py` now includes fragment gap validation
 - Automatic detection prevents P0 blocker from re-occurring
 
 **Status:** ✅ Phase 2 PRODUCTION-READY

@@ -9,7 +9,7 @@
 ## Executive Summary
 
 - ✅ `scripts/conversion/convert_jain_excel_to_csv.py` reproduces the canonical Jain dataset (137 antibodies) directly from PNAS supplementary files SD01–SD03.
-- ✅ `scripts/validate_jain_conversion.py` reconverts the Excel files in-memory and matches the saved CSV byte-for-byte (SHA256 `b1a6d7399260aef1a894743877a726caa248d12d948b8216822cb2a5b9bc96a3`).
+- ✅ `scripts/validation/validate_jain_conversion.py` reconverts the Excel files in-memory and matches the saved CSV byte-for-byte (SHA256 `b1a6d7399260aef1a894743877a726caa248d12d948b8216822cb2a5b9bc96a3`).
 - ✅ Table 1 thresholds (Jain et al. 2017) are implemented as four developability flag clusters with full audit columns.
 - ✅ VH/VL sequences are sanitized to contain only IMGT-valid amino acids; no gap or whitespace artifacts remain.
 - ⚠️ Flag distribution is highly imbalanced (3 antibodies classified as `non_specific` with ≥4 flags, 67 mild cases with 1–3 flags). Downstream evaluation must exclude mild cases as in Sakhnini et al. 2025.
@@ -34,7 +34,7 @@
 |------|---------|
 | `test_datasets/jain.csv` | Cleaned dataset with flags, labels, and supporting assays |
 | `scripts/conversion/convert_jain_excel_to_csv.py` | Deterministic Excel→CSV converter |
-| `scripts/validate_jain_conversion.py` | Integrity + provenance validation |
+| `scripts/validation/validate_jain_conversion.py` | Integrity + provenance validation |
 
 ### Column Overview (ordered)
 
@@ -73,7 +73,7 @@ Label mapping: 0 flags → specific; 1–3 flags → mild; 4 flags → non-speci
 
 ## Validation Highlights
 
-Run: `python3 scripts/validate_jain_conversion.py`
+Run: `python3 scripts/validation/validate_jain_conversion.py`
 
 | Check | Result |
 |-------|--------|

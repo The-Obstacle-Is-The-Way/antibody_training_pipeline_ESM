@@ -222,7 +222,7 @@ def main():
 
     if not csv_path.exists():
         print(f"Error: {csv_path} not found!")
-        print("Please run scripts/convert_shehata_excel_to_csv.py first.")
+        print("Please run scripts/conversion/convert_shehata_excel_to_csv.py first.")
         sys.exit(1)
 
     print("=" * 60)

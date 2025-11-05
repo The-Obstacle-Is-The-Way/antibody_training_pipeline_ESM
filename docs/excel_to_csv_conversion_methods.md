@@ -10,16 +10,16 @@
 ## Overview of Methods
 
 ### Method 1a: Python Script – Shehata (RECOMMENDED) ⭐
-- **Tool:** `scripts/convert_shehata_excel_to_csv.py`
+- **Tool:** `scripts/conversion/convert_shehata_excel_to_csv.py`
 - **Pros:** Full control, validation built-in, reproducible, transparent
 - **Cons:** Requires Python environment
-- **Validation:** Multi-method cross-checking with `validate_shehata_conversion.py`
+- **Validation:** Multi-method cross-checking with `scripts/validation/validate_shehata_conversion.py`
 
 ### Method 1b: Python Script – Jain (RECOMMENDED) ⭐
-- **Tool:** `scripts/convert_jain_excel_to_csv.py`
+- **Tool:** `scripts/conversion/convert_jain_excel_to_csv.py`
 - **Pros:** Deterministic flag derivation (Table 1 thresholds), full provenance columns, label handling consistent with Sakhnini et al.
 - **Cons:** Requires Python environment
-- **Validation:** `scripts/validate_jain_conversion.py` (rebuilds pipeline & checks SHA256)
+- **Validation:** `scripts/validation/validate_jain_conversion.py` (rebuilds pipeline & checks SHA256)
 
 ### Method 2: CLI Tools
 - **Tools:** `in2csv`, `ssconvert`, `xlsx2csv`
@@ -51,7 +51,7 @@ pip install pandas openpyxl
 cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
 
 # Run conversion script (interactive)
-python3 scripts/convert_shehata_excel_to_csv.py
+python3 scripts/conversion/convert_shehata_excel_to_csv.py
 ```
 
 **Interactive prompts:**
@@ -65,7 +65,7 @@ python3 scripts/convert_shehata_excel_to_csv.py
 
 ```bash
 # Run multi-method validation
-python3 scripts/validate_shehata_conversion.py
+python3 scripts/validation/validate_shehata_conversion.py
 ```
 
 **What it checks:**
@@ -96,7 +96,7 @@ ADI-38501,EVQLLESGGGLVQPGGSLRLSCAASGFTFSSYSMNWVRQAPGKGLEWVS...,DIVMTQSPATLSLSPGE
 cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
 
 # Generate canonical Jain dataset
-python3 scripts/convert_jain_excel_to_csv.py --verbose
+python3 scripts/conversion/convert_jain_excel_to_csv.py --verbose
 ```
 
 **What it does:**
@@ -108,7 +108,7 @@ python3 scripts/convert_jain_excel_to_csv.py --verbose
 ### Validation (Jain)
 
 ```bash
-python3 scripts/validate_jain_conversion.py
+python3 scripts/validation/validate_jain_conversion.py
 ```
 
 **Checks performed:**
@@ -282,12 +282,12 @@ df_processed.to_csv('test_datasets/shehata/processed/shehata.csv', index=False)
 ### Step 1: Convert
 ```bash
 cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
-python3 scripts/convert_shehata_excel_to_csv.py
+python3 scripts/conversion/convert_shehata_excel_to_csv.py
 ```
 
 ### Step 2: Validate
 ```bash
-python3 scripts/validate_shehata_conversion.py
+python3 scripts/validation/validate_shehata_conversion.py
 ```
 
 ### Step 3: Compare with Jain
@@ -385,13 +385,13 @@ print(f'Label distribution: {list(zip(*np.unique(y, return_counts=True)))}')
 # Environment 1: conda with pandas 1.x
 conda create -n verify1 pandas=1.5 openpyxl
 conda activate verify1
-python scripts/validate_shehata_conversion.py > verify1.log
+python scripts/validation/validate_shehata_conversion.py > verify1.log
 
 # Environment 2: venv with pandas 2.x
 python3 -m venv verify2
 source verify2/bin/activate
 pip install pandas openpyxl
-python scripts/validate_shehata_conversion.py > verify2.log
+python scripts/validation/validate_shehata_conversion.py > verify2.log
 
 # Compare logs
 diff verify1.log verify2.log
@@ -401,7 +401,7 @@ diff verify1.log verify2.log
 
 ```bash
 # Method 1: Python script
-python3 scripts/convert_shehata_excel_to_csv.py
+python3 scripts/conversion/convert_shehata_excel_to_csv.py
 
 # Method 2: in2csv + manual processing
 in2csv test_datasets/shehata/raw/shehata-mmc2.xlsx > mmc2_in2csv.csv
@@ -462,7 +462,7 @@ After conversion, document:
 
 ## Next Steps
 
-1. ✅ Scripts created (`convert_shehata_excel_to_csv.py`, `validate_shehata_conversion.py`)
+1. ✅ Scripts created (`scripts/conversion/convert_shehata_excel_to_csv.py`, `scripts/validation/validate_shehata_conversion.py`)
 2. 🔲 Run conversion interactively
 3. 🔲 Review and approve PSR threshold
 4. 🔲 Run validation checks
@@ -485,4 +485,4 @@ After conversion, document:
 - ✓ No manual steps
 - ✓ Generates comprehensive logs
 
-**Ready to run:** `python3 scripts/convert_shehata_excel_to_csv.py`
+**Ready to run:** `python3 scripts/conversion/convert_shehata_excel_to_csv.py`

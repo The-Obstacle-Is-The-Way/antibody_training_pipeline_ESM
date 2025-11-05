@@ -10,7 +10,7 @@ This script:
 4. Produces a canonical CSV with explicit flag metadata and binary labels
 
 Usage:
-    python3 scripts/convert_jain_excel_to_csv.py \
+    python3 scripts/conversion/convert_jain_excel_to_csv.py \
         --sd01 test_datasets/pnas.1616408114.sd01.xlsx \
         --sd02 test_datasets/pnas.1616408114.sd02.xlsx \
         --sd03 test_datasets/pnas.1616408114.sd03.xlsx \

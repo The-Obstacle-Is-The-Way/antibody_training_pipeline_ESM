@@ -210,13 +210,13 @@ All agents confirmed:
 ## Files Modified
 
 ### Scripts:
-1. `scripts/convert_shehata_excel_to_csv.py` (+54 lines, clean refactor)
+1. `scripts/conversion/convert_shehata_excel_to_csv.py` (+54 lines, clean refactor)
    - Added `sanitize_sequence()` function
    - Added non-interactive mode
    - Removed unused imports
    - Improved validation reporting
 
-2. `scripts/validate_shehata_conversion.py` (+10 lines, bug fix)
+2. `scripts/validation/validate_shehata_conversion.py` (+10 lines, bug fix)
    - Fixed NaN comparison logic
    - Updated docstring accuracy
 
