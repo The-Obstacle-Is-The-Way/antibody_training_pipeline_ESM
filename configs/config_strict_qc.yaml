@@ -1,0 +1,86 @@
+# Configuration file for Boughter Training - Strict QC (Industry Standard)
+# Train on Boughter dataset with strict QC (852 sequences), test on Jain dataset
+#
+# This config uses the STRICT QC dataset which includes:
+# - Boughter's QC filters (X in CDRs, empty CDRs)
+# - PLUS industry standard full-sequence QC (X anywhere, non-standard AA)
+# Expected to match Novo's likely methodology and achieve ~71% accuracy
+
+# Model configuration
+model:
+  name: "facebook/esm1v_t33_650M_UR90S_1"  # ESM-1V model from HuggingFace (pretrained)
+  device: "mps"  # [cuda, cpu, mps] - use MPS for Apple Silicon
+
+# Data configuration
+data:
+  source: "local"
+  dataset_name: "boughter_vh_strict_qc"
+  train_file: ./train_datasets/boughter/VH_only_boughter_strict_qc.csv  # Boughter VH strict QC (852 sequences)
+  val_file: null    # No validation set - use CV instead
+  test_file: VH_only_jain_test_QC_REMOVED.csv   # Jain VH test data (91 antibodies after QC, 3 length outliers removed)
+
+  # Data format options
+  sequence_column: "sequence"  # Column name for protein sequences
+  label_column: "label"       # Column name for binary labels
+
+  # Data preprocessing
+  max_sequence_length: 1024   # Maximum sequence length for ESM tokenizer
+
+  # Data storage
+  save_embeddings: true       # Cache embeddings for faster re-runs
+  embeddings_cache_dir: "./embeddings_cache"
+
+# Classifier configuration - matches Novo Nordisk methodology
+classifier:
+  type: "logistic_regression"  # Novo uses LogisticReg
+
+  # LogisticRegression hyperparameters (verified optimal via sweep)
+  C: 1.0                      # Inverse regularization strength (optimal from sweep)
+  penalty: "l2"               # Regularization type: l1, l2, elasticnet, or none (optimal from sweep)
+  solver: "lbfgs"             # Optimization algorithm: lbfgs, liblinear, saga, etc (optimal from sweep)
+  max_iter: 1000              # Maximum iterations for convergence
+  random_state: 42            # Seed for reproducibility
+  class_weight: null          # None - Strict QC dataset is still balanced (49.9%/50.1%)
+
+  # Cross-validation settings (performed on training data only)
+  cv_folds: 10                # Novo uses 10-fold CV
+  stratify: true              # Stratified CV for balanced folds
+
+# Training configuration
+training:
+  # Evaluation metrics
+  metrics: ["accuracy", "precision", "recall", "f1", "roc_auc"]
+
+  # Model saving
+  save_model: true
+  model_name: "boughter_vh_strict_qc_esm1v_logreg"  # Model name (indicates strict QC)
+  model_save_dir: "./models"
+
+  # Logging
+  log_level: "INFO"
+  log_file: "./logs/boughter_strict_qc_training.log"
+
+  # Performance optimization
+  batch_size: 8              # Batch size for embedding extraction
+  num_workers: 4              # Number of workers for data loading
+
+# Experiment tracking
+experiment:
+  name: "boughter_strict_qc_novo_parity"
+  description: "Train ESM-1v VH-based LogisticReg on Boughter STRICT QC (852 seqs), test on Jain (Novo parity attempt)"
+  tags: ["boughter", "strict_qc", "jain", "esm1v", "novo", "parity"]
+  notes: |
+    Strict QC filtering applied:
+    - Boughter QC: X in CDRs, empty CDRs (914 sequences)
+    - PLUS: X anywhere in full VH sequence (-62 sequences)
+    - PLUS: Non-standard AA filtering (B, Z, J, U, O)
+    - Final: 852 sequences (49.9% label 0, 50.1% label 1)
+
+    Hypothesis: This matches Novo's likely methodology and should achieve ~71% accuracy
+    Previous result (914 sequences, Boughter QC only): 67.5% ± 8.9%
+    Target (Novo reported): 71%
+
+# Hardware configuration
+hardware:
+  gpu_memory_fraction: 0.8
+  clear_cache_frequency: 100

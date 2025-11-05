@@ -116,7 +116,7 @@ def load_local_data(
         X_train, y_train
     """
 
-    train_df = pd.read_csv(file_path)
+    train_df = pd.read_csv(file_path, comment='#')  # Handle comment lines in CSV
     X_train = train_df[text_column].tolist()
     y_train = train_df[label_column].tolist()
 
