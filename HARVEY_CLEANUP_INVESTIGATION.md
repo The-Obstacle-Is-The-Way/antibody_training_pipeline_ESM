@@ -210,47 +210,118 @@ test_datasets/harvey/ (fragments only - MIXED PURPOSE)
 - VHH_only_harvey.csv
 - failed_sequences.txt
 
-### Scripts to Update (2 files)
+### Scripts to Update (6 files, 15 total path references)
 
-**1. scripts/conversion/convert_harvey_csvs.py**
+**VALIDATED:** All path references confirmed from first principles (2025-11-05)
+
+**1. scripts/conversion/convert_harvey_csvs.py** (4 path references)
 ```python
+# Lines 119-121: Path variables
 # OLD:
-input_high = "reference_repos/harvey_official_repo/backend/app/experiments/high_polyreactivity_high_throughput.csv"
-input_low = "reference_repos/harvey_official_repo/backend/app/experiments/low_polyreactivity_high_throughput.csv"
-output = "test_datasets/harvey.csv"
+high_csv = Path("test_datasets/harvey_high.csv")
+low_csv = Path("test_datasets/harvey_low.csv")
+output_csv = Path("test_datasets/harvey.csv")
 
 # NEW:
-input_high = "test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv"
-input_low = "test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv"
-output = "test_datasets/harvey/processed/harvey.csv"
+high_csv = Path("test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv")
+low_csv = Path("test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv")
+output_csv = Path("test_datasets/harvey/processed/harvey.csv")
+
+# Lines 127-135: Error messages (update all path strings)
+# Lines 141-143: Print statements (update displayed paths)
 ```
 
-**2. preprocessing/process_harvey.py**
+**2. preprocessing/process_harvey.py** (3 path references)
 ```python
+# Lines 202-203: Path variables
 # OLD:
-csv_path = "test_datasets/harvey.csv"
-output_dir = "test_datasets/harvey"
+csv_path = Path("test_datasets/harvey.csv")
+output_dir = Path("test_datasets/harvey")
 
 # NEW:
-csv_path = "test_datasets/harvey/processed/harvey.csv"
-output_dir = "test_datasets/harvey/fragments"
+csv_path = Path("test_datasets/harvey/processed/harvey.csv")
+output_dir = Path("test_datasets/harvey/fragments")
+
+# Line 133: Failure log path
+# OLD:
+failure_log = Path("test_datasets/harvey/failed_sequences.txt")
+
+# NEW:
+failure_log = Path("test_datasets/harvey/fragments/failed_sequences.txt")
+
+# Lines 207-211: Error messages and docstrings (update all path strings)
 ```
 
-### Documentation to Update (8+ files)
+**3. scripts/validation/validate_fragments.py** (1 path reference)
+```python
+# Line 193: Harvey validation entry
+# OLD:
+("harvey", Path("test_datasets/harvey"), 6),
 
-**Harvey-specific docs (5 files in docs/harvey/):**
-- harvey_data_sources.md
-- harvey_data_cleaning_log.md
-- harvey_preprocessing_implementation_plan.md
-- harvey_script_status.md
-- HARVEY_P0_FIX_REPORT.md
+# NEW:
+("harvey", Path("test_datasets/harvey/fragments"), 6),
+```
 
-**Root-level docs (2 files):**
-- docs/harvey_data_sources.md
-- docs/harvey_data_cleaning_log.md
+**4. scripts/rethreshold_harvey.py** (1 path reference)
+```python
+# Line 48: Data path
+# OLD:
+data_path = "test_datasets/harvey/VHH_only_harvey.csv"
 
-**README references:**
-- README.md (root)
+# NEW:
+data_path = "test_datasets/harvey/fragments/VHH_only_harvey.csv"
+```
+
+**5. scripts/testing/test_harvey_psr_threshold.py** (1 path reference)
+```python
+# Line 73: Harvey file path
+# OLD:
+harvey_file = "test_datasets/harvey/VHH_only_harvey.csv"
+
+# NEW:
+harvey_file = "test_datasets/harvey/fragments/VHH_only_harvey.csv"
+```
+
+**6. tests/test_harvey_embedding_compatibility.py** (5 path references)
+```python
+# Lines 45, 96, 242: Harvey directory paths
+# OLD:
+harvey_dir = Path("test_datasets/harvey")
+
+# NEW:
+harvey_dir = Path("test_datasets/harvey/fragments")
+
+# Lines 153, 203: VHH file paths
+# OLD:
+vhh_file = Path("test_datasets/harvey/VHH_only_harvey.csv")
+
+# NEW:
+vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
+```
+
+### Documentation to Update (11 files, 76 total path references)
+
+**VALIDATED:** All path references confirmed via grep search (2025-11-05)
+
+**Harvey-specific docs (7 files in docs/harvey/ - 43 references):**
+- `harvey_data_sources.md` (5 references)
+- `harvey_data_cleaning_log.md` (12 references)
+- `harvey_preprocessing_implementation_plan.md` (3 references)
+- `harvey_script_status.md` (7 references)
+- `harvey_script_audit_request.md` (6 references)
+- `HARVEY_P0_FIX_REPORT.md` (8 references)
+- `HARVEY_TEST_RESULTS.md` (2 references)
+
+**Root-level Harvey docs (2 files - 31 references):**
+- `docs/harvey_data_sources.md` (9 references)
+- `docs/harvey_data_cleaning_log.md` (22 references)
+
+**Global benchmark docs (2 files - 2 references):**
+- `docs/COMPLETE_VALIDATION_RESULTS.md` (line 176: VHH_only_harvey.csv path)
+- `docs/BENCHMARK_TEST_RESULTS.md` (line 142: VHH_only_harvey.csv path)
+
+**Script documentation:**
+- `scripts/testing/README.md` (usage section references old harvey paths)
 
 ### READMEs to Create (5 files)
 
@@ -409,30 +480,45 @@ python3 preprocessing/process_harvey.py
 ### 5. Fragment Validation
 ```bash
 python3 scripts/validation/validate_fragments.py
-# Should validate harvey fragments
+# Should validate harvey fragments (now points to harvey/fragments/)
 ```
 
-### 6. Model Test
+### 6. Embedding Compatibility Test (P0 Regression Check)
+```bash
+# CRITICAL: Run embedding compatibility test after cleanup
+python3 tests/test_harvey_embedding_compatibility.py
+# Ensures no gap characters reintroduced, ESM-1v compatible
+# Tests all 6 fragment files, validates no '-' characters
+```
+
+### 7. Model Test
 ```bash
 python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
   --data test_datasets/harvey/fragments/VHH_only_harvey.csv
-# Should load and run successfully
+# Should load and run successfully with new paths
 ```
 
-### 7. Failed Sequences Check
+### 8. Failed Sequences Check
 ```bash
-# Verify failed_sequences.txt has 453 entries
+# Verify failed_sequences.txt has 453 entries and moved to fragments/
 wc -l test_datasets/harvey/fragments/failed_sequences.txt  # Should be 453
 ```
 
-### 8. Documentation Validation
+### 9. Documentation Validation
 ```bash
-# Check no references to old paths remain
+# Check no references to old paths remain (should find 0 after cleanup)
 grep -rn "test_datasets/harvey\.csv" docs/ README.md --include="*.md" | grep -v "processed/"
 # Should return NOTHING
 
 grep -rn "reference_repos/harvey_official_repo" scripts/ --include="*.py"
 # Should return NOTHING
+
+grep -rn "test_datasets/harvey_high\|test_datasets/harvey_low" . --include="*.py" --include="*.md"
+# Should return NOTHING (files deleted)
+
+# Verify all fragments paths use new structure
+grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
+# Should find 15 references (all updated)
 ```
 
 ---
@@ -456,15 +542,23 @@ grep -rn "reference_repos/harvey_official_repo" scripts/ --include="*.py"
 - Move 6 fragment CSVs → fragments/
 - Move failed_sequences.txt → fragments/
 
-### Phase 5: Update Scripts (10 min)
-- Update scripts/conversion/convert_harvey_csvs.py (paths)
-- Update preprocessing/process_harvey.py (paths)
+### Phase 5: Update Scripts (15 min)
+- Update scripts/conversion/convert_harvey_csvs.py (4 path references, docstrings, error messages)
+- Update preprocessing/process_harvey.py (3 path references, failure log, docstrings)
+- Update scripts/validation/validate_fragments.py (1 path reference)
+- Update scripts/rethreshold_harvey.py (1 path reference)
+- Update scripts/testing/test_harvey_psr_threshold.py (1 path reference)
+- Update tests/test_harvey_embedding_compatibility.py (5 path references)
+- **Total:** 6 files, 15 path references
 
-### Phase 6: Update Documentation (20 min)
-- Update 8+ markdown files with new paths
-- Update README.md
+### Phase 6: Update Documentation (30 min)
+- Update 7 files in docs/harvey/ (43 references)
+- Update 2 root-level Harvey docs (31 references)
+- Update 2 global benchmark docs (2 references)
+- Update scripts/testing/README.md (usage examples)
+- **Total:** 11 files, 76+ path references
 
-### Phase 7: Verify (10 min)
+### Phase 7: Verify (15 min)
 - Run all 8 verification checks
 - Ensure all pass
 
