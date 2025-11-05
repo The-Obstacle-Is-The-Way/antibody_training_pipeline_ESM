@@ -284,11 +284,6 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
     print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
-    # Get processing date
-    from datetime import datetime
-
-    processing_date = datetime.now().strftime("%Y-%m-%d")
-
     for fragment_name, (column_name, description) in fragments.items():
         output_path = output_dir / f"{fragment_name}_boughter.csv"
 
@@ -309,7 +304,6 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
         # Write metadata header as comments, then CSV data
         metadata = f"""# Boughter Dataset - {fragment_name} Fragment
-# Processing Date: {processing_date}
 # CDR Extraction Method: ANARCI (IMGT numbering, strict)
 # CDR-H3 Boundary: positions 105-117 (EXCLUDES position 118 - FR4 J-anchor)
 # CDR-H2 Boundary: positions 56-65 (fixed IMGT, variable lengths are normal)

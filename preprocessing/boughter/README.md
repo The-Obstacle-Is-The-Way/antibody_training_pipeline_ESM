@@ -236,6 +236,51 @@ Detailed documentation available in `docs/boughter/`:
 
 ---
 
+## Reproducibility
+
+### Byte-for-Byte Reproducibility
+
+This pipeline is designed for **complete reproducibility** - running the same input through the pipeline will produce **byte-for-byte identical outputs**.
+
+**Design Choice: No Processing Timestamps**
+
+Fragment CSV files do NOT include processing date comments in headers. This ensures:
+- ✅ `diff` comparisons show only actual data changes
+- ✅ `md5sum` / `sha256sum` validation works cleanly
+- ✅ Git diffs highlight real changes, not timestamp noise
+
+**Rationale:**
+- Git commit timestamps already track when files were processed
+- Processing dates in file headers create false diff signals
+- Clean byte-for-byte comparisons enable robust validation
+
+**Verification:**
+```bash
+# Re-run full pipeline
+python3 preprocessing/boughter/stage1_dna_translation.py
+python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
+
+# Verify outputs are identical
+diff train_datasets/boughter.csv train_datasets/boughter_BACKUP.csv
+# Result: No differences (if input unchanged)
+```
+
+**What IS included in headers:**
+- Dataset name and fragment type
+- CDR extraction method (ANARCI/IMGT)
+- CDR boundary definitions
+- Sequence count statistics
+- Reference documentation
+
+**What is NOT included:**
+- Processing dates/timestamps
+- System information
+- User information
+
+This design enables clean reproducibility validation and version control.
+
+---
+
 ## References
 
 - **Boughter et al. (2020)** - "Biochemical patterns of antibody polyreactivity revealed through a bioinformatics-based analysis of CDR loops." *eLife* 9:e61393
