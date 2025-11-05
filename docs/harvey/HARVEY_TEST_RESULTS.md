@@ -105,7 +105,7 @@ Sum of absolute differences: 4,168 (~3% of dataset)
 - **No StandardScaler:** Removed per Novo methodology
 
 ### Dataset Details
-- **File:** `test_datasets/harvey/VHH_only_harvey.csv`
+- **File:** `test_datasets/harvey/fragments/VHH_only_harvey.csv`
 - **Total sequences:** 141,021 nanobodies (VHH)
 - **Class distribution:**
   - Specific: 69,262 (49.1%)
@@ -257,7 +257,7 @@ To reproduce these results:
 ls models/boughter_vh_esm1v_logreg.pkl
 
 # 2. Prepare Harvey dataset
-ls test_datasets/harvey/VHH_only_harvey.csv
+ls test_datasets/harvey/fragments/VHH_only_harvey.csv
 
 # 3. Run inference
 python3 scripts/testing/test_harvey_psr_threshold.py

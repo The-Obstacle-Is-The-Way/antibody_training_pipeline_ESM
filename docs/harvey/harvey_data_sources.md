@@ -173,7 +173,7 @@ From Harvey et al. 2022 (line 220):
 - Expected to fail during preprocessing (~0.27% failure rate)
 - **Actual preprocessing result (2025-11-01):**
   - 141,021 successfully annotated sequences (99.68%)
-  - 453 failures logged (`test_datasets/harvey/failed_sequences.txt`)
+  - 453 failures logged (`test_datasets/harvey/fragments/failed_sequences.txt`)
   - Post-processing label distribution: 69,262 low (49.1%), 71,759 high (50.9%)
 
 ---
@@ -193,7 +193,7 @@ From Harvey et al. 2022 (line 220):
 
 ### ✅ CORRECT: ~141K Deep Sequencing Dataset
 
-**File:** `test_datasets/harvey.csv` (downloaded from HuggingFace)
+**File:** `test_datasets/harvey/processed/harvey.csv` (downloaded from HuggingFace)
 **Source:** HuggingFace `ZYMScott/polyreaction`
 **Size:** 141,474 nanobodies with binary labels
 **Use Case:** Testing ESM-1v models (Novo Nordisk methodology)
@@ -238,9 +238,9 @@ Initial Dataset: ~134K sequences (65K low + 69K high)
     ↓ Preprocessing/Cleaning
 HuggingFace: 141,474 sequences (ZYMScott/polyreaction)
     ↓ Downloaded 2025-11-01
-Local: test_datasets/harvey.csv + harvey_hf/ splits
+Local: test_datasets/harvey/processed/harvey.csv + harvey_hf/ splits
     ↓ PENDING: ANARCI fragment extraction
-test_datasets/harvey/ fragment CSVs (VHH, H-CDRs, H-FWRs, etc.)
+test_datasets/harvey/fragments/ fragment CSVs (VHH, H-CDRs, H-FWRs, etc.)
 ```
 
 ---
