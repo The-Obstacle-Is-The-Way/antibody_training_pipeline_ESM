@@ -8,6 +8,9 @@
 
 This directory contains the complete preprocessing pipeline for the Boughter et al. 2020 antibody polyreactivity dataset, following the Novo Nordisk methodology (Sakhnini et al. 2025).
 
+**📋 For complete data provenance and source citations, see:**
+[`train_datasets/BOUGHTER_DATA_PROVENANCE.md`](../../train_datasets/BOUGHTER_DATA_PROVENANCE.md)
+
 ### Pipeline Flow
 
 ```
@@ -226,6 +229,17 @@ data:
 ---
 
 ## Documentation
+
+### Data Provenance & Sources
+
+**📋 [`train_datasets/BOUGHTER_DATA_PROVENANCE.md`](../../train_datasets/BOUGHTER_DATA_PROVENANCE.md)**
+- Complete data lineage from AIMS_manuscripts repository
+- All source citations (Boughter 2020, Guthmiller 2020, etc.)
+- Directory structure and file mapping
+- Processing pipeline statistics
+- Quality control metrics
+
+### Pipeline Documentation
 
 Detailed documentation available in `docs/boughter/`:
 
