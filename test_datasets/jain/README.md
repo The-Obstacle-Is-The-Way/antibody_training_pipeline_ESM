@@ -4,25 +4,19 @@
 
 ---
 
-## Canonical Novo Nordisk Parity Dataset
+## Canonical Novo Nordisk Parity Datasets
 
-**`jain_86_novo_parity.csv`** - EXACT MATCH to Novo Nordisk confusion matrix
+Two curated 86-antibody subsets reproduce Novo Nordisk’s confusion matrix:
 
-- **Antibodies**: 86 total (59 specific / 27 non-specific)
-- **Confusion Matrix**: [[40, 19], [10, 17]]
-- **Accuracy**: 66.28%
-- **Method**: P5e-S2 (PSR reclassification + PSR/AC-SINS removal)
+### 1. `VH_only_jain_test_PARITY_86.csv` (OLD simple QC)
+- **Method:** ELISA filter → remove VH length outliers → remove 5 borderline antibodies
+- **Result:** [[40, 19], [10, 17]] (deterministic)
+- **Use when:** You need a guaranteed parity benchmark
 
-**Pipeline**:
-1. Start: 137 antibodies (jain_with_private_elisa_FULL.csv)
-2. Remove ELISA 1-3 (mild aggregators) → 116 antibodies
-3. Reclassify 5 antibodies specific→non-specific:
-   - 3 by PSR>0.4: bimagrumab, bavituximab, ganitumab
-   - eldelumab (extreme Tm outlier)
-   - infliximab (clinical withdrawn)
-4. Remove 30 by PSR primary, AC-SINS tiebreaker → 86 antibodies
-
-**Full Provenance**: See `experiments/novo_parity/` for complete reverse engineering history
+### 2. `jain_86_novo_parity.csv` / `VH_only_jain_86_p5e_s2.csv` (P5e-S2 canonical)
+- **Method:** ELISA filter → PSR/Tm/clinical reclassification (5 antibodies) → PSR + AC-SINS removal (30 antibodies)
+- **Result:** [[40, 19], [10, 17]] when nimotuzumab scores <0.5. Because its predicted probability sits ≈0.5, reruns may occasionally give [[39, 20], [10, 17]]. Use the stored `prediction` column or OLD dataset when you need strict determinism.
+- **Full provenance:** `experiments/novo_parity/`
 
 ---
 
@@ -46,11 +40,10 @@
 
 ## Archive
 
-**`legacy_reverse_engineered/`** - Old failed reverse engineering attempts (pre-P5e)
-
-**`legacy_total_flags_methodology/`** - Old total_flags approach (superseded)
-
-**`archive/`** - Intermediate analysis files from reverse engineering process
+`archive/` contains historical or deprecated artifacts:
+- `jain_116_qc_candidates.csv`, `jain_ELISA_ONLY_116_with_zscores.csv`
+- `archive/legacy_reverse_engineered/` – duplicate copies of the OLD datasets (kept for history)
+- `archive/legacy_total_flags_methodology/` – ❌ incorrect total_flags methodology (do not use)
 
 ---
 
@@ -69,9 +62,9 @@ df = pd.read_csv('test_datasets/jain/jain_86_novo_parity.csv')
 
 **For sensitivity analysis**:
 - P5e-S4 (Tm tiebreaker): `experiments/novo_parity/datasets/jain_86_p5e_s4.csv`
-  - Same exact match, different tiebreaker for PSR=0 antibodies
+  - Produces [[39, 20], [10, 17]] with the OLD model (off by 1 FP)
 
 ---
 
-**Last Updated**: November 4, 2025
-**Branch**: `ray/novo-parity-experiments`
+**Last Updated**: November 5, 2025
+**Branch**: `clean-jain`

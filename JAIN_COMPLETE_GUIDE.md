@@ -401,7 +401,7 @@ A: `boughter_vh_esm1v_logreg.pkl` (OLD, 914 training) for Novo parity. NEW model
 
 ## Additional Documentation
 
-- **CSV Cleanup Plan:** `JAIN_CLEANUP_PLAN_REVISED.md`
+- **CSV Cleanup Plan:** `docs/archive/investigation_2025_11_05/JAIN_CLEANUP_PLAN_REVISED.md`
 - **Experiment Logs:** `experiments/novo_parity/EXACT_MATCH_FOUND.md`
 - **Archived Investigation:** `docs/archive/investigation_2025_11_05/`
 
@@ -410,4 +410,3 @@ A: `boughter_vh_esm1v_logreg.pkl` (OLD, 914 training) for Novo parity. NEW model
 **Last verified:** 2025-11-05
 **Status:** ✅ Accurate and up-to-date
 **Maintained by:** Claude + Ray
-
