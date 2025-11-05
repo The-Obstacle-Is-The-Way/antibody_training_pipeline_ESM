@@ -1,5 +1,5 @@
 # Boughter Dataset - L-CDR3 Fragment
-# Processing Date: 2025-11-04
+# Processing Date: 2025-11-02
 # CDR Extraction Method: ANARCI (IMGT numbering, strict)
 # CDR-H3 Boundary: positions 105-117 (EXCLUDES position 118 - FR4 J-anchor)
 # CDR-H2 Boundary: positions 56-65 (fixed IMGT, variable lengths are normal)

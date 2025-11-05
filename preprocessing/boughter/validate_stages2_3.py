@@ -61,8 +61,12 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
         results["errors"].append(f"Directory not found: {dataset_dir}")
         return results
 
-    # Check for CSV files
-    csv_files = list(dataset_dir.glob("*.csv"))
+    # Check for CSV files (exclude training subset files)
+    csv_files = [
+        f
+        for f in dataset_dir.glob("*.csv")
+        if not f.name.endswith("_training.csv")
+    ]
     if len(csv_files) == 0:
         results["valid"] = False
         results["errors"].append("No CSV files found")
@@ -185,11 +189,18 @@ def print_validation_report(
         for warning in results["warnings"]:
             print(f"  - {warning}")
 
-    # Label distribution (from first CSV)
-    csv_files = list(dataset_dir.glob("*.csv"))
+    # Label distribution (from VH_only fragment, excluding training subset)
+    csv_files = [
+        f
+        for f in dataset_dir.glob("*.csv")
+        if not f.name.endswith("_training.csv")
+    ]
     if csv_files:
-        label_stats = validate_label_distribution(csv_files[0])
-        print(f"\nLabel distribution:")
+        # Prefer VH_only file for label distribution
+        vh_file = dataset_dir / "VH_only_boughter.csv"
+        label_file = vh_file if vh_file.exists() else csv_files[0]
+        label_stats = validate_label_distribution(label_file)
+        print(f"\nLabel distribution (from {label_file.name}):")
         print(
             f"  Specific (0): {label_stats['specific']} ({label_stats['specific_pct']:.1f}%)"
         )
@@ -209,25 +220,46 @@ def print_validation_report(
 
 
 def main():
-    """Validate all processed datasets."""
-    datasets = [
-        ("jain", Path("test_datasets/jain"), 16),  # Full antibodies (VH+VL)
-        ("shehata", Path("test_datasets/shehata"), 16),  # Full antibodies (VH+VL)
-        ("harvey", Path("test_datasets/harvey"), 6),  # Nanobodies (VHH only)
-        ("boughter", Path("test_datasets/boughter"), 16),  # Full antibodies (VH+VL)
-    ]
+    """Validate Boughter dataset Stages 2+3 output."""
+    boughter_dir = Path("train_datasets/boughter")
 
-    all_valid = True
+    if not boughter_dir.exists():
+        print(f"✗ Error: Boughter output directory not found: {boughter_dir}")
+        sys.exit(1)
 
-    for name, path, expected_frags in datasets:
-        if path.exists():
-            valid = print_validation_report(name, path, expected_frags)
-            all_valid = all_valid and valid
-            print()
+    valid = print_validation_report("boughter", boughter_dir, expected_fragments=16)
+
+    # Additional Boughter-specific checks
+    print("\n" + "=" * 60)
+    print("BOUGHTER-SPECIFIC VALIDATION")
+    print("=" * 60)
+
+    # Check training subset file
+    training_file = boughter_dir / "VH_only_boughter_training.csv"
+    if training_file.exists():
+        df = pd.read_csv(training_file, comment="#")
+        print(f"\n✓ Training subset file exists: {training_file.name}")
+        print(f"  Rows: {len(df)}")
+        print(f"  Specific (0): {(df['label'] == 0).sum()}")
+        print(f"  Non-specific (1): {(df['label'] == 1).sum()}")
+    else:
+        print(f"\n✗ Training subset file not found: {training_file.name}")
+        valid = False
+
+    # Check for include_in_training flag in fragment files
+    vh_only = boughter_dir / "VH_only_boughter.csv"
+    if vh_only.exists():
+        df = pd.read_csv(vh_only, comment="#")
+        if "include_in_training" in df.columns:
+            print(f"\n✓ include_in_training flag present")
+            print(f"  Training eligible: {df['include_in_training'].sum()}")
+            print(f"  Excluded (mild 1-3 flags): {(~df['include_in_training']).sum()}")
         else:
-            print(f"⚠ Skipping {name} - directory not found: {path}\n")
+            print(f"\n⚠ include_in_training flag missing (may be older format)")
 
-    sys.exit(0 if all_valid else 1)
+    print("\n" + "=" * 60)
+
+    sys.exit(0 if valid else 1)
 
 
 if __name__ == "__main__":
