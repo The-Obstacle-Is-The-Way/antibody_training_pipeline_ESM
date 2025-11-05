@@ -98,11 +98,9 @@ ARFYGNYEDYYAMDYW    (ends with YW - position 118 included)
 
 ---
 
-## ⚠️ THE FUNDAMENTAL CONTRADICTION (Updated 2025-11-04)
+## ✅ RESOLVED: Novo's "Boughter Methodology" = QC + Flagging (NOT CDR Boundaries) (Updated 2025-11-04)
 
-### Novo's Paper Contains Mutually Exclusive Statements
-
-**The Problem:** Novo's methods section makes TWO claims that **cannot both be true**:
+### Novo's Paper Statements (Previously Misinterpreted as Contradictory)
 
 **Statement 1 (Methods, line 236):**
 > "the Boughter dataset was **parsed into three groups as previously done in [44]**"
@@ -110,25 +108,57 @@ ARFYGNYEDYYAMDYW    (ends with YW - position 118 included)
 **Statement 2 (Methods, line 240):**
 > "The primary sequences were **annotated in the CDRs using ANARCI following the IMGT numbering scheme**"
 
-### Why These Are Incompatible
+### ✅ RESOLUTION: These Are NOT Contradictory - They Refer to Different Pipeline Steps
+
+**The key insight:** "Boughter's methodology" in Statement 1 refers to **QC filtering + flagging strategy**, NOT CDR annotation!
 
 ```
-Boughter's Methodology:
-├── Tool: IgBLAST + custom parsing (GetCDRs_AA.ipynb)
-├── CDR-H3 Boundaries: positions 105-118 (includes J-anchor W/F)
-├── Result: "ARRGYYYGSFDYW" (13 residues, W at end)
-└── Verified: 100% of Boughter's .dat files end with W/F
+Boughter's "Methodology" (from seq_loader.py) =
+├── QC Filtering:
+│   ├── Remove X in CDRs (any of L1, L2, L3, H1, H2, H3)
+│   └── Remove empty CDRs
+├── Flagging Strategy:
+│   ├── 0 flags = Specific (label 0)
+│   ├── 1-3 flags = Mildly polyreactive (EXCLUDE)
+│   └── 4+ flags = Non-specific (label 1)
+└── Source: https://github.com/ctboughter/AIMS_manuscripts/blob/main/seq_loader.py#L10-L16
 
-ANARCI + IMGT Methodology:
-├── Tool: ANARCI (antibody numbering tool)
-├── CDR-H3 Boundaries: positions 105-117 (excludes J-anchor W/F)
-├── Result: "ARRGYYYGSFDY" (12 residues, no W)
-└── Standard: IMGT international consensus
+Novo's FULL Pipeline:
+Step 1: ANARCI + IMGT annotation (CDR-H3: 105-117, EXCLUDES pos 118)
+Step 2: Boughter-style QC (filter X in CDRs, empty CDRs)  ← "as previously done in [44]"
+Step 3: Boughter-style flagging (0 and 4+ flags only)     ← "as previously done in [44]"
 
-YOU CANNOT USE BOTH!
-If you "follow Boughter" → you include position 118
-If you use "ANARCI + IMGT" → you exclude position 118
+NOT CONTRADICTORY - DIFFERENT STEPS!
 ```
+
+### Evidence from Boughter's Actual Code
+
+**Boughter's seq_loader.py (lines 10-16, repeated in all functions):**
+```python
+# Remove X's in sequences... Should actually get a count of these at some point...
+total_abs2=total_abs1[~total_abs1['cdrL1_aa'].str.contains("X")]
+total_abs3=total_abs2[~total_abs2['cdrL2_aa'].str.contains("X")]
+total_abs4=total_abs3[~total_abs3['cdrL3_aa'].str.contains("X")]
+total_abs5=total_abs4[~total_abs4['cdrH1_aa'].str.contains("X")]
+total_abs6=total_abs5[~total_abs5['cdrH2_aa'].str.contains("X")]
+total_abs7=total_abs6[~total_abs6['cdrH3_aa'].str.contains("X")]
+```
+
+**Lines 26-33 (remove empty CDRs):**
+```python
+for i in np.arange(len(mono_all[:,5])):
+    if mono_all[i,5] == '' or ... or mono_all[i,0] == '':  # Any empty CDR
+        del_these.append(i)  # Delete sequence
+```
+
+**KEY OBSERVATION:** Boughter's QC code operates on **already-extracted CDRs** (from .dat files). It does NOT specify HOW those CDRs were extracted (IgBLAST boundaries with position 118 are irrelevant to the QC logic).
+
+**THEREFORE:** Novo can use:
+- ✅ ANARCI/IMGT for annotation (CDR boundaries, excludes 118)
+- ✅ Boughter's QC methodology (filter X in CDRs, empty CDRs)
+- ✅ Boughter's flagging (0 and 4+ flags)
+
+NO CONTRADICTION!
 
 ### The Biological Argument (Why IMGT is Correct)
 
@@ -188,40 +218,55 @@ model.learns(only_hypervariable_regions)
    - **NOT statistically significant!**
    - Gap could be: hyperparameters, random seed, embedding method, etc.
 
-### What "Following Boughter" Actually Means
+### What "Following Boughter" Actually Means (CLARIFIED)
 
-**Novo's sloppy citation** likely refers to:
-- ✅ Using Boughter's **dataset** (1,171 DNA sequences)
-- ✅ Using Boughter's **labels** (polyreactivity flags)
-- ✅ Using Boughter's **flagging strategy** (0 and 4+ flags, exclude 1-3)
-- ❌ NOT using Boughter's **CDR extraction methodology**
+**When Novo says "parsed into three groups as previously done in [44]", they mean:**
 
-**This is classic academic paper sloppiness:**
-- Cite original dataset paper for everything
-- Don't clarify what you kept vs changed
-- Assume readers will figure it out
-- Result: **Irreproducible methods section**
+1. ✅ **Boughter's flagging strategy** (from paper Table 1 & seq_loader.py):
+   - 0 flags → Specific (label 0, include in training)
+   - 1-3 flags → Mildly polyreactive (EXCLUDE from training)
+   - 4-7 flags → Non-specific (label 1, include in training)
 
-### Our Conclusion (Updated)
+2. ✅ **Boughter's QC filtering** (from seq_loader.py lines 10-33):
+   - Remove sequences with X in ANY CDR
+   - Remove sequences with empty CDRs
 
-**Original interpretation (before deep analysis):**
-> "Novo's claim is ambiguous - they might have used Boughter's extended boundaries OR strict IMGT"
+3. ✅ **Boughter's dataset** (source):
+   - 1,171 raw DNA sequences from AIMS_manuscripts repository
+   - Polyreactivity labels from ELISA assays
 
-**Updated interpretation (after biological analysis):**
-> **"Novo LIKELY used strict IMGT (ANARCI excludes position 118)"**
+**What Novo does NOT mean:**
+- ❌ **NOT** Boughter's CDR extraction (IgBLAST with position 118)
+- ❌ **NOT** Boughter's CDR boundaries (105-118)
+
+**Why this is confusing:**
+- Novo used TWO things from Boughter (QC + flagging)
+- But used ANARCI/IMGT for annotation (different from Boughter's IgBLAST)
+- They bundled all of this into "as previously done in [44]"
+- Classic academic shorthand that obscures important methodological details
+
+### Our Conclusion (FINAL - After Code Review)
+
+**Original interpretation (2025-11-04 morning):**
+> "Novo's statements are contradictory - they claim to use both Boughter's methodology AND ANARCI/IMGT"
+
+**CORRECTED interpretation (2025-11-04 afternoon, after reviewing Boughter's seq_loader.py):**
+> **"NO CONTRADICTION - Novo used Boughter's QC/flagging + ANARCI/IMGT annotation"**
 >
 > Evidence:
-> - Explicit statement "ANARCI + IMGT" (technical and specific)
-> - Biological soundness (excluding conserved noise)
-> - Pharma industry standard (IMGT compliance)
-> - Statistical insignificance of 3.5% gap (within variance)
+> - Boughter's "methodology" (seq_loader.py) = QC filters + flagging strategy
+> - Boughter's QC operates on CDRs (agnostic to HOW they were extracted)
+> - Novo used ANARCI/IMGT for extraction → then Boughter's QC on those CDRs
+> - This is a perfectly valid hybrid approach
 >
-> The "following Boughter" phrase is **sloppy academic citation** referring to:
-> - Dataset source (Boughter et al. 2020)
-> - Flagging strategy (0 and 4+ flags)
-> - NOT CDR extraction methodology
+> **Pipeline reconstruction:**
+> 1. Boughter raw DNA → Protein translation
+> 2. ANARCI + IMGT annotation (CDR-H3: 105-117, excludes 118) ← NOVO'S CHOICE
+> 3. Boughter QC (X in CDRs, empty CDRs) ← "as previously done"
+> 4. Boughter flagging (0 and 4+ only) ← "as previously done"
+> 5. Training
 >
-> **This is lazy writing, not evidence of different methodology.**
+> **NOT sloppy - just under-documented!**
 
 ### Impact on Our Work
 

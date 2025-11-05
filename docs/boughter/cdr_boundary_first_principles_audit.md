@@ -171,26 +171,39 @@ CDR extraction happened UPSTREAM via:
 "curated dataset of >1000 mouse IgA... from Boughter et al. [44]"
 ```
 
-### Interpretation
+### Interpretation (UPDATED 2025-11-04 - After Reviewing Boughter's Code)
 
-**Two possible scenarios:**
+**✅ RESOLVED - Novo used ANARCI/IMGT for annotation, Boughter's QC for filtering**
 
-**Scenario A (Likely):** They used Boughter's pre-processed CDRs
-- "Retrieved from public sources" = used existing data
-- "Annotated in CDRs using ANARCI" = numbered positions, but kept Boughter's boundaries
-- Terminology confusion: "IMGT numbering" ≠ "IMGT CDR extraction"
+**The key insight:** "Following Boughter's methodology" refers to **QC filtering + flagging**, NOT CDR extraction!
 
-**Scenario B (Unlikely):** They re-extracted CDRs with ANARCI
-- Would result in different CDR3s (no W at end)
-- Would break compatibility with Boughter's labels
-- No mention of re-extraction in methods
+**Evidence from Boughter's seq_loader.py:**
+```python
+# Lines 10-16 (and repeated in all functions)
+# Remove X's in sequences... Should actually get a count of these at some point...
+total_abs2=total_abs1[~total_abs1['cdrL1_aa'].str.contains("X")]
+total_abs3=total_abs2[~total_abs2['cdrL2_aa'].str.contains("X")]
+total_abs4=total_abs3[~total_abs3['cdrL3_aa'].str.contains("X")]
+total_abs5=total_abs4[~total_abs4['cdrH1_aa'].str.contains("X")]
+total_abs6=total_abs5[~total_abs5['cdrH2_aa'].str.contains("X")]
+total_abs7=total_abs6[~total_abs6['cdrH3_aa'].str.contains("X")]
 
-### Evidence for Scenario A
-Line 55: "Following the **original study** [44], the Boughter dataset was **first parsed** into two groups"
+# Lines 26-33: Remove sequences with any empty CDR
+```
 
-Key word: "first" - implies they started with Boughter's data as-is, then filtered.
+**Novo's actual pipeline (reconstructed):**
+1. ANARCI + IMGT annotation (CDR-H3: 105-117, EXCLUDES position 118)
+2. Boughter-style QC filtering (X in CDRs, empty CDRs) ← "following [44]"
+3. Boughter-style flagging (0 and 4+ flags) ← "following [44]"
 
-**Status**: ⚠️ AMBIGUOUS (needs clarification from authors)
+**Why there's no contradiction:**
+- Boughter's QC code operates on **already-extracted CDRs**
+- It doesn't care HOW those CDRs were extracted (IgBLAST vs ANARCI)
+- Novo extracted CDRs with ANARCI, THEN applied Boughter's QC filters
+
+**Status**: ✅ **RESOLVED** (after code review)
+
+**Reference:** https://github.com/ctboughter/AIMS_manuscripts/blob/main/seq_loader.py#L10-L16
 
 ---
 

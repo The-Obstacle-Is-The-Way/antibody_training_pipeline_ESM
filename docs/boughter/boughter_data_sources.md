@@ -303,8 +303,50 @@ From Sakhnini et al. 2025:
 
 ---
 
+---
+
+## CLARIFICATION: Novo's "Boughter Methodology" (2025-11-04)
+
+### What Novo Actually Meant
+
+**Novo's statement:** "parsed into three groups as previously done in [44]"
+
+**This refers to TWO things (NOT CDR extraction):**
+
+1. **Boughter's QC filtering** (seq_loader.py lines 10-33):
+   ```python
+   # Remove X in CDRs
+   total_abs = total_abs[~total_abs['cdrL1_aa'].str.contains("X")]
+   total_abs = total_abs[~total_abs['cdrL2_aa'].str.contains("X")]
+   # ... repeat for all 6 CDRs
+
+   # Remove empty CDRs
+   if any_cdr == '': delete_sequence
+   ```
+
+2. **Boughter's flagging strategy** (from paper):
+   - 0 flags → Specific (label 0, include in training)
+   - 1-3 flags → Mildly polyreactive (EXCLUDE)
+   - 4+ flags → Non-specific (label 1, include in training)
+
+**What Novo did NOT use from Boughter:**
+- ❌ IgBLAST annotation tool
+- ❌ CDR boundaries with position 118 included
+- ❌ Custom GetCDRs_AA.ipynb extraction
+
+**Novo's full pipeline (reconstructed):**
+1. ANARCI + IMGT annotation (CDR-H3: 105-117, excludes pos 118)
+2. Boughter QC filtering (X in CDRs, empty CDRs) ← "as previously done"
+3. Boughter flagging (0 and 4+ flags) ← "as previously done"
+
+**Key insight:** Boughter's QC code is **agnostic** to CDR extraction method - it only checks for X/empty in already-extracted CDRs!
+
+**Source:** https://github.com/ctboughter/AIMS_manuscripts/blob/main/seq_loader.py#L10-L16
+
+---
+
 ## Document Status
-- **Version**: 2.0
-- **Date**: 2025-11-02
-- **Updated**: 2025-11-02 (Added 2025 best practices validation)
-- **Status**: Complete with 2025 validation - Ready for implementation
+- **Version**: 3.0
+- **Date**: 2025-11-04
+- **Updated**: 2025-11-04 (Clarified Novo's methodology = QC + flagging, NOT CDR boundaries)
+- **Status**: Complete with Novo methodology clarification - Ready for implementation
