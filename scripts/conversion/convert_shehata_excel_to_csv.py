@@ -272,8 +272,8 @@ def compare_with_original(csv_df: pd.DataFrame, excel_path: str):
 
 def main():
     """Main entry point for command-line execution."""
-    excel_path = Path("test_datasets/mmc2.xlsx")
-    output_path = Path("test_datasets/shehata.csv")
+    excel_path = Path("test_datasets/shehata/raw/shehata-mmc2.xlsx")
+    output_path = Path("test_datasets/shehata/processed/shehata.csv")
 
     if not excel_path.exists():
         print(f"Error: {excel_path} not found!")

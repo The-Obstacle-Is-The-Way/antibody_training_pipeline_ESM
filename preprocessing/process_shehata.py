@@ -217,8 +217,8 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 def main():
     """Main processing pipeline."""
     # Paths
-    csv_path = Path("test_datasets/shehata.csv")
-    output_dir = Path("test_datasets/shehata")
+    csv_path = Path("test_datasets/shehata/processed/shehata.csv")
+    output_dir = Path("test_datasets/shehata/fragments")
 
     if not csv_path.exists():
         print(f"Error: {csv_path} not found!")

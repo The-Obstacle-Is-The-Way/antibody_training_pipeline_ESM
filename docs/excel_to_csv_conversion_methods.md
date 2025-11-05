@@ -59,7 +59,7 @@ python3 scripts/convert_shehata_excel_to_csv.py
 2. Suggests threshold based on paper (7/398 non-specific)
 3. Asks for confirmation or custom threshold
 4. Validates sequences
-5. Saves to `test_datasets/shehata.csv`
+5. Saves to `test_datasets/shehata/processed/shehata.csv`
 
 ### Validation (Shehata)
 
@@ -140,10 +140,10 @@ pip install csvkit
 **Usage:**
 ```bash
 # Convert single sheet
-in2csv test_datasets/mmc2.xlsx > test_datasets/mmc2_raw.csv
+in2csv test_datasets/shehata/raw/shehata-mmc2.xlsx > test_datasets/mmc2_raw.csv
 
 # Specify sheet
-in2csv --sheet "Sheet1" test_datasets/mmc2.xlsx > test_datasets/mmc2_raw.csv
+in2csv --sheet "Sheet1" test_datasets/shehata/raw/shehata-mmc2.xlsx > test_datasets/mmc2_raw.csv
 ```
 
 **Pros:**
@@ -164,7 +164,7 @@ brew install gnumeric
 
 **Usage:**
 ```bash
-ssconvert test_datasets/mmc2.xlsx test_datasets/mmc2_raw.csv
+ssconvert test_datasets/shehata/raw/shehata-mmc2.xlsx test_datasets/mmc2_raw.csv
 ```
 
 **Pros:**
@@ -185,7 +185,7 @@ pip install xlsx2csv
 
 **Usage:**
 ```bash
-xlsx2csv test_datasets/mmc2.xlsx test_datasets/mmc2_raw.csv
+xlsx2csv test_datasets/shehata/raw/shehata-mmc2.xlsx test_datasets/mmc2_raw.csv
 ```
 
 **Pros:**
@@ -213,7 +213,7 @@ df_processed = pd.DataFrame({
     'source': 'shehata2019'
 })
 
-df_processed.to_csv('test_datasets/shehata.csv', index=False)
+df_processed.to_csv('test_datasets/shehata/processed/shehata.csv', index=False)
 ```
 
 ---
@@ -222,7 +222,7 @@ df_processed.to_csv('test_datasets/shehata.csv', index=False)
 
 ### Steps
 
-1. Open `test_datasets/mmc2.xlsx` in Excel or LibreOffice
+1. Open `test_datasets/shehata/raw/shehata-mmc2.xlsx` in Excel or LibreOffice
 2. File → Save As → CSV (UTF-8)
 3. Save as `mmc2_raw.csv`
 4. Run post-processing script (same as CLI method above)
@@ -294,13 +294,13 @@ python3 scripts/validate_shehata_conversion.py
 ```bash
 # Check format matches
 head -n 3 test_datasets/jain.csv
-head -n 3 test_datasets/shehata.csv
+head -n 3 test_datasets/shehata/processed/shehata.csv
 
 # Check column compatibility
 python3 -c "
 import pandas as pd
 jain = pd.read_csv('test_datasets/jain.csv')
-shehata = pd.read_csv('test_datasets/shehata.csv')
+shehata = pd.read_csv('test_datasets/shehata/processed/shehata.csv')
 print('Jain columns:', list(jain.columns))
 print('Shehata columns:', list(shehata.columns))
 print('Common columns:', set(jain.columns) & set(shehata.columns))
@@ -315,7 +315,7 @@ from data import load_local_data
 
 # Load Shehata
 X, y = load_local_data(
-    'test_datasets/shehata.csv',
+    'test_datasets/shehata/processed/shehata.csv',
     sequence_column='heavy_seq',
     label_column='label'
 )
@@ -404,13 +404,13 @@ diff verify1.log verify2.log
 python3 scripts/convert_shehata_excel_to_csv.py
 
 # Method 2: in2csv + manual processing
-in2csv test_datasets/mmc2.xlsx > mmc2_in2csv.csv
+in2csv test_datasets/shehata/raw/shehata-mmc2.xlsx > mmc2_in2csv.csv
 
 # Method 3: R (if available)
 Rscript -e "
 library(readxl)
 library(readr)
-df <- read_excel('test_datasets/mmc2.xlsx')
+df <- read_excel('test_datasets/shehata/raw/shehata-mmc2.xlsx')
 write_csv(df, 'mmc2_R.csv')
 "
 
@@ -426,10 +426,10 @@ After running conversion, store these checksums:
 
 ```bash
 # Excel source file
-shasum -a 256 test_datasets/mmc2.xlsx
+shasum -a 256 test_datasets/shehata/raw/shehata-mmc2.xlsx
 
 # Generated CSV
-shasum -a 256 test_datasets/shehata.csv
+shasum -a 256 test_datasets/shehata/processed/shehata.csv
 
 # Store in docs/checksums.txt for future verification
 ```

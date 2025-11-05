@@ -106,7 +106,7 @@ The `riot_na` library (ANARCI wrapper) provides two sequence attributes:
 
 **Total:** 141,474 sequences → 141,021 after ANARCI annotation (99.68% success rate)
 
-**Conversion Script:** `scripts/convert_harvey_csvs.py`
+**Conversion Script:** `scripts/conversion/convert_harvey_csvs.py`
 - Extracts full sequences from IMGT position columns (1-128)
 - Combines high/low CSVs with binary labels (0=low, 1=high)
 - Outputs: `test_datasets/harvey.csv`

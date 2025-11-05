@@ -93,7 +93,7 @@ def main():
     print("=" * 60)
     shehata_cm, shehata_acc = test_with_assay_type(
         model,
-        "test_datasets/shehata/VH_only_shehata.csv",
+        "test_datasets/shehata/fragments/VH_only_shehata.csv",
         "Shehata",
         "PSR",
         novo_shehata,

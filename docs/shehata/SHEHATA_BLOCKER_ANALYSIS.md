@@ -322,7 +322,7 @@ Next highest (labeled specific):
      # TO:   f"full_seq_{chain}": annotation.sequence_aa
      ```
    - Re-run fragment extraction: `python3 preprocessing/process_shehata.py`
-   - Validate all gaps removed: `grep -c '\-' test_datasets/shehata/*.csv` (should be 0)
+   - Validate all gaps removed: `grep -c '\-' test_datasets/shehata/fragments/*.csv` (should be 0)
    - Test ESM embedding on all 17 previously-affected sequences
 
 2. **Add gap detection to validation**

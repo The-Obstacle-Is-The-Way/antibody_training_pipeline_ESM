@@ -188,8 +188,8 @@ def print_validation_report(
 def main():
     """Validate all processed datasets."""
     datasets = [
-        ("jain", Path("test_datasets/jain"), 16),  # Full antibodies (VH+VL)
-        ("shehata", Path("test_datasets/shehata"), 16),  # Full antibodies (VH+VL)
+        ("jain", Path("test_datasets/jain/fragments"), 16),  # Full antibodies (VH+VL)
+        ("shehata", Path("test_datasets/shehata/fragments"), 16),  # Full antibodies (VH+VL)
         ("harvey", Path("test_datasets/harvey"), 6),  # Nanobodies (VHH only)
         ("boughter", Path("test_datasets/boughter"), 16),  # Full antibodies (VH+VL)
     ]

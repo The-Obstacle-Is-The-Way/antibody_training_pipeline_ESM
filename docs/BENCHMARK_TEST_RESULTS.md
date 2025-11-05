@@ -72,7 +72,7 @@ True    Spec      40      17      (57 specific)
 
 ### Our Results
 
-**Test file:** `test_datasets/shehata/VH_only_shehata.csv`
+**Test file:** `test_datasets/shehata/fragments/VH_only_shehata.csv`
 **Size:** 398 antibodies (391 specific, 7 non-specific - highly imbalanced)
 
 ```

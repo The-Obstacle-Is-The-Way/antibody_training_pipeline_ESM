@@ -117,7 +117,7 @@ cp reference_repos/harvey_official_repo/backend/app/experiments/low_polyreactivi
 
 ### Step 2: CSV Conversion
 
-**Script:** `scripts/convert_harvey_csvs.py`
+**Script:** `scripts/conversion/convert_harvey_csvs.py`
 
 **Functionality:**
 1. Read high/low polyreactivity CSVs from official repo
@@ -128,7 +128,7 @@ cp reference_repos/harvey_official_repo/backend/app/experiments/low_polyreactivi
 
 **Command:**
 ```bash
-python3 scripts/convert_harvey_csvs.py
+python3 scripts/conversion/convert_harvey_csvs.py
 ```
 
 **Output:** `test_datasets/harvey.csv` (141,474 sequences)
@@ -238,7 +238,7 @@ reference_repos/harvey_official_repo/backend/app/experiments/
     ↓
 high_polyreactivity_high_throughput.csv (71,772)
 low_polyreactivity_high_throughput.csv (69,702)
-    ↓ scripts/convert_harvey_csvs.py
+    ↓ scripts/conversion/convert_harvey_csvs.py
 test_datasets/harvey.csv (141,474)
     ↓ preprocessing/process_harvey.py (ANARCI)
 test_datasets/harvey/ fragment CSVs (141,021 each)

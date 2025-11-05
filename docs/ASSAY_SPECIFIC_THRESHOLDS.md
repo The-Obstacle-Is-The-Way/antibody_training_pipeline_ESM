@@ -140,7 +140,7 @@ predictions = model.predict(X_embeddings, assay_type='ELISA')
 
 ```python
 # Load Shehata test data
-df = pd.read_csv("test_datasets/shehata/VH_only_shehata.csv")
+df = pd.read_csv("test_datasets/shehata/fragments/VH_only_shehata.csv")
 sequences = df['sequence'].tolist()
 
 # Extract embeddings

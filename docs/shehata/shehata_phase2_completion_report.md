@@ -204,7 +204,7 @@ ADI-38502,EVQLLESGGGLVKPGG...,0,0.0,IgG memory,shehata2019
 from data import load_local_data
 
 df = load_local_data(
-    'test_datasets/shehata/VH_only_shehata.csv',
+    'test_datasets/shehata/fragments/VH_only_shehata.csv',
     sequence_column='sequence',
     label_column='label'
 )
@@ -258,7 +258,7 @@ Follows `preprocessing/process_boughter.py` pattern:
    - ANARCI annotation + fragment extraction
    - Comprehensive validation reporting
 
-2. **`test_datasets/shehata/*.csv`** (16 files)
+2. **`test_datasets/shehata/fragments/*.csv`** (16 files)
    - All fragment-specific CSVs
    - Standardized format
    - Ready for model inference

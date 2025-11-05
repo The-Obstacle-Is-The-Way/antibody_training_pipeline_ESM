@@ -167,7 +167,7 @@ def main():
     # Analyze Shehata dataset
     shehata_threshold, shehata_cm, shehata_probs = analyze_dataset_probabilities(
         model,
-        "test_datasets/shehata/VH_only_shehata.csv",
+        "test_datasets/shehata/fragments/VH_only_shehata.csv",
         "Shehata",
         target_cm=novo_shehata,
     )
@@ -191,7 +191,7 @@ def main():
         logger.info("\nWhat happens if we use Jain's optimal threshold on Shehata?")
         test_threshold_on_dataset(
             model,
-            "test_datasets/shehata/VH_only_shehata.csv",
+            "test_datasets/shehata/fragments/VH_only_shehata.csv",
             "Shehata",
             jain_threshold,
         )

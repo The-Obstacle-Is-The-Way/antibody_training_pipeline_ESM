@@ -22,7 +22,7 @@ def test_gap_characters():
     print("TEST 1: Gap Character Detection")
     print("=" * 60)
 
-    fragments_dir = Path("test_datasets/shehata")
+    fragments_dir = Path("test_datasets/shehata/fragments")
     fragment_files = list(fragments_dir.glob("*.csv"))
 
     if not fragment_files:
@@ -56,7 +56,7 @@ def test_amino_acid_validation():
 
     valid_aas = set("ACDEFGHIKLMNPQRSTVWYX")
 
-    fragments_dir = Path("test_datasets/shehata")
+    fragments_dir = Path("test_datasets/shehata/fragments")
 
     # Test previously affected files
     critical_files = [
@@ -111,7 +111,7 @@ def test_previously_affected_sequences():
     vh_check = ["ADI-47173", "ADI-47060", "ADI-45440", "ADI-47105", "ADI-47224"]
     vl_check = ["ADI-47223", "ADI-47114", "ADI-47163", "ADI-47211"]
 
-    fragments_dir = Path("test_datasets/shehata")
+    fragments_dir = Path("test_datasets/shehata/fragments")
     vh_df = pd.read_csv(fragments_dir / "VH_only_shehata.csv")
     vl_df = pd.read_csv(fragments_dir / "VL_only_shehata.csv")
 
@@ -160,7 +160,7 @@ def test_model_validation_logic():
     # This is the exact validation logic from model.py:86-90
     valid_aas = set("ACDEFGHIKLMNPQRSTVWYX")
 
-    fragments_dir = Path("test_datasets/shehata")
+    fragments_dir = Path("test_datasets/shehata/fragments")
     vh_df = pd.read_csv(fragments_dir / "VH_only_shehata.csv")
 
     # Sample 10 sequences
@@ -197,7 +197,7 @@ def test_data_integrity():
     print("TEST 5: Data Integrity")
     print("=" * 60)
 
-    fragments_dir = Path("test_datasets/shehata")
+    fragments_dir = Path("test_datasets/shehata/fragments")
 
     # Check all 16 fragment files exist
     expected_files = [

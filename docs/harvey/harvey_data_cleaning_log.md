@@ -39,7 +39,7 @@
 ### 2025-11-01 01:51-04:00 - Initial Implementation (WRONG)
 
 **Scripts created:**
-- `scripts/convert_harvey_to_csv.py` - Parsed markdown for sequences
+- `scripts/conversion/convert_harvey_csvs.py` - Parsed markdown for sequences
 - `scripts/validate_harvey.py` - Validated 48-nanobody dataset
 - `preprocessing/process_harvey.py` - Extracted VHH fragments
 
@@ -366,7 +366,7 @@ bcad113 Remove Excel source files from git tracking
   - `H-FWRs_harvey.csv`
 - Label distribution preserved: 69,262 low (49.1%), 71,759 high (50.9%)
 - Sequence length summary (VHH): 102-137 aa, mean 120.8 aa
-- Validation: `python3 scripts/validate_fragments.py` ✅ PASS
+- Validation: `python3 scripts/validation/validate_fragments.py` ✅ PASS
 
 ### 2. Sequence Length Filtering
 

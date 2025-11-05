@@ -111,11 +111,11 @@ def convert_excel_to_csv(..., interactive: bool = True):
 
 ## Conversion Results
 
-### Input: `test_datasets/mmc2.xlsx`
+### Input: `test_datasets/shehata/raw/shehata-mmc2.xlsx`
 - **Rows:** 402 (398 antibodies + 4 metadata/legend rows)
 - **Columns:** 25 (sequences, biophysical data, annotations)
 
-### Output: `test_datasets/shehata.csv`
+### Output: `test_datasets/shehata/processed/shehata.csv`
 - **Rows:** 402
 - **Columns:** 7 (`id, heavy_seq, light_seq, label, psr_score, b_cell_subset, source`)
 - **Format:** Compatible with `jain.csv` (shares 5 core columns)
@@ -227,7 +227,7 @@ All agents confirmed:
 4. `docs/shehata_preprocessing_implementation_plan.md` (existing)
 
 ### Data:
-1. `test_datasets/shehata.csv` (NEW - 402 rows, 7 columns)
+1. `test_datasets/shehata/processed/shehata.csv` (NEW - 402 rows, 7 columns)
 
 ---
 

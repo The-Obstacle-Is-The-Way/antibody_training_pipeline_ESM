@@ -41,5 +41,5 @@ python3 preprocessing/process_shehata.py
 ```
 
 This will generate:
-- `test_datasets/shehata.csv` (Phase 1 output)
-- `test_datasets/shehata/*.csv` (16 fragment-specific files)
+- `test_datasets/shehata/processed/shehata.csv` (Phase 1 output)
+- `test_datasets/shehata/fragments/*.csv` (16 fragment-specific files)

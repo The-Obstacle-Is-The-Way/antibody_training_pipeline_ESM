@@ -119,7 +119,7 @@ abituzumab,QVQLQQSGGE...,DIQMTQSPSS...,0,jain2017,0.125938041,0.044483421
 ### Phase 1: Basic Preprocessing Script (Minimal Viable Product)
 **Goal:** Create test-ready CSV matching existing format
 **Effort:** ~2-3 hours
-**Deliverable:** `test_datasets/shehata.csv`
+**Deliverable:** `test_datasets/shehata/processed/shehata.csv`
 
 **Tasks:**
 1. ✅ Read mmc2.xlsx
@@ -265,7 +265,7 @@ antibody_training_pipeline_ESM/
 
 ✅ **Data format:** CSV with `sequence, label` columns
 ✅ **Loading:** Works with `data.load_local_data(file_path, sequence_column, label_column)`
-✅ **Testing:** Compatible with `test.py --data test_datasets/shehata.csv`
+✅ **Testing:** Compatible with `test.py --data test_datasets/shehata/processed/shehata.csv`
 ✅ **Embedding:** Sequences ready for ESM-1v processing
 ✅ **Naming:** Follows `{fragment}_{dataset}.csv` pattern
 
@@ -352,7 +352,7 @@ anarci or riot_na      # CDR annotation (Phase 2 only)
 ## Success Criteria
 
 ### Phase 1 Complete When:
-- [x] `test_datasets/shehata.csv` exists
+- [x] `test_datasets/shehata/processed/shehata.csv` exists
 - [x] 398 rows (one per antibody)
 - [x] Columns: `id, heavy_seq, light_seq, label, psr_score, b_cell_subset, source`
 - [x] Binary labels defined with documented threshold (0.31002 = 98.24%ile)

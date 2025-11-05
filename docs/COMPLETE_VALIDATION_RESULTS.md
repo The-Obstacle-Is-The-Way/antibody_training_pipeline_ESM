@@ -125,7 +125,7 @@ True    Spec      40      19      (59 specific)
 
 ### Our Results
 
-**Test file**: `test_datasets/shehata/VH_only_shehata.csv`
+**Test file**: `test_datasets/shehata/fragments/VH_only_shehata.csv`
 
 ```
 Confusion Matrix: [[204, 187], [2, 5]]

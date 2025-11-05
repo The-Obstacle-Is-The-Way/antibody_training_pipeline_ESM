@@ -118,7 +118,7 @@ all(aa in valid_aas for aa in sequence_without_gaps)
 ```python
 import pandas as pd
 
-df = pd.read_csv('test_datasets/shehata/VH_only_shehata.csv')
+df = pd.read_csv('test_datasets/shehata/fragments/VH_only_shehata.csv')
 gap_count = df['sequence'].str.contains('-').sum()
 >>> 13 sequences with "-" gaps
 
@@ -179,7 +179,7 @@ if not all(aa in valid_aas for aa in seq) or len(seq) < 1:
 **Phase 1 (Excel → CSV):** ✅ CORRECT
 - `scripts/convert_shehata_excel_to_csv.py:21-46` has `sanitize_sequence()`
 - Removes all `-` characters from input sequences
-- `test_datasets/shehata.csv` is gap-free ✓
+- `test_datasets/shehata/processed/shehata.csv` is gap-free ✓
 
 **Phase 2 (CSV → Fragments):** ❌ BROKEN
 - `preprocessing/process_shehata.py:63` uses `annotation.sequence_alignment_aa`
@@ -264,7 +264,7 @@ from model import ESMEmbeddingExtractor
 model = ESMEmbeddingExtractor('facebook/esm1v_t33_650M_UR90S_1', 'cpu')
 
 # Load Shehata VH sequences
-df = pd.read_csv('test_datasets/shehata/VH_only_shehata.csv')
+df = pd.read_csv('test_datasets/shehata/fragments/VH_only_shehata.csv')
 sequences = df['sequence'].tolist()
 
 # Try embedding - should NOT raise errors or warnings
@@ -337,7 +337,7 @@ assert not any(np.allclose(emb, 0) for emb in embeddings)
 
 3. Validate all gaps removed:
    ```bash
-   grep -r '\-' test_datasets/shehata/*.csv | wc -l
+   grep -r '\-' test_datasets/shehata/fragments/*.csv | wc -l
    # Should be 0
    ```
 
@@ -355,7 +355,7 @@ assert not any(np.allclose(emb, 0) for emb in embeddings)
 | File | Line | Issue | Fix |
 |------|------|-------|-----|
 | `preprocessing/process_shehata.py` | 63 | Uses `sequence_alignment_aa` (has gaps) | Use `sequence_aa` (no gaps) |
-| `test_datasets/shehata/VH_only_shehata.csv` | Multiple | 13 sequences with `-` | Re-extract after fix |
+| `test_datasets/shehata/fragments/VH_only_shehata.csv` | Multiple | 13 sequences with `-` | Re-extract after fix |
 | `test_datasets/shehata/VL_only_shehata.csv` | Multiple | 4 sequences with `-` | Re-extract after fix |
 | `test_datasets/shehata/Full_shehata.csv` | Multiple | 17 sequences with `-` | Re-extract after fix |
 

@@ -132,7 +132,7 @@ python3 preprocessing/process_harvey.py
 - Failures logged: **453** (0.32%) — IDs recorded in `test_datasets/harvey/failed_sequences.txt`
 - Fragment files generated with consistent row counts (141,021) and 5-column schema
 - Label distribution preserved: 69,262 low (49.1%), 71,759 high (50.9%)
-- Validation: `python3 scripts/validate_fragments.py` → **PASS**
+- Validation: `python3 scripts/validation/validate_fragments.py` → **PASS**
 
 ---
 
@@ -182,7 +182,7 @@ After execution, verify:
 1. ✅ Script created and audited
 2. ✅ Critical fixes applied
 3. ✅ Full preprocessing run (tmux session `harvey_processing`)
-4. ✅ Validation: `python3 scripts/validate_fragments.py`
+4. ✅ Validation: `python3 scripts/validation/validate_fragments.py`
 5. ✅ Documentation updated with run outcomes
 
 ### Remaining
