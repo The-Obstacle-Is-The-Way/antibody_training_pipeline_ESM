@@ -22,13 +22,15 @@
   - Fab Tm, scFv Tm
   - Results across 12 assays
 
-### Private Data (Novo Nordisk)
+### Private Data (Adimab)
 
 - `Private_Jain2017_ELISA_indiv.xlsx` - **Private ELISA Data**
   - Individual ELISA reactivity for 6 antigens:
     - Cardiolipin, KLH, LPS, ssDNA, dsDNA, Insulin
   - OD values used to calculate ELISA flags
   - This data is NOT in the published paper
+  - **Data source:** Adimab (T. Sun and Y. Xu from the Jain et al. 2017 author list were most responsible for generating this data)
+  - **Permission:** Shared with permission from Adimab for research purposes
 
 ---
 
@@ -47,7 +49,7 @@ Output files will be created in `test_datasets/jain/processed/`.
 ## Data Provenance
 
 - **Public data:** Downloaded from PNAS supplementary materials
-- **Private data:** Provided by Novo Nordisk collaborators
+- **Private ELISA data:** Provided by Adimab (T. Sun and Y. Xu), shared with permission for research purposes
 - **Date added:** 2025-11-03
 - **Last verified:** 2025-11-05
 
