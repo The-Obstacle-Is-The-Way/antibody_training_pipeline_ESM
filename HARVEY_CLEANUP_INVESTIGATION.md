@@ -525,7 +525,7 @@ grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
 
 ## Execution Plan (7 Phases)
 
-**Estimated time:** 45-60 minutes
+**Estimated time:** 60-75 minutes (revised upward after comprehensive audit)
 
 ### Phase 1: Prepare (5 min)
 - Create directory structure: `test_datasets/harvey/{raw,processed,canonical,fragments}`
@@ -559,8 +559,9 @@ grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
 - **Total:** 11 files, 76+ path references
 
 ### Phase 7: Verify (15 min)
-- Run all 8 verification checks
+- Run all 9 verification checks (including embedding compatibility test)
 - Ensure all pass
+- Confirm 0 references to old paths remain
 
 ---
 
