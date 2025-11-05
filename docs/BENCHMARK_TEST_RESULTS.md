@@ -139,7 +139,7 @@ True    Spec     229     162      (391 specific)
 
 ### Our Results
 
-**Test file:** `test_datasets/harvey/VHH_only_harvey.csv`
+**Test file:** `test_datasets/harvey/fragments/VHH_only_harvey.csv`
 **Size:** 141,021 nanobodies (69,262 specific, 71,759 non-specific)
 **Test Date:** 2025-11-03 08:09-09:38 (89.3 minutes)
 

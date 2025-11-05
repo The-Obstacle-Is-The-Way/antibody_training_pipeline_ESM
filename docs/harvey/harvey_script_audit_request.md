@@ -28,7 +28,7 @@ Please audit `preprocessing/process_harvey.py` against the following specificati
 ## Specifications (from harvey_preprocessing_implementation_plan.md)
 
 ### Input File
-- **Path:** `test_datasets/harvey.csv`
+- **Path:** `test_datasets/harvey/processed/harvey.csv`
 - **Rows:** 141,474 nanobodies (plus header)
 - **Columns:** `seq, CDR1_nogaps, CDR2_nogaps, CDR3_nogaps, label`
 - **Labels:** Binary (0=low polyreactivity, 1=high polyreactivity)
@@ -40,7 +40,7 @@ Please audit `preprocessing/process_harvey.py` against the following specificati
 
 ### Output
 
-**Directory:** `test_datasets/harvey/`
+**Directory:** `test_datasets/harvey/fragments/`
 
 **6 Fragment CSV files:**
 1. `VHH_only_harvey.csv` - Full nanobody variable domain
@@ -94,7 +94,7 @@ Harvey script should be **similar to** `preprocessing/process_shehata.py` BUT:
 ## Key Verification Points
 
 ### 1. Input Handling
-- [ ] Reads `test_datasets/harvey.csv` correctly
+- [ ] Reads `test_datasets/harvey/processed/harvey.csv` correctly
 - [ ] Accesses `row["seq"]` (not `row["heavy_seq"]`)
 - [ ] Handles 141,474 rows without memory issues
 - [ ] Generates IDs as `harvey_000001`, `harvey_000002`, etc.
@@ -118,7 +118,7 @@ Harvey script should be **similar to** `preprocessing/process_shehata.py` BUT:
 - [ ] Source is "harvey2022" (not "harvey2025" or other)
 
 ### 4. Error Handling
-- [ ] Checks if `test_datasets/harvey.csv` exists
+- [ ] Checks if `test_datasets/harvey/processed/harvey.csv` exists
 - [ ] Try/except around ANARCI calls
 - [ ] Logs failed sequences to stderr
 - [ ] Continues processing after failures (doesn't halt)
@@ -138,7 +138,7 @@ Harvey script should be **similar to** `preprocessing/process_shehata.py` BUT:
    - Note: `idx` is 0-indexed, so `idx+1` is needed
 
 2. **Line 94:** Is `row["seq"]` the correct column name?
-   - Verify against test_datasets/harvey.csv header
+   - Verify against test_datasets/harvey/processed/harvey.csv header
 
 3. **Line 99:** Is metadata complete?
    - Should it include anything from HuggingFace besides label?
@@ -150,7 +150,7 @@ Harvey script should be **similar to** `preprocessing/process_shehata.py` BUT:
    - H-FWRs → fwrs_H ✓
 
 5. **Line 198:** Is output directory path correct?
-   - Should be `test_datasets/harvey/` (not `test_datasets/harvey_fragments/`)
+   - Should be `test_datasets/harvey/fragments/` (new structure after cleanup)
 
 6. **Memory usage:** Will loading 141K sequences into DataFrame cause issues?
    - Estimate: ~20-30 MB for CSV, 100-200 MB for processed data (acceptable)

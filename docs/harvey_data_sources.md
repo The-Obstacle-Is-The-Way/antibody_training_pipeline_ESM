@@ -15,7 +15,7 @@ The Harvey dataset contains **141,474 nanobody sequences** with binary polyreact
 - ✅ 71,772 high polyreactivity + 69,702 low polyreactivity = 141,474 total sequences
 - ✅ Binary labels: 0 = low polyreactivity, 1 = high polyreactivity
 - ✅ Successfully processed: 141,021 sequences (99.68% success rate)
-- ✅ Failed sequences: 453 (0.32%) logged in `test_datasets/harvey/failed_sequences.txt`
+- ✅ Failed sequences: 453 (0.32%) logged in `test_datasets/harvey/fragments/failed_sequences.txt`
 
 ---
 
@@ -131,7 +131,7 @@ cp reference_repos/harvey_official_repo/backend/app/experiments/low_polyreactivi
 python3 scripts/conversion/convert_harvey_csvs.py
 ```
 
-**Output:** `test_datasets/harvey.csv` (141,474 sequences)
+**Output:** `test_datasets/harvey/processed/harvey.csv` (141,474 sequences)
 
 ### Step 3: Fragment Extraction
 
@@ -206,7 +206,7 @@ python3 preprocessing/process_harvey.py
 ### Overview
 
 **Total failures:** 453 sequences (0.32%)
-**Log file:** `test_datasets/harvey/failed_sequences.txt`
+**Log file:** `test_datasets/harvey/fragments/failed_sequences.txt`
 
 ### Root Cause
 
@@ -226,7 +226,7 @@ ANARCI (IMGT numbering) requires valid VHH domain structure to annotate sequence
 
 First 10 failures: harvey_014076, harvey_014372, harvey_016053, harvey_022050, harvey_033141, harvey_044910, harvey_049180, harvey_049181, harvey_052106, harvey_052117
 
-Full list: See `test_datasets/harvey/failed_sequences.txt` (453 IDs)
+Full list: See `test_datasets/harvey/fragments/failed_sequences.txt` (453 IDs)
 
 ---
 
@@ -239,7 +239,7 @@ reference_repos/harvey_official_repo/backend/app/experiments/
 high_polyreactivity_high_throughput.csv (71,772)
 low_polyreactivity_high_throughput.csv (69,702)
     ↓ scripts/conversion/convert_harvey_csvs.py
-test_datasets/harvey.csv (141,474)
+test_datasets/harvey/processed/harvey.csv (141,474)
     ↓ preprocessing/process_harvey.py (ANARCI)
 test_datasets/harvey/ fragment CSVs (141,021 each)
 ```
