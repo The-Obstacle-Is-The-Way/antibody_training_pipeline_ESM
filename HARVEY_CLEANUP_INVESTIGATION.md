@@ -43,7 +43,8 @@ Harvey dataset structure is **MESSY** and requires cleanup similar to Shehata/Ja
 **Key Numbers (Validated):**
 - 🔧 **6 Python scripts** need path updates (15 total references)
 - 📝 **11 Markdown files** need path updates (76 total references)
-- 🗂️ **10 files** to move (3 raw, 3 processed, 6 fragments, 1 log)
+- 🗂️ **10 files** to move (3 copy to raw/, 1 move to processed/, 7 move to fragments/)
+- 🗑️ **2 files** to delete (harvey_high.csv, harvey_low.csv - duplicates of raw sources)
 - 📋 **5 READMEs** to create (master, raw, processed, canonical, fragments)
 - ⏱️ **60-75 minutes** estimated execution time (revised upward after audit)
 
@@ -223,19 +224,21 @@ test_datasets/harvey/ (fragments only - MIXED PURPOSE)
 
 ## Cleanup Scope
 
-### Files to Move (10 files)
+### Files to Move/Modify (10 files move, 2 files delete)
 
-**From reference_repos → raw/:**
-- high_polyreactivity_high_throughput.csv (copy or symlink)
-- low_polyreactivity_high_throughput.csv (copy or symlink)
+**From reference_repos → raw/ (COPY 3 files):**
+- high_polyreactivity_high_throughput.csv
+- low_polyreactivity_high_throughput.csv
 - low_throughput_polyspecificity_scores_w_exp.csv (optional)
 
-**From test_datasets/ root → processed/:**
-- harvey.csv
-- harvey_high.csv (decision: keep or delete?)
-- harvey_low.csv (decision: keep or delete?)
+**From test_datasets/ root → processed/ (MOVE 1 file):**
+- harvey.csv → test_datasets/harvey/processed/harvey.csv
 
-**From test_datasets/harvey/ → fragments/:**
+**From test_datasets/ root (DELETE 2 files per Decision 2):**
+- ❌ harvey_high.csv (delete - duplicate of raw source, scripts will read from raw/)
+- ❌ harvey_low.csv (delete - duplicate of raw source, scripts will read from raw/)
+
+**From test_datasets/harvey/ → fragments/ (MOVE 6 CSVs + 1 log):**
 - H-CDR1_harvey.csv
 - H-CDR2_harvey.csv
 - H-CDR3_harvey.csv
