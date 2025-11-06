@@ -1,5 +1,12 @@
 # Strict QC Experiment (November 2025) - ARCHIVED
 
+> **⚠️ LEGACY EXPERIMENT (v1.x)**
+>
+> This archived experiment references old root file commands (e.g., `python train.py`, `python test.py`).
+> In v2.0.0+, use: `antibody-train --config X` and `antibody-test --model X --data Y`
+>
+> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+
 **Status:** UNVALIDATED - Never tested on external datasets
 **Date:** 2025-11-04
 **Archived:** 2025-11-06

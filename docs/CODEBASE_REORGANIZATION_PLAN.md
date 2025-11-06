@@ -272,15 +272,15 @@ classifier = core.classifier.BinaryClassifier(...)
 dataset = datasets.jain.JainDataset(...)
 ```
 
-### CLI After Refactor
+### CLI After Refactor (Achieved in v2.0.0)
 ```bash
-# Old way (running root-level scripts)
-python train.py --config configs/config.yaml
+# ❌ v1.x way (REMOVED - files no longer exist)
+# python train.py --config configs/config.yaml
 
-# New way (proper CLI module)
+# ✅ v2.0.0 way (current - use this)
 python -m antibody_training_esm.cli.train --config configs/config.yaml
 
-# Or with entry point (defined in pyproject.toml)
+# ✅ Or with entry point (defined in pyproject.toml) - RECOMMENDED
 antibody-train --config configs/config.yaml
 ```
 
