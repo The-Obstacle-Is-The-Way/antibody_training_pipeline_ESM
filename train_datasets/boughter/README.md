@@ -118,7 +118,7 @@ Raw DNA FASTA (6 subsets, 1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter.csv (1,171 sequences)
+   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,171 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
@@ -150,13 +150,13 @@ Stage 4: Additional QC (Industry Standard)
 import pandas as pd
 
 # Use standard Boughter QC files
-df = pd.read_csv('train_datasets/boughter/VH_only_boughter.csv', comment='#')
+df = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
 
 # Filter to training subset
 df_train = df[df['include_in_training'] == True]  # 914 sequences
 
 # Or use the pre-exported training file (no metadata)
-df_train = pd.read_csv('train_datasets/boughter/VH_only_boughter_training.csv')  # 914 sequences
+df_train = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv')  # 914 sequences
 ```
 
 ### For Novo Nordisk Parity (Recommended)
@@ -164,10 +164,10 @@ df_train = pd.read_csv('train_datasets/boughter/VH_only_boughter_training.csv') 
 import pandas as pd
 
 # Use strict QC files (matches Novo's likely methodology)
-df_train = pd.read_csv('train_datasets/boughter/VH_only_boughter_strict_qc.csv', comment='#')  # 852 sequences
+df_train = pd.read_csv('train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv', comment='#')  # 852 sequences
 
 # For CDR-only analysis (no filtering difference)
-df_cdr3 = pd.read_csv('train_datasets/boughter/H-CDR3_boughter_strict_qc.csv', comment='#')  # 914 sequences
+df_cdr3 = pd.read_csv('train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv', comment='#')  # 914 sequences
 ```
 
 ### For Multi-Fragment Analysis
@@ -175,9 +175,9 @@ df_cdr3 = pd.read_csv('train_datasets/boughter/H-CDR3_boughter_strict_qc.csv', c
 import pandas as pd
 
 # Load multiple fragments with consistent IDs
-vh = pd.read_csv('train_datasets/boughter/VH_only_boughter_strict_qc.csv', comment='#')
-vl = pd.read_csv('train_datasets/boughter/VL_only_boughter_strict_qc.csv', comment='#')
-cdr3 = pd.read_csv('train_datasets/boughter/H-CDR3_boughter_strict_qc.csv', comment='#')
+vh = pd.read_csv('train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv', comment='#')
+vl = pd.read_csv('train_datasets/boughter/strict_qc/VL_only_boughter_strict_qc.csv', comment='#')
+cdr3 = pd.read_csv('train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv', comment='#')
 
 # Merge on 'id' column (available in all fragment CSVs)
 merged = vh.merge(vl, on='id', suffixes=('_vh', '_vl'))

@@ -147,7 +147,7 @@ Raw DNA FASTA (6 subsets, 1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter.csv (1,171 sequences)
+   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,171 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
@@ -165,8 +165,8 @@ Stage 2+3: ANARCI annotation + Boughter QC
 - Training subset (0 and 4+ flags): 914 sequences (-151 more, -14.2% of 1,065)
 
 **Files:**
-- `train_datasets/boughter/VH_only_boughter.csv` (1,065 sequences, all flags)
-- `train_datasets/boughter/VH_only_boughter_training.csv` (914 sequences, training only)
+- `train_datasets/boughter/annotated/VH_only_boughter.csv` (1,065 sequences, all flags)
+- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences, training only)
 
 **Use case:** Exact replication of Boughter's published methodology
 
@@ -197,7 +197,7 @@ Stage 4: Additional QC (Industry Standard)
 - **CDR-only fragments**: **914 sequences** (no change - X already filtered in CDRs)
 
 **Files:**
-- `train_datasets/boughter/VH_only_boughter_strict_qc.csv` (852 sequences)
+- `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv` (852 sequences)
 - `train_datasets/boughter/*_boughter_strict_qc.csv` (16 fragment files)
 
 **Use case:** Matching Novo's likely methodology + modern ML best practices
@@ -373,7 +373,7 @@ train_datasets/boughter/
 
 **Training time:** ~1.5 minutes (embeddings cached)
 
-**File used:** `train_datasets/boughter/VH_only_boughter_training.csv`
+**File used:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv`
 
 **Status:** ✅ Baseline model, matches Boughter methodology
 
@@ -397,7 +397,7 @@ train_datasets/boughter/
 
 **Training time:** ~1.5 minutes (2025-11-04 23:57:04 → 23:58:30)
 
-**File used:** `train_datasets/boughter/VH_only_boughter_strict_qc.csv`
+**File used:** `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
 
 **Status:** ✅ Industry-standard QC model, but did NOT improve CV accuracy
 
@@ -453,7 +453,7 @@ Boughter:      [58.6% =========== 67.5% ============ 76.4%]
 
 ### Primary Recommendation: Use Boughter QC (914 sequences)
 
-**File:** `train_datasets/boughter/VH_only_boughter_training.csv`
+**File:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv`
 
 **Why?**
 1. ✅ **Better CV accuracy** (67.5% vs 66.55%, though not statistically significant)
@@ -470,7 +470,7 @@ Boughter:      [58.6% =========== 67.5% ============ 76.4%]
 
 ### Alternative: Use Strict QC (852 sequences)
 
-**File:** `train_datasets/boughter/VH_only_boughter_strict_qc.csv`
+**File:** `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
 
 **Why?**
 - If you want industry-standard QC (X anywhere, non-standard AA)
@@ -574,9 +574,9 @@ python3 test.py \
 - Training readiness: `docs/TRAINING_READINESS_CHECK.md`
 
 **Training Data:**
-- Boughter QC (914): `train_datasets/boughter/VH_only_boughter_training.csv` ⭐ **RECOMMENDED**
-- Strict QC (852): `train_datasets/boughter/VH_only_boughter_strict_qc.csv`
-- Fragment CSVs: `train_datasets/boughter/*_boughter.csv` (16 files)
+- Boughter QC (914): `train_datasets/boughter/canonical/VH_only_boughter_training.csv` ⭐ **RECOMMENDED**
+- Strict QC (852): `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
+- Fragment CSVs: `train_datasets/boughter/annotated/*_boughter.csv` (16 files)
 - Strict QC fragments: `train_datasets/boughter/*_boughter_strict_qc.csv` (16 files)
 
 **Trained Models:**

@@ -248,7 +248,7 @@ def main():
         valid = False
 
     # Check for include_in_training flag in fragment files
-    vh_only = boughter_dir / "VH_only_boughter.csv"
+    vh_only = boughter_annotated_dir / "VH_only_boughter.csv"
     if vh_only.exists():
         df = pd.read_csv(vh_only, comment="#")
         if "include_in_training" in df.columns:

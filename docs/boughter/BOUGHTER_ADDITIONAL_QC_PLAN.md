@@ -53,7 +53,7 @@ Raw DNA FASTA files (1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter.csv (1,171 sequences)
+   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,171 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
@@ -166,7 +166,7 @@ df_clean.to_csv('H-CDR3_boughter_strict_qc.csv', index=False)
 
 **Purpose:** Apply industry-standard QC filters beyond Boughter's CDR-only checks
 
-**Input:** All 16 fragment CSVs (`train_datasets/boughter/*_boughter.csv`)
+**Input:** All 16 fragment CSVs (`train_datasets/boughter/annotated/*_boughter.csv`)
 
 **Filters to Apply:**
 1. ✅ Filter sequences where `include_in_training == False` (reduces 1,065 → 914)
@@ -201,20 +201,20 @@ Where:
 
 **Current files (keep as-is):**
 ```
-train_datasets/boughter/VH_only_boughter.csv                # 1,065 sequences (all flags)
-train_datasets/boughter/VH_only_boughter_training.csv       # 914 sequences (export, no metadata)
-train_datasets/boughter/H-CDR3_boughter.csv                 # 1,065 sequences (all flags)
-train_datasets/boughter/All-CDRs_boughter.csv               # 1,065 sequences (all flags)
-train_datasets/boughter/Full_boughter.csv                   # 1,065 sequences (all flags)
+train_datasets/boughter/annotated/VH_only_boughter.csv                # 1,065 sequences (all flags)
+train_datasets/boughter/canonical/VH_only_boughter_training.csv       # 914 sequences (export, no metadata)
+train_datasets/boughter/annotated/H-CDR3_boughter.csv                 # 1,065 sequences (all flags)
+train_datasets/boughter/annotated/All-CDRs_boughter.csv               # 1,065 sequences (all flags)
+train_datasets/boughter/annotated/Full_boughter.csv                   # 1,065 sequences (all flags)
 ... (13 more fragment CSVs)
 ```
 
 **NEW files (to be created):**
 ```
-train_datasets/boughter/VH_only_boughter_strict_qc.csv      # ~852 sequences (X filtered)
-train_datasets/boughter/H-CDR3_boughter_strict_qc.csv       # ~852 sequences
-train_datasets/boughter/All-CDRs_boughter_strict_qc.csv     # ~852 sequences
-train_datasets/boughter/Full_boughter_strict_qc.csv         # ~852 sequences
+train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv      # ~852 sequences (X filtered)
+train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv       # ~852 sequences
+train_datasets/boughter/strict_qc/All-CDRs_boughter_strict_qc.csv     # ~852 sequences
+train_datasets/boughter/strict_qc/Full_boughter_strict_qc.csv         # ~852 sequences
 ... (13 more fragment CSVs with strict QC)
 ```
 
@@ -228,7 +228,7 @@ train_datasets/boughter/Full_boughter_strict_qc.csv         # ~852 sequences
 
 **Purpose:** Apply industry-standard full-sequence QC filters to all fragment CSVs
 
-**Inputs:** `train_datasets/boughter/*_boughter.csv` (16 files, 1,065 sequences each)
+**Inputs:** `train_datasets/boughter/annotated/*_boughter.csv` (16 files, 1,065 sequences each)
 
 **Filters:**
 1. Select `include_in_training == True` (reduces to 914)
@@ -246,7 +246,7 @@ Stage 4: Additional QC Filtering for Boughter Dataset
 
 Purpose: Apply industry-standard full-sequence QC beyond Boughter's CDR-only checks
 
-Inputs: train_datasets/boughter/*_boughter.csv (16 fragment files, 1,065 sequences each)
+Inputs: train_datasets/boughter/annotated/*_boughter.csv (16 fragment files, 1,065 sequences each)
 Outputs: train_datasets/boughter/*_boughter_strict_qc.csv (16 files, ~852 sequences each)
 
 Filters:

@@ -209,7 +209,7 @@ python3 -c "
 import pandas as pd
 
 # Check for gaps
-vh = pd.read_csv('train_datasets/boughter/VH_only_boughter.csv', comment='#')
+vh = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
 print(f'Gaps: {vh[\"sequence\"].str.contains(\"-\", na=False).sum()}')
 
 # Check for stop codons
@@ -285,9 +285,9 @@ python3 tests/test_boughter_embedding_compatibility.py
 2. ✅ `tests/test_boughter_embedding_compatibility.py` - New test suite created
 
 ### Data Regenerated
-3. ✅ `train_datasets/boughter/VH_only_boughter.csv` - 11 gaps + 157 stop codons → 0
-4. ✅ `train_datasets/boughter/VL_only_boughter.csv` - 2 gaps + 226 stop codons → 0
-5. ✅ `train_datasets/boughter/Full_boughter.csv` - 13 gaps + 241 stop codons → 0
+3. ✅ `train_datasets/boughter/annotated/VH_only_boughter.csv` - 11 gaps + 157 stop codons → 0
+4. ✅ `train_datasets/boughter/annotated/VL_only_boughter.csv` - 2 gaps + 226 stop codons → 0
+5. ✅ `train_datasets/boughter/annotated/Full_boughter.csv` - 13 gaps + 241 stop codons → 0
 6. ✅ All 13 other fragment files regenerated (already clean)
 
 ### Documentation

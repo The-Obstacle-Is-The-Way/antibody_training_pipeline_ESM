@@ -23,7 +23,7 @@ All systems are **GO** for training on the Boughter strict QC dataset!
 ### ✅ Data Files
 
 **Training Data:**
-- File: `train_datasets/boughter/VH_only_boughter_strict_qc.csv`
+- File: `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
 - Status: ✅ EXISTS
 - Sequences: 852 (VH only, strict QC)
 - Labels: 425 (label 0) + 427 (label 1) = perfectly balanced
@@ -39,14 +39,14 @@ All systems are **GO** for training on the Boughter strict QC dataset!
 **Strict QC Config:**
 - File: `configs/config_strict_qc.yaml`
 - Status: ✅ CREATED
-- Dataset: `train_datasets/boughter/VH_only_boughter_strict_qc.csv`
+- Dataset: `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
 - Model Name: `boughter_vh_strict_qc_esm1v_logreg` (clearly indicates strict QC)
 - Log File: `logs/boughter_strict_qc_training.log`
 - Validation: ✅ PASSED
 
 **Original Config (for comparison):**
 - File: `configs/config.yaml`
-- Dataset: `train_datasets/boughter/VH_only_boughter_training.csv` (914 sequences)
+- Dataset: `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences)
 - Model Name: `boughter_vh_esm1v_logreg`
 
 ### ✅ Code Fixes
@@ -88,7 +88,7 @@ model_path = os.path.join(model_save_dir, f"{model_name}.pkl")
 ```
 1. Load config: configs/config_strict_qc.yaml
    ↓
-2. Load data: train_datasets/boughter/VH_only_boughter_strict_qc.csv (852 seqs)
+2. Load data: train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv (852 seqs)
    ↓
 3. Initialize ESM-1V model: facebook/esm1v_t33_650M_UR90S_1
    ↓
@@ -107,7 +107,7 @@ model_path = os.path.join(model_save_dir, f"{model_name}.pkl")
 ```bash
 $ python3 main.py configs/config_strict_qc.yaml --validate-only
 ✅ Configuration validated successfully
-✅ Training Data: ./train_datasets/boughter/VH_only_boughter_strict_qc.csv
+✅ Training Data: ./train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv
 ✅ ESM Model: facebook/esm1v_t33_650M_UR90S_1
 ✅ Device: mps
 ✅ Cross-validation: 10 folds (stratified)
@@ -197,7 +197,7 @@ python3 main.py configs/config_strict_qc.yaml
 **"File not found" error:**
 ```bash
 # Check file exists
-ls -la train_datasets/boughter/VH_only_boughter_strict_qc.csv
+ls -la train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv
 
 # If missing, regenerate:
 python3 preprocessing/boughter/stage4_additional_qc.py

@@ -299,7 +299,7 @@ Raw DNA FASTA (1,171 sequences)
     ↓
 [Stage 1: DNA Translation & Novo Flagging]
     ↓
-train_datasets/boughter.csv (1,117 protein sequences, 95.4% success)
+train_datasets/boughter/processed/boughter.csv (1,117 protein sequences, 95.4% success)
     ↓
 [Stage 2: ANARCI Annotation (IMGT numbering, strict)]
     ↓
@@ -616,9 +616,9 @@ Training Set Breakdown:
 **Our Preprocessing:**
 - `preprocessing/boughter/stage1_dna_translation.py`
 - `preprocessing/boughter/stage2_stage3_annotation_qc.py`
-- `train_datasets/boughter.csv` (1,117 sequences)
-- `train_datasets/boughter/VH_only_boughter.csv` (1,065 sequences)
-- `train_datasets/boughter/VH_only_boughter_training.csv` (914 sequences)
+- `train_datasets/boughter/processed/boughter.csv` (1,117 sequences)
+- `train_datasets/boughter/annotated/VH_only_boughter.csv` (1,065 sequences)
+- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences)
 
 **Boughter Original Data:**
 - `reference_repos/AIMS_manuscripts/app_data/full_sequences/` (1,171 DNA)

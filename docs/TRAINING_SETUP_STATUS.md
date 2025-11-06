@@ -35,7 +35,7 @@ The existing OSS repo is **fully wired and working**. We fixed one bug and creat
 - ✅ **Training**: 914 sequences (443 specific + 471 non-specific)
 - ✅ **Test (Jain)**: 70 sequences (67 specific + 3 non-specific)
 - ✅ All P0 blockers fixed (gap-free, ESM-compatible)
-- ✅ Filtered training file created: `train_datasets/boughter/VH_only_boughter_training.csv`
+- ✅ Filtered training file created: `train_datasets/boughter/canonical/VH_only_boughter_training.csv`
 
 ### 4. Configuration
 - ✅ `config_boughter.yaml` - Boughter-specific config
@@ -54,7 +54,7 @@ The existing OSS repo is **fully wired and working**. We fixed one bug and creat
 **Files Modified**:
 1. `data.py` - Fixed config key
 2. `config_boughter.yaml` - Created Boughter config
-3. `train_datasets/boughter/VH_only_boughter_training.csv` - Created filtered training file
+3. `train_datasets/boughter/canonical/VH_only_boughter_training.csv` - Created filtered training file
 
 ---
 
