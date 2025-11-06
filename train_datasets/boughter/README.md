@@ -75,10 +75,11 @@ Each dataset is available in **16 different antibody fragments** (from Novo Tabl
 ## File Naming Convention
 
 ```
-{fragment}_boughter.csv           # Boughter QC (1,065 sequences, all flags)
-{fragment}_boughter_strict_qc.csv # Strict QC (840-914 sequences, training subset + industry standard)
-VH_only_boughter_training.csv     # Special export (914 sequences, flattened [sequence, label] only)
+annotated/{fragment}_boughter.csv         # All sequences (1,065) with full metadata
+canonical/VH_only_boughter_training.csv   # Training export (914 sequences, flattened [sequence, label] only)
 ```
+
+**Archived (experimental):** `experiments/strict_qc_2025-11-04/data/strict_qc/*_strict_qc.csv` (never validated)
 
 ---
 
