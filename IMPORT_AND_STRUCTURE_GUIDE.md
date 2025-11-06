@@ -222,141 +222,42 @@ antibody-preprocess --dataset jain
 
 ---
 
-## Backwards Compatibility Strategy
+## Migration History
 
-### Phase 1: Core Migration (✅ Complete)
-- Moved `classifier.py` → `src/antibody_training_esm/core/classifier.py`
-- Moved `model.py` → `src/antibody_training_esm/core/embeddings.py`
-- Moved `train.py` → `src/antibody_training_esm/core/trainer.py`
-- Created root shims with deprecation warnings
+### Phase 1: Core Migration (v0.1.0 → v0.2.0)
+- Migrated `classifier.py` → `src/antibody_training_esm/core/classifier.py`
+- Migrated `model.py` → `src/antibody_training_esm/core/embeddings.py`
+- Migrated `train.py` → `src/antibody_training_esm/core/trainer.py`
+- Created temporary backwards compatibility shims
 
-### Phase 2: Data & CLI Migration (✅ Complete)
-- Moved `data.py` → `src/antibody_training_esm/data/loaders.py`
-- Moved training logic → `src/antibody_training_esm/cli/train.py`
-- Created `main.py` shim to delegate to new CLI
-- Updated all imports in package code
+### Phase 2: Data & CLI Migration (v0.2.0 → v0.3.0)
+- Migrated `data.py` → `src/antibody_training_esm/data/loaders.py`
+- Created professional CLI: `src/antibody_training_esm/cli/train.py`
+- Entry point: `antibody-train`
 
-### Phase 3: Dataset Abstractions (✅ Complete)
-- Created `src/antibody_training_esm/datasets/base.py` with `AntibodyDataset` ABC
+### Phase 3: Dataset Abstractions (v0.3.0 → v1.0.0)
+- Created `AntibodyDataset` abstract base class
 - Implemented dataset-specific loaders (Jain, Harvey, Shehata, Boughter)
-- Maintained preprocessing scripts as SSOT
-- Fixed mypy errors (100% type safety achieved)
+- Applied Open/Closed Principle for extensibility
+- Achieved 100% type safety (mypy strict mode)
 
-### Phase 4: Test Migration (✅ COMPLETE!)
-- ✅ Migrated `test.py` (574 lines) → `src/antibody_training_esm/cli/test.py`
-- ✅ **Preserved full CLI interface** (multi-model, multi-dataset, config file support)
-- ✅ Updated all imports from root shims → package paths
-- ✅ Converted root `test.py` → backwards compatibility shim (32 lines)
-- ✅ Verified `antibody-test` CLI works correctly with full argument interface
+### Phase 4: Test CLI Migration (v1.0.0 → v1.1.0)
+- Migrated `test.py` (574 lines) → `src/antibody_training_esm/cli/test.py`
+- Preserved full CLI interface (multi-model, multi-dataset, config support)
+- Entry point: `antibody-test`
 
-### Phase 5: Cleanup (❌ Pending)
-- Remove all backwards compatibility shims (breaking change)
-- Update all documentation to remove legacy import patterns
-- Release v2.0.0 with clean package structure
+### Phase 5: Legacy Cleanup (v1.1.0 → v2.0.0) ✅ COMPLETE
 
----
+**Breaking Changes:**
+- ❌ Deleted all 6 root shim files: `classifier.py`, `data.py`, `main.py`, `model.py`, `test.py`, `train.py`
+- ❌ Root imports no longer work (e.g., `from classifier import BinaryClassifier` → ERROR)
+- ✅ Clean professional package structure only
+- ✅ Updated version to 2.0.0 (semantic versioning for breaking change)
 
-## Phase 4 Implementation Results
-
-### Goal: Migrate `test.py` to Professional Package Structure ✅ ACHIEVED
-
-#### Final State (Phase 4 Complete)
-
+**Result:**
 ```
-ROOT:
-test.py (32 lines) ✅
-├── Backwards compatibility shim
-├── Deprecation warning with examples
-├── Delegates to antibody_training_esm.cli.test:main
-└── Full backwards compatibility maintained
-
-PACKAGE:
-src/antibody_training_esm/cli/test.py (574 lines) ✅
-├── Full professional implementation
-├── ModelTester class (comprehensive evaluation logic)
-├── TestConfig dataclass (all configuration options)
-├── Confusion matrix plotting (matplotlib/seaborn)
-├── Multi-model/multi-dataset testing
-├── Config file support (YAML)
-├── Device override (cpu/cuda/mps)
-├── Batch size override
-├── --create-config for sample generation
-├── Imports: from antibody_training_esm.core.classifier import BinaryClassifier
-└── Imports: from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
-```
-
-#### Migration Steps (Completed)
-
-**Step 1: Update Imports in Root `test.py`** ✅
-
-```python
-# Before (line 43)
-from classifier import BinaryClassifier
-
-# After
-from antibody_training_esm.core.classifier import BinaryClassifier
-
-# Before (line 130)
-from model import ESMEmbeddingExtractor
-
-# After
-from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
-```
-
-**Step 2: Copy Full Implementation to Package CLI** ✅
-
-All 574 lines migrated to `src/antibody_training_esm/cli/test.py` with:
-- ✅ Full CLI interface preserved (multi-model, multi-dataset, config support)
-- ✅ All functionality intact (ModelTester, TestConfig, plotting, caching)
-- ✅ Professional docstrings and error handling
-
-**Step 3: Update Package CLI Imports** ✅
-
-All imports updated to package paths:
-```python
-from antibody_training_esm.core.classifier import BinaryClassifier
-from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
-```
-
-**Step 4: Verify CLI Entry Point** ✅
-
-CLI verified working:
-```bash
-$ uv run python -m antibody_training_esm.cli.test --help
-✅ Shows comprehensive help with all options
-
-$ antibody-test --model m1.pkl m2.pkl --data d1.csv d2.csv
-✅ Multi-model/dataset interface working
-```
-
-**Step 5: Convert Root `test.py` to Shim** ✅
-
-Root `test.py` converted to 32-line shim:
-```python
-"""
-Test Script (BACKWARDS COMPATIBILITY SHIM)
-...
-"""
-from antibody_training_esm.cli.test import main as test_main
-...
-sys.exit(test_main())
-```
-
-Verified backwards compatibility:
-```bash
-$ uv run python test.py --help
-✅ Works with deprecation warning
-```
-
-**Step 6: Verify All Tests Pass** ✅
-
-All quality gates passed:
-```bash
-$ make all
-✅ Format:     60 files unchanged
-✅ Lint:       All checks passed!
-✅ Type safety: 53 files, 100% mypy coverage
-✅ Tests:      20/20 passed (5.39s)
+v2.0.0: Zero legacy code, 100% professional package organization
+All functionality preserved via proper package imports
 ```
 
 ---
