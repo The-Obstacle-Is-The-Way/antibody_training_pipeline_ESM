@@ -29,6 +29,7 @@ Reference:
 """
 
 from pathlib import Path
+from typing import NoReturn
 
 import pandas as pd
 
@@ -166,7 +167,7 @@ class BoughterDataset(AntibodyDataset):
 
         return df
 
-    def translate_dna_to_protein(self, dna_sequence: str) -> str:  # noqa: ARG002
+    def translate_dna_to_protein(self, dna_sequence: str) -> NoReturn:  # noqa: ARG002
         """
         This method is NOT IMPLEMENTED and will always raise an error.
 

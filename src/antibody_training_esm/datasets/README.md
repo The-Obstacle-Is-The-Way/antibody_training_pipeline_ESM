@@ -156,13 +156,16 @@ dataset = JainDataset()
 ```
 
 ✅ **DO THIS INSTEAD**:
-```python
-# RIGHT: Use preprocessing scripts to CREATE data
-# Run this ONCE to generate fragment files:
-$ python preprocessing/jain/step2_preprocess_p5e_s2.py
 
-# Then LOAD the preprocessed data in your training code:
+**Step 1: Run preprocessing script ONCE to CREATE fragment files:**
+```bash
+python preprocessing/jain/step2_preprocess_p5e_s2.py
+```
+
+**Step 2: LOAD the preprocessed data in your training code:**
+```python
 from antibody_training_esm.datasets import load_jain_data
+
 df = load_jain_data(stage="parity")  # Fast, correct
 ```
 
