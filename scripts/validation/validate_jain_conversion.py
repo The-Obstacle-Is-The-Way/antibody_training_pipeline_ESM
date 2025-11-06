@@ -20,10 +20,8 @@ from typing import Dict
 import pandas as pd
 import pandas.testing as pdt
 
-# Make conversion helpers importable.
-sys.path.append(str(Path(__file__).resolve().parent))
-
-from convert_jain_excel_to_csv import (  # noqa: E402
+# Clean package import (no sys.path manipulation needed)
+from preprocessing.jain.step1_convert_excel_to_csv import (
     ASSAY_CLUSTERS,
     VALID_AA,
     convert_jain_dataset,

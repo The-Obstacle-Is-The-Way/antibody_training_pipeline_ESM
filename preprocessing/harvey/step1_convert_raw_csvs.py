@@ -153,7 +153,7 @@ def main():
     print(f"\nOutput file: {output_csv.absolute()}")
     print(f"Total sequences: {len(df)}")
     print("\nNext steps:")
-    print("  1. Run preprocessing/process_harvey.py to extract fragments")
+    print("  1. Run preprocessing/harvey/step2_extract_fragments.py to extract fragments")
     print("  2. Validate with scripts/validation/validate_fragments.py")
 
 
