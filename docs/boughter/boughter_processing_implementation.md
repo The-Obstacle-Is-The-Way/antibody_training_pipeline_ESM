@@ -850,7 +850,7 @@ def main():
     df_clean = filter_quality_issues(df_annotated)
 
     # Create fragment CSVs from CLEAN data
-    output_dir = Path('test_datasets/boughter')
+    output_dir = Path('train_datasets/boughter/annotated')
     create_fragment_csvs(df_clean, output_dir)  # Use df_clean, not df_annotated
 ```
 
