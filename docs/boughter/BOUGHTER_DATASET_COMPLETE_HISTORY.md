@@ -174,35 +174,7 @@ Stage 2+3: ANARCI annotation + Boughter QC
 
 ### QC Level 2: Strict QC (Industry Standard)
 
-**What it includes:**
-- ✅ All Boughter QC filters (above)
-- ✅ **PLUS:** X filtering in **FULL sequence** (not just CDRs)
-- ✅ **PLUS:** Non-standard AA filtering (B, Z, J, U, O)
-
-**Pipeline:**
-```
-Stage 2+3 outputs (1,065 sequences, *_boughter.csv files)
-   ↓
-Stage 4: Additional QC (Industry Standard)
-   ↓ preprocessing/boughter/stage4_additional_qc.py
-   ↓ QC: X ANYWHERE in sequence, non-standard AA
-   ↓ Outputs: 16 fragment CSVs (840-914 sequences, fragment-dependent)
-       *_boughter_strict_qc.csv (training subset + industry standard filters)
-```
-
-**Sequence counts (fragment-dependent):**
-- **VH_only**: 914 → **852 sequences** (-62 with X in VH frameworks)
-- **VL_only**: 914 → **900 sequences** (-14 with X in VL frameworks)
-- **Full/VH+VL**: 914 → **840 sequences** (-74 total with X in either chain)
-- **CDR-only fragments**: **914 sequences** (no change - X already filtered in CDRs)
-
-**Files:**
-- `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv` (852 sequences)
-- `train_datasets/boughter/*_boughter_strict_qc.csv` (16 fragment files)
-
-**Use case:** Matching Novo's likely methodology + modern ML best practices
-
-**Documentation:** `docs/BOUGHTER_ADDITIONAL_QC_PLAN.md`
+An experimental Stage 4 strict QC filtering was tested but archived due to lack of improvement over production model. All details have been moved to `experiments/strict_qc_2025-11-04/`.
 
 ---
 
@@ -346,31 +318,15 @@ An experimental strict QC filtering (852-914 sequences) was tested but archived 
 
 ---
 
-### Strict QC (852 sequences)
+### Historical Note: Archived Strict QC Experiment
 
-**Model:** `models/boughter_vh_strict_qc_esm1v_logreg.pkl`
+A 852-sequence strict QC model was trained but did NOT improve performance over the 914-sequence production model (66.55% vs 67.5% CV accuracy, not statistically significant).
 
-**Cross-Validation (10-fold):**
-- Accuracy: **66.55% ± 7.07%**
-- F1 Score: 66.10% ± 8.99%
-- ROC AUC: nan (scoring issue)
-
-**Final Training (on full 852 sequences):**
-- Accuracy: 74.18%
-- Precision: 74.35%
-- Recall: 74.00%
-- F1 Score: 74.18%
-- ROC AUC: 82.93%
-
-**Training time:** ~1.5 minutes (2025-11-04 23:57:04 → 23:58:30)
-
-**File used:** `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
-
-**Status:** ✅ Industry-standard QC model, but did NOT improve CV accuracy
+**See:** `experiments/strict_qc_2025-11-04/EXPERIMENT_README.md` for complete experimental details.
 
 ---
 
-### Statistical Comparison
+### Comparison Summary
 
 **CV Accuracy:**
 - Boughter QC: 67.5% ± 8.9% (margin of error: ±8.9%)
@@ -435,22 +391,7 @@ Boughter:      [58.6% =========== 67.5% ============ 76.4%]
 
 ---
 
-### Alternative: Use Strict QC (852 sequences)
-
-**File:** `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
-
-**Why?**
-- If you want industry-standard QC (X anywhere, non-standard AA)
-- If you prioritize data cleanliness over quantity
-- If you're exploring QC impact on performance
-
-**Model:** `models/boughter_vh_strict_qc_esm1v_logreg.pkl`
-
-**Expected Jain test accuracy:** ~66% (similar to Boughter QC)
-
----
-
-_Removed: Testing section already covered in "Testing the Production Model" above_
+_Removed: Old "Alternative" section - strict_qc experiment archived in `experiments/strict_qc_2025-11-04/`_
 
 ---
 
@@ -538,7 +479,7 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 ---
 
 **Document Status:**
-- **Version:** 1.0
-- **Date:** 2025-11-04
-- **Status:** ✅ Complete - All Boughter questions answered, both QC levels validated
+- **Version:** 2.0 (Post-archive cleanup)
+- **Date:** 2025-11-06
+- **Status:** ✅ Complete - Production model validated, experimental work archived
 - **Maintainer:** Ray (Clarity Digital Twin Project)
