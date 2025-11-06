@@ -166,7 +166,7 @@ def test_previously_affected_sequences():
     print("=" * 70)
 
     # Check VH_only
-    vh_file = Path("train_datasets/boughter/VH_only_boughter.csv")
+    vh_file = Path("train_datasets/boughter/annotated/VH_only_boughter.csv")
     if not vh_file.exists():
         print(f"  ✗ FAIL: {vh_file} not found")
         return False
@@ -174,7 +174,7 @@ def test_previously_affected_sequences():
     vh_df = pd.read_csv(vh_file, comment="#")
 
     # Check VL_only
-    vl_file = Path("train_datasets/boughter/VL_only_boughter.csv")
+    vl_file = Path("train_datasets/boughter/annotated/VL_only_boughter.csv")
     if not vl_file.exists():
         print(f"  ✗ FAIL: {vl_file} not found")
         return False
@@ -247,7 +247,7 @@ def test_model_validation_logic():
     total_validated = 0
 
     for file_name in test_files:
-        file_path = Path(f"train_datasets/boughter/{file_name}")
+        file_path = Path(f"train_datasets/boughter/annotated/{file_name}")
 
         if not file_path.exists():
             print(f"  ✗ FAIL: {file_path} not found")
@@ -292,7 +292,7 @@ def test_data_integrity():
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    boughter_dir = Path("train_datasets/boughter")
+    boughter_dir = Path("train_datasets/boughter/annotated")
     expected_files = [
         "VH_only_boughter.csv",
         "VL_only_boughter.csv",
