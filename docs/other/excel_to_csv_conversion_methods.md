@@ -1,8 +1,15 @@
 # Excel to CSV Conversion Methods & Validation
 
+> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+>
+> This document may reference old root imports (e.g., `from data import load_data`).
+> In v2.0.0+, use: `from antibody_training_esm.data.loaders import load_data`
+>
+> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+
 **Purpose:** Document all available methods for converting supplementary Excel files (Shehata & Jain datasets) to CSV with validation.
 
-**Last Updated:** 2025-11-01  
+**Last Updated:** 2025-11-01
 **Related Issues:** #3 (Shehata), #2 (Jain)
 
 ---

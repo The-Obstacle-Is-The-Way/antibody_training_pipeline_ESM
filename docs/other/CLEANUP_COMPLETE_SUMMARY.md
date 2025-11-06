@@ -1,5 +1,12 @@
 # Jain Dataset Cleanup - COMPLETE ✅
 
+> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+>
+> This document may reference the old root file structure (train.py, test.py, etc.).
+> In v2.0.0+, use `antibody-train` and `antibody-test` CLIs instead.
+>
+> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+
 **Branch:** clean-jain
 **Date:** 2025-11-05
 **Status:** ✅ Clean, organized, ready to merge

@@ -1,5 +1,12 @@
 # Jain Dataset: Complete History & Processing Documentation
 
+> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+>
+> This document may reference `python test.py` commands which no longer exist in v2.0.0+.
+> Use `antibody-test` CLI instead: `antibody-test --model X --data Y`
+>
+> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+
 **Date:** 2025-11-04
 **Status:** ✅ Complete - All questions answered, methodology fully documented
 **Purpose:** Comprehensive reference for Jain dataset structure, processing, and test file selection
