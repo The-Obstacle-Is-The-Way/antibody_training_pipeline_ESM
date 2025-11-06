@@ -30,10 +30,10 @@
 
 ## scripts/analysis/ (5 scripts)
 
-### ✅ `analyze_threshold_optimization.py` - KEEP
+### 🧪 `analyze_threshold_optimization.py` - DELETE
 
-**Status:** VALID - Cross-dataset utility
-**Purpose:** Finds optimal decision thresholds for different assay types (ELISA vs PSR)
+**Status:** EXPERIMENTAL - One-off threshold discovery
+**Purpose:** Find optimal decision thresholds for ELISA vs PSR assays
 
 **What it does:**
 - Loads trained model
@@ -41,14 +41,19 @@
 - Finds optimal thresholds that match Novo's confusion matrices
 - Demonstrates why single threshold can't work for both assays
 
-**Why keep:**
-- Cross-dataset analysis tool
-- Documents ELISA vs PSR threshold differences
-- Production utility for threshold calibration
+**Why delete:**
+- ✅ Thresholds already discovered (ELISA: 0.5, PSR: 0.5495)
+- ✅ Now implemented in `model.predict(assay_type='ELISA'|'PSR')`
+- ✅ Results documented in `docs/ASSAY_SPECIFIC_THRESHOLDS.md`
+- ✅ Uses OLD file paths (VH_only_jain_test_QC_REMOVED.csv - 91 antibodies)
+- ✅ Has wrong confusion matrices (Jain numbers are backwards)
+- ✅ One-off analysis from Nov 3, 2025 discovery phase
 
-**References:**
-- Novo's Section 2.7: "PSR and ELISA measure different non-specificity spectrums"
-- Used to discover PSR threshold = 0.549
+**Historical context:**
+- Created during threshold calibration experiments
+- Successfully discovered PSR threshold = 0.5495
+- Led to implementing assay-specific thresholds in classifier.py
+- Purpose fulfilled - can be deleted
 
 ---
 
@@ -336,10 +341,11 @@
 
 ## Recommended Actions
 
-### Phase 1: DELETE Experimental + Deprecated Scripts (4 scripts)
+### Phase 1: DELETE Experimental + Deprecated Scripts (5 scripts)
 
 ```bash
-# Experimental scripts (3)
+# Experimental scripts (4)
+git rm scripts/analysis/analyze_threshold_optimization.py
 git rm scripts/analysis/compare_jain_methodologies.py
 git rm scripts/analysis/rethreshold_harvey.py
 git rm scripts/analysis/zscore_jain_116_outliers.py
@@ -349,7 +355,7 @@ git rm scripts/validation/verify_novo_parity.py
 ```
 
 **Rationale:**
-- **Experimental (3):** One-off experiments from reverse engineering phase, results documented, no longer needed
+- **Experimental (4):** One-off experiments from threshold discovery and reverse engineering phase, results documented, no longer needed
 - **Deprecated (1):** verify_novo_parity.py superseded by test_jain_novo_parity.py (uses old paths/columns)
 
 ---
@@ -392,9 +398,6 @@ scripts/testing/test_harvey_psr_threshold.py
 
 ```
 scripts/
-├── analysis/
-│   ├── analyze_threshold_optimization.py  (cross-dataset utility)
-│   └── README.md
 ├── testing/
 │   ├── demo_assay_specific_thresholds.py  (educational demo)
 │   └── README.md
@@ -403,10 +406,11 @@ scripts/
     └── README.md
 ```
 
-**Only 3 scripts remain:**
-- All are cross-dataset utilities
-- All are production-ready
-- All serve different purposes (analysis, demo, validation)
+**Only 2 scripts remain:**
+- Both are cross-dataset utilities
+- Both are production-ready
+- Demo script shows assay-specific threshold usage
+- Validation script provides generic fragment checking
 
 ---
 
@@ -434,15 +438,15 @@ scripts/
 
 ## Senior Approval Questions
 
-1. **Approve Phase 1: DELETE 4 scripts?**
-   - 3 experimental (compare_jain_methodologies, rethreshold_harvey, zscore_jain_116_outliers)
+1. **Approve Phase 1: DELETE 5 scripts?**
+   - 4 experimental (analyze_threshold_optimization, compare_jain_methodologies, rethreshold_harvey, zscore_jain_116_outliers)
    - 1 deprecated (verify_novo_parity.py - superseded by test_jain_novo_parity.py)
 
 2. **Approve Phase 2: MOVE 6 dataset-specific scripts to preprocessing/?**
    - Follows dataset-centric organization (consistent with recent refactor)
    - Boughter (2), Jain (2), Shehata (1), Harvey (1)
 
-3. **Approve Phase 3: Final structure with only 3 cross-dataset utilities?**
+3. **Approve Phase 3: Final structure with only 2 cross-dataset utilities?**
    - scripts/ becomes minimal: only cross-dataset tools
    - Dataset-specific work lives in preprocessing/{dataset}/
 
