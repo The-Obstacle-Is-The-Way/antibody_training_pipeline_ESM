@@ -221,13 +221,14 @@ def print_validation_report(
 
 def main():
     """Validate Boughter dataset Stages 2+3 output."""
-    boughter_dir = Path("train_datasets/boughter")
+    boughter_annotated_dir = Path("train_datasets/boughter/annotated")
+    boughter_canonical_dir = Path("train_datasets/boughter/canonical")
 
-    if not boughter_dir.exists():
-        print(f"✗ Error: Boughter output directory not found: {boughter_dir}")
+    if not boughter_annotated_dir.exists():
+        print(f"✗ Error: Boughter annotated directory not found: {boughter_annotated_dir}")
         sys.exit(1)
 
-    valid = print_validation_report("boughter", boughter_dir, expected_fragments=16)
+    valid = print_validation_report("boughter", boughter_annotated_dir, expected_fragments=16)
 
     # Additional Boughter-specific checks
     print("\n" + "=" * 60)
@@ -235,7 +236,7 @@ def main():
     print("=" * 60)
 
     # Check training subset file
-    training_file = boughter_dir / "VH_only_boughter_training.csv"
+    training_file = boughter_canonical_dir / "VH_only_boughter_training.csv"
     if training_file.exists():
         df = pd.read_csv(training_file, comment="#")
         print(f"\n✓ Training subset file exists: {training_file.name}")
