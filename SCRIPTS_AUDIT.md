@@ -16,15 +16,15 @@
 **Total scripts audited:** 13 scripts (+ 3 README files)
 
 **Breakdown:**
-- ✅ VALID (keep in `scripts/`): 3 scripts
+- ✅ VALID (keep in `scripts/`): 2 scripts
 - 📦 DATASET-SPECIFIC (move to `preprocessing/`): 6 scripts
-- 🧪 EXPERIMENTAL (delete): 3 scripts
+- 🧪 EXPERIMENTAL (delete): 4 scripts
 - 🗑️ DEPRECATED (delete): 1 script
 
 **Actions:**
-- **DELETE:** 4 scripts (3 experimental + 1 deprecated)
+- **DELETE:** 5 scripts (4 experimental + 1 deprecated)
 - **MOVE:** 6 scripts (2 Boughter + 2 Jain + 1 Shehata + 1 Harvey)
-- **KEEP:** 3 scripts (cross-dataset utilities only)
+- **KEEP:** 2 scripts (cross-dataset utilities only)
 
 ---
 
