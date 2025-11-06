@@ -1,7 +1,11 @@
 """
-Harvey Dataset Preprocessor
+Harvey Dataset Loader
 
-Handles preprocessing of the Harvey nanobody polyreactivity dataset.
+Loads preprocessed Harvey nanobody polyreactivity dataset.
+
+IMPORTANT: This module is for LOADING preprocessed data, not for running
+the preprocessing pipeline. The preprocessing scripts that CREATE the data
+are in: preprocessing/harvey/step2_extract_fragments.py
 
 Dataset characteristics:
 - Nanobodies (VHH only, no light chain)
@@ -27,24 +31,27 @@ from .base import AntibodyDataset
 
 class HarveyDataset(AntibodyDataset):
     """
-    Preprocessor for Harvey nanobody dataset.
+    Loader for Harvey nanobody dataset.
 
-    This dataset contains VHH sequences (heavy chain only, no light chain) from
+    This class provides an interface to LOAD preprocessed Harvey dataset files.
+    It does NOT run the preprocessing pipeline - use preprocessing/harvey/step2_extract_fragments.py for that.
+
+    The Harvey dataset contains VHH sequences (heavy chain only, no light chain) from
     a high-throughput polyreactivity screen. Sequences are provided with IMGT
     numbering and pre-extracted CDR regions.
     """
 
     def __init__(self, output_dir: Path | None = None, logger=None):
         """
-        Initialize Harvey dataset preprocessor.
+        Initialize Harvey dataset loader.
 
         Args:
-            output_dir: Directory to write processed outputs
+            output_dir: Directory containing preprocessed fragment files
             logger: Logger instance
         """
         super().__init__(
             dataset_name="harvey",
-            output_dir=output_dir or Path("train_datasets/harvey"),
+            output_dir=output_dir or Path("train_datasets/harvey/fragments"),
             logger=logger,
         )
 
@@ -81,7 +88,7 @@ class HarveyDataset(AntibodyDataset):
                 positions.append(row[col])
         return "".join(positions)
 
-    def load_data(
+    def load_data(  # type: ignore[override]
         self,
         high_csv_path: str | None = None,
         low_csv_path: str | None = None,
@@ -185,31 +192,30 @@ class HarveyDataset(AntibodyDataset):
         return df_output
 
 
-# ========== CONVENIENCE FUNCTIONS FOR STANDALONE USE ==========
+# ========== CONVENIENCE FUNCTIONS FOR LOADING DATA ==========
 
 
-def preprocess_harvey(
+def load_harvey_data(
     high_csv: str | None = None,
     low_csv: str | None = None,
-    output_dir: str | None = None,
 ) -> pd.DataFrame:
     """
-    Convenience function to preprocess Harvey dataset.
+    Convenience function to load preprocessed Harvey dataset.
 
-    This function provides a simple interface for standalone preprocessing scripts.
+    IMPORTANT: This loads PREPROCESSED data. To preprocess raw data, use:
+    preprocessing/harvey/step2_extract_fragments.py
 
     Args:
         high_csv: Path to high polyreactivity CSV
         low_csv: Path to low polyreactivity CSV
-        output_dir: Output directory for processed files
 
     Returns:
-        Processed DataFrame
+        DataFrame with preprocessed data
 
     Example:
-        >>> from antibody_training_esm.datasets.harvey import preprocess_harvey
-        >>> df = preprocess_harvey()
-        >>> print(f"Processed {len(df)} sequences")
+        >>> from antibody_training_esm.datasets.harvey import load_harvey_data
+        >>> df = load_harvey_data()
+        >>> print(f"Loaded {len(df)} sequences")
     """
-    dataset = HarveyDataset(output_dir=Path(output_dir) if output_dir else None)
-    return dataset.process(high_csv_path=high_csv, low_csv_path=low_csv)
+    dataset = HarveyDataset()
+    return dataset.load_data(high_csv_path=high_csv, low_csv_path=low_csv)

@@ -1,7 +1,11 @@
 """
-Jain Dataset Preprocessor
+Jain Dataset Loader
 
-Handles preprocessing of the Jain 2017 therapeutic antibody dataset.
+Loads preprocessed Jain 2017 therapeutic antibody dataset.
+
+IMPORTANT: This module is for LOADING preprocessed data, not for running
+the preprocessing pipeline. The preprocessing scripts that CREATE the data
+are in: preprocessing/jain/step2_preprocess_p5e_s2.py
 
 Dataset characteristics:
 - Full antibodies (VH + VL)
@@ -36,9 +40,12 @@ from .base import AntibodyDataset
 
 class JainDataset(AntibodyDataset):
     """
-    Preprocessor for Jain therapeutic antibody dataset.
+    Loader for Jain therapeutic antibody dataset.
 
-    This dataset contains FDA-approved and clinical-stage therapeutic antibodies
+    This class provides an interface to LOAD preprocessed Jain dataset files.
+    It does NOT run the preprocessing pipeline - use preprocessing/jain/step2_preprocess_p5e_s2.py for that.
+
+    The Jain dataset contains FDA-approved and clinical-stage therapeutic antibodies
     with complex multi-stage filtering to achieve Novo Nordisk parity.
     """
 
@@ -52,15 +59,15 @@ class JainDataset(AntibodyDataset):
 
     def __init__(self, output_dir: Path | None = None, logger=None):
         """
-        Initialize Jain dataset preprocessor.
+        Initialize Jain dataset loader.
 
         Args:
-            output_dir: Directory to write processed outputs
+            output_dir: Directory containing preprocessed fragment files
             logger: Logger instance
         """
         super().__init__(
             dataset_name="jain",
-            output_dir=output_dir or Path("test_datasets/jain"),
+            output_dir=output_dir or Path("test_datasets/jain/fragments"),
             logger=logger,
         )
 
@@ -75,7 +82,7 @@ class JainDataset(AntibodyDataset):
         """
         return self.FULL_ANTIBODY_FRAGMENTS
 
-    def load_data(
+    def load_data(  # type: ignore[override]
         self,
         full_csv_path: str | None = None,
         sd03_csv_path: str | None = None,
@@ -299,33 +306,34 @@ class JainDataset(AntibodyDataset):
         return df_86
 
 
-# ========== CONVENIENCE FUNCTIONS FOR STANDALONE USE ==========
+# ========== CONVENIENCE FUNCTIONS FOR LOADING DATA ==========
 
 
-def preprocess_jain(
+def load_jain_data(
     full_csv: str | None = None,
     sd03_csv: str | None = None,
     stage: str = "parity",
-    output_dir: str | None = None,
 ) -> pd.DataFrame:
     """
-    Convenience function to preprocess Jain dataset.
+    Convenience function to load preprocessed Jain dataset.
 
-    This function provides a simple interface for standalone preprocessing scripts.
+    IMPORTANT: This loads PREPROCESSED data. To preprocess raw data, use:
+    preprocessing/jain/step2_preprocess_p5e_s2.py
 
     Args:
         full_csv: Path to jain_with_private_elisa_FULL.csv
         sd03_csv: Path to jain_sd03.csv (biophysical data)
         stage: Processing stage ("full", "ssot", or "parity")
-        output_dir: Output directory for processed files
 
     Returns:
-        Processed DataFrame
+        DataFrame with preprocessed data
 
     Example:
-        >>> from antibody_training_esm.datasets.jain import preprocess_jain
-        >>> df = preprocess_jain(stage="parity")  # 86 antibodies (Novo parity)
-        >>> print(f"Processed {len(df)} sequences")
+        >>> from antibody_training_esm.datasets.jain import load_jain_data
+        >>> df = load_jain_data(stage="parity")  # 86 antibodies (Novo parity)
+        >>> print(f"Loaded {len(df)} sequences")
     """
-    dataset = JainDataset(output_dir=Path(output_dir) if output_dir else None)
-    return dataset.process(full_csv_path=full_csv, sd03_csv_path=sd03_csv, stage=stage)
+    dataset = JainDataset()
+    return dataset.load_data(
+        full_csv_path=full_csv, sd03_csv_path=sd03_csv, stage=stage
+    )

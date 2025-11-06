@@ -330,7 +330,7 @@ class AntibodyDataset(ABC):
         # Annotate heavy chains
         if "VH_sequence" in df.columns:
             self.logger.info("Annotating VH sequences...")
-            vh_annotations = df.apply(
+            vh_annotations = df.apply(  # type: ignore[call-overload]
                 lambda row: self.annotate_sequence(
                     row.get("id", f"seq_{row.name}"), row["VH_sequence"], "H"
                 )
@@ -348,7 +348,7 @@ class AntibodyDataset(ABC):
         # Annotate light chains (if present)
         if "VL_sequence" in df.columns:
             self.logger.info("Annotating VL sequences...")
-            vl_annotations = df.apply(
+            vl_annotations = df.apply(  # type: ignore[call-overload]
                 lambda row: self.annotate_sequence(
                     row.get("id", f"seq_{row.name}"), row["VL_sequence"], "L"
                 )
@@ -505,7 +505,7 @@ class AntibodyDataset(ABC):
         fragment_types = self.get_fragment_types()
 
         # Collect fragments for each type
-        fragment_data = {ftype: [] for ftype in fragment_types}
+        fragment_data: dict[str, list] = {ftype: [] for ftype in fragment_types}
 
         for _, row in df.iterrows():
             fragments = self.create_fragments(row)

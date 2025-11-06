@@ -1,7 +1,11 @@
 """
-Boughter Dataset Preprocessor
+Boughter Dataset Loader
 
-Handles preprocessing of the Boughter mouse antibody dataset with DNA translation.
+Loads preprocessed Boughter mouse antibody dataset.
+
+IMPORTANT: This module is for LOADING preprocessed data, not for running
+the preprocessing pipeline. The preprocessing scripts that CREATE the data
+are in: preprocessing/boughter/stage2_stage3_annotation_qc.py
 
 Dataset characteristics:
 - Full antibodies (VH + VL)
@@ -33,11 +37,14 @@ from .base import AntibodyDataset
 
 class BoughterDataset(AntibodyDataset):
     """
-    Preprocessor for Boughter mouse antibody dataset.
+    Loader for Boughter mouse antibody dataset.
 
-    This dataset requires DNA translation before standard preprocessing.
+    This class provides an interface to LOAD preprocessed Boughter dataset files.
+    It does NOT run the preprocessing pipeline - use preprocessing/boughter/stage2_stage3_annotation_qc.py for that.
+
+    The Boughter dataset originally requires DNA translation before standard preprocessing.
     Sequences are provided as DNA in FASTA format and must be translated
-    to protein sequences using a hybrid translation strategy.
+    to protein sequences using a hybrid translation strategy (done by preprocessing scripts).
     """
 
     # Novo flagging strategy
@@ -50,15 +57,15 @@ class BoughterDataset(AntibodyDataset):
 
     def __init__(self, output_dir: Path | None = None, logger=None):
         """
-        Initialize Boughter dataset preprocessor.
+        Initialize Boughter dataset loader.
 
         Args:
-            output_dir: Directory to write processed outputs
+            output_dir: Directory containing preprocessed fragment files
             logger: Logger instance
         """
         super().__init__(
             dataset_name="boughter",
-            output_dir=output_dir or Path("train_datasets/boughter"),
+            output_dir=output_dir or Path("train_datasets/boughter/fragments"),
             logger=logger,
         )
 
@@ -73,7 +80,7 @@ class BoughterDataset(AntibodyDataset):
         """
         return self.FULL_ANTIBODY_FRAGMENTS
 
-    def load_data(
+    def load_data(  # type: ignore[override]
         self,
         processed_csv: str | None = None,
         subset: str | None = None,
@@ -224,35 +231,34 @@ class BoughterDataset(AntibodyDataset):
         return df
 
 
-# ========== CONVENIENCE FUNCTIONS FOR STANDALONE USE ==========
+# ========== CONVENIENCE FUNCTIONS FOR LOADING DATA ==========
 
 
-def preprocess_boughter(
+def load_boughter_data(
     processed_csv: str | None = None,
     subset: str | None = None,
     include_mild: bool = False,
-    output_dir: str | None = None,
 ) -> pd.DataFrame:
     """
-    Convenience function to preprocess Boughter dataset.
+    Convenience function to load preprocessed Boughter dataset.
 
-    This function provides a simple interface for standalone preprocessing scripts.
+    IMPORTANT: This loads PREPROCESSED data. To preprocess raw data, use:
+    preprocessing/boughter/stage2_stage3_annotation_qc.py
 
     Args:
         processed_csv: Path to processed CSV with protein sequences
         subset: Specific subset to load or None for all
         include_mild: If True, include mild (1-3 flags)
-        output_dir: Output directory for processed files
 
     Returns:
-        Processed DataFrame
+        DataFrame with preprocessed data
 
     Example:
-        >>> from antibody_training_esm.datasets.boughter import preprocess_boughter
-        >>> df = preprocess_boughter(include_mild=False)  # Novo flagging
-        >>> print(f"Processed {len(df)} sequences")
+        >>> from antibody_training_esm.datasets.boughter import load_boughter_data
+        >>> df = load_boughter_data(include_mild=False)  # Novo flagging
+        >>> print(f"Loaded {len(df)} sequences")
     """
-    dataset = BoughterDataset(output_dir=Path(output_dir) if output_dir else None)
-    return dataset.process(
+    dataset = BoughterDataset()
+    return dataset.load_data(
         processed_csv=processed_csv, subset=subset, include_mild=include_mild
     )

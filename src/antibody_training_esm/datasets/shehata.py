@@ -1,7 +1,11 @@
 """
-Shehata Dataset Preprocessor
+Shehata Dataset Loader
 
-Handles preprocessing of the Shehata HIV antibody polyreactivity dataset.
+Loads preprocessed Shehata HIV antibody polyreactivity dataset.
+
+IMPORTANT: This module is for LOADING preprocessed data, not for running
+the preprocessing pipeline. The preprocessing scripts that CREATE the data
+are in: preprocessing/shehata/step2_extract_fragments.py
 
 Dataset characteristics:
 - Full antibodies (VH + VL)
@@ -27,9 +31,12 @@ from .base import AntibodyDataset
 
 class ShehataDataset(AntibodyDataset):
     """
-    Preprocessor for Shehata HIV antibody dataset.
+    Loader for Shehata HIV antibody dataset.
 
-    This dataset contains HIV-specific antibodies from 8 donors, with PSR scores
+    This class provides an interface to LOAD preprocessed Shehata dataset files.
+    It does NOT run the preprocessing pipeline - use preprocessing/shehata/step2_extract_fragments.py for that.
+
+    The Shehata dataset contains HIV-specific antibodies from 8 donors, with PSR scores
     measuring polyreactivity. The paper reports 7/398 (1.76%) as non-specific,
     corresponding to the 98.24th percentile threshold.
     """
@@ -39,15 +46,15 @@ class ShehataDataset(AntibodyDataset):
 
     def __init__(self, output_dir: Path | None = None, logger=None):
         """
-        Initialize Shehata dataset preprocessor.
+        Initialize Shehata dataset loader.
 
         Args:
-            output_dir: Directory to write processed outputs
+            output_dir: Directory containing preprocessed fragment files
             logger: Logger instance
         """
         super().__init__(
             dataset_name="shehata",
-            output_dir=output_dir or Path("test_datasets/shehata"),
+            output_dir=output_dir or Path("test_datasets/shehata/fragments"),
             logger=logger,
         )
 
@@ -101,7 +108,7 @@ class ShehataDataset(AntibodyDataset):
 
         return threshold
 
-    def load_data(
+    def load_data(  # type: ignore[override]
         self,
         excel_path: str | None = None,
         psr_threshold: float | None = None,
@@ -215,31 +222,30 @@ class ShehataDataset(AntibodyDataset):
         return df_output
 
 
-# ========== CONVENIENCE FUNCTIONS FOR STANDALONE USE ==========
+# ========== CONVENIENCE FUNCTIONS FOR LOADING DATA ==========
 
 
-def preprocess_shehata(
+def load_shehata_data(
     excel_path: str | None = None,
     psr_threshold: float | None = None,
-    output_dir: str | None = None,
 ) -> pd.DataFrame:
     """
-    Convenience function to preprocess Shehata dataset.
+    Convenience function to load preprocessed Shehata dataset.
 
-    This function provides a simple interface for standalone preprocessing scripts.
+    IMPORTANT: This loads PREPROCESSED data. To preprocess raw data, use:
+    preprocessing/shehata/step2_extract_fragments.py
 
     Args:
         excel_path: Path to shehata-mmc2.xlsx
         psr_threshold: PSR threshold for classification (None = auto-calculate)
-        output_dir: Output directory for processed files
 
     Returns:
-        Processed DataFrame
+        DataFrame with preprocessed data
 
     Example:
-        >>> from antibody_training_esm.datasets.shehata import preprocess_shehata
-        >>> df = preprocess_shehata()
-        >>> print(f"Processed {len(df)} sequences")
+        >>> from antibody_training_esm.datasets.shehata import load_shehata_data
+        >>> df = load_shehata_data()
+        >>> print(f"Loaded {len(df)} sequences")
     """
-    dataset = ShehataDataset(output_dir=Path(output_dir) if output_dir else None)
-    return dataset.process(excel_path=excel_path, psr_threshold=psr_threshold)
+    dataset = ShehataDataset()
+    return dataset.load_data(excel_path=excel_path, psr_threshold=psr_threshold)
