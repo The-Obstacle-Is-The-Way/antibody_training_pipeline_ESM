@@ -17,17 +17,9 @@ expected_counts:
   mild: 21
   test_set: 116  # excludes mild
 
-verification_status:
-  - ✓ Perfect match: 0 label mismatches vs SSOT
-  - ✓ All 137 antibodies have correct ELISA-based labels
-  - ✓ Distribution: 94/22/21 (specific/nonspecific/mild)
-
 note: |
   This replaces the old fragments (67/27/43 distribution) that used
   flags_total labeling from the paper. The ELISA-based labeling is
   the single source of truth (SSOT) for all jain data.
 
   Old fragments moved to: test_datasets/jain/fragments_legacy_flags_total/
-  Old fragments had 53/137 (38.7%) label mismatches vs SSOT.
-
-  The new fragments match the SSOT perfectly with 0 mismatches.

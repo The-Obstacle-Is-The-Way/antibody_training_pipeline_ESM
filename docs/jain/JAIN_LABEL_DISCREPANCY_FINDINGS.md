@@ -2,7 +2,7 @@
 
 **Date**: November 6, 2025
 **Investigation**: Integration test failures for Jain dataset
-**Status**: 🔴 **CRITICAL ISSUE IDENTIFIED**
+**Status**: ✅ **RESOLVED - ELISA SSOT RESTORED**
 
 ---
 
@@ -10,12 +10,12 @@
 
 The Jain dataset fragments (`test_datasets/jain/fragments/*.csv`) are using **INCORRECT labels** based on an outdated `flags_total` system instead of the correct `elisa_flags` system. This affects **53 out of 137 antibodies** (38.7% label error rate).
 
-**Current (WRONG)**:
+**Legacy (Wrong - flags_total)**:
 - Specific (0): 67 antibodies
 - Non-specific (1): 27 antibodies
 - Mild (NaN): 43 antibodies
 
-**Correct (Should be)**:
+**Current (Correct - ELISA SSOT)**:
 - Specific (0): 94 antibodies
 - Non-specific (1): 22 antibodies
 - Mild (NaN): 21 antibodies
@@ -178,55 +178,23 @@ print(f'Discrepancies: {len(diff)}/137 antibodies ({len(diff)/137*100:.1f}%)')
 
 ## Recommended Fix
 
-### Option 1: Regenerate Fragments (RECOMMENDED)
+### ✅ Fix Implemented (2025-11-06)
 
-**Steps**:
-1. Create script `preprocessing/jain/step3_extract_fragments.py`
-2. Source: `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv`
-3. Regenerate all 16 fragment files with correct ELISA-based labels
-4. Update test expectations to 94/22/21
-5. Verify with integration tests
-
-**Pros**:
-- Fixes root cause
-- All fragments correct
-- Aligns with SSOT (ELISA flags)
-
-**Cons**:
-- Requires fragment extraction script
-- Changes 18 data files
-
-### Option 2: Update Test Expectations Only (QUICK FIX)
-
-**Steps**:
-1. Update `tests/integration/test_jain_embedding_compatibility.py`
-2. Change expectations from 67/27/43 to 94/22/21
-3. Document that fragments use deprecated labeling
-
-**Pros**:
-- Quick fix
-- Tests pass
-
-**Cons**:
-- Doesn't fix root cause
-- Fragments still have wrong labels
-- Confusing for future users
-
-### Option 3: Hybrid Approach
-
-**Steps**:
-1. Regenerate fragments with correct labels (Option 1)
-2. Keep old fragments in `test_datasets/jain/fragments_deprecated/`
-3. Document both labeling systems clearly
-
-**Pros**:
-- Preserves history
-- Fixes data
-- Educational value
-
-**Cons**:
-- More disk space
-- Could be confusing
+1. **New extraction pipeline**: `preprocessing/jain/step3_extract_fragments.py`
+   - Uses ANARCI (IMGT) to rebuild all 16 fragment views from the ELISA SSOT (`jain_with_private_elisa_FULL.csv`)
+   - Centralizes the ELISA labeling rule (`0 → specific`, `1-3 → mild`, `≥4 → non-specific`)
+2. **Fresh fragments generated**: `test_datasets/jain/fragments/*.csv`
+   - 137 antibodies each
+   - Distribution verified: 94 specific / 22 non-specific / 21 mild
+   - `manifest.yml` records source hash, script version, and expected counts
+3. **Legacy artifacts quarantined**: `test_datasets/jain/fragments_legacy_flags_total/`
+   - README documents the old 67/27/43 distribution and warns against usage
+4. **Integration tests updated**: `tests/integration/test_jain_embedding_compatibility.py`
+   - Path fixes now target the regenerated fragments
+   - Data integrity assertions enforce 94/22/21 distribution (with mild count 21)
+5. **Documentation refreshed**
+   - `test_datasets/jain/fragments/README.md` now references the ELISA SSOT, manifests, and legacy folder
+   - This report captures the history, root cause, and permanent fix
 
 ---
 
@@ -261,12 +229,12 @@ git show 9de5687  # Nov 5, 2025
 
 ## Action Items
 
-- [ ] **DECIDE**: Which fix approach to use (Option 1, 2, or 3)
-- [ ] **IMPLEMENT**: Chosen fix approach
-- [ ] **UPDATE**: Fragment README to document labeling system
-- [ ] **VERIFY**: All integration tests pass
-- [ ] **DOCUMENT**: Update jain documentation with labeling system details
-- [ ] **COMMIT**: Changes with clear message explaining fix
+- [x] Regenerate fragments from ELISA SSOT
+- [x] Quarantine legacy fragments + add README warning
+- [x] Update integration tests to assert 94/22/21
+- [x] Add provenance manifest (source hash, script, counts)
+- [x] Refresh documentation (fragment README + this report)
+- [x] Run full validation (`make all`) – 20/20 tests passing, zero warnings
 
 ---
 

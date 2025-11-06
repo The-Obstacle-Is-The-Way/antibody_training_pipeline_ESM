@@ -315,16 +315,31 @@ def create_manifest(output_dir: Path, source_path: Path, script_path: Path):
     """
     import hashlib
 
+    root = Path.cwd().resolve()
+
     # Calculate SHA256 of source file
     with open(source_path, "rb") as f:
         source_sha = hashlib.sha256(f.read()).hexdigest()
 
+    source_abs = source_path.resolve()
+    script_abs = script_path.resolve()
+
+    try:
+        source_rel = source_abs.relative_to(root)
+    except ValueError:
+        source_rel = source_abs
+
+    try:
+        script_rel = script_abs.relative_to(root)
+    except ValueError:
+        script_rel = script_abs
+
     manifest_content = f"""# Jain Dataset Fragment Provenance Manifest
 # Generated: 2025-11-06
 
-source_file: {source_path.relative_to(Path.cwd())}
+source_file: {source_rel}
 source_sha256: {source_sha}
-script: {script_path.relative_to(Path.cwd())}
+script: {script_rel}
 
 labeling_rule: ELISA-based
   - elisa_flags = 0     → Specific (label 0)
@@ -416,10 +431,12 @@ def main():
     print("=" * 70)
 
     print("\nNext steps:")
-    print("  1. Move old fragments to test_datasets/jain/fragments_legacy_flags_total/")
-    print("  2. Update test_jain_embedding_compatibility.py expectations (94/22/21)")
-    print("  3. Run integration tests to verify")
-    print("  4. Commit changes with clear message")
+    print(
+        "  1. Ensure legacy fragments remain quarantined in "
+        "test_datasets/jain/fragments_legacy_flags_total/"
+    )
+    print("  2. Run integration tests to verify the 94/22/21 distribution")
+    print("  3. Commit changes with a clear provenance message")
 
 
 if __name__ == "__main__":
