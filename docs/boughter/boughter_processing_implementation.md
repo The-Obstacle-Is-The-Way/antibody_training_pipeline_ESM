@@ -505,7 +505,7 @@ def validate_stage1_output(csv_path: str) -> pd.DataFrame:
 
 ### Stage 2.2: ANARCI Annotation
 
-**Following process_jain.py pattern**:
+**Following preprocess_jain_p5e_s2.py pattern**:
 
 ```python
 import riot_na
@@ -1165,7 +1165,7 @@ logger = logging.getLogger(__name__)
 
 **Implementation Patterns**:
 - `preprocessing/process_harvey.py` - Nanobody (VHH only) processing
-- `preprocessing/process_jain.py` - Full antibody (VH+VL) processing
+- `preprocessing/preprocess_jain_p5e_s2.py` - Full antibody (VH+VL) processing
 
 ---
 

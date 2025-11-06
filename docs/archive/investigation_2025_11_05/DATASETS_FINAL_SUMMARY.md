@@ -61,19 +61,19 @@ This project uses **two main datasets** for antibody polyreactivity prediction:
 ### Four Test Sets Available:
 
 #### 1. Complete Dataset (137 antibodies)
-- **File:** `test_datasets/jain/VH_only_jain.csv`
+- **File:** `test_datasets/jain/fragments/VH_only_jain.csv`
 - **Use case:** Exploratory analysis, full dataset
 
 #### 2. FULL Set (94 antibodies)
-- **File:** `test_datasets/jain/VH_only_jain_test_FULL.csv`
+- **File:** `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv`
 - **Filtering:** 0 and 4 flags only (excludes 1-3 flags)
 
 #### 3. QC_REMOVED Set (91 antibodies)
-- **File:** `test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv`
+- **File:** `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv`
 - **Filtering:** FULL minus 3 VH length outliers
 
 #### 4. PARITY_86 Set (86 antibodies) ⭐ **RECOMMENDED**
-- **File:** `test_datasets/jain/VH_only_jain_test_PARITY_86.csv`
+- **File:** `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv`
 - **Filtering:** QC_REMOVED minus 5 borderline antibodies
 - **Novo Parity:** 66.28% accuracy (exact match)
 - **Use case:** Benchmarking against Novo results
@@ -100,12 +100,12 @@ python3 main.py configs/config_strict_qc.yaml
 # Test Boughter QC model on Jain PARITY_86 (recommended)
 python3 test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
 # Test Strict QC model on Jain PARITY_86
 python3 test.py \
   --model models/boughter_vh_strict_qc_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
 **Expected test accuracy:** ~66% (generalization to clinical antibodies)

@@ -485,19 +485,19 @@ Boughter:      [58.6% =========== 67.5% ============ 76.4%]
 
 ### Testing Both Models on Jain
 
-**Recommended test file:** `test_datasets/jain/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
+**Recommended test file:** `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
 
 **Commands:**
 ```bash
 # Test Boughter QC model (914 sequences)
 python3 test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
 # Test Strict QC model (852 sequences)
 python3 test.py \
   --model models/boughter_vh_strict_qc_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
 **Expected:** Both models should achieve ~66% accuracy (similar generalization)
@@ -641,7 +641,7 @@ python3 test.py \
 
 **For training:** Use `VH_only_boughter_training.csv` (914 sequences, Boughter QC) ⭐
 
-**For testing:** Use `test_datasets/jain/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
+**For testing:** Use `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
 
 ---
 

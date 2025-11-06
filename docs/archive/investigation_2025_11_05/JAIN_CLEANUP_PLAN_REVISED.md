@@ -82,7 +82,7 @@ REPO ROOT
 - 36 columns of rich data
 - Source of truth for P5e-S2 methodology
 
-### test_datasets/jain/VH_only_jain_86_p5e_s2.csv
+### test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
 - ✅ Result: [[40, 19], [10, 17]]
 - Minimal VH-only version (6 columns: id, sequence, label, smp, elisa, source)
 - Created from experiments source
@@ -364,13 +364,13 @@ Run these to ensure both parity methods still work:
 # Test 1: OLD reverse-engineered method
 python test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 # Expected: [[40, 19], [10, 17]] ✅
 
 # Test 2: P5e-S2 canonical method
 python test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/VH_only_jain_86_p5e_s2.csv
+  --data test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
 # Expected: [[40, 19], [10, 17]] ✅
 
 # Both should pass!

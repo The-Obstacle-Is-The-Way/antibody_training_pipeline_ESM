@@ -128,12 +128,12 @@ test_results/                 0 Jain files (cleaned)
 ### ✅ Both Methods Achieve Novo Parity
 
 **Method 1: OLD Reverse-Engineered**
-- File: `test_datasets/jain/VH_only_jain_test_PARITY_86.csv`
+- File: `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv`
 - Result: [[40, 19], [10, 17]] ✅
 - Characteristics: Simple, deterministic, recommended for benchmarking
 
 **Method 2: P5e-S2 Canonical**
-- File: `test_datasets/jain/VH_only_jain_86_p5e_s2.csv`
+- File: `test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv`
 - Result: [[40, 19], [10, 17]] ✅
 - Characteristics: Biologically principled (PSR-based), recommended for research
 - ⚠️ Has one borderline antibody (nimotuzumab ~0.5 prob)
@@ -199,13 +199,13 @@ test_results/                 0 Jain files (cleaned)
 # Method 1: OLD reverse-engineered (PRIMARY)
 python test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 # ✅ Result: [[40, 19], [10, 17]], 66.28%
 
 # Method 2: P5e-S2 canonical (ALTERNATIVE)
 python test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/VH_only_jain_86_p5e_s2.csv
+  --data test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
 # ✅ Result: [[40, 19], [10, 17]] (within ±1 due to nimotuzumab)
 ```
 

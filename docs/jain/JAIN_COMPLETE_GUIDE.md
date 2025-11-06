@@ -14,7 +14,7 @@ This is the **single source of truth** for all Jain dataset information.
 **Use this combination:**
 ```bash
 Model: models/boughter_vh_esm1v_logreg.pkl
-Dataset: test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+Dataset: test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 Expected: [[40, 19], [10, 17]], 66.28% accuracy
 ```
 
@@ -22,12 +22,12 @@ Expected: [[40, 19], [10, 17]], 66.28% accuracy
 ```bash
 python test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
 **Alternative (also achieves parity):**
 ```bash
-Dataset: test_datasets/jain/VH_only_jain_86_p5e_s2.csv
+Dataset: test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
 Expected: [[40, 19], [10, 17]]* (see reproducibility notes)
 ```
 
@@ -133,7 +133,7 @@ Remove 5 borderline antibodies
 86 antibodies (59 specific / 27 non-specific)
 ```
 
-**File:** `test_datasets/jain/VH_only_jain_test_PARITY_86.csv`
+**File:** `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv`
 
 **Result:** [[40, 19], [10, 17]] ✅ **EXACT Novo match**
 
@@ -169,7 +169,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 59 specific / 27 non-specific = 86 antibodies
 ```
 
-**File:** `test_datasets/jain/VH_only_jain_86_p5e_s2.csv`
+**File:** `test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv`
 
 **Result:** [[40, 19], [10, 17]] ✅ **Also achieves parity**
 
@@ -231,7 +231,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 3. **Use OLD method** for guaranteed reproducibility
    ```bash
    # Always gives [[40, 19], [10, 17]]
-   python test.py --data test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+   python test.py --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
    ```
 
 4. **Document the variance** in your results
@@ -314,7 +314,7 @@ experiments/novo_parity/
 # Method 1: OLD reverse-engineered (guaranteed)
 python test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
 # Expected: [[40, 19], [10, 17]], 66.28%
 ```
@@ -324,10 +324,10 @@ python test.py \
 ```bash
 # Test both datasets with same model
 python test.py --model models/boughter_vh_esm1v_logreg.pkl \
-               --data test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+               --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
 python test.py --model models/boughter_vh_esm1v_logreg.pkl \
-               --data test_datasets/jain/VH_only_jain_86_p5e_s2.csv
+               --data test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
 
 # Both should give [[40, 19], [10, 17]] (within ±1 for P5e-S2)
 ```

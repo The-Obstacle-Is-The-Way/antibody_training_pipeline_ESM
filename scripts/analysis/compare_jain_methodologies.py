@@ -19,8 +19,8 @@ from pathlib import Path
 import pickle
 
 # Paths
-OLD_FILE = Path("test_datasets/jain/VH_only_jain_test_PARITY_86.csv")
-P5E_S2_FILE = Path("test_datasets/jain/VH_only_jain_86_p5e_s2.csv")
+OLD_FILE = Path("test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv")
+P5E_S2_FILE = Path("test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv")
 MODEL_FILE = Path("models/boughter_vh_esm1v_logreg.pkl")
 OLD_PRED_FILE = Path("test_results/jain_old_verification/predictions_boughter_vh_esm1v_logreg_VH_only_jain_test_PARITY_86_20251105_083012.csv")
 P5E_S2_PRED_FILE = Path("test_results/jain_p5e_s2_verification/predictions_boughter_vh_esm1v_logreg_VH_only_jain_86_p5e_s2_20251105_082929.csv")

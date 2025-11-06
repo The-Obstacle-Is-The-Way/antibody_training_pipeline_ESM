@@ -122,14 +122,14 @@ preprocessing: 168K
 #### 5. preprocessing/ (168K)
 **Purpose:** Data preprocessing pipelines
 **Structure:** Boughter in subdirectory, others in root
-**Status:** ⚠️ NEEDS CLEANUP (1 bad script + __pycache__)
+**Status:** ✅ CLEAN (legacy script removed 2025-11-05)
 **Files:**
 - preprocessing/boughter/ (7 scripts) ✅
 - preprocess_jain_p5e_s2.py ✅ CORRECT
-- process_jain.py ❌ DELETE (wrong paths)
+- (legacy) process_jain.py ❌ removed in commit 52cffad
 - process_harvey.py ✅
 - process_shehata.py ✅
-- __pycache__/ ❌ CLEAN (should be gitignored)
+- __pycache__/ ✅ Removed (gitignored going forward)
 
 **Action:** See SCRIPTS_AUDIT_FINDINGS.md for details
 
@@ -378,8 +378,8 @@ All ESSENTIAL, keep as-is:
 
 | Issue | Location | Action | Risk |
 |-------|----------|--------|------|
-| Wrong paths script | `preprocessing/process_jain.py` | DELETE | 🔴 HIGH |
-| Python cache | `__pycache__/` (4 locations) | CLEAN | 🟡 LOW |
+| Wrong paths script | `preprocessing/process_jain.py` | DELETE ✅ (2025-11-05) | 🟢 RESOLVED |
+| Python cache | `__pycache__/` (4 locations) | CLEAN ✅ (2025-11-05) | 🟢 RESOLVED |
 
 ---
 
@@ -387,7 +387,7 @@ All ESSENTIAL, keep as-is:
 
 | Issue | Location | Action | Risk |
 |-------|----------|--------|------|
-| Missing path subdirectory | `scripts/testing/demo_assay_specific_thresholds.py` line 84 | FIX | 🟡 MED |
+| Missing path subdirectory | `scripts/testing/demo_assay_specific_thresholds.py` line 84 | FIX ✅ (2025-11-05) | 🟢 RESOLVED |
 | Outdated README | `README.md` | UPDATE | 🟢 LOW |
 
 ---
@@ -396,7 +396,7 @@ All ESSENTIAL, keep as-is:
 
 | Issue | Action | Priority |
 |-------|--------|----------|
-| 4 root-level scripts need categorization | Move to subdirectories | LOW |
+| 4 root-level scripts need categorization | Move to subdirectories ✅ (2025-11-05) | LOW |
 | Old hyperparameter sweep results | Archive or document | LOW |
 | No tests/ README | Create tests/README.md | LOW |
 
@@ -404,18 +404,10 @@ All ESSENTIAL, keep as-is:
 
 ## Cleanup Actions
 
-### Phase 1: Delete Bad Files
+### Phase 1: Delete Bad Files (Completed)
 
 ```bash
-# Delete bad preprocessing script
-git rm preprocessing/process_jain.py
-
-# Clean Python caches
-git rm -r preprocessing/__pycache__/
-find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null
-
-# Commit
-git commit -m "cleanup: Remove preprocessing/process_jain.py and __pycache__ directories"
+# Already executed in commit 52cffad (2025-11-05); commands retained for provenance.
 ```
 
 ---
@@ -444,7 +436,7 @@ git commit -m "docs: Update README with Harvey, Jain, and complete benchmark res
 **Line 84 change:**
 ```python
 # OLD
-"test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv"
+"test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv"
 
 # NEW
 "test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv"
@@ -598,12 +590,12 @@ hyperparameter_sweep_results/
 
 After cleanup:
 
-- [ ] `preprocessing/process_jain.py` deleted
-- [ ] All `__pycache__/` directories removed
-- [ ] `scripts/testing/demo_assay_specific_thresholds.py` path fixed
+- [x] `preprocessing/process_jain.py` deleted
+- [x] All `__pycache__/` directories removed
+- [x] `scripts/testing/demo_assay_specific_thresholds.py` path fixed
 - [ ] README.md updated with all 4 datasets
-- [ ] Optional: Root-level scripts moved to subdirectories
-- [ ] Git status clean (no unexpected changes)
+- [x] Optional: Root-level scripts moved to subdirectories
+- [x] Git status clean (no unexpected changes)
 - [ ] All preprocessing scripts still work
 - [ ] All test scripts still work
 

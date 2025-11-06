@@ -177,16 +177,19 @@ class ModelTester:
             raise ValueError(
                 f"CRITICAL: Dataset contains {nan_count} NaN labels! "
                 f"This will corrupt evaluation metrics. "
-                f"Please use the curated test file (e.g., VH_only_jain_test.csv with no NaNs)"
+                f"Please use the curated canonical test file (e.g., "
+                f"test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv with no NaNs)."
             )
 
-        # For Jain test set, validate expected size (94 antibodies)
+        # For Jain test sets, validate expected size (allow legacy 94 + canonical 86)
         if "jain" in data_path.lower() and "test" in data_path.lower():
-            expected_size = 94
-            if len(df) != expected_size:
+            expected_sizes = {94, 86}
+            if len(df) not in expected_sizes:
                 self.logger.warning(
-                    f"WARNING: Jain test set has {len(df)} antibodies, expected {expected_size}. "
-                    f"Ensure you're using the correct curated test file."
+                    f"WARNING: Jain test set has {len(df)} antibodies. "
+                    f"Expected one of {sorted(expected_sizes)}. "
+                    f"Ensure you're using the correct curated file (preferred: "
+                    f"test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv)."
                 )
 
         sequences = df[sequence_col].tolist()

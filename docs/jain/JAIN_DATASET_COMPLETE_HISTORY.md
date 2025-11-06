@@ -319,7 +319,7 @@ test_datasets/jain/
 
 ### Primary Recommendation: Use PARITY_86
 
-**File:** `test_datasets/jain/VH_only_jain_test_PARITY_86.csv`
+**File:** `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv`
 
 **Why?**
 1. ✅ **Achieves Novo parity** (66.28% accuracy, exact confusion matrix match)
@@ -338,7 +338,7 @@ test_datasets/jain/
 
 ### Alternative: Use QC_REMOVED (91 antibodies)
 
-**File:** `test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv`
+**File:** `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv`
 
 **Why?**
 - If you want more test samples (91 vs 86)
@@ -351,7 +351,7 @@ test_datasets/jain/
 
 ### Not Recommended: FULL (94 antibodies)
 
-**File:** `test_datasets/jain/VH_only_jain_test_FULL.csv`
+**File:** `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv`
 
 **Why not?**
 - Contains 3 VH length outliers (structural QC failures)
@@ -364,7 +364,7 @@ test_datasets/jain/
 
 ### For Exploratory Analysis: Complete Dataset (137 antibodies)
 
-**File:** `test_datasets/jain/VH_only_jain.csv`
+**File:** `test_datasets/jain/fragments/VH_only_jain.csv`
 
 **Why?**
 - Full dataset with all 137 clinical antibodies
@@ -399,12 +399,12 @@ test_datasets/jain/
 # Test original Boughter QC model
 python3 test.py \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
 # Test strict QC model
 python3 test.py \
   --model models/boughter_vh_strict_qc_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
 **Expected:** Both models should achieve ~66% accuracy on Jain (generalization performance)
@@ -461,10 +461,10 @@ python3 test.py \
 - Breakthrough analysis: `docs/archive/key_insights/JAIN_BREAKTHROUGH_ANALYSIS.md`
 
 **Test Files:**
-- Complete: `test_datasets/jain/VH_only_jain.csv` (137 antibodies)
-- FULL: `test_datasets/jain/VH_only_jain_test_FULL.csv` (94 antibodies)
-- QC_REMOVED: `test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv` (91 antibodies)
-- ⭐ PARITY_86: `test_datasets/jain/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
+- Complete: `test_datasets/jain/fragments/VH_only_jain.csv` (137 antibodies)
+- FULL: `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv` (94 antibodies)
+- QC_REMOVED: `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv` (91 antibodies)
+- ⭐ PARITY_86: `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
 
 **Raw Data (not in repo):**
 - `test_datasets/jain-pnas.1616408114.sd01.xlsx` (metadata)

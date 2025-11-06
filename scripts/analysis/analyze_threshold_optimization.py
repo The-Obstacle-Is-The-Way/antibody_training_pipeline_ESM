@@ -159,7 +159,7 @@ def main():
     # Analyze Jain dataset
     jain_threshold, jain_cm, jain_probs = analyze_dataset_probabilities(
         model,
-        "test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv",
+        "test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv",
         "Jain",
         target_cm=novo_jain,
     )
@@ -200,7 +200,7 @@ def main():
         logger.info("\nWhat happens if we use Shehata's optimal threshold on Jain?")
         test_threshold_on_dataset(
             model,
-            "test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv",
+            "test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv",
             "Jain",
             shehata_threshold,
         )

@@ -107,7 +107,7 @@ logs/boughter_training.log                    # Summary log
 
 ```bash
 python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-                --data test_datasets/jain/VH_only_jain.csv \
+                --data test_datasets/jain/fragments/VH_only_jain.csv \
                 --config test_config.yaml
 ```
 

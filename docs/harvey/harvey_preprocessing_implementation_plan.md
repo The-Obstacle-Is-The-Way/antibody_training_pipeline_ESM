@@ -434,7 +434,7 @@ After implementation:
 
 **Phase 1: Script Development** (30-60 min)
 - Write `preprocessing/process_harvey.py`
-- Adapt from `process_jain.py` (remove light chain logic)
+- Adapt from `preprocess_jain_p5e_s2.py` (remove light chain logic)
 
 **Phase 2: Test Run** (10-30 min)
 - Process first 1000 sequences

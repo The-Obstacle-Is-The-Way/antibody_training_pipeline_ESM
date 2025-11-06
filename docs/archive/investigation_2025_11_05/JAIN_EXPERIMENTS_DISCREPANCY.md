@@ -165,7 +165,7 @@ The OLD reverse-engineered method (simple QC) achieves parity, NOT the complex P
 ### For Benchmarking:
 ```
 Model: models/boughter_vh_esm1v_logreg.pkl
-Dataset: test_datasets/jain/VH_only_jain_test_PARITY_86.csv (OLD)
+Dataset: test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv (OLD)
 Expected: [[40, 19], [10, 17]], 66.28%
 ```
 

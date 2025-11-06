@@ -98,7 +98,7 @@ test_datasets/jain/
 RAW (Excel)
     ↓ [scripts/conversion/convert_jain_excel_to_csv.py]
 PROCESSED (CSV base files)
-    ↓ [preprocessing/preprocess_jain_p5e_s2.py OR process_jain.py]
+    ↓ preprocessing/preprocess_jain_p5e_s2.py
 CANONICAL (86-antibody benchmarks)
     ↓ [scripts/fragmentation/extract_jain_fragments.py]
 FRAGMENTS (region-specific extracts)
@@ -181,7 +181,7 @@ All files derived from `raw/` using scripts in `scripts/conversion/` and `prepro
 
 ## Merging + ELISA Integration
 
-**Script:** `preprocessing/process_jain.py` (or preprocess_jain_p5e_s2.py)
+**Script:** `preprocessing/preprocess_jain_p5e_s2.py`
 
 - `jain.csv` (137 antibodies) - Base merged dataset
 - `jain_with_private_elisa_FULL.csv` (137 antibodies) - With ELISA flags added
@@ -197,9 +197,9 @@ All files derived from `raw/` using scripts in `scripts/conversion/` and `prepro
 **Files to move into jain/canonical/:**
 ```bash
 mv test_datasets/jain/jain_86_novo_parity.csv test_datasets/jain/canonical/
-mv test_datasets/jain/VH_only_jain_test_PARITY_86.csv test_datasets/jain/canonical/
-mv test_datasets/jain/VH_only_jain_test_FULL.csv test_datasets/jain/canonical/
-mv test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv test_datasets/jain/canonical/
+mv test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv test_datasets/jain/canonical/
+mv test_datasets/jain/canonical/VH_only_jain_test_FULL.csv test_datasets/jain/canonical/
+mv test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv test_datasets/jain/canonical/
 ```
 
 **Create canonical/README.md:**
@@ -221,7 +221,7 @@ Final curated datasets for reproducible benchmarking.
 ### 2. `VH_only_jain_test_PARITY_86.csv` (OLD Reverse-Engineered)
 
 - **Method:** ELISA filter → VH length outliers → borderline removals
-- **Script:** `preprocessing/process_jain.py` (old version)
+- **Script:** Legacy `preprocessing/process_jain.py` (removed; see git history)
 - **Result:** [[40, 19], [10, 17]], 66.28% (deterministic)
 - **Columns:** VH fragment only
 
@@ -259,10 +259,10 @@ mv test_datasets/jain/L-CDR3_jain.csv test_datasets/jain/fragments/
 mv test_datasets/jain/L-CDRs_jain.csv test_datasets/jain/fragments/
 mv test_datasets/jain/L-FWRs_jain.csv test_datasets/jain/fragments/
 mv test_datasets/jain/VH+VL_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/VH_only_jain.csv test_datasets/jain/fragments/
+mv test_datasets/jain/fragments/VH_only_jain.csv test_datasets/jain/fragments/
 mv test_datasets/jain/VL_only_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/VH_only_jain_86_p5e_s2.csv test_datasets/jain/fragments/
-mv test_datasets/jain/VH_only_jain_86_p5e_s4.csv test_datasets/jain/fragments/
+mv test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv test_datasets/jain/fragments/
+mv test_datasets/jain/fragments/VH_only_jain_86_p5e_s4.csv test_datasets/jain/fragments/
 ```
 
 **Create fragments/README.md:**
@@ -462,7 +462,7 @@ test_datasets/
 - **Change:** Read from `test_datasets/jain/processed/`
 - **Change:** Write to `test_datasets/jain/canonical/`
 
-### 3. `preprocessing/process_jain.py` (old method)
+### 3. Legacy `preprocessing/process_jain.py` (old method)
 - **Change:** Read from `test_datasets/jain/processed/`
 - **Change:** Write to `test_datasets/jain/canonical/`
 

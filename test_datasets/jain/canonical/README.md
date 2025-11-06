@@ -31,7 +31,7 @@ Final curated datasets for reproducible benchmarking against Novo Nordisk result
 ### 2. `VH_only_jain_test_PARITY_86.csv` (OLD Reverse-Engineered)
 
 - **Method:** ELISA filter → VH length outlier removal (3 antibodies) → borderline removals (5 antibodies)
-- **Script:** `preprocessing/process_jain.py` (old version)
+- **Script:** Legacy `preprocessing/process_jain.py` (removed; see git history)
 - **Result:** [[40, 19], [10, 17]], 66.28% accuracy (deterministic)
 - **Distribution:** 59 specific / 27 non-specific
 - **Columns:** VH fragment only (minimal columns)

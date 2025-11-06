@@ -51,9 +51,9 @@ We have **TWO DIFFERENT** 86-antibody Jain datasets that both claim to achieve N
 ### Dataset 2: Old QC Methodology (WRONG - Outdated)
 
 **Files:**
-- `test_datasets/jain/VH_only_jain_test_PARITY_86.csv` (fragment file)
-- `test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv` (91 antibodies)
-- `test_datasets/jain/VH_only_jain_test_FULL.csv` (94 antibodies)
+- `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (fragment file)
+- `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv` (91 antibodies)
+- `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv` (94 antibodies)
 
 **Methodology:** 137 → 94 → 91 → 86 (OLD BUGGY METHOD)
 - **Step 1:** Remove ELISA 1-3 → **94 antibodies** (NOT 116!)
@@ -121,7 +121,7 @@ We have **TWO DIFFERENT** 86-antibody Jain datasets that both claim to achieve N
 **Command run:**
 ```bash
 python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
 **Dataset used:** `VH_only_jain_test_PARITY_86.csv` (Old QC methodology)

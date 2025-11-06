@@ -130,7 +130,7 @@ Remove 5 borderline antibodies
     ↓
 86 antibodies (59 specific / 27 non-specific)
 
-File: test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+File: test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 Created: Nov 2, 2025 (BEFORE P5e-S2 experiments)
 Commit: 1d38a69 "Add VH_only_jain_parity86 dataset"
 Documentation: docs/JAIN_QC_REMOVALS_COMPLETE.md
@@ -269,7 +269,7 @@ The simpler OLD methodology achieves exact parity, NOT the complex P5e-S2.
 
 ```yaml
 Model: models/boughter_vh_esm1v_logreg.pkl
-Dataset: test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+Dataset: test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 Expected Result: [[40, 19], [10, 17]], 66.28% accuracy
 Purpose: Novo Nordisk replication benchmark
 ```
@@ -314,7 +314,7 @@ In `experiments/novo_parity/EXACT_MATCH_FOUND.md`:
 def test_novo_parity():
     """Verify OLD model + OLD dataset = [[40, 19], [10, 17]]"""
     model = load_model("models/boughter_vh_esm1v_logreg.pkl")
-    data = load_data("test_datasets/jain/VH_only_jain_test_PARITY_86.csv")
+    data = load_data("test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv")
 
     cm = get_confusion_matrix(model, data)
 

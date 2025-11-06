@@ -14,7 +14,7 @@ This document contains our trained model's performance on all test datasets, com
 
 ### Our Results
 
-**Test file:** `test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv`
+**Test file:** `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv`
 **Size:** 86 antibodies (after QC removals)
 
 ```

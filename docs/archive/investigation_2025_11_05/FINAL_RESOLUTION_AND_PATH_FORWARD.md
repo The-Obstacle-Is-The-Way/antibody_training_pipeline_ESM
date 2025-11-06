@@ -15,7 +15,7 @@
 
 ### Jain: ✅ OLD REVERSE-ENGINEERED METHOD IS CORRECT
 - **PROVEN:** OLD dataset (137 → 94 → 91 → 86) achieves [[40, 19], [10, 17]] ✅
-- **File:** `test_datasets/jain/VH_only_jain_test_PARITY_86.csv`
+- **File:** `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv`
 - **Model:** `models/boughter_vh_esm1v_logreg.pkl`
 - **Result:** 66.28% accuracy, EXACT Novo Nordisk match
 
@@ -37,7 +37,7 @@
    - Conclusion: Experiments were done elsewhere, only dataset files imported
 
 2. ✅ **We tested the P5e-S2 dataset files directly**
-   - File: `test_datasets/jain/VH_only_jain_86_p5e_s2.csv` (created from full P5e-S2)
+   - File: `test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv` (created from full P5e-S2)
    - Model: `models/boughter_vh_esm1v_logreg.pkl` (OLD Nov 2 model)
    - Result: [[39, 20], [10, 17]] - DOES NOT MATCH CLAIMED [[40, 19], [10, 17]]
 
@@ -96,7 +96,7 @@
 
 ```yaml
 Model: models/boughter_vh_esm1v_logreg.pkl
-Dataset: test_datasets/jain/VH_only_jain_test_PARITY_86.csv
+Dataset: test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 Expected: [[40, 19], [10, 17]], 66.28% accuracy
 Purpose: Novo Nordisk Jain et al. 2017 replication benchmark
 ```

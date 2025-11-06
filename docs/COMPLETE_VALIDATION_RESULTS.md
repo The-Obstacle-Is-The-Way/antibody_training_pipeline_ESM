@@ -81,7 +81,7 @@ Preprocessing:
 
 ### Our Results
 
-**Test file**: `test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv`
+**Test file**: `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv`
 
 ```
 Confusion Matrix: [[40, 19], [10, 17]]

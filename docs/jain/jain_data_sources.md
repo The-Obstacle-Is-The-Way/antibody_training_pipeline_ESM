@@ -136,7 +136,7 @@ Flags are calculated from 4 assay groups using 90th percentile thresholds of app
 python3 scripts/conversion/convert_jain_excel_to_csv.py
 
 # Phase 2: Extract antibody fragments
-python3 preprocessing/process_jain.py
+python3 preprocessing/preprocess_jain_p5e_s2.py
 ```
 
 This will generate:

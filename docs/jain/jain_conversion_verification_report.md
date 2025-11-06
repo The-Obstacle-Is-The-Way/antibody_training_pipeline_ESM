@@ -91,7 +91,7 @@ Notable antibodies (≥4 flags / label 1): **bimagrumab**, **briakinumab**, **
 ## Next Steps
 
 1. Update downstream preprocessing / evaluation to ignore mild (`label` = `<NA>`) entries when performing binary classification, mirroring Sakhnini et al. 2025.
-2. Regenerate fragment CSVs via `python3 preprocessing/process_jain.py` once PR is updated to the new canonical dataset.
+2. Regenerate fragment CSVs via `python3 preprocessing/preprocess_jain_p5e_s2.py` once PR is updated to the new canonical dataset.
 3. Append these validation results to future PR descriptions for traceability.
 
 ---
@@ -124,7 +124,7 @@ if total_flags >= 3:  # Fixed: Changed from >=4 to >=3 (matches Novo/Hybri)
 
 1. ✅ `test_datasets/jain.csv` - Regenerated with correct labels
 2. ✅ All 16 fragment files in `test_datasets/jain/` - Regenerated
-3. ✅ `test_datasets/jain/VH_only_jain_test.csv` - Now has 94 antibodies (was 70)
+3. ✅ `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv` - Now has 94 antibodies (was 70)
 
 ### Validation After Fix
 

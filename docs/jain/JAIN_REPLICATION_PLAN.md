@@ -206,7 +206,7 @@ df['total_flags'] = (
 Run corrected script to generate:
 - `test_datasets/jain_with_private_elisa_FULL.csv` (all 137 antibodies)
 - `test_datasets/jain_with_private_elisa_TEST.csv` (specific + non-specific only)
-- `test_datasets/jain/VH_only_jain_novo_parity.csv` (for model inference)
+- `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (for model inference)
 
 ### Step 3: Validate Distributions
 

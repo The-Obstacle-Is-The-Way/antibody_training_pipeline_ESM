@@ -432,7 +432,7 @@ docs/harvey_data_cleaning_log.md            (This file - discovery timeline)
 
 1. **Review documentation** for accuracy (10000% verification requested)
 2. **Approve fragment extraction strategy** (6 VHH-specific files)
-3. **Implement process_harvey.py** (adapt from process_jain.py)
+3. **Implement process_harvey.py** (adapt from preprocess_jain_p5e_s2.py)
 4. **Run validation** (verify 141,474 rows in all fragment files)
 5. **Document results** (verification report with ANARCI statistics)
 

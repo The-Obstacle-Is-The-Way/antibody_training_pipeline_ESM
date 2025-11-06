@@ -43,7 +43,7 @@ These scripts represent incorrect approaches from early reverse engineering atte
 
 **For Jain dataset conversion**: Use `scripts/conversion/convert_jain_excel_to_csv.py`
 
-**For Jain preprocessing**: Use `preprocessing/process_jain.py` (implements P5e-S2 methodology)
+**For Jain preprocessing**: Use `preprocessing/preprocess_jain_p5e_s2.py` (implements P5e-S2 methodology)
 
 ---
 

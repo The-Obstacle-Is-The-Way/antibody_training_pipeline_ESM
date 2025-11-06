@@ -177,14 +177,14 @@ Non-specific       0.47      0.63      0.54        27
 import pandas as pd
 
 # Load current 91-antibody dataset
-df = pd.read_csv('test_datasets/jain/VH_only_jain_test.csv')
+df = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv')
 
 # Remove 5 identified antibodies (biology + confidence)
 drop_ids = ['muromonab', 'cetuximab', 'girentuximab', 'tabalumab', 'abituzumab']
 df_parity = df[~df['id'].isin(drop_ids)]
 
 # Save parity set
-df_parity.to_csv('test_datasets/jain/VH_only_jain_parity86.csv', index=False)
+df_parity.to_csv('test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv', index=False)
 
 # Expected result:
 # - 86 total antibodies
@@ -221,9 +221,9 @@ df_parity.to_csv('test_datasets/jain/VH_only_jain_parity86.csv', index=False)
 
 ## Files Generated
 
-- `test_datasets/jain/VH_only_jain_test.csv` - Current 91-antibody set (3 length outliers removed)
-- `test_datasets/jain/VH_only_jain_parity86.csv` - ✅ Created and verified (86 antibodies, exact Novo parity)
-- `test_datasets/jain/VH_only_jain_test_BACKUP.csv` - Original 94-antibody backup
+- `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv` - Current 91-antibody set (3 length outliers removed)
+- `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` - ✅ Created and verified (86 antibodies, exact Novo parity)
+- `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv` - Original 94-antibody backup
 - `docs/NOVO_PARITY_ANALYSIS.md` - This document
 
 ---
