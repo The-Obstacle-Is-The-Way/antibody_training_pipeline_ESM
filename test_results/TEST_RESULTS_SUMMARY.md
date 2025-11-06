@@ -1,5 +1,7 @@
 # Test Results Summary
 
+> **ℹ️ NOTE:** Commands in this file now use v2.0.0 CLI (`antibody-test`) instead of the deprecated `python test.py`.
+
 **Last Updated:** 2025-11-06
 **Model Tested:** `models/boughter_vh_esm1v_logreg.pkl`
 
@@ -169,9 +171,9 @@ Per `NOVO_TRAINING_METHODOLOGY.md` and `CODEBASE_AUDIT_VS_NOVO.md`:
 
 1. **Complete Harvey Testing:**
    ```bash
-   python test.py \
-     --model-paths models/boughter_vh_esm1v_logreg.pkl \
-     --data-paths test_datasets/harvey/fragments/VHH_only_harvey.csv \
+   antibody-test \
+     --model models/boughter_vh_esm1v_logreg.pkl \
+     --data test_datasets/harvey/fragments/VHH_only_harvey.csv \
      --output-dir test_results
    ```
 
