@@ -1,25 +1,25 @@
 #!/usr/bin/env python3
 """
-Boughter Dataset ESM Embedding Compatibility Test
+Jain Dataset ESM Embedding Compatibility Test
 
-Tests that cleaned Boughter fragment sequences are compatible with ESM-1v
+Tests that cleaned Jain fragment sequences are compatible with ESM-1v
 embedding pipeline without requiring model download.
 
-P0 Blocker Fix Verification:
+P0 Blocker Verification:
 - Ensures no gap characters ('-') in any fragment CSV
-- Validates annotation.sequence_aa (gap-free) was used instead of
-  annotation.sequence_alignment_aa (with gaps)
+- Validates sequences contain only valid amino acids
+- Checks for stop codons ('*') that would crash ESM
 
 Test Coverage:
 1. Gap character detection (P0 blocker regression check)
 2. Amino acid validation (ESM-1v compatible characters only)
-3. Previously affected sequences spot-check
+3. Stop codon detection (another P0 blocker)
 4. Model validation logic simulation
 5. Data integrity verification
 
 Date: 2025-11-02
-Issue: Boughter dataset preprocessing P0 blocker
-P0 Fix: preprocessing/process_boughter.py:89
+Issue: Jain dataset preprocessing P0 validation
+Expected: 137 antibodies (67 specific, 67 mild, 3 non-specific)
 """
 
 import sys
@@ -36,37 +36,37 @@ def test_gap_characters():
     Test 1: Verify no gap characters in any fragment CSV.
 
     P0 BLOCKER: ESM-1v crashes on sequences containing '-' gap characters.
-    This test ensures the fix (sequence_aa vs sequence_alignment_aa) is applied.
+    This test ensures sequences are properly cleaned.
     """
     print("\n" + "=" * 70)
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    boughter_dir = Path("train_datasets/boughter/annotated")
+    jain_dir = Path("test_datasets/jain")
     fragment_files = [
-        "VH_only_boughter.csv",
-        "VL_only_boughter.csv",
-        "H-CDR1_boughter.csv",
-        "H-CDR2_boughter.csv",
-        "H-CDR3_boughter.csv",
-        "L-CDR1_boughter.csv",
-        "L-CDR2_boughter.csv",
-        "L-CDR3_boughter.csv",
-        "H-CDRs_boughter.csv",
-        "L-CDRs_boughter.csv",
-        "H-FWRs_boughter.csv",
-        "L-FWRs_boughter.csv",
-        "VH+VL_boughter.csv",
-        "All-CDRs_boughter.csv",
-        "All-FWRs_boughter.csv",
-        "Full_boughter.csv",
+        "VH_only_jain.csv",
+        "VL_only_jain.csv",
+        "H-CDR1_jain.csv",
+        "H-CDR2_jain.csv",
+        "H-CDR3_jain.csv",
+        "L-CDR1_jain.csv",
+        "L-CDR2_jain.csv",
+        "L-CDR3_jain.csv",
+        "H-CDRs_jain.csv",
+        "L-CDRs_jain.csv",
+        "H-FWRs_jain.csv",
+        "L-FWRs_jain.csv",
+        "VH+VL_jain.csv",
+        "All-CDRs_jain.csv",
+        "All-FWRs_jain.csv",
+        "Full_jain.csv",
     ]
 
     all_clean = True
     total_sequences = 0
 
     for file_name in fragment_files:
-        file_path = boughter_dir / file_name
+        file_path = jain_dir / file_name
         if not file_path.exists():
             print(f"  ✗ MISSING: {file_name}")
             all_clean = False
@@ -79,17 +79,22 @@ def test_gap_characters():
 
         if gap_count > 0:
             print(f"  ✗ {file_name}: {gap_count} sequences with gaps")
+            # Show first few problematic sequences
+            gap_seqs = df[df["sequence"].str.contains("-", na=False)].head(3)
+            for _idx, row in gap_seqs.iterrows():
+                print(f"    ID: {row['id']}, gaps in: {row['sequence'][:50]}...")
             all_clean = False
         else:
             print(f"  ✓ {file_name}: gap-free ({len(df)} sequences)")
 
     if all_clean:
-        print("\n  ✓ PASS: All Boughter fragments are gap-free")
+        print("\n  ✓ PASS: All Jain fragments are gap-free")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
-        print("\n  ✗ FAIL: Gap characters detected - P0 blocker still present!")
-        return False
+        print("\n  ✗ FAIL: Gap characters detected - P0 blocker present!")
+
+    # Pytest assertion
+    assert all_clean, "Gap characters detected - P0 blocker present!"
 
 
 def test_amino_acid_validation():
@@ -104,22 +109,22 @@ def test_amino_acid_validation():
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    boughter_dir = Path("train_datasets/boughter/annotated")
+    jain_dir = Path("test_datasets/jain")
 
     # Check critical files for full antibody model
     test_files = [
-        "VH_only_boughter.csv",
-        "VL_only_boughter.csv",
-        "H-CDRs_boughter.csv",
-        "L-CDRs_boughter.csv",
-        "Full_boughter.csv",
+        "VH_only_jain.csv",
+        "VL_only_jain.csv",
+        "H-CDRs_jain.csv",
+        "L-CDRs_jain.csv",
+        "Full_jain.csv",
     ]
 
     all_valid = True
     total_sequences = 0
 
     for file_name in test_files:
-        file_path = boughter_dir / file_name
+        file_path = jain_dir / file_name
         if not file_path.exists():
             print(f"  ✗ MISSING: {file_name}")
             all_valid = False
@@ -129,11 +134,13 @@ def test_amino_acid_validation():
 
         # Check each sequence for invalid characters
         invalid_count = 0
-        for _idx, seq in enumerate(df["sequence"]):
+        for idx, seq in enumerate(df["sequence"]):
             if not set(seq).issubset(VALID_AMINO_ACIDS):
                 invalid_chars = set(seq) - VALID_AMINO_ACIDS
                 if invalid_count == 0:
                     print(f"  ✗ {file_name}: Invalid characters found: {invalid_chars}")
+                    # Show which antibody has the issue
+                    print(f"    First issue in: {df.iloc[idx]['id']}")
                 invalid_count += 1
 
         if invalid_count > 0:
@@ -146,82 +153,65 @@ def test_amino_acid_validation():
     if all_valid:
         print("\n  ✓ PASS: All sequences contain only valid amino acids")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
         print("\n  ✗ FAIL: Invalid amino acids detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid, "Invalid amino acids detected"
 
 
-def test_previously_affected_sequences():
+def test_stop_codons():
     """
-    Test 3: Spot-check sequences that previously had gaps.
+    Test 3: Verify no stop codons in sequences.
 
-    Before fix: VH_only had 11 sequences with gaps (1.0%)
-                VL_only had 2 sequences with gaps (0.2%)
-                Full had 13 sequences with gaps (1.2%)
-    After fix: Should be 0
+    P0 BLOCKER: Stop codons ('*') can cause issues with ESM embedding.
+    This is common when constant regions are included.
     """
     print("\n" + "=" * 70)
-    print("TEST 3: Previously Affected Sequences (Spot Check)")
+    print("TEST 3: Stop Codon Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    # Check VH_only
-    vh_file = Path("train_datasets/boughter/annotated/VH_only_boughter.csv")
-    if not vh_file.exists():
-        print(f"  ✗ FAIL: {vh_file} not found")
-        return False
+    jain_dir = Path("test_datasets/jain")
+    fragment_files = [
+        "VH_only_jain.csv",
+        "VL_only_jain.csv",
+        "Full_jain.csv",
+    ]
 
-    vh_df = pd.read_csv(vh_file, comment="#")
-
-    # Check VL_only
-    vl_file = Path("train_datasets/boughter/annotated/VL_only_boughter.csv")
-    if not vl_file.exists():
-        print(f"  ✗ FAIL: {vl_file} not found")
-        return False
-
-    vl_df = pd.read_csv(vl_file, comment="#")
-
-    # Sample check: First 5 sequences from each
-    print("\n  Checking sample sequences from VH_only_boughter.csv:")
     all_clean = True
+    total_sequences = 0
 
-    for idx in range(min(5, len(vh_df))):
-        seq = vh_df.iloc[idx]["sequence"]
-        seq_id = vh_df.iloc[idx]["id"]
-        has_gaps = "-" in seq
+    for file_name in fragment_files:
+        file_path = jain_dir / file_name
+        if not file_path.exists():
+            print(f"  ✗ MISSING: {file_name}")
+            all_clean = False
+            continue
 
-        if has_gaps:
-            print(f"    ✗ {seq_id}: contains gaps")
+        df = pd.read_csv(file_path, comment="#")
+        stop_count = df["sequence"].str.contains(r"\*", na=False, regex=True).sum()
+        total_sequences = len(df)
+
+        if stop_count > 0:
+            print(f"  ✗ {file_name}: {stop_count} sequences with stop codons")
+            # Show first few problematic sequences
+            stop_seqs = df[
+                df["sequence"].str.contains(r"\*", na=False, regex=True)
+            ].head(3)
+            for _idx, row in stop_seqs.iterrows():
+                print(f"    ID: {row['id']}")
             all_clean = False
         else:
-            print(f"    ✓ {seq_id}: gap-free (length {len(seq)} aa)")
+            print(f"  ✓ {file_name}: no stop codons ({len(df)} sequences)")
 
-    print("\n  Checking sample sequences from VL_only_boughter.csv:")
-    for idx in range(min(5, len(vl_df))):
-        seq = vl_df.iloc[idx]["sequence"]
-        seq_id = vl_df.iloc[idx]["id"]
-        has_gaps = "-" in seq
-
-        if has_gaps:
-            print(f"    ✗ {seq_id}: contains gaps")
-            all_clean = False
-        else:
-            print(f"    ✓ {seq_id}: gap-free (length {len(seq)} aa)")
-
-    # Check total gap counts
-    vh_gaps = vh_df["sequence"].str.contains("-", na=False).sum()
-    vl_gaps = vl_df["sequence"].str.contains("-", na=False).sum()
-
-    print(f"\n  VH_only: {len(vh_df)} total sequences, {vh_gaps} with gaps")
-    print(f"  VL_only: {len(vl_df)} total sequences, {vl_gaps} with gaps")
-    print("  Before P0 fix: VH had 11 gaps, VL had 2 gaps")
-
-    if vh_gaps == 0 and vl_gaps == 0 and all_clean:
-        print("\n  ✓ PASS: P0 fix successfully eliminated all gaps")
-        return True
+    if all_clean:
+        print("\n  ✓ PASS: All Jain fragments are stop-codon-free")
+        print(f"  ✓ Total sequences validated: {total_sequences}")
     else:
-        print("\n  ✗ FAIL: Gaps still present after fix")
-        return False
+        print("\n  ✗ FAIL: Stop codons detected - P0 blocker present!")
+
+    # Pytest assertion
+    assert all_clean, "Stop codons detected - P0 blocker present!"
 
 
 def test_model_validation_logic():
@@ -238,16 +228,16 @@ def test_model_validation_logic():
 
     # Test all critical fragment files
     test_files = [
-        "VH_only_boughter.csv",
-        "VL_only_boughter.csv",
-        "Full_boughter.csv",
+        "VH_only_jain.csv",
+        "VL_only_jain.csv",
+        "Full_jain.csv",
     ]
 
     all_passed = True
     total_validated = 0
 
     for file_name in test_files:
-        file_path = Path(f"train_datasets/boughter/annotated/{file_name}")
+        file_path = Path(f"test_datasets/jain/{file_name}")
 
         if not file_path.exists():
             print(f"  ✗ FAIL: {file_path} not found")
@@ -275,50 +265,52 @@ def test_model_validation_logic():
 
     if all_passed:
         print(f"\n  ✓ PASS: All {total_validated} sequences are ESM-1v compatible")
-        return True
     else:
         print("\n  ✗ FAIL: Dataset NOT compatible with ESM-1v")
-        return False
+
+    # Pytest assertion
+    assert all_passed, "Dataset NOT compatible with ESM-1v"
 
 
 def test_data_integrity():
     """
-    Test 5: Verify data integrity after regeneration.
+    Test 5: Verify data integrity.
 
-    Ensures all expected files exist, have correct row counts, and
-    preserve label distribution.
+    Ensures all expected files exist, have correct row counts (137), and
+    preserve label distribution (67 specific, 67 mild, 3 non-specific).
     """
     print("\n" + "=" * 70)
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    boughter_dir = Path("train_datasets/boughter/annotated")
+    jain_dir = Path("test_datasets/jain")
     expected_files = [
-        "VH_only_boughter.csv",
-        "VL_only_boughter.csv",
-        "H-CDR1_boughter.csv",
-        "H-CDR2_boughter.csv",
-        "H-CDR3_boughter.csv",
-        "L-CDR1_boughter.csv",
-        "L-CDR2_boughter.csv",
-        "L-CDR3_boughter.csv",
-        "H-CDRs_boughter.csv",
-        "L-CDRs_boughter.csv",
-        "H-FWRs_boughter.csv",
-        "L-FWRs_boughter.csv",
-        "VH+VL_boughter.csv",
-        "All-CDRs_boughter.csv",
-        "All-FWRs_boughter.csv",
-        "Full_boughter.csv",
+        "VH_only_jain.csv",
+        "VL_only_jain.csv",
+        "H-CDR1_jain.csv",
+        "H-CDR2_jain.csv",
+        "H-CDR3_jain.csv",
+        "L-CDR1_jain.csv",
+        "L-CDR2_jain.csv",
+        "L-CDR3_jain.csv",
+        "H-CDRs_jain.csv",
+        "L-CDRs_jain.csv",
+        "H-FWRs_jain.csv",
+        "L-FWRs_jain.csv",
+        "VH+VL_jain.csv",
+        "All-CDRs_jain.csv",
+        "All-FWRs_jain.csv",
+        "Full_jain.csv",
     ]
 
     all_valid = True
-    expected_rows = None
+    expected_rows = 137  # Known count from PNAS supplementary files
 
     print(f"\n  Checking {len(expected_files)} fragment files:")
+    print(f"  Expected rows per file: {expected_rows}")
 
     for file_name in expected_files:
-        file_path = boughter_dir / file_name
+        file_path = jain_dir / file_name
 
         if not file_path.exists():
             print(f"    ✗ MISSING: {file_name}")
@@ -326,10 +318,6 @@ def test_data_integrity():
             continue
 
         df = pd.read_csv(file_path, comment="#")
-
-        # All files should have same row count
-        if expected_rows is None:
-            expected_rows = len(df)
 
         if len(df) != expected_rows:
             print(
@@ -340,37 +328,46 @@ def test_data_integrity():
             print(f"    ✓ {file_name}: {len(df)} rows")
 
     # Check label distribution in VH file
-    vh_file = boughter_dir / "VH_only_boughter.csv"
+    vh_file = jain_dir / "VH_only_jain.csv"
     if vh_file.exists():
         df = pd.read_csv(vh_file, comment="#")
 
-        # Count training vs excluded sequences
-        training_df = df[df["include_in_training"]]
-        excluded_df = df[~df["include_in_training"]]
+        # Check label distribution
+        # label column: 0 (specific), 1 (non-specific), NaN (mild)
+        specific_count = (df["label"] == 0).sum()
+        nonspecific_count = (df["label"] == 1).sum()
+        mild_count = df["label"].isna().sum()
 
         print(f"\n  Total sequences: {len(df)}")
-        print(f"  Training sequences: {len(training_df)}")
-        print(f"  Excluded (1-3 flags): {len(excluded_df)}")
+        print("  Label distribution:")
+        print(
+            f"    Specific (0):     {specific_count} ({specific_count / len(df) * 100:.1f}%)"
+        )
+        print(
+            f"    Non-specific (1): {nonspecific_count} ({nonspecific_count / len(df) * 100:.1f}%)"
+        )
+        print(f"    Mild (NaN):       {mild_count} ({mild_count / len(df) * 100:.1f}%)")
 
-        if len(training_df) > 0:
-            label_counts = training_df["label"].value_counts().sort_index()
+        # Expected: 67 specific, 3 non-specific, 67 mild
+        print("\n  Expected distribution: 67 specific, 3 non-specific, 67 mild")
 
-            print("\n  Training set label distribution:")
-            print(
-                f"    Specific (0):     {label_counts.get(0, 0)} ({label_counts.get(0, 0) / len(training_df) * 100:.1f}%)"
-            )
-            print(
-                f"    Non-specific (1): {label_counts.get(1, 0)} ({label_counts.get(1, 0) / len(training_df) * 100:.1f}%)"
-            )
+        if specific_count == 67 and nonspecific_count == 3 and mild_count == 67:
+            print("    ✓ Label distribution matches expected")
+        else:
+            print("    ⚠ Label distribution differs from expected")
+            all_valid = False
 
-            # Check if balanced (should be ~50/50)
-            balance = label_counts.get(1, 0) / len(training_df)
-            if 0.45 <= balance <= 0.55:
-                print("    ✓ Training set is balanced")
-            else:
-                print("    ⚠ Training set may be imbalanced")
+        # For model testing, we use only specific (67) + non-specific (3) = 70
+        test_count = specific_count + nonspecific_count
+        print(f"\n  Test set size (excluding mild): {test_count} sequences")
+        print("    Expected: 70 sequences (67 + 3)")
 
-    if all_valid and expected_rows is not None:
+        if test_count == 70:
+            print("    ✓ Test set size matches expected")
+        else:
+            print("    ⚠ Test set size differs from expected")
+
+    if all_valid and expected_rows == 137:
         print(
             f"\n  ✓ PASS: All {len(expected_files)} files present with {expected_rows} rows"
         )
@@ -383,17 +380,17 @@ def test_data_integrity():
 def main():
     """Run all tests and report results."""
     print("\n" + "=" * 70)
-    print("Boughter Dataset - ESM-1v Embedding Compatibility Test Suite")
+    print("Jain Dataset - ESM-1v Embedding Compatibility Test Suite")
     print("=" * 70)
-    print("P0 Blocker Fix: annotation.sequence_aa (gap-free)")
-    print("Previous issue: annotation.sequence_alignment_aa (with gaps)")
-    print("Fix location: preprocessing/process_boughter.py:89")
+    print("Dataset: 137 clinical antibodies from PNAS 2017")
+    print("Test set: 70 sequences (67 specific + 3 non-specific)")
+    print("Excluded: 67 mild sequences (1-3 flags)")
 
     # Run all tests
     tests = [
         ("Gap Character Detection", test_gap_characters),
         ("Amino Acid Validation", test_amino_acid_validation),
-        ("Previously Affected Sequences", test_previously_affected_sequences),
+        ("Stop Codon Detection", test_stop_codons),
         ("ESM Model Validation", test_model_validation_logic),
         ("Data Integrity", test_data_integrity),
     ]
@@ -405,6 +402,9 @@ def main():
             results.append((test_name, passed))
         except Exception as e:
             print(f"\n  ✗ EXCEPTION: {test_name} - {e}")
+            import traceback
+
+            traceback.print_exc()
             results.append((test_name, False))
 
     # Summary
@@ -422,11 +422,12 @@ def main():
     print(f"\n  Total: {passed_count}/{total_count} tests passed")
 
     if passed_count == total_count:
-        print("\n  ✓ ALL TESTS PASSED - Boughter dataset is ESM-1v compatible!")
-        print("  ✓ P0 blocker successfully resolved")
+        print("\n  ✓ ALL TESTS PASSED - Jain dataset is ESM-1v compatible!")
+        print("  ✓ Ready for model inference and confusion matrix generation")
         return 0
     else:
-        print("\n  ✗ SOME TESTS FAILED - Review errors above")
+        print("\n  ✗ SOME TESTS FAILED - P0 blockers detected")
+        print("  ✗ Fix required before ESM embedding can proceed")
         return 1
 
 

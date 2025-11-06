@@ -75,10 +75,11 @@ def test_gap_characters():
     if all_clean:
         print("\n  ✓ PASS: All Harvey fragments are gap-free")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
         print("\n  ✗ FAIL: Gap characters detected - P0 blocker still present!")
-        return False
+
+    # Pytest assertion
+    assert all_clean, "Gap characters detected - P0 blocker still present!"
 
 
 def test_amino_acid_validation():
@@ -133,10 +134,11 @@ def test_amino_acid_validation():
     if all_valid:
         print("\n  ✓ PASS: All sequences contain only valid amino acids")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
         print("\n  ✗ FAIL: Invalid amino acids detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid, "Invalid amino acids detected"
 
 
 def test_previously_affected_sequences():
@@ -151,10 +153,7 @@ def test_previously_affected_sequences():
     print("=" * 70)
 
     vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
-
-    if not vhh_file.exists():
-        print(f"  ✗ FAIL: {vhh_file} not found")
-        return False
+    assert vhh_file.exists(), f"{vhh_file} not found"
 
     df = pd.read_csv(vhh_file)
 
@@ -182,10 +181,11 @@ def test_previously_affected_sequences():
 
     if total_gaps == 0 and all_clean:
         print("\n  ✓ PASS: P0 fix successfully eliminated all gaps")
-        return True
     else:
         print("\n  ✗ FAIL: Gaps still present after fix")
-        return False
+
+    # Pytest assertion
+    assert total_gaps == 0 and all_clean, "Gaps still present after fix"
 
 
 def test_model_validation_logic():
@@ -201,10 +201,7 @@ def test_model_validation_logic():
     print("  Simulating model.py:86-90 validation logic...")
 
     vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
-
-    if not vhh_file.exists():
-        print(f"  ✗ FAIL: {vhh_file} not found")
-        return False
+    assert vhh_file.exists(), f"{vhh_file} not found"
 
     df = pd.read_csv(vhh_file)
 
@@ -220,12 +217,13 @@ def test_model_validation_logic():
     if len(invalid_sequences) == 0:
         print(f"  ✓ All {len(df)} sequences passed model validation")
         print("  ✓ PASS: Dataset is ESM-1v compatible")
-        return True
     else:
         print(f"  ✗ {len(invalid_sequences)} sequences failed validation")
         print(f"  ✗ First failed sequence: {invalid_sequences[0][0]}")
         print("  ✗ FAIL: Dataset NOT compatible with ESM-1v")
-        return False
+
+    # Pytest assertion
+    assert len(invalid_sequences) == 0, "Dataset NOT compatible with ESM-1v"
 
 
 def test_data_integrity():
@@ -301,10 +299,11 @@ def test_data_integrity():
         print(
             f"\n  ✓ PASS: All {len(expected_files)} files present with {expected_rows} rows"
         )
-        return True
     else:
         print("\n  ✗ FAIL: Data integrity issues detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid and expected_rows is not None, "Data integrity issues detected"
 
 
 def main():
@@ -328,8 +327,11 @@ def main():
     results = []
     for test_name, test_func in tests:
         try:
-            passed = test_func()
-            results.append((test_name, passed))
+            test_func()  # No return value - uses assertions
+            results.append((test_name, True))
+        except AssertionError as e:
+            print(f"\n  ✗ ASSERTION: {test_name} - {e}")
+            results.append((test_name, False))
         except Exception as e:
             print(f"\n  ✗ EXCEPTION: {test_name} - {e}")
             results.append((test_name, False))
