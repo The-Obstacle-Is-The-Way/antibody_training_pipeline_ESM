@@ -401,10 +401,10 @@ test_datasets/jain/
 
 **Command:**
 ```bash
-# Test production model
-python test.py \
-  --model-paths models/boughter_vh_esm1v_logreg.pkl \
-  --data-paths test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+# Test production model (v2.0.0)
+antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
 **Expected:** 66.28% accuracy (validated performance)

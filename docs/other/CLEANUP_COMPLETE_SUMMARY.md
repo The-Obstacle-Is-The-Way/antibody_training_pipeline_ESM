@@ -203,14 +203,14 @@ test_results/                 0 Jain files (cleaned)
 ### Test Results Still Work
 
 ```bash
-# Method 1: OLD reverse-engineered (PRIMARY)
-python test.py \
+# Method 1: OLD reverse-engineered (PRIMARY) - v2.0.0
+antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
   --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 # ✅ Result: [[40, 19], [10, 17]], 66.28%
 
-# Method 2: P5e-S2 canonical (ALTERNATIVE)
-python test.py \
+# Method 2: P5e-S2 canonical (ALTERNATIVE) - v2.0.0
+antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
   --data test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
 # ✅ Result: [[40, 19], [10, 17]] (within ±1 due to nimotuzumab)
