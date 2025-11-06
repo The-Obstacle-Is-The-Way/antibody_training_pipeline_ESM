@@ -191,7 +191,7 @@ def main():
         ("jain", Path("test_datasets/jain/fragments"), 16),  # Full antibodies (VH+VL)
         ("shehata", Path("test_datasets/shehata/fragments"), 16),  # Full antibodies (VH+VL)
         ("harvey", Path("test_datasets/harvey/fragments"), 6),  # Nanobodies (VHH only)
-        ("boughter", Path("test_datasets/boughter"), 16),  # Full antibodies (VH+VL)
+        ("boughter", Path("train_datasets/boughter/annotated"), 16),  # Full antibodies (VH+VL)
     ]
 
     all_valid = True

@@ -56,53 +56,67 @@ diff -r train_datasets/boughter/raw/ \
 
 ```
 train_datasets/
+├── README.md                             ← Overview of training datasets
 ├── BOUGHTER_DATA_PROVENANCE.md           ← This document
 │
-├── boughter_raw/                         ← Raw DNA sequences from AIMS
-│   ├── flu_fastaH.txt                    │  (19 files, copied from AIMS_manuscripts)
-│   ├── flu_fastaL.txt                    │
-│   ├── flu_NumReact.txt                  │  Source: ctboughter/AIMS_manuscripts
-│   ├── gut_hiv_fastaH.txt                │          app_data/full_sequences/
-│   ├── gut_hiv_fastaL.txt                │
-│   ├── gut_hiv_NumReact.txt              │  Format: DNA nucleotide sequences (FASTA)
-│   ├── nat_cntrl_fastaH.txt              │          + polyreactivity flags
-│   ├── nat_cntrl_fastaL.txt              │
-│   ├── nat_cntrl_NumReact.txt            │
-│   ├── nat_hiv_fastaH.txt                │
-│   ├── nat_hiv_fastaL.txt                │
-│   ├── nat_hiv_NumReact.txt              │
-│   ├── plos_hiv_fastaH.txt               │
-│   ├── plos_hiv_fastaL.txt               │
-│   ├── plos_hiv_YN.txt                   │
-│   ├── mouse_fastaH.dat                  │
-│   ├── mouse_fastaL.dat                  │
-│   ├── mouse_YN.txt                      │
-│   └── translation_failures.log          ← Generated during Stage 1 processing
-│
-├── boughter.csv                          ← Stage 1 output: Protein sequences
-│                                           (1,117 sequences from 1,171 raw)
-│
-└── boughter/                             ← Stages 2+3 output: Fragment CSVs
-    ├── VH_only_boughter.csv              │  (16 fragment files, 1,065 sequences each)
-    ├── VL_only_boughter.csv              │
-    ├── H-CDR1_boughter.csv               │  Each file contains:
-    ├── H-CDR2_boughter.csv               │  - Annotated sequences (ANARCI/IMGT)
-    ├── H-CDR3_boughter.csv               │  - Polyreactivity labels
-    ├── L-CDR1_boughter.csv               │  - include_in_training flag
-    ├── L-CDR2_boughter.csv               │
-    ├── L-CDR3_boughter.csv               │
-    ├── H-CDRs_boughter.csv               │
-    ├── L-CDRs_boughter.csv               │
-    ├── H-FWRs_boughter.csv               │
-    ├── L-FWRs_boughter.csv               │
-    ├── VH+VL_boughter.csv                │
-    ├── All-CDRs_boughter.csv             │
-    ├── All-FWRs_boughter.csv             │
-    ├── Full_boughter.csv                 │
-    ├── VH_only_boughter_training.csv     ← Training subset (914 sequences)
-    ├── annotation_failures.log           ← Stage 2 failures (7 sequences)
-    ├── qc_filtered_sequences.txt         ← Stage 3 filtered (45 sequences)
-    └── validation_report.txt             ← QC metrics
+└── boughter/                             ← Dataset-centric organization
+    │
+    ├── README.md                         ← Boughter-specific documentation
+    │
+    ├── raw/                              ← Stage 0: Raw DNA sequences from AIMS
+    │   ├── flu_fastaH.txt                │  (19 files, copied from AIMS_manuscripts)
+    │   ├── flu_fastaL.txt                │
+    │   ├── flu_NumReact.txt              │  Source: ctboughter/AIMS_manuscripts
+    │   ├── gut_hiv_fastaH.txt            │          app_data/full_sequences/
+    │   ├── gut_hiv_fastaL.txt            │
+    │   ├── gut_hiv_NumReact.txt          │  Format: DNA nucleotide sequences (FASTA)
+    │   ├── nat_cntrl_fastaH.txt          │          + polyreactivity flags
+    │   ├── nat_cntrl_fastaL.txt          │
+    │   ├── nat_cntrl_NumReact.txt        │
+    │   ├── nat_hiv_fastaH.txt            │
+    │   ├── nat_hiv_fastaL.txt            │
+    │   ├── nat_hiv_NumReact.txt          │
+    │   ├── plos_hiv_fastaH.txt           │
+    │   ├── plos_hiv_fastaL.txt           │
+    │   ├── plos_hiv_YN.txt               │
+    │   ├── mouse_fastaH.dat              │
+    │   ├── mouse_fastaL.dat              │
+    │   ├── mouse_YN.txt                  │
+    │   └── translation_failures.log      ← Generated during Stage 1 processing
+    │
+    ├── processed/                        ← Stage 1: Translated protein sequences
+    │   └── boughter.csv                  │  (1,117 sequences from 1,171 raw)
+    │
+    ├── annotated/                        ← Stages 2+3: ANARCI-annotated fragments
+    │   ├── VH_only_boughter.csv          │  (16 fragment files, 1,065 sequences each)
+    │   ├── VL_only_boughter.csv          │
+    │   ├── H-CDR1_boughter.csv           │  Each file contains:
+    │   ├── H-CDR2_boughter.csv           │  - Annotated sequences (ANARCI/IMGT)
+    │   ├── H-CDR3_boughter.csv           │  - Polyreactivity labels
+    │   ├── L-CDR1_boughter.csv           │  - include_in_training flag
+    │   ├── L-CDR2_boughter.csv           │
+    │   ├── L-CDR3_boughter.csv           │
+    │   ├── H-CDRs_boughter.csv           │
+    │   ├── L-CDRs_boughter.csv           │
+    │   ├── H-FWRs_boughter.csv           │
+    │   ├── L-FWRs_boughter.csv           │
+    │   ├── VH+VL_boughter.csv            │
+    │   ├── All-CDRs_boughter.csv         │
+    │   ├── All-FWRs_boughter.csv         │
+    │   ├── Full_boughter.csv             │
+    │   ├── annotation_failures.log       ← Stage 2 failures (7 sequences)
+    │   ├── qc_filtered_sequences.txt     ← Stage 3 filtered (45 sequences)
+    │   └── validation_report.txt         ← QC metrics
+    │
+    ├── canonical/                        ← Authoritative training file
+    │   ├── VH_only_boughter_training.csv │  (914 sequences: 443 specific, 471 non-specific)
+    │   └── README.md                     ← Training file documentation
+    │
+    └── strict_qc/                        ← Stage 4: Experimental strict QC
+        ├── VH_only_boughter_strict_qc.csv│  (16 strict QC files)
+        ├── VL_only_boughter_strict_qc.csv│
+        ├── ... (14 more files)           │
+        └── README.md                     ← Strict QC documentation
 ```
 
 ---

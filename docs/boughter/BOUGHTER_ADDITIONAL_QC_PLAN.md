@@ -27,43 +27,52 @@ preprocessing/boughter/
 ├── validate_stage1.py                 ✅ Keep as-is
 └── validate_stages2_3.py              ✅ Keep as-is
 
-train_datasets/
-├── boughter.csv                       ✅ Stage 1 output (1,171 sequences)
-│
-├── boughter_raw/                      ✅ Raw DNA FASTA files (source data)
+train_datasets/boughter/
+├── raw/                               ✅ Stage 0: Raw DNA FASTA files (source data)
 │   ├── flu_fastaH.txt
 │   ├── flu_fastaL.txt
 │   ├── mouse_fastaH.dat
 │   └── ... (other raw files)
 │
-└── boughter/                          ✅ Stage 2+3 outputs
-    ├── VH_only_boughter.csv           (1,065 seqs, all flags, has include_in_training column)
-    ├── H-CDR3_boughter.csv            (1,065 seqs, has include_in_training column)
-    ├── All-CDRs_boughter.csv          (1,065 seqs, has include_in_training column)
-    ├── ... (14 more fragment CSVs)
-    │
-    └── VH_only_boughter_training.csv  (914 seqs, training subset ONLY)
-        └── Columns: [sequence, label] - NO id, NO fragments, NO metadata
+├── processed/                         ✅ Stage 1: Translated proteins
+│   └── boughter.csv                   (1,117 sequences)
+│
+├── annotated/                         ✅ Stages 2+3: ANARCI fragments
+│   ├── VH_only_boughter.csv           (1,065 seqs, has include_in_training column)
+│   ├── H-CDR3_boughter.csv            (1,065 seqs, has include_in_training column)
+│   ├── All-CDRs_boughter.csv          (1,065 seqs, has include_in_training column)
+│   ├── ... (13 more fragment CSVs)
+│   ├── annotation_failures.log
+│   ├── qc_filtered_sequences.txt
+│   └── validation_report.txt
+│
+├── canonical/                         ✅ Authoritative training file
+│   ├── VH_only_boughter_training.csv  (914 seqs, training subset ONLY)
+│   └── README.md                      └── Columns: [sequence, label] - NO id, NO fragments
+│
+└── strict_qc/                         ✅ Stage 4: Experimental strict QC
+    ├── VH_only_boughter_strict_qc.csv (16 strict QC files)
+    └── README.md
 ```
 
 ### Current Pipeline Flow (VERIFIED)
 
 ```
-Raw DNA FASTA files (1,171 sequences)
+train_datasets/boughter/raw/ - Raw DNA FASTA files (1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,171 sequences)
+   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,117 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
    ↓ QC: X in CDRs only, empty CDRs
    ↓ Outputs (1,065 sequences each):
-   ↓   • 16 fragment CSVs: *_boughter.csv
+   ↓   • train_datasets/boughter/annotated/*_boughter.csv (16 fragment files)
    ↓     (with id, sequence, label, subset, num_flags, flag_category,
    ↓      include_in_training, source, sequence_length)
    ↓
-   ↓   • 1 training subset: VH_only_boughter_training.csv
+   ↓   • train_datasets/boughter/canonical/VH_only_boughter_training.csv
    ↓     (914 sequences where include_in_training==True)
    ↓     (columns: sequence, label ONLY - no id, no fragments)
 ```
