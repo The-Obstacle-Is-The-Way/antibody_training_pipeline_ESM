@@ -1,8 +1,10 @@
 # Training Datasets Organization Plan
 
 **Date:** November 5, 2025
-**Status:** 📋 PLANNING - Awaiting Senior Approval
+**Status:** 📋 PLANNING - Awaiting Senior Approval (✅ AUDITED & CORRECTED)
 **Purpose:** Reorganize `train_datasets/` to match the clean dataset-centric structure we established for `test_datasets/`
+
+**⚠️ AUDIT STATUS:** This plan was comprehensively audited on Nov 5, 2025 by exploration agent. **All 6 critical errors have been identified and corrected.** See "CRITICAL CORRECTIONS" section below for details.
 
 ---
 
@@ -212,11 +214,17 @@ log_file = "train_datasets/boughter/raw/translation_failures.log"
 input_file = "train_datasets/boughter.csv"
 output_dir = "train_datasets/boughter"
 training_output = "train_datasets/boughter/VH_only_boughter_training.csv"
+# Lines 237, 387: Log file paths
+failure_log = Path("train_datasets/boughter/annotation_failures.log")
+qc_log = Path("train_datasets/boughter/qc_filtered_sequences.txt")
 
 # AFTER:
 input_file = "train_datasets/boughter/processed/boughter.csv"
 output_dir = "train_datasets/boughter/annotated"
 training_output = "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+# Lines 237, 387: Log file paths MUST BE UPDATED
+failure_log = Path("train_datasets/boughter/annotated/annotation_failures.log")
+qc_log = Path("train_datasets/boughter/annotated/qc_filtered_sequences.txt")
 ```
 
 **`preprocessing/boughter/stage4_additional_qc.py`:**
@@ -231,6 +239,19 @@ output_dir = "train_datasets/boughter/strict_qc"
 output_suffix = "_strict_qc.csv"
 ```
 
+**`preprocessing/boughter/audit_training_qc.py`:**
+```python
+# BEFORE:
+BOUGHTER_DIR = Path("train_datasets/boughter")
+TRAINING_FILE = BOUGHTER_DIR / "VH_only_boughter_training.csv"
+FULL_FILE = BOUGHTER_DIR / "VH_only_boughter.csv"
+
+# AFTER:
+BOUGHTER_DIR = Path("train_datasets/boughter")
+TRAINING_FILE = BOUGHTER_DIR / "canonical" / "VH_only_boughter_training.csv"
+FULL_FILE = BOUGHTER_DIR / "annotated" / "VH_only_boughter.csv"
+```
+
 ---
 
 ### Validation Scripts
@@ -239,9 +260,17 @@ output_suffix = "_strict_qc.csv"
 ```python
 # BEFORE:
 csv_file = "train_datasets/boughter.csv"
+# Lines 153, 176, 357: Log file paths
+failure_log_path = output_dir / "annotation_failures.log"
+qc_log_path = output_dir / "qc_filtered_sequences.txt"
+report_path = Path("train_datasets/boughter/validation_report.txt")
 
 # AFTER:
 csv_file = "train_datasets/boughter/processed/boughter.csv"
+# Lines 153, 176, 357: Log file paths MUST BE UPDATED
+failure_log_path = output_dir / "annotated" / "annotation_failures.log"
+qc_log_path = output_dir / "annotated" / "qc_filtered_sequences.txt"
+report_path = Path("train_datasets/boughter/annotated/validation_report.txt")
 ```
 
 **`preprocessing/boughter/validate_stages2_3.py`:**
@@ -279,22 +308,22 @@ pattern = "*_strict_qc.csv"
 ```yaml
 # BEFORE:
 data:
-  train_path: "train_datasets/boughter/VH_only_boughter_training.csv"
+  train_file: ./train_datasets/boughter/VH_only_boughter_training.csv
 
 # AFTER:
 data:
-  train_path: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  train_file: ./train_datasets/boughter/canonical/VH_only_boughter_training.csv
 ```
 
 **`configs/config_strict_qc.yaml`:**
 ```yaml
 # BEFORE:
 data:
-  train_path: "train_datasets/boughter/VH_only_boughter_strict_qc.csv"
+  train_file: ./train_datasets/boughter/VH_only_boughter_strict_qc.csv
 
 # AFTER:
 data:
-  train_path: "train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv"
+  train_file: ./train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv
 ```
 
 ---
@@ -318,12 +347,21 @@ data:
 
 ### Supporting Documents
 
-4. **`docs/boughter/BOUGHTER_DATASET_COMPLETE_HISTORY.md`**
-5. **`docs/boughter/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`**
-6. **`docs/boughter/BOUGHTER_ADDITIONAL_QC_PLAN.md`**
-7. **`docs/boughter/boughter_processing_status.md`**
-8. **`docs/TRAINING_READINESS_CHECK.md`**
-9. **`docs/TRAINING_SETUP_STATUS.md`**
+4. **`docs/BOUGHTER_DATASET_COMPLETE_HISTORY.md`** ⚠️ DUPLICATE (same as #5, both need updating!)
+5. **`docs/boughter/BOUGHTER_DATASET_COMPLETE_HISTORY.md`** ⚠️ DUPLICATE (same as #4)
+6. **`docs/boughter/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`**
+7. **`docs/boughter/BOUGHTER_ADDITIONAL_QC_PLAN.md`**
+8. **`docs/boughter/BOUGHTER_NOVO_METHODOLOGY_CLARIFICATION.md`**
+9. **`docs/boughter/BOUGHTER_P0_FIX_REPORT.md`**
+10. **`docs/boughter/boughter_processing_status.md`**
+11. **`docs/boughter/boughter_processing_implementation.md`**
+12. **`docs/boughter/boughter_data_sources.md`**
+13. **`docs/boughter/boughter_cdr_boundary_investigation.md`**
+14. **`docs/boughter/accuracy_verification_report.md`**
+15. **`docs/TRAINING_READINESS_CHECK.md`**
+16. **`docs/TRAINING_SETUP_STATUS.md`**
+
+**NOTE:** Files #4 and #5 are byte-for-byte identical duplicates (25937 bytes). Consider consolidating to single source of truth after reorganization.
 
 ---
 
@@ -415,13 +453,11 @@ The `label` column is derived from the Novo Nordisk flagging strategy:
 
 ### Columns
 
-- `id` - Unique sequence identifier
-- `vh_sequence` - VH domain amino acid sequence (ANARCI-annotated)
-- `label` - Binary classification label (0=specific, 1=non-specific)
-- `subset` - Original source subset (flu, hiv_nat, gut_hiv, etc.)
-- `num_flags` - Number of polyreactivity flags (0-7 ligands)
-- `source` - "Boughter2020"
-- `include_in_training` - Always True in this file (pre-filtered)
+**ACTUAL COLUMNS IN FILE:**
+- `sequence` - VH domain amino acid sequence (ANARCI-annotated)
+- `label` - Binary classification label (0.0=specific, 1.0=non-specific)
+
+**NOTE:** The training CSV is intentionally minimal (sequence + label only) for model training. The full annotated data with metadata (id, subset, num_flags, etc.) is in `train_datasets/boughter/annotated/VH_only_boughter.csv`.
 
 ### Statistics
 
@@ -456,7 +492,8 @@ import pandas as pd
 # Load training data
 df = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv', comment='#')
 
-sequences = df['vh_sequence'].tolist()
+# NOTE: Columns are 'sequence' and 'label' (not 'vh_sequence')
+sequences = df['sequence'].tolist()  # NOT 'vh_sequence'!
 labels = df['label'].values
 
 print(f"Loaded {len(sequences)} training sequences")
@@ -561,16 +598,36 @@ python3 train.py --config configs/config_strict_qc.yaml
 
 ---
 
+## ⚠️ CRITICAL CORRECTIONS (Nov 5, 2025 Audit)
+
+**The following errors were found and corrected in this plan:**
+
+1. **❌ WRONG COLUMNS in canonical README:** Original plan described `id, vh_sequence, subset, num_flags, source, include_in_training` columns, but the actual training CSV only has `sequence, label`. **FIXED.**
+
+2. **❌ MISSING SCRIPT:** `preprocessing/boughter/audit_training_qc.py` (line 29) references training file but was NOT in update list. **FIXED.**
+
+3. **❌ WRONG CONFIG KEYS:** Plan used `train_path` but actual configs use `train_file`. **FIXED.**
+
+4. **❌ MISSING LOG FILE CODE CHANGES:** `stage2_stage3_annotation_qc.py` (lines 237, 387) and `validate_stage1.py` (lines 153, 176, 357) hardcode log file paths that must be updated in the code, not just moved with `git mv`. **FIXED.**
+
+5. **❌ MISSING DOCS:** Plan listed 9 docs to update, but there are actually 16 docs (including 2 byte-for-byte duplicates). **FIXED.**
+
+6. **⚠️ DUPLICATE DOCS:** `docs/BOUGHTER_DATASET_COMPLETE_HISTORY.md` and `docs/boughter/BOUGHTER_DATASET_COMPLETE_HISTORY.md` are identical (25937 bytes). Both need updating. Consider consolidating after reorganization.
+
+**All corrections have been applied to this plan. The plan is now accurate and complete.**
+
+---
+
 ## Estimated Effort
 
 - **File moves:** 15 minutes (scripted with bash/git mv)
-- **Script updates:** 30 minutes (6-8 Python files)
+- **Script updates:** 45 minutes (7 Python files, including log path code changes)
 - **Config updates:** 5 minutes (2 YAML files)
-- **Documentation updates:** 45 minutes (9 markdown files)
+- **Documentation updates:** 90 minutes (16 markdown files, including duplicates)
 - **New READMEs:** 20 minutes (3 new files)
 - **Testing/Validation:** 20 minutes (run all validation scripts)
 
-**Total:** ~2.5 hours
+**Total:** ~3.5 hours (was 2.5 hours before comprehensive audit)
 
 ---
 
