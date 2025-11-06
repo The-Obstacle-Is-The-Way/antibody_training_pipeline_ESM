@@ -19,31 +19,23 @@ This directory contains processed antibody sequences from the Boughter et al. 20
 
 ## File Organization
 
-### QC Levels
+### QC Level (Production)
 
-This dataset is available at **two QC levels**:
-
-#### 1. Boughter QC (Standard)
 **Files:** `*_boughter.csv`
 **Sequences:** 1,065 (all flags), 914 (training subset with `include_in_training==True`)
-**QC Filters:**
+
+**QC Filters Applied:**
 - ✅ X in CDRs only (L1, L2, L3, H1, H2, H3)
 - ✅ Empty CDR removal
 - ✅ Flagging strategy (0 and 4+ flags only, exclude 1-3)
 
-**Use Case:** Exact replication of Boughter's published methodology
+**Use Case:** Production model training (VALIDATED)
+- Jain test: 66.28% accuracy ✅
+- Shehata test: 52.26% accuracy ✅
+
 **Source:** Boughter et al. 2020, seq_loader.py lines 10-33
 
-#### 2. Strict QC (Industry Standard)
-**Files:** `*_boughter_strict_qc.csv`
-**Sequences:** 840-914 (fragment-dependent, see table below)
-**QC Filters:**
-- ✅ All Boughter QC filters (above)
-- ✅ **PLUS:** X filtering in FULL sequence (not just CDRs)
-- ✅ **PLUS:** Non-standard AA filtering (B, Z, J, U, O)
-
-**Use Case:** Matching Novo's likely methodology + modern ML best practices
-**Source:** Industry standard practice + inferred from Novo Nordisk paper
+**Note:** An experimental "strict QC" variant (852 sequences) was created but never validated. It has been archived in `experiments/strict_qc_2025-11-04/` for provenance.
 
 ---
 
