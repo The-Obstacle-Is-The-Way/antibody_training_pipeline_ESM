@@ -13,9 +13,9 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 
 def test_with_assay_type(model, test_file, dataset_name, assay_type, target_cm):
     """Test model with assay-specific threshold"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Testing {dataset_name} with assay_type='{assay_type}'")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Load data
     df = pd.read_csv(test_file, comment="#")
@@ -49,7 +49,7 @@ def test_with_assay_type(model, test_file, dataset_name, assay_type, target_cm):
 
     print("\n  Results:")
     print(f"    Confusion matrix: {cm.tolist()}")
-    print(f"    Accuracy: {acc*100:.1f}%")
+    print(f"    Accuracy: {acc * 100:.1f}%")
 
     print("\n  Novo benchmark:")
     print(f"    Confusion matrix: {target_cm}")
@@ -115,8 +115,8 @@ def main():
     print("SUMMARY")
     print("=" * 60)
     print("\nUsing assay-specific thresholds:")
-    print(f"  Jain (ELISA):   {jain_acc*100:.1f}% accuracy")
-    print(f"  Shehata (PSR):  {shehata_acc*100:.1f}% accuracy")
+    print(f"  Jain (ELISA):   {jain_acc * 100:.1f}% accuracy")
+    print(f"  Shehata (PSR):  {shehata_acc * 100:.1f}% accuracy")
 
     print("\nBenchmarks:")
     print("  Jain (ELISA):   66.28% accuracy (Novo benchmark)")

@@ -19,7 +19,6 @@ Issue: #4 - Harvey dataset preprocessing
 
 import sys
 from pathlib import Path
-from typing import Dict, Optional
 
 import pandas as pd
 import riot_na
@@ -29,7 +28,7 @@ from tqdm.auto import tqdm
 annotator = riot_na.create_riot_aa()
 
 
-def annotate_sequence(seq_id: str, sequence: str) -> Optional[Dict[str, str]]:
+def annotate_sequence(seq_id: str, sequence: str) -> dict[str, str] | None:
     """
     Annotate a single VHH (nanobody) sequence using ANARCI (IMGT).
 
@@ -100,7 +99,7 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
     failures = []
     seq_counter = 0
 
-    for idx, row in tqdm(df.iterrows(), total=len(df), desc="Annotating"):
+    for _idx, row in tqdm(df.iterrows(), total=len(df), desc="Annotating"):
         # Generate sequential ID (harvey_000001, harvey_000002, etc.)
         seq_counter += 1
         seq_id = f"harvey_{seq_counter:06d}"
@@ -167,7 +166,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
     print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
-    for fragment_name, (column_name, sequence_alias) in fragments.items():
+    for fragment_name, (column_name, _sequence_alias) in fragments.items():
         output_path = output_dir / f"{fragment_name}_harvey.csv"
 
         # Create fragment-specific CSV with standardized column names
@@ -207,9 +206,7 @@ def main():
         print(
             "Please run preprocessing/harvey/step1_convert_raw_csvs.py to generate from raw Harvey CSVs."
         )
-        print(
-            "Raw CSVs should be in: test_datasets/harvey/raw/"
-        )
+        print("Raw CSVs should be in: test_datasets/harvey/raw/")
         sys.exit(1)
 
     print("=" * 70)
@@ -236,7 +233,7 @@ def main():
     print("Label distribution:")
     for label, count in df_annotated["label"].value_counts().sort_index().items():
         label_name = "Low polyreactivity" if label == 0 else "High polyreactivity"
-        print(f"  {label_name}: {count} ({count/len(df_annotated)*100:.1f}%)")
+        print(f"  {label_name}: {count} ({count / len(df_annotated) * 100:.1f}%)")
 
     print("\nFragment files created: 6 (VHH-specific)")
     print(f"Output directory: {output_dir.absolute()}")

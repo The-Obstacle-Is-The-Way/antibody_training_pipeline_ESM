@@ -247,12 +247,12 @@ def apply_permutation(df, reclass_ids, removal_ids):
     specific_after = counts_after_reclass.get(0, 0)
     nonspec_after = counts_after_reclass.get(1, 0)
 
-    assert (
-        specific_after == 89
-    ), f"Expected 89 specific after reclass, got {specific_after}"
-    assert (
-        nonspec_after == 27
-    ), f"Expected 27 non-specific after reclass, got {nonspec_after}"
+    assert specific_after == 89, (
+        f"Expected 89 specific after reclass, got {specific_after}"
+    )
+    assert nonspec_after == 27, (
+        f"Expected 27 non-specific after reclass, got {nonspec_after}"
+    )
 
     # Step 2: Remove
     df_work = df_work[~df_work["id"].isin(removal_ids)].copy()
@@ -263,9 +263,9 @@ def apply_permutation(df, reclass_ids, removal_ids):
     final_nonspec = final_counts.get(1, 0)
 
     assert final_specific == 59, f"Expected 59 specific in final, got {final_specific}"
-    assert (
-        final_nonspec == 27
-    ), f"Expected 27 non-specific in final, got {final_nonspec}"
+    assert final_nonspec == 27, (
+        f"Expected 27 non-specific in final, got {final_nonspec}"
+    )
     assert len(df_work) == 86, f"Expected 86 total, got {len(df_work)}"
 
     return df_work
@@ -292,11 +292,11 @@ def run_inference(df_test):
 
 def test_permutation(perm_id, reclass_strategy, removal_strategy, description):
     """Test a single permutation"""
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"Testing {perm_id}: {description}")
     print(f"  Reclassification: {reclass_strategy}")
     print(f"  Removal: {removal_strategy}")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     # Get reclassification IDs
     reclass_func = RECLASSIFICATION_STRATEGIES[reclass_strategy][1]
@@ -329,33 +329,33 @@ def test_permutation(perm_id, reclass_strategy, removal_strategy, description):
     df_final = apply_permutation(df, reclass_ids, removal_ids)
 
     print(f"\n✅ Final dataset: {len(df_final)} antibodies")
-    print(f"  Specific: {(df_final['label']==0).sum()}")
-    print(f"  Non-specific: {(df_final['label']==1).sum()}")
+    print(f"  Specific: {(df_final['label'] == 0).sum()}")
+    print(f"  Non-specific: {(df_final['label'] == 1).sum()}")
 
     # Run inference
     print("\n🔄 Running inference...")
     cm, accuracy, y_pred, y_proba = run_inference(df_final)
 
     # Results
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print(f"RESULTS: {perm_id}")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
     print("\nConfusion Matrix:")
-    print(f"  [[{cm[0,0]:2d}, {cm[0,1]:2d}],")
-    print(f"   [{cm[1,0]:2d}, {cm[1,1]:2d}]]")
-    print(f"\nAccuracy: {accuracy:.4f} ({accuracy*100:.2f}%)")
+    print(f"  [[{cm[0, 0]:2d}, {cm[0, 1]:2d}],")
+    print(f"   [{cm[1, 0]:2d}, {cm[1, 1]:2d}]]")
+    print(f"\nAccuracy: {accuracy:.4f} ({accuracy * 100:.2f}%)")
 
     # Compare to Novo
     match = np.array_equal(cm, NOVO_CM)
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print("COMPARISON TO NOVO")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
     print(
-        f"Novo CM:  [[{NOVO_CM[0,0]:2d}, {NOVO_CM[0,1]:2d}], [{NOVO_CM[1,0]:2d}, {NOVO_CM[1,1]:2d}]]"
+        f"Novo CM:  [[{NOVO_CM[0, 0]:2d}, {NOVO_CM[0, 1]:2d}], [{NOVO_CM[1, 0]:2d}, {NOVO_CM[1, 1]:2d}]]"
     )
-    print(f"Ours:     [[{cm[0,0]:2d}, {cm[0,1]:2d}], [{cm[1,0]:2d}, {cm[1,1]:2d}]]")
+    print(f"Ours:     [[{cm[0, 0]:2d}, {cm[0, 1]:2d}], [{cm[1, 0]:2d}, {cm[1, 1]:2d}]]")
     print(
-        f"Diff:     [[{cm[0,0]-NOVO_CM[0,0]:+2d}, {cm[0,1]-NOVO_CM[0,1]:+2d}], [{cm[1,0]-NOVO_CM[1,0]:+2d}, {cm[1,1]-NOVO_CM[1,1]:+2d}]]"
+        f"Diff:     [[{cm[0, 0] - NOVO_CM[0, 0]:+2d}, {cm[0, 1] - NOVO_CM[0, 1]:+2d}], [{cm[1, 0] - NOVO_CM[1, 0]:+2d}, {cm[1, 1] - NOVO_CM[1, 1]:+2d}]]"
     )
 
     if match:

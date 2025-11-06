@@ -112,11 +112,10 @@ train_datasets/
     │   ├── VH_only_boughter_training.csv │  (914 sequences: 443 specific, 471 non-specific)
     │   └── README.md                     ← Training file documentation
     │
-    └── strict_qc/                        ← Stage 4: Experimental strict QC
-        ├── VH_only_boughter_strict_qc.csv│  (16 strict QC files)
-        ├── VL_only_boughter_strict_qc.csv│
-        ├── ... (14 more files)           │
-        └── README.md                     ← Strict QC documentation
+    └── (strict QC experiment archived)   ← See experiments/strict_qc_2025-11-04/
+        ├── data/strict_qc/*.csv          │  (16 experimental fragment files)
+        ├── preprocessing/stage4_*.py     │  (Stage 4 scripts)
+        └── EXPERIMENT_README.md          ← Experimental hypothesis & results
 ```
 
 ---

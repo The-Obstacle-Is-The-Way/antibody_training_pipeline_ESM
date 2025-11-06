@@ -20,7 +20,7 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -53,12 +53,12 @@ sns.set_palette("husl")
 class TestConfig:
     """Configuration for testing pipeline"""
 
-    model_paths: List[str]
-    data_paths: List[str]
+    model_paths: list[str]
+    data_paths: list[str]
     sequence_column: str = "sequence"  # Column name for sequences in dataset
     label_column: str = "label"  # Column name for labels in dataset
     output_dir: str = "./test_results"
-    metrics: List[str] = None
+    metrics: list[str] | None = None
     save_predictions: bool = True
     batch_size: int = 32  # Batch size for embedding extraction
     device: str = "cpu"  # Device to use for inference [cuda, cpu, mps]
@@ -81,8 +81,8 @@ class ModelTester:
     def __init__(self, config: TestConfig):
         self.config = config
         self.logger = self._setup_logging()
-        self.results = {}
-        self.cached_embedding_files = []  # Track cached files for cleanup
+        self.results: dict[str, Any] = {}
+        self.cached_embedding_files: list[str] = []  # Track cached files for cleanup
 
         # Create output directory
         os.makedirs(config.output_dir, exist_ok=True)
@@ -150,7 +150,7 @@ class ModelTester:
         )
         return model
 
-    def load_dataset(self, data_path: str) -> Tuple[List[str], List[int]]:
+    def load_dataset(self, data_path: str) -> tuple[list[str], list[int]]:
         """Load dataset from CSV file using configured column names"""
         self.logger.info(f"Loading dataset from {data_path}")
 
@@ -204,7 +204,7 @@ class ModelTester:
         return sequences, labels
 
     def embed_sequences(
-        self, sequences: List[str], model: BinaryClassifier, dataset_name: str
+        self, sequences: list[str], model: BinaryClassifier, dataset_name: str
     ) -> np.ndarray:
         """Extract embeddings for sequences using the model's embedding extractor"""
         cache_file = os.path.join(
@@ -219,7 +219,7 @@ class ModelTester:
         if os.path.exists(cache_file):
             self.logger.info(f"Loading cached embeddings from {cache_file}")
             with open(cache_file, "rb") as f:
-                embeddings = pickle.load(f)
+                embeddings: np.ndarray = pickle.load(f)
 
             if len(embeddings) == len(sequences):
                 return embeddings
@@ -244,7 +244,7 @@ class ModelTester:
         y: np.ndarray,
         model_name: str,
         dataset_name: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Evaluate pretrained model directly on test set (no retraining)"""
         self.logger.info(f"Evaluating pretrained model {model_name} on {dataset_name}")
 
@@ -261,20 +261,24 @@ class ModelTester:
         }
 
         # Calculate all requested metrics
-        if "accuracy" in self.config.metrics:
-            results["test_scores"]["accuracy"] = accuracy_score(y, y_pred)
-        if "precision" in self.config.metrics:
-            results["test_scores"]["precision"] = precision_score(
-                y, y_pred, zero_division=0
-            )
-        if "recall" in self.config.metrics:
-            results["test_scores"]["recall"] = recall_score(y, y_pred, zero_division=0)
-        if "f1" in self.config.metrics:
-            results["test_scores"]["f1"] = f1_score(y, y_pred, zero_division=0)
-        if "roc_auc" in self.config.metrics:
-            results["test_scores"]["roc_auc"] = roc_auc_score(y, y_proba)
-        if "pr_auc" in self.config.metrics:
-            results["test_scores"]["pr_auc"] = average_precision_score(y, y_proba)
+        metrics = self.config.metrics
+        if metrics is not None:
+            if "accuracy" in metrics:
+                results["test_scores"]["accuracy"] = accuracy_score(y, y_pred)
+            if "precision" in metrics:
+                results["test_scores"]["precision"] = precision_score(
+                    y, y_pred, zero_division=0
+                )
+            if "recall" in metrics:
+                results["test_scores"]["recall"] = recall_score(
+                    y, y_pred, zero_division=0
+                )
+            if "f1" in metrics:
+                results["test_scores"]["f1"] = f1_score(y, y_pred, zero_division=0)
+            if "roc_auc" in metrics:
+                results["test_scores"]["roc_auc"] = roc_auc_score(y, y_proba)
+            if "pr_auc" in metrics:
+                results["test_scores"]["pr_auc"] = average_precision_score(y, y_proba)
 
         # Log results
         self.logger.info(f"Test results for {model_name} on {dataset_name}:")
@@ -283,7 +287,7 @@ class ModelTester:
 
         return results
 
-    def plot_confusion_matrix(self, results: Dict[str, Dict], dataset_name: str):
+    def plot_confusion_matrix(self, results: dict[str, dict], dataset_name: str):
         """Create confusion matrix visualization"""
         self.logger.info(f"Creating confusion matrix for {dataset_name}")
 
@@ -326,7 +330,7 @@ class ModelTester:
 
         self.logger.info(f"Confusion matrix saved to {plot_file}")
 
-    def save_detailed_results(self, results: Dict[str, Dict], dataset_name: str):
+    def save_detailed_results(self, results: dict[str, dict], dataset_name: str):
         """Save detailed results to files"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -387,9 +391,9 @@ class ModelTester:
             # Test each dataset
             for data_path in self.config.data_paths:
                 dataset_name = Path(data_path).stem
-                self.logger.info(f"\n{'='*60}")
+                self.logger.info(f"\n{'=' * 60}")
                 self.logger.info(f"Testing on dataset: {dataset_name}")
-                self.logger.info(f"{'='*60}")
+                self.logger.info(f"{'=' * 60}")
 
                 # Load dataset
                 try:
@@ -447,7 +451,7 @@ class ModelTester:
 
 def load_config_file(config_path: str) -> TestConfig:
     """Load test configuration from YAML file"""
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         config_dict = yaml.safe_load(f)
 
     return TestConfig(**config_dict)
@@ -480,16 +484,16 @@ def main():
 Examples:
     # Test single model on single dataset
     python test.py --model models/antibody_classifier.pkl --data sample_data.csv
-    
+
     # Test multiple models on multiple datasets
     python test.py --model models/model1.pkl models/model2.pkl --data dataset1.csv dataset2.csv
-    
+
     # Use configuration file
     python test.py --config test_config.yaml
-    
+
     # Override device and batch size
     python test.py --config test_config.yaml --device cuda --batch-size 64
-    
+
     # Create sample configuration
     python test.py --create-config
         """,
@@ -546,9 +550,9 @@ Examples:
         tester = ModelTester(config)
         results = tester.run_comprehensive_test()
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print("TESTING COMPLETED SUCCESSFULLY!")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
         print(f"Results saved to: {config.output_dir}")
 
         # Print summary

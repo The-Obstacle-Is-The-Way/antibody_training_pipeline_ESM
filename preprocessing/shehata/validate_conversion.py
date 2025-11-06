@@ -53,7 +53,7 @@ def method1_pandas_openpyxl(excel_path: str) -> pd.DataFrame:
     return df
 
 
-def method2_openpyxl_direct(excel_path: str) -> dict:
+def method2_openpyxl_direct(excel_path: str) -> pd.DataFrame:
     """Read Excel using openpyxl directly."""
     print("\nMethod 2: openpyxl direct reading")
     wb = openpyxl.load_workbook(excel_path)
@@ -150,7 +150,9 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
 
     if not fragments_dir.exists():
         print(f"  ℹ Fragment directory not found: {fragments_dir}")
-        print("  (Run preprocessing/shehata/step2_extract_fragments.py to generate fragments)")
+        print(
+            "  (Run preprocessing/shehata/step2_extract_fragments.py to generate fragments)"
+        )
         return True  # Not an error if fragments haven't been generated yet
 
     fragment_files = list(fragments_dir.glob("*.csv"))
@@ -276,7 +278,7 @@ def main():
         print("\n  Label distribution:")
         for label, count in df_csv["label"].value_counts().sort_index().items():
             label_name = "Specific" if label == 0 else "Non-specific"
-            print(f"    {label_name}: {count} ({count/len(df_csv)*100:.1f}%)")
+            print(f"    {label_name}: {count} ({count / len(df_csv) * 100:.1f}%)")
 
         print("\n  Missing data:")
         print(f"    Missing heavy_seq: {df_csv['heavy_seq'].isna().sum()}")

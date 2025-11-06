@@ -24,16 +24,16 @@ def print_metrics(y_true, y_pred, dataset_name):
     cm = confusion_matrix(y_true, y_pred)
     acc = accuracy_score(y_true, y_pred)
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"{dataset_name} Results")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"Confusion Matrix: {cm.tolist()}")
-    print(f"  [[TN={cm[0,0]}, FP={cm[0,1]}],")
-    print(f"   [FN={cm[1,0]}, TP={cm[1,1]}]]")
-    print(f"\nAccuracy: {acc*100:.1f}%")
-    print(f"Sensitivity: {cm[1,1]/(cm[1,0]+cm[1,1])*100:.1f}%")
-    print(f"Specificity: {cm[0,0]/(cm[0,0]+cm[0,1])*100:.1f}%")
-    print(f"{'='*60}\n")
+    print(f"  [[TN={cm[0, 0]}, FP={cm[0, 1]}],")
+    print(f"   [FN={cm[1, 0]}, TP={cm[1, 1]}]]")
+    print(f"\nAccuracy: {acc * 100:.1f}%")
+    print(f"Sensitivity: {cm[1, 1] / (cm[1, 0] + cm[1, 1]) * 100:.1f}%")
+    print(f"Specificity: {cm[0, 0] / (cm[0, 0] + cm[0, 1]) * 100:.1f}%")
+    print(f"{'=' * 60}\n")
 
     return {"cm": cm, "accuracy": acc}
 
@@ -66,7 +66,7 @@ def main():
 
     print("Novo Benchmark (from Figure S14):")
     print(f"  Confusion Matrix: {novo_cm.tolist()}")
-    print(f"  Accuracy: {novo_acc*100:.1f}%")
+    print(f"  Accuracy: {novo_acc * 100:.1f}%")
     print()
 
     # Load Harvey data
@@ -91,7 +91,7 @@ def main():
     X_embeddings = model.embedding_extractor.extract_batch_embeddings(sequences)
     embed_time = time.time() - start_embed
 
-    print(f"✓ Embeddings extracted in {embed_time/60:.1f} minutes")
+    print(f"✓ Embeddings extracted in {embed_time / 60:.1f} minutes")
     print(f"  Embedding shape: {X_embeddings.shape}")
     print()
 
@@ -112,7 +112,7 @@ def main():
     print(f"  Novo CM:  {novo_cm.tolist()}")
     print(f"  Our CM:   {cm.tolist()}")
     print(f"  Difference: {diff} (sum of absolute differences)")
-    print(f"  Accuracy gap: {(results['accuracy'] - novo_acc)*100:.1f}pp")
+    print(f"  Accuracy gap: {(results['accuracy'] - novo_acc) * 100:.1f}pp")
     print()
 
     print(f"End time: {time.strftime('%Y-%m-%d %H:%M:%S')}")

@@ -215,10 +215,12 @@ total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 - ESM models can't handle X (validation fails)
 - Professional QC practice
 
-**Recommended action:**
-- Filter the 62 sequences with X
-- Retrain model on 852 clean sequences
-- Expected accuracy improvement: ~2-4 percentage points
+**What we tested:**
+- ✅ Filtered the 62 sequences with X → 852 clean sequences
+- ✅ Retrained model (Stage 4 strict QC)
+- ❌ Result: 66.55% vs 67.5% (NO improvement)
+
+**Conclusion:** The 62 sequences were valid training data, not noise. ESM embeddings already handle ambiguous positions well. This experiment has been archived in `experiments/strict_qc_2025-11-04/`.
 
 ---
 

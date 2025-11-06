@@ -13,9 +13,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import sys
 from pathlib import Path
-from typing import Dict
 
 import pandas as pd
 import pandas.testing as pdt
@@ -68,7 +66,7 @@ def checksum(path: Path) -> str:
     return sha.hexdigest()
 
 
-def validate_sequences(df: pd.DataFrame) -> Dict[str, int]:
+def validate_sequences(df: pd.DataFrame) -> dict[str, int]:
     """Return counts of sequences containing invalid residues."""
     invalid_counts = {"heavy": 0, "light": 0}
     for seq in df["heavy_seq"].dropna():
@@ -93,7 +91,7 @@ def main() -> None:
     for col in ["flags_total", "label"]:
         csv_df[col] = csv_df[col].astype("Int64")
         regenerated[col] = regenerated[col].astype("Int64")
-    for col in ASSAY_CLUSTERS.keys():
+    for col in ASSAY_CLUSTERS:
         csv_df[col] = csv_df[col].astype(bool)
         regenerated[col] = regenerated[col].astype(bool)
 

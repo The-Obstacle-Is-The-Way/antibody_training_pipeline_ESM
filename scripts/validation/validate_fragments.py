@@ -10,6 +10,7 @@ Date: 2025-11-01
 
 import sys
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -25,24 +26,28 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
     Returns:
         Dictionary with validation results
     """
-    results = {
+    errors_list: list[str] = []
+    warnings_list: list[str] = []
+    stats_dict: dict[str, Any] = {}
+
+    results: dict[str, Any] = {
         "valid": True,
-        "errors": [],
-        "warnings": [],
-        "stats": {},
+        "errors": errors_list,
+        "warnings": warnings_list,
+        "stats": stats_dict,
     }
 
     # Check directory exists
     if not dataset_dir.exists():
         results["valid"] = False
-        results["errors"].append(f"Directory not found: {dataset_dir}")
+        errors_list.append(f"Directory not found: {dataset_dir}")
         return results
 
     # Check for CSV files
     csv_files = list(dataset_dir.glob("*.csv"))
     if len(csv_files) == 0:
         results["valid"] = False
-        results["errors"].append("No CSV files found")
+        errors_list.append("No CSV files found")
         return results
 
     if len(csv_files) != expected_fragments:
@@ -54,7 +59,6 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
 
     # Validate each CSV file
     required_columns = {"id", "sequence", "label", "source"}
-    optional_columns = {"sequence_length"}  # Added in newer preprocessing scripts
     all_row_counts = []
 
     for csv_file in csv_files:
@@ -64,18 +68,14 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
             # Check required columns
             missing_cols = required_columns - set(df.columns)
             if missing_cols:
-                results["errors"].append(
-                    f"{csv_file.name}: Missing columns {missing_cols}"
-                )
+                errors_list.append(f"{csv_file.name}: Missing columns {missing_cols}")
                 results["valid"] = False
 
             # Check for empty sequences
             if "sequence" in df.columns:
                 empty_seqs = (df["sequence"].str.len() == 0).sum()
                 if empty_seqs > 0:
-                    results["errors"].append(
-                        f"{csv_file.name}: {empty_seqs} empty sequences"
-                    )
+                    errors_list.append(f"{csv_file.name}: {empty_seqs} empty sequences")
                     results["valid"] = False
 
             # Check for null values in critical columns
@@ -83,7 +83,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
                 if col in df.columns:
                     nulls = df[col].isna().sum()
                     if nulls > 0:
-                        results["errors"].append(
+                        errors_list.append(
                             f"{csv_file.name}: {nulls} null values in '{col}'"
                         )
                         results["valid"] = False
@@ -100,7 +100,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
             all_row_counts.append(len(df))
 
         except Exception as e:
-            results["errors"].append(f"{csv_file.name}: Failed to read - {e}")
+            errors_list.append(f"{csv_file.name}: Failed to read - {e}")
             results["valid"] = False
 
     # Check if all files have same number of rows
@@ -108,7 +108,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
         unique_counts = set(all_row_counts)
         if len(unique_counts) > 1:
             results["warnings"].append(
-                f"Inconsistent row counts: {dict(zip(csv_files, all_row_counts))}"
+                f"Inconsistent row counts: {dict(zip(csv_files, all_row_counts, strict=False))}"
             )
 
         results["stats"]["row_count"] = all_row_counts[0] if all_row_counts else 0
@@ -121,14 +121,18 @@ def validate_label_distribution(csv_path: Path):
     """Validate label distribution matches expected pattern."""
     df = pd.read_csv(csv_path, comment="#")
 
-    stats = {
-        "total": len(df),
-        "specific": (df["label"] == 0).sum(),
-        "non_specific": (df["label"] == 1).sum(),
+    total = len(df)
+    specific = int((df["label"] == 0).sum())
+    non_specific = int((df["label"] == 1).sum())
+
+    stats: dict[str, int | float] = {
+        "total": total,
+        "specific": specific,
+        "non_specific": non_specific,
     }
 
-    stats["specific_pct"] = stats["specific"] / stats["total"] * 100
-    stats["non_specific_pct"] = stats["non_specific"] / stats["total"] * 100
+    stats["specific_pct"] = specific / total * 100
+    stats["non_specific_pct"] = non_specific / total * 100
 
     return stats
 
@@ -189,9 +193,17 @@ def main():
     """Validate all processed datasets."""
     datasets = [
         ("jain", Path("test_datasets/jain/fragments"), 16),  # Full antibodies (VH+VL)
-        ("shehata", Path("test_datasets/shehata/fragments"), 16),  # Full antibodies (VH+VL)
+        (
+            "shehata",
+            Path("test_datasets/shehata/fragments"),
+            16,
+        ),  # Full antibodies (VH+VL)
         ("harvey", Path("test_datasets/harvey/fragments"), 6),  # Nanobodies (VHH only)
-        ("boughter", Path("train_datasets/boughter/annotated"), 16),  # Full antibodies (VH+VL)
+        (
+            "boughter",
+            Path("train_datasets/boughter/annotated"),
+            16,
+        ),  # Full antibodies (VH+VL)
     ]
 
     all_valid = True

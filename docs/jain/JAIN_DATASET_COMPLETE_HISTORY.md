@@ -377,17 +377,15 @@ test_datasets/jain/
 
 ## Testing with New Strict QC Model
 
-### Now That We Have Two Boughter Models
+### Testing the Production Model
 
-**Models:**
-1. **Original Boughter QC** (914 sequences): `models/boughter_vh_esm1v_logreg.pkl`
-   - CV accuracy: 67.5% ± 8.9%
-2. **Strict QC** (852 sequences): `models/boughter_vh_strict_qc_esm1v_logreg.pkl`
-   - CV accuracy: 66.55% ± 7.07%
+**Production Model:** `models/boughter_vh_esm1v_logreg.pkl` (914 sequences)
+- CV accuracy: 67.5% ± 8.9%
+- **Externally validated:** Jain 66.28%, Shehata 52.26% ✅
 
 ### Which Jain File to Test On?
 
-**Recommendation:** Test **both models** on **PARITY_86**
+**Recommendation:** Test on **PARITY_86** for Novo parity benchmarking
 
 **Why?**
 - PARITY_86 is the cleanest test set
@@ -396,18 +394,13 @@ test_datasets/jain/
 
 **Command:**
 ```bash
-# Test original Boughter QC model
-python3 test.py \
-  --model models/boughter_vh_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
-
-# Test strict QC model
-python3 test.py \
-  --model models/boughter_vh_strict_qc_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+# Test production model
+python test.py \
+  --model-paths models/boughter_vh_esm1v_logreg.pkl \
+  --data-paths test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
-**Expected:** Both models should achieve ~66% accuracy on Jain (generalization performance)
+**Expected:** 66.28% accuracy (validated performance)
 
 ---
 

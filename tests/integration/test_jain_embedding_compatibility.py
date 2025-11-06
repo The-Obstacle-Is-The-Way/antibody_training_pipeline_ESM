@@ -17,9 +17,9 @@ Test Coverage:
 4. Model validation logic simulation
 5. Data integrity verification
 
-Date: 2025-11-02
-Issue: Jain dataset preprocessing P0 validation
-Expected: 137 antibodies (67 specific, 67 mild, 3 non-specific)
+Date: 2025-11-06
+Issue: Jain dataset label discrepancy fix (ELISA-based SSOT)
+Expected: 137 antibodies (94 specific, 22 non-specific, 21 mild)
 """
 
 import sys
@@ -42,7 +42,7 @@ def test_gap_characters():
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    jain_dir = Path("test_datasets/jain")
+    jain_dir = Path("test_datasets/jain/fragments")
     fragment_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",
@@ -81,7 +81,7 @@ def test_gap_characters():
             print(f"  ✗ {file_name}: {gap_count} sequences with gaps")
             # Show first few problematic sequences
             gap_seqs = df[df["sequence"].str.contains("-", na=False)].head(3)
-            for idx, row in gap_seqs.iterrows():
+            for _idx, row in gap_seqs.iterrows():
                 print(f"    ID: {row['id']}, gaps in: {row['sequence'][:50]}...")
             all_clean = False
         else:
@@ -90,10 +90,11 @@ def test_gap_characters():
     if all_clean:
         print("\n  ✓ PASS: All Jain fragments are gap-free")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
         print("\n  ✗ FAIL: Gap characters detected - P0 blocker present!")
-        return False
+
+    # Pytest assertion
+    assert all_clean, "Gap characters detected - P0 blocker present!"
 
 
 def test_amino_acid_validation():
@@ -108,7 +109,7 @@ def test_amino_acid_validation():
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    jain_dir = Path("test_datasets/jain")
+    jain_dir = Path("test_datasets/jain/fragments")
 
     # Check critical files for full antibody model
     test_files = [
@@ -152,10 +153,11 @@ def test_amino_acid_validation():
     if all_valid:
         print("\n  ✓ PASS: All sequences contain only valid amino acids")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
         print("\n  ✗ FAIL: Invalid amino acids detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid, "Invalid amino acids detected"
 
 
 def test_stop_codons():
@@ -169,7 +171,7 @@ def test_stop_codons():
     print("TEST 3: Stop Codon Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    jain_dir = Path("test_datasets/jain")
+    jain_dir = Path("test_datasets/jain/fragments")
     fragment_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",
@@ -196,7 +198,7 @@ def test_stop_codons():
             stop_seqs = df[
                 df["sequence"].str.contains(r"\*", na=False, regex=True)
             ].head(3)
-            for idx, row in stop_seqs.iterrows():
+            for _idx, row in stop_seqs.iterrows():
                 print(f"    ID: {row['id']}")
             all_clean = False
         else:
@@ -205,10 +207,11 @@ def test_stop_codons():
     if all_clean:
         print("\n  ✓ PASS: All Jain fragments are stop-codon-free")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
         print("\n  ✗ FAIL: Stop codons detected - P0 blocker present!")
-        return False
+
+    # Pytest assertion
+    assert all_clean, "Stop codons detected - P0 blocker present!"
 
 
 def test_model_validation_logic():
@@ -234,7 +237,7 @@ def test_model_validation_logic():
     total_validated = 0
 
     for file_name in test_files:
-        file_path = Path(f"test_datasets/jain/{file_name}")
+        file_path = Path(f"test_datasets/jain/fragments/{file_name}")
 
         if not file_path.exists():
             print(f"  ✗ FAIL: {file_path} not found")
@@ -245,7 +248,7 @@ def test_model_validation_logic():
 
         # Simulate model.py validation (lines 86-90)
         invalid_sequences = []
-        for idx, row in df.iterrows():
+        for _idx, row in df.iterrows():
             sequence = row["sequence"]
 
             # Check for invalid amino acids (same logic as model.py)
@@ -262,10 +265,11 @@ def test_model_validation_logic():
 
     if all_passed:
         print(f"\n  ✓ PASS: All {total_validated} sequences are ESM-1v compatible")
-        return True
     else:
         print("\n  ✗ FAIL: Dataset NOT compatible with ESM-1v")
-        return False
+
+    # Pytest assertion
+    assert all_passed, "Dataset NOT compatible with ESM-1v"
 
 
 def test_data_integrity():
@@ -279,7 +283,7 @@ def test_data_integrity():
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    jain_dir = Path("test_datasets/jain")
+    jain_dir = Path("test_datasets/jain/fragments")
     expected_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",
@@ -337,28 +341,42 @@ def test_data_integrity():
         print(f"\n  Total sequences: {len(df)}")
         print("  Label distribution:")
         print(
-            f"    Specific (0):     {specific_count} ({specific_count/len(df)*100:.1f}%)"
+            f"    Specific (0):     {specific_count} ({specific_count / len(df) * 100:.1f}%)"
         )
         print(
-            f"    Non-specific (1): {nonspecific_count} ({nonspecific_count/len(df)*100:.1f}%)"
+            f"    Non-specific (1): {nonspecific_count} ({nonspecific_count / len(df) * 100:.1f}%)"
         )
-        print(f"    Mild (NaN):       {mild_count} ({mild_count/len(df)*100:.1f}%)")
+        print(f"    Mild (NaN):       {mild_count} ({mild_count / len(df) * 100:.1f}%)")
 
-        # Expected: 67 specific, 3 non-specific, 67 mild
-        print("\n  Expected distribution: 67 specific, 3 non-specific, 67 mild")
+        # Expected distribution based on ELISA-based SSOT labeling
+        # Source: jain_with_private_elisa_FULL.csv (ELISA flags, not flags_total)
+        expected_specific = 94
+        expected_nonspecific = 22
+        expected_mild = 21
 
-        if specific_count == 67 and nonspecific_count == 3 and mild_count == 67:
+        print(
+            f"\n  Expected distribution: {expected_specific} specific, {expected_nonspecific} non-specific, {expected_mild} mild"
+        )
+
+        if (
+            specific_count == expected_specific
+            and nonspecific_count == expected_nonspecific
+            and mild_count == expected_mild
+        ):
             print("    ✓ Label distribution matches expected")
         else:
             print("    ⚠ Label distribution differs from expected")
             all_valid = False
 
-        # For model testing, we use only specific (67) + non-specific (3) = 70
+        # For model testing, we use only specific + non-specific (excluding mild)
         test_count = specific_count + nonspecific_count
+        expected_test_count = expected_specific + expected_nonspecific
         print(f"\n  Test set size (excluding mild): {test_count} sequences")
-        print("    Expected: 70 sequences (67 + 3)")
+        print(
+            f"    Expected: {expected_test_count} sequences ({expected_specific} + {expected_nonspecific})"
+        )
 
-        if test_count == 70:
+        if test_count == expected_test_count:
             print("    ✓ Test set size matches expected")
         else:
             print("    ⚠ Test set size differs from expected")
@@ -367,10 +385,11 @@ def test_data_integrity():
         print(
             f"\n  ✓ PASS: All {len(expected_files)} files present with {expected_rows} rows"
         )
-        return True
     else:
         print("\n  ✗ FAIL: Data integrity issues detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid and expected_rows == 137, "Data integrity issues detected"
 
 
 def main():
@@ -379,8 +398,9 @@ def main():
     print("Jain Dataset - ESM-1v Embedding Compatibility Test Suite")
     print("=" * 70)
     print("Dataset: 137 clinical antibodies from PNAS 2017")
-    print("Test set: 70 sequences (67 specific + 3 non-specific)")
-    print("Excluded: 67 mild sequences (1-3 flags)")
+    print("Labels: ELISA-based (SSOT) - 94/22/21 distribution")
+    print("Test set: 116 sequences (94 specific + 22 non-specific)")
+    print("Excluded: 21 mild sequences (1-3 ELISA flags)")
 
     # Run all tests
     tests = [
@@ -394,8 +414,11 @@ def main():
     results = []
     for test_name, test_func in tests:
         try:
-            passed = test_func()
-            results.append((test_name, passed))
+            test_func()  # No return value - uses assertions
+            results.append((test_name, True))
+        except AssertionError as e:
+            print(f"\n  ✗ ASSERTION: {test_name} - {e}")
+            results.append((test_name, False))
         except Exception as e:
             print(f"\n  ✗ EXCEPTION: {test_name} - {e}")
             import traceback

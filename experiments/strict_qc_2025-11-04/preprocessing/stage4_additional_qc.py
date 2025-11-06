@@ -46,10 +46,11 @@ FRAGMENTS = [
     "L-CDRs",
     "L-FWRs",
     "All-CDRs",
-    "All-FWRs"
+    "All-FWRs",
 ]
 
-def apply_strict_qc(df, fragment_name, original_seq_col='sequence'):
+
+def apply_strict_qc(df, fragment_name, original_seq_col="sequence"):
     """
     Apply industry-standard QC filters:
     1. Filter to training set (include_in_training == True)
@@ -59,28 +60,32 @@ def apply_strict_qc(df, fragment_name, original_seq_col='sequence'):
     Returns: (filtered_df, stats_dict)
     """
     stats = {
-        'original': len(df),
-        'after_training_filter': 0,
-        'removed_x': 0,
-        'removed_non_standard': 0,
-        'final': 0
+        "original": len(df),
+        "after_training_filter": 0,
+        "removed_x": 0,
+        "removed_non_standard": 0,
+        "final": 0,
     }
 
     # Step 1: Filter to training set
-    if 'include_in_training' in df.columns:
-        df_filtered = df[df['include_in_training'] == True].copy()
-        stats['after_training_filter'] = len(df_filtered)
-        print(f"  Step 1: Training filter: {stats['original']} → {stats['after_training_filter']}")
+    if "include_in_training" in df.columns:
+        df_filtered = df[df["include_in_training"] == True].copy()
+        stats["after_training_filter"] = len(df_filtered)
+        print(
+            f"  Step 1: Training filter: {stats['original']} → {stats['after_training_filter']}"
+        )
     else:
         print(f"  WARNING: No 'include_in_training' column in {fragment_name}")
         df_filtered = df.copy()
-        stats['after_training_filter'] = len(df_filtered)
+        stats["after_training_filter"] = len(df_filtered)
 
     # Step 2: Remove X anywhere in sequence
     before = len(df_filtered)
-    df_filtered = df_filtered[~df_filtered[original_seq_col].str.contains('X', na=False)]
+    df_filtered = df_filtered[
+        ~df_filtered[original_seq_col].str.contains("X", na=False)
+    ]
     removed = before - len(df_filtered)
-    stats['removed_x'] = removed
+    stats["removed_x"] = removed
     print(f"  Step 2: Remove X: {before} → {len(df_filtered)} (-{removed})")
 
     # Step 3: Remove non-standard amino acids
@@ -92,10 +97,12 @@ def apply_strict_qc(df, fragment_name, original_seq_col='sequence'):
     before = len(df_filtered)
     df_filtered = df_filtered[~df_filtered[original_seq_col].apply(has_non_standard)]
     removed = before - len(df_filtered)
-    stats['removed_non_standard'] = removed
-    print(f"  Step 3: Remove non-standard AA: {before} → {len(df_filtered)} (-{removed})")
+    stats["removed_non_standard"] = removed
+    print(
+        f"  Step 3: Remove non-standard AA: {before} → {len(df_filtered)} (-{removed})"
+    )
 
-    stats['final'] = len(df_filtered)
+    stats["final"] = len(df_filtered)
 
     return df_filtered, stats
 
@@ -120,7 +127,7 @@ def process_all_fragments():
     input_files = list(INPUT_DIR.glob(INPUT_PATTERN))
 
     # Exclude the training export file (it's a flattened subset)
-    input_files = [f for f in input_files if 'training' not in f.name]
+    input_files = [f for f in input_files if "training" not in f.name]
 
     if len(input_files) == 0:
         print(f"ERROR: No *_boughter.csv files found in {INPUT_DIR}")
@@ -135,7 +142,7 @@ def process_all_fragments():
     all_stats = {}
 
     for input_path in sorted(input_files):
-        fragment_name = input_path.stem.replace('_boughter', '')
+        fragment_name = input_path.stem.replace("_boughter", "")
         output_name = f"{fragment_name}_boughter_strict_qc.csv"
         output_path = OUTPUT_DIR / output_name
 
@@ -144,7 +151,7 @@ def process_all_fragments():
         print(f"  Output: {output_name}")
 
         # Load data
-        df = pd.read_csv(input_path, comment='#')
+        df = pd.read_csv(input_path, comment="#")
 
         # Apply strict QC
         df_clean, stats = apply_strict_qc(df, fragment_name)
@@ -154,14 +161,14 @@ def process_all_fragments():
         metadata = f"""# Boughter Dataset - {fragment_name} Fragment (Strict QC)
 # QC Level: Boughter QC (X in CDRs, empty CDRs) + Industry Standard (X anywhere, non-standard AA)
 # Source: Filtered from {input_path.name}
-# Original sequences: {stats['original']}
-# After training filter: {stats['after_training_filter']}
-# After strict QC: {stats['final']} (-{stats['removed_x']} X, -{stats['removed_non_standard']} non-standard AA)
+# Original sequences: {stats["original"]}
+# After training filter: {stats["after_training_filter"]}
+# After strict QC: {stats["final"]} (-{stats["removed_x"]} X, -{stats["removed_non_standard"]} non-standard AA)
 # Reference: See BOUGHTER_ADDITIONAL_QC_PLAN.md
 """
 
         # Save output
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(metadata)
             df_clean.to_csv(f, index=False)
 
@@ -174,9 +181,11 @@ def process_all_fragments():
     print("=" * 80)
 
     # Check consistency across fragments
-    final_counts = {name: stats['final'] for name, stats in all_stats.items()}
+    final_counts = {name: stats["final"] for name, stats in all_stats.items()}
     if len(set(final_counts.values())) == 1:
-        print(f"✅ All fragments have same sequence count: {list(final_counts.values())[0]}")
+        print(
+            f"✅ All fragments have same sequence count: {list(final_counts.values())[0]}"
+        )
     else:
         print("⚠️  WARNING: Fragments have different sequence counts!")
         for name, count in sorted(final_counts.items()):
@@ -187,12 +196,18 @@ def process_all_fragments():
     print()
     print(f"Pipeline progression (per fragment):")
     print(f"  Original (all flags):       {example_stats['original']:4d} sequences")
-    print(f"  Training filter:            {example_stats['after_training_filter']:4d} sequences")
+    print(
+        f"  Training filter:            {example_stats['after_training_filter']:4d} sequences"
+    )
     print(f"  After strict QC:            {example_stats['final']:4d} sequences")
     print()
     print(f"  Removed by X filter:        {example_stats['removed_x']:4d} sequences")
-    print(f"  Removed by non-standard AA: {example_stats['removed_non_standard']:4d} sequences")
-    print(f"  Total removed:              {example_stats['after_training_filter'] - example_stats['final']:4d} sequences")
+    print(
+        f"  Removed by non-standard AA: {example_stats['removed_non_standard']:4d} sequences"
+    )
+    print(
+        f"  Total removed:              {example_stats['after_training_filter'] - example_stats['final']:4d} sequences"
+    )
     print()
 
     # Files created

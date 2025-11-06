@@ -29,7 +29,6 @@ Issue: #3 - Shehata dataset preprocessing (Phase 2)
 
 import sys
 from pathlib import Path
-from typing import Dict, Optional
 
 import pandas as pd
 import riot_na
@@ -39,9 +38,7 @@ from tqdm.auto import tqdm
 annotator = riot_na.create_riot_aa()
 
 
-def annotate_sequence(
-    seq_id: str, sequence: str, chain: str
-) -> Optional[Dict[str, str]]:
+def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] | None:
     """
     Annotate a single amino acid sequence using ANARCI (IMGT).
 
@@ -113,7 +110,7 @@ def process_shehata_dataset(csv_path: str) -> pd.DataFrame:
 
     results = []
 
-    for idx, row in tqdm(df.iterrows(), total=len(df), desc="Annotating"):
+    for _idx, row in tqdm(df.iterrows(), total=len(df), desc="Annotating"):
         # Annotate heavy chain
         heavy_frags = annotate_sequence(f"{row['id']}_VH", row["heavy_seq"], "H")
 
@@ -192,7 +189,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
     print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
-    for fragment_name, (column_name, sequence_alias) in fragments.items():
+    for fragment_name, (column_name, _sequence_alias) in fragments.items():
         output_path = output_dir / f"{fragment_name}_shehata.csv"
 
         # Create fragment-specific CSV with standardized column names
@@ -248,7 +245,7 @@ def main():
     print("Label distribution:")
     for label, count in df_annotated["label"].value_counts().sort_index().items():
         label_name = "Specific" if label == 0 else "Non-specific"
-        print(f"  {label_name}: {count} ({count/len(df_annotated)*100:.1f}%)")
+        print(f"  {label_name}: {count} ({count / len(df_annotated) * 100:.1f}%)")
 
     print("\nFragment files created: 16")
     print(f"Output directory: {output_dir.absolute()}")

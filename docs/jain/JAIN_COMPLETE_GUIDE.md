@@ -256,20 +256,22 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 - `VH_only_jain_test_PARITY_86.csv` → [[40, 19], [10, 17]] ✅
 - `VH_only_jain_86_p5e_s2.csv` → [[40, 19], [10, 17]] ✅*
 
-### NEW Model (Strict QC)
+### Production Model (VALIDATED)
 
-**File:** `models/boughter_vh_strict_qc_esm1v_logreg.pkl`
+**File:** `models/boughter_vh_esm1v_logreg.pkl`
 
 **Training:**
-- Date: Nov 4, 2025
-- Training data: 859 sequences (additional X filtering)
-- Better accuracy overall but DOES NOT achieve exact Novo parity
+- Date: Nov 2, 2025
+- Training data: 914 sequences (Boughter QC methodology)
+- **Externally validated:** ✅ Jain 66.28%, Shehata 52.26%
 
-**Results:**
-- OLD dataset: [[41, 18], [10, 17]] (off by 1, but higher accuracy: 67.44%)
-- P5e-S2: [[40, 19], [12, 15]] (off by 2 in FN/TP)
+**Results on Jain PARITY_86:**
+- Confusion matrix: [[40, 19], [10, 17]] ✅ Exact Novo parity
+- Accuracy: 66.28%
 
-**Use for:** Research, but NOT for Novo parity benchmarking
+**Use for:** Production deployments and Novo parity benchmarking ⭐
+
+**Note:** An experimental strict QC model (852 sequences) was tested but archived due to lack of improvement. See `experiments/strict_qc_2025-11-04/` for details.
 
 ---
 

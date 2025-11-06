@@ -58,8 +58,8 @@ def load_data():
     # Load 116 ELISA-only set
     df116 = pd.read_csv(INPUT_116)
     print(f"  Loaded 116 antibodies: {len(df116)} rows")
-    print(f"    Specific: {(df116['label']==0).sum()}")
-    print(f"    Non-specific: {(df116['label']==1).sum()}")
+    print(f"    Specific: {(df116['label'] == 0).sum()}")
+    print(f"    Non-specific: {(df116['label'] == 1).sum()}")
 
     # Load SD03 biophysical data
     sd03 = pd.read_csv(INPUT_SD03)

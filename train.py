@@ -7,7 +7,7 @@ import logging
 import os
 import pickle
 import shutil
-from typing import Any, Dict, List
+from typing import Any
 
 import numpy as np
 import yaml
@@ -26,7 +26,7 @@ from data import load_data
 from model import ESMEmbeddingExtractor
 
 
-def setup_logging(config: Dict) -> logging.Logger:
+def setup_logging(config: dict) -> logging.Logger:
     """Setup logging configuration"""
     log_level = getattr(logging, config["training"]["log_level"].upper())
     log_file = config["training"]["log_file"]
@@ -44,15 +44,15 @@ def setup_logging(config: Dict) -> logging.Logger:
     return logging.getLogger(__name__)
 
 
-def load_config(config_path: str) -> Dict:
+def load_config(config_path: str) -> dict:
     """Load configuration from YAML file"""
-    with open(config_path, "r") as f:
-        config = yaml.safe_load(f)
+    with open(config_path) as f:
+        config: dict = yaml.safe_load(f)
     return config
 
 
 def get_or_create_embeddings(
-    sequences: List[str],
+    sequences: list[str],
     embedding_extractor: ESMEmbeddingExtractor,
     cache_path: str,
     dataset_name: str,
@@ -72,7 +72,7 @@ def get_or_create_embeddings(
     if os.path.exists(cache_file):
         logger.info(f"Loading cached embeddings from {cache_file}")
         with open(cache_file, "rb") as f:
-            cached_data = pickle.load(f)
+            cached_data: dict = pickle.load(f)
 
         # Verify the cached sequences match exactly
         if (
@@ -82,7 +82,8 @@ def get_or_create_embeddings(
             logger.info(
                 f"Using cached embeddings for {len(sequences)} sequences (hash: {sequences_hash})"
             )
-            return cached_data["embeddings"]
+            embeddings_result: np.ndarray = cached_data["embeddings"]
+            return embeddings_result
         else:
             logger.warning("Cached embeddings hash mismatch, recomputing...")
 
@@ -109,9 +110,9 @@ def evaluate_model(
     X: np.ndarray,
     y: np.ndarray,
     dataset_name: str,
-    metrics: List[str],
+    metrics: list[str],
     logger: logging.Logger,
-) -> Dict[str, float]:
+) -> dict[str, float]:
     """Evaluate model performance"""
     logger.info(f"Evaluating model on {dataset_name} set")
 
@@ -150,12 +151,11 @@ def evaluate_model(
 
 
 def perform_cross_validation(
-    classifier: BinaryClassifier,
     X: np.ndarray,
     y: np.ndarray,
-    config: Dict,
+    config: dict,
     logger: logging.Logger,
-) -> Dict[str, float]:
+) -> dict[str, dict[str, float]]:
     """Perform cross-validation"""
     cv_config = config["classifier"]
     cv_folds = cv_config["cv_folds"]
@@ -199,14 +199,14 @@ def perform_cross_validation(
     # Log results
     logger.info("Cross-validation Results:")
     for metric, values in cv_results.items():
-        logger.info(f"  {metric}: {values['mean']:.4f} (+/- {values['std']*2:.4f})")
+        logger.info(f"  {metric}: {values['mean']:.4f} (+/- {values['std'] * 2:.4f})")
 
     return cv_results
 
 
 def save_model(
-    classifier: BinaryClassifier, config: Dict, logger: logging.Logger
-) -> str:
+    classifier: BinaryClassifier, config: dict, logger: logging.Logger
+) -> str | None:
     """Save trained model
 
     Returns:
@@ -232,7 +232,7 @@ def save_model(
     return model_path
 
 
-def train_model(config_path: str = "configs/config.yaml") -> Dict[str, Any]:
+def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
     """
     Main training function
 
@@ -276,23 +276,23 @@ def train_model(config_path: str = "configs/config.yaml") -> Dict[str, Any]:
         )
 
         # Convert labels to numpy array
-        y_train = np.array(y_train)
+        y_train_array: np.ndarray = np.array(y_train)
 
         # Perform cross-validation on full training data
         logger.info("Performing cross-validation on training data...")
         cv_results = perform_cross_validation(
-            classifier, X_train_embedded, y_train, config, logger
+            X_train_embedded, y_train_array, config, logger
         )
 
         # Train final model on full training set
         logger.info("Training final model on full training set...")
-        classifier.fit(X_train_embedded, y_train)
+        classifier.fit(X_train_embedded, y_train_array)
         logger.info("Training completed")
 
         # Evaluate final model on training set
         metrics = config["training"]["metrics"]
         train_results = evaluate_model(
-            classifier, X_train_embedded, y_train, "Training", metrics, logger
+            classifier, X_train_embedded, y_train_array, "Training", metrics, logger
         )
 
         # Save model

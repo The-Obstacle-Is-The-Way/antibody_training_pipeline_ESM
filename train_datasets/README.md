@@ -34,8 +34,8 @@ train_datasets/
     ├── raw/ - Original DNA FASTA files
     ├── processed/ - Stage 1: Translated proteins
     ├── annotated/ - Stages 2+3: ANARCI fragments
-    ├── canonical/ - Authoritative training file
-    └── strict_qc/ - Stage 4: Experimental strict QC
+    ├── canonical/ - Authoritative training file (914 sequences, production)
+    └── (strict QC experiment archived in experiments/strict_qc_2025-11-04/)
 ```
 
 ---

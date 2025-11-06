@@ -8,7 +8,9 @@ This directory contains processed antibody sequences from the Boughter et al. 20
 
 **Source:** Boughter et al. (2020) eLife 9:e61393
 **Reference Implementation:** Sakhnini et al. (2025) - Novo Nordisk antibody non-specificity prediction
-**Total Antibodies:** 1,171 (raw) → 1,065 (after ANARCI + Boughter QC) → 914 (training subset) → 840-914 (strict QC, fragment-dependent)
+**Total Antibodies:** 1,171 (raw) → 1,065 (after ANARCI + Boughter QC) → 914 (training subset, PRODUCTION)
+
+**Experimental Strict QC:** Archived in `experiments/strict_qc_2025-11-04/` (never validated)
 
 **Assay:** ELISA polyreactivity against 4-7 diverse antigens (DNA, insulin, LPS, flagellin, albumin, cardiolipin, KLH)
 **Classification:** Binary (0 flags = specific, 4+ flags = non-specific; 1-3 flags excluded from training)
@@ -17,31 +19,23 @@ This directory contains processed antibody sequences from the Boughter et al. 20
 
 ## File Organization
 
-### QC Levels
+### QC Level (Production)
 
-This dataset is available at **two QC levels**:
-
-#### 1. Boughter QC (Standard)
 **Files:** `*_boughter.csv`
 **Sequences:** 1,065 (all flags), 914 (training subset with `include_in_training==True`)
-**QC Filters:**
+
+**QC Filters Applied:**
 - ✅ X in CDRs only (L1, L2, L3, H1, H2, H3)
 - ✅ Empty CDR removal
 - ✅ Flagging strategy (0 and 4+ flags only, exclude 1-3)
 
-**Use Case:** Exact replication of Boughter's published methodology
+**Use Case:** Production model training (VALIDATED)
+- Jain test: 66.28% accuracy ✅
+- Shehata test: 52.26% accuracy ✅
+
 **Source:** Boughter et al. 2020, seq_loader.py lines 10-33
 
-#### 2. Strict QC (Industry Standard)
-**Files:** `*_boughter_strict_qc.csv`
-**Sequences:** 840-914 (fragment-dependent, see table below)
-**QC Filters:**
-- ✅ All Boughter QC filters (above)
-- ✅ **PLUS:** X filtering in FULL sequence (not just CDRs)
-- ✅ **PLUS:** Non-standard AA filtering (B, Z, J, U, O)
-
-**Use Case:** Matching Novo's likely methodology + modern ML best practices
-**Source:** Industry standard practice + inferred from Novo Nordisk paper
+**Note:** An experimental "strict QC" variant (852 sequences) was created but never validated. It has been archived in `experiments/strict_qc_2025-11-04/` for provenance.
 
 ---
 
@@ -49,48 +43,49 @@ This dataset is available at **two QC levels**:
 
 Each dataset is available in **16 different antibody fragments** (from Novo Table 4):
 
-### Sequence Counts by Fragment and QC Level
+### Sequence Counts by Fragment (Production)
 
-| Fragment      | Boughter QC (All) | Boughter QC (Training) | Strict QC | Difference |
-|---------------|-------------------|------------------------|-----------|------------|
+| Fragment | All Sequences | Training Subset |
+|----------|---------------|-----------------|
 | **Variable Domains** |
-| VH_only       | 1,065             | 914                    | **852**   | -62 (VH frameworks) |
-| VL_only       | 1,065             | 914                    | **900**   | -14 (VL frameworks) |
-| VH+VL         | 1,065             | 914                    | **840**   | -74 (both chains) |
-| Full          | 1,065             | 914                    | **840**   | -74 (both chains) |
+| VH_only | 1,065 | **914** |
+| VL_only | 1,065 | **914** |
+| VH+VL | 1,065 | **914** |
+| Full | 1,065 | **914** |
 | **Heavy Chain CDRs** |
-| H-CDR1        | 1,065             | 914                    | **914**   | No change |
-| H-CDR2        | 1,065             | 914                    | **914**   | No change |
-| H-CDR3        | 1,065             | 914                    | **914**   | No change |
-| H-CDRs        | 1,065             | 914                    | **914**   | No change |
+| H-CDR1 | 1,065 | **914** |
+| H-CDR2 | 1,065 | **914** |
+| H-CDR3 | 1,065 | **914** |
+| H-CDRs | 1,065 | **914** |
 | **Light Chain CDRs** |
-| L-CDR1        | 1,065             | 914                    | **914**   | No change |
-| L-CDR2        | 1,065             | 914                    | **914**   | No change |
-| L-CDR3        | 1,065             | 914                    | **914**   | No change |
-| L-CDRs        | 1,065             | 914                    | **914**   | No change |
+| L-CDR1 | 1,065 | **914** |
+| L-CDR2 | 1,065 | **914** |
+| L-CDR3 | 1,065 | **914** |
+| L-CDRs | 1,065 | **914** |
 | **Combined** |
-| All-CDRs      | 1,065             | 914                    | **914**   | No change |
-| H-FWRs        | 1,065             | 914                    | **852**   | -62 (VH frameworks) |
-| L-FWRs        | 1,065             | 914                    | **900**   | -14 (VL frameworks) |
-| All-FWRs      | 1,065             | 914                    | **840**   | -74 (both chains) |
+| All-CDRs | 1,065 | **914** |
+| H-FWRs | 1,065 | **914** |
+| L-FWRs | 1,065 | **914** |
+| All-FWRs | 1,065 | **914** |
 
-**Key Insight:** CDR-only fragments have no change in strict QC because Boughter's QC already filters X in CDRs. Framework and full-sequence fragments show reductions due to X in framework regions.
+**Key Insight:** All 16 fragments use the same 914-sequence training subset after filtering to `include_in_training==True` (0 and 4+ ELISA flags only).
 
 ---
 
 ## File Naming Convention
 
 ```
-{fragment}_boughter.csv           # Boughter QC (1,065 sequences, all flags)
-{fragment}_boughter_strict_qc.csv # Strict QC (840-914 sequences, training subset + industry standard)
-VH_only_boughter_training.csv     # Special export (914 sequences, flattened [sequence, label] only)
+annotated/{fragment}_boughter.csv         # All sequences (1,065) with full metadata
+canonical/VH_only_boughter_training.csv   # Training export (914 sequences, flattened [sequence, label] only)
 ```
+
+**Archived (experimental):** `experiments/strict_qc_2025-11-04/data/strict_qc/*_strict_qc.csv` (never validated)
 
 ---
 
 ## Column Descriptions
 
-### Standard Fragment Files (*_boughter.csv, *_boughter_strict_qc.csv)
+### Standard Fragment Files (annotated/*_boughter.csv)
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -111,63 +106,61 @@ VH_only_boughter_training.csv     # Special export (914 sequences, flattened [se
 
 ---
 
-## Processing Pipeline
+## Processing Pipeline (Production)
 
 ```
 Raw DNA FASTA (6 subsets, 1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,171 sequences)
+   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,117 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
    ↓ QC: X in CDRs only, empty CDRs
-   ↓ Outputs: 16 fragment CSVs (1,065 sequences each)
-   ↓    *_boughter.csv (all flags, has include_in_training column)
+   ↓ Outputs: train_datasets/boughter/annotated/*_boughter.csv
+   ↓    16 fragment CSVs (1,065 sequences each, all flags)
    ↓
-   ↓ Filter to training subset (include_in_training == True)
-   ↓    VH_only_boughter_training.csv (914 sequences, flattened export)
+Filter to training subset (include_in_training == True)
+   ↓ Export: train_datasets/boughter/canonical/VH_only_boughter_training.csv
+   ↓    914 sequences (0 and 4+ ELISA flags only)
    ↓
-Stage 4: Additional QC (Industry Standard)
-   ↓ preprocessing/boughter/stage4_additional_qc.py
-   ↓ QC: X ANYWHERE in sequence, non-standard AA
-   ↓ Outputs: 16 fragment CSVs (840-914 sequences each)
-       *_boughter_strict_qc.csv (training subset + industry standard filters)
+✅ PRODUCTION MODEL: models/boughter_vh_esm1v_logreg.pkl
+   └─ Validated on Jain: 66.28% accuracy
+   └─ Validated on Shehata: 52.26% accuracy
 ```
 
 **Validation:**
 - `preprocessing/boughter/validate_stage1.py` - Stage 1 validation
 - `preprocessing/boughter/validate_stages2_3.py` - Stages 2+3 validation
-- `preprocessing/boughter/validate_stage4.py` - Stage 4 validation
+
+**Archived Experiment:**
+- Stage 4 strict QC (852 sequences) archived in `experiments/strict_qc_2025-11-04/` (never validated)
 
 ---
 
 ## Usage Recommendations
 
-### For Exact Boughter Replication
+### For Production Model Training (Recommended)
 ```python
 import pandas as pd
 
-# Use standard Boughter QC files
+# Use pre-exported training file (914 sequences, validated)
+df_train = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv')
+# Columns: sequence, label (flattened for ML)
+# Used for: models/boughter_vh_esm1v_logreg.pkl (validated on Jain/Shehata)
+```
+
+### For Full Metadata Access
+```python
+import pandas as pd
+
+# Use annotated files with full provenance
 df = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
 
 # Filter to training subset
 df_train = df[df['include_in_training'] == True]  # 914 sequences
-
-# Or use the pre-exported training file (no metadata)
-df_train = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv')  # 914 sequences
-```
-
-### For Novo Nordisk Parity (Recommended)
-```python
-import pandas as pd
-
-# Use strict QC files (matches Novo's likely methodology)
-df_train = pd.read_csv('train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv', comment='#')  # 852 sequences
-
-# For CDR-only analysis (no filtering difference)
-df_cdr3 = pd.read_csv('train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv', comment='#')  # 914 sequences
+# Columns: id, sequence, label, subset, num_flags, flag_category, include_in_training, source, sequence_length
 ```
 
 ### For Multi-Fragment Analysis
@@ -175,27 +168,27 @@ df_cdr3 = pd.read_csv('train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_
 import pandas as pd
 
 # Load multiple fragments with consistent IDs
-vh = pd.read_csv('train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv', comment='#')
-vl = pd.read_csv('train_datasets/boughter/strict_qc/VL_only_boughter_strict_qc.csv', comment='#')
-cdr3 = pd.read_csv('train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv', comment='#')
+vh = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
+vl = pd.read_csv('train_datasets/boughter/annotated/VL_only_boughter.csv', comment='#')
+cdr3 = pd.read_csv('train_datasets/boughter/annotated/H-CDR3_boughter.csv', comment='#')
+
+# Filter to training subset
+vh_train = vh[vh['include_in_training'] == True]  # 914 sequences
+vl_train = vl[vl['include_in_training'] == True]  # 914 sequences
 
 # Merge on 'id' column (available in all fragment CSVs)
-merged = vh.merge(vl, on='id', suffixes=('_vh', '_vl'))
+merged = vh_train.merge(vl_train, on='id', suffixes=('_vh', '_vl'))
 ```
 
 ---
 
 ## Label Distribution
 
-**Boughter QC (914 training sequences):**
+**Production Training Set (914 sequences):**
 - Label 0 (specific, 0 flags): 457 sequences (50.0%)
 - Label 1 (non-specific, 4+ flags): 457 sequences (50.0%)
 
-**Strict QC (VH_only, 852 sequences):**
-- Label 0 (specific, 0 flags): 425 sequences (49.9%)
-- Label 1 (non-specific, 4+ flags): 427 sequences (50.1%)
-
-**Note:** Labels remain balanced after strict QC filtering.
+**Note:** Training set is perfectly balanced (50/50 split).
 
 ---
 

@@ -44,8 +44,6 @@ htmlcov/
 .tox/
 .nox/
 
-uv.lock
-
 # Test results
 test_results/*
 !test_results/.gitkeep
@@ -77,9 +75,6 @@ test_config.yaml
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# pyenv
-.python-version
-
 # Environment variables
 .env
 .env.local
@@ -110,3 +105,9 @@ test_datasets/*.xls
 
 # Source data files (Excel) - do not track
 test_datasets/**/*.xlsx
+
+# Coverage reports
+coverage.xml
+
+# Ruff cache
+.ruff_cache/

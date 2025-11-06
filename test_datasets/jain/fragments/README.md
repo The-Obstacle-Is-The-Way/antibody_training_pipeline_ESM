@@ -2,7 +2,14 @@
 
 Region-specific extracts for ablation studies, CDR-focused training, and targeted analysis.
 
-All fragments are derived from the full 137-antibody dataset.
+All fragments are derived from the **ELISA-based SSOT dataset** (`../processed/jain_with_private_elisa_FULL.csv`) and share the same labeling schema:
+
+- 137 antibodies total
+- 94 specific (label `0`)
+- 22 non-specific (label `1`)
+- 21 mild / held-out (label `NaN`)
+
+> ℹ️ The previous 67/27/43 fragments that used the paper-style `flags_total` labeling are preserved in `../fragments_legacy_flags_total/` for reference only. Do not use them for training or validation.
 
 ---
 
@@ -81,7 +88,9 @@ def extract_cdr3(sequence):
     return cdr3
 ```
 
-**Script:** `scripts/fragmentation/extract_jain_fragments.py` (if exists)
+**Script:** `preprocessing/jain/step3_extract_fragments.py`
+
+See `manifest.yml` for exact provenance (source file hash, script version, expected counts).
 
 ---
 
@@ -124,8 +133,10 @@ for region_file in regions:
 
 ## Notes
 
-- All fragments maintain the same antibody IDs and labels as the full dataset
-- Fragments are extracted from the **full 137-antibody dataset** before any QC filtering
+- All fragments maintain the same antibody IDs and **ELISA-based labels** as the SSOT dataset
+- Mild antibodies (`NaN`) are included in the 137-antibody fragments but excluded from the 116-antibody ELISA test set and the 86-antibody parity set
+- Provenance, expected label counts, and script references are recorded in `manifest.yml`
+- Deprecated fragments (67/27/43 distribution) live in `../fragments_legacy_flags_total/`
 - For 86-antibody benchmark fragments, use `VH_only_jain_86_p5e_s2.csv`
 
 ---

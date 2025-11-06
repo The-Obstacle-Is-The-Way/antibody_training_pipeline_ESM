@@ -86,10 +86,11 @@ def test_gap_characters():
     if all_clean:
         print("\n  ✓ PASS: All Boughter fragments are gap-free")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
         print("\n  ✗ FAIL: Gap characters detected - P0 blocker still present!")
-        return False
+
+    # Pytest assertion (no return value)
+    assert all_clean, "Gap characters detected - P0 blocker still present!"
 
 
 def test_amino_acid_validation():
@@ -129,7 +130,7 @@ def test_amino_acid_validation():
 
         # Check each sequence for invalid characters
         invalid_count = 0
-        for idx, seq in enumerate(df["sequence"]):
+        for _idx, seq in enumerate(df["sequence"]):
             if not set(seq).issubset(VALID_AMINO_ACIDS):
                 invalid_chars = set(seq) - VALID_AMINO_ACIDS
                 if invalid_count == 0:
@@ -146,10 +147,11 @@ def test_amino_acid_validation():
     if all_valid:
         print("\n  ✓ PASS: All sequences contain only valid amino acids")
         print(f"  ✓ Total sequences validated: {total_sequences}")
-        return True
     else:
         print("\n  ✗ FAIL: Invalid amino acids detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid, "Invalid amino acids detected"
 
 
 def test_previously_affected_sequences():
@@ -167,17 +169,13 @@ def test_previously_affected_sequences():
 
     # Check VH_only
     vh_file = Path("train_datasets/boughter/annotated/VH_only_boughter.csv")
-    if not vh_file.exists():
-        print(f"  ✗ FAIL: {vh_file} not found")
-        return False
+    assert vh_file.exists(), f"{vh_file} not found"
 
     vh_df = pd.read_csv(vh_file, comment="#")
 
     # Check VL_only
     vl_file = Path("train_datasets/boughter/annotated/VL_only_boughter.csv")
-    if not vl_file.exists():
-        print(f"  ✗ FAIL: {vl_file} not found")
-        return False
+    assert vl_file.exists(), f"{vl_file} not found"
 
     vl_df = pd.read_csv(vl_file, comment="#")
 
@@ -218,10 +216,11 @@ def test_previously_affected_sequences():
 
     if vh_gaps == 0 and vl_gaps == 0 and all_clean:
         print("\n  ✓ PASS: P0 fix successfully eliminated all gaps")
-        return True
     else:
         print("\n  ✗ FAIL: Gaps still present after fix")
-        return False
+
+    # Pytest assertion
+    assert vh_gaps == 0 and vl_gaps == 0 and all_clean, "Gaps still present after fix"
 
 
 def test_model_validation_logic():
@@ -258,7 +257,7 @@ def test_model_validation_logic():
 
         # Simulate model.py validation (lines 86-90)
         invalid_sequences = []
-        for idx, row in df.iterrows():
+        for _idx, row in df.iterrows():
             sequence = row["sequence"]
 
             # Check for invalid amino acids (same logic as model.py)
@@ -275,10 +274,11 @@ def test_model_validation_logic():
 
     if all_passed:
         print(f"\n  ✓ PASS: All {total_validated} sequences are ESM-1v compatible")
-        return True
     else:
         print("\n  ✗ FAIL: Dataset NOT compatible with ESM-1v")
-        return False
+
+    # Pytest assertion
+    assert all_passed, "Dataset NOT compatible with ESM-1v"
 
 
 def test_data_integrity():
@@ -357,10 +357,10 @@ def test_data_integrity():
 
             print("\n  Training set label distribution:")
             print(
-                f"    Specific (0):     {label_counts.get(0, 0)} ({label_counts.get(0, 0)/len(training_df)*100:.1f}%)"
+                f"    Specific (0):     {label_counts.get(0, 0)} ({label_counts.get(0, 0) / len(training_df) * 100:.1f}%)"
             )
             print(
-                f"    Non-specific (1): {label_counts.get(1, 0)} ({label_counts.get(1, 0)/len(training_df)*100:.1f}%)"
+                f"    Non-specific (1): {label_counts.get(1, 0)} ({label_counts.get(1, 0) / len(training_df) * 100:.1f}%)"
             )
 
             # Check if balanced (should be ~50/50)
@@ -374,10 +374,11 @@ def test_data_integrity():
         print(
             f"\n  ✓ PASS: All {len(expected_files)} files present with {expected_rows} rows"
         )
-        return True
     else:
         print("\n  ✗ FAIL: Data integrity issues detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid and expected_rows is not None, "Data integrity issues detected"
 
 
 def main():
@@ -401,8 +402,11 @@ def main():
     results = []
     for test_name, test_func in tests:
         try:
-            passed = test_func()
-            results.append((test_name, passed))
+            test_func()  # No return value - uses assertions
+            results.append((test_name, True))
+        except AssertionError as e:
+            print(f"\n  ✗ ASSERTION: {test_name} - {e}")
+            results.append((test_name, False))
         except Exception as e:
             print(f"\n  ✗ EXCEPTION: {test_name} - {e}")
             results.append((test_name, False))

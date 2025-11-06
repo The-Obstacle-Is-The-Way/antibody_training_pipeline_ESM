@@ -27,9 +27,9 @@ Novo Nordisk Flagging Strategy:
 Reference: See docs/boughter/boughter_data_sources.md for methodology
 """
 
-import sys
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Dict, List, Optional, Sequence
+from typing import Any
 
 import pandas as pd
 from Bio import SeqIO
@@ -65,7 +65,7 @@ VDOMAIN_MOTIFS: Sequence[str] = (
 )
 
 
-def parse_fasta_dna(fasta_path: Path) -> List[str]:
+def parse_fasta_dna(fasta_path: Path) -> list[str]:
     """
     Parse DNA FASTA file and return list of DNA sequences.
 
@@ -81,7 +81,7 @@ def parse_fasta_dna(fasta_path: Path) -> List[str]:
     return sequences
 
 
-def parse_numreact_flags(flag_path: Path) -> List[int]:
+def parse_numreact_flags(flag_path: Path) -> list[int]:
     """
     Parse NumReact flag file (0-7 scale with header).
 
@@ -103,7 +103,7 @@ def parse_numreact_flags(flag_path: Path) -> List[int]:
     return [int(line.strip()) for line in lines]
 
 
-def parse_yn_flags(flag_path: Path) -> List[int]:
+def parse_yn_flags(flag_path: Path) -> list[int]:
     """
     Parse Y/N flag file and convert to NumReact equivalent.
 
@@ -128,7 +128,7 @@ def parse_yn_flags(flag_path: Path) -> List[int]:
     return flags
 
 
-def find_best_atg_translation(dna_seq: str) -> Optional[str]:
+def find_best_atg_translation(dna_seq: str) -> str | None:
     """
     Find the best ATG-based translation for full-length sequences.
 
@@ -206,7 +206,7 @@ def find_best_atg_translation(dna_seq: str) -> Optional[str]:
     return best_protein
 
 
-def translate_vdomain_direct(dna_seq: str) -> Optional[str]:
+def translate_vdomain_direct(dna_seq: str) -> str | None:
     """
     Direct translation for sequences that already begin with the V-domain.
 
@@ -236,7 +236,7 @@ def translate_vdomain_direct(dna_seq: str) -> Optional[str]:
         return None
 
 
-def translate_dna_to_protein(dna_seq: str) -> Optional[str]:
+def translate_dna_to_protein(dna_seq: str) -> str | None:
     """
     Hybrid DNA translation for Boughter's two sequence types.
 
@@ -324,13 +324,10 @@ def validate_translation(protein_seq: str) -> bool:
         return False
 
     # Reject if stop codons in first 150 aa (would truncate V-domain)
-    if "*" in first_150:
-        return False
-
-    return True
+    return "*" not in first_150
 
 
-def apply_novo_flagging(num_flags: int) -> Dict[str, any]:
+def apply_novo_flagging(num_flags: int) -> dict[str, Any]:
     """
     Apply Novo Nordisk flagging strategy from Sakhnini et al. 2025.
 
@@ -365,7 +362,7 @@ def process_subset(
     light_path: Path,
     flag_path: Path,
     flag_format: str,
-) -> List[Dict]:
+) -> tuple[list[dict[str, Any]], list[str]]:
     """
     Process a single subset: translate DNA, pair sequences, apply flagging.
 

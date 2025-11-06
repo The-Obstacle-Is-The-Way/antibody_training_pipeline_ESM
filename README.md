@@ -91,6 +91,71 @@ uv sync
 
 ---
 
+# Developer Workflow
+
+This project uses modern Python tooling for a streamlined development experience. All common tasks are available through simple `make` commands.
+
+## Quick Start
+
+```bash
+# Install dependencies
+make install
+
+# Run full quality pipeline (format, lint, typecheck, test)
+make all
+```
+
+## Available Commands
+
+| Command | Description |
+|---------|-------------|
+| `make install` | Install all project dependencies with uv |
+| `make format` | Auto-format code with ruff |
+| `make lint` | Check code quality with ruff linting |
+| `make typecheck` | Run static type checking with mypy |
+| `make hooks` | Run pre-commit hooks on all files |
+| `make test` | Run the full test suite with pytest |
+| `make all` | Run complete quality pipeline (format → lint → typecheck → test) |
+| `make train` | Run the ML training pipeline |
+| `make clean` | Remove cache directories and temporary files |
+| `make help` | Show all available commands |
+
+## Code Quality Standards
+
+This repository maintains **100% type safety** and enforces quality through pre-commit hooks:
+
+- **Ruff**: Fast linting and formatting (replaces black, isort, flake8)
+- **mypy**: Static type checking with strict configuration
+- **pytest**: Comprehensive test coverage
+
+### Pre-commit Hooks
+
+Pre-commit hooks run automatically before each commit to ensure code quality:
+
+```bash
+# Install hooks (one-time setup)
+uv run pre-commit install
+
+# Run hooks manually on all files
+make hooks
+```
+
+The hooks will automatically:
+- Format code with ruff
+- Check linting rules
+- Verify type safety with mypy
+
+If any check fails, the commit is blocked until issues are resolved.
+
+## Development Best Practices
+
+1. **Before committing**: Run `make all` to ensure everything passes
+2. **When adding new code**: Include type annotations from the start
+3. **If pre-commit blocks**: Review the errors and fix them - the hooks ensure quality
+4. **For quick checks**: Use individual commands like `make lint` or `make typecheck`
+
+---
+
 # Datasets
 
 ## Shehata Dataset
