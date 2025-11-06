@@ -29,12 +29,11 @@ Reference: See docs/boughter/boughter_data_sources.md for Stage 1 methodology
 
 import sys
 from pathlib import Path
-from typing import Dict, List
 
 import pandas as pd
 
 
-def validate_stage1_output() -> Dict:
+def validate_stage1_output() -> dict:
     """Validate Stage 1 output (boughter.csv)."""
     print("\n" + "=" * 70)
     print("Stage 1 Validation: DNA Translation & Novo Flagging")
@@ -84,7 +83,7 @@ def validate_stage1_output() -> Dict:
     # Length distribution
     heavy_len = df["heavy_seq"].str.len()
     light_len = df["light_seq"].str.len()
-    print(f"\n✓ Sequence Length Ranges:")
+    print("\n✓ Sequence Length Ranges:")
     print(
         f"  Heavy: {heavy_len.min()}-{heavy_len.max()} aa "
         f"(mean: {heavy_len.mean():.1f})"
@@ -95,20 +94,18 @@ def validate_stage1_output() -> Dict:
     )
 
     # Check Novo flagging distribution
-    print(f"\n✓ Novo Flagging Strategy:")
+    print("\n✓ Novo Flagging Strategy:")
     for category in ["specific", "mild", "non_specific"]:
         count = len(df[df["flag_category"] == category])
         pct = count / len(df) * 100
         included = len(
             df[(df["flag_category"] == category) & df["include_in_training"]]
         )
-        print(
-            f"  {category:15s}: {count:4d} ({pct:5.2f}%) - " f"{included} in training"
-        )
+        print(f"  {category:15s}: {count:4d} ({pct:5.2f}%) - {included} in training")
 
     # Training set balance
     training_df = df[df["include_in_training"]]
-    print(f"\n✓ Training Set Balance:")
+    print("\n✓ Training Set Balance:")
     print(f"  Total training:    {len(training_df)}")
     if len(training_df) > 0:
         label_counts = training_df["label"].value_counts()
@@ -128,7 +125,7 @@ def validate_stage1_output() -> Dict:
     }
 
 
-def validate_stage2_output() -> Dict:
+def validate_stage2_output() -> dict:
     """Validate Stage 2 output (fragment CSVs + annotation)."""
     print("\n" + "=" * 70)
     print("Stage 2 Validation: ANARCI Annotation & Fragment Extraction")
@@ -149,7 +146,7 @@ def validate_stage2_output() -> Dict:
 
     stage1_count = len(df_stage1)
     # Stage 2 failures from log (if present)
-    failure_ids: List[str] = []
+    failure_ids: list[str] = []
     failure_log_path = output_dir / "annotation_failures.log"
     if failure_log_path.exists():
         failures_log = failure_log_path.read_text().strip()
@@ -162,7 +159,7 @@ def validate_stage2_output() -> Dict:
     stage2_annotated = stage1_count - stage2_failures
     stage2_success_rate = (stage2_annotated / stage1_count) * 100
 
-    print(f"\n✓ ANARCI Annotation Success:")
+    print("\n✓ ANARCI Annotation Success:")
     print(f"  Stage 1 input:          {stage1_count} sequences")
     print(f"  Stage 2 annotated:      {stage2_annotated} sequences")
     print(
@@ -174,7 +171,7 @@ def validate_stage2_output() -> Dict:
 
     # Stage 3 QC removals
     qc_log_path = output_dir / "qc_filtered_sequences.txt"
-    qc_ids: List[str] = []
+    qc_ids: list[str] = []
     if qc_log_path.exists():
         qc_text = qc_log_path.read_text().strip()
         if qc_text:
@@ -185,7 +182,7 @@ def validate_stage2_output() -> Dict:
         (stage3_retained / stage2_annotated) * 100 if stage2_annotated else 0.0
     )
 
-    print(f"\n✓ Stage 3 (Post-Annotation QC):")
+    print("\n✓ Stage 3 (Post-Annotation QC):")
     print(f"  Sequences entering Stage 3: {stage2_annotated}")
     print(f"  Filtered (X/empty CDRs):    {stage3_removed}")
     print(
@@ -202,10 +199,10 @@ def validate_stage2_output() -> Dict:
 
     # Report failures by subset (Stage 2)
     if failure_ids:
-        print(f"\n✓ Stage 2 Failures by Subset:")
+        print("\n✓ Stage 2 Failures by Subset:")
         from collections import Counter
 
-        subset_counts = Counter()
+        subset_counts: Counter[str] = Counter()
         for fid in failure_ids:
             subset = fid.split("_")[0]
             # preserve hiv_* prefixes
@@ -233,7 +230,7 @@ def validate_stage2_output() -> Dict:
             )
 
     # Check CDR length distributions
-    print(f"\n✓ CDR Length Distributions (from VH_only):")
+    print("\n✓ CDR Length Distributions (from VH_only):")
     h_cdr1_file = output_dir / "H-CDR1_boughter.csv"
     h_cdr2_file = output_dir / "H-CDR2_boughter.csv"
     h_cdr3_file = output_dir / "H-CDR3_boughter.csv"
@@ -258,8 +255,7 @@ def validate_stage2_output() -> Dict:
         print(f"  Status: ✅ All {expected_fragments} fragments present")
     else:
         print(
-            f"  Status: ❌ Expected {expected_fragments}, "
-            f"found {len(fragment_files)}"
+            f"  Status: ❌ Expected {expected_fragments}, found {len(fragment_files)}"
         )
 
     return {
@@ -275,7 +271,7 @@ def validate_stage2_output() -> Dict:
     }
 
 
-def generate_report(stage1_results: Dict, stage2_results: Dict):
+def generate_report(stage1_results: dict, stage2_results: dict):
     """Generate validation report."""
     print("\n" + "=" * 70)
     print("Validation Summary")

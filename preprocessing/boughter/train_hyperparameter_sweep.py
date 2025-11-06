@@ -29,7 +29,7 @@ class HyperparameterSweep:
     """Run systematic hyperparameter sweep for LogisticRegression"""
 
     def __init__(self, config_path):
-        with open(config_path, "r") as f:
+        with open(config_path) as f:
             self.config = yaml.safe_load(f)
 
         # Load training data
@@ -63,11 +63,11 @@ class HyperparameterSweep:
 
     def test_hyperparameters(self, C, penalty, solver, class_weight="balanced"):
         """Test a single hyperparameter configuration"""
-        logger.info(f"\n{'='*70}")
+        logger.info(f"\n{'=' * 70}")
         logger.info(
             f"Testing: C={C}, penalty={penalty}, solver={solver}, class_weight={class_weight}"
         )
-        logger.info(f"{'='*70}")
+        logger.info(f"{'=' * 70}")
 
         # Use embeddings directly (no scaling - matches Novo methodology)
         X = self.embeddings
@@ -168,12 +168,12 @@ class HyperparameterSweep:
 
         results_list = []
 
-        logger.info(f"\n{'='*70}")
+        logger.info(f"\n{'=' * 70}")
         logger.info("STARTING HYPERPARAMETER SWEEP")
         logger.info(f"Total configurations to test: {len(sweep_grid)}")
         logger.info("Baseline: ~68% CV, 68.09% Jain (no StandardScaler)")
         logger.info("Target: 71.0% CV (Novo benchmark)")
-        logger.info(f"{'='*70}\n")
+        logger.info(f"{'=' * 70}\n")
 
         for i, params in enumerate(sweep_grid, 1):
             logger.info(f"\n[{i}/{len(sweep_grid)}] Testing configuration...")
@@ -196,9 +196,9 @@ class HyperparameterSweep:
         # Sort by CV accuracy
         valid_results = valid_results.sort_values("cv_accuracy_mean", ascending=False)
 
-        logger.info(f"\n{'='*70}")
+        logger.info(f"\n{'=' * 70}")
         logger.info("HYPERPARAMETER SWEEP COMPLETE")
-        logger.info(f"{'='*70}\n")
+        logger.info(f"{'=' * 70}\n")
 
         logger.info("TOP 5 CONFIGURATIONS:")
         logger.info(
@@ -207,9 +207,9 @@ class HyperparameterSweep:
 
         # Best configuration
         best = valid_results.iloc[0]
-        logger.info(f"\n{'='*70}")
+        logger.info(f"\n{'=' * 70}")
         logger.info("BEST CONFIGURATION:")
-        logger.info(f"{'='*70}")
+        logger.info(f"{'=' * 70}")
         logger.info(f"C: {best['C']}")
         logger.info(f"Penalty: {best['penalty']}")
         logger.info(f"Solver: {best['solver']}")
@@ -222,7 +222,7 @@ class HyperparameterSweep:
         logger.info(
             f"Gap to Novo (71%): {(0.71 - best['cv_accuracy_mean']) * 100:.2f}%"
         )
-        logger.info(f"{'='*70}\n")
+        logger.info(f"{'=' * 70}\n")
 
         # Save final results
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

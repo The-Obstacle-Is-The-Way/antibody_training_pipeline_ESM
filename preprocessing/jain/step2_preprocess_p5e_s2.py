@@ -68,8 +68,8 @@ def load_data():
 
     df = pd.read_csv(INPUT_137)
     print(f"  ✓ Loaded {len(df)} antibodies from FULL dataset")
-    print(f"    Specific: {(df['label']==0).sum()}")
-    print(f"    Non-specific: {(df['label']==1).sum()}")
+    print(f"    Specific: {(df['label'] == 0).sum()}")
+    print(f"    Non-specific: {(df['label'] == 1).sum()}")
 
     return df
 
@@ -96,8 +96,8 @@ def step1_remove_elisa_1to3(df):
     print(f"\n  Initial: {initial_count} antibodies")
     print(f"  Removed ELISA 1-3: {removed_count} antibodies")
     print(f"  Remaining: {len(df_116)} antibodies")
-    print(f"    Specific: {(df_116['label']==0).sum()}")
-    print(f"    Non-specific: {(df_116['label']==1).sum()}")
+    print(f"    Specific: {(df_116['label'] == 0).sum()}")
+    print(f"    Non-specific: {(df_116['label'] == 1).sum()}")
 
     # Save 116 SSOT
     print(f"\n  Saving 116 SSOT → {OUTPUT_116.relative_to(BASE_DIR)}")
@@ -335,7 +335,7 @@ def main():
     df_86 = step4_remove_30_by_psr_acsins(df_116)
 
     # Save final 86 dataset
-    output_path = save_86_dataset(df_86)
+    save_86_dataset(df_86)
 
     # Summary
     print("\n" + "=" * 80)

@@ -75,9 +75,6 @@ test_config.yaml
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# pyenv
-.python-version
-
 # Environment variables
 .env
 .env.local

@@ -4,7 +4,6 @@ Contains the ESM-1V embedding extractor for protein sequences.
 """
 
 import logging
-from typing import List
 
 import numpy as np
 import torch
@@ -15,7 +14,6 @@ logger = logging.getLogger(__name__)
 
 
 class ESMEmbeddingExtractor:
-
     def __init__(self, model_name, device, batch_size=32):
         self.model_name = model_name
         self.device = device
@@ -69,13 +67,14 @@ class ESMEmbeddingExtractor:
                 sum_mask = attention_mask.sum(dim=1)  # Count valid tokens
                 mean_embeddings = sum_embeddings / sum_mask  # Average
 
-                return mean_embeddings.squeeze(0).cpu().numpy()
+                result: np.ndarray = mean_embeddings.squeeze(0).cpu().numpy()
+                return result
 
         except Exception as e:
             logger.error(f"Error getting embeddings for sequence: {e}")
             raise
 
-    def extract_batch_embeddings(self, sequences: List[str]) -> np.ndarray:
+    def extract_batch_embeddings(self, sequences: list[str]) -> np.ndarray:
         """Extract embeddings for a batch of sequences using actual batching"""
         embeddings_list = []
 
@@ -94,7 +93,7 @@ class ESMEmbeddingExtractor:
             try:
                 # Validate and clean sequences
                 valid_aas = set("ACDEFGHIKLMNPQRSTVWYX")
-                cleaned_sequences = []
+                cleaned_sequences: list[str] = []
                 for seq in batch_sequences:
                     seq = seq.upper().strip()
                     if not all(aa in valid_aas for aa in seq) or len(seq) < 1:

@@ -39,8 +39,8 @@ def main():
     print("Loading test set: test_datasets/jain/canonical/jain_86_novo_parity.csv")
     df = pd.read_csv("test_datasets/jain/canonical/jain_86_novo_parity.csv")
     print(f"✅ Test set loaded: {len(df)} antibodies")
-    print(f"   - Specific (label=0): {(df['label']==0).sum()}")
-    print(f"   - Non-specific (label=1): {(df['label']==1).sum()}")
+    print(f"   - Specific (label=0): {(df['label'] == 0).sum()}")
+    print(f"   - Non-specific (label=1): {(df['label'] == 1).sum()}")
     print()
 
     # Extract sequences and labels
@@ -56,7 +56,7 @@ def main():
     # Make predictions
     print("Making predictions...")
     y_pred = classifier.predict(X_test)
-    y_proba = classifier.predict_proba(X_test)
+    classifier.predict_proba(X_test)
     print("✅ Predictions complete")
     print()
 
@@ -70,21 +70,21 @@ def main():
     print("=" * 80)
     print()
 
-    print(f"Accuracy: {accuracy:.4f} ({accuracy*100:.2f}%)")
+    print(f"Accuracy: {accuracy:.4f} ({accuracy * 100:.2f}%)")
     print()
 
     print("OUR Confusion Matrix:")
     print("              Predicted")
     print("              Specific(0) Non-spec(1)   Total")
     print(
-        f"Actual Specific(0):     {cm[0,0]:2d}         {cm[0,1]:2d}        {cm[0,0]+cm[0,1]:2d}"
+        f"Actual Specific(0):     {cm[0, 0]:2d}         {cm[0, 1]:2d}        {cm[0, 0] + cm[0, 1]:2d}"
     )
     print(
-        f"Actual Non-spec(1):     {cm[1,0]:2d}         {cm[1,1]:2d}        {cm[1,0]+cm[1,1]:2d}"
+        f"Actual Non-spec(1):     {cm[1, 0]:2d}         {cm[1, 1]:2d}        {cm[1, 0] + cm[1, 1]:2d}"
     )
     print("                       ---        ---       ---")
     print(
-        f"Total:                  {cm[:,0].sum():2d}         {cm[:,1].sum():2d}        {len(y_true):2d}"
+        f"Total:                  {cm[:, 0].sum():2d}         {cm[:, 1].sum():2d}        {len(y_true):2d}"
     )
     print()
 
@@ -134,16 +134,16 @@ def main():
     print("| Metric              | Ours       | Novo       | Match      |")
     print("|---------------------|------------|------------|------------|")
     print(
-        f"| Accuracy            | {accuracy:.4f}     | 0.6628     | {'✅ YES' if abs(accuracy-0.6628)<0.0001 else '❌ NO'} |"
+        f"| Accuracy            | {accuracy:.4f}     | 0.6628     | {'✅ YES' if abs(accuracy - 0.6628) < 0.0001 else '❌ NO'} |"
     )
     print(
-        f"| Confusion Matrix    | [[{cm[0,0]},{cm[0,1]}],[{cm[1,0]},{cm[1,1]}]] | [[40,19],[10,17]] | {'✅ YES' if np.array_equal(cm, novo_cm) else '❌ NO'} |"
+        f"| Confusion Matrix    | [[{cm[0, 0]},{cm[0, 1]}],[{cm[1, 0]},{cm[1, 1]}]] | [[40,19],[10,17]] | {'✅ YES' if np.array_equal(cm, novo_cm) else '❌ NO'} |"
     )
     print(
-        f"| Non-spec FN         | {cm[0,1]:2d}         | 19         | {'✅ YES' if cm[0,1]==19 else '❌ NO'} |"
+        f"| Non-spec FN         | {cm[0, 1]:2d}         | 19         | {'✅ YES' if cm[0, 1] == 19 else '❌ NO'} |"
     )
     print(
-        f"| Non-spec TP         | {cm[1,1]:2d}         | 17         | {'✅ YES' if cm[1,1]==17 else '❌ NO'} |"
+        f"| Non-spec TP         | {cm[1, 1]:2d}         | 17         | {'✅ YES' if cm[1, 1] == 17 else '❌ NO'} |"
     )
     print()
 

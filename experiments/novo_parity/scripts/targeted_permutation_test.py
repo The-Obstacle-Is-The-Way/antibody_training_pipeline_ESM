@@ -200,7 +200,7 @@ def test_permutation(perm_id, config):
     exact_match = np.array_equal(cm, NOVO_CM)
 
     print(f"  CM: {cm.tolist()}")
-    print(f"  Accuracy: {acc:.4f} ({int(acc*len(df_final))}/{len(df_final)})")
+    print(f"  Accuracy: {acc:.4f} ({int(acc * len(df_final))}/{len(df_final)})")
     print(f"  Diff from Novo: {diff} cells", end="")
 
     if exact_match:
@@ -290,7 +290,7 @@ if __name__ == "__main__":
     else:
         print("No exact matches found.")
         print(
-            f'Closest match: {results_sorted[0]["permutation_id"]} ({results_sorted[0]["difference_cells"]} cells off)'
+            f"Closest match: {results_sorted[0]['permutation_id']} ({results_sorted[0]['difference_cells']} cells off)"
         )
 
     print()

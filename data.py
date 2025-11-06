@@ -1,6 +1,6 @@
 import logging
 import pickle
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -11,11 +11,11 @@ logger = logging.getLogger(__name__)
 
 
 def preprocess_raw_data(
-    X: List[str],
-    y: List[Any],
+    X: list[str],
+    y: list[Any],
     embedding_extractor,
-    scaler: Optional[StandardScaler] = None,
-) -> Tuple[np.ndarray, np.ndarray]:
+    scaler: StandardScaler | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
     """
     Given a dataset of input sequences (X) and labels (y), embed the sequences and return
     the embedded dataset and labels.
@@ -45,17 +45,20 @@ def preprocess_raw_data(
 
 
 def store_preprocessed_data(
-    X: List[str] = None,
-    y: List[Any] = None,
-    X_embedded: Optional[np.ndarray] = None,
-    filename: str = None,
+    X: list[str] | None = None,
+    y: list[Any] | None = None,
+    X_embedded: np.ndarray | None = None,
+    filename: str | None = None,
 ):
     """
     Store the preprocessed data to a pickle file.
     You can provide either raw sequences (X) and labels (y), or embedded data (X_embedded) and labels (y).
     If X_embedded is provided, it will be stored as the embedded data.
     """
-    data = {}
+    if filename is None:
+        raise ValueError("filename is required")
+
+    data: dict[str, list[str] | list[Any] | np.ndarray] = {}
     if X_embedded is not None:
         data["X_embedded"] = X_embedded
     if X is not None:
@@ -66,13 +69,14 @@ def store_preprocessed_data(
         pickle.dump(data, f)
 
 
-def load_preprocessed_data(filename: str) -> Dict:
+def load_preprocessed_data(filename: str) -> dict[str, Any]:
     """
     Load the preprocessed data from a pickle file.
     Returns a dictionary with keys: 'X', 'y', and/or 'X_embedded'
     """
     with open(filename, "rb") as f:
-        return pickle.load(f)
+        data: dict[str, Any] = pickle.load(f)
+        return data
 
 
 def load_hf_dataset(
@@ -80,7 +84,7 @@ def load_hf_dataset(
     split: str,
     text_column: str,
     label_column: str,
-) -> Tuple[List[str], List[Any]]:
+) -> tuple[list[str], list[Any]]:
     """
     Load a dataset from Hugging Face datasets library.
 
@@ -103,7 +107,7 @@ def load_hf_dataset(
 
 def load_local_data(
     file_path: str, text_column: str, label_column: str
-) -> Tuple[List[str], List[Any]]:
+) -> tuple[list[str], list[Any]]:
     """
     Load training data from file
 
@@ -116,14 +120,14 @@ def load_local_data(
         X_train, y_train
     """
 
-    train_df = pd.read_csv(file_path, comment='#')  # Handle comment lines in CSV
+    train_df = pd.read_csv(file_path, comment="#")  # Handle comment lines in CSV
     X_train = train_df[text_column].tolist()
     y_train = train_df[label_column].tolist()
 
     return X_train, y_train
 
 
-def load_data(config: Dict) -> Tuple[List[str], List[int]]:
+def load_data(config: dict) -> tuple[list[str], list[int]]:
     """
     Load training data from either Hugging Face datasets or local file based on source parameter
 

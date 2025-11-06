@@ -25,7 +25,7 @@ def setup_directories(config_path: str = "configs/config.yaml"):
     """Create necessary directories for the pipeline"""
     import yaml
 
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         config = yaml.safe_load(f)
 
     # Create directories
@@ -48,7 +48,7 @@ def validate_config(config_path: str):
 
     import yaml
 
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         config = yaml.safe_load(f)
 
     # Check for required fields
@@ -106,7 +106,7 @@ def main():
 Examples:
     python main.py                    # Use default config.yaml
     python main.py my_config.yaml     # Use custom config file
-    
+
 The pipeline will:
 1. Load protein sequences and binary labels from your data files
 2. Extract ESM-1V embeddings for each sequence
@@ -188,7 +188,7 @@ The pipeline will:
             print("\nCross-Validation Results:")
             for metric, values in results["cv_metrics"].items():
                 print(
-                    f"  {metric.upper()}: {values['mean']:.4f} (+/- {values['std']*2:.4f})"
+                    f"  {metric.upper()}: {values['mean']:.4f} (+/- {values['std'] * 2:.4f})"
                 )
 
         if "train_metrics" in results:

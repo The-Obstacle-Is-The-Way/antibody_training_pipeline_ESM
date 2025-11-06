@@ -32,7 +32,7 @@ Reference: See docs/boughter/boughter_data_sources.md for Stages 2+3 methodology
 
 import sys
 from pathlib import Path
-from typing import Dict, List
+from typing import Any
 
 import pandas as pd
 
@@ -48,40 +48,41 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
     Returns:
         Dictionary with validation results
     """
-    results = {
+    errors_list: list[str] = []
+    warnings_list: list[str] = []
+    stats_dict: dict[str, Any] = {}
+
+    results: dict[str, Any] = {
         "valid": True,
-        "errors": [],
-        "warnings": [],
-        "stats": {},
+        "errors": errors_list,
+        "warnings": warnings_list,
+        "stats": stats_dict,
     }
 
     # Check directory exists
     if not dataset_dir.exists():
         results["valid"] = False
-        results["errors"].append(f"Directory not found: {dataset_dir}")
+        errors_list.append(f"Directory not found: {dataset_dir}")
         return results
 
     # Check for CSV files (exclude training subset files)
     csv_files = [
-        f
-        for f in dataset_dir.glob("*.csv")
-        if not f.name.endswith("_training.csv")
+        f for f in dataset_dir.glob("*.csv") if not f.name.endswith("_training.csv")
     ]
     if len(csv_files) == 0:
         results["valid"] = False
-        results["errors"].append("No CSV files found")
+        errors_list.append("No CSV files found")
         return results
 
     if len(csv_files) != expected_fragments:
-        results["warnings"].append(
+        warnings_list.append(
             f"Expected {expected_fragments} fragments, found {len(csv_files)}"
         )
 
-    results["stats"]["num_files"] = len(csv_files)
+    stats_dict["num_files"] = len(csv_files)
 
     # Validate each CSV file
     required_columns = {"id", "sequence", "label", "source"}
-    optional_columns = {"sequence_length"}  # Added in newer preprocessing scripts
     all_row_counts = []
 
     for csv_file in csv_files:
@@ -91,18 +92,14 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
             # Check required columns
             missing_cols = required_columns - set(df.columns)
             if missing_cols:
-                results["errors"].append(
-                    f"{csv_file.name}: Missing columns {missing_cols}"
-                )
+                errors_list.append(f"{csv_file.name}: Missing columns {missing_cols}")
                 results["valid"] = False
 
             # Check for empty sequences
             if "sequence" in df.columns:
                 empty_seqs = (df["sequence"].str.len() == 0).sum()
                 if empty_seqs > 0:
-                    results["errors"].append(
-                        f"{csv_file.name}: {empty_seqs} empty sequences"
-                    )
+                    errors_list.append(f"{csv_file.name}: {empty_seqs} empty sequences")
                     results["valid"] = False
 
             # Check for null values in critical columns
@@ -110,7 +107,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
                 if col in df.columns:
                     nulls = df[col].isna().sum()
                     if nulls > 0:
-                        results["errors"].append(
+                        errors_list.append(
                             f"{csv_file.name}: {nulls} null values in '{col}'"
                         )
                         results["valid"] = False
@@ -119,7 +116,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
             if "label" in df.columns:
                 nulls = df["label"].isna().sum()
                 if nulls > 0:
-                    results["warnings"].append(
+                    warnings_list.append(
                         f"{csv_file.name}: {nulls} null/held-out labels"
                     )
 
@@ -127,19 +124,19 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
             all_row_counts.append(len(df))
 
         except Exception as e:
-            results["errors"].append(f"{csv_file.name}: Failed to read - {e}")
+            errors_list.append(f"{csv_file.name}: Failed to read - {e}")
             results["valid"] = False
 
     # Check if all files have same number of rows
     if all_row_counts:
         unique_counts = set(all_row_counts)
         if len(unique_counts) > 1:
-            results["warnings"].append(
-                f"Inconsistent row counts: {dict(zip(csv_files, all_row_counts))}"
+            warnings_list.append(
+                f"Inconsistent row counts: {dict(zip(csv_files, all_row_counts, strict=False))}"
             )
 
-        results["stats"]["row_count"] = all_row_counts[0] if all_row_counts else 0
-        results["stats"]["consistent_rows"] = len(unique_counts) == 1
+        stats_dict["row_count"] = all_row_counts[0] if all_row_counts else 0
+        stats_dict["consistent_rows"] = len(unique_counts) == 1
 
     return results
 
@@ -148,14 +145,18 @@ def validate_label_distribution(csv_path: Path):
     """Validate label distribution matches expected pattern."""
     df = pd.read_csv(csv_path, comment="#")
 
-    stats = {
-        "total": len(df),
-        "specific": (df["label"] == 0).sum(),
-        "non_specific": (df["label"] == 1).sum(),
+    total = len(df)
+    specific = int((df["label"] == 0).sum())
+    non_specific = int((df["label"] == 1).sum())
+
+    stats: dict[str, int | float] = {
+        "total": total,
+        "specific": specific,
+        "non_specific": non_specific,
     }
 
-    stats["specific_pct"] = stats["specific"] / stats["total"] * 100
-    stats["non_specific_pct"] = stats["non_specific"] / stats["total"] * 100
+    stats["specific_pct"] = specific / total * 100
+    stats["non_specific_pct"] = non_specific / total * 100
 
     return stats
 
@@ -191,9 +192,7 @@ def print_validation_report(
 
     # Label distribution (from VH_only fragment, excluding training subset)
     csv_files = [
-        f
-        for f in dataset_dir.glob("*.csv")
-        if not f.name.endswith("_training.csv")
+        f for f in dataset_dir.glob("*.csv") if not f.name.endswith("_training.csv")
     ]
     if csv_files:
         # Prefer VH_only file for label distribution
@@ -225,10 +224,14 @@ def main():
     boughter_canonical_dir = Path("train_datasets/boughter/canonical")
 
     if not boughter_annotated_dir.exists():
-        print(f"✗ Error: Boughter annotated directory not found: {boughter_annotated_dir}")
+        print(
+            f"✗ Error: Boughter annotated directory not found: {boughter_annotated_dir}"
+        )
         sys.exit(1)
 
-    valid = print_validation_report("boughter", boughter_annotated_dir, expected_fragments=16)
+    valid = print_validation_report(
+        "boughter", boughter_annotated_dir, expected_fragments=16
+    )
 
     # Additional Boughter-specific checks
     print("\n" + "=" * 60)
@@ -252,11 +255,11 @@ def main():
     if vh_only.exists():
         df = pd.read_csv(vh_only, comment="#")
         if "include_in_training" in df.columns:
-            print(f"\n✓ include_in_training flag present")
+            print("\n✓ include_in_training flag present")
             print(f"  Training eligible: {df['include_in_training'].sum()}")
             print(f"  Excluded (mild 1-3 flags): {(~df['include_in_training']).sum()}")
         else:
-            print(f"\n⚠ include_in_training flag missing (may be older format)")
+            print("\n⚠ include_in_training flag missing (may be older format)")
 
     print("\n" + "=" * 60)
 

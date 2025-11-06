@@ -1,5 +1,4 @@
 import logging
-from typing import Dict, Optional
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
@@ -12,7 +11,7 @@ logger = logging.getLogger(__name__)
 class BinaryClassifier:
     """Binary classifier for protein sequences using ESM-1V embeddings"""
 
-    def __init__(self, params: Dict = None, **kwargs):
+    def __init__(self, params: dict | None = None, **kwargs):
         """
         Initialize the binary classifier
 
@@ -70,12 +69,12 @@ class BinaryClassifier:
         # Store all params for sklearn compatibility
         self._params = params
 
-    def get_params(self, deep=True):
+    def get_params(self, deep: bool = True) -> dict:  # noqa: ARG002
         """
         Get parameters for sklearn compatibility (required for cross_val_score)
 
         Args:
-            deep: If True, return parameters for sub-estimators
+            deep: If True, return parameters for sub-estimators (unused but required by sklearn API)
 
         Returns:
             Dictionary of parameters
@@ -123,7 +122,7 @@ class BinaryClassifier:
         logger.info(f"Classifier fitted on {len(X)} samples")
 
     def predict(
-        self, X: np.ndarray, threshold: float = 0.5, assay_type: Optional[str] = None
+        self, X: np.ndarray, threshold: float = 0.5, assay_type: str | None = None
     ) -> np.ndarray:
         """
         Predict the labels for the data
@@ -164,7 +163,7 @@ class BinaryClassifier:
 
         # Get probabilities and apply threshold
         probabilities = self.classifier.predict_proba(X)
-        predictions = (probabilities[:, 1] > threshold).astype(int)
+        predictions: np.ndarray = (probabilities[:, 1] > threshold).astype(int)
 
         return predictions
 
@@ -181,7 +180,8 @@ class BinaryClassifier:
         if not self.is_fitted:
             raise ValueError("Classifier must be fitted before making predictions")
 
-        return self.classifier.predict_proba(X)
+        result: np.ndarray = self.classifier.predict_proba(X)
+        return result
 
     def score(self, X: np.ndarray, y: np.ndarray) -> float:
         """
@@ -197,7 +197,8 @@ class BinaryClassifier:
         if not self.is_fitted:
             raise ValueError("Classifier must be fitted before scoring")
 
-        return self.classifier.score(X, y)
+        score: float = self.classifier.score(X, y)
+        return score
 
     def __getstate__(self):
         """Custom pickle method - don't save the ESM model"""

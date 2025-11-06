@@ -38,7 +38,7 @@ Reference: See docs/boughter/boughter_data_sources.md for complete methodology
 
 import sys
 from pathlib import Path
-from typing import Dict, Optional
+from typing import cast
 
 import pandas as pd
 import riot_na
@@ -47,9 +47,7 @@ import riot_na
 annotator = riot_na.create_riot_aa()
 
 
-def annotate_sequence(
-    seq_id: str, sequence: str, chain: str
-) -> Optional[Dict[str, str]]:
+def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] | None:
     """
     Annotate a single amino acid sequence using ANARCI (IMGT).
 
@@ -153,7 +151,7 @@ def annotate_sequence(
         return None
 
 
-def process_antibody(row: pd.Series) -> Optional[Dict]:
+def process_antibody(row: pd.Series) -> dict | None:
     """
     Annotate heavy and light chains, create all 16 fragments.
 
@@ -221,8 +219,9 @@ def annotate_all(df: pd.DataFrame) -> pd.DataFrame:
             results.append(result)
 
         # Progress indicator
-        if (idx + 1) % 100 == 0:
-            print(f"  Progress: {idx + 1}/{len(df)} ({len(failures)} failures)")
+        idx_int = cast(int, idx)
+        if (idx_int + 1) % 100 == 0:
+            print(f"  Progress: {idx_int + 1}/{len(df)} ({len(failures)} failures)")
 
     df_annotated = pd.DataFrame(results)
 
@@ -313,7 +312,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 # Fragment Description: {description}
 # Reference: See docs/cdr_boundary_first_principles_audit.md
 # Total Sequences: {len(fragment_df)}
-# Training Sequences: {len(fragment_df[fragment_df['include_in_training']])}
+# Training Sequences: {len(fragment_df[fragment_df["include_in_training"]])}
 """
 
         # Write metadata + CSV
@@ -335,7 +334,7 @@ def export_training_subset(df: pd.DataFrame, output_path: Path):
     """
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    train_df = df[df["include_in_training"] == True].copy()
+    train_df = df[df["include_in_training"]].copy()
     if len(train_df) == 0:
         print("⚠ No sequences flagged for training; canonical export skipped.")
         return
@@ -421,7 +420,7 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
 
     print()
     print(f"Output sequences: {len(df_clean)}")
-    print(f"Retention rate: {len(df_clean)/len(df)*100:.1f}%")
+    print(f"Retention rate: {len(df_clean) / len(df) * 100:.1f}%")
 
     return df_clean
 
@@ -462,7 +461,9 @@ def main():
 
     if not input_csv.exists():
         print(f"ERROR: {input_csv} not found!")
-        print("Please run preprocessing/boughter/stage1_dna_translation.py first (Stage 1)")
+        print(
+            "Please run preprocessing/boughter/stage1_dna_translation.py first (Stage 1)"
+        )
         sys.exit(1)
 
     print("=" * 70)
@@ -486,7 +487,9 @@ def main():
     create_fragment_csvs(df_clean, output_dir)
 
     # Export canonical VH-only training subset
-    canonical_path = Path("train_datasets/boughter/canonical/VH_only_boughter_training.csv")
+    canonical_path = Path(
+        "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+    )
     export_training_subset(df_clean, canonical_path)
 
     print("\n" + "=" * 70)
@@ -495,10 +498,10 @@ def main():
     print("\nPipeline Summary:")
     print(f"  Stage 1 (Translation):  {len(df)} sequences")
     print(
-        f"  Stage 2 (ANARCI):       {len(df_annotated)} sequences ({len(df_annotated)/len(df)*100:.1f}%)"
+        f"  Stage 2 (ANARCI):       {len(df_annotated)} sequences ({len(df_annotated) / len(df) * 100:.1f}%)"
     )
     print(
-        f"  Stage 3 (Quality QC):   {len(df_clean)} sequences ({len(df_clean)/len(df)*100:.1f}%)"
+        f"  Stage 3 (Quality QC):   {len(df_clean)} sequences ({len(df_clean) / len(df) * 100:.1f}%)"
     )
     print("\nNext steps:")
     print("  1. Verify fragment files in train_datasets/boughter/annotated/")

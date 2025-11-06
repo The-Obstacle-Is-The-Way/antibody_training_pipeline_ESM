@@ -175,12 +175,12 @@ def test_model_validation_logic():
         # This is the exact check from model.py
         if not all(aa in valid_aas for aa in seq_clean):
             invalid_chars = set(seq_clean) - valid_aas
-            print(f"    ❌ Sequence {i+1}: would FAIL validation")
+            print(f"    ❌ Sequence {i + 1}: would FAIL validation")
             print(f"       Invalid characters: {invalid_chars}")
             all_valid = False
         else:
             print(
-                f"    ✅ Sequence {i+1}: would PASS validation (len={len(seq_clean)})"
+                f"    ✅ Sequence {i + 1}: would PASS validation (len={len(seq_clean)})"
             )
 
     if all_valid:

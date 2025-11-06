@@ -123,16 +123,12 @@ def main():
     # Validate inputs
     if not high_csv.exists():
         print(f"Error: {high_csv} not found!")
-        print(
-            "Please ensure raw files are in test_datasets/harvey/raw/"
-        )
+        print("Please ensure raw files are in test_datasets/harvey/raw/")
         sys.exit(1)
 
     if not low_csv.exists():
         print(f"Error: {low_csv} not found!")
-        print(
-            "Please ensure raw files are in test_datasets/harvey/raw/"
-        )
+        print("Please ensure raw files are in test_datasets/harvey/raw/")
         sys.exit(1)
 
     print("=" * 70)
@@ -153,7 +149,9 @@ def main():
     print(f"\nOutput file: {output_csv.absolute()}")
     print(f"Total sequences: {len(df)}")
     print("\nNext steps:")
-    print("  1. Run preprocessing/harvey/step2_extract_fragments.py to extract fragments")
+    print(
+        "  1. Run preprocessing/harvey/step2_extract_fragments.py to extract fragments"
+    )
     print("  2. Validate with scripts/validation/validate_fragments.py")
 
 

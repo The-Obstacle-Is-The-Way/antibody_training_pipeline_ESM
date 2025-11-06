@@ -41,9 +41,9 @@ def load_model():
 
 def test_elisa_threshold(model, threshold=1.3):
     """Test simple ELISA threshold approach"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"TEST 1: Simple ELISA Threshold (<= {threshold})")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Load 116 SSOT
     df116 = pd.read_csv(JAIN_116)
@@ -58,8 +58,8 @@ def test_elisa_threshold(model, threshold=1.3):
     df_86 = merged[merged["ELISA"] <= threshold].copy()
 
     print(f"\n116 → ELISA <= {threshold} → {len(df_86)} antibodies")
-    print(f"  Specific: {(df_86['label']==0).sum()}")
-    print(f"  Non-specific: {(df_86['label']==1).sum()}")
+    print(f"  Specific: {(df_86['label'] == 0).sum()}")
+    print(f"  Non-specific: {(df_86['label'] == 1).sum()}")
 
     # Generate embeddings
     print("\nGenerating embeddings...")
@@ -76,7 +76,7 @@ def test_elisa_threshold(model, threshold=1.3):
 
     print("\nResults:")
     print(f"  Confusion Matrix: {cm.tolist()}")
-    print(f"  Accuracy: {acc*100:.2f}%")
+    print(f"  Accuracy: {acc * 100:.2f}%")
 
     print("\nComparison to Novo:")
     print(f"  Novo CM:  {NOVO_CM.tolist()}")
@@ -88,16 +88,16 @@ def test_elisa_threshold(model, threshold=1.3):
 
 def test_p5e_s2(model):
     """Test P5e-S2 approach"""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("TEST 2: P5e-S2 Method (PSR Reclassification + Removal)")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Load P5e-S2 dataset
     df = pd.read_csv(P5E_S2_DATASET)
 
     print(f"\n116 → P5e-S2 pipeline → {len(df)} antibodies")
-    print(f"  Specific: {(df['label']==0).sum()}")
-    print(f"  Non-specific: {(df['label']==1).sum()}")
+    print(f"  Specific: {(df['label'] == 0).sum()}")
+    print(f"  Non-specific: {(df['label'] == 1).sum()}")
 
     # Generate embeddings
     print("\nGenerating embeddings...")
@@ -114,7 +114,7 @@ def test_p5e_s2(model):
 
     print("\nResults:")
     print(f"  Confusion Matrix: {cm.tolist()}")
-    print(f"  Accuracy: {acc*100:.2f}%")
+    print(f"  Accuracy: {acc * 100:.2f}%")
 
     print("\nComparison to Novo:")
     print(f"  Novo CM:  {NOVO_CM.tolist()}")
@@ -140,9 +140,9 @@ def main():
     result_p5e = test_p5e_s2(model)
 
     # Summary
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("SUMMARY")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     print("| Method | N | Accuracy | CM Match | Confusion Matrix |")
     print("|--------|---|----------|----------|------------------|")
@@ -150,14 +150,14 @@ def main():
     for result in [result_elisa_13, result_elisa_15, result_p5e]:
         match = "✅" if np.array_equal(result["cm"], NOVO_CM) else "❌"
         print(
-            f"| {result['method']:12s} | {result['n']:2d} | {result['acc']*100:5.2f}% | {match:8s} | {result['cm'].tolist()} |"
+            f"| {result['method']:12s} | {result['n']:2d} | {result['acc'] * 100:5.2f}% | {match:8s} | {result['cm'].tolist()} |"
         )
 
-    print(f"\nNovo benchmark: {NOVO_CM.tolist()}, {NOVO_ACC*100:.2f}%")
+    print(f"\nNovo benchmark: {NOVO_CM.tolist()}, {NOVO_ACC * 100:.2f}%")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("CONCLUSION")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     if np.array_equal(result_p5e["cm"], NOVO_CM):
         print("✅ P5e-S2 achieves EXACT Novo parity")
@@ -169,7 +169,7 @@ def main():
         print("⚠️ Neither method achieves exact parity")
         print("Need further investigation")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
 
 
 if __name__ == "__main__":

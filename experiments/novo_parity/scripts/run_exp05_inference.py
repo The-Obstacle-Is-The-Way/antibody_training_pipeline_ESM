@@ -52,8 +52,8 @@ def main():
     print(f"Loading dataset: {dataset_path}")
     df = pd.read_csv(dataset_path)
     print(f"✅ Dataset loaded: {len(df)} antibodies")
-    print(f"   - Specific (label=0): {(df['label']==0).sum()}")
-    print(f"   - Non-specific (label=1): {(df['label']==1).sum()}")
+    print(f"   - Specific (label=0): {(df['label'] == 0).sum()}")
+    print(f"   - Non-specific (label=1): {(df['label'] == 1).sum()}")
     print()
 
     # Extract sequences and labels
@@ -84,7 +84,7 @@ def main():
     print("=" * 80)
     print()
 
-    print(f"Accuracy: {accuracy:.4f} ({accuracy*100:.2f}%)")
+    print(f"Accuracy: {accuracy:.4f} ({accuracy * 100:.2f}%)")
     print(f"Correct predictions: {(y_true == y_pred).sum()}/{len(y_true)}")
     print()
 
@@ -92,14 +92,14 @@ def main():
     print("              Predicted")
     print("              Specific(0) Non-spec(1)   Total")
     print(
-        f"Actual Specific(0):     {cm[0,0]:2d}         {cm[0,1]:2d}        {cm[0,0]+cm[0,1]:2d}"
+        f"Actual Specific(0):     {cm[0, 0]:2d}         {cm[0, 1]:2d}        {cm[0, 0] + cm[0, 1]:2d}"
     )
     print(
-        f"Actual Non-spec(1):     {cm[1,0]:2d}         {cm[1,1]:2d}        {cm[1,0]+cm[1,1]:2d}"
+        f"Actual Non-spec(1):     {cm[1, 0]:2d}         {cm[1, 1]:2d}        {cm[1, 0] + cm[1, 1]:2d}"
     )
     print("                       ---        ---       ---")
     print(
-        f"Total:                  {cm[:,0].sum():2d}         {cm[:,1].sum():2d}        {len(y_true):2d}"
+        f"Total:                  {cm[:, 0].sum():2d}         {cm[:, 1].sum():2d}        {len(y_true):2d}"
     )
     print()
 
@@ -128,15 +128,17 @@ def main():
         print(f"   {diff}")
         print()
         print("   Cell-by-cell:")
-        print(f"   - TN (spec→spec):  Ours={cm[0,0]:2d}, Novo=40, Diff={cm[0,0]-40:+d}")
         print(
-            f"   - FP (spec→nonspec): Ours={cm[0,1]:2d}, Novo=19, Diff={cm[0,1]-19:+d}"
+            f"   - TN (spec→spec):  Ours={cm[0, 0]:2d}, Novo=40, Diff={cm[0, 0] - 40:+d}"
         )
         print(
-            f"   - FN (nonspec→spec): Ours={cm[1,0]:2d}, Novo=10, Diff={cm[1,0]-10:+d}"
+            f"   - FP (spec→nonspec): Ours={cm[0, 1]:2d}, Novo=19, Diff={cm[0, 1] - 19:+d}"
         )
         print(
-            f"   - TP (nonspec→nonspec): Ours={cm[1,1]:2d}, Novo=17, Diff={cm[1,1]-17:+d}"
+            f"   - FN (nonspec→spec): Ours={cm[1, 0]:2d}, Novo=10, Diff={cm[1, 0] - 10:+d}"
+        )
+        print(
+            f"   - TP (nonspec→nonspec): Ours={cm[1, 1]:2d}, Novo=17, Diff={cm[1, 1] - 17:+d}"
         )
 
     print()
@@ -144,9 +146,11 @@ def main():
         print("✅✅✅ PERFECT MATCH! Accuracy is IDENTICAL to Novo!")
     else:
         print(
-            f"⚠️ Accuracy differs: Ours={accuracy:.4f} ({accuracy*100:.2f}%), Novo={novo_accuracy:.4f} ({novo_accuracy*100:.2f}%)"
+            f"⚠️ Accuracy differs: Ours={accuracy:.4f} ({accuracy * 100:.2f}%), Novo={novo_accuracy:.4f} ({novo_accuracy * 100:.2f}%)"
         )
-        print(f"   Difference: {(accuracy-novo_accuracy)*100:+.2f} percentage points")
+        print(
+            f"   Difference: {(accuracy - novo_accuracy) * 100:+.2f} percentage points"
+        )
 
     print()
     print("=" * 80)
@@ -172,19 +176,19 @@ def main():
         f"| Accuracy            | {accuracy:.4f}       | 0.6628       | {'✅ YES' if match_acc else '❌ NO'} |"
     )
     print(
-        f"| Confusion Matrix    | [[{cm[0,0]},{cm[0,1]}],[{cm[1,0]},{cm[1,1]}]] | [[40,19],[10,17]] | {'✅ YES' if match_cm else '❌ NO'} |"
+        f"| Confusion Matrix    | [[{cm[0, 0]},{cm[0, 1]}],[{cm[1, 0]},{cm[1, 1]}]] | [[40,19],[10,17]] | {'✅ YES' if match_cm else '❌ NO'} |"
     )
     print(
-        f"| Spec TN             | {cm[0,0]:2d}           | 40           | {'✅ YES' if cm[0,0]==40 else '❌ NO'} |"
+        f"| Spec TN             | {cm[0, 0]:2d}           | 40           | {'✅ YES' if cm[0, 0] == 40 else '❌ NO'} |"
     )
     print(
-        f"| Spec FP             | {cm[0,1]:2d}           | 19           | {'✅ YES' if cm[0,1]==19 else '❌ NO'} |"
+        f"| Spec FP             | {cm[0, 1]:2d}           | 19           | {'✅ YES' if cm[0, 1] == 19 else '❌ NO'} |"
     )
     print(
-        f"| Non-spec FN         | {cm[1,0]:2d}           | 10           | {'✅ YES' if cm[1,0]==10 else '❌ NO'} |"
+        f"| Non-spec FN         | {cm[1, 0]:2d}           | 10           | {'✅ YES' if cm[1, 0] == 10 else '❌ NO'} |"
     )
     print(
-        f"| Non-spec TP         | {cm[1,1]:2d}           | 17           | {'✅ YES' if cm[1,1]==17 else '❌ NO'} |"
+        f"| Non-spec TP         | {cm[1, 1]:2d}           | 17           | {'✅ YES' if cm[1, 1] == 17 else '❌ NO'} |"
     )
     print()
 
@@ -201,7 +205,7 @@ def main():
     if fp_ids:
         print("  ", ", ".join(fp_ids[:10]))
         if len(fp_ids) > 10:
-            print(f"   ... and {len(fp_ids)-10} more")
+            print(f"   ... and {len(fp_ids) - 10} more")
     print()
 
     # False Negatives (non-specific predicted as specific)

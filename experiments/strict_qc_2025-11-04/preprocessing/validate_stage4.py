@@ -23,24 +23,25 @@ STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")
 
 # Expected sequence counts for different fragment groups
 EXPECTED_COUNTS = {
-    'CDR_only': {
-        'count': 914,
-        'fragments': ['All-CDRs', 'H-CDR1', 'H-CDR2', 'H-CDR3', 'H-CDRs',
-                     'L-CDR1', 'L-CDR2', 'L-CDR3', 'L-CDRs']
+    "CDR_only": {
+        "count": 914,
+        "fragments": [
+            "All-CDRs",
+            "H-CDR1",
+            "H-CDR2",
+            "H-CDR3",
+            "H-CDRs",
+            "L-CDR1",
+            "L-CDR2",
+            "L-CDR3",
+            "L-CDRs",
+        ],
     },
-    'VH_frameworks': {
-        'count': 852,
-        'fragments': ['VH_only', 'H-FWRs']
-    },
-    'VL_frameworks': {
-        'count': 900,
-        'fragments': ['VL_only', 'L-FWRs']
-    },
-    'VH_and_VL': {
-        'count': 840,
-        'fragments': ['Full', 'VH+VL', 'All-FWRs']
-    }
+    "VH_frameworks": {"count": 852, "fragments": ["VH_only", "H-FWRs"]},
+    "VL_frameworks": {"count": 900, "fragments": ["VL_only", "L-FWRs"]},
+    "VH_and_VL": {"count": 840, "fragments": ["Full", "VH+VL", "All-FWRs"]},
 }
+
 
 def validate_strict_qc():
     """Validate all strict QC files"""
@@ -65,15 +66,15 @@ def validate_strict_qc():
     fragment_groups = {}
 
     for file_path in sorted(strict_qc_files):
-        fragment_name = file_path.stem.replace('_boughter_strict_qc', '')
+        fragment_name = file_path.stem.replace("_boughter_strict_qc", "")
         print(f"Validating: {fragment_name}")
 
         # Load data
-        df = pd.read_csv(file_path, comment='#')
+        df = pd.read_csv(file_path, comment="#")
         sequence_counts[fragment_name] = len(df)
 
         # Check 1: No X in sequences
-        has_x = df['sequence'].str.contains('X', na=False).sum()
+        has_x = df["sequence"].str.contains("X", na=False).sum()
         if has_x > 0:
             print(f"  ❌ FAIL: Found {has_x} sequences with X")
             all_valid = False
@@ -84,7 +85,7 @@ def validate_strict_qc():
         def has_non_standard(seq):
             return any(aa not in STANDARD_AA for aa in str(seq))
 
-        non_standard = df['sequence'].apply(has_non_standard).sum()
+        non_standard = df["sequence"].apply(has_non_standard).sum()
         if non_standard > 0:
             print(f"  ❌ FAIL: Found {non_standard} sequences with non-standard AA")
             all_valid = False
@@ -95,16 +96,18 @@ def validate_strict_qc():
         print(f"  ℹ️  Sequence count: {len(df)}")
 
         # Check 4: Label distribution (if applicable)
-        if 'label' in df.columns and fragment_name in ['VH_only', 'Full', 'VH+VL']:
-            label_counts = df['label'].value_counts().sort_index()
+        if "label" in df.columns and fragment_name in ["VH_only", "Full", "VH+VL"]:
+            label_counts = df["label"].value_counts().sort_index()
             total = len(df)
             label_0_pct = (label_counts.get(0, 0) / total) * 100 if total > 0 else 0
             label_1_pct = (label_counts.get(1, 0) / total) * 100 if total > 0 else 0
-            print(f"  ℹ️  Label distribution: 0={label_counts.get(0, 0)} ({label_0_pct:.1f}%), 1={label_counts.get(1, 0)} ({label_1_pct:.1f}%)")
+            print(
+                f"  ℹ️  Label distribution: 0={label_counts.get(0, 0)} ({label_0_pct:.1f}%), 1={label_counts.get(1, 0)} ({label_1_pct:.1f}%)"
+            )
 
         # Categorize fragment
         for group_name, group_info in EXPECTED_COUNTS.items():
-            if fragment_name in group_info['fragments']:
+            if fragment_name in group_info["fragments"]:
                 fragment_groups[fragment_name] = group_name
                 break
 
@@ -117,8 +120,8 @@ def validate_strict_qc():
     print()
 
     for group_name, group_info in EXPECTED_COUNTS.items():
-        expected = group_info['count']
-        fragments = group_info['fragments']
+        expected = group_info["count"]
+        fragments = group_info["fragments"]
 
         print(f"{group_name}: Expected {expected} sequences")
         group_valid = True
@@ -145,7 +148,7 @@ def validate_strict_qc():
 
     all_expected_fragments = []
     for group_info in EXPECTED_COUNTS.values():
-        all_expected_fragments.extend(group_info['fragments'])
+        all_expected_fragments.extend(group_info["fragments"])
 
     missing = set(all_expected_fragments) - set(sequence_counts.keys())
     unexpected = set(sequence_counts.keys()) - set(all_expected_fragments)
@@ -169,7 +172,7 @@ def validate_strict_qc():
 
     for fragment in sorted(sequence_counts.keys()):
         count = sequence_counts[fragment]
-        group = fragment_groups.get(fragment, 'Unknown')
+        group = fragment_groups.get(fragment, "Unknown")
         print(f"{fragment:<20} {count:>6}  {group:<20}")
 
     # Expected reduction from 914 training sequences
@@ -185,7 +188,9 @@ def validate_strict_qc():
     print(f"  VH_only (primary target):  852 sequences (-62, -6.8%)")
     print(f"  VL_only:                   900 sequences (-14, -1.5%)")
     print(f"  Full (VH+VL):              840 sequences (-74, -8.1%)")
-    print(f"  CDR-only fragments:        914 sequences (no change - X already filtered)")
+    print(
+        f"  CDR-only fragments:        914 sequences (no change - X already filtered)"
+    )
 
     # Final result
     print()

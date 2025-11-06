@@ -14,6 +14,7 @@ Issue: #3 - Shehata dataset preprocessing
 
 import sys
 from pathlib import Path
+from typing import cast
 
 import pandas as pd
 
@@ -55,12 +56,25 @@ def validate_sequences(df: pd.DataFrame) -> dict:
     """
     valid_aa = set("ACDEFGHIKLMNPQRSTVWY")
 
+    # Track invalid counts separately to avoid object type issues
+    invalid_vh_count = 0
+    invalid_vl_count = 0
+
+    # Check for invalid amino acids (after sanitization, there should be none)
+    for _idx, seq in df["heavy_seq"].dropna().items():
+        if not set(cast(str, seq)).issubset(valid_aa):
+            invalid_vh_count += 1
+
+    for _idx, seq in df["light_seq"].dropna().items():
+        if not set(cast(str, seq)).issubset(valid_aa):
+            invalid_vl_count += 1
+
     validation = {
         "total_sequences": len(df),
         "missing_vh": df["heavy_seq"].isna().sum(),
         "missing_vl": df["light_seq"].isna().sum(),
-        "invalid_vh": 0,
-        "invalid_vl": 0,
+        "invalid_vh": invalid_vh_count,
+        "invalid_vl": invalid_vl_count,
         "vh_length_range": (
             df["heavy_seq"].str.len().min(),
             df["heavy_seq"].str.len().max(),
@@ -71,22 +85,13 @@ def validate_sequences(df: pd.DataFrame) -> dict:
         ),
     }
 
-    # Check for invalid amino acids (after sanitization, there should be none)
-    for idx, seq in df["heavy_seq"].dropna().items():
-        if not set(seq).issubset(valid_aa):
-            validation["invalid_vh"] += 1
-
-    for idx, seq in df["light_seq"].dropna().items():
-        if not set(seq).issubset(valid_aa):
-            validation["invalid_vl"] += 1
-
     return validation
 
 
 def convert_excel_to_csv(
     excel_path: str,
     output_path: str,
-    psr_threshold: float = None,
+    psr_threshold: float | None = None,
     interactive: bool = True,
 ) -> pd.DataFrame:
     """
@@ -221,7 +226,9 @@ def convert_excel_to_csv(
     label_dist = df_csv["label"].value_counts().sort_index()
     for label, count in label_dist.items():
         label_name = "Specific" if label == 0 else "Non-specific"
-        print(f"  {label_name} (label={label}): {count} ({count/len(df_csv)*100:.1f}%)")
+        print(
+            f"  {label_name} (label={label}): {count} ({count / len(df_csv) * 100:.1f}%)"
+        )
 
     # B cell subset distribution
     print("\nB cell subset distribution:")
@@ -264,8 +271,10 @@ def compare_with_original(csv_df: pd.DataFrame, excel_path: str):
         match = excel_vh == csv_vh
         print(f"  Row {i}: {'✓' if match else '✗'} VH match")
         if not match:
-            print(f"    Excel: {excel_vh[:50]}...")
-            print(f"    CSV:   {csv_vh[:50]}...")
+            excel_vh_str = cast(str, excel_vh)
+            csv_vh_str = cast(str, csv_vh)
+            print(f"    Excel: {excel_vh_str[:50]}...")
+            print(f"    CSV:   {csv_vh_str[:50]}...")
 
     print("\nConversion validation complete!")
 

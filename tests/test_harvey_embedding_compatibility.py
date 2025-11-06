@@ -116,7 +116,7 @@ def test_amino_acid_validation():
 
         # Check each sequence for invalid characters
         invalid_count = 0
-        for idx, seq in enumerate(df["sequence"]):
+        for _idx, seq in enumerate(df["sequence"]):
             if not set(seq).issubset(VALID_AMINO_ACIDS):
                 invalid_chars = set(seq) - VALID_AMINO_ACIDS
                 if invalid_count == 0:
@@ -210,7 +210,7 @@ def test_model_validation_logic():
 
     # Simulate model.py validation (lines 86-90)
     invalid_sequences = []
-    for idx, row in df.iterrows():
+    for _idx, row in df.iterrows():
         sequence = row["sequence"]
 
         # Check for invalid amino acids (same logic as model.py)
@@ -284,10 +284,10 @@ def test_data_integrity():
 
         print("\n  Label distribution:")
         print(
-            f"    Low polyreactivity (0): {label_counts.get(0, 0)} ({label_counts.get(0, 0)/len(df)*100:.1f}%)"
+            f"    Low polyreactivity (0): {label_counts.get(0, 0)} ({label_counts.get(0, 0) / len(df) * 100:.1f}%)"
         )
         print(
-            f"    High polyreactivity (1): {label_counts.get(1, 0)} ({label_counts.get(1, 0)/len(df)*100:.1f}%)"
+            f"    High polyreactivity (1): {label_counts.get(1, 0)} ({label_counts.get(1, 0) / len(df) * 100:.1f}%)"
         )
 
         # Check if balanced (should be ~50/50)

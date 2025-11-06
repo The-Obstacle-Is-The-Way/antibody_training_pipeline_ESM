@@ -81,7 +81,7 @@ def test_gap_characters():
             print(f"  ✗ {file_name}: {gap_count} sequences with gaps")
             # Show first few problematic sequences
             gap_seqs = df[df["sequence"].str.contains("-", na=False)].head(3)
-            for idx, row in gap_seqs.iterrows():
+            for _idx, row in gap_seqs.iterrows():
                 print(f"    ID: {row['id']}, gaps in: {row['sequence'][:50]}...")
             all_clean = False
         else:
@@ -196,7 +196,7 @@ def test_stop_codons():
             stop_seqs = df[
                 df["sequence"].str.contains(r"\*", na=False, regex=True)
             ].head(3)
-            for idx, row in stop_seqs.iterrows():
+            for _idx, row in stop_seqs.iterrows():
                 print(f"    ID: {row['id']}")
             all_clean = False
         else:
@@ -245,7 +245,7 @@ def test_model_validation_logic():
 
         # Simulate model.py validation (lines 86-90)
         invalid_sequences = []
-        for idx, row in df.iterrows():
+        for _idx, row in df.iterrows():
             sequence = row["sequence"]
 
             # Check for invalid amino acids (same logic as model.py)
@@ -337,12 +337,12 @@ def test_data_integrity():
         print(f"\n  Total sequences: {len(df)}")
         print("  Label distribution:")
         print(
-            f"    Specific (0):     {specific_count} ({specific_count/len(df)*100:.1f}%)"
+            f"    Specific (0):     {specific_count} ({specific_count / len(df) * 100:.1f}%)"
         )
         print(
-            f"    Non-specific (1): {nonspecific_count} ({nonspecific_count/len(df)*100:.1f}%)"
+            f"    Non-specific (1): {nonspecific_count} ({nonspecific_count / len(df) * 100:.1f}%)"
         )
-        print(f"    Mild (NaN):       {mild_count} ({mild_count/len(df)*100:.1f}%)")
+        print(f"    Mild (NaN):       {mild_count} ({mild_count / len(df) * 100:.1f}%)")
 
         # Expected: 67 specific, 3 non-specific, 67 mild
         print("\n  Expected distribution: 67 specific, 3 non-specific, 67 mild")
