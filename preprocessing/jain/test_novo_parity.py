@@ -7,7 +7,7 @@ This script demonstrates that our model achieves EXACT parity with Novo:
 - Accuracy: 66.28% (57/86) (exact match)
 
 Usage:
-    python verify_novo_parity.py
+    python preprocessing/jain/test_novo_parity.py
 """
 
 import pickle
