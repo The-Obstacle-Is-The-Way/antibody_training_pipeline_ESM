@@ -466,36 +466,32 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 - Replication analysis: `docs/boughter/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`
 - Data sources: `docs/boughter/boughter_data_sources.md`
 - CDR boundary audit: `docs/boughter/cdr_boundary_first_principles_audit.md`
-- Stage 4 plan: `docs/BOUGHTER_ADDITIONAL_QC_PLAN.md`
-- Training readiness: `docs/TRAINING_READINESS_CHECK.md`
 
-**Training Data:**
-- Boughter QC (914): `train_datasets/boughter/canonical/VH_only_boughter_training.csv` ⭐ **RECOMMENDED**
-- Strict QC (852): `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
-- Fragment CSVs: `train_datasets/boughter/annotated/*_boughter.csv` (16 files)
-- Strict QC fragments: `train_datasets/boughter/*_boughter_strict_qc.csv` (16 files)
+**Training Data (Production):**
+- Production: `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 seqs) ⭐ **VALIDATED**
+- Fragment CSVs: `train_datasets/boughter/annotated/*_boughter.csv` (16 files, 1,065 seqs each)
 
 **Trained Models:**
-- Boughter QC: `models/boughter_vh_esm1v_logreg.pkl` (67.5% CV) ⭐ **RECOMMENDED**
-- Strict QC: `models/boughter_vh_strict_qc_esm1v_logreg.pkl` (66.55% CV)
+- Production: `models/boughter_vh_esm1v_logreg.pkl` ⭐ **VALIDATED** (Jain 66.28%, Shehata 52.26%)
 
 **Preprocessing Scripts:**
 - Stage 1: `preprocessing/boughter/stage1_dna_translation.py`
 - Stage 2+3: `preprocessing/boughter/stage2_stage3_annotation_qc.py`
-- Stage 4: `preprocessing/boughter/stage4_additional_qc.py` ⭐ **NEW**
 
 **Validation Scripts:**
 - Stage 1: `preprocessing/boughter/validate_stage1.py`
 - Stage 2+3: `preprocessing/boughter/validate_stages2_3.py`
-- Stage 4: `preprocessing/boughter/validate_stage4.py` ⭐ **NEW**
+
+**Archived Experimental Work:**
+- Strict QC data: `experiments/strict_qc_2025-11-04/data/strict_qc/` (852-914 seqs)
+- Stage 4 script: `experiments/strict_qc_2025-11-04/preprocessing/stage4_additional_qc.py`
+- Experiment details: `experiments/strict_qc_2025-11-04/EXPERIMENT_README.md`
 
 ---
 
 ## Glossary
 
-**Boughter QC:** CDR-only X filtering + empty CDR removal + ANARCI failures (914 training sequences)
-
-**Strict QC:** Boughter QC + X anywhere in full sequence + non-standard AA filtering (852 training sequences)
+**Boughter QC (Production):** CDR-only X filtering + empty CDR removal + ANARCI failures (914 training sequences, externally validated)
 
 **118 Position Issue:** Ambiguity about whether to include position 118 in CDR-H3 (resolved: exclude it, use IMGT standard)
 
