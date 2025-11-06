@@ -1,4 +1,4 @@
-.PHONY: install test lint format typecheck all clean help train
+.PHONY: install test lint format typecheck hooks all clean help train
 
 help:
 	@echo "Available commands:"
@@ -6,6 +6,7 @@ help:
 	@echo "  make format     - Format code with ruff"
 	@echo "  make lint       - Run ruff linting checks"
 	@echo "  make typecheck  - Run mypy type checking"
+	@echo "  make hooks      - Run pre-commit hooks on all files"
 	@echo "  make test       - Run pytest test suite"
 	@echo "  make all        - Run format, lint, typecheck, and test"
 	@echo "  make train      - Run training pipeline"
@@ -25,6 +26,9 @@ format:
 
 typecheck:
 	uv run mypy .
+
+hooks:
+	uv run pre-commit run --all-files
 
 all: format lint typecheck test
 
