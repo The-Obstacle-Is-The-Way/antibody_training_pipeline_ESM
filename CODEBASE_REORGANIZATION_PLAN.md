@@ -354,15 +354,50 @@ After each phase, verify:
 
 ## Questions to Resolve
 
-1. **Package naming**: Keep `antibody-dev-esm` or rename to `antibody-training-esm` to match repo?
-2. **Entry points**: Should we add CLI entry points in `pyproject.toml` for easier execution?
-3. **Preprocessing scripts**: Keep as standalone scripts or integrate into package?
-4. **Experiment scripts**: Move to package or keep in `scripts/experiments/`?
-5. **Config management**: Use hydra/omegaconf or stick with PyYAML?
+~~1. **Package naming**: Keep `antibody-dev-esm` or rename to `antibody-training-esm` to match repo?~~
+~~2. **Entry points**: Should we add CLI entry points in `pyproject.toml` for easier execution?~~
+~~3. **Preprocessing scripts**: Keep as standalone scripts or integrate into package?~~
+~~4. **Experiment scripts**: Move to package or keep in `scripts/experiments/`?~~
+~~5. **Config management**: Use hydra/omegaconf or stick with PyYAML?~~
 
 ---
 
-**Status**: READY FOR IMPLEMENTATION
+## Professional Decisions (RESOLVED)
+
+### 1. Package Naming ✅
+**Decision**: Rename to match repository structure
+- **PyPI name** (in `pyproject.toml`): `antibody-training-esm` (kebab-case, PyPI standard)
+- **Python package**: `antibody_training_esm` (snake_case, Python convention)
+- **Rationale**: Consistency with repo name, follows Python/PyPI naming standards
+
+### 2. CLI Entry Points ✅
+**Decision**: Add proper CLI entry points
+- `antibody-train` - Training interface
+- `antibody-test` - Testing/evaluation interface
+- `antibody-preprocess` - Data preprocessing interface
+- **Rationale**: Professional packages use entry points (like `pytest`, `black`, `ruff`), not `python -m` calls
+
+### 3. Preprocessing Scripts ✅
+**Decision**: Hybrid approach
+- Keep scripts as standalone in `scripts/preprocessing/` (one-off data converters)
+- Extract reusable logic into `src/antibody_training_esm/datasets/` (library code)
+- **Rationale**: Scripts are run once to prepare data; library code is imported and reused
+
+### 4. Experiment Scripts ✅
+**Decision**: Move to `scripts/experiments/`
+- Keep only results/datasets in `experiments/`
+- Executable code → `scripts/experiments/`
+- **Rationale**: Separation of code and outputs
+
+### 5. Config Management ✅
+**Decision**: Stick with PyYAML for now
+- Don't force Hydra/OmegaConf unless needed
+- Keep existing YAML-based config working
+- **Rationale**: No breaking changes; can upgrade later if complexity demands it
+
+---
+
+**Status**: APPROVED FOR IMPLEMENTATION
 **Next Step**: Get user approval, then execute Phase 1
 
 ---
