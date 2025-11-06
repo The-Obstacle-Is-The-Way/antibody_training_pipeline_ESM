@@ -80,8 +80,9 @@ True Pos (1→1): 5
 ## Training Dataset (Boughter)
 
 **10-Fold Cross-Validation Results:** See `training_logs/train_*.log`
-- Training accuracy: ~71% (matches Novo's reported 71%)
-- 3.5% gap from Novo likely due to 62 sequences with 'X' at position 0
+- Training accuracy: 67.5% ± 8.9%
+- Novo reported: 71%
+- 3.5% gap is within statistical noise (0.4 std deviations)
 
 ---
 
@@ -103,8 +104,8 @@ True Pos (1→1): 5
 ## Datasets Available
 
 ### Training (Boughter)
-- ✅ `train_datasets/boughter/strict_qc/*.csv` (16 fragments)
-- Training completed, 10-fold CV results logged
+- ✅ `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences)
+- Training completed, 10-fold CV results logged (67.5% ± 8.9%)
 
 ### External Validation Sets
 1. ✅ **Jain (HIC retention)** - TESTED
