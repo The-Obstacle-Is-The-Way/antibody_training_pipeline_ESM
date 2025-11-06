@@ -671,7 +671,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
     Args:
         df: DataFrame with all fragments
-        output_dir: Directory to save fragment CSVs (train_datasets/boughter/raw/)
+        output_dir: Directory to save fragment CSVs (train_datasets/boughter/annotated/)
     """
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -826,7 +826,7 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     # Log filtered sequence IDs
     if total_filtered > 0:
         filtered_ids = set(df['id']) - set(df_clean['id'])
-        qc_log = Path('train_datasets/boughter/raw/qc_filtered_sequences.txt')
+        qc_log = Path('train_datasets/boughter/annotated/qc_filtered_sequences.txt')
         qc_log.write_text('\n'.join(sorted(filtered_ids)))
         print(f"  Filtered IDs written to: {qc_log}")
 
@@ -936,7 +936,7 @@ def validate_annotation_success(df_input: pd.DataFrame, df_output: pd.DataFrame)
 
     if success_rate < 95:
         print("⚠ WARNING: Annotation success rate below 95%")
-        print("  Check failed_sequences.txt for details")
+        print("  Check annotation_failures.log for details")
 ```
 
 ### QC Checkpoint 3: CDR Length Distributions
@@ -991,7 +991,7 @@ def validate_cdr_lengths(df: pd.DataFrame):
   - Columns: id, subset, heavy_seq, light_seq, num_flags, flag_category, label, include_in_training, source
 
 **Stage 2**:
-- `train_datasets/boughter/raw/` - 16 fragment-specific CSVs
+- `train_datasets/boughter/annotated/` - 16 fragment-specific CSVs
   - Each file: ~700-800 sequences (annotation failures excluded)
   - Naming: `{Fragment}_boughter.csv` (e.g., `VH_only_boughter.csv`)
   - Columns: id, sequence, label, subset, num_flags, flag_category, include_in_training, source, sequence_length
