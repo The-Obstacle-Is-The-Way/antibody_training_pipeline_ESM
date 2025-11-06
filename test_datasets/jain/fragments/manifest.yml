@@ -1,0 +1,33 @@
+# Jain Dataset Fragment Provenance Manifest
+# Generated: 2025-11-06
+
+source_file: test_datasets/jain/processed/jain_with_private_elisa_FULL.csv
+source_sha256: 51ab6828aa2bb53c61207f4b54367f686ece8fcc5c2c637b329bf8b1eaf6e091
+script: preprocessing/jain/step3_extract_fragments.py
+
+labeling_rule: ELISA-based
+  - elisa_flags = 0     → Specific (label 0)
+  - elisa_flags = 1-3   → Mild (label NaN)
+  - elisa_flags >= 4    → Non-specific (label 1)
+
+expected_counts:
+  total: 137
+  specific: 94
+  nonspecific: 22
+  mild: 21
+  test_set: 116  # excludes mild
+
+verification_status:
+  - ✓ Perfect match: 0 label mismatches vs SSOT
+  - ✓ All 137 antibodies have correct ELISA-based labels
+  - ✓ Distribution: 94/22/21 (specific/nonspecific/mild)
+
+note: |
+  This replaces the old fragments (67/27/43 distribution) that used
+  flags_total labeling from the paper. The ELISA-based labeling is
+  the single source of truth (SSOT) for all jain data.
+
+  Old fragments moved to: test_datasets/jain/fragments_legacy_flags_total/
+  Old fragments had 53/137 (38.7%) label mismatches vs SSOT.
+
+  The new fragments match the SSOT perfectly with 0 mismatches.

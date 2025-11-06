@@ -17,9 +17,9 @@ Test Coverage:
 4. Model validation logic simulation
 5. Data integrity verification
 
-Date: 2025-11-02
-Issue: Jain dataset preprocessing P0 validation
-Expected: 137 antibodies (67 specific, 27 non-specific, 43 mild)
+Date: 2025-11-06
+Issue: Jain dataset label discrepancy fix (ELISA-based SSOT)
+Expected: 137 antibodies (94 specific, 22 non-specific, 21 mild)
 """
 
 import sys
@@ -348,11 +348,11 @@ def test_data_integrity():
         )
         print(f"    Mild (NaN):       {mild_count} ({mild_count / len(df) * 100:.1f}%)")
 
-        # Expected distribution based on actual Jain dataset processing
-        # Note: Distribution differs from paper (67/3/67) due to preprocessing
-        expected_specific = 67
-        expected_nonspecific = 27
-        expected_mild = 43
+        # Expected distribution based on ELISA-based SSOT labeling
+        # Source: jain_with_private_elisa_FULL.csv (ELISA flags, not flags_total)
+        expected_specific = 94
+        expected_nonspecific = 22
+        expected_mild = 21
 
         print(
             f"\n  Expected distribution: {expected_specific} specific, {expected_nonspecific} non-specific, {expected_mild} mild"
@@ -398,8 +398,9 @@ def main():
     print("Jain Dataset - ESM-1v Embedding Compatibility Test Suite")
     print("=" * 70)
     print("Dataset: 137 clinical antibodies from PNAS 2017")
-    print("Test set: 94 sequences (67 specific + 27 non-specific)")
-    print("Excluded: 43 mild sequences (1-3 flags)")
+    print("Labels: ELISA-based (SSOT) - 94/22/21 distribution")
+    print("Test set: 116 sequences (94 specific + 22 non-specific)")
+    print("Excluded: 21 mild sequences (1-3 ELISA flags)")
 
     # Run all tests
     tests = [
