@@ -20,7 +20,7 @@ Expected: [[40, 19], [10, 17]], 66.28% accuracy
 
 **Run test:**
 ```bash
-python test.py \
+antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
   --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
@@ -231,7 +231,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 3. **Use OLD method** for guaranteed reproducibility
    ```bash
    # Always gives [[40, 19], [10, 17]]
-   python test.py --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+   antibody-test --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
    ```
 
 4. **Document the variance** in your results
@@ -314,7 +314,7 @@ experiments/novo_parity/
 
 ```bash
 # Method 1: OLD reverse-engineered (guaranteed)
-python test.py \
+antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
   --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
@@ -325,10 +325,10 @@ python test.py \
 
 ```bash
 # Test both datasets with same model
-python test.py --model models/boughter_vh_esm1v_logreg.pkl \
+antibody-test --model models/boughter_vh_esm1v_logreg.pkl \
                --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
-python test.py --model models/boughter_vh_esm1v_logreg.pkl \
+antibody-test --model models/boughter_vh_esm1v_logreg.pkl \
                --data test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
 
 # Both should give [[40, 19], [10, 17]] (within ±1 for P5e-S2)

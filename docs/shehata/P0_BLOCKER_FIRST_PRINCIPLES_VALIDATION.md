@@ -1,5 +1,12 @@
 # P0 Blocker: First Principles Validation
 
+> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+>
+> This document references old root imports (e.g., `from model import ESMEmbeddingExtractor`).
+> In v2.0.0+, use: `from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor`
+>
+> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+
 **Date:** 2025-11-02
 **Question:** Is the gap character bug real, or is it a hallucination?
 **Analyst:** Claude Code (verified by user request)

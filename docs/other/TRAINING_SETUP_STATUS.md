@@ -1,7 +1,18 @@
 # Boughter Training Setup - Ready to Launch
 
+> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+>
+> This document references the old root file structure (train.py, test.py, etc.) which was removed in v2.0.0.
+>
+> **For v2.0.0+, use:**
+> - `antibody-train --config configs/config.yaml` instead of `python train.py`
+> - `antibody-test --model X --data Y` instead of `python test.py`
+> - `from antibody_training_esm.core.classifier import BinaryClassifier` instead of `from classifier import BinaryClassifier`
+>
+> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for v2.0.0 usage.
+
 **Date**: 2025-11-02
-**Status**: ✅ **READY TO TRAIN**
+**Status**: ✅ **READY TO TRAIN** (updated for v2.0.0)
 
 ---
 
@@ -24,11 +35,11 @@ The existing OSS repo is **fully wired and working**. We fixed one bug and creat
   - 10-fold cross-validation
   - Takes ~10-30 minutes
 
-### 2. Training Pipeline (from OSS repo)
-- ✅ `train.py` - Main training script
-- ✅ `data.py` - Data loading (fixed bug: `file_path` → `train_file`)
-- ✅ `model.py` - ESM-1v wrapper
-- ✅ `classifier.py` - Logistic regression wrapper
+### 2. Training Pipeline (professional package structure)
+- ✅ `src/antibody_training_esm/cli/train.py` - Training CLI
+- ✅ `src/antibody_training_esm/data/loaders.py` - Data loading
+- ✅ `src/antibody_training_esm/core/embeddings.py` - ESM-1v wrapper
+- ✅ `src/antibody_training_esm/core/classifier.py` - Logistic regression wrapper
 - ✅ Complete evaluation with CV metrics
 
 ### 3. Boughter Dataset (our processing)
@@ -58,23 +69,23 @@ The existing OSS repo is **fully wired and working**. We fixed one bug and creat
 
 ---
 
-## Launch Training
+## Launch Training (v2.0.0)
 
 ### Option 1: Direct Launch
 ```bash
-python3 train.py config_boughter.yaml
+antibody-train --config configs/config_boughter.yaml
 ```
 
 ### Option 2: Tmux (Recommended)
 ```bash
 tmux new -s boughter_training
-python3 train.py config_boughter.yaml 2>&1 | tee logs/boughter_$(date +%Y%m%d_%H%M%S).log
+antibody-train --config configs/config_boughter.yaml 2>&1 | tee logs/boughter_$(date +%Y%m%d_%H%M%S).log
 # Detach: Ctrl+B, then D
 ```
 
 ### Option 3: Background
 ```bash
-nohup python3 train.py config_boughter.yaml > logs/boughter_training.log 2>&1 &
+nohup antibody-train --config configs/config_boughter.yaml > logs/boughter_training.log 2>&1 &
 ```
 
 ---

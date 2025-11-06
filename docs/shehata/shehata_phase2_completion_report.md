@@ -1,5 +1,12 @@
 # Shehata Dataset Phase 2 Completion Report
 
+> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+>
+> This document references old root imports (e.g., `from model import ESMEmbeddingExtractor`).
+> In v2.0.0+, use: `from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor`
+>
+> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+
 **Date:** 2025-10-31 (Original) | 2025-11-02 (P0 Blocker Found & Fixed)
 **Issue:** #3 - Shehata dataset preprocessing (Phase 2)
 **Status:** ✅ **COMPLETE** (P0 blocker resolved)

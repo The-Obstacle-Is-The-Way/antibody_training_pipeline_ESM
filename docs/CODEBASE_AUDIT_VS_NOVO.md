@@ -1,5 +1,16 @@
 # Codebase Audit: Implementation vs Novo Methodology
 
+> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+>
+> This audit references the old root file structure (train.py, classifier.py, model.py, data.py).
+> In v2.0.0+, these files were moved to the professional package structure:
+> - `train.py` → `src/antibody_training_esm/cli/train.py`
+> - `classifier.py` → `src/antibody_training_esm/core/classifier.py`
+> - `model.py` → `src/antibody_training_esm/core/embeddings.py`
+> - `data.py` → `src/antibody_training_esm/data/loaders.py`
+>
+> The implementation remains functionally identical. See [IMPORT_AND_STRUCTURE_GUIDE.md](../IMPORT_AND_STRUCTURE_GUIDE.md).
+
 **Audit Date:** 2025-11-05
 **Auditor:** Claude Code
 **Purpose:** Line-by-line comparison of current implementation against Novo Nordisk methodology
