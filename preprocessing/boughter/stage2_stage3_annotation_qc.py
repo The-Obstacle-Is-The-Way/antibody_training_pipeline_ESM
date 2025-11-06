@@ -19,13 +19,13 @@ Usage:
     python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 
 Inputs:
-    train_datasets/boughter.csv - Output from Stage 1 (1,117 sequences)
+    train_datasets/boughter/processed/boughter.csv - Output from Stage 1 (1,117 sequences)
 
 Outputs:
-    train_datasets/boughter/*_boughter.csv - 16 fragment CSVs (1,065 rows each)
-    train_datasets/boughter/VH_only_boughter_training.csv - Training subset (914 rows)
-    train_datasets/boughter/annotation_failures.log - Failed annotations (Stage 2)
-    train_datasets/boughter/qc_filtered_sequences.txt - QC-filtered sequences (Stage 3)
+    train_datasets/boughter/annotated/*_boughter.csv - 16 fragment CSVs (1,065 rows each)
+    train_datasets/boughter/canonical/VH_only_boughter_training.csv - Training subset (914 rows)
+    train_datasets/boughter/annotated/annotation_failures.log - Failed annotations (Stage 2)
+    train_datasets/boughter/annotated/qc_filtered_sequences.txt - QC-filtered sequences (Stage 3)
 
 Results Summary:
     Stage 1 input:  1,117 sequences (95.4% DNA translation success from 1,171 raw)
@@ -234,7 +234,7 @@ def annotate_all(df: pd.DataFrame) -> pd.DataFrame:
         print(f"  Failure rate: {failure_rate:.2f}%")
 
         # Write failures to log
-        failure_log = Path("train_datasets/boughter/annotation_failures.log")
+        failure_log = Path("train_datasets/boughter/annotated/annotation_failures.log")
         failure_log.write_text("\n".join(failures))
         print(f"  Failed IDs written to: {failure_log}")
 
@@ -384,7 +384,7 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     print(f"Total unique sequences removed: {len(problematic_ids)}")
 
     if problematic_ids:
-        qc_log = Path("train_datasets/boughter/qc_filtered_sequences.txt")
+        qc_log = Path("train_datasets/boughter/annotated/qc_filtered_sequences.txt")
         qc_log.write_text("\n".join(sorted(problematic_ids)))
         print(f"Filtered IDs written to: {qc_log}")
 
@@ -427,7 +427,7 @@ def print_annotation_stats(df: pd.DataFrame):
 def main():
     """Main processing pipeline."""
     # Load Stage 1 output
-    input_csv = Path("train_datasets/boughter.csv")
+    input_csv = Path("train_datasets/boughter/processed/boughter.csv")
 
     if not input_csv.exists():
         print(f"ERROR: {input_csv} not found!")
@@ -451,7 +451,7 @@ def main():
     print_annotation_stats(df_clean)
 
     # Create 16 fragment CSVs (from clean data)
-    output_dir = Path("train_datasets/boughter")
+    output_dir = Path("train_datasets/boughter/annotated")
     create_fragment_csvs(df_clean, output_dir)
 
     print("\n" + "=" * 70)
@@ -466,7 +466,7 @@ def main():
         f"  Stage 3 (Quality QC):   {len(df_clean)} sequences ({len(df_clean)/len(df)*100:.1f}%)"
     )
     print("\nNext steps:")
-    print("  1. Verify fragment files in train_datasets/boughter/")
+    print("  1. Verify fragment files in train_datasets/boughter/annotated/")
     print("  2. Check annotation_failures.log for any issues")
     print("  3. Review quality metrics in validation report")
     print("  4. Use fragment files for ESM embedding and training")
