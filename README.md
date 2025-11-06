@@ -1,4 +1,13 @@
 # Antibody Non-Specificity Prediction Pipeline using ESM
+
+<div align="center">
+  <img src="assets/leeroy_jenkins.png" alt="Leeroy Jenkins" width="300"/>
+  <br>
+  <em>"At least I have chicken."</em>
+</div>
+
+---
+
 This repository provides a machine learning pipeline to predict the non-specificity of antibodies using embeddings from the ESM-1v Protein Language Model(PLM). The project is an implementation of the methods described in the paper *"Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters"* by Sakhnini et al.
 
 ---
