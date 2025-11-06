@@ -299,14 +299,11 @@ failure_log = Path("test_datasets/harvey/fragments/failed_sequences.txt")
 ("harvey", Path("test_datasets/harvey/fragments"), 6),
 ```
 
-**4. scripts/rethreshold_harvey.py** (1 path reference)
+**4. scripts/rethreshold_harvey.py** ~~(1 path reference)~~ **DELETED**
 ```python
-# Line 48: Data path
-# OLD:
-data_path = "test_datasets/harvey/VHH_only_harvey.csv"
-
-# NEW:
-data_path = "test_datasets/harvey/fragments/VHH_only_harvey.csv"
+# This script was deleted as experimental (Nov 2025 cleanup)
+# Purpose fulfilled: PSR threshold (0.549) already discovered and implemented
+# Results documented in scripts/analysis/analyze_threshold_optimization.py
 ```
 
 **5. scripts/testing/test_harvey_psr_threshold.py** (1 path reference)

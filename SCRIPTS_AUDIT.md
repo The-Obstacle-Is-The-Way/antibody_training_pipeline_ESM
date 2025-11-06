@@ -354,7 +354,7 @@ git rm scripts/validation/verify_novo_parity.py
 
 ---
 
-### Phase 2: Move Dataset-Specific Scripts (7 scripts)
+### Phase 2: Move Dataset-Specific Scripts (6 scripts)
 
 **Boughter (2 scripts):**
 ```
