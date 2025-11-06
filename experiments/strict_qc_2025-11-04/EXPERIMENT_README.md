@@ -229,14 +229,18 @@ If you're curious whether 852-sequence QC actually helps:
 
 1. **Train model on 852 sequences:**
    ```bash
-   python train.py --config experiments/strict_qc_2025-11-04/configs/config_strict_qc.yaml
+   # v1.x (REMOVED): python train.py --config experiments/strict_qc_2025-11-04/configs/config_strict_qc.yaml
+   # v2.0.0 equivalent:
+   antibody-train --config experiments/strict_qc_2025-11-04/configs/config_strict_qc.yaml
    ```
 
 2. **Test on Jain dataset:**
    ```bash
-   python test.py \
-     --model-paths models/boughter_vh_strict_qc_esm1v_logreg.pkl \
-     --data-paths test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+   # v1.x (REMOVED): python test.py --model-paths X --data-paths Y
+   # v2.0.0 equivalent:
+   antibody-test \
+     --model models/boughter_vh_strict_qc_esm1v_logreg.pkl \
+     --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
    ```
 
 3. **Compare to production model:**
