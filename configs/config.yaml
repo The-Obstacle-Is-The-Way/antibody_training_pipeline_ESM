@@ -10,7 +10,7 @@ model:
 data:
   source: "local"
   dataset_name: "boughter_vh"
-  train_file: ./train_datasets/boughter/VH_only_boughter_training.csv  # Boughter VH training data (filtered)
+  train_file: ./train_datasets/boughter/canonical/VH_only_boughter_training.csv  # Boughter VH training data (filtered)
   val_file: null    # No validation set - use CV instead
   test_file: ./test_datasets/jain/canonical/jain_86_novo_parity.csv   # Jain P5e-S2 canonical (86 antibodies, recommended for Novo parity benchmarking)
 
