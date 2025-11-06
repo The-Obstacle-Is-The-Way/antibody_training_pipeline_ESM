@@ -256,31 +256,28 @@ total_abs = total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 
 ---
 
-## Available Training Files
+## Production Training Files
 
-### Complete File Inventory
+### File Inventory
 
 ```
 train_datasets/boughter/
-
-# Boughter QC (Standard)
-├── VH_only_boughter.csv                      # 1,065 sequences (all flags)
-├── VH_only_boughter_training.csv             #   914 sequences (0 and 4+ flags only, flattened)
-├── H-CDR3_boughter.csv                       # 1,065 sequences (all flags)
-├── Full_boughter.csv                         # 1,065 sequences (all flags)
-└── ... (13 more fragment CSVs)
-
-# Strict QC (Industry Standard)
-├── VH_only_boughter_strict_qc.csv            #   852 sequences (X filtered)
-├── H-CDR3_boughter_strict_qc.csv             #   914 sequences (no change - CDRs already filtered)
-├── Full_boughter_strict_qc.csv               #   840 sequences (X filtered from VH+VL)
-└── ... (13 more fragment CSVs with strict QC)
+├── canonical/
+│   └── VH_only_boughter_training.csv         # 914 sequences (PRODUCTION)
+├── annotated/
+│   ├── VH_only_boughter.csv                  # 1,065 sequences (all flags)
+│   ├── H-CDR3_boughter.csv                   # 1,065 sequences (all flags)
+│   ├── Full_boughter.csv                     # 1,065 sequences (all flags)
+│   └── ... (13 more fragment CSVs)
+└── processed/
+    └── boughter.csv                          # 1,117 translated sequences
 ```
 
-### Detailed File Descriptions
+### Production Training File
 
-#### 1. VH_only_boughter_training.csv (914 sequences)
-**What it is:** Flattened training export with Boughter QC
+**File:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv`
+
+**Sequences:** 914 (training subset: 0 and 4+ ELISA flags only)
 
 **Columns:**
 - `sequence`: VH amino acid sequence
@@ -292,75 +289,45 @@ train_datasets/boughter/
 - Label 0 (specific, 0 flags): 457 sequences (50.0%)
 - Label 1 (non-specific, 4+ flags): 457 sequences (50.0%)
 
-**Contains:** 62 sequences with X in frameworks (not in CDRs)
+**Model:** `models/boughter_vh_esm1v_logreg.pkl`
 
-**Use case:** Exact replication of Boughter methodology, matches Novo's stated approach
+**Performance:**
+- CV accuracy: 67.5% ± 8.9% (10-fold)
+- External validation:
+  - Jain (HIC retention): 66.28% accuracy ✅
+  - Shehata (PSR assay): 52.26% accuracy ✅
 
-**Training results:**
-- CV accuracy: **67.5% ± 8.9%** (10-fold CV)
-- Model: `models/boughter_vh_esm1v_logreg.pkl`
-
----
-
-#### 2. VH_only_boughter_strict_qc.csv (852 sequences) ⭐ **NEW**
-**What it is:** Industry-standard QC (filters X anywhere, not just CDRs)
-
-**Columns:**
-- `id`: Unique sequence identifier (format: `{subset}_{index}`)
-- `sequence`: VH amino acid sequence
-- `label`: Binary (0 = specific, 1 = non-specific)
-- `subset`: Source dataset (flu, hiv_nat, hiv_cntrl, hiv_plos, gut_hiv, mouse_iga)
-- `num_flags`: Number of polyreactive antigens bound (0-7)
-- `flag_category`: Category (specific, mildly_poly, non_specific)
-- `include_in_training`: Always True (already filtered)
-- `source`: Constant "boughter2020"
-- `sequence_length`: Length in amino acids
-
-**QC level:** Strict QC (X anywhere + non-standard AA + Boughter QC)
-
-**Label distribution:**
-- Label 0 (specific, 0 flags): 425 sequences (49.9%)
-- Label 1 (non-specific, 4+ flags): 427 sequences (50.1%)
-
-**Removed:** 62 sequences with X in frameworks (VH only)
-
-**Use case:** Industry-standard QC, modern ML best practices
-
-**Training results:**
-- CV accuracy: **66.55% ± 7.07%** (10-fold CV)
-- Model: `models/boughter_vh_strict_qc_esm1v_logreg.pkl`
+**Status:** ✅ PRODUCTION - Externally validated and ready for deployment
 
 ---
 
-#### 3. Fragment CSVs (*_boughter.csv)
-**What they are:** 16 different antibody fragments (from Novo Table 4)
+### Fragment Files (Multi-Fragment Analysis)
 
-**Fragments:**
+**Files:** `train_datasets/boughter/annotated/*_boughter.csv` (16 files)
+
+**Fragments available:**
 - Variable domains: VH_only, VL_only, VH+VL, Full
 - Heavy chain CDRs: H-CDR1, H-CDR2, H-CDR3, H-CDRs, H-FWRs
 - Light chain CDRs: L-CDR1, L-CDR2, L-CDR3, L-CDRs, L-FWRs
 - Combined: All-CDRs, All-FWRs
 
-**All contain:** 1,065 sequences (all flags, has `include_in_training` column)
+**Sequences:** 1,065 (all flags, includes `include_in_training` column)
 
 **Use case:** Multi-fragment analysis, fragment-specific training
 
 ---
 
-#### 4. Fragment CSVs (*_boughter_strict_qc.csv) ⭐ **NEW**
-**What they are:** Same 16 fragments with strict QC
+### Archived Experimental Files
 
-**Sequence counts (fragment-dependent):**
-- CDR-only fragments: 914 sequences (no change)
-- VH_only/H-FWRs: 852 sequences (-62)
-- VL_only/L-FWRs: 900 sequences (-14)
-- Full/VH+VL/All-FWRs: 840 sequences (-74)
+**Location:** `experiments/strict_qc_2025-11-04/data/strict_qc/`
 
-**Use case:** Fragment-specific training with industry-standard QC
+An experimental strict QC filtering (852-914 sequences) was tested but archived due to lack of improvement over production model.
+
+**See:** `experiments/strict_qc_2025-11-04/EXPERIMENT_README.md`
 
 ---
 
-## Training Results Comparison
+## Production Model Performance
 
 ### Boughter QC (914 sequences)
 
