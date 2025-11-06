@@ -17,7 +17,7 @@ Date: 2025-11-04
 import pandas as pd
 from pathlib import Path
 
-BOUGHTER_DIR = Path("train_datasets/boughter")
+STRICT_QC_DIR = Path("train_datasets/boughter/strict_qc")
 STRICT_QC_PATTERN = "*_strict_qc.csv"
 STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")
 
@@ -51,7 +51,7 @@ def validate_strict_qc():
     print()
 
     # Find all strict QC files
-    strict_qc_files = list(BOUGHTER_DIR.glob(STRICT_QC_PATTERN))
+    strict_qc_files = list(STRICT_QC_DIR.glob(STRICT_QC_PATTERN))
 
     if len(strict_qc_files) == 0:
         print("❌ ERROR: No *_strict_qc.csv files found!")
