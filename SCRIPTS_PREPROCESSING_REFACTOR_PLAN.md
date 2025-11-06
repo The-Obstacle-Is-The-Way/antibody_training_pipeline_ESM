@@ -117,9 +117,15 @@ scripts/
    - **Action:** DELETE `preprocessing/process_jain.py` or move to `preprocessing/legacy/`
    - **Keep:** `preprocessing/preprocess_jain_p5e_s2.py` (this is the CORRECT script)
 
+2. **Scripts using pre-reorganization Jain paths**
+   - `scripts/testing/demo_assay_specific_thresholds.py` line 84:
+     - Uses: `test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv` ❌
+     - Should be: `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv` ✅
+   - **Action:** Fix path to use canonical/ subdirectory
+
 ### ⚠️ P1: Organizational Issues
 
-2. **Inconsistent preprocessing structure**
+1. **Inconsistent preprocessing structure**
    - Boughter has subdirectory (`preprocessing/boughter/`) with 6 scripts
    - Other datasets have single scripts in `preprocessing/` root
    - **Reason:** Boughter has multi-stage pipeline, others are single-stage
@@ -148,30 +154,53 @@ scripts/
 
 ### Phase 1: Delete/Archive Legacy Scripts ✅ SAFE (we have backup)
 
-**Target:** `preprocessing/preprocess_jain_p5e_s2.py`
+**Target:** `preprocessing/process_jain.py` (BAD - uses old flat paths)
+
+**Why Delete:**
+- Uses paths that DON'T EXIST: `test_datasets/jain_with_private_elisa_FULL.csv`
+- Expects flat structure instead of 4-tier: raw/processed/canonical/fragments
+- Created BEFORE Jain dataset reorganization (commit 9de5687)
+- The CORRECT script is `preprocessing/preprocess_jain_p5e_s2.py`
 
 **Options:**
 1. **Option A (Aggressive):** Delete entirely
-   - Pros: Clean, no confusion
-   - Cons: Lose git history traceability
+   - Pros: Clean, no confusion, prevents accidents
+   - Cons: Lose easy access (git history still preserves it)
    - **Recommendation:** DO THIS (git history is preserved anyway)
 
 2. **Option B (Conservative):** Move to `preprocessing/legacy/`
    - Pros: Preserves traceability, documents evolution
    - Cons: Clutter, risk of accidental use
-   - **Recommendation:** If we want to keep for reference
+   - **Recommendation:** If we want to document the evolution
 
 **Decision:** ???? (user to decide)
 
-**Command:**
+**Commands:**
 ```bash
-# Option A: Delete
-git rm preprocessing/preprocess_jain_p5e_s2.py
+# Option A: Delete (RECOMMENDED)
+git rm preprocessing/process_jain.py
+git rm -r preprocessing/__pycache__  # Clean up pycache too
 
 # Option B: Archive
 mkdir -p preprocessing/legacy
-git mv preprocessing/preprocess_jain_p5e_s2.py preprocessing/legacy/
-echo "# Legacy Preprocessing Scripts\n\n**DO NOT USE** - Archived for historical reference." > preprocessing/legacy/README.md
+git mv preprocessing/process_jain.py preprocessing/legacy/
+cat > preprocessing/legacy/README.md << 'EOF'
+# Legacy Preprocessing Scripts
+
+**Status:** INCORRECT - Archived for historical reference
+
+## process_jain.py
+
+**Problem:** Uses old flat paths (pre-4-tier reorganization)
+
+**Missing files:**
+- `test_datasets/jain_with_private_elisa_FULL.csv` (now in processed/)
+- `test_datasets/jain/jain_86_novo_parity.csv` (now in canonical/)
+
+**Superseded by:** `preprocessing/preprocess_jain_p5e_s2.py`
+
+**DO NOT USE** - Will fail or write to wrong locations
+EOF
 ```
 
 ---
@@ -336,9 +365,9 @@ preprocessing/
 **Current scripts:**
 - ✅ `preprocessing/boughter/` (7 scripts) - Multi-stage Boughter pipeline
 - ✅ `preprocessing/process_harvey.py` - Harvey preprocessing (VHH nanobodies)
-- ✅ `preprocessing/process_jain.py` - Jain P5e-S2 preprocessing (86 antibodies)
+- ✅ `preprocessing/preprocess_jain_p5e_s2.py` - Jain P5e-S2 preprocessing (86 antibodies, 4-tier paths)
 - ✅ `preprocessing/process_shehata.py` - Shehata preprocessing (398 antibodies)
-- ❌ `preprocessing/preprocess_jain_p5e_s2.py` - **LEGACY (DELETE)**
+- ❌ `preprocessing/process_jain.py` - **LEGACY (DELETE - uses old flat paths)**
 
 ---
 
@@ -407,24 +436,28 @@ preprocessing/
 
 ```bash
 # Option A (recommended): Delete entirely
-git rm preprocessing/preprocess_jain_p5e_s2.py
+git rm preprocessing/process_jain.py
 git rm -r preprocessing/__pycache__  # Clean up pycache
 
 # Option B (conservative): Archive
 mkdir -p preprocessing/legacy
-git mv preprocessing/preprocess_jain_p5e_s2.py preprocessing/legacy/
+git mv preprocessing/process_jain.py preprocessing/legacy/
 cat > preprocessing/legacy/README.md << 'EOF'
 # Legacy Preprocessing Scripts
 
 **Status:** INCORRECT - Archived for historical reference
 
-## preprocess_jain_p5e_s2.py
+## process_jain.py
 
-**Problem:** Uses old paths (pre-4-tier reorganization)
+**Problem:** Uses old flat paths (pre-4-tier reorganization)
 
-**Superseded by:** `preprocessing/process_jain.py`
+**Missing files:**
+- `test_datasets/jain_with_private_elisa_FULL.csv` (now in processed/)
+- `test_datasets/jain/jain_86_novo_parity.csv` (now in canonical/)
 
-**DO NOT USE**
+**Superseded by:** `preprocessing/preprocess_jain_p5e_s2.py`
+
+**DO NOT USE** - Will fail or write to wrong locations
 EOF
 ```
 
@@ -473,13 +506,14 @@ git status
 
 # Verify no broken imports
 grep -r "from preprocessing" scripts/
-grep -r "import preprocess_jain" .
+grep -r "import process_jain" .
 
 # Commit changes
 git add -A
 git commit -m "refactor: Reorganize preprocessing/ and scripts/ for clarity
 
-- Delete legacy preprocessing/preprocess_jain_p5e_s2.py (old paths)
+- Delete legacy preprocessing/process_jain.py (old flat paths)
+- Keep preprocessing/preprocess_jain_p5e_s2.py (correct 4-tier paths)
 - Move validation scripts to scripts/validation/
 - Move analysis scripts to scripts/analysis/
 - Create scripts/training/ for training utilities
@@ -498,19 +532,19 @@ Tests: All preprocessing scripts verified with correct 4-tier paths."
 
 ```
 preprocessing/
-├── README.md                    ✅ NEW (quick reference guide)
-├── boughter/                    ✅ Multi-stage pipeline
+├── README.md                      ✅ NEW (quick reference guide)
+├── boughter/                      ✅ Multi-stage pipeline
 │   ├── README.md
 │   ├── stage1_dna_translation.py
 │   ├── stage2_stage3_annotation_qc.py
 │   ├── stage4_additional_qc.py
 │   └── validate_*.py (3 scripts)
-├── process_harvey.py            ✅ Single-stage pipeline
-├── process_jain.py              ✅ Single-stage pipeline (P5e-S2)
-└── process_shehata.py           ✅ Single-stage pipeline
+├── process_harvey.py              ✅ Single-stage pipeline
+├── preprocess_jain_p5e_s2.py      ✅ Single-stage pipeline (P5e-S2, 4-tier paths)
+└── process_shehata.py             ✅ Single-stage pipeline
 ```
 
-**Total:** 4 datasets, 11 scripts (7 in boughter/, 3 in root, 1 deleted)
+**Total:** 4 datasets, 11 scripts (7 in boughter/, 3 in root, 1 deleted: process_jain.py)
 
 ---
 
