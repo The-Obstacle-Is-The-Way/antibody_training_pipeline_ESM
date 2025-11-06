@@ -21,5 +21,6 @@ note: |
   This replaces the old fragments (67/27/43 distribution) that used
   flags_total labeling from the paper. The ELISA-based labeling is
   the single source of truth (SSOT) for all jain data.
-  Legacy CSVs are no longer tracked in the repository; recover from
-  git history if ever needed (commit 09d6121).
+
+  Legacy fragments (67/27/43 distribution) are no longer tracked in the working tree.
+  Recover from git history if needed (commit 09d6121).
