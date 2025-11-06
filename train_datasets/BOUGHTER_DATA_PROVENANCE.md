@@ -126,17 +126,17 @@ train_datasets/
 ### Overview
 
 ```
-Raw DNA FASTA (1,171 sequences)
+train_datasets/boughter/raw/           (Stage 0: Raw DNA FASTA)
     ↓
 [Stage 1: DNA Translation & Novo Flagging]
     ↓
-boughter.csv (1,117 protein sequences)
+train_datasets/boughter/processed/boughter.csv   (1,117 protein sequences)
     ↓
 [Stages 2+3: ANARCI Annotation + QC Filtering]
     ↓
-boughter/*.csv (16 fragment types × 1,065 sequences)
+train_datasets/boughter/annotated/*_boughter.csv (16 fragment types × 1,065 sequences)
     ↓
-VH_only_boughter_training.csv (914 sequences for training)
+train_datasets/boughter/canonical/VH_only_boughter_training.csv (914 sequences for training)
 ```
 
 ### Stage 1: DNA Translation & Novo Nordisk Flagging
@@ -224,6 +224,7 @@ hiv_plos: 1 failure (2.3%)
 **Output:**
 - 1,065 clean sequences (95.9% retention from Stage 2)
 - `train_datasets/boughter/annotated/qc_filtered_sequences.txt` - 45 filtered sequences
+- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` - 914 training sequences (sequence + label)
 
 **QC Statistics:**
 ```

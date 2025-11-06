@@ -649,7 +649,7 @@ def process_boughter_dataset(csv_path: str) -> pd.DataFrame:
     if failures:
         print(f'  Failures: {len(failures)}')
         # Write failures to log
-        failure_log = Path('train_datasets/boughter/raw/failed_sequences.txt')
+        failure_log = Path('train_datasets/boughter/annotated/annotation_failures.log')
         failure_log.parent.mkdir(parents=True, exist_ok=True)
         with open(failure_log, 'w') as f:
             f.write('\n'.join(failures))
@@ -1065,7 +1065,7 @@ pip install biopython pandas riot-na tqdm
    - Report failure rate in summary
 
 2. **ANARCI annotation failures**: Sequence doesn't match antibody structure
-   - Write failed IDs to `failed_sequences.txt`
+   - Write failed IDs to `annotation_failures.log`
    - Expected failure rate: <5%
    - Continue processing remaining sequences
 

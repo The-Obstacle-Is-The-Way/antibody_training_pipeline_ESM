@@ -326,6 +326,37 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
     print(f"\n✓ All {len(fragments)} fragment files created in: {output_dir}")
 
 
+def export_training_subset(df: pd.DataFrame, output_path: Path):
+    """
+    Export the canonical training subset used by the model pipeline.
+
+    The canonical file contains only [sequence, label] columns for VH domains and
+    includes sequences where include_in_training == True.
+    """
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    train_df = df[df["include_in_training"] == True].copy()
+    if len(train_df) == 0:
+        print("⚠ No sequences flagged for training; canonical export skipped.")
+        return
+
+    canonical_df = (
+        train_df[["full_seq_H", "label"]]
+        .rename(columns={"full_seq_H": "sequence"})
+        .assign(label=lambda d: d["label"].astype(float))
+    )
+
+    canonical_df.to_csv(output_path, index=False)
+
+    label_counts = canonical_df["label"].value_counts().sort_index()
+    print(f"\n✓ Canonical training file exported: {output_path}")
+    print(f"  Total sequences: {len(canonical_df)}")
+    for label, count in label_counts.items():
+        label_name = "Specific (0)" if label == 0.0 else "Non-specific (1)"
+        pct = count / len(canonical_df) * 100
+        print(f"  {label_name}: {count} ({pct:.1f}%)")
+
+
 def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     """
     Stage 3: Post-annotation quality control.
@@ -453,6 +484,10 @@ def main():
     # Create 16 fragment CSVs (from clean data)
     output_dir = Path("train_datasets/boughter/annotated")
     create_fragment_csvs(df_clean, output_dir)
+
+    # Export canonical VH-only training subset
+    canonical_path = Path("train_datasets/boughter/canonical/VH_only_boughter_training.csv")
+    export_training_subset(df_clean, canonical_path)
 
     print("\n" + "=" * 70)
     print("Boughter Dataset Processing Complete!")
