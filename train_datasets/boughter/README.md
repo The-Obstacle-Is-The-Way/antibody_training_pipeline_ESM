@@ -8,7 +8,9 @@ This directory contains processed antibody sequences from the Boughter et al. 20
 
 **Source:** Boughter et al. (2020) eLife 9:e61393
 **Reference Implementation:** Sakhnini et al. (2025) - Novo Nordisk antibody non-specificity prediction
-**Total Antibodies:** 1,171 (raw) → 1,065 (after ANARCI + Boughter QC) → 914 (training subset) → 840-914 (strict QC, fragment-dependent)
+**Total Antibodies:** 1,171 (raw) → 1,065 (after ANARCI + Boughter QC) → 914 (training subset, PRODUCTION)
+
+**Experimental Strict QC:** Archived in `experiments/strict_qc_2025-11-04/` (never validated)
 
 **Assay:** ELISA polyreactivity against 4-7 diverse antigens (DNA, insulin, LPS, flagellin, albumin, cardiolipin, KLH)
 **Classification:** Binary (0 flags = specific, 4+ flags = non-specific; 1-3 flags excluded from training)
