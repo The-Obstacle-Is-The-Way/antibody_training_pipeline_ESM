@@ -17,7 +17,7 @@ import yaml
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold, cross_validate
 
-from model import ESMEmbeddingExtractor
+from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
