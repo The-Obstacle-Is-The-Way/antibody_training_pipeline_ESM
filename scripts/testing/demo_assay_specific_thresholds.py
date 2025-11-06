@@ -81,7 +81,7 @@ def main():
     print("=" * 60)
     jain_cm, jain_acc = test_with_assay_type(
         model,
-        "test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv",
+        "test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv",
         "Jain",
         "ELISA",
         novo_jain,

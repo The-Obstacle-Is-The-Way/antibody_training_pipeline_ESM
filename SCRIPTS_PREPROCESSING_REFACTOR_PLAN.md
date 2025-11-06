@@ -463,7 +463,19 @@ EOF
 
 ---
 
-### Step 2: Reorganize scripts/ Root Files
+### Step 2: Fix Jain Path in demo_assay_specific_thresholds.py
+
+```bash
+# Fix line 84 in demo_assay_specific_thresholds.py
+sed -i '' 's|test_datasets/jain/VH_only_jain_test_QC_REMOVED.csv|test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv|' scripts/testing/demo_assay_specific_thresholds.py
+
+# Verify the fix
+grep "VH_only_jain_test_QC_REMOVED.csv" scripts/testing/demo_assay_specific_thresholds.py
+```
+
+---
+
+### Step 3: Reorganize scripts/ Root Files
 
 ```bash
 # Move validation scripts
@@ -480,7 +492,7 @@ git mv scripts/train_hyperparameter_sweep.py scripts/training/
 
 ---
 
-### Step 3: Create Documentation
+### Step 4: Create Documentation
 
 ```bash
 # Create preprocessing/README.md
@@ -498,7 +510,7 @@ git mv scripts/train_hyperparameter_sweep.py scripts/training/
 
 ---
 
-### Step 4: Validate & Commit
+### Step 5: Validate & Commit
 
 ```bash
 # Check status
@@ -612,12 +624,13 @@ scripts/
 
 ## Next Steps
 
-1. **User Decision:** Delete vs Archive `preprocessing/preprocess_jain_p5e_s2.py`
-2. **Execute Step 1:** Remove legacy Jain script
-3. **Execute Step 2:** Reorganize scripts/ root files
-4. **Execute Step 3:** Create documentation (READMEs)
-5. **Execute Step 4:** Validate & commit
-6. **Final Check:** Run preprocessing scripts to verify no breakage
+1. **User Decision:** Delete vs Archive `preprocessing/process_jain.py` (bad script with wrong paths)
+2. **Execute Step 1:** Remove legacy Jain script (`process_jain.py`)
+3. **Execute Step 2:** Fix Jain path in `demo_assay_specific_thresholds.py`
+4. **Execute Step 3:** Reorganize scripts/ root files
+5. **Execute Step 4:** Create documentation (READMEs)
+6. **Execute Step 5:** Validate & commit
+7. **Final Check:** Run preprocessing scripts to verify no breakage
 
 ---
 
