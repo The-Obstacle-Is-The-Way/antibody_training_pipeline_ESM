@@ -1,5 +1,10 @@
 # Configuration file for Boughter Training - Novo Nordisk Reproduction
 # Train on Boughter dataset, test on Jain dataset
+#
+# ✅ PRODUCTION CONFIG - VALIDATED MODEL
+# This config produces the validated model: models/boughter_vh_esm1v_logreg.pkl
+# Validated on: Jain (66.28% acc), Shehata (52.26% acc)
+# See: test_results/TEST_RESULTS_SUMMARY.md
 
 # Model configuration
 model:

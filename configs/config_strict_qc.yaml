@@ -1,10 +1,15 @@
-# Configuration file for Boughter Training - Strict QC (Industry Standard)
+# Configuration file for Boughter Training - Strict QC (EXPERIMENTAL)
 # Train on Boughter dataset with strict QC (852 sequences), test on Jain dataset
+#
+# WARNING: This config is EXPERIMENTAL and UNVALIDATED
+# The validated production model uses config.yaml (914 sequences)
 #
 # This config uses the STRICT QC dataset which includes:
 # - Boughter's QC filters (X in CDRs, empty CDRs)
 # - PLUS industry standard full-sequence QC (X anywhere, non-standard AA)
-# Expected to match Novo's likely methodology and achieve ~71% accuracy
+#
+# NOTE: This was a hypothesis that stricter QC would match Novo better.
+# However, the 914-sequence model (config.yaml) is the VALIDATED version with proven results.
 
 # Model configuration
 model:
@@ -66,19 +71,21 @@ training:
 
 # Experiment tracking
 experiment:
-  name: "boughter_strict_qc_novo_parity"
-  description: "Train ESM-1v VH-based LogisticReg on Boughter STRICT QC (852 seqs), test on Jain (Novo parity attempt)"
-  tags: ["boughter", "strict_qc", "jain", "esm1v", "novo", "parity"]
+  name: "boughter_strict_qc_experimental"
+  description: "EXPERIMENTAL: Train ESM-1v VH-based LogisticReg on Boughter STRICT QC (852 seqs)"
+  tags: ["boughter", "strict_qc", "jain", "esm1v", "experimental", "unvalidated"]
   notes: |
+    **STATUS: EXPERIMENTAL - NOT VALIDATED**
+    Production model uses config.yaml (914 sequences) - see models/boughter_vh_esm1v_logreg.pkl
+
     Strict QC filtering applied:
     - Boughter QC: X in CDRs, empty CDRs (914 sequences)
     - PLUS: X anywhere in full VH sequence (-62 sequences)
     - PLUS: Non-standard AA filtering (B, Z, J, U, O)
     - Final: 852 sequences (49.9% label 0, 50.1% label 1)
 
-    Hypothesis: This matches Novo's likely methodology and should achieve ~71% accuracy
-    Previous result (914 sequences, Boughter QC only): 67.5% ± 8.9%
-    Target (Novo reported): 71%
+    Original Hypothesis (UNPROVEN): Stricter QC would match Novo better
+    Reality: 914-sequence model is validated with Jain (66.28%) and Shehata (52.26%) results
 
 # Hardware configuration
 hardware:

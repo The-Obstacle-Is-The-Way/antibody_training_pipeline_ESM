@@ -1,16 +1,29 @@
-# Boughter Strict QC Files (Experimental)
+# Boughter Strict QC Files (EXPERIMENTAL - UNVALIDATED)
 
-This directory contains **experimental** fragment files with additional strict quality control filters applied (Stage 4).
+**⚠️ WARNING: These files are EXPERIMENTAL and have NOT been validated.**
+
+**USE PRODUCTION DATA INSTEAD:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences)
+
+This directory contains experimental fragment files with additional strict quality control filters applied (Stage 4), reducing from 914 to 852 sequences for VH.
 
 ---
 
-## Purpose
+## Status: UNVALIDATED
 
-These files were generated as part of an experimental investigation to determine if stricter QC criteria could improve model performance.
+**Production Model:** Uses `canonical/VH_only_boughter_training.csv` (914 sequences)
+- ✅ Validated on Jain: 66.28% accuracy
+- ✅ Validated on Shehata: 52.26% accuracy (expected poor separation)
+- See: `test_results/TEST_RESULTS_SUMMARY.md`
 
-**Result:** No significant improvement observed. Standard QC (Stages 2+3) is sufficient.
+**This Directory:** Model trained on strict_qc (852 sequences) has NEVER been tested.
 
-**See:** `docs/boughter/BOUGHTER_ADDITIONAL_QC_PLAN.md` for details.
+---
+
+## Original Hypothesis (UNPROVEN)
+
+These files were generated to test if stricter QC (removing all X, not just in CDRs) would match Novo's methodology better.
+
+**Result:** Hypothesis never validated. The 914-sequence model is the proven version.
 
 ---
 
