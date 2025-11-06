@@ -85,7 +85,7 @@ canonical/VH_only_boughter_training.csv   # Training export (914 sequences, flat
 
 ## Column Descriptions
 
-### Standard Fragment Files (*_boughter.csv, *_boughter_strict_qc.csv)
+### Standard Fragment Files (annotated/*_boughter.csv)
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -106,63 +106,61 @@ canonical/VH_only_boughter_training.csv   # Training export (914 sequences, flat
 
 ---
 
-## Processing Pipeline
+## Processing Pipeline (Production)
 
 ```
 Raw DNA FASTA (6 subsets, 1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,171 sequences)
+   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,117 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
    ↓ QC: X in CDRs only, empty CDRs
-   ↓ Outputs: 16 fragment CSVs (1,065 sequences each)
-   ↓    *_boughter.csv (all flags, has include_in_training column)
+   ↓ Outputs: train_datasets/boughter/annotated/*_boughter.csv
+   ↓    16 fragment CSVs (1,065 sequences each, all flags)
    ↓
-   ↓ Filter to training subset (include_in_training == True)
-   ↓    VH_only_boughter_training.csv (914 sequences, flattened export)
+Filter to training subset (include_in_training == True)
+   ↓ Export: train_datasets/boughter/canonical/VH_only_boughter_training.csv
+   ↓    914 sequences (0 and 4+ ELISA flags only)
    ↓
-Stage 4: Additional QC (Industry Standard)
-   ↓ preprocessing/boughter/stage4_additional_qc.py
-   ↓ QC: X ANYWHERE in sequence, non-standard AA
-   ↓ Outputs: 16 fragment CSVs (840-914 sequences each)
-       *_boughter_strict_qc.csv (training subset + industry standard filters)
+✅ PRODUCTION MODEL: models/boughter_vh_esm1v_logreg.pkl
+   └─ Validated on Jain: 66.28% accuracy
+   └─ Validated on Shehata: 52.26% accuracy
 ```
 
 **Validation:**
 - `preprocessing/boughter/validate_stage1.py` - Stage 1 validation
 - `preprocessing/boughter/validate_stages2_3.py` - Stages 2+3 validation
-- `preprocessing/boughter/validate_stage4.py` - Stage 4 validation
+
+**Archived Experiment:**
+- Stage 4 strict QC (852 sequences) archived in `experiments/strict_qc_2025-11-04/` (never validated)
 
 ---
 
 ## Usage Recommendations
 
-### For Exact Boughter Replication
+### For Production Model Training (Recommended)
 ```python
 import pandas as pd
 
-# Use standard Boughter QC files
+# Use pre-exported training file (914 sequences, validated)
+df_train = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv')
+# Columns: sequence, label (flattened for ML)
+# Used for: models/boughter_vh_esm1v_logreg.pkl (validated on Jain/Shehata)
+```
+
+### For Full Metadata Access
+```python
+import pandas as pd
+
+# Use annotated files with full provenance
 df = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
 
 # Filter to training subset
 df_train = df[df['include_in_training'] == True]  # 914 sequences
-
-# Or use the pre-exported training file (no metadata)
-df_train = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv')  # 914 sequences
-```
-
-### For Novo Nordisk Parity (Recommended)
-```python
-import pandas as pd
-
-# Use strict QC files (matches Novo's likely methodology)
-df_train = pd.read_csv('train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv', comment='#')  # 852 sequences
-
-# For CDR-only analysis (no filtering difference)
-df_cdr3 = pd.read_csv('train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv', comment='#')  # 914 sequences
+# Columns: id, sequence, label, subset, num_flags, flag_category, include_in_training, source, sequence_length
 ```
 
 ### For Multi-Fragment Analysis
@@ -170,27 +168,27 @@ df_cdr3 = pd.read_csv('train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_
 import pandas as pd
 
 # Load multiple fragments with consistent IDs
-vh = pd.read_csv('train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv', comment='#')
-vl = pd.read_csv('train_datasets/boughter/strict_qc/VL_only_boughter_strict_qc.csv', comment='#')
-cdr3 = pd.read_csv('train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv', comment='#')
+vh = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
+vl = pd.read_csv('train_datasets/boughter/annotated/VL_only_boughter.csv', comment='#')
+cdr3 = pd.read_csv('train_datasets/boughter/annotated/H-CDR3_boughter.csv', comment='#')
+
+# Filter to training subset
+vh_train = vh[vh['include_in_training'] == True]  # 914 sequences
+vl_train = vl[vl['include_in_training'] == True]  # 914 sequences
 
 # Merge on 'id' column (available in all fragment CSVs)
-merged = vh.merge(vl, on='id', suffixes=('_vh', '_vl'))
+merged = vh_train.merge(vl_train, on='id', suffixes=('_vh', '_vl'))
 ```
 
 ---
 
 ## Label Distribution
 
-**Boughter QC (914 training sequences):**
+**Production Training Set (914 sequences):**
 - Label 0 (specific, 0 flags): 457 sequences (50.0%)
 - Label 1 (non-specific, 4+ flags): 457 sequences (50.0%)
 
-**Strict QC (VH_only, 852 sequences):**
-- Label 0 (specific, 0 flags): 425 sequences (49.9%)
-- Label 1 (non-specific, 4+ flags): 427 sequences (50.1%)
-
-**Note:** Labels remain balanced after strict QC filtering.
+**Note:** Training set is perfectly balanced (50/50 split).
 
 ---
 
