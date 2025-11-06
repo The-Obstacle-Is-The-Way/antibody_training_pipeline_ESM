@@ -65,7 +65,7 @@ class BoughterDataset(AntibodyDataset):
         """
         super().__init__(
             dataset_name="boughter",
-            output_dir=output_dir or Path("train_datasets/boughter/fragments"),
+            output_dir=output_dir or Path("train_datasets/boughter/annotated"),
             logger=logger,
         )
 
@@ -166,29 +166,37 @@ class BoughterDataset(AntibodyDataset):
 
         return df
 
-    def translate_dna_to_protein(self, dna_sequence: str) -> str | None:  # noqa: ARG002
+    def translate_dna_to_protein(self, dna_sequence: str) -> str:  # noqa: ARG002
         """
         Translate DNA sequence to protein.
 
-        This is a placeholder for the complex DNA translation logic.
-        The actual implementation is in preprocessing/boughter/stage1_dna_translation.py
+        This method is NOT implemented in the dataset loader class.
+        DNA translation logic belongs in the preprocessing scripts.
+
+        For DNA translation, use:
+            preprocessing/boughter/stage1_dna_translation.py
 
         Args:
             dna_sequence: DNA sequence string
 
         Returns:
-            Translated protein sequence or None if translation fails
-        """
-        # TODO: Implement hybrid translation strategy:
-        # 1. Direct V-domain translation (pre-trimmed sequences)
-        # 2. ATG-based translation (full-length with signal peptide)
-        # 3. V-domain motif detection (EVQL, QVQL, etc.)
+            Translated protein sequence
 
-        self.logger.warning(
-            "DNA translation not implemented in dataset class.\n"
-            "Please use preprocessing/boughter/stage1_dna_translation.py"
+        Raises:
+            NotImplementedError: Always - this method should not be used
+        """
+        raise NotImplementedError(
+            "DNA translation is not implemented in dataset loader classes.\n"
+            "Dataset loaders are for LOADING preprocessed data, not creating it.\n"
+            "\n"
+            "For DNA translation, use the preprocessing script:\n"
+            "  python preprocessing/boughter/stage1_dna_translation.py\n"
+            "\n"
+            "This script implements the full hybrid translation strategy:\n"
+            "  1. Direct V-domain translation (pre-trimmed sequences)\n"
+            "  2. ATG-based translation (full-length with signal peptide)\n"
+            "  3. V-domain motif detection (EVQL, QVQL, etc.)"
         )
-        return None
 
     def filter_quality_issues(self, df: pd.DataFrame) -> pd.DataFrame:
         """

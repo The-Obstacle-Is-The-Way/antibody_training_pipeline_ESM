@@ -110,7 +110,7 @@ print(f"Loaded {len(df)} sequences")
 
 ### BoughterDataset
 - **Source**: `train_datasets/boughter/raw/` (DNA FASTA files)
-- **Fragments**: `train_datasets/boughter/fragments/`
+- **Fragments**: `train_datasets/boughter/annotated/`
 - **Preprocessing**: `preprocessing/boughter/stage2_stage3_annotation_qc.py`
 - **Characteristics**:
   - Mouse antibodies (6 subsets)

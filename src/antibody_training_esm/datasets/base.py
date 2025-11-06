@@ -547,42 +547,21 @@ class AntibodyDataset(ABC):
 
         self.logger.info(f"Fragment CSVs written to {self.output_dir}")
 
-    # ========== MAIN PROCESSING PIPELINE ==========
-
-    def process(self, **kwargs) -> pd.DataFrame:
-        """
-        Main entry point for preprocessing pipeline.
-
-        This method orchestrates the complete preprocessing workflow:
-        1. Load raw data
-        2. Validate sequences
-        3. Annotate with ANARCI
-        4. Generate fragments
-        5. Save outputs
-
-        Concrete classes can override this method to add dataset-specific steps.
-
-        Args:
-            **kwargs: Dataset-specific arguments passed to load_data()
-
-        Returns:
-            Processed DataFrame
-        """
-        self.logger.info(f"Starting preprocessing for {self.dataset_name} dataset")
-
-        # Step 1: Load data
-        self.logger.info("Step 1: Loading data...")
-        df = self.load_data(**kwargs)
-        self.print_statistics(df, stage="Raw")
-
-        # Step 2: Annotate sequences
-        self.logger.info("Step 2: Annotating sequences...")
-        df = self.annotate_all(df)
-        self.print_statistics(df, stage="Annotated")
-
-        # Step 3: Generate fragment CSVs
-        self.logger.info("Step 3: Generating fragment CSVs...")
-        self.create_fragment_csvs(df)
-
-        self.logger.info(f"Preprocessing complete for {self.dataset_name}")
-        return df
+    # ========== INDIVIDUAL UTILITIES FOR BUILDING NEW PIPELINES ==========
+    #
+    # The methods above (annotate_sequence, create_fragments, annotate_all, etc.)
+    # are available for BUILDING NEW preprocessing pipelines, not for running
+    # existing ones.
+    #
+    # IMPORTANT: Do NOT add a process() orchestrator method here. Having a
+    # convenient "run everything" button makes it too easy to accidentally
+    # re-run expensive ANARCI annotation on existing datasets.
+    #
+    # For existing datasets, always use the preprocessing scripts in:
+    # preprocessing/<dataset>/
+    #
+    # These individual methods are kept for:
+    # - Building NEW preprocessing pipelines
+    # - Prototyping dataset variations
+    # - Research experiments
+    # - Unit testing individual components
