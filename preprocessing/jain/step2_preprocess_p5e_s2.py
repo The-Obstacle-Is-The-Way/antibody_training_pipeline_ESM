@@ -37,7 +37,7 @@ from pathlib import Path
 import pandas as pd
 
 # File paths
-BASE_DIR = Path(__file__).parent.parent
+BASE_DIR = Path(__file__).parent.parent.parent  # Project root
 INPUT_137 = BASE_DIR / "test_datasets/jain/processed/jain_with_private_elisa_FULL.csv"
 INPUT_SD03 = BASE_DIR / "test_datasets/jain/processed/jain_sd03.csv"
 OUTPUT_116 = BASE_DIR / "test_datasets/jain/processed/jain_ELISA_ONLY_116.csv"
