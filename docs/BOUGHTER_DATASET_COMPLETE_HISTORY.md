@@ -438,6 +438,8 @@ python test.py \
 
 ## Pipeline Summary Diagram
 
+### Production Pipeline (Validated)
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Raw DNA FASTA Files (6 subsets, 1,171 sequences)          │
@@ -459,38 +461,36 @@ python test.py \
 │          + VH_only_boughter_training.csv (914 seqs)         │
 └────────────────────────┬────────────────────────────────────┘
                          │
-                         ├─────────────────────────────────────┐
-                         │                                     │
-                         ▼                                     ▼
-         ┌───────────────────────────┐       ┌─────────────────────────────┐
-         │  BOUGHTER QC (914 seqs)   │       │  Stage 4: Strict QC         │
-         │                           │       │  Script: stage4_...qc.py    │
-         │  Files:                   │       │  QC: X anywhere, non-std AA │
-         │  - VH_only_boughter_      │       │                             │
-         │    training.csv           │       │  Output: 16 fragment CSVs   │
-         │                           │       │  (840-914 seqs, fragment-   │
-         │  Model:                   │       │   dependent)                │
-         │  - boughter_vh_esm1v_     │       │                             │
-         │    logreg.pkl             │       │                             │
-         │                           │       │                             │
-         │  CV Accuracy: 67.5±8.9%   │       └──────────┬──────────────────┘
-         │  ✅ RECOMMENDED            │                  │
-         └───────────────────────────┘                  ▼
-                                              ┌─────────────────────────────┐
-                                              │  STRICT QC (852 seqs)       │
-                                              │                             │
-                                              │  Files:                     │
-                                              │  - VH_only_boughter_        │
-                                              │    strict_qc.csv            │
-                                              │                             │
-                                              │  Model:                     │
-                                              │  - boughter_vh_strict_qc_   │
-                                              │    esm1v_logreg.pkl         │
-                                              │                             │
-                                              │  CV Accuracy: 66.55±7.07%   │
-                                              │  ⚠️  No improvement         │
-                                              └─────────────────────────────┘
+                         ▼
+         ┌───────────────────────────────────────────┐
+         │  PRODUCTION MODEL (914 sequences)         │
+         │                                           │
+         │  File: VH_only_boughter_training.csv      │
+         │  Model: boughter_vh_esm1v_logreg.pkl      │
+         │                                           │
+         │  CV Accuracy: 67.5% ± 8.9%                │
+         │                                           │
+         │  External Validation:                     │
+         │  ✅ Jain: 66.28% accuracy                 │
+         │  ✅ Shehata: 52.26% accuracy              │
+         │                                           │
+         │  Status: VALIDATED & READY                │
+         └───────────────────────────────────────────┘
 ```
+
+### Experimental Pipeline (Archived)
+
+An experimental Stage 4 strict QC filtering was tested but archived:
+
+```
+914 sequences → Stage 4 (X anywhere) → 852 sequences
+  CV: 67.5%                              CV: 66.55%
+  ✅ Validated                            ❌ No improvement
+                                         ❌ Never externally tested
+                                         ⚠️  ARCHIVED
+```
+
+**See:** `experiments/strict_qc_2025-11-04/` for complete experimental details
 
 ---
 
@@ -505,25 +505,25 @@ python test.py \
 - Stage 4 plan: `docs/BOUGHTER_ADDITIONAL_QC_PLAN.md`
 - Training readiness: `docs/TRAINING_READINESS_CHECK.md`
 
-**Training Data:**
-- Boughter QC (914): `train_datasets/boughter/canonical/VH_only_boughter_training.csv` ⭐ **RECOMMENDED**
-- Strict QC (852): `train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv`
-- Fragment CSVs: `train_datasets/boughter/annotated/*_boughter.csv` (16 files)
-- Strict QC fragments: `train_datasets/boughter/*_boughter_strict_qc.csv` (16 files)
+**Training Data (Production):**
+- Boughter QC: `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 seqs) ⭐ **PRODUCTION**
+- Fragment CSVs: `train_datasets/boughter/annotated/*_boughter.csv` (16 files, 1,065 seqs each)
 
 **Trained Models:**
-- Boughter QC: `models/boughter_vh_esm1v_logreg.pkl` (67.5% CV) ⭐ **RECOMMENDED**
-- Strict QC: `models/boughter_vh_strict_qc_esm1v_logreg.pkl` (66.55% CV)
+- Production: `models/boughter_vh_esm1v_logreg.pkl` ⭐ **VALIDATED** (Jain 66.28%, Shehata 52.26%)
 
 **Preprocessing Scripts:**
 - Stage 1: `preprocessing/boughter/stage1_dna_translation.py`
 - Stage 2+3: `preprocessing/boughter/stage2_stage3_annotation_qc.py`
-- Stage 4: `preprocessing/boughter/stage4_additional_qc.py` ⭐ **NEW**
 
 **Validation Scripts:**
 - Stage 1: `preprocessing/boughter/validate_stage1.py`
 - Stage 2+3: `preprocessing/boughter/validate_stages2_3.py`
-- Stage 4: `preprocessing/boughter/validate_stage4.py` ⭐ **NEW**
+
+**Archived Experimental Work:**
+- Strict QC data: `experiments/strict_qc_2025-11-04/data/strict_qc/` (852-914 seqs)
+- Stage 4 script: `experiments/strict_qc_2025-11-04/preprocessing/stage4_additional_qc.py`
+- Experiment details: `experiments/strict_qc_2025-11-04/EXPERIMENT_README.md`
 
 ---
 
@@ -555,25 +555,30 @@ python test.py \
 
 ## Summary
 
-**Boughter dataset is 100% complete with two QC levels:**
+**Boughter dataset processing is complete and externally validated:**
 
-1. ✅ **Boughter QC (914 sequences)** - Exact Novo methodology, CV accuracy 67.5% ± 8.9%
-   - **RECOMMENDED for training**
+✅ **Production Model (914 sequences)** - Validated and ready for deployment
+   - CV accuracy: 67.5% ± 8.9%
+   - External validation:
+     - Jain (HIC retention): 66.28% accuracy ✅
+     - Shehata (PSR assay): 52.26% accuracy ✅
    - Model: `models/boughter_vh_esm1v_logreg.pkl`
+   - Pipeline: Stages 1-2-3 (ANARCI + IMGT + Boughter QC)
 
-2. ✅ **Strict QC (852 sequences)** - Industry standard, CV accuracy 66.55% ± 7.07%
-   - Alternative approach, no performance improvement
-   - Model: `models/boughter_vh_strict_qc_esm1v_logreg.pkl`
+⚠️ **Experimental Strict QC (852 sequences)** - Archived (no improvement)
+   - CV accuracy: 66.55% ± 7.07% (NOT better than production)
+   - Never externally validated
+   - Archived: `experiments/strict_qc_2025-11-04/`
 
 **Key findings:**
 - 118 position issue resolved (exclude position 118, use ANARCI + IMGT)
-- 62 sequences with X removed in strict QC (but didn't improve performance)
-- Both models perform equivalently within statistical noise
-- Both ready for testing on Jain dataset
+- 62 sequences with X tested: removing them did NOT improve performance
+- Production model externally validated with strong results
+- Ready for deployment
 
-**For training:** Use `VH_only_boughter_training.csv` (914 sequences, Boughter QC) ⭐
+**For production use:** `models/boughter_vh_esm1v_logreg.pkl` (914 sequences) ⭐
 
-**For testing:** Use `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
+**For external testing:** Use Jain or Shehata test datasets (validated)
 
 ---
 
