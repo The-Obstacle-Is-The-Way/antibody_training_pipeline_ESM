@@ -428,7 +428,7 @@ total_abs7=total_abs6[~total_abs6['cdrH3_aa'].str.contains("X")]
 
 **Required Addition: Stage 3 Quality Control**
 ```python
-# Add to process_boughter.py (following Boughter methodology):
+# Implemented in preprocessing/boughter/stage2_stage3_annotation_qc.py (following Boughter methodology):
 def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     """
     Stage 3: Post-annotation quality control.

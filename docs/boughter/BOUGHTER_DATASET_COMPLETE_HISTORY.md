@@ -186,7 +186,7 @@ An experimental Stage 4 strict QC filtering was tested but archived due to lack 
 ### What We Discovered
 
 **QC Audit (2025-11-04):**
-- Script: `scripts/audit_boughter_training_qc.py`
+- Script: `preprocessing/boughter/audit_training_qc.py`
 - Finding: **62 sequences** in the training set (914 sequences) have X amino acid
 
 **Where is X located?**

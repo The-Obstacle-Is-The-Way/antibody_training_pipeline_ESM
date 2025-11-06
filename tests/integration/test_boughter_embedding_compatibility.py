@@ -19,7 +19,7 @@ Test Coverage:
 
 Date: 2025-11-02
 Issue: Boughter dataset preprocessing P0 blocker
-P0 Fix: preprocessing/process_boughter.py:89
+P0 Fix: preprocessing/boughter/stage2_stage3_annotation_qc.py:93-147
 """
 
 import sys
@@ -386,9 +386,11 @@ def main():
     print("\n" + "=" * 70)
     print("Boughter Dataset - ESM-1v Embedding Compatibility Test Suite")
     print("=" * 70)
-    print("P0 Blocker Fix: annotation.sequence_aa (gap-free)")
-    print("Previous issue: annotation.sequence_alignment_aa (with gaps)")
-    print("Fix location: preprocessing/process_boughter.py:89")
+    print("P0 Blocker Fix: V-domain reconstruction from fragments (gap-free)")
+    print(
+        "Previous issue: annotation.sequence_alignment_aa (with gaps) + sequence_aa (constant region)"
+    )
+    print("Fix location: preprocessing/boughter/stage2_stage3_annotation_qc.py:93-147")
 
     # Run all tests
     tests = [

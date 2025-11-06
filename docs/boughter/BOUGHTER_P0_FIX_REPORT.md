@@ -103,7 +103,7 @@ The `riot_na` library (ANARCI wrapper) provides multiple sequence attributes:
 ### Before Fix (Original Processing)
 
 **Generated:** 2025-11-01 (original run)
-**Source:** `preprocessing/process_boughter.py` with `sequence_alignment_aa`
+**Source:** `preprocessing/boughter/stage2_stage3_annotation_qc.py` with `sequence_alignment_aa`
 
 **Gap Character Contamination:**
 
@@ -136,7 +136,7 @@ Sequence: RLQLQESGPGLVKPSETLSLTCTASGGSVNSGGYYWGWIR...WSSAQDWLNAXYSAXSTXSXHR
 ### After Fix (Regenerated with V-Domain Reconstruction)
 
 **Generated:** 2025-11-02
-**Source:** `preprocessing/process_boughter.py` with fragment concatenation
+**Source:** `preprocessing/boughter/stage2_stage3_annotation_qc.py` with fragment concatenation
 
 | File | Sequences | Gaps | Stop Codons | Status |
 |------|-----------|------|-------------|--------|
@@ -174,7 +174,7 @@ Sequence: RLQLQESGPGLVKPSETLSLTCTASGGSVNSGGYYWGWIR...WSSAQDWLNAXYSAXSTXSXHR
 
 ### Step 1: Apply P0 Fix
 
-**File:** `preprocessing/process_boughter.py:89-109`
+**File:** `preprocessing/boughter/stage2_stage3_annotation_qc.py:93-147`
 
 Changed from:
 ```python
@@ -265,7 +265,7 @@ python3 tests/test_boughter_embedding_compatibility.py
 
 | Aspect | Shehata | Harvey | **Boughter** |
 |--------|---------|--------|--------------|
-| **Bug Location** | process_shehata.py:63 | process_harvey.py:48 | process_boughter.py:89-109 |
+| **Bug Location** | preprocessing/shehata/step2_extract_fragments.py:63 | preprocessing/harvey/process_harvey.py:48 | preprocessing/boughter/stage2_stage3_annotation_qc.py:93-147 |
 | **Bug Type** | sequence_alignment_aa (gaps) | sequence_alignment_aa (gaps) | sequence_alignment_aa (gaps) + sequence_aa (constant region) |
 | **Fix** | `→ sequence_aa` (gap-free) | `→ sequence_aa` (gap-free) | `→ fragment concatenation` (V-domain only) |
 | **Affected Files** | VH_only, VL_only | VHH_only | VH_only, VL_only, Full |
@@ -281,8 +281,8 @@ python3 tests/test_boughter_embedding_compatibility.py
 ## Files Modified
 
 ### Code Changes
-1. ✅ `preprocessing/process_boughter.py:89-109` - P0 fix applied (V-domain reconstruction)
-2. ✅ `tests/test_boughter_embedding_compatibility.py` - New test suite created
+1. ✅ `preprocessing/boughter/stage2_stage3_annotation_qc.py:93-147` - P0 fix applied (V-domain reconstruction)
+2. ✅ `tests/integration/test_boughter_embedding_compatibility.py` - New test suite created
 
 ### Data Regenerated
 3. ✅ `train_datasets/boughter/annotated/VH_only_boughter.csv` - 11 gaps + 157 stop codons → 0

@@ -192,8 +192,11 @@ From local data analysis (flu subset, 379 sequences):
 
 ### 6.2 Sequence Count Validation
 After processing, total counts should match:
-- Pre-filtering: 1,171 total sequences across 6 subsets
-- Post-filtering: ~700-800 sequences (exact number TBD from flag distributions)
+- **Raw input:** 1,171 DNA sequences across 6 subsets
+- **Stage 1 (DNA translation):** 1,117 protein sequences (95.4% success)
+- **Stage 2 (ANARCI annotation):** 1,110 annotated sequences (99.4% success)
+- **Stage 3 (QC filtering):** 1,065 clean sequences (95.9% retention)
+- **Training subset (Novo flagging):** 914 sequences (0 and 4+ flags only)
 
 ---
 
@@ -218,11 +221,22 @@ After processing, total counts should match:
 
 ## 8. Output Format Requirements
 
-### 8.1 CSV Structure (Inferred from Harvey/Jain/Shehata patterns)
-Expected columns:
+### 8.1 CSV Structure (Fragment Files)
+**Actual fragment file schema** (16 files in `train_datasets/boughter/annotated/`):
 ```
-sequence_id,subset,heavy_chain,light_chain,VH,VL,H_CDR1,H_CDR2,H_CDR3,L_CDR1,L_CDR2,L_CDR3,label,num_flags
+id,sequence,label,subset,num_flags,flag_category,include_in_training,source,sequence_length
 ```
+
+**Column descriptions:**
+- `id` - Unique antibody identifier (e.g., flu_000001)
+- `sequence` - Fragment sequence (VH, VL, CDR, FWR, etc.)
+- `label` - Binary label (0=specific, 1=non-specific)
+- `subset` - Source dataset (flu, hiv_nat, hiv_cntrl, hiv_plos, gut_hiv, mouse_iga)
+- `num_flags` - Polyreactivity flag count (0-7)
+- `flag_category` - Flag category (specific, mild, non-specific)
+- `include_in_training` - Training eligibility flag (True/False)
+- `source` - Dataset source (boughter2020)
+- `sequence_length` - Length of fragment sequence
 
 ### 8.2 Label Encoding
 ```
@@ -289,11 +303,11 @@ From Sakhnini et al. 2025:
 - **Harvey et al. 2022**: Post-annotation CDR length filtering
 - **ANARCI benchmark (2025)**: 99.5% success on CLEAN sequences
 
-**Required Addition to Pipeline:**
-- **Stage 3**: Post-annotation quality control
-- Filter sequences with X in CDRs
-- Filter sequences with empty CDRs
-- Expected: ~750-800 final clean sequences
+**Implemented in Pipeline:**
+- **Stage 3**: Post-annotation quality control (`preprocessing/boughter/stage2_stage3_annotation_qc.py`)
+- Filters sequences with X in CDRs
+- Filters sequences with empty CDRs
+- **Result:** 1,065 clean sequences (95.9% retention from Stage 2)
 
 **References Added:**
 - Boughter seq_loader.py: Lines 10-16, 76-82, 200-206, 268-274, 337-343
