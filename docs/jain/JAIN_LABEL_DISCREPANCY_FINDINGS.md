@@ -187,7 +187,7 @@ print(f'Discrepancies: {len(diff)}/137 antibodies ({len(diff)/137*100:.1f}%)')
    - 137 antibodies each
    - Distribution verified: 94 specific / 22 non-specific / 21 mild
    - `manifest.yml` records source hash, script version, and expected counts
-3. **Legacy artifacts quarantined**: `test_datasets/jain/fragments_legacy_flags_total/`
+3. **Legacy artifacts recorded in git history**: commit `09d6121`
    - README documents the old 67/27/43 distribution and warns against usage
 4. **Integration tests updated**: `tests/integration/test_jain_embedding_compatibility.py`
    - Path fixes now target the regenerated fragments

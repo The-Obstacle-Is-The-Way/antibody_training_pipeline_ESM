@@ -9,7 +9,7 @@ All fragments are derived from the **ELISA-based SSOT dataset** (`../processed/j
 - 22 non-specific (label `1`)
 - 21 mild / held-out (label `NaN`)
 
-> ℹ️ The previous 67/27/43 fragments that used the paper-style `flags_total` labeling are preserved in `../fragments_legacy_flags_total/` for reference only. Do not use them for training or validation.
+> ℹ️ The previous 67/27/43 fragments that used the paper-style `flags_total` labeling have been removed from the working tree (see git commit `09d6121` if historical reference is ever required). Do not use those legacy artifacts for training or validation.
 
 ---
 
@@ -136,7 +136,7 @@ for region_file in regions:
 - All fragments maintain the same antibody IDs and **ELISA-based labels** as the SSOT dataset
 - Mild antibodies (`NaN`) are included in the 137-antibody fragments but excluded from the 116-antibody ELISA test set and the 86-antibody parity set
 - Provenance, expected label counts, and script references are recorded in `manifest.yml`
-- Deprecated fragments (67/27/43 distribution) live in `../fragments_legacy_flags_total/`
+- Legacy fragments (67/27/43 distribution) were removed; restore from git commit `09d6121` if needed for historical comparison only
 - For 86-antibody benchmark fragments, use `VH_only_jain_86_p5e_s2.csv`
 
 ---
