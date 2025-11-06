@@ -5,8 +5,8 @@ Stage 4: Additional QC Filtering for Boughter Dataset
 
 Purpose: Apply industry-standard full-sequence QC beyond Boughter's CDR-only checks
 
-Inputs: train_datasets/boughter/*_boughter.csv (16 fragment files, 1,065 sequences each)
-Outputs: train_datasets/boughter/*_boughter_strict_qc.csv (16 files, ~852 sequences each)
+Inputs: train_datasets/boughter/annotated/*_boughter.csv (16 fragment files, 1,065 sequences each)
+Outputs: train_datasets/boughter/strict_qc/*_boughter_strict_qc.csv (16 files, ~852 sequences each)
 
 Filters:
 1. Select include_in_training == True (reduces 1,065 → 914)
@@ -21,7 +21,8 @@ from pathlib import Path
 import sys
 
 # Paths
-BOUGHTER_DIR = Path("train_datasets/boughter")
+INPUT_DIR = Path("train_datasets/boughter/annotated")
+OUTPUT_DIR = Path("train_datasets/boughter/strict_qc")
 INPUT_PATTERN = "*_boughter.csv"
 OUTPUT_SUFFIX = "_strict_qc"
 
@@ -108,18 +109,21 @@ def process_all_fragments():
     print()
 
     # Check input directory
-    if not BOUGHTER_DIR.exists():
-        print(f"ERROR: {BOUGHTER_DIR} not found!")
+    if not INPUT_DIR.exists():
+        print(f"ERROR: {INPUT_DIR} not found!")
         sys.exit(1)
 
+    # Ensure output directory exists
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
     # Find all fragment files
-    input_files = list(BOUGHTER_DIR.glob(INPUT_PATTERN))
+    input_files = list(INPUT_DIR.glob(INPUT_PATTERN))
 
     # Exclude the training export file (it's a flattened subset)
     input_files = [f for f in input_files if 'training' not in f.name]
 
     if len(input_files) == 0:
-        print(f"ERROR: No *_boughter.csv files found in {BOUGHTER_DIR}")
+        print(f"ERROR: No *_boughter.csv files found in {INPUT_DIR}")
         sys.exit(1)
 
     print(f"Found {len(input_files)} fragment files to process:")
@@ -133,7 +137,7 @@ def process_all_fragments():
     for input_path in sorted(input_files):
         fragment_name = input_path.stem.replace('_boughter', '')
         output_name = f"{fragment_name}_boughter_strict_qc.csv"
-        output_path = BOUGHTER_DIR / output_name
+        output_path = OUTPUT_DIR / output_name
 
         print(f"Processing: {fragment_name}")
         print(f"  Input:  {input_path.name}")
