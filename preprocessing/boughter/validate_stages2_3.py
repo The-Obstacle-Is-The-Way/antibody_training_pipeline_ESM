@@ -14,7 +14,7 @@ Usage:
     python3 preprocessing/boughter/validate_stages2_3.py
 
 Validation Checks:
-    1. All 16 fragment CSV files exist in train_datasets/boughter/
+    1. All 16 fragment CSV files exist in train_datasets/boughter/annotated/
     2. Each fragment has 1,065 rows (95.9% retention from Stage 1)
     3. All rows have include_in_training flag (True/False)
     4. Training subset has 914 rows (443 specific + 471 non-specific)
