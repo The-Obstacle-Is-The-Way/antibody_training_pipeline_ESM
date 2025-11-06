@@ -96,10 +96,6 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = [
-    "--cov=.",
-    "--cov-report=html",
-    "--cov-report=term-missing",
-    "--cov-fail-under=70",
     "-v",
     "-ra",
 ]

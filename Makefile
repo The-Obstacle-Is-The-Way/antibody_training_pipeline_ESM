@@ -1,4 +1,4 @@
-.PHONY: install test lint format typecheck hooks all clean help train
+.PHONY: install test coverage lint format typecheck hooks all clean help train
 
 help:
 	@echo "Available commands:"
@@ -8,6 +8,7 @@ help:
 	@echo "  make typecheck  - Run mypy type checking"
 	@echo "  make hooks      - Run pre-commit hooks on all files"
 	@echo "  make test       - Run pytest test suite"
+	@echo "  make coverage   - Run tests with coverage report (requires unit tests)"
 	@echo "  make all        - Run format, lint, typecheck, and test"
 	@echo "  make train      - Run training pipeline"
 	@echo "  make clean      - Remove cache directories"
@@ -17,6 +18,9 @@ install:
 
 test:
 	uv run pytest
+
+coverage:
+	uv run pytest --cov=. --cov-report=html --cov-report=term-missing --cov-fail-under=70
 
 lint:
 	uv run ruff check .
