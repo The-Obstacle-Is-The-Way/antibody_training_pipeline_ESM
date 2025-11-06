@@ -61,9 +61,9 @@ logs/*
 models/*
 !models/.gitkeep
 
-# Data
-data/*
-!data/.gitkeep
+# Data (root level only)
+/data/*
+!/data/.gitkeep
 
 # Outputs
 outputs/*
@@ -84,11 +84,11 @@ test_config.yaml
 .DS_Store
 Thumbs.db
 
-# Project specific
-data/
-models/
-logs/
-outputs/
+# Project specific (root level only)
+/data/
+/models/
+/logs/
+/outputs/
 
 # Literature PDFs and markdown conversions (for personal reference only)
 literature/
