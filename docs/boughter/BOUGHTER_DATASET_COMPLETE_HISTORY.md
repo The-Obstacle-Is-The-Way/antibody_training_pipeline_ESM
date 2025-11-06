@@ -450,82 +450,11 @@ Boughter:      [58.6% =========== 67.5% ============ 76.4%]
 
 ---
 
-### Testing Both Models on Jain
-
-**Recommended test file:** `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
-
-**Commands:**
-```bash
-# Test Boughter QC model (914 sequences)
-python3 test.py \
-  --model models/boughter_vh_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
-
-# Test Strict QC model (852 sequences)
-python3 test.py \
-  --model models/boughter_vh_strict_qc_esm1v_logreg.pkl \
-  --test_file test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
-```
-
-**Expected:** Both models should achieve ~66% accuracy (similar generalization)
+_Removed: Testing section already covered in "Testing the Production Model" above_
 
 ---
 
-## Pipeline Summary Diagram
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Raw DNA FASTA Files (6 subsets, 1,171 sequences)          │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Stage 1: DNA → Protein Translation                         │
-│  Script: stage1_dna_translation.py                          │
-│  Output: boughter.csv (1,171 sequences)                     │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-                         ▼
-┌─────────────────────────────────────────────────────────────┐
-│  Stage 2+3: ANARCI Annotation + Boughter QC                 │
-│  Script: stage2_stage3_annotation_qc.py                     │
-│  QC: X in CDRs only, empty CDRs, ANARCI failures            │
-│  Output: 16 fragment CSVs (1,065 sequences each)            │
-│          + VH_only_boughter_training.csv (914 seqs)         │
-└────────────────────────┬────────────────────────────────────┘
-                         │
-                         ├─────────────────────────────────────┐
-                         │                                     │
-                         ▼                                     ▼
-         ┌───────────────────────────┐       ┌─────────────────────────────┐
-         │  BOUGHTER QC (914 seqs)   │       │  Stage 4: Strict QC         │
-         │                           │       │  Script: stage4_...qc.py    │
-         │  Files:                   │       │  QC: X anywhere, non-std AA │
-         │  - VH_only_boughter_      │       │                             │
-         │    training.csv           │       │  Output: 16 fragment CSVs   │
-         │                           │       │  (840-914 seqs, fragment-   │
-         │  Model:                   │       │   dependent)                │
-         │  - boughter_vh_esm1v_     │       │                             │
-         │    logreg.pkl             │       │                             │
-         │                           │       │                             │
-         │  CV Accuracy: 67.5±8.9%   │       └──────────┬──────────────────┘
-         │  ✅ RECOMMENDED            │                  │
-         └───────────────────────────┘                  ▼
-                                              ┌─────────────────────────────┐
-                                              │  STRICT QC (852 seqs)       │
-                                              │                             │
-                                              │  Files:                     │
-                                              │  - VH_only_boughter_        │
-                                              │    strict_qc.csv            │
-                                              │                             │
-                                              │  Model:                     │
-                                              │  - boughter_vh_strict_qc_   │
-                                              │    esm1v_logreg.pkl         │
-                                              │                             │
-                                              │  CV Accuracy: 66.55±7.07%   │
-                                              │  ⚠️  No improvement         │
-                                              └─────────────────────────────┘
-```
+_Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section above_
 
 ---
 
