@@ -34,7 +34,7 @@ We successfully replicated the Novo Nordisk antibody non-specificity prediction 
 ### 1.2 Our Implementation
 ✅ **EXACT MATCH**
 
-- **Script**: `scripts/conversion/convert_boughter_to_csv.py:338`
+- **Script**: `preprocessing/boughter/stage1_dna_translation.py`
 - **Threshold**: `num_flags >= 4` (excludes 1-3 flags)
 - **Training set**: 461 specific + 487 non-specific = **948 total**
 - **Flag distribution**:
@@ -218,7 +218,7 @@ We will test multiple approaches to understand the gap:
 ## 7. Files Modified/Created
 
 ### Training
-- `scripts/conversion/convert_boughter_to_csv.py:338` - >=4 threshold ✅
+- `preprocessing/boughter/stage1_dna_translation.py` - >=4 threshold ✅
 
 ### Testing
 - `preprocessing/jain/step1_convert_excel_to_csv.py:207` - >=3 threshold (4-group methodology)

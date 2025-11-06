@@ -1,6 +1,6 @@
 # Jain Dataset - Processed Files
 
-All files here are derived from `raw/` using scripts in `scripts/conversion/` and `preprocessing/`.
+All files here are derived from `raw/` using scripts in `preprocessing/jain/`.
 
 ---
 

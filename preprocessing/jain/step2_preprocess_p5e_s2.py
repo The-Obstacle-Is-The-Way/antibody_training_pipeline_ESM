@@ -352,7 +352,7 @@ def main():
     print("  Accuracy: 66.28%")
 
     print("\n  Next steps:")
-    print("    1. Run inference: scripts/testing/test_jain_novo_parity.py")
+    print("    1. Run inference: preprocessing/jain/test_novo_parity.py")
     print("    2. Verify confusion matrix matches Novo exactly")
     print("    3. Document any findings")
 

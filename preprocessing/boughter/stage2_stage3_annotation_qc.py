@@ -431,7 +431,7 @@ def main():
 
     if not input_csv.exists():
         print(f"ERROR: {input_csv} not found!")
-        print("Please run scripts/convert_boughter_to_csv.py first (Stage 1)")
+        print("Please run preprocessing/boughter/stage1_dna_translation.py first (Stage 1)")
         sys.exit(1)
 
     print("=" * 70)

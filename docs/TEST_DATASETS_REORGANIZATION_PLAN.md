@@ -169,7 +169,7 @@ mv test_datasets/jain_86_elisa_1.3.csv test_datasets/jain/processed/
 ```markdown
 # Jain Dataset - Processed Files
 
-All files derived from `raw/` using scripts in `scripts/conversion/` and `preprocessing/`.
+All files derived from `raw/` using scripts in `preprocessing/jain/`.
 
 ## Conversion (Raw Excel → CSV)
 
