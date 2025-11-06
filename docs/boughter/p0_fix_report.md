@@ -291,9 +291,9 @@ python3 tests/test_boughter_embedding_compatibility.py
 6. ✅ All 13 other fragment files regenerated (already clean)
 
 ### Documentation
-7. ✅ `docs/boughter/BOUGHTER_P0_FIX_REPORT.md` - This report
-8. ⬜ `docs/boughter/boughter_processing_status.md` - Needs update to reflect P0 fix
-9. ⬜ `docs/boughter/accuracy_verification_report.md` - Needs update to correct "✅ VALIDATED" claim
+7. ✅ `docs/boughter/p0_fix_report.md` - This report
+8. ✅ `docs/boughter/archive/boughter_processing_status.md` - Archived (pre-P0 fix snapshot)
+9. ✅ `docs/boughter/archive/accuracy_verification_report.md` - Archived (pre-P0 fix snapshot)
 
 ---
 

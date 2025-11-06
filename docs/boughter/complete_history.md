@@ -126,7 +126,7 @@ if any_cdr == '': delete_sequence
 
 **Result:** Exact match to Novo's stated methodology
 
-**Documentation:** `docs/boughter/BOUGHTER_NOVO_METHODOLOGY_CLARIFICATION.md`
+**Documentation:** `docs/boughter/novo_methodology_clarification.md`
 
 ---
 
@@ -405,10 +405,10 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 ## File Locations Quick Reference
 
 **Documentation:**
-- This file: `BOUGHTER_DATASET_COMPLETE_HISTORY.md`
-- Novo methodology: `docs/boughter/BOUGHTER_NOVO_METHODOLOGY_CLARIFICATION.md`
-- Replication analysis: `docs/boughter/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`
-- Data sources: `docs/boughter/boughter_data_sources.md`
+- This file: `complete_history.md`
+- Novo methodology: `docs/boughter/novo_methodology_clarification.md`
+- Replication analysis: `docs/boughter/archive/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`
+- Data sources: `docs/boughter/data_sources.md`
 - CDR boundary audit: `docs/boughter/cdr_boundary_first_principles_audit.md`
 
 **Training Data (Production):**

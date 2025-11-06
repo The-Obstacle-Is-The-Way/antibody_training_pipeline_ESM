@@ -20,7 +20,7 @@ Start here with this directory's documentation ↓
 
 ### Core Reference Documents
 
-#### 1. BOUGHTER_DATASET_COMPLETE_HISTORY.md
+#### 1. complete_history.md
 **Purpose:** Master historical reference and QC level comparison
 - Complete dataset evolution (1,171 → 1,117 → 1,110 → 1,065 → 914 training)
 - Two QC levels explained (Boughter QC vs Strict QC)
@@ -32,7 +32,7 @@ Start here with this directory's documentation ↓
 
 ---
 
-#### 2. BOUGHTER_NOVO_METHODOLOGY_CLARIFICATION.md
+#### 2. novo_methodology_clarification.md
 **Purpose:** Critical methodological insight resolving apparent contradiction in Novo's paper
 - "Boughter methodology" = QC filtering + flagging (NOT CDR boundaries)
 - Evidence from Boughter's actual `seq_loader.py` code
@@ -43,7 +43,7 @@ Start here with this directory's documentation ↓
 
 ---
 
-#### 3. BOUGHTER_P0_FIX_REPORT.md
+#### 3. p0_fix_report.md
 **Purpose:** Essential bug fix documentation (P0 blocker)
 - Gap character contamination (13 sequences, 1.2%)
 - Stop codon contamination (241 sequences, 22.6%)
@@ -57,7 +57,7 @@ Start here with this directory's documentation ↓
 
 ### Technical Analysis Documents
 
-#### 4. boughter_cdr_boundary_investigation.md
+#### 4. cdr_boundary_investigation.md
 **Purpose:** CDR boundary technical analysis
 - Position 118 discrepancy (Boughter's IgBLAST vs IMGT standard)
 - Biological rationale (position 118 is Framework 4 anchor, W or F, 99% conserved)
@@ -68,7 +68,7 @@ Start here with this directory's documentation ↓
 
 ---
 
-#### 5. boughter_data_sources.md
+#### 5. data_sources.md
 **Purpose:** Novo Nordisk methodology requirements specification
 - Complete requirements from Sakhnini et al. 2025 paper
 - ELISA polyreactivity panel (7 antigens)
@@ -101,12 +101,12 @@ preprocessing/boughter/README.md ← SINGLE SOURCE OF TRUTH (implementation)
 docs/boughter/
 ├── README.md (THIS FILE) ← Documentation index
 │
-├── BOUGHTER_DATASET_COMPLETE_HISTORY.md ← Master reference
-├── BOUGHTER_NOVO_METHODOLOGY_CLARIFICATION.md ← Key insight
-├── BOUGHTER_P0_FIX_REPORT.md ← Critical bug fix
+├── complete_history.md ← Master reference
+├── novo_methodology_clarification.md ← Key insight
+├── p0_fix_report.md ← Critical bug fix
 │
-├── boughter_cdr_boundary_investigation.md ← CDR boundaries
-├── boughter_data_sources.md ← Novo requirements
+├── cdr_boundary_investigation.md ← CDR boundaries
+├── data_sources.md ← Novo requirements
 ├── cdr_boundary_first_principles_audit.md ← Gold standard reference
 │
 └── archive/ ← Historical investigation and status reports
@@ -167,7 +167,7 @@ docs/boughter/
 
 1. **Implementation changes** → Update `preprocessing/boughter/README.md` (SSOT)
 2. **Methodology insights** → Update relevant docs/boughter/*.md files
-3. **Bug fixes** → Create new report (follow BOUGHTER_P0_FIX_REPORT.md pattern)
+3. **Bug fixes** → Create new report (follow p0_fix_report.md pattern)
 4. **Historical/debugging docs** → Move to archive/ with explanation
 
 ### Documentation Principles
