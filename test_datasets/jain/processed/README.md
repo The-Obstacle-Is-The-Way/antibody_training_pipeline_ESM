@@ -51,13 +51,13 @@ All files here are derived from `raw/` using scripts in `scripts/conversion/` an
 
 ```
 raw/*.xlsx
-  ↓ [convert_jain_excel_to_csv.py]
+  ↓ [preprocessing/jain/step1_convert_excel_to_csv.py]
 jain_sd01/02/03.csv → jain.csv
   ↓ [merge Private_ELISA_indiv.xlsx]
 jain_with_private_elisa_FULL.csv (137 antibodies)
   ↓ [remove ELISA 1-3]
 jain_ELISA_ONLY_116.csv (116 antibodies) ← SSOT
-  ↓ [preprocess_jain_p5e_s2.py]
+  ↓ [preprocessing/jain/step2_preprocess_p5e_s2.py]
 ../canonical/jain_86_novo_parity.csv (86 antibodies)
 ```
 

@@ -57,9 +57,9 @@ shehata/
 
 ```
 raw/shehata-mmc2.xlsx (402 rows)
-  ↓ [convert_shehata_excel_to_csv.py]
+  ↓ [preprocessing/shehata/step1_convert_excel_to_csv.py]
 processed/shehata.csv (398 antibodies, 4 removed)
-  ↓ [process_shehata.py + ANARCI annotation]
+  ↓ [preprocessing/shehata/step2_extract_fragments.py + ANARCI annotation]
 fragments/*.csv (16 fragment types)
 ```
 
