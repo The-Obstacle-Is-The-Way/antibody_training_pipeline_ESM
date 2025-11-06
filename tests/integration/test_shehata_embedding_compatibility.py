@@ -25,9 +25,7 @@ def test_gap_characters():
     fragments_dir = Path("test_datasets/shehata/fragments")
     fragment_files = list(fragments_dir.glob("*.csv"))
 
-    if not fragment_files:
-        print("❌ FAIL: No fragment files found")
-        return False
+    assert fragment_files, "No fragment files found"
 
     all_clean = True
     for file in sorted(fragment_files):
@@ -42,10 +40,11 @@ def test_gap_characters():
 
     if all_clean:
         print("\n✅ PASS: All fragment files are gap-free")
-        return True
     else:
         print("\n❌ FAIL: Gap characters detected")
-        return False
+
+    # Pytest assertion
+    assert all_clean, "Gap characters detected"
 
 
 def test_amino_acid_validation():
@@ -95,10 +94,11 @@ def test_amino_acid_validation():
         print(
             f"\n✅ PASS: All {total_sequences} sequences contain only valid amino acids"
         )
-        return True
     else:
         print("\n❌ FAIL: Invalid amino acids detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid, "Invalid amino acids detected"
 
 
 def test_previously_affected_sequences():
@@ -145,10 +145,11 @@ def test_previously_affected_sequences():
 
     if all_clean:
         print("\n✅ PASS: All previously affected sequences are now clean")
-        return True
     else:
         print("\n❌ FAIL: Some sequences still have issues")
-        return False
+
+    # Pytest assertion
+    assert all_clean, "Some sequences still have issues"
 
 
 def test_model_validation_logic():
@@ -185,10 +186,11 @@ def test_model_validation_logic():
 
     if all_valid:
         print("\n✅ PASS: All sequences would pass ESM model validation")
-        return True
     else:
         print("\n❌ FAIL: Some sequences would fail ESM validation")
-        return False
+
+    # Pytest assertion
+    assert all_valid, "Some sequences would fail ESM validation"
 
 
 def test_data_integrity():
@@ -237,10 +239,11 @@ def test_data_integrity():
 
     if all_exist and all_398:
         print("\n✅ PASS: All 16 fragment files exist with 398 rows each")
-        return True
     else:
         print("\n❌ FAIL: Data integrity issues detected")
-        return False
+
+    # Pytest assertion
+    assert all_exist and all_398, "Data integrity issues detected"
 
 
 def main():
@@ -263,8 +266,11 @@ def main():
 
     for test_name, test_func in tests:
         try:
-            passed = test_func()
-            results.append((test_name, passed))
+            test_func()  # No return value - uses assertions
+            results.append((test_name, True))
+        except AssertionError as e:
+            print(f"\n❌ ASSERTION in {test_name}: {e}")
+            results.append((test_name, False))
         except Exception as e:
             print(f"\n❌ EXCEPTION in {test_name}: {e}")
             results.append((test_name, False))
