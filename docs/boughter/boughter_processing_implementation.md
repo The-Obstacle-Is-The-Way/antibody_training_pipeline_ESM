@@ -13,12 +13,12 @@ This document provides COMPLETE, EXPLICIT, step-by-step implementation instructi
 
 ```
 Stage 1: convert_boughter_to_csv.py - DNA Translation
-  Input:  Raw FASTA DNA files + flag files from test_datasets/boughter/
-  Output: test_datasets/boughter.csv (combined CSV with translated protein sequences)
+  Input:  Raw FASTA DNA files + flag files from train_datasets/boughter/raw/
+  Output: train_datasets/boughter/processed/boughter.csv (combined CSV with translated protein sequences)
   Note:   Lenient validation - let ANARCI handle quality assessment
 
 Stage 2: process_boughter.py - ANARCI Annotation
-  Input:  test_datasets/boughter.csv
+  Input:  train_datasets/boughter/processed/boughter.csv
   Process: ANARCI annotation with strict IMGT numbering
   Actual:  1110/1117 success (99.4%) - high success with hybrid translation
 
@@ -26,7 +26,7 @@ Stage 3: process_boughter.py - Post-Annotation Quality Control (NEW - 2025 Best 
   Input:  Annotated sequences from Stage 2
   Process: Filter X-containing CDRs, filter empty CDRs
   Actual:  1065 clean sequences (95.9% retention after QC)
-  Output: test_datasets/boughter/*.csv (16 fragment-specific CSVs)
+  Output: train_datasets/boughter/annotated/*.csv (16 fragment-specific CSVs)
 
 Following Boughter et al. 2020 (seq_loader.py) and 2025 industry standards
 (AbSet, ASAP-SML, Harvey et al.)
@@ -649,7 +649,7 @@ def process_boughter_dataset(csv_path: str) -> pd.DataFrame:
     if failures:
         print(f'  Failures: {len(failures)}')
         # Write failures to log
-        failure_log = Path('test_datasets/boughter/failed_sequences.txt')
+        failure_log = Path('train_datasets/boughter/raw/failed_sequences.txt')
         failure_log.parent.mkdir(parents=True, exist_ok=True)
         with open(failure_log, 'w') as f:
             f.write('\n'.join(failures))
@@ -671,7 +671,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
     Args:
         df: DataFrame with all fragments
-        output_dir: Directory to save fragment CSVs (test_datasets/boughter/)
+        output_dir: Directory to save fragment CSVs (train_datasets/boughter/raw/)
     """
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -826,7 +826,7 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     # Log filtered sequence IDs
     if total_filtered > 0:
         filtered_ids = set(df['id']) - set(df_clean['id'])
-        qc_log = Path('test_datasets/boughter/qc_filtered_sequences.txt')
+        qc_log = Path('train_datasets/boughter/raw/qc_filtered_sequences.txt')
         qc_log.write_text('\n'.join(sorted(filtered_ids)))
         print(f"  Filtered IDs written to: {qc_log}")
 
@@ -986,12 +986,12 @@ def validate_cdr_lengths(df: pd.DataFrame):
 ### Final Outputs
 
 **Stage 1**:
-- `test_datasets/boughter.csv` - ~1,171 total sequences
+- `train_datasets/boughter/processed/boughter.csv` - ~1,171 total sequences
   - After Novo filtering: ~700-800 training sequences (exact number TBD)
   - Columns: id, subset, heavy_seq, light_seq, num_flags, flag_category, label, include_in_training, source
 
 **Stage 2**:
-- `test_datasets/boughter/` - 16 fragment-specific CSVs
+- `train_datasets/boughter/raw/` - 16 fragment-specific CSVs
   - Each file: ~700-800 sequences (annotation failures excluded)
   - Naming: `{Fragment}_boughter.csv` (e.g., `VH_only_boughter.csv`)
   - Columns: id, sequence, label, subset, num_flags, flag_category, include_in_training, source, sequence_length

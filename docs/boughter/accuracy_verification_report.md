@@ -102,11 +102,11 @@ All 16 CSVs (`VH_only`, `VL_only`, `H-CDR1`, …, `Full`) contain:
 
 ## 5. Validation Artefacts
 
-- Stage 1 output: `test_datasets/boughter.csv`  
-- Translation failures: `test_datasets/boughter_raw/translation_failures.log`  
-- Stage 2 annotation log: `test_datasets/boughter/annotation_failures.log`  
-- Stage 3 filtered IDs: `test_datasets/boughter/qc_filtered_sequences.txt`  
-- Validation report (this run): `test_datasets/boughter/validation_report.txt`
+- Stage 1 output: `train_datasets/boughter/processed/boughter.csv`  
+- Translation failures: `train_datasets/boughter/raw/translation_failures.log`  
+- Stage 2 annotation log: `train_datasets/boughter/annotated/annotation_failures.log`  
+- Stage 3 filtered IDs: `train_datasets/boughter/annotated/qc_filtered_sequences.txt`  
+- Validation report (this run): `train_datasets/boughter/annotated/validation_report.txt`
 
 ---
 
