@@ -108,6 +108,12 @@ def main() -> None:
         csv_df[col] = csv_df[col].astype("Int64")
         regenerated[col] = regenerated[col].astype("Int64")
 
+    # Convert flag_category from Categorical to string for comparison
+    if "flag_category" in csv_df.columns:
+        csv_df["flag_category"] = csv_df["flag_category"].astype(str)
+    if "flag_category" in regenerated.columns:
+        regenerated["flag_category"] = regenerated["flag_category"].astype(str)
+
     regenerated_sorted = regenerated.sort_values("id").reset_index(drop=True)
     csv_sorted = csv_df.sort_values("id").reset_index(drop=True)
 
