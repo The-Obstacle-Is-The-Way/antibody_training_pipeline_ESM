@@ -126,12 +126,12 @@ ROOT FILES:                   STATUS:
 
 ### 🔴 **Identified Issues**
 
-1. **`test.py` (575 lines)** - Full-featured legacy script, NOT a shim
+1. **`test.py` (574 lines)** - Full-featured legacy script, NOT a shim
    - Contains `ModelTester` class with comprehensive evaluation logic
    - Imports from root shims: `from classifier import BinaryClassifier`
    - Should be migrated to `src/antibody_training_esm/cli/test.py`
 
-2. **`src/antibody_training_esm/cli/test.py` (62 lines)** - Stub implementation
+2. **`src/antibody_training_esm/cli/test.py` (61 lines)** - Stub implementation
    - Contains TODO comment: "Implement testing logic"
    - Contains fallback message: "Use 'python test.py' for now"
    - Needs to receive full implementation from root `test.py`
@@ -260,10 +260,11 @@ antibody-preprocess --dataset jain
 - Fixed mypy errors (100% type safety achieved)
 
 ### Phase 4: Test Migration (❌ Pending)
-- Migrate `test.py` (575 lines) → `src/antibody_training_esm/cli/test.py`
+- Migrate `test.py` (574 lines) → `src/antibody_training_esm/cli/test.py`
+- **CRITICAL**: Preserve full CLI interface (multi-model, multi-dataset, config file support)
 - Update imports from root shims → package paths
 - Convert root `test.py` → backwards compatibility shim
-- Verify `antibody-test` CLI works correctly
+- Verify `antibody-test` CLI works correctly with full argument interface
 
 ### Phase 5: Cleanup (❌ Pending)
 - Remove all backwards compatibility shims (breaking change)
@@ -280,18 +281,25 @@ antibody-preprocess --dataset jain
 
 ```
 ROOT:
-test.py (575 lines)
+test.py (574 lines)
 ├── ModelTester class
 ├── TestConfig dataclass
 ├── Comprehensive evaluation logic
 ├── Confusion matrix plotting
 ├── Multi-model/multi-dataset testing
+├── Config file support (YAML)
+├── Device override (cpu/cuda/mps)
+├── Batch size override
+├── --create-config for sample generation
 ├── Imports: from classifier import BinaryClassifier
 └── Imports: from model import ESMEmbeddingExtractor
 
 PACKAGE:
-src/antibody_training_esm/cli/test.py (62 lines)
-├── Stub implementation
+src/antibody_training_esm/cli/test.py (61 lines)
+├── Stub implementation (SIMPLIFIED INTERFACE)
+├── Single model only (vs multi-model)
+├── Single dataset only (vs multi-dataset)
+├── No config file support
 ├── TODO comment
 └── "Use 'python test.py' for now" message
 ```
@@ -320,6 +328,16 @@ from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 # Copy test.py content to src/antibody_training_esm/cli/test.py
 # (preserving all functionality: ModelTester, TestConfig, plotting, etc.)
 ```
+
+**⚠️ CRITICAL: The new CLI MUST preserve the full argument interface from root test.py:**
+- `--model` with `nargs="+"` (multiple models)
+- `--data` with `nargs="+"` (multiple datasets)
+- `--config` for YAML configuration files
+- `--device` override (cpu/cuda/mps)
+- `--batch-size` override
+- `--create-config` for sample config generation
+
+**DO NOT use the stub's simplified interface (single model/dataset only).**
 
 **Step 3: Update Package CLI Imports**
 
@@ -380,8 +398,8 @@ make all  # Run format → lint → typecheck → test
 ### Pre-commit Hooks (Enforced on Every Commit)
 
 ```yaml
-- ruff format    # Code formatting (replaces black)
-- ruff lint      # Linting (replaces flake8, isort)
+- ruff           # Linting (replaces flake8, isort)
+- ruff-format    # Code formatting (replaces black)
 - mypy           # Type checking (strict mode)
 ```
 
@@ -463,7 +481,7 @@ ROOT:
 PACKAGE:
 └── src/antibody_training_esm/
     └── cli/
-        └── test.py           ✅ Full implementation (575+ lines)
+        └── test.py           ✅ Full implementation (574 lines, preserves full CLI interface)
 
 CLI:
 $ antibody-test --help        ✅ Shows comprehensive help
