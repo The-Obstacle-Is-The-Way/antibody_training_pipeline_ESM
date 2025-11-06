@@ -19,7 +19,17 @@ def test_with_assay_type(model, test_file, dataset_name, assay_type, target_cm):
 
     # Load data
     df = pd.read_csv(test_file, comment="#")
-    sequences = df["sequence"].tolist()
+
+    # Determine which sequence column to use (dataset-dependent)
+    if "vh_sequence" in df.columns:
+        sequences = df["vh_sequence"].tolist()
+    elif "sequence" in df.columns:
+        sequences = df["sequence"].tolist()
+    else:
+        raise KeyError(
+            f"Expected 'vh_sequence' or 'sequence' column in {test_file}, "
+            f"found columns: {list(df.columns)}"
+        )
     y_true = df["label"].values
 
     print(f"  Dataset size: {len(sequences)} sequences")
@@ -69,11 +79,11 @@ def main():
         model = pickle.load(f)
     print("  Model loaded successfully!")
 
-    # Novo benchmarks
+    # Benchmarks
     import numpy as np
 
-    novo_jain = np.array([[40, 17], [10, 19]])  # 68.6% accuracy
-    novo_shehata = np.array([[229, 162], [2, 5]])  # 58.8% accuracy
+    novo_jain = np.array([[40, 19], [10, 17]])  # 66.28% accuracy (Novo benchmark)
+    novo_shehata = np.array([[229, 162], [2, 5]])  # 58.8% accuracy (Novo benchmark)
 
     # Test Jain with ELISA threshold (default 0.5)
     print("\n" + "=" * 60)
@@ -81,7 +91,7 @@ def main():
     print("=" * 60)
     jain_cm, jain_acc = test_with_assay_type(
         model,
-        "test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv",
+        "test_datasets/jain/canonical/jain_86_novo_parity.csv",
         "Jain",
         "ELISA",
         novo_jain,
@@ -107,9 +117,9 @@ def main():
     print(f"  Jain (ELISA):   {jain_acc*100:.1f}% accuracy")
     print(f"  Shehata (PSR):  {shehata_acc*100:.1f}% accuracy")
 
-    print("\nNovo benchmarks:")
-    print("  Jain (ELISA):   68.6% accuracy")
-    print("  Shehata (PSR):  58.8% accuracy")
+    print("\nBenchmarks:")
+    print("  Jain (ELISA):   66.28% accuracy (Novo benchmark)")
+    print("  Shehata (PSR):  58.8% accuracy (Novo benchmark)")
 
     print("\n" + "=" * 60)
     print("HOW TO USE IN YOUR CODE:")

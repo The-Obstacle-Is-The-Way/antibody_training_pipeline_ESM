@@ -158,23 +158,17 @@
 
 ---
 
-### ✅ `test_harvey_psr_threshold.py` - KEEP (but consider moving)
+### 📦 `test_harvey_psr_threshold.py` - MOVED to preprocessing/harvey/
 
-**Status:** VALID - Production test script
-**Purpose:** Test Harvey dataset with PSR threshold (0.5495)
+**Status:** DATASET-SPECIFIC - Harvey PSR validation
+**Purpose:** Long-running benchmark verifying PSR threshold matches Novo Figure S14
 
-**What it does:**
-- Loads model with assay_type='PSR'
-- Tests on VHH_only_harvey.csv (141k nanobodies)
-- Uses PSR-specific threshold
-- Compares to Novo benchmark from Figure S14
+**Action taken:** Moved to `preprocessing/harvey/test_psr_threshold.py` as part of dataset-centric reorg
 
-**Why keep:**
-- ✅ Production test for Harvey validation
-- ✅ Long-running test (~20-30 min for 141k sequences)
-- ✅ Validates PSR threshold implementation
-
-**Note:** Harvey-specific - could move to `preprocessing/harvey/` under dataset-centric organization
+**Why move:**
+- 📦 Harvey-only logic (loads 141k nanobody sequences)
+- 📦 Runs with `assay_type='PSR'` and calibrated threshold 0.5495
+- 📦 Best maintained alongside Harvey preprocessing scripts
 
 ---
 
@@ -199,9 +193,9 @@
 
 ### 📄 `README.md` - OK
 
-**Current content:** Documents all 3 test scripts
+**Current content:** Documents remaining demo script
 
-**Action:** Update if we move dataset-specific tests to preprocessing/
+**Action:** Updated to point to dataset-specific tests under `preprocessing/{dataset}/`
 
 ---
 
