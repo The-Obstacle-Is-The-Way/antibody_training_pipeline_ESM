@@ -26,8 +26,8 @@ from collections import Counter
 
 # Paths
 BOUGHTER_DIR = Path("train_datasets/boughter")
-TRAINING_FILE = BOUGHTER_DIR / "VH_only_boughter_training.csv"
-FULL_FILE = BOUGHTER_DIR / "VH_only_boughter.csv"
+TRAINING_FILE = BOUGHTER_DIR / "canonical" / "VH_only_boughter_training.csv"
+FULL_FILE = BOUGHTER_DIR / "annotated" / "VH_only_boughter.csv"
 
 # Standard amino acids (20 standard + X for unknown)
 STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")
