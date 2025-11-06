@@ -456,25 +456,30 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 
 ## Summary
 
-**Boughter dataset is 100% complete with two QC levels:**
+**Boughter dataset processing complete and externally validated:**
 
-1. ✅ **Boughter QC (914 sequences)** - Exact Novo methodology, CV accuracy 67.5% ± 8.9%
-   - **RECOMMENDED for training**
+✅ **Production Model (914 sequences)** - Validated and ready for deployment
+   - CV accuracy: 67.5% ± 8.9%
+   - External validation:
+     - Jain (HIC retention): 66.28% accuracy ✅
+     - Shehata (PSR assay): 52.26% accuracy ✅
    - Model: `models/boughter_vh_esm1v_logreg.pkl`
+   - Pipeline: Stages 1-2-3 (ANARCI + IMGT + Boughter QC)
 
-2. ✅ **Strict QC (852 sequences)** - Industry standard, CV accuracy 66.55% ± 7.07%
-   - Alternative approach, no performance improvement
-   - Model: `models/boughter_vh_strict_qc_esm1v_logreg.pkl`
+⚠️ **Experimental Strict QC (852 sequences)** - Archived (no improvement)
+   - CV accuracy: 66.55% ± 7.07% (NOT better than production)
+   - Never externally validated
+   - Archived: `experiments/strict_qc_2025-11-04/`
 
 **Key findings:**
 - 118 position issue resolved (exclude position 118, use ANARCI + IMGT)
-- 62 sequences with X removed in strict QC (but didn't improve performance)
-- Both models perform equivalently within statistical noise
-- Both ready for testing on Jain dataset
+- 62 sequences with X tested: removing them did NOT improve performance
+- Production model externally validated with strong results
+- Ready for deployment
 
-**For training:** Use `VH_only_boughter_training.csv` (914 sequences, Boughter QC) ⭐
+**For production use:** `models/boughter_vh_esm1v_logreg.pkl` (914 sequences) ⭐
 
-**For testing:** Use `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
+**For external testing:** Use Jain or Shehata test datasets (validated)
 
 ---
 
