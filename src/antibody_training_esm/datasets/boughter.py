@@ -168,22 +168,20 @@ class BoughterDataset(AntibodyDataset):
 
     def translate_dna_to_protein(self, dna_sequence: str) -> str:  # noqa: ARG002
         """
-        Translate DNA sequence to protein.
+        This method is NOT IMPLEMENTED and will always raise an error.
 
-        This method is NOT implemented in the dataset loader class.
-        DNA translation logic belongs in the preprocessing scripts.
+        DNA translation logic belongs in the preprocessing scripts, not in
+        dataset loader classes. Loaders are for LOADING preprocessed data,
+        not for creating it.
 
         For DNA translation, use:
             preprocessing/boughter/stage1_dna_translation.py
 
         Args:
-            dna_sequence: DNA sequence string
-
-        Returns:
-            Translated protein sequence
+            dna_sequence: DNA sequence string (unused - always raises)
 
         Raises:
-            NotImplementedError: Always - this method should not be used
+            NotImplementedError: Always - this method intentionally does nothing
         """
         raise NotImplementedError(
             "DNA translation is not implemented in dataset loader classes.\n"

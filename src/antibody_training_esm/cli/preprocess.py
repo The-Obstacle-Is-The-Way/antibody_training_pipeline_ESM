@@ -9,10 +9,21 @@ import sys
 
 
 def main():
-    """Main entry point for preprocessing CLI"""
+    """
+    Main entry point for preprocessing CLI.
+
+    This CLI does NOT run preprocessing - it only provides guidance on which
+    preprocessing scripts to use. Preprocessing is handled by specialized
+    scripts that are the Single Source of Truth (SSOT).
+    """
     parser = argparse.ArgumentParser(
-        description="Preprocess antibody datasets",
+        description="Antibody dataset preprocessing guidance",
         formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+NOTE: This CLI does NOT run preprocessing. It provides guidance on which
+preprocessing scripts to use. Each dataset has unique requirements and the
+scripts maintain bit-for-bit parity with published methods.
+        """,
     )
 
     parser.add_argument(
@@ -21,21 +32,7 @@ def main():
         type=str,
         required=True,
         choices=["jain", "harvey", "shehata", "boughter"],
-        help="Dataset to preprocess",
-    )
-
-    parser.add_argument(
-        "--step",
-        "-s",
-        type=str,
-        help="Specific preprocessing step to run",
-    )
-
-    parser.add_argument(
-        "--output",
-        "-o",
-        type=str,
-        help="Output directory for preprocessed data",
+        help="Dataset to get preprocessing guidance for",
     )
 
     args = parser.parse_args()

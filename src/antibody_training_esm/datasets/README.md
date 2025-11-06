@@ -151,14 +151,19 @@ print(f"Loaded {len(df)} sequences")
 ```python
 # WRONG: Trying to preprocess from dataset class
 dataset = JainDataset()
-df = dataset.process()  # This would re-run ANARCI (slow/wrong)
+# There is NO process() method - it was intentionally removed!
+# Dataset loaders are for LOADING preprocessed data only.
 ```
 
 ✅ **DO THIS INSTEAD**:
 ```python
-# RIGHT: Load preprocessed data
-dataset = JainDataset()
-df = dataset.load_data(stage="parity")  # Fast, correct
+# RIGHT: Use preprocessing scripts to CREATE data
+# Run this ONCE to generate fragment files:
+$ python preprocessing/jain/step2_preprocess_p5e_s2.py
+
+# Then LOAD the preprocessed data in your training code:
+from antibody_training_esm.datasets import load_jain_data
+df = load_jain_data(stage="parity")  # Fast, correct
 ```
 
 ## Future Work (Phase 4+)
