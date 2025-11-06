@@ -384,7 +384,7 @@ fragments/ (region-specific)
 
 3. **Test scripts** can find canonical files:
    ```bash
-   # Check scripts/testing/test_jain_novo_parity.py
+   # Check preprocessing/jain/test_novo_parity.py
    # Update paths to test_datasets/jain/canonical/
    ```
 
@@ -466,7 +466,7 @@ test_datasets/
 - **Change:** Read from `test_datasets/jain/processed/`
 - **Change:** Write to `test_datasets/jain/canonical/`
 
-### 4. `scripts/testing/test_jain_novo_parity.py`
+### 4. `preprocessing/jain/test_novo_parity.py`
 - **Change:** Read from `test_datasets/jain/canonical/`
 
 ### 5. `scripts/fragmentation/extract_jain_fragments.py` (if exists)
