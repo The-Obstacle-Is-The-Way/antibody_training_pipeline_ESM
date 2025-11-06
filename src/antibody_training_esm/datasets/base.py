@@ -8,7 +8,7 @@ Follows Open/Closed Principle - datasets extend this without modifying it.
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 
@@ -189,12 +189,17 @@ class AntibodyDataset(ABC):
 
         # Check VH sequences
         if "VH_sequence" in df.columns:
-            stats["missing_vh"] = df["VH_sequence"].isna().sum()
+            missing_vh = int(df["VH_sequence"].isna().sum())
+            stats["missing_vh"] = missing_vh
             valid_vh = df["VH_sequence"].notna()
 
             if valid_vh.any():
                 vh_lengths = df.loc[valid_vh, "VH_sequence"].str.len()
-                stats["length_stats"]["VH"] = {
+                # Cast to help mypy understand the type
+                length_stats = cast(
+                    dict[str, dict[str, int | float]], stats["length_stats"]
+                )
+                length_stats["VH"] = {
                     "min": int(vh_lengths.min()),
                     "max": int(vh_lengths.max()),
                     "mean": float(vh_lengths.mean()),
@@ -202,19 +207,26 @@ class AntibodyDataset(ABC):
 
         # Check VL sequences (if present)
         if "VL_sequence" in df.columns:
-            stats["missing_vl"] = df["VL_sequence"].isna().sum()
+            missing_vl = int(df["VL_sequence"].isna().sum())
+            stats["missing_vl"] = missing_vl
             valid_vl = df["VL_sequence"].notna()
 
             if valid_vl.any():
                 vl_lengths = df.loc[valid_vl, "VL_sequence"].str.len()
-                stats["length_stats"]["VL"] = {
+                # Cast to help mypy understand the type
+                length_stats = cast(
+                    dict[str, dict[str, int | float]], stats["length_stats"]
+                )
+                length_stats["VL"] = {
                     "min": int(vl_lengths.min()),
                     "max": int(vl_lengths.max()),
                     "mean": float(vl_lengths.mean()),
                 }
 
-        stats["valid_sequences"] = len(df) - stats["missing_vh"]
-        stats["invalid_sequences"] = stats["missing_vh"]
+        # Use explicit variable for type safety
+        missing_vh_count = cast(int, stats["missing_vh"])
+        stats["valid_sequences"] = len(df) - missing_vh_count
+        stats["invalid_sequences"] = missing_vh_count
 
         return stats
 
