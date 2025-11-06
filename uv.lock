@@ -114,7 +114,7 @@ wheels = [
 ]
 
 [[package]]
-name = "antibody-dev-esm"
+name = "antibody-training-esm"
 version = "1.0.0"
 source = { editable = "." }
 dependencies = [
