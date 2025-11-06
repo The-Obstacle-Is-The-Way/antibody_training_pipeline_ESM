@@ -446,7 +446,7 @@ grep -rn "scripts/validate_fragments" docs/ --include="*.md" | grep -v "validati
 - [ ] `preprocessing/shehata/step1_convert_excel_to_csv.py`
 - [ ] `preprocessing/shehata/step2_extract_fragments.py`
 - [ ] `scripts/validation/validate_shehata_conversion.py`
-- [ ] `scripts/analysis/analyze_threshold_optimization.py`
+- [x] ~~`scripts/analysis/analyze_threshold_optimization.py`~~ (DELETED - experimental script)
 - [ ] `scripts/testing/demo_assay_specific_thresholds.py`
 - [ ] `scripts/validate_fragments.py`
 - [ ] `scripts/validation/validate_fragments.py`
