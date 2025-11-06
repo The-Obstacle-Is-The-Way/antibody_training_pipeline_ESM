@@ -45,11 +45,11 @@ jain/
 ### 4. Updated All Scripts
 
 **Scripts updated to use new paths:**
-- `scripts/conversion/convert_jain_excel_to_csv.py`
+- `preprocessing/jain/step1_convert_excel_to_csv.py`
   - Input: `test_datasets/jain/raw/*.xlsx`
   - Output: `test_datasets/jain/processed/*.csv`
 
-- `preprocessing/preprocess_jain_p5e_s2.py`
+- `preprocessing/jain/step2_preprocess_p5e_s2.py`
   - Input: `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv`
   - Output: `test_datasets/jain/canonical/jain_86_novo_parity.csv`
 
@@ -170,11 +170,11 @@ All files can be regenerated from raw sources:
 
 ```bash
 # Step 1: Convert Excel → CSV
-python3 scripts/conversion/convert_jain_excel_to_csv.py
+python3 preprocessing/jain/step1_convert_excel_to_csv.py
 # Creates: processed/*.csv
 
 # Step 2: Create 86-antibody benchmarks
-python3 preprocessing/preprocess_jain_p5e_s2.py
+python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 # Creates: processed/jain_ELISA_ONLY_116.csv (SSOT)
 #          canonical/jain_86_novo_parity.csv
 

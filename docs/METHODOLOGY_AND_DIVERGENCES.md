@@ -60,7 +60,7 @@ We successfully replicated the Novo Nordisk antibody non-specificity prediction 
 ✅ **EXACT MATCH on data processing**
 ⚠️ **Threshold question** (0.5 default vs 0.5495)
 
-- **Script**: `scripts/conversion/convert_harvey_csvs.py`
+- **Script**: `preprocessing/harvey/step1_convert_raw_csvs.py`
 - **Labeling**: Directly uses Harvey's pre-labeled high/low CSVs
 - **Test set**: 69,262 specific + 71,759 non-specific = **141,021 total**
 - **Decision threshold**: Currently using default 0.5 (need to test 0.5495)
@@ -130,7 +130,7 @@ Jain et al. 2017 Table 1 defines **4 assay groups**, each contributing 0 or 1 fl
 
 ✅ **Uses ONLY publicly available data**
 
-- **Script**: `scripts/conversion/convert_jain_excel_to_csv.py:160-232`
+- **Script**: `preprocessing/jain/step1_convert_excel_to_csv.py:160-232`
 - **Flag calculation**: Jain Table 1 methodology (4 groups → max 4 flags)
 - **Threshold**: `>= 3` (flags 3-4 = non-specific)
 - **Test set**: 67 specific + 27 non-specific = **94 antibodies**
@@ -221,8 +221,8 @@ We will test multiple approaches to understand the gap:
 - `scripts/conversion/convert_boughter_to_csv.py:338` - >=4 threshold ✅
 
 ### Testing
-- `scripts/conversion/convert_jain_excel_to_csv.py:207` - >=3 threshold (4-group methodology)
-- `scripts/conversion/convert_harvey_csvs.py` - Direct pre-labeled data
+- `preprocessing/jain/step1_convert_excel_to_csv.py:207` - >=3 threshold (4-group methodology)
+- `preprocessing/harvey/step1_convert_raw_csvs.py` - Direct pre-labeled data
 - `scripts/conversion/convert_shehata_excel_to_csv.py` - PSR threshold
 
 ### Documentation

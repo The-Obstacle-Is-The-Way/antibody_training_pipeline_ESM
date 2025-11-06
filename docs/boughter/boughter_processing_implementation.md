@@ -1164,8 +1164,8 @@ logger = logging.getLogger(__name__)
 3. BioPython Seq.translate() documentation: https://biopython.org/docs/1.75/api/Bio.Seq.html#Bio.Seq.Seq.translate
 
 **Implementation Patterns**:
-- `preprocessing/process_harvey.py` - Nanobody (VHH only) processing
-- `preprocessing/preprocess_jain_p5e_s2.py` - Full antibody (VH+VL) processing
+- `preprocessing/harvey/step2_extract_fragments.py` - Nanobody (VHH only) processing
+- `preprocessing/jain/step2_preprocess_p5e_s2.py` - Full antibody (VH+VL) processing
 
 ---
 

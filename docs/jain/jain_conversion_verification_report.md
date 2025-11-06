@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-- ✅ `scripts/conversion/convert_jain_excel_to_csv.py` reproduces the canonical Jain dataset (137 antibodies) directly from PNAS supplementary files SD01–SD03.
+- ✅ `preprocessing/jain/step1_convert_excel_to_csv.py` reproduces the canonical Jain dataset (137 antibodies) directly from PNAS supplementary files SD01–SD03.
 - ✅ `scripts/validation/validate_jain_conversion.py` reconverts the Excel files in-memory and matches the saved CSV byte-for-byte (SHA256 `b1a6d7399260aef1a894743877a726caa248d12d948b8216822cb2a5b9bc96a3`).
 - ✅ Table 1 thresholds (Jain et al. 2017) are implemented as four developability flag clusters with full audit columns.
 - ✅ VH/VL sequences are sanitized to contain only IMGT-valid amino acids; no gap or whitespace artifacts remain.
@@ -33,7 +33,7 @@
 | File | Purpose |
 |------|---------|
 | `test_datasets/jain.csv` | Cleaned dataset with flags, labels, and supporting assays |
-| `scripts/conversion/convert_jain_excel_to_csv.py` | Deterministic Excel→CSV converter |
+| `preprocessing/jain/step1_convert_excel_to_csv.py` | Deterministic Excel→CSV converter |
 | `scripts/validation/validate_jain_conversion.py` | Integrity + provenance validation |
 
 ### Column Overview (ordered)
@@ -91,7 +91,7 @@ Notable antibodies (≥4 flags / label 1): **bimagrumab**, **briakinumab**, **
 ## Next Steps
 
 1. Update downstream preprocessing / evaluation to ignore mild (`label` = `<NA>`) entries when performing binary classification, mirroring Sakhnini et al. 2025.
-2. Regenerate fragment CSVs via `python3 preprocessing/preprocess_jain_p5e_s2.py` once PR is updated to the new canonical dataset.
+2. Regenerate fragment CSVs via `python3 preprocessing/jain/step2_preprocess_p5e_s2.py` once PR is updated to the new canonical dataset.
 3. Append these validation results to future PR descriptions for traceability.
 
 ---
@@ -102,13 +102,13 @@ Notable antibodies (≥4 flags / label 1): **bimagrumab**, **briakinumab**, **
 
 After comparing with Hybri's Discord replication and Novo's results, discovered that flag threshold was incorrectly set:
 
-- **Bug**: `scripts/conversion/convert_jain_excel_to_csv.py:207` used `>= 4` threshold
+- **Bug**: `preprocessing/jain/step1_convert_excel_to_csv.py:207` used `>= 4` threshold
 - **Correct**: Should be `>= 3` threshold (matches Novo/Hybri methodology)
 - **Impact**: Only 3 non-specific antibodies instead of 27
 
 ### Fix Implemented
 
-**File Modified**: `scripts/conversion/convert_jain_excel_to_csv.py`
+**File Modified**: `preprocessing/jain/step1_convert_excel_to_csv.py`
 
 ```python
 # Line 207 - BEFORE (WRONG):

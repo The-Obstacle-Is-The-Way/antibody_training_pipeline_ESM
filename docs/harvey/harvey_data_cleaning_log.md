@@ -39,9 +39,9 @@
 ### 2025-11-01 01:51-04:00 - Initial Implementation (WRONG)
 
 **Scripts created:**
-- `scripts/conversion/convert_harvey_csvs.py` - Parsed markdown for sequences
+- `preprocessing/harvey/step1_convert_raw_csvs.py` - Parsed markdown for sequences
 - `scripts/validate_harvey.py` - Validated 48-nanobody dataset
-- `preprocessing/process_harvey.py` - Extracted VHH fragments
+- `preprocessing/harvey/step2_extract_fragments.py` - Extracted VHH fragments
 
 **Output:**
 - `test_datasets/harvey/processed/harvey.csv` - 48 nanobodies

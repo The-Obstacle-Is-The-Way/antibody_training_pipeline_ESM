@@ -96,9 +96,9 @@ test_datasets/jain/
 
 ```
 RAW (Excel)
-    ↓ [scripts/conversion/convert_jain_excel_to_csv.py]
+    ↓ [preprocessing/jain/step1_convert_excel_to_csv.py]
 PROCESSED (CSV base files)
-    ↓ preprocessing/preprocess_jain_p5e_s2.py
+    ↓ preprocessing/jain/step2_preprocess_p5e_s2.py
 CANONICAL (86-antibody benchmarks)
     ↓ [scripts/fragmentation/extract_jain_fragments.py]
 FRAGMENTS (region-specific extracts)
@@ -148,7 +148,7 @@ mv test_datasets/Private_Jain2017_ELISA_indiv.xlsx test_datasets/jain/raw/
 
 Convert to CSV using:
 ```bash
-python3 scripts/conversion/convert_jain_excel_to_csv.py
+python3 preprocessing/jain/step1_convert_excel_to_csv.py
 ```
 ```
 
@@ -173,7 +173,7 @@ All files derived from `raw/` using scripts in `scripts/conversion/` and `prepro
 
 ## Conversion (Raw Excel → CSV)
 
-**Script:** `scripts/conversion/convert_jain_excel_to_csv.py`
+**Script:** `preprocessing/jain/step1_convert_excel_to_csv.py`
 
 - `jain_sd01.csv` ← jain-pnas.1616408114.sd01.xlsx
 - `jain_sd02.csv` ← jain-pnas.1616408114.sd02.xlsx
@@ -181,7 +181,7 @@ All files derived from `raw/` using scripts in `scripts/conversion/` and `prepro
 
 ## Merging + ELISA Integration
 
-**Script:** `preprocessing/preprocess_jain_p5e_s2.py`
+**Script:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 
 - `jain.csv` (137 antibodies) - Base merged dataset
 - `jain_with_private_elisa_FULL.csv` (137 antibodies) - With ELISA flags added
@@ -213,7 +213,7 @@ Final curated datasets for reproducible benchmarking.
 ### 1. `jain_86_novo_parity.csv` (P5e-S2 Canonical) ✅ RECOMMENDED
 
 - **Method:** ELISA filter → PSR reclassification → AC-SINS removal
-- **Script:** `preprocessing/preprocess_jain_p5e_s2.py`
+- **Script:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 - **Result:** [[40, 19], [10, 17]], 66.28%
 - **Columns:** Full-length sequences + biophysical properties
 - **Reproducibility:** 1 borderline antibody (nimotuzumab ~0.5) may flip
@@ -372,13 +372,13 @@ fragments/ (region-specific)
 
 1. **Conversion script** can find raw files:
    ```bash
-   # Check if scripts/conversion/convert_jain_excel_to_csv.py references correct paths
+   # Check if preprocessing/jain/step1_convert_excel_to_csv.py references correct paths
    # Update paths from test_datasets/*.xlsx → test_datasets/jain/raw/*.xlsx
    ```
 
 2. **Preprocessing scripts** can find input files:
    ```bash
-   # Check preprocessing/preprocess_jain_p5e_s2.py
+   # Check preprocessing/jain/step2_preprocess_p5e_s2.py
    # Update paths to point to processed/ directory
    ```
 
@@ -454,11 +454,11 @@ test_datasets/
 
 ## Scripts to Update
 
-### 1. `scripts/conversion/convert_jain_excel_to_csv.py`
+### 1. `preprocessing/jain/step1_convert_excel_to_csv.py`
 - **Change:** Update paths to read from `test_datasets/jain/raw/`
 - **Change:** Update paths to write to `test_datasets/jain/processed/`
 
-### 2. `preprocessing/preprocess_jain_p5e_s2.py`
+### 2. `preprocessing/jain/step2_preprocess_p5e_s2.py`
 - **Change:** Read from `test_datasets/jain/processed/`
 - **Change:** Write to `test_datasets/jain/canonical/`
 

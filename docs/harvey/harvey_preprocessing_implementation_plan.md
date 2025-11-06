@@ -225,7 +225,7 @@ Generate 6 fragment CSV files:
 
 ### Primary Script
 
-**File:** `preprocessing/process_harvey.py`
+**File:** `preprocessing/harvey/step2_extract_fragments.py`
 **Purpose:** Extract VHH fragments using ANARCI (IMGT numbering)
 **Dependencies:**
 - `pandas`: DataFrame manipulation
@@ -234,7 +234,7 @@ Generate 6 fragment CSV files:
 
 **Usage:**
 ```bash
-python3 preprocessing/process_harvey.py
+python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
 **Expected Runtime:** ~10-30 minutes (141K sequences × ANARCI annotation)
@@ -433,7 +433,7 @@ After implementation:
 ## Implementation Timeline
 
 **Phase 1: Script Development** (30-60 min)
-- Write `preprocessing/process_harvey.py`
+- Write `preprocessing/harvey/step2_extract_fragments.py`
 - Adapt from `preprocess_jain_p5e_s2.py` (remove light chain logic)
 
 **Phase 2: Test Run** (10-30 min)

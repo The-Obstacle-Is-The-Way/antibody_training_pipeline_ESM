@@ -133,10 +133,10 @@ Flags are calculated from 4 assay groups using 90th percentile thresholds of app
 
 ```bash
 # Phase 1: Convert PNAS Excel files to CSV
-python3 scripts/conversion/convert_jain_excel_to_csv.py
+python3 preprocessing/jain/step1_convert_excel_to_csv.py
 
 # Phase 2: Extract antibody fragments
-python3 preprocessing/preprocess_jain_p5e_s2.py
+python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 
 This will generate:

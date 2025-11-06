@@ -123,9 +123,9 @@ test_datasets/  (ROOT LEVEL - BAD)
 reference_repos/harvey_official_repo/backend/app/experiments/
   ├── high_polyreactivity_high_throughput.csv (71,772)
   └── low_polyreactivity_high_throughput.csv (69,702)
-    ↓ [scripts/conversion/convert_harvey_csvs.py]
+    ↓ [preprocessing/harvey/step1_convert_raw_csvs.py]
 test_datasets/harvey.csv (141,474 combined)
-  ↓ [preprocessing/process_harvey.py + ANARCI]
+  ↓ [preprocessing/harvey/step2_extract_fragments.py + ANARCI]
 test_datasets/harvey/ fragments (141,021 - 453 failures)
 ```
 
@@ -251,7 +251,7 @@ test_datasets/harvey/ (fragments only - MIXED PURPOSE)
 
 **VALIDATED:** All path references confirmed from first principles (2025-11-05)
 
-**1. scripts/conversion/convert_harvey_csvs.py** (4 path references)
+**1. preprocessing/harvey/step1_convert_raw_csvs.py** (4 path references)
 ```python
 # Lines 119-121: Path variables
 # OLD:
@@ -268,7 +268,7 @@ output_csv = Path("test_datasets/harvey/processed/harvey.csv")
 # Lines 141-143: Print statements (update displayed paths)
 ```
 
-**2. preprocessing/process_harvey.py** (3 path references)
+**2. preprocessing/harvey/step2_extract_fragments.py** (3 path references)
 ```python
 # Lines 202-203: Path variables
 # OLD:
@@ -427,7 +427,7 @@ vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
 **Current state:**
 - harvey_high.csv = copy of raw/high_polyreactivity_high_throughput.csv
 - harvey_low.csv = copy of raw/low_polyreactivity_high_throughput.csv
-- Both used as input to scripts/conversion/convert_harvey_csvs.py
+- Both used as input to preprocessing/harvey/step1_convert_raw_csvs.py
 
 **Options:**
 - **Option A: Keep in processed/**
@@ -508,10 +508,10 @@ print('Match:', dist == expected)
 ### 4. Script Regeneration Test
 ```bash
 # Test conversion script
-python3 scripts/conversion/convert_harvey_csvs.py
+python3 preprocessing/harvey/step1_convert_raw_csvs.py
 
 # Test fragment extraction
-python3 preprocessing/process_harvey.py
+python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
 ### 5. Fragment Validation
@@ -580,8 +580,8 @@ grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
 - Move failed_sequences.txt → fragments/
 
 ### Phase 5: Update Scripts (15 min)
-- Update scripts/conversion/convert_harvey_csvs.py (4 path references, docstrings, error messages)
-- Update preprocessing/process_harvey.py (3 path references, failure log, docstrings)
+- Update preprocessing/harvey/step1_convert_raw_csvs.py (4 path references, docstrings, error messages)
+- Update preprocessing/harvey/step2_extract_fragments.py (3 path references, failure log, docstrings)
 - Update scripts/validation/validate_fragments.py (1 path reference)
 - Update scripts/rethreshold_harvey.py (1 path reference)
 - Update scripts/testing/test_harvey_psr_threshold.py (1 path reference)

@@ -16,7 +16,7 @@
 - **Validation:** Multi-method cross-checking with `scripts/validation/validate_shehata_conversion.py`
 
 ### Method 1b: Python Script – Jain (RECOMMENDED) ⭐
-- **Tool:** `scripts/conversion/convert_jain_excel_to_csv.py`
+- **Tool:** `preprocessing/jain/step1_convert_excel_to_csv.py`
 - **Pros:** Deterministic flag derivation (Table 1 thresholds), full provenance columns, label handling consistent with Sakhnini et al.
 - **Cons:** Requires Python environment
 - **Validation:** `scripts/validation/validate_jain_conversion.py` (rebuilds pipeline & checks SHA256)
@@ -96,7 +96,7 @@ ADI-38501,EVQLLESGGGLVQPGGSLRLSCAASGFTFSSYSMNWVRQAPGKGLEWVS...,DIVMTQSPATLSLSPGE
 cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
 
 # Generate canonical Jain dataset
-python3 scripts/conversion/convert_jain_excel_to_csv.py --verbose
+python3 preprocessing/jain/step1_convert_excel_to_csv.py --verbose
 ```
 
 **What it does:**

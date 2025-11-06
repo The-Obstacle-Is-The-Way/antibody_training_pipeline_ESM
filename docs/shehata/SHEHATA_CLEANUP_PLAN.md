@@ -175,8 +175,8 @@ rm scripts/validate_fragments.py               # Use scripts/validation/ version
 ```
 
 **Canonical versions (keep these):**
-- ✅ `scripts/conversion/convert_jain_excel_to_csv.py`
-- ✅ `scripts/conversion/convert_harvey_csvs.py`
+- ✅ `preprocessing/jain/step1_convert_excel_to_csv.py`
+- ✅ `preprocessing/harvey/step1_convert_raw_csvs.py`
 - ✅ `scripts/validation/validate_jain_conversion.py`
 - ✅ `scripts/validation/validate_fragments.py`
 
@@ -260,13 +260,13 @@ test_datasets/mmc2.xlsx → test_datasets/shehata/raw/shehata-mmc2.xlsx
 
 **File:** `docs/harvey_data_cleaning_log.md` (7 references)
 ```bash
-scripts/convert_harvey_csvs.py → scripts/conversion/convert_harvey_csvs.py
+scripts/convert_harvey_csvs.py → preprocessing/harvey/step1_convert_raw_csvs.py
 scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 ```
 
 **File:** `docs/harvey_data_sources.md` (3 references)
 ```bash
-scripts/convert_harvey_csvs.py → scripts/conversion/convert_harvey_csvs.py
+scripts/convert_harvey_csvs.py → preprocessing/harvey/step1_convert_raw_csvs.py
 ```
 
 **File:** `docs/harvey/harvey_script_status.md` (3 references)

@@ -262,7 +262,7 @@ def main():
     print("  1. jain_with_private_elisa_FULL.csv - All 137 antibodies")
     print("  2. jain_with_private_elisa_TEST.csv - Test set only (94 antibodies)")
     print("\nNext step:")
-    print("  Run preprocessing/preprocess_jain_p5e_s2.py to generate fragments")
+    print("  Run preprocessing/jain/step2_preprocess_p5e_s2.py to generate fragments")
 
 
 if __name__ == "__main__":

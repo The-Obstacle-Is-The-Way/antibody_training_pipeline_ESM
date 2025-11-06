@@ -117,7 +117,7 @@ cp reference_repos/harvey_official_repo/backend/app/experiments/low_polyreactivi
 
 ### Step 2: CSV Conversion
 
-**Script:** `scripts/conversion/convert_harvey_csvs.py`
+**Script:** `preprocessing/harvey/step1_convert_raw_csvs.py`
 
 **Functionality:**
 1. Read high/low polyreactivity CSVs from official repo
@@ -128,14 +128,14 @@ cp reference_repos/harvey_official_repo/backend/app/experiments/low_polyreactivi
 
 **Command:**
 ```bash
-python3 scripts/conversion/convert_harvey_csvs.py
+python3 preprocessing/harvey/step1_convert_raw_csvs.py
 ```
 
 **Output:** `test_datasets/harvey/processed/harvey.csv` (141,474 sequences)
 
 ### Step 3: Fragment Extraction
 
-**Script:** `preprocessing/process_harvey.py`
+**Script:** `preprocessing/harvey/step2_extract_fragments.py`
 
 **Method:**
 - ANARCI (riot_na) with IMGT numbering scheme
@@ -144,7 +144,7 @@ python3 scripts/conversion/convert_harvey_csvs.py
 
 **Command:**
 ```bash
-python3 preprocessing/process_harvey.py
+python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
 **Output:** 6 fragment CSV files in `test_datasets/harvey/`
@@ -238,9 +238,9 @@ reference_repos/harvey_official_repo/backend/app/experiments/
     ↓
 high_polyreactivity_high_throughput.csv (71,772)
 low_polyreactivity_high_throughput.csv (69,702)
-    ↓ scripts/conversion/convert_harvey_csvs.py
+    ↓ preprocessing/harvey/step1_convert_raw_csvs.py
 test_datasets/harvey/processed/harvey.csv (141,474)
-    ↓ preprocessing/process_harvey.py (ANARCI)
+    ↓ preprocessing/harvey/step2_extract_fragments.py (ANARCI)
 test_datasets/harvey/ fragment CSVs (141,021 each)
 ```
 

@@ -13,7 +13,7 @@ The Harvey dataset processing script had the **EXACT SAME P0 BLOCKER** as Shehat
 
 **Impact:** 12,116 sequences (8.6%) in `VHH_only_harvey.csv` contained gap characters `-`, causing ESM-1v embedding validation to crash.
 
-**Fix:** One-line change in `preprocessing/process_harvey.py:48`
+**Fix:** One-line change in `preprocessing/harvey/step2_extract_fragments.py:48`
 **Status:** ✅ All 141,021 sequences now gap-free
 **Tests:** ✅ 5/5 comprehensive tests passing
 
@@ -23,7 +23,7 @@ The Harvey dataset processing script had the **EXACT SAME P0 BLOCKER** as Shehat
 
 ### The Bug
 
-**File:** `preprocessing/process_harvey.py`
+**File:** `preprocessing/harvey/step2_extract_fragments.py`
 **Line:** 48
 **Issue:** Using wrong attribute from riot_na annotation
 
@@ -60,7 +60,7 @@ The `riot_na` library (ANARCI wrapper) provides two sequence attributes:
 ### Before Fix (Original Processing)
 
 **Generated:** 2025-11-01 (original run)
-**Source:** `preprocessing/process_harvey.py` with `sequence_alignment_aa`
+**Source:** `preprocessing/harvey/step2_extract_fragments.py` with `sequence_alignment_aa`
 
 | File | Sequences | Gaps | Gap % |
 |------|-----------|------|-------|
@@ -76,7 +76,7 @@ The `riot_na` library (ANARCI wrapper) provides two sequence attributes:
 ### After Fix (Regenerated with P0 Fix)
 
 **Generated:** 2025-11-02
-**Source:** `preprocessing/process_harvey.py` with `sequence_aa` (gap-free)
+**Source:** `preprocessing/harvey/step2_extract_fragments.py` with `sequence_aa` (gap-free)
 
 | File | Sequences | Gaps | Gap % |
 |------|-----------|------|-------|
@@ -106,7 +106,7 @@ The `riot_na` library (ANARCI wrapper) provides two sequence attributes:
 
 **Total:** 141,474 sequences → 141,021 after ANARCI annotation (99.68% success rate)
 
-**Conversion Script:** `scripts/conversion/convert_harvey_csvs.py`
+**Conversion Script:** `preprocessing/harvey/step1_convert_raw_csvs.py`
 - Extracts full sequences from IMGT position columns (1-128)
 - Combines high/low CSVs with binary labels (0=low, 1=high)
 - Outputs: `test_datasets/harvey/processed/harvey.csv`
@@ -126,7 +126,7 @@ Per NbBench paper (Zhang et al. 2025, arxiv:2505.02022):
 
 ### Step 1: Apply P0 Fix
 
-**File:** `preprocessing/process_harvey.py:48`
+**File:** `preprocessing/harvey/step2_extract_fragments.py:48`
 
 ```diff
 - "full_seq_H": annotation.sequence_alignment_aa,
@@ -136,7 +136,7 @@ Per NbBench paper (Zhang et al. 2025, arxiv:2505.02022):
 ### Step 2: Regenerate All Harvey Fragments
 
 ```bash
-python3 preprocessing/process_harvey.py
+python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
 **Runtime:** ~10 minutes
@@ -205,7 +205,7 @@ Both datasets had the **EXACT SAME P0 BLOCKER** - here's the parallel:
 ## Files Modified
 
 ### Code Changes
-1. ✅ `preprocessing/process_harvey.py:48` - P0 fix applied
+1. ✅ `preprocessing/harvey/step2_extract_fragments.py:48` - P0 fix applied
 2. ✅ `tests/test_harvey_embedding_compatibility.py` - New test suite created
 
 ### Data Regenerated

@@ -1,7 +1,7 @@
 # Harvey Preprocessing Script - Audit Request
 
 **Date:** 2025-11-01
-**Script:** `preprocessing/process_harvey.py`
+**Script:** `preprocessing/harvey/step2_extract_fragments.py`
 **Purpose:** Extract VHH (nanobody) fragments from Harvey dataset for ESM-1v testing
 
 ---
@@ -16,7 +16,7 @@
 
 ## Request
 
-Please audit `preprocessing/process_harvey.py` against the following specifications:
+Please audit `preprocessing/harvey/step2_extract_fragments.py` against the following specifications:
 
 1. **Does it follow the methodology in `docs/harvey_preprocessing_implementation_plan.md`?**
 2. **Does it match the codebase style of `preprocessing/process_shehata.py`?**

@@ -1,7 +1,7 @@
 # Harvey Preprocessing Script - Status Report
 
 **Date:** 2025-11-01
-**Script:** `preprocessing/process_harvey.py`
+**Script:** `preprocessing/harvey/step2_extract_fragments.py`
 **Status:** ⚠️ **ON HOLD - DATASET SOURCE VERIFICATION REQUIRED**
 
 ---
@@ -40,7 +40,7 @@ Harvey preprocessing script has been created, audited, and executed. Processing 
 ## What Was Done
 
 ### 1. Script Creation
-- ✅ Created `preprocessing/process_harvey.py` (250 lines)
+- ✅ Created `preprocessing/harvey/step2_extract_fragments.py` (250 lines)
 - ✅ Based on `process_shehata.py` template
 - ✅ Adapted for nanobodies (VHH only, no light chain)
 - ✅ Follows `docs/harvey_preprocessing_implementation_plan.md` specifications
@@ -118,7 +118,7 @@ harvey_000001,QVQLVESGG...,1,harvey2022,127
 tmux new -s harvey_processing
 
 # Execute
-python3 preprocessing/process_harvey.py
+python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
 ### Runtime (observed)

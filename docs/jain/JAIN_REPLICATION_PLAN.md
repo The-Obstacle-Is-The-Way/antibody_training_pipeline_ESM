@@ -125,7 +125,7 @@ With correct 0-10 methodology:
 **What we did**: Completely ignored BVP ELISA data
 **What we should do**: Include BVP from public SD03 as Flag 7
 
-**Code location**: `scripts/conversion/convert_jain_excel_to_csv.py` (currently missing BVP entirely)
+**Code location**: `preprocessing/jain/step1_convert_excel_to_csv.py` (currently missing BVP entirely)
 
 **Evidence BVP exists**:
 ```python
@@ -192,7 +192,7 @@ df['total_flags'] = (
 
 ### Step 1: Fix Flag Calculation Script
 
-**File**: `scripts/conversion/convert_jain_excel_to_csv.py`
+**File**: `preprocessing/jain/step1_convert_excel_to_csv.py`
 
 **Changes needed**:
 1. Load BVP from SD03 alongside other public assays
@@ -263,7 +263,7 @@ Update/delete files:
 
 ## Next Actions
 
-1. **Fix** `scripts/conversion/convert_jain_excel_to_csv.py` (add BVP, remove aggregation)
+1. **Fix** `preprocessing/jain/step1_convert_excel_to_csv.py` (add BVP, remove aggregation)
 2. **Regenerate** all Jain output files with corrected methodology
 3. **Validate** flag distributions and test set size
 4. **Test** model inference on corrected dataset
