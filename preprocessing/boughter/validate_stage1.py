@@ -13,7 +13,7 @@ Usage:
     python3 preprocessing/boughter/validate_stage1.py
 
 Validation Checks:
-    1. train_datasets/boughter.csv exists and is readable
+    1. train_datasets/boughter/processed/boughter.csv exists and is readable
     2. Sequence count: 1,117 (95.4% translation success from 1,171 raw)
     3. All sequences contain valid protein characters (ACDEFGHIKLMNPQRSTVWY)
     4. Required columns present: id, subset, heavy, light, label, num_flags, flag_category
@@ -22,7 +22,7 @@ Validation Checks:
 
 Outputs:
     - Console report with validation results
-    - train_datasets/boughter/validation_report.txt
+    - train_datasets/boughter/annotated/validation_report.txt
 
 Reference: See docs/boughter/boughter_data_sources.md for Stage 1 methodology
 """
@@ -40,7 +40,7 @@ def validate_stage1_output() -> Dict:
     print("Stage 1 Validation: DNA Translation & Novo Flagging")
     print("=" * 70)
 
-    csv_path = Path("train_datasets/boughter.csv")
+    csv_path = Path("train_datasets/boughter/processed/boughter.csv")
 
     if not csv_path.exists():
         return {
