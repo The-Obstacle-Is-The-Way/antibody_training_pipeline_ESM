@@ -19,7 +19,7 @@
 Please audit `preprocessing/harvey/step2_extract_fragments.py` against the following specifications:
 
 1. **Does it follow the methodology in `docs/harvey_preprocessing_implementation_plan.md`?**
-2. **Does it match the codebase style of `preprocessing/process_shehata.py`?**
+2. **Does it match the codebase style of `preprocessing/shehata/step2_extract_fragments.py`?**
 3. **Are there any bugs, edge cases, or issues?**
 4. **Will it correctly process 141,474 nanobody sequences?**
 
@@ -72,7 +72,7 @@ harvey_000001,QVQLVESGG...,1,harvey2022,127
 
 ## Comparison with Shehata Script
 
-Harvey script should be **similar to** `preprocessing/process_shehata.py` BUT:
+Harvey script should be **similar to** `preprocessing/shehata/step2_extract_fragments.py` BUT:
 
 ### Same as Shehata:
 - ✅ Uses `riot_na.create_riot_aa()` for ANARCI
@@ -204,7 +204,7 @@ Harvey script should be **similar to** `preprocessing/process_shehata.py` BUT:
 - **Implementation plan:** `docs/harvey_preprocessing_implementation_plan.md`
 - **Data sources:** `docs/harvey_data_sources.md`
 - **Cleaning log:** `docs/harvey_data_cleaning_log.md`
-- **Template script:** `preprocessing/process_shehata.py`
+- **Template script:** `preprocessing/shehata/step2_extract_fragments.py`
 - **Sakhnini et al. 2025:** Table 4 (Harvey dataset specs)
 
 ---

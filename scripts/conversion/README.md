@@ -1,18 +1,23 @@
 # Data Conversion Scripts
 
-These scripts convert raw data files from various sources into standardized CSV format.
+**⚠️  MOVED:** Conversion scripts have been reorganized.
 
-**Purpose:** Essential for reproducibility - these transform Excel/FASTA files into the CSV format used by the training pipeline.
+## New Locations (Dataset-Centric)
 
-## Scripts
+Conversion scripts now live with their respective datasets in `preprocessing/`:
 
-- `convert_boughter_to_csv.py` - Converts Boughter FASTA (DNA) → CSV with protein sequences
-- `convert_harvey_csvs.py` - Combines Harvey high/low polyreactivity CSVs
-- `convert_jain_excel_to_csv.py` - Converts Jain Excel → CSV  
-- `convert_shehata_excel_to_csv.py` - Converts Shehata Excel → CSV
+- **Boughter:** `preprocessing/boughter/stage1_dna_translation.py`
+- **Harvey:** `preprocessing/harvey/step1_convert_raw_csvs.py`
+- **Jain:** `preprocessing/jain/step1_convert_excel_to_csv.py`
+- **Shehata:** `preprocessing/shehata/step1_convert_excel_to_csv.py`
 
-## Usage
+## Rationale
 
-Run these BEFORE training if you need to regenerate the CSV files from source data.
+Following industry-standard **dataset-centric organization**:
+- All preprocessing for a dataset lives in ONE directory
+- Consistent with HuggingFace, TensorFlow datasets, PyTorch patterns
+- Easier to discover and maintain
 
-**Note:** The main preprocessing pipeline uses `preprocessing/process_*.py` scripts, which may call these conversion scripts internally.
+## Legacy Scripts
+
+See `legacy/` for historical incorrect implementations (archived for reference).

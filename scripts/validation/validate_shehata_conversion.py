@@ -150,7 +150,7 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
 
     if not fragments_dir.exists():
         print(f"  ℹ Fragment directory not found: {fragments_dir}")
-        print("  (Run preprocessing/process_shehata.py to generate fragments)")
+        print("  (Run preprocessing/shehata/step2_extract_fragments.py to generate fragments)")
         return True  # Not an error if fragments haven't been generated yet
 
     fragment_files = list(fragments_dir.glob("*.csv"))

@@ -10,7 +10,7 @@
 ## Overview of Methods
 
 ### Method 1a: Python Script – Shehata (RECOMMENDED) ⭐
-- **Tool:** `scripts/conversion/convert_shehata_excel_to_csv.py`
+- **Tool:** `preprocessing/shehata/step1_convert_excel_to_csv.py`
 - **Pros:** Full control, validation built-in, reproducible, transparent
 - **Cons:** Requires Python environment
 - **Validation:** Multi-method cross-checking with `scripts/validation/validate_shehata_conversion.py`
@@ -51,7 +51,7 @@ pip install pandas openpyxl
 cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
 
 # Run conversion script (interactive)
-python3 scripts/conversion/convert_shehata_excel_to_csv.py
+python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 ```
 
 **Interactive prompts:**
@@ -282,7 +282,7 @@ df_processed.to_csv('test_datasets/shehata/processed/shehata.csv', index=False)
 ### Step 1: Convert
 ```bash
 cd /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
-python3 scripts/conversion/convert_shehata_excel_to_csv.py
+python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 ```
 
 ### Step 2: Validate
@@ -401,7 +401,7 @@ diff verify1.log verify2.log
 
 ```bash
 # Method 1: Python script
-python3 scripts/conversion/convert_shehata_excel_to_csv.py
+python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 
 # Method 2: in2csv + manual processing
 in2csv test_datasets/shehata/raw/shehata-mmc2.xlsx > mmc2_in2csv.csv
@@ -462,7 +462,7 @@ After conversion, document:
 
 ## Next Steps
 
-1. ✅ Scripts created (`scripts/conversion/convert_shehata_excel_to_csv.py`, `scripts/validation/validate_shehata_conversion.py`)
+1. ✅ Scripts created (`preprocessing/shehata/step1_convert_excel_to_csv.py`, `scripts/validation/validate_shehata_conversion.py`)
 2. 🔲 Run conversion interactively
 3. 🔲 Review and approve PSR threshold
 4. 🔲 Run validation checks
@@ -485,4 +485,4 @@ After conversion, document:
 - ✓ No manual steps
 - ✓ Generates comprehensive logs
 
-**Ready to run:** `python3 scripts/conversion/convert_shehata_excel_to_csv.py`
+**Ready to run:** `python3 preprocessing/shehata/step1_convert_excel_to_csv.py`

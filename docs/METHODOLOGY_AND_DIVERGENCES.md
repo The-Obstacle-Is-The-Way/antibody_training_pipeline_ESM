@@ -87,7 +87,7 @@ We successfully replicated the Novo Nordisk antibody non-specificity prediction 
 ✅ **EXACT MATCH on data processing**
 ⚠️ **Threshold question** (0.5 default vs 0.5495)
 
-- **Script**: `scripts/conversion/convert_shehata_excel_to_csv.py`
+- **Script**: `preprocessing/shehata/step1_convert_excel_to_csv.py`
 - **Labeling**: PSR score threshold (98.24th percentile = 0.5495)
 - **Test set**: 391 specific + 7 non-specific = **398 total** (extreme imbalance)
 - **Decision threshold**: Currently using default 0.5 (need to test 0.5495)
@@ -223,7 +223,7 @@ We will test multiple approaches to understand the gap:
 ### Testing
 - `preprocessing/jain/step1_convert_excel_to_csv.py:207` - >=3 threshold (4-group methodology)
 - `preprocessing/harvey/step1_convert_raw_csvs.py` - Direct pre-labeled data
-- `scripts/conversion/convert_shehata_excel_to_csv.py` - PSR threshold
+- `preprocessing/shehata/step1_convert_excel_to_csv.py` - PSR threshold
 
 ### Documentation
 - `docs/COMPLETE_VALIDATION_RESULTS.md` - All 4 datasets benchmarked

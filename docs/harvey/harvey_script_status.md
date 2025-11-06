@@ -199,7 +199,7 @@ After execution, verify:
 - **Audit request:** `docs/harvey_script_audit_request.md`
 - **Data sources:** `docs/harvey_data_sources.md`
 - **Cleaning log:** `docs/harvey_data_cleaning_log.md`
-- **Template:** `preprocessing/process_shehata.py`
+- **Template:** `preprocessing/shehata/step2_extract_fragments.py`
 - **Input data:** `test_datasets/harvey/processed/harvey.csv` (141,474 rows)
 
 ---

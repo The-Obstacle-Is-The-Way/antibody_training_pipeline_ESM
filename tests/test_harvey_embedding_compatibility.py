@@ -19,7 +19,7 @@ Test Coverage:
 
 Date: 2025-11-02
 Issue: #4 - Harvey dataset preprocessing
-P0 Fix: preprocessing/process_harvey.py:48
+P0 Fix: preprocessing/harvey/step2_extract_fragments.py:48
 """
 
 import sys
@@ -314,7 +314,7 @@ def main():
     print("=" * 70)
     print("P0 Blocker Fix: annotation.sequence_aa (gap-free)")
     print("Previous issue: annotation.sequence_alignment_aa (with gaps)")
-    print("Fix location: preprocessing/process_harvey.py:48")
+    print("Fix location: preprocessing/harvey/step2_extract_fragments.py:48")
 
     # Run all tests
     tests = [
