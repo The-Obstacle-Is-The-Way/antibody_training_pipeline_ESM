@@ -56,7 +56,7 @@ jain/
 - `scripts/validation/validate_jain_conversion.py`
   - Updated all default paths to use `jain/raw/` and `jain/processed/`
 
-- `scripts/testing/test_jain_novo_parity.py`
+- `preprocessing/jain/test_novo_parity.py`
   - Updated to use `test_datasets/jain/canonical/jain_86_novo_parity.csv`
 
 ---

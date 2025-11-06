@@ -306,7 +306,7 @@ failure_log = Path("test_datasets/harvey/fragments/failed_sequences.txt")
 # Results documented in docs/ASSAY_SPECIFIC_THRESHOLDS.md
 ```
 
-**5. scripts/testing/test_harvey_psr_threshold.py** (1 path reference)
+**5. preprocessing/harvey/test_psr_threshold.py** (1 path reference)
 ```python
 # Line 73: Harvey file path
 # OLD:
@@ -581,7 +581,7 @@ grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
 - Update preprocessing/harvey/step2_extract_fragments.py (3 path references, failure log, docstrings)
 - Update scripts/validation/validate_fragments.py (1 path reference)
 - Update scripts/rethreshold_harvey.py (1 path reference)
-- Update scripts/testing/test_harvey_psr_threshold.py (1 path reference)
+- Update preprocessing/harvey/test_psr_threshold.py (1 path reference)
 - Update tests/test_harvey_embedding_compatibility.py (5 path references)
 - **Total:** 6 files, 15 path references
 

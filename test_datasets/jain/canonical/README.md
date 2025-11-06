@@ -124,7 +124,7 @@ To verify parity:
 
 ```bash
 # Test P5e-S2
-python3 scripts/testing/test_jain_novo_parity.py
+python3 preprocessing/jain/test_novo_parity.py
 
 # Test OLD method
 python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \

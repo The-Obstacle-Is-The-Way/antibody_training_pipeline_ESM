@@ -311,12 +311,12 @@
 **Purpose:** OLD version of Novo parity verification
 
 **What it does:**
-- IDENTICAL logic to scripts/testing/test_jain_novo_parity.py
+- IDENTICAL logic to preprocessing/jain/test_novo_parity.py
 - BUT uses OLD file path: `VH_only_jain_test_PARITY_86.csv` (deprecated)
 - Uses OLD column name: `sequence` (should be `vh_sequence`)
 
 **Why delete:**
-- 🚨 **DUPLICATE** of scripts/testing/test_jain_novo_parity.py (newer version)
+- 🚨 **DUPLICATE** of preprocessing/jain/test_novo_parity.py (newer version)
 - 🚨 **DEPRECATED** - references OLD file and column names
 - ✅ Newer version in scripts/testing/ uses correct paths
 - ✅ Same functionality, just outdated references
@@ -370,7 +370,7 @@ scripts/validation/audit_boughter_training_qc.py
 scripts/validation/validate_jain_conversion.py
   → preprocessing/jain/validate_conversion.py
 
-scripts/testing/test_jain_novo_parity.py
+preprocessing/jain/test_novo_parity.py
   → preprocessing/jain/test_novo_parity.py
 ```
 
@@ -382,7 +382,7 @@ scripts/validation/validate_shehata_conversion.py
 
 **Harvey (1 script):**
 ```
-scripts/testing/test_harvey_psr_threshold.py
+preprocessing/harvey/test_psr_threshold.py
   → preprocessing/harvey/test_psr_threshold.py
 ```
 

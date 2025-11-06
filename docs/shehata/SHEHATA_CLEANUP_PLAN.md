@@ -168,8 +168,8 @@ fragments_dir = Path("test_datasets/shehata")
 
 **Delete these root-level scripts:**
 ```bash
-rm scripts/convert_jain_excel_to_csv.py        # Use scripts/conversion/ version
-rm scripts/convert_harvey_csvs.py              # Use scripts/conversion/ version
+rm scripts/convert_jain_excel_to_csv.py        # Moved to preprocessing/
+rm scripts/convert_harvey_csvs.py              # Moved to preprocessing/
 rm scripts/validate_jain_conversion.py         # Use scripts/validation/ version
 rm scripts/validate_fragments.py               # Use scripts/validation/ version
 ```

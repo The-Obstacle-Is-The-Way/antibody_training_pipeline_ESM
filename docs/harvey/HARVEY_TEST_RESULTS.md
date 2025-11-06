@@ -260,7 +260,7 @@ ls models/boughter_vh_esm1v_logreg.pkl
 ls test_datasets/harvey/fragments/VHH_only_harvey.csv
 
 # 3. Run inference
-python3 scripts/testing/test_harvey_psr_threshold.py
+python3 preprocessing/harvey/test_psr_threshold.py
 
 # Expected output:
 # - Confusion Matrix: [[18318, 50944], [3293, 68466]]
