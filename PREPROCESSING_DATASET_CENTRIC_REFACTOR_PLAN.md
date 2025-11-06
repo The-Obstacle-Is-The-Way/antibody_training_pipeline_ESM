@@ -18,10 +18,12 @@
 **Target State:** CONSISTENT - All datasets follow Boughter pattern
 
 **Impact:**
-- Move 6 files (3 conversion scripts + 3 preprocessing scripts)
-- Create 3 new dataset subdirectories
-- Create 3 new READMEs
-- Update references in validation scripts
+- **Code:** Move 6 files (3 conversion scripts + 3 preprocessing scripts)
+- **Structure:** Create 3 new dataset subdirectories + 4 __init__.py files
+- **Documentation:** Create 4 new READMEs + update 30+ existing docs/READMEs
+- **Imports:** Fix 2 validation scripts (clean package imports)
+- **Messages:** Update 3 script output messages
+- **Total files affected:** ~45 files (6 moves, 8 new, 30+ updates)
 - **NO changes to data files or test datasets**
 
 **Risk Level:** LOW
@@ -1330,22 +1332,16 @@ python3 preprocessing/harvey/step2_extract_fragments.py --help
 ```bash
 git add -A
 
-git commit -m "refactor: Reorganize preprocessing to dataset-centric structure
+git commit -m "refactor: Reorganize preprocessing to dataset-centric structure (12 phases)
 
 BREAKING CHANGE: Preprocessing scripts moved to dataset subdirectories
 
-This refactor follows industry-standard dataset-centric organization
-pattern (HuggingFace, TensorFlow datasets, PyTorch torchvision).
+This comprehensive refactor follows industry-standard dataset-centric
+organization pattern (HuggingFace, TensorFlow datasets, PyTorch).
 
-Changes:
-- Move conversion scripts to preprocessing/{dataset}/step1_*.py
-- Move preprocessing scripts to preprocessing/{dataset}/step2_*.py
-- Create per-dataset READMEs with complete pipeline docs
-- Update scripts/conversion/README.md to redirect
-- Fix import paths in validation scripts
-- All datasets now follow consistent Boughter pattern
+## Summary of Changes (~49 files affected)
 
-File moves (git history preserved):
+### Code Moves (6 files - git history preserved)
 - scripts/conversion/convert_harvey_csvs.py
   → preprocessing/harvey/step1_convert_raw_csvs.py
 - preprocessing/process_harvey.py
@@ -1359,26 +1355,63 @@ File moves (git history preserved):
 - preprocessing/process_shehata.py
   → preprocessing/shehata/step2_extract_fragments.py
 
-New files:
-- preprocessing/README.md (overview of all datasets)
-- preprocessing/harvey/README.md (Harvey pipeline docs)
-- preprocessing/jain/README.md (Jain pipeline docs)
-- preprocessing/shehata/README.md (Shehata pipeline docs)
+### New Files (8 files)
+Package structure:
+- preprocessing/__init__.py (makes preprocessing a proper Python package)
+- preprocessing/harvey/__init__.py
+- preprocessing/jain/__init__.py
+- preprocessing/shehata/__init__.py
 
-Updated files:
+Documentation:
+- preprocessing/README.md (comprehensive overview of all 4 datasets)
+- preprocessing/harvey/README.md (complete Harvey pipeline docs)
+- preprocessing/jain/README.md (complete Jain pipeline docs)
+- preprocessing/shehata/README.md (complete Shehata pipeline docs)
+
+### Updated Files (35+ files)
+
+Core Scripts (5 files):
 - scripts/conversion/README.md (redirect to new locations)
-- scripts/validation/validate_jain_conversion.py (fix import)
-- scripts/validation/validate_shehata_conversion.py (fix import)
+- scripts/validation/validate_jain_conversion.py (clean package import)
+- scripts/validation/validate_shehata_conversion.py (clean package import)
+- preprocessing/harvey/step1_convert_raw_csvs.py (update output messages)
+- preprocessing/jain/step1_convert_excel_to_csv.py (update output messages)
 
-Benefits:
-✅ Consistent structure across all datasets
-✅ All preprocessing for dataset X in preprocessing/X/
-✅ Easier discoverability and maintenance
-✅ Better documentation (per-dataset READMEs)
-✅ Follows professional ML repository patterns
+Documentation (30+ files):
+- Harvey docs (7 files): docs/harvey/*.md, docs/harvey_data_sources.md
+- Jain docs (8 files): docs/jain/*.md, scripts/conversion/legacy/*.md
+- Shehata docs (7 files): docs/shehata/*.md
+- Test dataset READMEs (12 files): test_datasets/**/*.md
+- Cross-dataset docs (5+ files): docs/*.md, README.md
+- Test files (1 file): tests/test_harvey_embedding_compatibility.py
 
-All core datasets (Boughter, Harvey, Jain, Shehata) remain functional.
-No changes to data files or test datasets.
+## Key Improvements
+
+✅ Consistent structure: All datasets follow Boughter pattern
+✅ Discoverability: All preprocessing for dataset X in preprocessing/X/
+✅ Clean imports: No sys.path manipulation (proper Python packages)
+✅ Complete docs: Each dataset has full pipeline README
+✅ Updated references: All 30+ docs point to new locations
+✅ Industry standard: Matches HuggingFace, TensorFlow, PyTorch patterns
+
+## Validation Performed
+
+✅ Git history preserved (git log --follow verified)
+✅ No broken imports (validation scripts tested)
+✅ No old path references in active code (grep verified)
+✅ Script output messages updated
+✅ All documentation updated
+
+## Safety
+
+✅ Backup on main branch (commit a868338)
+✅ No changes to data files or test datasets
+✅ No logic changes (only file locations and imports)
+✅ Easy rollback: git reset --hard HEAD~1
+
+All core datasets (Boughter, Harvey, Jain, Shehata) remain fully functional.
+
+See PREPROCESSING_DATASET_CENTRIC_REFACTOR_PLAN.md for complete execution details.
 
 🤖 Generated with Claude Code
 
@@ -1442,18 +1475,32 @@ git checkout main
 - preprocessing/preprocess_jain_p5e_s2.py → preprocessing/jain/step2_preprocess_p5e_s2.py
 - preprocessing/process_shehata.py → preprocessing/shehata/step2_extract_fragments.py
 
-**Created (4 files):**
-- preprocessing/README.md
-- preprocessing/harvey/README.md
-- preprocessing/jain/README.md
-- preprocessing/shehata/README.md
+**Created (8 files):**
+- preprocessing/__init__.py (package structure)
+- preprocessing/harvey/__init__.py
+- preprocessing/jain/__init__.py
+- preprocessing/shehata/__init__.py
+- preprocessing/README.md (overview)
+- preprocessing/harvey/README.md (pipeline docs)
+- preprocessing/jain/README.md (pipeline docs)
+- preprocessing/shehata/README.md (pipeline docs)
 
-**Updated (3 files):**
-- scripts/conversion/README.md (redirect)
-- scripts/validation/validate_jain_conversion.py (fix import)
-- scripts/validation/validate_shehata_conversion.py (fix import)
+**Updated - Core Scripts (5 files):**
+- scripts/conversion/README.md (redirect to new locations)
+- scripts/validation/validate_jain_conversion.py (fix import path)
+- scripts/validation/validate_shehata_conversion.py (fix import path)
+- preprocessing/harvey/step1_convert_raw_csvs.py (update output messages)
+- preprocessing/jain/step1_convert_excel_to_csv.py (update output messages)
 
-**Total:** 13 files affected (6 moves, 4 new, 3 updates)
+**Updated - Documentation (30+ files):**
+- Harvey docs (7 files): docs/harvey/*.md, docs/harvey_data_sources.md
+- Jain docs (8 files): docs/jain/*.md, scripts/conversion/legacy/*.md
+- Shehata docs (7 files): docs/shehata/*.md
+- Test dataset READMEs (12 files): test_datasets/{harvey,jain,shehata}/**/*.md
+- Cross-dataset docs (5+ files): docs/*.md, README.md
+- Test files (1 file): tests/test_harvey_embedding_compatibility.py
+
+**Total:** ~49 files affected (6 moves, 8 new, 35 updates)
 
 ---
 
@@ -1482,14 +1529,32 @@ git checkout main
 
 **After refactor, verify:**
 
+**Structure:**
 - [ ] All 4 datasets have subdirectories in preprocessing/
-- [ ] Each dataset has README.md with complete pipeline
-- [ ] Git history preserved (`git log --follow` works)
-- [ ] No broken imports (validation scripts work)
+- [ ] Each dataset has README.md with complete pipeline docs
+- [ ] All __init__.py files created (preprocessing/ + 3 dataset subdirs)
+- [ ] preprocessing/README.md provides comprehensive overview
+
+**Code:**
+- [ ] Git history preserved (`git log --follow` works for all 6 moved files)
+- [ ] No broken imports (validation scripts use clean package imports)
+- [ ] No sys.path manipulation needed (proper Python packages)
+- [ ] Script output messages reference new paths
+
+**Documentation:**
 - [ ] scripts/conversion/README.md redirects to new locations
-- [ ] No references to old paths in active code
-- [ ] Commit message documents all changes
-- [ ] preprocessing/README.md provides overview
+- [ ] All Harvey docs updated (7 files)
+- [ ] All Jain docs updated (8+ files)
+- [ ] All Shehata docs updated (7 files)
+- [ ] All test dataset READMEs updated (12 files)
+- [ ] Cross-dataset docs updated (5+ files)
+- [ ] Test files updated (1 file)
+
+**Validation:**
+- [ ] No references to old paths in active code (grep verification)
+- [ ] Validation scripts import successfully
+- [ ] All preprocessing scripts can be found via new paths
+- [ ] Commit message documents all changes comprehensively
 
 ---
 
@@ -1519,38 +1584,57 @@ git checkout main
 
 ## Timeline Estimate
 
-**Execution time:** ~30 minutes
+**Execution time:** ~60-90 minutes
 
-- Phase 1-3 (moves): 10 minutes
-- Phase 4-6 (fixes + READMEs): 15 minutes
-- Phase 7-9 (validation + commit): 5 minutes
+**Breakdown:**
+- Phase 1: Create directories (1 min)
+- Phase 2: Move conversion scripts (3 min)
+- Phase 3: Move preprocessing scripts (3 min)
+- Phase 4: Create __init__.py files (2 min)
+- Phase 5: Fix validation script imports (5 min)
+- Phase 6: Update script output messages (5 min)
+- Phase 7: Update documentation references (15-20 min)
+  - 7.1 Harvey docs: 3 min
+  - 7.2 Jain docs: 3 min
+  - 7.3 Shehata docs: 3 min
+  - 7.4 Test dataset READMEs: 3 min
+  - 7.5 Cross-dataset docs: 3 min
+  - 7.6 Test files: 1 min
+- Phase 8: Create dataset READMEs (10 min)
+- Phase 9: Update scripts/conversion/README.md (2 min)
+- Phase 10: Clean up (1 min)
+- Phase 11: Validation & testing (10-15 min)
+- Phase 12: Commit (5 min)
 
-**Total:** Conservative estimate with testing
+**Total:** 1-1.5 hours (conservative estimate with thorough validation)
 
 ---
 
 ## Questions for Senior Review
 
 1. **Naming convention:** `step1_*.py` vs `stage1_*.py` vs `01_*.py`?
-   - Proposed: `step1_` for Harvey/Jain/Shehata (consistent with multi-step)
-   - Keep: `stage1_` for Boughter (already established)
+   - ✅ **Decided:** `step1_` for Harvey/Jain/Shehata (consistent with multi-step pattern)
+   - ✅ **Keep:** `stage1_` for Boughter (already established, don't change working pattern)
 
 2. **scripts/conversion/ fate:**
-   - Proposed: Keep with redirect README + legacy/ folder
-   - Alternative: Delete entirely (except legacy/)
+   - ✅ **Decided:** Keep with redirect README + legacy/ folder (Option B)
+   - Provides clear migration path for users
 
 3. **Validation script location:**
+   - ❓ **Open Question:** Should we move validation scripts too?
    - Current: scripts/validation/validate_*_conversion.py
-   - Future: Move to preprocessing/{dataset}/validate_conversion.py?
+   - Future: preprocessing/{dataset}/validate_conversion.py?
+   - **Recommendation:** Keep in scripts/validation/ for now (separate from preprocessing)
 
-4. **Import style preference:**
-   - Option A: sys.path manipulation
-   - Option B: Proper module imports (from preprocessing.jain.step1_* import)
+4. **Import strategy:**
+   - ✅ **Decided:** Use proper Python packages with __init__.py files
+   - Clean imports: `from preprocessing.jain.step1_convert_excel_to_csv import ...`
+   - No sys.path manipulation needed
 
-5. **Should we add __init__.py files?**
-   - preprocessing/__init__.py
-   - preprocessing/harvey/__init__.py, etc.
-   - Makes proper module imports easier
+5. **Documentation automation:**
+   - ❓ **Open Question:** Should we create a script to automate the sed replacements?
+   - Or manually execute each Phase 7 substep for safety?
+   - **Recommendation:** Manual execution for first run (this refactor), script for future use
 
 ---
 
