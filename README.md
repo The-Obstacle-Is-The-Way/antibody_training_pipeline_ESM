@@ -3,7 +3,7 @@
 <div align="center">
   <img src="assets/leeroy_jenkins.png" alt="Leeroy Jenkins" width="300"/>
   <br>
-  <em>"At least I have chicken."</em>
+  <em>"Alright chums, (I'm back)! Let's do this..."</em>
 </div>
 
 ---
