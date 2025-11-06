@@ -34,26 +34,31 @@ preprocessing/
 │   ├── validate_stage1.py              ✅ Validation included
 │   ├── validate_stage4.py              ✅ Validation included
 │   └── validate_stages2_3.py           ✅ Validation included
-├── preprocess_jain_p5e_s2.py           ⚠️  LEGACY (old paths)
-├── process_jain.py                     ✅ CURRENT (new 4-tier paths)
-├── process_harvey.py                   ✅ CURRENT
-└── process_shehata.py                  ✅ CURRENT
+├── preprocess_jain_p5e_s2.py           ✅ CURRENT (4-tier paths)
+├── process_jain.py                     ❌ LEGACY (old flat paths)
+├── process_harvey.py                   ✅ CURRENT (4-tier paths)
+└── process_shehata.py                  ✅ CURRENT (4-tier paths)
 ```
 
-**Key Finding:** `preprocess_jain_p5e_s2.py` uses OLD paths (pre-reorganization):
+**🚨 CRITICAL FINDING:** `process_jain.py` uses OLD flat paths (pre-reorganization):
+
 ```python
-# OLD PATHS (preprocess_jain_p5e_s2.py)
-INPUT_137 = "test_datasets/jain_with_private_elisa_FULL.csv"  # ❌ Wrong
-OUTPUT_86 = "test_datasets/jain/jain_86_novo_parity.csv"       # ❌ Wrong
+# ❌ BAD PATHS (process_jain.py) - FILES DON'T EXIST
+INPUT_137 = "test_datasets/jain_with_private_elisa_FULL.csv"  # ❌ MISSING
+OUTPUT_86 = "test_datasets/jain/jain_86_novo_parity.csv"       # ❌ MISSING
 
-# NEW PATHS (process_jain.py)
-INPUT_137 = "test_datasets/jain/processed/jain_with_private_elisa_FULL.csv"  # ✅ Correct
-OUTPUT_86 = "test_datasets/jain/canonical/jain_86_novo_parity.csv"           # ✅ Correct
+# ✅ CORRECT PATHS (preprocess_jain_p5e_s2.py) - FILES EXIST
+INPUT_137 = "test_datasets/jain/processed/jain_with_private_elisa_FULL.csv"  # ✅ EXISTS (37K)
+OUTPUT_86 = "test_datasets/jain/canonical/jain_86_novo_parity.csv"           # ✅ EXISTS (44K)
 ```
+
+**Documentation Confirms:**
+- `docs/jain/JAIN_REORGANIZATION_COMPLETE.md` line 52: **"preprocessing/preprocess_jain_p5e_s2.py"** is canonical
+- `test_datasets/jain/README.md`: References 4-tier structure (raw/processed/canonical/fragments)
 
 **Status:**
 - ✅ **Boughter:** Clean multi-stage pipeline in subdirectory
-- ⚠️  **Jain:** Has duplicate script with old paths (DELETE preprocess_jain_p5e_s2.py)
+- ❌ **Jain:** Has duplicate script with WRONG paths (DELETE `process_jain.py`)
 - ✅ **Harvey:** Single-stage pipeline, correct paths
 - ✅ **Shehata:** Single-stage pipeline, correct paths
 
@@ -104,11 +109,13 @@ scripts/
 
 ### 🚨 P0: Critical Issues
 
-1. **Duplicate Jain preprocessing script with OLD PATHS**
-   - `preprocessing/preprocess_jain_p5e_s2.py` uses pre-reorganization paths
-   - If run accidentally, could write outputs to WRONG locations
+1. **Duplicate Jain preprocessing script with OLD FLAT PATHS**
+   - `preprocessing/process_jain.py` uses pre-reorganization flat paths
+   - Targets files that DON'T EXIST (test_datasets/jain_*.csv instead of test_datasets/jain/processed/*.csv)
+   - If run accidentally, will FAIL or worse - create files in WRONG locations
    - **Risk:** Data corruption, confusion about which script is canonical
-   - **Action:** DELETE or move to `preprocessing/legacy/`
+   - **Action:** DELETE `preprocessing/process_jain.py` or move to `preprocessing/legacy/`
+   - **Keep:** `preprocessing/preprocess_jain_p5e_s2.py` (this is the CORRECT script)
 
 ### ⚠️ P1: Organizational Issues
 
