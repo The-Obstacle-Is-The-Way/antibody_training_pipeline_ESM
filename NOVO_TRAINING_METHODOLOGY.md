@@ -36,17 +36,28 @@ The Boughter dataset was parsed into **three groups** following Boughter et al. 
 **Quote from paper (Lines 239-241):**
 > "Following this, 16 different antibody fragment sequences were assembled..."
 
-**Table 4 from paper** defines the 16 fragment types:
+**The 16 fragment types** (reconciling paper statement with Table 4 categories):
 
-| Fragment Type | Description |
-|--------------|-------------|
-| VL, VH | Individual variable domains |
-| L-CDR1, L-CDR2, L-CDR3 | Individual light chain CDRs |
-| H-CDR1, H-CDR2, H-CDR3 | Individual heavy chain CDRs |
-| VH/VL joined | Concatenated variable domains |
-| L-CDRs joined | Concatenated light CDRs |
-| H-CDRs joined | Concatenated heavy CDRs |
-| H/L-CDRs joined | All CDRs concatenated |
+| # | Fragment Type | Description |
+|---|---------------|-------------|
+| 1 | VH | Heavy variable domain |
+| 2 | VL | Light variable domain |
+| 3 | H-CDR1 | Heavy CDR1 only |
+| 4 | H-CDR2 | Heavy CDR2 only |
+| 5 | H-CDR3 | Heavy CDR3 only |
+| 6 | L-CDR1 | Light CDR1 only |
+| 7 | L-CDR2 | Light CDR2 only |
+| 8 | L-CDR3 | Light CDR3 only |
+| 9 | H-CDRs | Heavy CDRs joined (H-CDR1+H-CDR2+H-CDR3) |
+| 10 | L-CDRs | Light CDRs joined (L-CDR1+L-CDR2+L-CDR3) |
+| 11 | H-FWRs | Heavy frameworks joined |
+| 12 | L-FWRs | Light frameworks joined |
+| 13 | VH+VL | Variable domains joined (paired) |
+| 14 | All-CDRs | All 6 CDRs joined (H-CDRs + L-CDRs) |
+| 15 | All-FWRs | All frameworks joined (H-FWRs + L-FWRs) |
+| 16 | Full | Complete antibody sequence |
+
+**Note:** Table 4 in the paper groups these into condensed categories (e.g., "VL, VH or an individual CDR sequence" and "A vectorised embedding of a joined sequence"), but the actual implementation uses all 16 fragments listed above.
 
 ---
 
@@ -73,7 +84,8 @@ The following PLMs were used for embedding:
 **CRITICAL SPECIFICATION:**
 - Pooling method: **Mean pooling**
 - Definition: Average of all token vectors
-- This is applied to the **final layer hidden states** of the model
+- **Layer choice:** Paper does NOT specify which layer (e.g., final layer, intermediate layer)
+- **Standard practice inference:** Using final layer hidden states is standard for ESM embeddings, but this is NOT explicitly stated by Novo
 
 ### 2.3 Additional Encoders Tested
 
@@ -154,9 +166,14 @@ Where:
 ### 5.2 Reported Performance
 
 **Top model: ESM 1v mean-mode VH-based LogisticReg**
-- 10-fold CV accuracy: **71%**
-- Jain dataset accuracy: **69%**
-- Harvey dataset: Not applicable (different assay)
+- 10-fold CV accuracy: **71%** (Boughter dataset, ELISA assay)
+- Jain dataset accuracy: **69%** (clinical antibodies, ELISA assay)
+- Shehata/Harvey datasets: **Evaluated qualitatively, no accuracy reported**
+  - Models were tested on PSR-scored antibodies (Section 2.7, Figure 3)
+  - Paper conclusion: "classifier did not appear to separate the PSR-scored specific and non-specific antibodies well"
+  - Reason: PSR assay measures a different "spectrum" of non-specificity than ELISA (assay mismatch)
+  - Evidence: Broad probability distributions across specific PSR antibodies, narrower distribution for non-specific PSR antibodies
+  - **No numerical accuracy metric provided** due to assay incompatibility
 
 ---
 
@@ -168,12 +185,14 @@ The following details are **NOT explicitly stated** in the paper:
 
 | Detail | Status | Impact |
 |--------|--------|--------|
+| **Which layer for embeddings** | **Not specified** | Paper says "average of all token vectors" but not which layer (final? intermediate?) |
 | Random seed/state | **Not specified** | Affects reproducibility |
 | Stratified vs regular K-fold | **Not specified** | Could affect class balance in folds |
 | LogisticReg hyperparameters | **Not specified** | Default sklearn settings assumed |
 | StandardScaler usage | **Not specified** | **CRITICAL - potential data leakage** |
 | Class weights/balancing | **Not specified** | May affect imbalanced classes |
 | Exact scikit-learn version | Version not specified (just referenced) | API changes possible |
+| Which ESM-1v variant (1-5) | **Not specified** | Five models exist with different random seeds |
 | How to handle "joined" sequences | **Not specified** | Concatenation with separator? Direct join? |
 | BOS/EOS token handling | **Not specified** | Included in mean pooling or excluded? |
 

@@ -81,10 +81,15 @@ XVQL...VTVSS,1.0   # Non-specific (4+ flags)
   dataset_name: "boughter_vh"
   train_file: ./train_datasets/boughter/canonical/VH_only_boughter_training.csv
   ```
-- **Fragment used:** VH only (top performer per Novo Figure 1D)
-- **Other fragments:** Available in `train_datasets/boughter/canonical/` directory
+- **Fragment used:** VH only (top performer per Novo Figure 1D, 71% accuracy)
+- **All 16 fragments available** in `train_datasets/boughter/strict_qc/`:
+  1. VH, 2. VL, 3-8. Individual CDRs (H-CDR1/2/3, L-CDR1/2/3),
+  9-10. Joined CDRs (H-CDRs, L-CDRs), 11-12. Frameworks (H-FWRs, L-FWRs),
+  13. VH+VL, 14. All-CDRs, 15. All-FWRs, 16. Full sequence
 
 **Status:** ✅ **PASS** - VH fragment correctly extracted and used (71% target accuracy)
+
+**Note:** Paper says "16 different antibody fragment sequences" but Table 4 groups them into condensed categories. Actual implementation confirmed via directory listing matches all 16.
 
 ---
 
@@ -138,7 +143,7 @@ mean_embeddings = sum_embeddings / sum_mask  # MEAN POOLING
 ```
 
 **Analysis:**
-- ✅ Uses `hidden_states[-1]` (final layer)
+- ✅ Uses `hidden_states[-1]` (final layer) ← **INFERRED** (Novo doesn't specify layer)
 - ✅ Excludes BOS (CLS) token
 - ✅ Excludes EOS token
 - ✅ Computes mean of remaining sequence tokens
@@ -146,7 +151,10 @@ mean_embeddings = sum_embeddings / sum_mask  # MEAN POOLING
 
 **Status:** ✅ **PASS** - Mean pooling correctly implemented
 
-**Note:** Novo doesn't specify whether to include/exclude BOS/EOS. Excluding them is standard practice and biologically sound (they're not amino acids).
+**Notes:**
+- Novo says "average of all token vectors" but does NOT specify which layer (final vs intermediate)
+- Using final layer `hidden_states[-1]` is standard practice for ESM embeddings
+- Novo doesn't specify whether to include/exclude BOS/EOS. Excluding them is standard practice and biologically sound (they're not amino acids)
 
 ---
 
@@ -354,6 +362,7 @@ if "recall" in metrics:  # ← This is SENSITIVITY
 
 | Item | Novo Says | Current Implementation | Assessment |
 |------|-----------|----------------------|------------|
+| **Which layer for embeddings** | "Average of all token vectors" (layer not specified) | `hidden_states[-1]` (final layer) | ✅ Standard practice |
 | **ESM-1v variant** | "ESM 1v" (unspecified which of 5) | `esm1v_t33_650M_UR90S_1` (variant 1) | ✅ Reasonable choice |
 | **Random seed** | Not specified | 42 (config line 37) | ✅ Good for reproducibility |
 | **Stratified CV** | Not specified | Yes (config line 42) | ✅ Best practice |
