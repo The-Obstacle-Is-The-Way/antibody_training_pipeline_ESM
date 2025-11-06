@@ -598,7 +598,7 @@ sed -i '' 's|scripts/conversion/convert_harvey_csvs|preprocessing/harvey/step1_c
 
 ### Phase 8: Create Dataset READMEs (3 new files)
 
-**6.1 Create preprocessing/harvey/README.md**
+**8.1 Create preprocessing/harvey/README.md**
 
 ```markdown
 # Harvey Dataset Preprocessing Pipeline
@@ -720,7 +720,7 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 
 ---
 
-**6.2 Create preprocessing/jain/README.md**
+**8.2 Create preprocessing/jain/README.md**
 
 ```markdown
 # Jain Dataset Preprocessing Pipeline
@@ -871,7 +871,7 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 
 ---
 
-**6.3 Create preprocessing/shehata/README.md**
+**8.3 Create preprocessing/shehata/README.md**
 
 ```markdown
 # Shehata Dataset Preprocessing Pipeline
@@ -1009,7 +1009,7 @@ See `scripts/analysis/analyze_threshold_optimization.py` for details.
 
 ---
 
-**6.4 Create preprocessing/README.md (Overview)**
+**8.4 Create preprocessing/README.md (Overview)**
 
 ```markdown
 # Antibody Dataset Preprocessing
@@ -1186,7 +1186,43 @@ uv sync
 
 ---
 
-### Phase 7: Clean Up Empty scripts/conversion/
+### Phase 9: Update scripts/conversion/README.md (Redirect)
+
+**Purpose:** Update the conversion README to redirect users to new locations
+
+**File:** `scripts/conversion/README.md`
+
+**Replace entire contents with:**
+
+```markdown
+# Data Conversion Scripts
+
+**⚠️  MOVED:** Conversion scripts have been reorganized.
+
+## New Locations (Dataset-Centric)
+
+Conversion scripts now live with their respective datasets in `preprocessing/`:
+
+- **Boughter:** `preprocessing/boughter/stage1_dna_translation.py`
+- **Harvey:** `preprocessing/harvey/step1_convert_raw_csvs.py`
+- **Jain:** `preprocessing/jain/step1_convert_excel_to_csv.py`
+- **Shehata:** `preprocessing/shehata/step1_convert_excel_to_csv.py`
+
+## Rationale
+
+Following industry-standard **dataset-centric organization**:
+- All preprocessing for a dataset lives in ONE directory
+- Consistent with HuggingFace, TensorFlow datasets, PyTorch patterns
+- Easier to discover and maintain
+
+## Legacy Scripts
+
+See `legacy/` for historical incorrect implementations (archived for reference).
+```
+
+---
+
+### Phase 10: Clean Up Empty scripts/conversion/
 
 **Option A: Delete scripts/conversion/ entirely**
 ```bash
@@ -1206,9 +1242,9 @@ rm scripts/conversion/README.md
 
 ---
 
-### Phase 8: Validation & Testing
+### Phase 11: Validation & Testing
 
-**8.1 Check Git Status**
+**11.1 Check Git Status**
 ```bash
 git status --short
 ```
@@ -1238,7 +1274,7 @@ D  scripts/conversion/convert_shehata_excel_to_csv.py
 
 ---
 
-**8.2 Verify Git History Preserved**
+**11.2 Verify Git History Preserved**
 ```bash
 # Check Harvey conversion script history
 git log --follow preprocessing/harvey/step1_convert_raw_csvs.py | head -10
@@ -1251,7 +1287,7 @@ git log --follow preprocessing/jain/step2_preprocess_p5e_s2.py | head -10
 
 ---
 
-**8.3 Test Imports**
+**11.3 Test Imports**
 ```bash
 # Check if validation scripts can import
 python3 -c "import sys; sys.path.insert(0, 'preprocessing/jain'); from step1_convert_excel_to_csv import load_data; print('✅ Import works')"
@@ -1259,7 +1295,7 @@ python3 -c "import sys; sys.path.insert(0, 'preprocessing/jain'); from step1_con
 
 ---
 
-**8.4 Verify No Broken References**
+**11.4 Verify No Broken References**
 ```bash
 # Search for old paths in all Python files
 grep -r "scripts/conversion/convert_harvey" . --include="*.py" | grep -v ".git" | grep -v "legacy"
@@ -1277,7 +1313,7 @@ grep -r "preprocessing/process_harvey\|preprocessing/preprocess_jain_p5e_s2\|pre
 
 ---
 
-**8.5 Dry-Run Test (Optional)**
+**11.5 Dry-Run Test (Optional)**
 ```bash
 # Test Harvey pipeline (dry-run, don't write files)
 python3 preprocessing/harvey/step1_convert_raw_csvs.py --help
@@ -1288,7 +1324,7 @@ python3 preprocessing/harvey/step2_extract_fragments.py --help
 
 ---
 
-### Phase 9: Commit Changes
+### Phase 12: Commit Changes
 
 **Commit message:**
 ```bash
