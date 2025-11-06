@@ -358,7 +358,8 @@ note: |
   flags_total labeling from the paper. The ELISA-based labeling is
   the single source of truth (SSOT) for all jain data.
 
-  Old fragments moved to: test_datasets/jain/fragments_legacy_flags_total/
+  Legacy fragments (67/27/43 distribution) are no longer tracked in the working tree.
+  Recover from git history if needed (commit 09d6121).
 """
 
     manifest_path = output_dir / "manifest.yml"
@@ -431,12 +432,11 @@ def main():
     print("=" * 70)
 
     print("\nNext steps:")
+    print("  1. Run integration tests to verify the 94/22/21 distribution")
     print(
-        "  1. Ensure legacy fragments remain quarantined in "
-        "test_datasets/jain/fragments_legacy_flags_total/"
+        "  2. Commit changes with a clear provenance message "
+        "(legacy 67/27/43 fragments remain available in git history at commit 09d6121)"
     )
-    print("  2. Run integration tests to verify the 94/22/21 distribution")
-    print("  3. Commit changes with a clear provenance message")
 
 
 if __name__ == "__main__":
