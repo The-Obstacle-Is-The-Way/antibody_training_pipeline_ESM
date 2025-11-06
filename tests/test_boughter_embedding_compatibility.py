@@ -42,7 +42,7 @@ def test_gap_characters():
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    boughter_dir = Path("train_datasets/boughter")
+    boughter_dir = Path("train_datasets/boughter/annotated")
     fragment_files = [
         "VH_only_boughter.csv",
         "VL_only_boughter.csv",
@@ -104,7 +104,7 @@ def test_amino_acid_validation():
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    boughter_dir = Path("train_datasets/boughter")
+    boughter_dir = Path("train_datasets/boughter/annotated")
 
     # Check critical files for full antibody model
     test_files = [
