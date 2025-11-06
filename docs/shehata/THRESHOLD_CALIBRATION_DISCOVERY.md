@@ -326,9 +326,9 @@ If we use Shehata's threshold (0.5495) on Jain:
 ## Files Modified
 
 - **`classifier.py:125-165`** - Added `assay_type` parameter to `predict()`
-- **`analyze_thresholds.py`** - Threshold optimization script
+- ~~**`analyze_thresholds.py`**~~ - Threshold optimization script (DELETED - experimental, purpose fulfilled)
 - **`test_assay_specific_thresholds.py`** - Demonstration and validation
-- **`docs/ASSAY_SPECIFIC_THRESHOLDS.md`** - Comprehensive user-facing documentation
+- **`docs/ASSAY_SPECIFIC_THRESHOLDS.md`** - Comprehensive user-facing documentation (production doc)
 - **`docs/shehata/THRESHOLD_CALIBRATION_DISCOVERY.md`** - This technical note
 
 ---

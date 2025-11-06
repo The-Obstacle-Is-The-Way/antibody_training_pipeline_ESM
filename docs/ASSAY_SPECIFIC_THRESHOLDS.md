@@ -28,7 +28,7 @@ Using a single threshold (default 0.5) across all datasets leads to:
 - **Good performance on ELISA datasets** (Jain: 67.0% accuracy)
 - **Suboptimal performance on PSR datasets** (Shehata: 52.5% → should be 58.8%)
 
-Our threshold analysis (`analyze_thresholds.py`) found:
+Our threshold analysis experiments found:
 
 | Dataset | Assay | Optimal Threshold | Novo Benchmark Accuracy | Our Accuracy (default 0.5) |
 |---------|-------|-------------------|-------------------------|---------------------------|
@@ -193,7 +193,7 @@ predictions = model.predict(X_embeddings, threshold=0.6)
 
 ### Probability Distribution Analysis
 
-Our `analyze_thresholds.py` revealed that the probability distributions differ between ELISA and PSR datasets:
+Threshold optimization experiments revealed that the probability distributions differ between ELISA and PSR datasets:
 
 **Jain (ELISA):**
 - Specific antibodies: Mean p(non-spec) = 0.420, Std = 0.173
@@ -300,10 +300,10 @@ def predict(self, X: np.ndarray, threshold: float = 0.5, assay_type: str = None)
     return predictions
 ```
 
-### Analysis Scripts
+### Related Scripts
 
-- **`analyze_thresholds.py`** - Threshold optimization analysis
-- **`test_assay_specific_thresholds.py`** - Demo of assay-specific usage
+- ~~**`analyze_thresholds.py`**~~ - Threshold optimization analysis (DELETED - experimental, purpose fulfilled)
+- **`scripts/testing/demo_assay_specific_thresholds.py`** - Demo of assay-specific usage (production)
 
 ---
 
