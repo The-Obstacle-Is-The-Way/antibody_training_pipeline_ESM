@@ -43,32 +43,32 @@ This directory contains processed antibody sequences from the Boughter et al. 20
 
 Each dataset is available in **16 different antibody fragments** (from Novo Table 4):
 
-### Sequence Counts by Fragment and QC Level
+### Sequence Counts by Fragment (Production)
 
-| Fragment      | Boughter QC (All) | Boughter QC (Training) | Strict QC | Difference |
-|---------------|-------------------|------------------------|-----------|------------|
+| Fragment | All Sequences | Training Subset |
+|----------|---------------|-----------------|
 | **Variable Domains** |
-| VH_only       | 1,065             | 914                    | **852**   | -62 (VH frameworks) |
-| VL_only       | 1,065             | 914                    | **900**   | -14 (VL frameworks) |
-| VH+VL         | 1,065             | 914                    | **840**   | -74 (both chains) |
-| Full          | 1,065             | 914                    | **840**   | -74 (both chains) |
+| VH_only | 1,065 | **914** |
+| VL_only | 1,065 | **914** |
+| VH+VL | 1,065 | **914** |
+| Full | 1,065 | **914** |
 | **Heavy Chain CDRs** |
-| H-CDR1        | 1,065             | 914                    | **914**   | No change |
-| H-CDR2        | 1,065             | 914                    | **914**   | No change |
-| H-CDR3        | 1,065             | 914                    | **914**   | No change |
-| H-CDRs        | 1,065             | 914                    | **914**   | No change |
+| H-CDR1 | 1,065 | **914** |
+| H-CDR2 | 1,065 | **914** |
+| H-CDR3 | 1,065 | **914** |
+| H-CDRs | 1,065 | **914** |
 | **Light Chain CDRs** |
-| L-CDR1        | 1,065             | 914                    | **914**   | No change |
-| L-CDR2        | 1,065             | 914                    | **914**   | No change |
-| L-CDR3        | 1,065             | 914                    | **914**   | No change |
-| L-CDRs        | 1,065             | 914                    | **914**   | No change |
+| L-CDR1 | 1,065 | **914** |
+| L-CDR2 | 1,065 | **914** |
+| L-CDR3 | 1,065 | **914** |
+| L-CDRs | 1,065 | **914** |
 | **Combined** |
-| All-CDRs      | 1,065             | 914                    | **914**   | No change |
-| H-FWRs        | 1,065             | 914                    | **852**   | -62 (VH frameworks) |
-| L-FWRs        | 1,065             | 914                    | **900**   | -14 (VL frameworks) |
-| All-FWRs      | 1,065             | 914                    | **840**   | -74 (both chains) |
+| All-CDRs | 1,065 | **914** |
+| H-FWRs | 1,065 | **914** |
+| L-FWRs | 1,065 | **914** |
+| All-FWRs | 1,065 | **914** |
 
-**Key Insight:** CDR-only fragments have no change in strict QC because Boughter's QC already filters X in CDRs. Framework and full-sequence fragments show reductions due to X in framework regions.
+**Key Insight:** All 16 fragments use the same 914-sequence training subset after filtering to `include_in_training==True` (0 and 4+ ELISA flags only).
 
 ---
 
