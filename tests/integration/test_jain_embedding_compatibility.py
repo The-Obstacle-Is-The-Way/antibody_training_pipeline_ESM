@@ -371,10 +371,11 @@ def test_data_integrity():
         print(
             f"\n  ✓ PASS: All {len(expected_files)} files present with {expected_rows} rows"
         )
-        return True
     else:
         print("\n  ✗ FAIL: Data integrity issues detected")
-        return False
+
+    # Pytest assertion
+    assert all_valid and expected_rows == 137, "Data integrity issues detected"
 
 
 def main():
@@ -398,8 +399,11 @@ def main():
     results = []
     for test_name, test_func in tests:
         try:
-            passed = test_func()
-            results.append((test_name, passed))
+            test_func()  # No return value - uses assertions
+            results.append((test_name, True))
+        except AssertionError as e:
+            print(f"\n  ✗ ASSERTION: {test_name} - {e}")
+            results.append((test_name, False))
         except Exception as e:
             print(f"\n  ✗ EXCEPTION: {test_name} - {e}")
             import traceback
