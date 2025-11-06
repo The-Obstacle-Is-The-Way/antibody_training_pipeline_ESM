@@ -295,45 +295,81 @@ git mv preprocessing/process_shehata.py preprocessing/shehata/step2_extract_frag
 
 ---
 
-### Phase 4: Fix Import Paths in Validation Scripts (2 files)
+### Phase 4: Create __init__.py Files for Package Imports
+
+**Decision:** Use proper Python package structure (cleaner than sys.path manipulation)
+
+**4.1 Create preprocessing/__init__.py**
+```bash
+touch preprocessing/__init__.py
+```
+
+**Content:**
+```python
+"""Antibody dataset preprocessing pipelines."""
+```
+
+---
+
+**4.2 Create dataset-specific __init__.py files**
+```bash
+touch preprocessing/harvey/__init__.py
+touch preprocessing/jain/__init__.py
+touch preprocessing/shehata/__init__.py
+```
+
+**Content (example for harvey/__init__.py):**
+```python
+"""Harvey dataset preprocessing pipeline."""
+```
+
+**Why this matters:**
+- Enables clean imports: `from preprocessing.harvey.step1_convert_raw_csvs import ...`
+- Makes preprocessing a proper Python package
+- Follows Python best practices
+- No need for sys.path manipulation
+
+---
+
+### Phase 5: Fix Import Paths in Validation Scripts (2 files)
 
 **Files that import conversion scripts:**
 - `scripts/validation/validate_jain_conversion.py`
 - `scripts/validation/validate_shehata_conversion.py`
 
-**4.1 Fix validate_jain_conversion.py**
+**5.1 Fix validate_jain_conversion.py**
 
-**Current import (line 26):**
+**Current import (line ~26):**
 ```python
-from convert_jain_excel_to_csv import (  # noqa: E402
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "conversion"))
+from convert_jain_excel_to_csv import (
 ```
 
-**Fix:**
+**New import:**
 ```python
-# Add path adjustment at top of file (after imports)
-import sys
-from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent / "preprocessing" / "jain"))
-
-from step1_convert_excel_to_csv import (  # noqa: E402
-```
-
-**Alternative fix (better):**
-```python
-# Import as module
+# Clean package import (works because we added __init__.py files)
 from preprocessing.jain.step1_convert_excel_to_csv import (
 ```
 
+**Remove the old sys.path line** - no longer needed!
+
 ---
 
-**4.2 Fix validate_shehata_conversion.py**
+**5.2 Fix validate_shehata_conversion.py**
 
-**Check if it imports conversion script:**
-```bash
-grep -n "convert_shehata" scripts/validation/validate_shehata_conversion.py
+**Current import (line ~24):**
+```python
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "conversion"))
+from convert_shehata_excel_to_csv import (
 ```
 
-**If it imports, apply same fix pattern as Jain validation.**
+**New import:**
+```python
+# Clean package import
+from preprocessing.shehata.step1_convert_excel_to_csv import (
+```
+
+**Remove the old sys.path line** - no longer needed!
 
 ---
 
@@ -369,7 +405,198 @@ See `legacy/` for historical incorrect implementations (archived for reference).
 
 ---
 
-### Phase 6: Create Dataset READMEs (3 new files)
+### Phase 6: Update Script Output Messages (3 files)
+
+**Problem:** Conversion scripts print old paths in their output messages
+
+**6.1 Update convert_harvey_csvs.py output messages**
+
+**File:** `preprocessing/harvey/step1_convert_raw_csvs.py` (after move)
+
+**Find and replace these print statements:**
+```python
+# OLD:
+print("  Run preprocessing/process_harvey.py to generate fragments")
+
+# NEW:
+print("  Run preprocessing/harvey/step2_extract_fragments.py to generate fragments")
+```
+
+---
+
+**6.2 Update convert_jain_excel_to_csv.py output messages**
+
+**File:** `preprocessing/jain/step1_convert_excel_to_csv.py` (after move)
+
+**Find and replace:**
+```python
+# OLD:
+print("  Run preprocessing/preprocess_jain_p5e_s2.py to generate canonical files")
+
+# NEW:
+print("  Run preprocessing/jain/step2_preprocess_p5e_s2.py to generate canonical files")
+```
+
+---
+
+**6.3 Update convert_shehata_excel_to_csv.py output messages**
+
+**File:** `preprocessing/shehata/step1_convert_excel_to_csv.py` (after move)
+
+**Find and replace:**
+```python
+# OLD:
+print("  Run preprocessing/process_shehata.py to generate fragments")
+
+# NEW:
+print("  Run preprocessing/shehata/step2_extract_fragments.py to generate fragments")
+```
+
+---
+
+### Phase 7: Update Documentation References (20+ files)
+
+**Problem:** Documentation and README files reference old script paths
+
+**7.1 Update Harvey Documentation (7 files)**
+
+Files to update:
+1. `docs/harvey/HARVEY_P0_FIX_REPORT.md` (line ~109)
+2. `docs/harvey/harvey_preprocessing_implementation_plan.md`
+3. `docs/harvey/harvey_data_cleaning_log.md`
+4. `docs/harvey/harvey_script_status.md`
+5. `docs/harvey/harvey_script_audit_request.md`
+6. `docs/harvey/HARVEY_CLEANUP_INVESTIGATION.md`
+7. `docs/harvey_data_sources.md`
+
+**Find and replace:**
+```bash
+# Replace in all docs
+find docs/ -name "*.md" -type f -exec sed -i '' \
+  's|scripts/conversion/convert_harvey_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
+  's|preprocessing/process_harvey.py|preprocessing/harvey/step2_extract_fragments.py|g' {} +
+```
+
+---
+
+**7.2 Update Jain Documentation (8+ files)**
+
+Files to update:
+1. `docs/jain/JAIN_REPLICATION_PLAN.md`
+2. `docs/jain/jain_conversion_verification_report.md`
+3. `docs/jain/jain_data_sources.md`
+4. `docs/jain/JAIN_REORGANIZATION_COMPLETE.md`
+5. `docs/archive/investigation_2025_11_05/JAIN_DATASETS_AUDIT_REPORT.md`
+6. `docs/archive/p5_close_attempt/JAIN_NOVO_PARITY_VALIDATION_REPORT.md`
+7. `scripts/conversion/legacy/README.md`
+8. `scripts/conversion/legacy/convert_jain_excel_to_csv_TOTAL_FLAGS_WRONG.py`
+
+**Find and replace:**
+```bash
+# Replace in all docs
+find docs/ scripts/conversion/legacy/ -name "*.md" -o -name "*.py" -type f -exec sed -i '' \
+  's|scripts/conversion/convert_jain_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/preprocess_jain_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' {} +
+```
+
+---
+
+**7.3 Update Shehata Documentation (7 files)**
+
+Files to update:
+1. `docs/shehata/shehata_preprocessing_implementation_plan.md`
+2. `docs/shehata/shehata_phase2_completion_report.md`
+3. `docs/shehata/shehata_data_sources.md`
+4. `docs/shehata/shehata_conversion_verification_report.md`
+5. `docs/shehata/SHEHATA_CLEANUP_PLAN.md`
+6. `docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md`
+7. `docs/shehata/P0_BLOCKER_FIRST_PRINCIPLES_VALIDATION.md`
+
+**Find and replace:**
+```bash
+# Replace in all docs
+find docs/shehata/ -name "*.md" -type f -exec sed -i '' \
+  's|scripts/conversion/convert_shehata_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/process_shehata.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
+```
+
+---
+
+**7.4 Update Test Dataset READMEs (10 files)**
+
+Files to update:
+1. `test_datasets/harvey/raw/README.md` (line ~46)
+2. `test_datasets/harvey/processed/README.md`
+3. `test_datasets/harvey/fragments/README.md`
+4. `test_datasets/harvey/README.md`
+5. `test_datasets/jain/raw/README.md`
+6. `test_datasets/jain/processed/README.md`
+7. `test_datasets/jain/canonical/README.md`
+8. `test_datasets/jain/README.md`
+9. `test_datasets/shehata/raw/README.md`
+10. `test_datasets/shehata/processed/README.md`
+11. `test_datasets/shehata/fragments/README.md`
+12. `test_datasets/shehata/README.md`
+
+**Find and replace:**
+```bash
+# Update all test dataset READMEs
+find test_datasets/ -name "README.md" -type f -exec sed -i '' \
+  's|scripts/conversion/convert_harvey_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
+  's|preprocessing/process_harvey.py|preprocessing/harvey/step2_extract_fragments.py|g' \
+  's|scripts/conversion/convert_jain_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/preprocess_jain_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' \
+  's|scripts/conversion/convert_shehata_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/process_shehata.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
+```
+
+---
+
+**7.5 Update Cross-Dataset Documentation (5+ files)**
+
+Files to update:
+1. `docs/TEST_DATASETS_REORGANIZATION_PLAN.md`
+2. `docs/excel_to_csv_conversion_methods.md`
+3. `docs/METHODOLOGY_AND_DIVERGENCES.md`
+4. `docs/boughter/boughter_processing_implementation.md`
+5. `README.md` (root)
+
+**Find and replace:**
+```bash
+# Update cross-dataset docs
+find docs/ -maxdepth 1 -name "*.md" -type f -exec sed -i '' \
+  's|scripts/conversion/convert_harvey_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
+  's|preprocessing/process_harvey.py|preprocessing/harvey/step2_extract_fragments.py|g' \
+  's|scripts/conversion/convert_jain_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/preprocess_jain_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' \
+  's|scripts/conversion/convert_shehata_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/process_shehata.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
+```
+
+---
+
+**7.6 Update Test Files (1 file)**
+
+File to update:
+- `tests/test_harvey_embedding_compatibility.py` (line ~22)
+
+**Find and replace:**
+```python
+# OLD:
+# from scripts.conversion.convert_harvey_csvs import ...
+
+# NEW:
+# from preprocessing.harvey.step1_convert_raw_csvs import ...
+```
+
+**Command:**
+```bash
+sed -i '' 's|scripts/conversion/convert_harvey_csvs|preprocessing/harvey/step1_convert_raw_csvs|g' tests/test_harvey_embedding_compatibility.py
+```
+
+---
+
+### Phase 8: Create Dataset READMEs (3 new files)
 
 **6.1 Create preprocessing/harvey/README.md**
 
