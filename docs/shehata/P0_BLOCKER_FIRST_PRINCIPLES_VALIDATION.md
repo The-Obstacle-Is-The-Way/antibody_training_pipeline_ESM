@@ -177,12 +177,12 @@ if not all(aa in valid_aas for aa in seq) or len(seq) < 1:
 ### Where Do Gaps Come From?
 
 **Phase 1 (Excel → CSV):** ✅ CORRECT
-- `scripts/conversion/convert_shehata_excel_to_csv.py:21-46` has `sanitize_sequence()`
+- `preprocessing/shehata/step1_convert_excel_to_csv.py:21-46` has `sanitize_sequence()`
 - Removes all `-` characters from input sequences
 - `test_datasets/shehata/processed/shehata.csv` is gap-free ✓
 
 **Phase 2 (CSV → Fragments):** ❌ BROKEN
-- `preprocessing/process_shehata.py:63` uses `annotation.sequence_alignment_aa`
+- `preprocessing/shehata/step2_extract_fragments.py:63` uses `annotation.sequence_alignment_aa`
 - This field includes IMGT gaps for structural alignment
 - Should use `annotation.sequence_aa` (no gaps)
 
@@ -321,7 +321,7 @@ assert not any(np.allclose(emb, 0) for emb in embeddings)
 ## Action Items
 
 ### URGENT (P0):
-1. Update `preprocessing/process_shehata.py:63`
+1. Update `preprocessing/shehata/step2_extract_fragments.py:63`
    ```python
    # Change FROM:
    f"full_seq_{chain}": annotation.sequence_alignment_aa
@@ -332,7 +332,7 @@ assert not any(np.allclose(emb, 0) for emb in embeddings)
 
 2. Re-run fragment extraction:
    ```bash
-   python3 preprocessing/process_shehata.py
+   python3 preprocessing/shehata/step2_extract_fragments.py
    ```
 
 3. Validate all gaps removed:
@@ -354,7 +354,7 @@ assert not any(np.allclose(emb, 0) for emb in embeddings)
 
 | File | Line | Issue | Fix |
 |------|------|-------|-----|
-| `preprocessing/process_shehata.py` | 63 | Uses `sequence_alignment_aa` (has gaps) | Use `sequence_aa` (no gaps) |
+| `preprocessing/shehata/step2_extract_fragments.py` | 63 | Uses `sequence_alignment_aa` (has gaps) | Use `sequence_aa` (no gaps) |
 | `test_datasets/shehata/fragments/VH_only_shehata.csv` | Multiple | 13 sequences with `-` | Re-extract after fix |
 | `test_datasets/shehata/VL_only_shehata.csv` | Multiple | 4 sequences with `-` | Re-extract after fix |
 | `test_datasets/shehata/Full_shehata.csv` | Multiple | 17 sequences with `-` | Re-extract after fix |

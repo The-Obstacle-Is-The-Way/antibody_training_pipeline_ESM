@@ -53,7 +53,7 @@ Region-specific extracts for ablation studies and targeted model training.
 To regenerate all fragments from processed CSV:
 
 ```bash
-python3 preprocessing/process_harvey.py
+python3 preprocessing/harvey/step2_extract_fragments.py
 # Input:  test_datasets/harvey/processed/harvey.csv
 # Output: test_datasets/harvey/fragments/*.csv (6 files)
 ```
@@ -75,7 +75,7 @@ python3 preprocessing/process_harvey.py
 
 **Root cause:** Used `annotation.sequence_alignment_aa` instead of `annotation.sequence_aa`
 
-**Fix:** Line 48 in `preprocessing/process_harvey.py`
+**Fix:** Line 48 in `preprocessing/harvey/step2_extract_fragments.py`
 ```python
 # WRONG (has gaps):
 "full_seq_H": annotation.sequence_alignment_aa

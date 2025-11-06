@@ -32,7 +32,7 @@
 To convert the main Excel file to CSV format:
 
 ```bash
-python3 scripts/conversion/convert_shehata_excel_to_csv.py
+python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 ```
 
 **Input:** `test_datasets/shehata/raw/shehata-mmc2.xlsx`

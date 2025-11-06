@@ -66,7 +66,7 @@ OUTPUT_86 = "test_datasets/jain/canonical/jain_86_novo_parity.csv"           # �
 ```
 
 **Documentation Confirms:**
-- `docs/jain/JAIN_REORGANIZATION_COMPLETE.md` line 52: **"preprocessing/preprocess_jain_p5e_s2.py"** is canonical
+- `docs/jain/JAIN_REORGANIZATION_COMPLETE.md` line 52: **"preprocessing/jain/step2_preprocess_p5e_s2.py"** is canonical
 - `test_datasets/jain/README.md`: References 4-tier structure (raw/processed/canonical/fragments)
 
 **Status:**
@@ -128,7 +128,7 @@ scripts/
    - If run accidentally, will FAIL or worse - create files in WRONG locations
    - **Risk:** Data corruption, confusion about which script is canonical
    - **Action (Completed):** Deleted `preprocessing/process_jain.py` (git history retains legacy version)
-   - **Keep:** `preprocessing/preprocess_jain_p5e_s2.py` (this is the CORRECT script)
+   - **Keep:** `preprocessing/jain/step2_preprocess_p5e_s2.py` (this is the CORRECT script)
 
 2. **Scripts using pre-reorganization Jain paths**
    - `scripts/testing/demo_assay_specific_thresholds.py` line 84:
@@ -174,7 +174,7 @@ scripts/
 - Uses paths that DON'T EXIST: `test_datasets/jain_with_private_elisa_FULL.csv`
 - Expects flat structure instead of 4-tier: raw/processed/canonical/fragments
 - Created BEFORE Jain dataset reorganization (commit 9de5687)
-- The CORRECT script is `preprocessing/preprocess_jain_p5e_s2.py`
+- The CORRECT script is `preprocessing/jain/step2_preprocess_p5e_s2.py`
 
 **Options:**
 1. **Option A (Aggressive):** Delete entirely
@@ -211,7 +211,7 @@ cat > preprocessing/legacy/README.md << 'EOF'
 - `test_datasets/jain_with_private_elisa_FULL.csv` (now in processed/)
 - `test_datasets/jain/jain_86_novo_parity.csv` (now in canonical/)
 
-**Superseded by:** `preprocessing/preprocess_jain_p5e_s2.py`
+**Superseded by:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 
 **DO NOT USE** - Will fail or write to wrong locations
 EOF
@@ -378,9 +378,9 @@ preprocessing/
 
 **Current scripts:**
 - ✅ `preprocessing/boughter/` (7 scripts) - Multi-stage Boughter pipeline
-- ✅ `preprocessing/process_harvey.py` - Harvey preprocessing (VHH nanobodies)
-- ✅ `preprocessing/preprocess_jain_p5e_s2.py` - Jain P5e-S2 preprocessing (86 antibodies, 4-tier paths)
-- ✅ `preprocessing/process_shehata.py` - Shehata preprocessing (398 antibodies)
+- ✅ `preprocessing/harvey/step2_extract_fragments.py` - Harvey preprocessing (VHH nanobodies)
+- ✅ `preprocessing/jain/step2_preprocess_p5e_s2.py` - Jain P5e-S2 preprocessing (86 antibodies, 4-tier paths)
+- ✅ `preprocessing/shehata/step2_extract_fragments.py` - Shehata preprocessing (398 antibodies)
 - ❌ `preprocessing/process_jain.py` - **LEGACY (DELETE - uses old flat paths)**
 
 ---
@@ -469,7 +469,7 @@ cat > preprocessing/legacy/README.md << 'EOF'
 - `test_datasets/jain_with_private_elisa_FULL.csv` (now in processed/)
 - `test_datasets/jain/jain_86_novo_parity.csv` (now in canonical/)
 
-**Superseded by:** `preprocessing/preprocess_jain_p5e_s2.py`
+**Superseded by:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 
 **DO NOT USE** - Will fail or write to wrong locations
 EOF
@@ -539,7 +539,7 @@ git add -A
 git commit -m "refactor: Reorganize preprocessing/ and scripts/ for clarity
 
 - Delete legacy preprocessing/process_jain.py (old flat paths)
-- Keep preprocessing/preprocess_jain_p5e_s2.py (correct 4-tier paths)
+- Keep preprocessing/jain/step2_preprocess_p5e_s2.py (correct 4-tier paths)
 - Move validation scripts to scripts/validation/
 - Move analysis scripts to scripts/analysis/
 - Create scripts/training/ for training utilities

@@ -52,7 +52,7 @@ ls: test_datasets/jain/jain_86_novo_parity.csv: No such file or directory ❌
 - Could confuse users about which script to use
 - Referenced in OLD docs that haven't been updated
 
-**Correct Script:** `preprocessing/preprocess_jain_p5e_s2.py`
+**Correct Script:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 
 **Correct Paths:**
 ```python
@@ -141,20 +141,20 @@ $ ls test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv
 
 ### Core Preprocessing Scripts (All Correct)
 
-#### 1. preprocessing/preprocess_jain_p5e_s2.py ✅
+#### 1. preprocessing/jain/step2_preprocess_p5e_s2.py ✅
 - **Status:** ✅ CURRENT, correct 4-tier paths
 - **Purpose:** P5e-S2 method for Jain 86-antibody benchmark
 - **Paths:** All use `jain/processed/` and `jain/canonical/`
 - **Action:** KEEP
 
-#### 2. preprocessing/process_harvey.py ✅
+#### 2. preprocessing/harvey/step2_extract_fragments.py ✅
 - **Status:** ✅ Correct 4-tier paths
 - **Paths:**
   - Input: `harvey/raw/*.csv` ✅
   - Output: `harvey/processed/harvey.csv` ✅
 - **Action:** KEEP
 
-#### 3. preprocessing/process_shehata.py ✅
+#### 3. preprocessing/shehata/step2_extract_fragments.py ✅
 - **Status:** ✅ Correct 4-tier paths
 - **Action:** KEEP
 
@@ -174,20 +174,20 @@ $ ls test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv
 
 ### Conversion Scripts (All Correct)
 
-#### 1. scripts/conversion/convert_harvey_csvs.py ✅
+#### 1. preprocessing/harvey/step1_convert_raw_csvs.py ✅
 - **Paths:**
   - Input: `harvey/raw/high_polyreactivity_high_throughput.csv` ✅
   - Input: `harvey/raw/low_polyreactivity_high_throughput.csv` ✅
   - Output: `harvey/processed/harvey.csv` ✅
 - **Action:** KEEP
 
-#### 2. scripts/conversion/convert_jain_excel_to_csv.py ✅
+#### 2. preprocessing/jain/step1_convert_excel_to_csv.py ✅
 - **Paths:**
   - Input: `jain/raw/*.xlsx` ✅
   - Output: `jain/processed/*.csv` ✅
 - **Action:** KEEP
 
-#### 3. scripts/conversion/convert_shehata_excel_to_csv.py ✅
+#### 3. preprocessing/shehata/step1_convert_excel_to_csv.py ✅
 - **Paths:**
   - Input: `shehata/raw/shehata-mmc2.xlsx` ✅
   - Output: `shehata/processed/shehata.csv` ✅
@@ -309,11 +309,11 @@ These docs referenced the legacy script and were updated to point at `preprocess
 
 4. **docs/jain/jain_data_sources.md**
    - Says: "python3 preprocessing/process_jain.py"
-   - Should say: "python3 preprocessing/preprocess_jain_p5e_s2.py"
+   - Should say: "python3 preprocessing/jain/step2_preprocess_p5e_s2.py"
 
 5. **docs/jain/jain_conversion_verification_report.md** (line 2)
    - Says: "via `python3 preprocessing/process_jain.py`"
-   - Should say: "via `python3 preprocessing/preprocess_jain_p5e_s2.py`"
+   - Should say: "via `python3 preprocessing/jain/step2_preprocess_p5e_s2.py`"
 
 **Note:** `docs/jain/JAIN_REORGANIZATION_COMPLETE.md` is CORRECT (uses preprocess_jain_p5e_s2.py)
 
@@ -377,7 +377,7 @@ preprocessing/process_jain.py
 
 **To:**
 ```
-preprocessing/preprocess_jain_p5e_s2.py
+preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 
 **Commit:**
@@ -422,9 +422,9 @@ git commit -m "refactor: Organize scripts into proper subdirectories"
 After making changes, verify:
 
 ### Preprocessing Scripts
-- [x] `preprocessing/preprocess_jain_p5e_s2.py` exists and works ✅
-- [x] `preprocessing/process_harvey.py` exists and works ✅
-- [x] `preprocessing/process_shehata.py` exists and works ✅
+- [x] `preprocessing/jain/step2_preprocess_p5e_s2.py` exists and works ✅
+- [x] `preprocessing/harvey/step2_extract_fragments.py` exists and works ✅
+- [x] `preprocessing/shehata/step2_extract_fragments.py` exists and works ✅
 - [x] `preprocessing/boughter/` directory intact (7 scripts) ✅
 - [x] `preprocessing/process_jain.py` deleted ✅
 
@@ -442,7 +442,7 @@ After making changes, verify:
 ### Functionality (Optional validation runs)
 - [ ] Run Jain preprocessing to verify:
   ```bash
-  python3 preprocessing/preprocess_jain_p5e_s2.py
+  python3 preprocessing/jain/step2_preprocess_p5e_s2.py
   ```
   Expected: Generates `jain_86_novo_parity.csv` in `test_datasets/jain/canonical/`
 

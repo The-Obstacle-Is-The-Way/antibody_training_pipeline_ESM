@@ -75,7 +75,7 @@
 5. **Isolation:** Changes to Harvey don't touch Jain/Shehata directories
 
 **Current Problem:**
-- Harvey preprocessing is SPLIT: scripts/conversion/convert_harvey_csvs.py + preprocessing/process_harvey.py
+- Harvey preprocessing is SPLIT: preprocessing/harvey/step1_convert_raw_csvs.py + preprocessing/harvey/step2_extract_fragments.py
 - New contributor must search TWO directories to understand Harvey pipeline
 - Inconsistent with Boughter pattern (which works well!)
 
@@ -158,16 +158,16 @@ preprocessing/
 │   └── validate_stages2_3.py
 ├── harvey/                         # 🆕 NEW DIRECTORY
 │   ├── README.md                   # NEW: Harvey pipeline docs
-│   ├── step1_convert_raw_csvs.py  # MOVED from scripts/conversion/convert_harvey_csvs.py
-│   └── step2_extract_fragments.py # MOVED from preprocessing/process_harvey.py
+│   ├── step1_convert_raw_csvs.py  # MOVED from preprocessing/harvey/step1_convert_raw_csvs.py
+│   └── step2_extract_fragments.py # MOVED from preprocessing/harvey/step2_extract_fragments.py
 ├── jain/                           # 🆕 NEW DIRECTORY
 │   ├── README.md                   # NEW: Jain pipeline docs
-│   ├── step1_convert_excel_to_csv.py # MOVED from scripts/conversion/convert_jain_excel_to_csv.py
-│   └── step2_preprocess_p5e_s2.py    # MOVED from preprocessing/preprocess_jain_p5e_s2.py
+│   ├── step1_convert_excel_to_csv.py # MOVED from preprocessing/jain/step1_convert_excel_to_csv.py
+│   └── step2_preprocess_p5e_s2.py    # MOVED from preprocessing/jain/step2_preprocess_p5e_s2.py
 └── shehata/                        # 🆕 NEW DIRECTORY
     ├── README.md                   # NEW: Shehata pipeline docs
-    ├── step1_convert_excel_to_csv.py # MOVED from scripts/conversion/convert_shehata_excel_to_csv.py
-    └── step2_extract_fragments.py    # MOVED from preprocessing/process_shehata.py
+    ├── step1_convert_excel_to_csv.py # MOVED from preprocessing/shehata/step1_convert_excel_to_csv.py
+    └── step2_extract_fragments.py    # MOVED from preprocessing/shehata/step2_extract_fragments.py
 ```
 
 ### scripts/ Directory (After Refactor)
@@ -227,7 +227,7 @@ ls -la preprocessing/harvey preprocessing/jain preprocessing/shehata
 
 **2.1 Move Harvey Conversion Script**
 ```bash
-git mv scripts/conversion/convert_harvey_csvs.py preprocessing/harvey/step1_convert_raw_csvs.py
+git mv preprocessing/harvey/step1_convert_raw_csvs.py preprocessing/harvey/step1_convert_raw_csvs.py
 ```
 
 **Rationale for rename:**
@@ -239,7 +239,7 @@ git mv scripts/conversion/convert_harvey_csvs.py preprocessing/harvey/step1_conv
 
 **2.2 Move Jain Conversion Script**
 ```bash
-git mv scripts/conversion/convert_jain_excel_to_csv.py preprocessing/jain/step1_convert_excel_to_csv.py
+git mv preprocessing/jain/step1_convert_excel_to_csv.py preprocessing/jain/step1_convert_excel_to_csv.py
 ```
 
 **Rationale for rename:**
@@ -251,7 +251,7 @@ git mv scripts/conversion/convert_jain_excel_to_csv.py preprocessing/jain/step1_
 
 **2.3 Move Shehata Conversion Script**
 ```bash
-git mv scripts/conversion/convert_shehata_excel_to_csv.py preprocessing/shehata/step1_convert_excel_to_csv.py
+git mv preprocessing/shehata/step1_convert_excel_to_csv.py preprocessing/shehata/step1_convert_excel_to_csv.py
 ```
 
 **Rationale for rename:**
@@ -264,7 +264,7 @@ git mv scripts/conversion/convert_shehata_excel_to_csv.py preprocessing/shehata/
 
 **3.1 Move Harvey Processing Script**
 ```bash
-git mv preprocessing/process_harvey.py preprocessing/harvey/step2_extract_fragments.py
+git mv preprocessing/harvey/step2_extract_fragments.py preprocessing/harvey/step2_extract_fragments.py
 ```
 
 **Rationale for rename:**
@@ -276,7 +276,7 @@ git mv preprocessing/process_harvey.py preprocessing/harvey/step2_extract_fragme
 
 **3.2 Move Jain Processing Script**
 ```bash
-git mv preprocessing/preprocess_jain_p5e_s2.py preprocessing/jain/step2_preprocess_p5e_s2.py
+git mv preprocessing/jain/step2_preprocess_p5e_s2.py preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 
 **Rationale for rename:**
@@ -288,7 +288,7 @@ git mv preprocessing/preprocess_jain_p5e_s2.py preprocessing/jain/step2_preproce
 
 **3.3 Move Shehata Processing Script**
 ```bash
-git mv preprocessing/process_shehata.py preprocessing/shehata/step2_extract_fragments.py
+git mv preprocessing/shehata/step2_extract_fragments.py preprocessing/shehata/step2_extract_fragments.py
 ```
 
 **Rationale for rename:**
@@ -418,7 +418,7 @@ See `legacy/` for historical incorrect implementations (archived for reference).
 **Find and replace these print statements:**
 ```python
 # OLD:
-print("  Run preprocessing/process_harvey.py to generate fragments")
+print("  Run preprocessing/harvey/step2_extract_fragments.py to generate fragments")
 
 # NEW:
 print("  Run preprocessing/harvey/step2_extract_fragments.py to generate fragments")
@@ -433,7 +433,7 @@ print("  Run preprocessing/harvey/step2_extract_fragments.py to generate fragmen
 **Find and replace:**
 ```python
 # OLD:
-print("  Run preprocessing/preprocess_jain_p5e_s2.py to generate canonical files")
+print("  Run preprocessing/jain/step2_preprocess_p5e_s2.py to generate canonical files")
 
 # NEW:
 print("  Run preprocessing/jain/step2_preprocess_p5e_s2.py to generate canonical files")
@@ -448,7 +448,7 @@ print("  Run preprocessing/jain/step2_preprocess_p5e_s2.py to generate canonical
 **Find and replace:**
 ```python
 # OLD:
-print("  Run preprocessing/process_shehata.py to generate fragments")
+print("  Run preprocessing/shehata/step2_extract_fragments.py to generate fragments")
 
 # NEW:
 print("  Run preprocessing/shehata/step2_extract_fragments.py to generate fragments")
@@ -475,8 +475,8 @@ Files to update:
 ```bash
 # Replace in all docs
 find docs/ -name "*.md" -type f -exec sed -i '' \
-  's|scripts/conversion/convert_harvey_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
-  's|preprocessing/process_harvey.py|preprocessing/harvey/step2_extract_fragments.py|g' {} +
+  's|preprocessing/harvey/step1_convert_raw_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
+  's|preprocessing/harvey/step2_extract_fragments.py|preprocessing/harvey/step2_extract_fragments.py|g' {} +
 ```
 
 ---
@@ -497,8 +497,8 @@ Files to update:
 ```bash
 # Replace in all docs
 find docs/ scripts/conversion/legacy/ -name "*.md" -o -name "*.py" -type f -exec sed -i '' \
-  's|scripts/conversion/convert_jain_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
-  's|preprocessing/preprocess_jain_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' {} +
+  's|preprocessing/jain/step1_convert_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/jain/step2_preprocess_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' {} +
 ```
 
 ---
@@ -518,8 +518,8 @@ Files to update:
 ```bash
 # Replace in all docs
 find docs/shehata/ -name "*.md" -type f -exec sed -i '' \
-  's|scripts/conversion/convert_shehata_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
-  's|preprocessing/process_shehata.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
+  's|preprocessing/shehata/step1_convert_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/shehata/step2_extract_fragments.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
 ```
 
 ---
@@ -544,12 +544,12 @@ Files to update:
 ```bash
 # Update all test dataset READMEs
 find test_datasets/ -name "README.md" -type f -exec sed -i '' \
-  's|scripts/conversion/convert_harvey_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
-  's|preprocessing/process_harvey.py|preprocessing/harvey/step2_extract_fragments.py|g' \
-  's|scripts/conversion/convert_jain_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
-  's|preprocessing/preprocess_jain_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' \
-  's|scripts/conversion/convert_shehata_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
-  's|preprocessing/process_shehata.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
+  's|preprocessing/harvey/step1_convert_raw_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
+  's|preprocessing/harvey/step2_extract_fragments.py|preprocessing/harvey/step2_extract_fragments.py|g' \
+  's|preprocessing/jain/step1_convert_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/jain/step2_preprocess_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' \
+  's|preprocessing/shehata/step1_convert_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/shehata/step2_extract_fragments.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
 ```
 
 ---
@@ -567,12 +567,12 @@ Files to update:
 ```bash
 # Update cross-dataset docs
 find docs/ -maxdepth 1 -name "*.md" -type f -exec sed -i '' \
-  's|scripts/conversion/convert_harvey_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
-  's|preprocessing/process_harvey.py|preprocessing/harvey/step2_extract_fragments.py|g' \
-  's|scripts/conversion/convert_jain_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
-  's|preprocessing/preprocess_jain_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' \
-  's|scripts/conversion/convert_shehata_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
-  's|preprocessing/process_shehata.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
+  's|preprocessing/harvey/step1_convert_raw_csvs.py|preprocessing/harvey/step1_convert_raw_csvs.py|g' \
+  's|preprocessing/harvey/step2_extract_fragments.py|preprocessing/harvey/step2_extract_fragments.py|g' \
+  's|preprocessing/jain/step1_convert_excel_to_csv.py|preprocessing/jain/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/jain/step2_preprocess_p5e_s2.py|preprocessing/jain/step2_preprocess_p5e_s2.py|g' \
+  's|preprocessing/shehata/step1_convert_excel_to_csv.py|preprocessing/shehata/step1_convert_excel_to_csv.py|g' \
+  's|preprocessing/shehata/step2_extract_fragments.py|preprocessing/shehata/step2_extract_fragments.py|g' {} +
 ```
 
 ---
@@ -1266,12 +1266,12 @@ A  preprocessing/README.md
 M  scripts/conversion/README.md
 M  scripts/validation/validate_jain_conversion.py
 M  scripts/validation/validate_shehata_conversion.py
-D  preprocessing/process_harvey.py
-D  preprocessing/preprocess_jain_p5e_s2.py
-D  preprocessing/process_shehata.py
-D  scripts/conversion/convert_harvey_csvs.py
-D  scripts/conversion/convert_jain_excel_to_csv.py
-D  scripts/conversion/convert_shehata_excel_to_csv.py
+D  preprocessing/harvey/step2_extract_fragments.py
+D  preprocessing/jain/step2_preprocess_p5e_s2.py
+D  preprocessing/shehata/step2_extract_fragments.py
+D  preprocessing/harvey/step1_convert_raw_csvs.py
+D  preprocessing/jain/step1_convert_excel_to_csv.py
+D  preprocessing/shehata/step1_convert_excel_to_csv.py
 ```
 
 ---
@@ -1342,17 +1342,17 @@ organization pattern (HuggingFace, TensorFlow datasets, PyTorch).
 ## Summary of Changes (~49 files affected)
 
 ### Code Moves (6 files - git history preserved)
-- scripts/conversion/convert_harvey_csvs.py
+- preprocessing/harvey/step1_convert_raw_csvs.py
   → preprocessing/harvey/step1_convert_raw_csvs.py
-- preprocessing/process_harvey.py
+- preprocessing/harvey/step2_extract_fragments.py
   → preprocessing/harvey/step2_extract_fragments.py
-- scripts/conversion/convert_jain_excel_to_csv.py
+- preprocessing/jain/step1_convert_excel_to_csv.py
   → preprocessing/jain/step1_convert_excel_to_csv.py
-- preprocessing/preprocess_jain_p5e_s2.py
+- preprocessing/jain/step2_preprocess_p5e_s2.py
   → preprocessing/jain/step2_preprocess_p5e_s2.py
-- scripts/conversion/convert_shehata_excel_to_csv.py
+- preprocessing/shehata/step1_convert_excel_to_csv.py
   → preprocessing/shehata/step1_convert_excel_to_csv.py
-- preprocessing/process_shehata.py
+- preprocessing/shehata/step2_extract_fragments.py
   → preprocessing/shehata/step2_extract_fragments.py
 
 ### New Files (8 files)
@@ -1468,12 +1468,12 @@ git checkout main
 ### Files Affected
 
 **Moved (6 files):**
-- scripts/conversion/convert_harvey_csvs.py → preprocessing/harvey/step1_convert_raw_csvs.py
-- scripts/conversion/convert_jain_excel_to_csv.py → preprocessing/jain/step1_convert_excel_to_csv.py
-- scripts/conversion/convert_shehata_excel_to_csv.py → preprocessing/shehata/step1_convert_excel_to_csv.py
-- preprocessing/process_harvey.py → preprocessing/harvey/step2_extract_fragments.py
-- preprocessing/preprocess_jain_p5e_s2.py → preprocessing/jain/step2_preprocess_p5e_s2.py
-- preprocessing/process_shehata.py → preprocessing/shehata/step2_extract_fragments.py
+- preprocessing/harvey/step1_convert_raw_csvs.py → preprocessing/harvey/step1_convert_raw_csvs.py
+- preprocessing/jain/step1_convert_excel_to_csv.py → preprocessing/jain/step1_convert_excel_to_csv.py
+- preprocessing/shehata/step1_convert_excel_to_csv.py → preprocessing/shehata/step1_convert_excel_to_csv.py
+- preprocessing/harvey/step2_extract_fragments.py → preprocessing/harvey/step2_extract_fragments.py
+- preprocessing/jain/step2_preprocess_p5e_s2.py → preprocessing/jain/step2_preprocess_p5e_s2.py
+- preprocessing/shehata/step2_extract_fragments.py → preprocessing/shehata/step2_extract_fragments.py
 
 **Created (8 files):**
 - preprocessing/__init__.py (package structure)

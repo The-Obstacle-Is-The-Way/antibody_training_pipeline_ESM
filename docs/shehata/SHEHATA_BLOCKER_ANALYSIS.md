@@ -13,7 +13,7 @@
 **P0 BLOCKER FIXED AND VALIDATED**
 
 **Fix Applied:**
-- **File:** `preprocessing/process_shehata.py:63`
+- **File:** `preprocessing/shehata/step2_extract_fragments.py:63`
 - **Change:** `annotation.sequence_alignment_aa` → `annotation.sequence_aa`
 - **Result:** All 16 fragment CSVs regenerated gap-free
 
@@ -98,7 +98,7 @@ EVQLVESGGGVVQPGRSLRLSCAASGFTFDRYGMHWIRQAPGKGLECVALISFDGSHK-YADSVKGRFTISRDNSRNTLY
 ```
 
 **Root Cause (Verified):**
-- **File:** `preprocessing/process_shehata.py:63`
+- **File:** `preprocessing/shehata/step2_extract_fragments.py:63`
 - **Issue:** Uses `annotation.sequence_alignment_aa` (IMGT-aligned with gaps)
 - **Should use:** `annotation.sequence_aa` (raw sequence without gaps)
 
@@ -125,7 +125,7 @@ EVQLVESGGGVVQPGRSLRLSCAASGFTFDRYGMHWIRQAPGKGLECVALISFDGSHK-YADSVKGRFTISRDNSRNTLY
 
 **Fix Required:**
 ```python
-# File: preprocessing/process_shehata.py
+# File: preprocessing/shehata/step2_extract_fragments.py
 # Line: 63
 
 # Current (BROKEN):
@@ -179,7 +179,7 @@ Next highest (labeled specific):
 **Severity:** P1 (labels likely correct, but need confirmation)
 
 **Mitigation:**
-- Threshold documented: `scripts/conversion/convert_shehata_excel_to_csv.py:163`
+- Threshold documented: `preprocessing/shehata/step1_convert_excel_to_csv.py:163`
 - Check paper supplement for non-specific antibody IDs
 - If IDs match, threshold is validated
 - If IDs differ, adjust threshold to match paper's exact cutoff
@@ -315,13 +315,13 @@ Next highest (labeled specific):
 
 ### URGENT (P0):
 1. **Fix gap characters in fragment sequences**
-   - **File:** `preprocessing/process_shehata.py`
+   - **File:** `preprocessing/shehata/step2_extract_fragments.py`
    - **Change line 63:**
      ```python
      # FROM: f"full_seq_{chain}": annotation.sequence_alignment_aa
      # TO:   f"full_seq_{chain}": annotation.sequence_aa
      ```
-   - Re-run fragment extraction: `python3 preprocessing/process_shehata.py`
+   - Re-run fragment extraction: `python3 preprocessing/shehata/step2_extract_fragments.py`
    - Validate all gaps removed: `grep -c '\-' test_datasets/shehata/fragments/*.csv` (should be 0)
    - Test ESM embedding on all 17 previously-affected sequences
 

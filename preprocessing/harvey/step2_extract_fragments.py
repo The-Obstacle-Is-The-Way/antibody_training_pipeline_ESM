@@ -205,7 +205,7 @@ def main():
     if not csv_path.exists():
         print(f"Error: {csv_path} not found!")
         print(
-            "Please run scripts/conversion/convert_harvey_csvs.py to generate from raw Harvey CSVs."
+            "Please run preprocessing/harvey/step1_convert_raw_csvs.py to generate from raw Harvey CSVs."
         )
         print(
             "Raw CSVs should be in: test_datasets/harvey/raw/"

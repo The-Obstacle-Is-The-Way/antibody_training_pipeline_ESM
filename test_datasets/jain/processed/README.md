@@ -6,7 +6,7 @@ All files here are derived from `raw/` using scripts in `scripts/conversion/` an
 
 ## Conversion (Excel → CSV)
 
-**Script:** `scripts/conversion/convert_jain_excel_to_csv.py`
+**Script:** `preprocessing/jain/step1_convert_excel_to_csv.py`
 
 ### Base Files (137 antibodies)
 
@@ -69,10 +69,10 @@ To regenerate all processed files from raw:
 
 ```bash
 # Step 1: Convert Excel to CSV
-python3 scripts/conversion/convert_jain_excel_to_csv.py
+python3 preprocessing/jain/step1_convert_excel_to_csv.py
 
 # Step 2: Create 86-antibody benchmarks
-python3 preprocessing/preprocess_jain_p5e_s2.py
+python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 
 ---

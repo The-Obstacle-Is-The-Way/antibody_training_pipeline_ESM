@@ -51,7 +51,7 @@ Region-specific extracts for ablation studies and targeted model training.
 To regenerate all fragments from processed CSV:
 
 ```bash
-python3 preprocessing/process_shehata.py
+python3 preprocessing/shehata/step2_extract_fragments.py
 # Input:  test_datasets/shehata/processed/shehata.csv
 # Output: test_datasets/shehata/fragments/*.csv (16 files)
 ```
@@ -72,7 +72,7 @@ python3 preprocessing/process_shehata.py
 
 **Root cause:** Used `annotation.sequence_alignment_aa` instead of `annotation.sequence_aa`
 
-**Fix:** Line 63 in `preprocessing/process_shehata.py`
+**Fix:** Line 63 in `preprocessing/shehata/step2_extract_fragments.py`
 ```python
 # WRONG (has gaps):
 f"full_seq_{chain}": annotation.sequence_alignment_aa

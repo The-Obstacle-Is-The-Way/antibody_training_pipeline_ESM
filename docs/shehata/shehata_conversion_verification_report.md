@@ -210,7 +210,7 @@ All agents confirmed:
 ## Files Modified
 
 ### Scripts:
-1. `scripts/conversion/convert_shehata_excel_to_csv.py` (+54 lines, clean refactor)
+1. `preprocessing/shehata/step1_convert_excel_to_csv.py` (+54 lines, clean refactor)
    - Added `sanitize_sequence()` function
    - Added non-interactive mode
    - Removed unused imports
@@ -257,7 +257,7 @@ ADI-38501,EVQLLESGGGLVQPGGSLRLSCAASGFTFSSYSMNWVRQAPGKGLEWVSYISSSSSTIYYADSVK...,D
 ### Future (Phase 2 - Optional):
 1. 🔲 Extract all 16 fragment types (VH, H-CDR3, etc.)
 2. 🔲 Re-annotate with ANARCI for consistency
-3. 🔲 Create `preprocessing/process_shehata.py` matching Boughter style
+3. 🔲 Create `preprocessing/shehata/step2_extract_fragments.py` matching Boughter style
 
 ---
 

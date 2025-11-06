@@ -81,9 +81,9 @@ print(cm)
 
 ```
 raw/ (Excel)
-  ↓ [scripts/conversion/convert_jain_excel_to_csv.py]
+  ↓ [preprocessing/jain/step1_convert_excel_to_csv.py]
 processed/ (CSV base files)
-  ↓ [preprocessing/preprocess_jain_p5e_s2.py]
+  ↓ [preprocessing/jain/step2_preprocess_p5e_s2.py]
 canonical/ (86-antibody benchmarks)
   ↓ [scripts/fragmentation/extract_jain_fragments.py]
 fragments/ (region-specific)
@@ -121,10 +121,10 @@ To regenerate from raw sources:
 
 ```bash
 # Step 1: Convert Excel → CSV
-python3 scripts/conversion/convert_jain_excel_to_csv.py
+python3 preprocessing/jain/step1_convert_excel_to_csv.py
 
 # Step 2: Create 86-antibody benchmarks
-python3 preprocessing/preprocess_jain_p5e_s2.py
+python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 
 # Step 3: (Optional) Extract fragments
 # python3 scripts/fragmentation/extract_jain_fragments.py

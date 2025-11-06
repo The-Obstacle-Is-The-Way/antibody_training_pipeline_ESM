@@ -57,9 +57,9 @@ harvey/
 ```
 raw/high_polyreactivity_high_throughput.csv (71,772)
 raw/low_polyreactivity_high_throughput.csv (69,702)
-  ↓ [scripts/conversion/convert_harvey_csvs.py]
+  ↓ [preprocessing/harvey/step1_convert_raw_csvs.py]
 processed/harvey.csv (141,474 combined)
-  ↓ [preprocessing/process_harvey.py + ANARCI annotation]
+  ↓ [preprocessing/harvey/step2_extract_fragments.py + ANARCI annotation]
 fragments/*.csv (141,021 - 453 ANARCI failures)
 ```
 
@@ -107,11 +107,11 @@ To regenerate all derived files from raw sources:
 
 ```bash
 # Step 1: Convert raw CSVs to combined dataset
-python3 scripts/conversion/convert_harvey_csvs.py
+python3 preprocessing/harvey/step1_convert_raw_csvs.py
 # Creates: processed/harvey.csv (141,474 nanobodies)
 
 # Step 2: Extract fragments with ANARCI
-python3 preprocessing/process_harvey.py
+python3 preprocessing/harvey/step2_extract_fragments.py
 # Creates: fragments/*.csv (6 fragment types, 141,021 sequences)
 ```
 

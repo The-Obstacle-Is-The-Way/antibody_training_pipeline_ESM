@@ -9,7 +9,7 @@ Final curated datasets for reproducible benchmarking against Novo Nordisk result
 ### 1. `jain_86_novo_parity.csv` (P5e-S2 Canonical) ✅ **RECOMMENDED**
 
 - **Method:** ELISA filter → PSR reclassification (5 antibodies) → PSR/AC-SINS removal (30 antibodies)
-- **Script:** `preprocessing/preprocess_jain_p5e_s2.py`
+- **Script:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 - **Result:** [[40, 19], [10, 17]], 66.28% accuracy
 - **Distribution:** 59 specific / 27 non-specific
 - **Columns:** Full-length VH+VL sequences + all biophysical properties

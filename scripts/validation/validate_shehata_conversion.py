@@ -204,7 +204,7 @@ def main():
 
     if not csv_path.exists():
         print(f"✗ CSV file not found: {csv_path}")
-        print("  Run scripts/conversion/convert_shehata_excel_to_csv.py first!")
+        print("  Run preprocessing/shehata/step1_convert_excel_to_csv.py first!")
         return
 
     print("\nReading files with multiple methods...\n")

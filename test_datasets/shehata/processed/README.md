@@ -48,7 +48,7 @@ Converted and filtered datasets, reproducible from raw sources.
 To regenerate this file from raw sources:
 
 ```bash
-python3 scripts/conversion/convert_shehata_excel_to_csv.py
+python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 # Input:  test_datasets/shehata/raw/shehata-mmc2.xlsx
 # Output: test_datasets/shehata/processed/shehata.csv
 ```
@@ -110,7 +110,7 @@ from sklearn.metrics import classification_report
 To extract region-specific fragments (CDRs, FWRs, VH-only, etc.):
 
 ```bash
-python3 preprocessing/process_shehata.py
+python3 preprocessing/shehata/step2_extract_fragments.py
 # Input:  test_datasets/shehata/processed/shehata.csv
 # Output: test_datasets/shehata/fragments/*.csv (16 files)
 ```

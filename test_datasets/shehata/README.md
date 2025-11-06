@@ -99,11 +99,11 @@ To regenerate all derived files from raw sources:
 
 ```bash
 # Step 1: Convert Excel to CSV
-python3 scripts/conversion/convert_shehata_excel_to_csv.py
+python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 # Creates: processed/shehata.csv (398 antibodies)
 
 # Step 2: Extract fragments
-python3 preprocessing/process_shehata.py
+python3 preprocessing/shehata/step2_extract_fragments.py
 # Creates: fragments/*.csv (16 fragment types)
 ```
 

@@ -56,7 +56,7 @@ These intermediate files were DELETED during cleanup (2025-11-05):
 To regenerate this file from raw sources:
 
 ```bash
-python3 scripts/conversion/convert_harvey_csvs.py
+python3 preprocessing/harvey/step1_convert_raw_csvs.py
 # Input:  test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv
 #         test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv
 # Output: test_datasets/harvey/processed/harvey.csv
@@ -130,7 +130,7 @@ print(f"Mean sequence length: {df['seq'].str.len().mean():.1f} aa")
 To extract region-specific fragments (CDRs, FWRs, VHH-only):
 
 ```bash
-python3 preprocessing/process_harvey.py
+python3 preprocessing/harvey/step2_extract_fragments.py
 # Input:  test_datasets/harvey/processed/harvey.csv
 # Output: test_datasets/harvey/fragments/*.csv (6 files)
 ```

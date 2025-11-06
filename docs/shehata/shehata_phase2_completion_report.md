@@ -13,7 +13,7 @@
 Gap characters in fragment sequences have been **ELIMINATED**.
 
 **Fix Applied:**
-- Updated `preprocessing/process_shehata.py:63` to use `annotation.sequence_aa` (gap-free)
+- Updated `preprocessing/shehata/step2_extract_fragments.py:63` to use `annotation.sequence_aa` (gap-free)
 - Regenerated all 16 fragment CSVs
 - Enhanced validation script with gap detection
 
@@ -53,7 +53,7 @@ Gap characters in fragment sequences have been **ELIMINATED**.
 
 ### 1. Preprocessing Script
 
-**File:** `preprocessing/process_shehata.py` (288 lines)
+**File:** `preprocessing/shehata/step2_extract_fragments.py` (288 lines)
 
 **Key Features:**
 - Uses ANARCI (riot_na) for IMGT-based CDR/FWR annotation
@@ -65,7 +65,7 @@ Gap characters in fragment sequences have been **ELIMINATED**.
 
 **Usage:**
 ```bash
-python3 preprocessing/process_shehata.py
+python3 preprocessing/shehata/step2_extract_fragments.py
 ```
 
 **Performance:**
@@ -253,7 +253,7 @@ Follows `preprocessing/process_boughter.py` pattern:
 
 ### New Files (Phase 2):
 
-1. **`preprocessing/process_shehata.py`** (288 lines)
+1. **`preprocessing/shehata/step2_extract_fragments.py`** (288 lines)
    - Main preprocessing script
    - ANARCI annotation + fragment extraction
    - Comprehensive validation reporting
@@ -344,7 +344,7 @@ pip install riot-na  # Installs riot_na + dependencies
 
 ### Phase 2 Success Criteria:
 
-- [x] `preprocessing/process_shehata.py` script exists
+- [x] `preprocessing/shehata/step2_extract_fragments.py` script exists
 - [x] 16 fragment-specific CSV files generated
 - [x] ANARCI re-annotation using IMGT scheme
 - [x] All fragments validated for sequence quality

@@ -146,7 +146,7 @@ ADI-38501,EVQLLESGGGLVQPGG...,DIVMTQSPATLSLSPG...,0,0.023184,IgG memory,shehata2
 ### Phase 2: Full Fragment Extraction (Paper-Complete)
 **Goal:** Generate all 16 antibody fragments for comprehensive testing
 **Effort:** ~4-6 hours
-**Deliverable:** `preprocessing/process_shehata.py` + multiple output CSVs
+**Deliverable:** `preprocessing/shehata/step2_extract_fragments.py` + multiple output CSVs
 
 **Tasks:**
 1. ✅ Re-annotate sequences using ANARCI (IMGT scheme) for consistency
@@ -361,7 +361,7 @@ anarci or riot_na      # CDR annotation (Phase 2 only)
 - [x] README/documentation updated
 
 ### Phase 2 Complete When:
-- [x] `preprocessing/process_shehata.py` script exists
+- [x] `preprocessing/shehata/step2_extract_fragments.py` script exists
 - [x] 16 fragment-specific CSV files generated in test_datasets/shehata/
 - [x] ANARCI re-annotation using IMGT scheme (riot_na v4.0.5)
 - [x] All fragments validated for sequence quality (lengths match expected ranges)

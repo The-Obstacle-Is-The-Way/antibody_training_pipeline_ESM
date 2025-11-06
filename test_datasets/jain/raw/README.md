@@ -39,7 +39,7 @@
 To convert these Excel files to CSV format:
 
 ```bash
-python3 scripts/conversion/convert_jain_excel_to_csv.py
+python3 preprocessing/jain/step1_convert_excel_to_csv.py
 ```
 
 Output files will be created in `test_datasets/jain/processed/`.

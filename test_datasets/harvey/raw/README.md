@@ -43,7 +43,7 @@ Each CSV contains IMGT-numbered positions (columns 1-128) and pre-extracted CDR 
 To convert raw CSVs to combined dataset:
 
 ```bash
-python3 scripts/conversion/convert_harvey_csvs.py
+python3 preprocessing/harvey/step1_convert_raw_csvs.py
 ```
 
 **Input:**

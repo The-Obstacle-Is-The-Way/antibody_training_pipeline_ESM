@@ -120,17 +120,17 @@ preprocessing/
 ├── harvey/
 │   ├── README.md
 │   ├── step1_convert_raw_csvs.py      # from scripts/conversion/
-│   ├── step2_extract_fragments.py     # from preprocessing/process_harvey.py
+│   ├── step2_extract_fragments.py     # from preprocessing/harvey/step2_extract_fragments.py
 │   └── validate_*.py (optional)
 ├── jain/
 │   ├── README.md
 │   ├── step1_convert_excel_to_csv.py  # from scripts/conversion/
-│   ├── step2_preprocess_p5e_s2.py     # from preprocessing/preprocess_jain_p5e_s2.py
+│   ├── step2_preprocess_p5e_s2.py     # from preprocessing/jain/step2_preprocess_p5e_s2.py
 │   └── validate_*.py (optional)
 └── shehata/
     ├── README.md
     ├── step1_convert_excel_to_csv.py  # from scripts/conversion/
-    ├── step2_extract_fragments.py     # from preprocessing/process_shehata.py
+    ├── step2_extract_fragments.py     # from preprocessing/shehata/step2_extract_fragments.py
     └── validate_*.py (optional)
 ```
 
@@ -165,13 +165,13 @@ preprocessing/
 │   ├── stage1_dna_translation.py
 │   └── stage2_stage3_annotation_qc.py
 ├── harvey/
-│   ├── README.md (references scripts/conversion/convert_harvey_csvs.py)
+│   ├── README.md (references preprocessing/harvey/step1_convert_raw_csvs.py)
 │   └── process_fragments.py (renamed from process_harvey.py)
 ├── jain/
-│   ├── README.md (references scripts/conversion/convert_jain_excel_to_csv.py)
+│   ├── README.md (references preprocessing/jain/step1_convert_excel_to_csv.py)
 │   └── preprocess_p5e_s2.py (renamed from preprocess_jain_p5e_s2.py)
 └── shehata/
-    ├── README.md (references scripts/conversion/convert_shehata_excel_to_csv.py)
+    ├── README.md (references preprocessing/shehata/step1_convert_excel_to_csv.py)
     └── process_fragments.py (renamed from process_shehata.py)
 ```
 
@@ -206,7 +206,7 @@ preprocessing/
 
 ### Step 1: Combine Raw CSVs
 ```bash
-python3 scripts/conversion/convert_harvey_csvs.py
+python3 preprocessing/harvey/step1_convert_raw_csvs.py
 ```
 
 Combines high/low polyreactivity CSVs into single processed CSV.

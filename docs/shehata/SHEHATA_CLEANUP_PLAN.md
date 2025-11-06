@@ -85,7 +85,7 @@ mv test_datasets/shehata/*.csv test_datasets/shehata/fragments/
 
 ### Core Scripts (3 files)
 
-**1. scripts/conversion/convert_shehata_excel_to_csv.py**
+**1. preprocessing/shehata/step1_convert_excel_to_csv.py**
 ```python
 # Line 275-276:
 # OLD:
@@ -97,7 +97,7 @@ excel_path = Path("test_datasets/shehata/raw/shehata-mmc2.xlsx")
 output_path = Path("test_datasets/shehata/processed/shehata.csv")
 ```
 
-**2. preprocessing/process_shehata.py**
+**2. preprocessing/shehata/step2_extract_fragments.py**
 ```python
 # Line 220-221:
 # OLD:
@@ -366,8 +366,8 @@ for f in files:
 
 ### 5. Script Regeneration Test
 ```bash
-python3 scripts/conversion/convert_shehata_excel_to_csv.py  # Should work
-python3 preprocessing/process_shehata.py                     # Should work
+python3 preprocessing/shehata/step1_convert_excel_to_csv.py  # Should work
+python3 preprocessing/shehata/step2_extract_fragments.py                     # Should work
 ```
 
 ### 6. Comprehensive Validation
@@ -443,8 +443,8 @@ grep -rn "scripts/validate_fragments" docs/ --include="*.md" | grep -v "validati
 ## Complete File Checklist
 
 ### Python Files to Modify (8)
-- [ ] `scripts/conversion/convert_shehata_excel_to_csv.py`
-- [ ] `preprocessing/process_shehata.py`
+- [ ] `preprocessing/shehata/step1_convert_excel_to_csv.py`
+- [ ] `preprocessing/shehata/step2_extract_fragments.py`
 - [ ] `scripts/validation/validate_shehata_conversion.py`
 - [ ] `scripts/analysis/analyze_threshold_optimization.py`
 - [ ] `scripts/testing/demo_assay_specific_thresholds.py`

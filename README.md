@@ -95,13 +95,13 @@ The Shehata dataset (Shehata et al. 2019) provides a critical test set of 398 hu
 3. Run Phase 1 preprocessing (Excel → CSV conversion):
 
    ```bash
-   python3 scripts/conversion/convert_shehata_excel_to_csv.py
+   python3 preprocessing/shehata/step1_convert_excel_to_csv.py
    ```
 
 4. Run Phase 2 preprocessing (fragment extraction):
 
    ```bash
-   python3 preprocessing/process_shehata.py
+   python3 preprocessing/shehata/step2_extract_fragments.py
    ```
 
 **Output Files:**
