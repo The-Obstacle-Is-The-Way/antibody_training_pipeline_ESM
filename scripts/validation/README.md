@@ -1,16 +1,23 @@
 # Validation Scripts
 
-Quality control scripts that verify data conversion and processing pipelines.
+Generic quality control scripts for cross-dataset validation.
 
-**Purpose:** Ensure data integrity throughout the preprocessing pipeline.
+**Purpose:** Ensure data integrity for any dataset.
 
 ## Scripts
 
-- `validate_boughter_conversion.py` - Validates Boughter DNA→protein translation
-- `validate_fragments.py` - Validates fragment extraction (VH, VL, VHH)
-- `validate_jain_conversion.py` - Validates Jain Excel→CSV conversion
-- `validate_shehata_conversion.py` - Validates Shehata Excel→CSV conversion
+- `validate_fragments.py` - Generic fragment extraction validation (works for any dataset)
 
 ## Usage
 
-Run these after data conversion to verify correctness before training.
+```bash
+# Validate fragment extraction for any dataset
+python scripts/validation/validate_fragments.py --dataset test_datasets/jain/
+```
+
+## Dataset-Specific Validation
+
+Dataset-specific validation scripts have been moved to `preprocessing/{dataset}/`:
+- Boughter QC audit: `preprocessing/boughter/audit_training_qc.py`
+- Jain conversion validation: `preprocessing/jain/validate_conversion.py`
+- Shehata conversion validation: `preprocessing/shehata/validate_conversion.py`
