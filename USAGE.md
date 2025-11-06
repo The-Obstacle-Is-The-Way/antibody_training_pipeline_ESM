@@ -46,7 +46,7 @@ This guide explains how to use the antibody classification pipeline with ESM-1V 
 
 # Run training pipeline
    ```bash
-   python main.py
+   antibody-train --config configs/config.yaml
    ```
 
 ## Configuration Options
@@ -96,22 +96,16 @@ training:
 ### Basic Usage
 ```bash
 # Use default config.yaml
-python main.py
+antibody-train --config configs/config.yaml
 
 # Use custom config file
-python main.py my_config.yaml
+antibody-train --config my_config.yaml
 ```
 
 ### Additional Options
 ```bash
-# Only validate configuration
-python main.py --validate-only
-
-# Setup directories without training
-python main.py --setup-dirs
-
-# Get help
-python main.py --help
+# Get help with all CLI options
+antibody-train --help
 ```
 
 ## Data Format
@@ -196,16 +190,16 @@ statistical_tests: true
 
 ```bash
 # Test with configuration file
-python test.py --config test_config.yaml
+antibody-test --config test_config.yaml
 
 # Or test directly with command line arguments
-python test.py --model models/antibody_classifier.pkl --data test_data.csv
+antibody-test --model models/antibody_classifier.pkl --data test_data.csv
 
 # Test multiple models on multiple datasets
-python test.py --model models/model1.pkl models/model2.pkl --data data1.csv data2.csv
+antibody-test --model models/model1.pkl models/model2.pkl --data data1.csv data2.csv
 
 # Create a sample test configuration
-python test.py --create-config
+antibody-test --create-config
 ```
 
 ### Test Output
