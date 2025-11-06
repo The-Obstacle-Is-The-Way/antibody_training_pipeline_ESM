@@ -83,7 +83,8 @@ def main():
     import numpy as np
 
     novo_jain = np.array([[40, 19], [10, 17]])  # 66.28% accuracy (Novo benchmark)
-    novo_shehata = np.array([[229, 162], [2, 5]])  # 58.8% accuracy (Novo benchmark)
+    # Note: Shehata is an external test set with expected performance, not a Novo benchmark
+    novo_shehata = np.array([[229, 162], [2, 5]])  # ~58.8% accuracy (expected)
 
     # Test Jain with ELISA threshold (default 0.5)
     print("\n" + "=" * 60)
@@ -119,7 +120,7 @@ def main():
 
     print("\nBenchmarks:")
     print("  Jain (ELISA):   66.28% accuracy (Novo benchmark)")
-    print("  Shehata (PSR):  58.8% accuracy (Novo benchmark)")
+    print("  Shehata (PSR):  ~58.8% accuracy (expected with PSR threshold)")
 
     print("\n" + "=" * 60)
     print("HOW TO USE IN YOUR CODE:")
