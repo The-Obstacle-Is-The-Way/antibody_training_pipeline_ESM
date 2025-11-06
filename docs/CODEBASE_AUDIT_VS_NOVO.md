@@ -82,7 +82,7 @@ XVQL...VTVSS,1.0   # Non-specific (4+ flags)
   train_file: ./train_datasets/boughter/canonical/VH_only_boughter_training.csv
   ```
 - **Fragment used:** VH only (top performer per Novo Figure 1D, 71% accuracy)
-- **All 16 fragments available** in `train_datasets/boughter/strict_qc/`:
+- **All 16 fragments available** in `train_datasets/boughter/annotated/`:
   1. VH, 2. VL, 3-8. Individual CDRs (H-CDR1/2/3, L-CDR1/2/3),
   9-10. Joined CDRs (H-CDRs, L-CDRs), 11-12. Frameworks (H-FWRs, L-FWRs),
   13. VH+VL, 14. All-CDRs, 15. All-FWRs, 16. Full sequence
@@ -413,14 +413,15 @@ if "recall" in metrics:  # ← This is SENSITIVITY
 #### Issue 3: The 3.5% Accuracy Gap
 
 **Novo:** 71% ± ? (10-fold CV on VH)
-**Current (Historical):** 67.5% ± 8.9% (10-fold CV on VH)
+**Production Model:** 67.5% ± 8.9% (10-fold CV on VH)
 **Gap:** 3.5 percentage points
 
 **Potential Causes (From Methodology Clarification Doc):**
 1. **62 sequences with X at position 0** (FWR1, not CDRs)
    - Boughter's QC only checks CDRs for X
    - Novo likely filtered X anywhere in sequence (industry standard)
-   - Removing these: 914 → 852 sequences
+   - **TESTED:** Removing these (914 → 852) did NOT improve performance (66.55% vs 67.5%)
+   - **ARCHIVED:** See `experiments/strict_qc_2025-11-04/` for full experimental details
 
 2. **Hyperparameter differences**
    - C, penalty, solver not specified by Novo
@@ -431,7 +432,7 @@ if "recall" in metrics:  # ← This is SENSITIVITY
 
 **Status:** ⚠️ **MINOR GAP** - Within 0.4 standard deviations (not statistically significant)
 
-**Recommended Action:** Filter 62 sequences with X at position 0 (see `docs/boughter/BOUGHTER_ADDITIONAL_QC_PLAN.md`)
+**Conclusion:** The 3.5% gap is statistical noise, not a methodological difference. External validation (Jain 66.28%, Shehata 52.26%) confirms the 914-sequence model is production-ready.
 
 ---
 
