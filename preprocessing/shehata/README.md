@@ -105,7 +105,7 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 - ELISA (Jain): 0.5 (default)
 - PSR (Shehata): 0.549
 
-See `scripts/analysis/analyze_threshold_optimization.py` for details.
+See `docs/ASSAY_SPECIFIC_THRESHOLDS.md` for details.
 
 ---
 

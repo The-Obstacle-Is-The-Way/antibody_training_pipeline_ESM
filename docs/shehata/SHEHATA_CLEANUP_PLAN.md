@@ -125,11 +125,11 @@ fragments_dir = Path("test_datasets/shehata/fragments")
 
 ### Analysis/Testing Scripts (5 files)
 
-**4. scripts/analysis/analyze_threshold_optimization.py**
+**4. scripts/analysis/analyze_threshold_optimization.py** ~~DELETED~~
 ```python
-# Line 170, 194:
-"test_datasets/shehata/VH_only_shehata.csv"
-→ "test_datasets/shehata/fragments/VH_only_shehata.csv"
+# This script was deleted as experimental (Nov 2025 cleanup)
+# Purpose fulfilled: PSR threshold (0.549) already discovered and implemented
+# Results documented in docs/ASSAY_SPECIFIC_THRESHOLDS.md
 ```
 
 **5. scripts/testing/demo_assay_specific_thresholds.py**

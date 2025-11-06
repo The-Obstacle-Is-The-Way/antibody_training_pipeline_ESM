@@ -303,7 +303,7 @@ failure_log = Path("test_datasets/harvey/fragments/failed_sequences.txt")
 ```python
 # This script was deleted as experimental (Nov 2025 cleanup)
 # Purpose fulfilled: PSR threshold (0.549) already discovered and implemented
-# Results documented in scripts/analysis/analyze_threshold_optimization.py
+# Results documented in docs/ASSAY_SPECIFIC_THRESHOLDS.md
 ```
 
 **5. scripts/testing/test_harvey_psr_threshold.py** (1 path reference)
