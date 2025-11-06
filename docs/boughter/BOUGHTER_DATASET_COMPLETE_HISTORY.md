@@ -1,8 +1,11 @@
 # Boughter Dataset: Complete History & Final Processing Documentation
 
-**Date:** 2025-11-04
+**Date:** 2025-11-04 (Last Updated: 2025-11-06)
 **Status:** ✅ Complete - Novo methodology replicated, strict QC implemented and tested
 **Purpose:** Comprehensive reference for Boughter dataset structure, QC levels, and file selection
+
+> **💡 Note:** For current preprocessing pipeline implementation, see [`preprocessing/boughter/README.md`](../../preprocessing/boughter/README.md) (SINGLE SOURCE OF TRUTH).
+> This document provides historical context, QC level comparisons, and decision rationale.
 
 ---
 
