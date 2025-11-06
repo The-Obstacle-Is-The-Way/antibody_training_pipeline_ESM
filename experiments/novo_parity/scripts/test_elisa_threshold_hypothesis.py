@@ -21,9 +21,9 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 BASE_DIR = SCRIPT_DIR.parent.parent.parent
 sys.path.insert(0, str(BASE_DIR))
 MODEL_PATH = BASE_DIR / "models/boughter_vh_esm1v_logreg.pkl"
-JAIN_116 = BASE_DIR / "test_datasets/jain_ELISA_ONLY_116.csv"
-JAIN_SD03 = BASE_DIR / "test_datasets/jain_sd03.csv"
-P5E_S2_DATASET = BASE_DIR / "test_datasets/jain/jain_86_novo_parity.csv"
+JAIN_116 = BASE_DIR / "test_datasets/jain/processed/jain_ELISA_ONLY_116.csv"
+JAIN_SD03 = BASE_DIR / "test_datasets/jain/processed/jain_sd03.csv"
+P5E_S2_DATASET = BASE_DIR / "test_datasets/jain/canonical/jain_86_novo_parity.csv"
 
 # Novo benchmark
 NOVO_CM = np.array([[40, 19], [10, 17]])

@@ -277,7 +277,7 @@ def test_data_integrity():
     Test 5: Verify data integrity.
 
     Ensures all expected files exist, have correct row counts (137), and
-    preserve label distribution (67 specific, 67 mild, 3 non-specific).
+    preserve label distribution (94 specific, 22 non-specific, 21 mild).
     """
     print("\n" + "=" * 70)
     print("TEST 5: Data Integrity Verification")
