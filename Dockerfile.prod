@@ -1,0 +1,48 @@
+FROM python:3.12-slim
+
+# Install system dependencies (gcc needed for psutil, build-essential for other C extensions)
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv package manager
+RUN pip install uv
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency files AND source code (hatchling needs src/ for editable install)
+COPY pyproject.toml uv.lock ./
+COPY src/ ./src/
+
+# Install exact versions with frozen lock file (no updates, includes editable install)
+# --frozen ensures we use exact versions from uv.lock for reproducibility
+RUN uv sync --frozen --all-extras
+
+# Copy fixture datasets for testing/validation
+COPY train_datasets/ ./train_datasets/
+COPY test_datasets/ ./test_datasets/
+
+# Export .venv/bin to PATH so installed commands are available
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Set HuggingFace cache directory
+ENV HF_HOME=/app/.cache/huggingface
+
+# Pre-download ESM-1v model weights (~650MB) for offline operation
+# This layer is cached, so subsequent builds won't re-download
+RUN python -c "from transformers import AutoModel, AutoTokenizer; \
+    print('Downloading ESM-1v model weights...'); \
+    AutoModel.from_pretrained('facebook/esm1v_t33_650M_UR90S_1'); \
+    AutoTokenizer.from_pretrained('facebook/esm1v_t33_650M_UR90S_1'); \
+    print('Model weights cached successfully')"
+
+# Run test suite to verify production build (non-E2E tests only)
+# This proves the frozen environment works correctly
+RUN pytest tests/ -m "not e2e" --tb=short -q
+
+# Set entrypoint to antibody-train CLI
+ENTRYPOINT ["antibody-train"]
+CMD ["--help"]
