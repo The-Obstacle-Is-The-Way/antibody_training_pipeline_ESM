@@ -129,15 +129,27 @@ def test_cross_validation_with_multiple_metrics(
 
     # Note: ROC AUC can be undefined with mock random embeddings where
     # classes are perfectly separable or completely inseparable
-    # We test it completes without error, but don't assert specific values
+    # sklearn may return NaN scores or raise ValueError - both are acceptable
     try:
         roc_auc_scores = cross_val_score(classifier, X, y, cv=cv, scoring="roc_auc")
+        # If scores contain NaN (sklearn's way of indicating scoring failed), that's OK
         assert len(roc_auc_scores) == 3
-    except ValueError:
-        # ROC AUC can fail with degenerate predictions from mock data
-        pass  # Test still passes - we verified accuracy and F1 work
+        # Check either all valid scores OR all NaN (sklearn failure mode)
+        if not np.isnan(roc_auc_scores).any():
+            # All scores valid - verify range
+            assert all(0.0 <= score <= 1.0 for score in roc_auc_scores)
+        else:
+            # Some/all NaN - expected with mock data, verify this is intentional
+            assert np.isnan(roc_auc_scores).all(), (
+                "Mixed NaN and valid scores unexpected"
+            )
+    except ValueError as e:
+        # Alternative failure mode: ValueError raised directly
+        assert "regressor" in str(e).lower() or "classifier" in str(e).lower(), (
+            f"Unexpected ValueError: {e}"
+        )
 
-    # Assert: Accuracy and F1 metrics produce valid scores
+    # Assert: Accuracy and F1 metrics always produce valid scores
     assert len(accuracy_scores) == 3
     assert len(f1_scores) == 3
 

@@ -251,14 +251,20 @@ def test_harvey_nanobody_fragments_pipeline(mock_dataset_paths, tmp_path):
 def test_jain_multi_stage_pipeline(
     mock_transformers_model, test_params, mock_dataset_paths
 ):
-    """Verify training on different Jain stages produces different results"""
+    """Verify training on different Jain stages produces different results
+
+    NOTE: Placeholder test - Currently simulates parity stage by slicing full dataset.
+    Does NOT exercise real Jain filtering logic (ELISA flags, reclassification).
+    TODO: Create distinct mock CSVs for full/parity stages to properly test stage filtering.
+    See TEST_SUITE_REVIEW_CHECKLIST.md Section 8 for backlog item.
+    """
     # Arrange: Load mock Jain data (only full stage available in mocks)
     jain = JainDataset()
     df_full = jain.load_data(
         full_csv_path=str(mock_dataset_paths["jain"]), stage="full"
     )
 
-    # For this test, simulate two datasets by splitting mock data
+    # PLACEHOLDER: Simulate parity stage by slicing (doesn't test real filtering)
     df_parity = df_full.head(len(df_full) // 2)  # Use first half as "parity"
 
     # Assert: Simulated stages have different sizes
