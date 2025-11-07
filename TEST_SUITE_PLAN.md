@@ -2,8 +2,86 @@
 
 **Status:** Planning (awaiting senior approval)
 **Date:** 2025-11-07
+**Revised:** 2025-11-07 (API corrections from code audit)
 **Author:** Claude Code
 **Philosophy:** Robert C. Martin (Uncle Bob) Clean Code Principles
+
+---
+
+## ⚠️ Critical API Reference (SSOT)
+
+**This section documents the ACTUAL implementation APIs to prevent test mismatches.**
+
+### BinaryClassifier API
+```python
+# CORRECT: Classifier expects embeddings (np.ndarray), NOT sequences
+classifier.fit(X: np.ndarray, y: np.ndarray)  # X shape: (n_samples, 1280)
+classifier.predict(X: np.ndarray, threshold: float = 0.5, assay_type: str | None = None)
+
+# Thresholds (from src/antibody_training_esm/core/classifier.py:165-177)
+ASSAY_THRESHOLDS = {
+    "ELISA": 0.5,      # Training data type (Boughter, Jain)
+    "PSR": 0.5495      # PSR assay type (Shehata, Harvey) - EXACT Novo parity
+}
+
+# WRONG: Classifier does NOT validate sequences or accept sequence strings
+# classifier.predict([sequence])  # ❌ This will fail!
+```
+
+### ESMEmbeddingExtractor API
+```python
+# CORRECT: Uses Hugging Face transformers, NOT esm.pretrained
+from transformers import AutoModel, AutoTokenizer
+
+extractor = ESMEmbeddingExtractor(
+    model_name="facebook/esm1v_t33_650M_UR90S_1",
+    device="cpu",
+    batch_size=32
+)
+
+# Two methods (from src/antibody_training_esm/core/embeddings.py:44-149):
+embedding = extractor.embed_sequence(sequence: str)  # Returns: np.ndarray shape (1280,)
+                                                      # Raises: ValueError on invalid sequences
+
+embeddings = extractor.extract_batch_embeddings(sequences: list[str])  # Returns: np.ndarray shape (n, 1280)
+                                                                        # Logs warning + uses "M" placeholder for invalid
+
+# WRONG: Method name and library
+# extractor.extract_embeddings()  # ❌ Use embed_sequence() or extract_batch_embeddings()
+# esm.pretrained.esm1v_t33_650M_UR90S_1()  # ❌ Use transformers.AutoModel.from_pretrained()
+```
+
+### Dataset API
+```python
+# CORRECT: load_data() returns VH_sequence and VL_sequence columns, NO fragment parameter
+df = dataset.load_data(...)  # Returns DataFrame with columns: id, VH_sequence, VL_sequence, label
+
+# JainDataset.load_data(full_csv_path, sd03_csv_path, stage)
+df = jain.load_data(stage="full")    # 137 antibodies
+df = jain.load_data(stage="parity")  # 86 antibodies (Novo parity)
+
+# BoughterDataset.load_data(processed_csv, subset, include_mild)
+df = boughter.load_data(include_mild=False)  # Excludes 1-3 flag sequences
+
+# Fragments created by separate method (from src/antibody_training_esm/datasets/base.py)
+dataset.create_fragment_csvs(df, output_dir)  # Creates 16 fragment CSVs
+
+# WRONG: No fragment parameter in load_data()
+# df = dataset.load_data(fragment="VH_only")  # ❌ This parameter doesn't exist!
+# df["sequence"]  # ❌ Use df["VH_sequence"] or df["VL_sequence"]
+```
+
+### Mocking Strategy
+```python
+# CORRECT: Mock transformers, not esm.pretrained
+@pytest.fixture
+def mock_transformers_model(monkeypatch):
+    monkeypatch.setattr("transformers.AutoModel.from_pretrained", MockESMModel)
+    monkeypatch.setattr("transformers.AutoTokenizer.from_pretrained", MockTokenizer)
+
+# WRONG:
+# monkeypatch.setattr("esm.pretrained.esm1v_t33_650M_UR90S_1", ...)  # ❌ Wrong library!
+```
 
 ---
 
