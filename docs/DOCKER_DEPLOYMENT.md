@@ -26,7 +26,7 @@ This document outlines the Docker containerization strategy for the antibody non
 ### 1. Research Reproducibility
 **Problem:** Scientific results must be reproducible years later on different hardware/OS.
 **Solution:** Docker locks down:
-- Python version (3.11)
+- Python version (3.12 - matches pyproject.toml:10)
 - All dependencies with exact versions (via `uv.lock`)
 - System libraries (transformers, CUDA drivers if needed)
 - Model weights (ESM-1v checkpoint)
@@ -98,7 +98,7 @@ This document outlines the Docker containerization strategy for the antibody non
 
 **Dockerfile.dev Structure:**
 ```dockerfile
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Install uv package manager
 RUN pip install uv
@@ -109,18 +109,19 @@ WORKDIR /app
 # Copy dependency files
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies (cache this layer)
+# Create virtual environment and install dependencies
+# uv sync installs to .venv/ and includes editable install automatically
 RUN uv sync
 
 # Copy source code (invalidates cache on code changes)
 COPY src/ ./src/
 COPY tests/ ./tests/
 
-# Install package in editable mode
-RUN uv pip install -e .
+# Export .venv/bin to PATH so installed commands are available
+ENV PATH="/app/.venv/bin:$PATH"
 
-# Run tests to verify build
-RUN pytest tests/ -m "not e2e" --tb=short
+# Run tests to verify build (use 'not e2e' to skip E2E tests)
+RUN pytest tests/ -m "not e2e" --tb=short -q
 
 CMD ["bash"]
 ```
@@ -145,9 +146,10 @@ services:
 ```
 
 **Validation:**
-- `docker-compose build dev` succeeds
-- `docker-compose run dev pytest` passes 372 tests
-- `docker-compose run dev antibody-train --help` works
+- `docker-compose build dev` succeeds (builds and runs 372 tests)
+- `docker-compose run dev pytest tests/` passes 372 tests
+- `docker-compose run dev antibody-train --help` works (PATH includes .venv/bin)
+- `docker-compose run dev bash` drops into shell with all commands available
 
 ---
 
@@ -177,7 +179,7 @@ RUN python -c "from transformers import AutoModel, AutoTokenizer; \
 
 **Dockerfile.prod Structure:**
 ```dockerfile
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # Install system dependencies (if needed for sklearn/numpy)
 RUN apt-get update && apt-get install -y \
@@ -192,14 +194,14 @@ WORKDIR /app
 # Copy locked dependencies
 COPY pyproject.toml uv.lock ./
 
-# Install exact versions (no updates)
+# Install exact versions (no updates, includes editable install)
 RUN uv sync --frozen
 
-# Copy source code
-COPY src/ ./src/
+# Export .venv/bin to PATH for all subsequent commands
+ENV PATH="/app/.venv/bin:$PATH"
 
-# Build and install wheel (non-editable)
-RUN uv build && uv pip install dist/*.whl
+# Copy source code (editable install will pick this up)
+COPY src/ ./src/
 
 # Pre-download ESM model weights
 ENV HF_HOME=/app/.cache/huggingface
@@ -210,7 +212,7 @@ RUN python -c "from transformers import AutoModel, AutoTokenizer; \
 # Optional: Copy preprocessed datasets
 # COPY data/processed/ ./data/processed/
 
-# Set entrypoint
+# Set entrypoint (now available via PATH)
 ENTRYPOINT ["antibody-train"]
 CMD ["--help"]
 ```
@@ -345,9 +347,9 @@ docker image prune
 ## Security Considerations
 
 ### 1. Base Image Selection
-- Use official `python:3.11-slim` (minimal attack surface)
+- Use official `python:3.12-slim` (matches pyproject.toml:10 requirement)
 - Regularly update base image for security patches
-- Consider `python:3.11-slim-bookworm` for latest Debian base
+- Consider `python:3.12-slim-bookworm` for latest Debian base
 
 ### 2. Dependency Scanning
 - Run `docker scan` before pushing images
@@ -402,11 +404,12 @@ docker image prune
 ## Success Criteria
 
 ### Phase 1 Complete When:
-- [x] `Dockerfile.dev` builds without errors
-- [x] `docker-compose run dev pytest` passes 372 tests
-- [x] `docker-compose run dev bash` provides interactive shell
-- [x] Source code hot-reloads when mounted as volume
-- [x] Documentation (`DOCKER_USAGE.md`) exists
+- [ ] `Dockerfile.dev` builds without errors
+- [ ] `docker-compose run dev pytest` passes 372 tests
+- [ ] `docker-compose run dev bash` provides interactive shell
+- [ ] Source code hot-reloads when mounted as volume
+- [ ] Documentation (`DOCKER_USAGE.md`) exists
+- [ ] PATH includes `/app/.venv/bin` so all commands work
 
 ### Phase 2 Complete When:
 - [ ] ESM model weights cached in production image
@@ -431,14 +434,39 @@ docker image prune
 ### Q: Why not use Poetry instead of uv?
 **A:** `uv` is faster, simpler, and already in use for this project. Docker works with any Python package manager.
 
+### Q: Should we use `uv run` instead of modifying PATH?
+**A:** Both approaches work:
+
+**Option 1: Export PATH (recommended for Docker):**
+```dockerfile
+ENV PATH="/app/.venv/bin:$PATH"
+CMD ["pytest", "tests/"]
+```
+✅ Pro: Standard Docker pattern, works with ENTRYPOINT/CMD
+✅ Pro: Interactive shells (`bash`) work naturally
+❌ Con: Less explicit about virtualenv usage
+
+**Option 2: Use `uv run` prefix (alternative):**
+```dockerfile
+# Don't export PATH
+CMD ["uv", "run", "pytest", "tests/"]
+```
+✅ Pro: Explicit about using virtualenv
+✅ Pro: Matches local `uv run` workflow
+❌ Con: Awkward with ENTRYPOINT/CMD patterns
+❌ Con: Interactive shells require `uv run bash` (weird)
+
+**Decision:** Use `ENV PATH` approach in Dockerfiles for consistency with standard container patterns.
+
 ### Q: Should we use Docker for local development?
 **A:** Optional. If `uv` works well on your machine, keep using it. Docker is for reproducibility and deployment, not mandatory for dev.
 
 ### Q: How do we handle GPU support?
 **A:** For GPU training:
 1. Use `nvidia/cuda:11.8.0-cudnn8-runtime-ubuntu22.04` as base image
-2. Install CUDA-compatible PyTorch
-3. Run with `docker run --gpus all ...`
+2. Install Python 3.12 manually (CUDA images don't include it)
+3. Install CUDA-compatible PyTorch via `uv sync`
+4. Run with `docker run --gpus all ...`
 
 Currently CPU-only is sufficient for testing and small datasets.
 
@@ -470,6 +498,48 @@ Currently CPU-only is sufficient for testing and small datasets.
 ---
 
 ## Revision History
+
+### 2025-11-07 - Critical Corrections (Post-Review)
+**Summary:** Fixed Python version mismatch, virtual environment handling, and premature success claims.
+
+**Critical Corrections Made:**
+
+1. **Python Version Fix (lines 29, 101, 182, 350, 443)**
+   - ❌ **Before:** `FROM python:3.11-slim`
+   - ✅ **After:** `FROM python:3.12-slim`
+   - **Reason:** pyproject.toml:10 requires `>=3.12`, ruff configured for py312
+   - **Impact:** Prevents `uv sync --frozen` failures due to incompatible Python version
+
+2. **Virtual Environment Activation (lines 120-121, 200-201)**
+   - ❌ **Before:** Commands run directly after `uv sync` (would fail)
+   - ✅ **After:** Added `ENV PATH="/app/.venv/bin:$PATH"` to Dockerfile
+   - **Reason:** `uv sync` installs to `.venv/`, not system PATH (README.md:79-82)
+   - **Impact:** Enables `pytest`, `antibody-train`, etc. to work without `uv run` prefix
+
+3. **Removed Redundant Install Step (lines 113-114 comment)**
+   - ❌ **Before:** `RUN uv pip install -e .` after `uv sync`
+   - ✅ **After:** Removed (uv sync does editable install automatically)
+   - **Reason:** `uv sync` already installs package in editable mode per pyproject.toml
+
+4. **Success Criteria Accuracy (lines 407-412)**
+   - ❌ **Before:** Phase 1 marked `[x]` complete
+   - ✅ **After:** All boxes marked `[ ]` (not yet implemented)
+   - **Reason:** No Docker files exist in repo (`ls` confirmed)
+   - **Added:** PATH requirement to success checklist
+
+5. **GPU Support Clarification (line 443)**
+   - ✅ **Added:** Note that CUDA base images don't include Python 3.12
+   - **Impact:** Prevents confusion when switching to GPU support
+
+**Validation:** All corrections verified against:
+- `pyproject.toml:10` (Python ≥3.12 requirement)
+- `pyproject.toml:59` (Ruff py312 target)
+- `README.md:79-82` (uv workflow with .venv activation)
+- Filesystem check (no Docker files present)
+
+**Status:** Document now accurately reflects implementation requirements.
+
+---
 
 ### 2025-11-07 - Initial Plan
 - Outlined two-tier Docker strategy (dev + prod)
