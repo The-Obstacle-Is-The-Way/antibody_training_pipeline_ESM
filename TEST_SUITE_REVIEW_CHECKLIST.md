@@ -6,11 +6,13 @@ This document is the single checklist we use during every review cycle (end of e
 
 ## 1. Scope & Phase Gates
 
-- [x] Current phase deliverables match the plan (Phase 1: core unit tests, Phase 2: datasets, Phase 3: integrations, Phase 4: CLI/E2E).
+- [x] Current phase deliverables match the plan (Phase 1: core unit tests, Phase 2: datasets, Phase 3: integrations, Phase 4: CLI/E2E, Phase 5: gap closure).
+  - **Phase 5 (80% Complete):** 37 new tests (17 ModelTester + 20 loaders), 2 fragment tests enabled, zero warnings achieved
   - Phase 4 delivered: 17 E2E tests (train_pipeline, reproduce_novo) + 61 CLI unit tests (train, test, preprocess)
   - Phase 3: 58 integration tests (embedding_compatibility, dataset_pipeline, cross_validation, model_persistence)
   - Phase 1-2: 182 core/dataset unit tests (excludes CLI tests)
-  - **ACTUAL TEST COUNTS:** 318 total (243 unit + 58 integration + 17 E2E), verified via `pytest --collect-only`
+  - **ACTUAL TEST COUNTS:** 355 total (280 unit + 58 integration + 17 E2E), verified via `pytest --collect-only`
+  - **Coverage Jump:** 65.23% (Phase 4) → 80.33% (Phase 5) = +15.10% absolute improvement
 - [x] No code paths outside the declared phase were touched unless part of a documented defect fix.
   - Only CLI unit tests and E2E tests added
   - One defect fix: Moved ASSAY_THRESHOLDS to class attribute for documentation (src/antibody_training_esm/core/classifier.py:22-25)
@@ -133,13 +135,19 @@ Verify tests only target the public behaviors listed below—never the implement
       - `core/trainer.py`: 17.04% vs ≥85% target (need config refactor + E2E tests)
       - `data/loaders.py`: 28.26% vs ≥80% target (need unit tests for load_sequences_from_csv, load_embeddings)
     - **Phase 4 Delivered:** CLI unit tests (61), E2E tests (17), KeyboardInterrupt handling, full train.py/preprocess.py coverage
-  - **Phase 5 Progress (In Progress):**
+  - **Phase 5 Status: 80% Complete (4 of 5 tasks):**
     - ✅ Task 1: ModelTester integration tests (17 tests) → cli/test.py 88.01% (target ≥70%)
     - ✅ Task 2: data/loaders unit tests (20 tests) → loaders.py 100.00% (target ≥80%)
     - ✅ Task 5: sklearn warnings suppressed (455 warnings → 0 via pytest.ini filters)
     - ✅ Task 4: ANARCI fixtures added (2 fragment tests enabled: test_boughter_fragment_csv_creation_pipeline, test_jain_fragment_pipeline_with_suffix)
-    - ⏳ Task 3: trainer.py refactor pending (17.04% vs ≥85% target)
-    - **Current Status:** 352 passed, 3 skipped, 16.84s, 80.33% coverage (up from 65.23%)
+    - ⏳ Task 3: trainer.py refactor pending (17.04% vs ≥85% target) - **ONLY REMAINING TASK**
+    - **Current Status:** 352 passed, 3 skipped, 18.29s, 80.33% coverage (up from 65.23%)
     - **Files Created:** tests/fixtures/mock_datasets/boughter_annotated.csv, jain_annotated.csv (with VH_*/VL_* CDR/FWR columns)
+    - **Test Breakdown:** 355 total (280 unit + 58 integration + 17 E2E)
+    - **3 Skipped Tests (All Trainer-Related, Task 3):**
+      - test_reproduce_novo.py::test_boughter_to_jain_pipeline_reproduces_novo_results (needs real datasets)
+      - test_train_pipeline.py::test_full_training_pipeline_end_to_end (needs real datasets + trainer refactor)
+      - test_train_pipeline.py::test_training_fails_with_missing_data_file (needs trainer config refactor)
+    - **Phase 5 Progress: 4/5 tasks complete, 80.33% overall coverage achieved, zero warnings, pristine test suite**
 
 Use this checklist as a living gate. After a phase passes, return to senior-review mode and keep the repo clean—no additional docs unless instructed.
