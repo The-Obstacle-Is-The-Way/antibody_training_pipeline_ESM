@@ -1,8 +1,14 @@
-# P0 Blocker: First Principles Validation
-
-> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+> **⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup**
 >
-> This document references old root imports (e.g., `from model import ESMEmbeddingExtractor`).
+> This document describes the P0 blocker validation from 2025-11-02 during initial Shehata Phase 2 development.
+>
+> **For current pipeline documentation, see:** `test_datasets/shehata/README.md`
+>
+> The gap character issue described below has been resolved. All fragment CSVs are now gap-free.
+
+---
+
+# P0 Blocker: First Principles Validation (HISTORICAL)
 > In v2.0.0+, use: `from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor`
 >
 > See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.

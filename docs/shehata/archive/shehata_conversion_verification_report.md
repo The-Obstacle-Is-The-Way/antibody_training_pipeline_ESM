@@ -1,22 +1,33 @@
-# Shehata Dataset Conversion - Verification Report (Phase 1)
+> **⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup**
+>
+> This document describes the Phase 1 verification from 2025-10-31 and Phase 2 blocker discovery.
+>
+> **For current pipeline documentation, see:** `test_datasets/shehata/README.md`
+>
+> Both Phase 1 and Phase 2 are now complete. The P0 blocker mentioned below has been resolved.
+
+---
+
+# Shehata Dataset Conversion - Verification Report (HISTORICAL)
 
 **Date:** 2025-10-31 (Phase 1) | 2025-11-02 (Phase 2 issue discovered)
 **Issue:** #3 - Shehata dataset preprocessing
 **Phase 1 Status:** ✅ **COMPLETE AND VERIFIED** (Excel → CSV)
-**Phase 2 Status:** ⚠️ **P0 BLOCKER FOUND** (CSV → Fragments)
+**Phase 2 Status:** ✅ **COMPLETE (P0 BLOCKER RESOLVED)** (CSV → Fragments)
 
 ---
 
-## ⚠️ UPDATE (2025-11-02): Phase 2 Issue
+## ⚠️ HISTORICAL NOTE (2025-11-02): Phase 2 Issue (NOW RESOLVED)
 
-**This report covers Phase 1 (Excel → CSV) ONLY.**
+**This report covers Phase 1 (Excel → CSV) verification.**
 
-Phase 2 (fragment extraction) has a separate P0 blocker:
-- Gap characters re-introduced in VH/VL/Full fragment files
-- 13 VH, 4 VL, 17 Full sequences affected
-- See `docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md` for details
+Phase 2 had a P0 blocker that has since been resolved:
+- Gap characters were re-introduced in VH/VL/Full fragment files
+- 13 VH, 4 VL, 17 Full sequences were affected
+- See `docs/shehata/archive/shehata_blocker_analysis.md` for historical details
+- **Resolution:** All fragments are now gap-free (validated 2025-11-06)
 
-**Phase 1 remains correct** - base `shehata.csv` is gap-free.
+**Both phases are now complete** - base `shehata.csv` and all fragments are gap-free.
 
 ---
 

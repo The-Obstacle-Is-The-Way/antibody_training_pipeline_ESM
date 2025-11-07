@@ -1,4 +1,14 @@
-# Shehata Dataset P0-P4 Blocker Analysis
+> **⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup**
+>
+> This document describes the P0 blocker analysis from 2025-11-02 during Shehata Phase 2 development.
+>
+> **For current pipeline documentation, see:** `test_datasets/shehata/README.md`
+>
+> The issues described below have been resolved. All fragments are now gap-free and validated.
+
+---
+
+# Shehata Dataset P0-P4 Blocker Analysis (HISTORICAL)
 
 **Date:** 2025-11-02 (Analysis) | 2025-11-02 (RESOLVED)
 **Analyst:** Claude Code

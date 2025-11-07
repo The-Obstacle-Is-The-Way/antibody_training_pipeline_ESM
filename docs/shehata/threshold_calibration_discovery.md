@@ -84,7 +84,9 @@ We conducted comprehensive searches to determine if Novo or others documented th
 
 ### Methodology
 
-Created `analyze_thresholds.py` to systematically find optimal thresholds:
+**Historical Note:** An experimental script `analyze_thresholds.py` was created for threshold discovery (now deleted - purpose fulfilled). The threshold calibration logic is now implemented in `src/antibody_training_esm/core/classifier.py:164-170`.
+
+**Original threshold search approach:**
 
 ```python
 # Search thresholds from 0.0 to 1.0 in 0.001 steps
@@ -96,6 +98,8 @@ for threshold in np.arange(0.0, 1.0, 0.001):
     if np.array_equal(cm, novo_benchmark):
         print(f"EXACT MATCH at threshold = {threshold}")
 ```
+
+**Current implementation:** See `classifier.py:164-170` for the production threshold mapping.
 
 ### Results
 
@@ -192,7 +196,7 @@ Difference: 0 (PERFECT MATCH!)
 
 ### Probability Distribution Analysis
 
-From `analyze_thresholds.py`, comparing prediction probabilities:
+From the original threshold analysis (historical `analyze_thresholds.py`), comparing prediction probabilities:
 
 **Jain (ELISA):**
 - Specific antibodies: Mean p(non-spec) = 0.420, Std = 0.173
@@ -325,11 +329,11 @@ If we use Shehata's threshold (0.5495) on Jain:
 
 ## Files Modified
 
-- **`classifier.py:125-165`** - Added `assay_type` parameter to `predict()`
+- **`src/antibody_training_esm/core/classifier.py:164-170`** - Dataset-specific threshold mapping (PSR: 0.5495, ELISA: 0.5)
 - ~~**`analyze_thresholds.py`**~~ - Threshold optimization script (DELETED - experimental, purpose fulfilled)
 - **`test_assay_specific_thresholds.py`** - Demonstration and validation
 - **`docs/ASSAY_SPECIFIC_THRESHOLDS.md`** - Comprehensive user-facing documentation (production doc)
-- **`docs/shehata/THRESHOLD_CALIBRATION_DISCOVERY.md`** - This technical note
+- **`docs/shehata/threshold_calibration_discovery.md`** - This technical note
 
 ---
 

@@ -1,32 +1,40 @@
 # Shehata Dataset Data Sources
 
+**Date:** 2025-10-31 (Updated: 2025-11-06)
+**Status:** ✅ **Complete - Data source verified and pipeline operational**
+
+---
+
 ## Raw Data Files
 
-The Shehata dataset preprocessing requires the following Excel files from the paper's supplementary materials:
+The Shehata dataset preprocessing requires the following Excel files from the original paper's supplementary materials:
 
 ### Required Files
 
 | File | Description | Source |
 |------|-------------|--------|
-| `mmc2.xlsx` | Shehata antibody sequences | [Sakhnini et al. 2025 Supplementary Materials](https://doi.org/10.1016/j.cell.2024.12.025) |
-| `mmc3.xlsx` | Additional metadata | Same source |
-| `mmc4.xlsx` | Additional metadata | Same source |
-| `mmc5.xlsx` | Additional metadata | Same source |
+| `shehata-mmc2.xlsx` | Supplementary Table S1: Antibody Sequences and Properties | [Shehata et al. 2019 Cell Reports](https://doi.org/10.1016/j.celrep.2019.08.056) |
+| `shehata-mmc3.xlsx` | Supplementary Table S2 (not used in current pipeline) | Same source |
+| `shehata-mmc4.xlsx` | Supplementary Table S3 (not used in current pipeline) | Same source |
+| `shehata-mmc5.xlsx` | Supplementary Table S4 (not used in current pipeline) | Same source |
 
 ### Download Instructions
 
-1. Visit the paper's Cell journal page
+1. Visit the Cell Reports journal page for the paper
 2. Navigate to "Supplementary Materials"
 3. Download `mmc2.xlsx` through `mmc5.xlsx`
-4. Place them in `test_datasets/` directory
+4. Rename them to `shehata-mmc2.xlsx`, `shehata-mmc3.xlsx`, etc.
+5. Place them in `test_datasets/shehata/raw/` directory
 
 **Note:** These Excel files are NOT committed to git (see `.gitignore`). They must be downloaded manually from the paper's supplementary materials.
 
 ### Paper Reference
 
-**Sakhnini, A., et al. (2025).** "Antibody Non-Specificity Prediction using Protein Language Models and Biophysical Features." *Cell*.
+**Shehata, L., et al. (2019).** "Affinity Maturation Enhances Antibody Specificity but Compromises Conformational Stability." *Cell Reports* 28(13):3300-3308.e4.
 
-DOI: https://doi.org/10.1016/j.cell.2024.12.025
+DOI: https://doi.org/10.1016/j.celrep.2019.08.056
+
+**Note:** This is the original dataset source. Novo Nordisk (Sakhnini et al. 2025) later used this dataset as a test set for their antibody non-specificity prediction models.
 
 ### Processed Data
 

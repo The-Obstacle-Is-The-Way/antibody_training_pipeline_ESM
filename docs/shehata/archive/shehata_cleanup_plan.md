@@ -1,8 +1,18 @@
-# Shehata Dataset Cleanup - Complete Plan
+> **⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup**
+>
+> This document describes the cleanup plan from 2025-11-05 that has since been executed.
+>
+> **For current pipeline documentation, see:** `test_datasets/shehata/README.md`
+>
+> The cleanup described below is complete and all changes have been applied.
+
+---
+
+# Shehata Dataset Cleanup - Complete Plan (HISTORICAL)
 
 **Date:** 2025-11-05
 **Branch:** `leroy-jenkins/shehata-cleanup`
-**Status:** ✅ **READY FOR EXECUTION**
+**Status:** ✅ **EXECUTED (archived for provenance)**
 
 ---
 
