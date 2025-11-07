@@ -64,11 +64,18 @@ df = jain.load_data(stage="parity")  # 86 antibodies (Novo parity)
 df = boughter.load_data(include_mild=False)  # Excludes 1-3 flag sequences
 
 # Fragments created by separate method (from src/antibody_training_esm/datasets/base.py)
-dataset.create_fragment_csvs(df, output_dir)  # Creates 16 fragment CSVs
+# output_dir must be set during instantiation, NOT passed to create_fragment_csvs
+dataset = JainDataset(output_dir=Path("test_output"))
+dataset.create_fragment_csvs(df, suffix="")  # Creates 16 fragment CSVs in dataset.output_dir
 
-# WRONG: No fragment parameter in load_data()
+# Get fragment types
+fragment_types = dataset.get_fragment_types()  # Returns list of 16 fragment types
+
+# WRONG: No fragment parameter in load_data(), no output_dir in create_fragment_csvs()
 # df = dataset.load_data(fragment="VH_only")  # ❌ This parameter doesn't exist!
 # df["sequence"]  # ❌ Use df["VH_sequence"] or df["VL_sequence"]
+# dataset.create_fragment_csvs(df, output_dir=path)  # ❌ No output_dir parameter!
+# dataset.get_supported_fragments()  # ❌ Use get_fragment_types()
 ```
 
 ### Mocking Strategy
@@ -404,22 +411,20 @@ def test_jain_dataset_excludes_mild_antibodies():
     assert len(df_full) == 137  # Full dataset
     assert len(df_parity) == 86  # Parity set (excludes mild + low-confidence)
 
-def test_jain_dataset_creates_fragment_csvs():
+def test_jain_dataset_creates_fragment_csvs(tmp_path):
     """Verify dataset can create all 16 fragment types"""
-    # Arrange
-    dataset = JainDataset()
+    # Arrange - output_dir set during instantiation
+    dataset = JainDataset(output_dir=tmp_path)
     df = dataset.load_data(stage="full")
-    output_dir = Path("test_output/jain_fragments")
-    output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Act
-    dataset.create_fragment_csvs(df, output_dir=str(output_dir))
+    # Act - create_fragment_csvs only accepts (df, suffix)
+    dataset.create_fragment_csvs(df, suffix="")
 
     # Assert
-    expected_fragments = dataset.get_supported_fragments()
+    expected_fragments = dataset.get_fragment_types()  # Correct method name
     assert len(expected_fragments) == 16
     for fragment in expected_fragments:
-        fragment_file = output_dir / f"{fragment}_jain.csv"
+        fragment_file = tmp_path / f"{fragment}_jain.csv"
         assert fragment_file.exists(), f"Fragment {fragment} not created"
 
 def test_jain_dataset_handles_missing_file():
@@ -600,22 +605,20 @@ def test_boughter_to_jain_pipeline(mock_transformers_model):
     assert all(pred in [0, 1] for pred in predictions)
     # Don't assert exact accuracy (that's fragile), just verify pipeline works
 
-def test_fragment_csv_creation():
+def test_fragment_csv_creation(tmp_path):
     """Verify all 16 fragment types can be created from full dataset"""
-    # Arrange
-    dataset = BoughterDataset()
+    # Arrange - output_dir set during instantiation
+    dataset = BoughterDataset(output_dir=tmp_path)
     df = dataset.load_data(include_mild=False)
-    output_dir = Path("test_output/boughter_fragments")
-    output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Act: Create fragment CSVs
-    dataset.create_fragment_csvs(df, output_dir=str(output_dir))
+    # Act - create_fragment_csvs only accepts (df, suffix)
+    dataset.create_fragment_csvs(df, suffix="")
 
     # Assert: All 16 fragments exist
-    expected_fragments = dataset.get_supported_fragments()
+    expected_fragments = dataset.get_fragment_types()  # Correct method name
     assert len(expected_fragments) == 16
     for fragment in expected_fragments:
-        fragment_file = output_dir / f"{fragment}_boughter.csv"
+        fragment_file = tmp_path / f"{fragment}_boughter.csv"
         assert fragment_file.exists(), f"Fragment {fragment} not created"
 
         # Verify fragment CSV has valid sequences (no gaps)
@@ -1202,5 +1205,32 @@ def mock_transformers_model(monkeypatch):
 - `src/antibody_training_esm/core/embeddings.py` (lines 44-149)
 - `src/antibody_training_esm/datasets/jain.py` (lines 85-120)
 - `src/antibody_training_esm/datasets/boughter.py` (lines 84-168)
+- `src/antibody_training_esm/datasets/base.py` (lines 63-84, 117-127, 501-559)
+
+---
+
+### 2025-11-07 - Final API Corrections (Fragment Methods)
+
+**Summary:** Fixed remaining API mismatches for fragment creation methods.
+
+**Critical Corrections Made:**
+
+6. **Fragment Method Names** (lines 72, 417, 611)
+   - ❌ **Before:** `dataset.get_supported_fragments()`
+   - ✅ **After:** `dataset.get_fragment_types()`
+   - **Reason:** Actual method name from `base.py:117-127`.
+
+7. **Fragment CSV Creation Signature** (lines 67-72, 407-421, 601-620)
+   - ❌ **Before:** `dataset.create_fragment_csvs(df, output_dir=str(path))`
+   - ✅ **After:** `dataset = JainDataset(output_dir=tmp_path)` then `dataset.create_fragment_csvs(df, suffix="")`
+   - **Reason:** `create_fragment_csvs()` signature is `(df, suffix="")` only. Uses `self.output_dir` set during instantiation (`base.py:501-559`).
+
+**Files Updated:**
+- Unit test examples (lines 407-421)
+- Integration test examples (lines 601-620)
+- API Reference section (lines 66-79)
+
+**Validation:** Verified against:
+- `src/antibody_training_esm/datasets/base.py` (lines 63-84, 117-127, 501-559)
 
 **Status:** Ready for implementation - all examples now match actual APIs.
