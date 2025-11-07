@@ -24,7 +24,7 @@ This document outlines a comprehensive test suite for the antibody non-specifici
 1. **Test Behaviors, Not Implementation**
    - ✅ Test WHAT the code does (contracts, interfaces, outcomes)
    - ❌ Don't test HOW it does it (private methods, internal state)
-   - Example: Test that `classifier.predict(sequence)` returns 0 or 1, not that it calls LogisticRegression internally
+   - Example: Test that `classifier.predict(embeddings)` returns 0 or 1, not that it calls LogisticRegression internally
 
 2. **Minimize Mocking (No Bogus Mocks)**
    - ✅ Mock only I/O boundaries: network calls, file system (when necessary), external APIs
@@ -56,12 +56,13 @@ This document outlines a comprehensive test suite for the antibody non-specifici
 5. **Arrange-Act-Assert (AAA)**
    ```python
    def test_classifier_predicts_nonspecific_antibody():
-       # Arrange: Set up test data
-       sequence = "QVQLVQSGAEVKKPGASVKVSCKASGYTFT..."
+       # Arrange: Set up test data (embeddings, not sequences)
+       embeddings = np.random.rand(1, 1280)  # Mock ESM embedding
        classifier = BinaryClassifier(params=TEST_PARAMS)
+       classifier.fit(np.random.rand(100, 1280), np.array([0, 1] * 50))  # Pre-fit
 
        # Act: Execute behavior
-       prediction = classifier.predict([sequence])
+       prediction = classifier.predict(embeddings)
 
        # Assert: Verify outcome
        assert prediction[0] in [0, 1]
@@ -225,33 +226,52 @@ def test_classifier_predicts_binary_labels():
     assert all(pred in [0, 1] for pred in predictions)
 
 def test_classifier_applies_psr_threshold_calibration():
-    """Verify PSR assay uses 0.4 decision threshold"""
+    """Verify PSR assay uses 0.5495 decision threshold (Novo parity value)"""
     # Arrange
+    X_train = np.random.rand(100, 1280)
+    y_train = np.array([0, 1] * 50)
     classifier = BinaryClassifier(params=TEST_PARAMS)
-    classifier.is_fitted = True
-    classifier.classifier.predict_proba = lambda X: np.array([[0.3, 0.7]])
+    classifier.fit(X_train, y_train)
+
+    # Mock predict_proba to return known probability
+    classifier.classifier.predict_proba = lambda X: np.array([[0.45, 0.55]])
 
     # Act
     prediction = classifier.predict(np.zeros((1, 1280)), assay_type="PSR")
 
     # Assert
-    assert prediction[0] == 1  # 0.7 > 0.4 threshold
+    assert prediction[0] == 1  # 0.55 > 0.5495 threshold
 
-def test_classifier_rejects_invalid_sequences():
-    """Verify classifier validates sequence format"""
+def test_classifier_requires_fit_before_predict():
+    """Verify classifier raises error when predicting before fit"""
     # Arrange
     classifier = BinaryClassifier(params=TEST_PARAMS)
-    invalid_sequence = "QVQL-VQSG"  # Contains gap
+    embeddings = np.random.rand(10, 1280)
 
     # Act & Assert
-    with pytest.raises(ValueError, match="Invalid amino acid"):
-        classifier.predict([invalid_sequence])
+    with pytest.raises(ValueError, match="Classifier must be fitted"):
+        classifier.predict(embeddings)
+
+def test_classifier_handles_single_sample():
+    """Verify classifier handles single embedding (edge case)"""
+    # Arrange
+    X_train = np.random.rand(100, 1280)
+    y_train = np.array([0, 1] * 50)
+    classifier = BinaryClassifier(params=TEST_PARAMS)
+    classifier.fit(X_train, y_train)
+
+    # Act
+    prediction = classifier.predict(np.random.rand(1, 1280))
+
+    # Assert
+    assert len(prediction) == 1
+    assert prediction[0] in [0, 1]
 ```
 
 **Mocking Strategy:**
-- Mock `ESMEmbeddingExtractor.extract_embeddings()` to return fake embeddings (np.random.rand)
 - Don't mock LogisticRegression (it's lightweight, part of the contract)
 - Don't mock DataFrame operations (part of domain logic)
+- Sequence validation happens in ESMEmbeddingExtractor, not classifier
 
 ---
 
@@ -272,11 +292,12 @@ def test_jain_dataset_loads_full_stage():
     dataset = JainDataset()
 
     # Act
-    df = dataset.load(stage="full")
+    df = dataset.load_data(stage="full")
 
     # Assert
     assert len(df) == 137
-    assert "sequence" in df.columns
+    assert "VH_sequence" in df.columns  # Dataset returns VH_sequence, not sequence
+    assert "VL_sequence" in df.columns  # Also includes VL_sequence
     assert "label" in df.columns
 
 def test_jain_dataset_parity_stage_returns_86_antibodies():
@@ -285,7 +306,7 @@ def test_jain_dataset_parity_stage_returns_86_antibodies():
     dataset = JainDataset()
 
     # Act
-    df = dataset.load(stage="parity")
+    df = dataset.load_data(stage="parity")
 
     # Assert
     assert len(df) == 86
@@ -296,24 +317,41 @@ def test_jain_dataset_excludes_mild_antibodies():
     dataset = JainDataset()
 
     # Act
-    df_full = dataset.load(stage="full")
-    df_parity = dataset.load(stage="parity")
+    df_full = dataset.load_data(stage="full")
+    df_parity = dataset.load_data(stage="parity")
 
     # Assert
-    # Mild antibodies (1-3 flags) should be filtered out
+    # Mild antibodies (1-3 flags) should be filtered out in parity stage
     assert len(df_parity) < len(df_full)
-    # Parity set should only have 0 flags (specific) or >=4 flags (non-specific)
-    # (This assumes internal flag column exists - adapt to actual implementation)
+    assert len(df_full) == 137  # Full dataset
+    assert len(df_parity) == 86  # Parity set (excludes mild + low-confidence)
 
-def test_jain_dataset_validates_required_columns():
-    """Verify dataset raises error if required columns missing"""
+def test_jain_dataset_creates_fragment_csvs():
+    """Verify dataset can create all 16 fragment types"""
     # Arrange
     dataset = JainDataset()
-    # Mock a corrupted CSV (missing 'sequence' column)
+    df = dataset.load_data(stage="full")
+    output_dir = Path("test_output/jain_fragments")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Act
+    dataset.create_fragment_csvs(df, output_dir=str(output_dir))
+
+    # Assert
+    expected_fragments = dataset.get_supported_fragments()
+    assert len(expected_fragments) == 16
+    for fragment in expected_fragments:
+        fragment_file = output_dir / f"{fragment}_jain.csv"
+        assert fragment_file.exists(), f"Fragment {fragment} not created"
+
+def test_jain_dataset_handles_missing_file():
+    """Verify dataset raises error for missing input files"""
+    # Arrange
+    dataset = JainDataset()
 
     # Act & Assert
-    with pytest.raises(ValueError, match="Missing required column"):
-        dataset.load(stage="full")
+    with pytest.raises(FileNotFoundError):
+        dataset.load_data(full_csv_path="nonexistent.csv")
 ```
 
 **Mocking Strategy:**
@@ -327,62 +365,113 @@ def test_jain_dataset_validates_required_columns():
 
 **What to Test:**
 - ✅ Model initialization (device selection, batch size)
-- ✅ Embedding extraction (sequence → 1280-dim vector)
-- ✅ Batch processing
+- ✅ Single sequence embedding (`embed_sequence`)
+- ✅ Batch embedding extraction (`extract_batch_embeddings`)
 - ✅ Sequence validation (gaps, invalid amino acids)
-- ✅ Edge cases: empty sequences, very long sequences
+- ✅ Edge cases: empty sequences, very long sequences, invalid characters
 
 **Example Tests:**
 ```python
 @pytest.fixture
-def mock_esm_model():
-    """Mock ESM model to avoid downloading 650MB model"""
+def mock_transformers_model(monkeypatch):
+    """Mock Hugging Face transformers model to avoid downloading 650MB"""
     class MockESMModel:
-        def __call__(self, tokens):
-            # Return fake embeddings (batch_size, seq_len, 1280)
-            batch_size = tokens.shape[0]
-            return {"representations": {33: torch.rand(batch_size, 128, 1280)}}
+        def __init__(self, *args, **kwargs):
+            pass
 
-    return MockESMModel()
+        def to(self, device):
+            return self
 
-def test_embeddings_extracts_1280_dim_vectors(mock_esm_model, monkeypatch):
-    """Verify embeddings are 1280-dimensional (ESM-1v representation size)"""
+        def eval(self):
+            return self
+
+        def __call__(self, input_ids, attention_mask, output_hidden_states=False):
+            batch_size = input_ids.shape[0]
+            seq_len = input_ids.shape[1]
+            # Mock hidden states (last layer)
+            hidden_states = torch.rand(batch_size, seq_len, 1280)
+            return type('obj', (object,), {'hidden_states': (None, hidden_states)})()
+
+    class MockTokenizer:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        def __call__(self, sequences, **kwargs):
+            if isinstance(sequences, str):
+                sequences = [sequences]
+            batch_size = len(sequences)
+            max_len = max(len(s) for s in sequences) + 2  # +2 for CLS/EOS
+            return {
+                "input_ids": torch.randint(0, 100, (batch_size, max_len)),
+                "attention_mask": torch.ones(batch_size, max_len)
+            }
+
+    monkeypatch.setattr("transformers.AutoModel.from_pretrained", MockESMModel)
+    monkeypatch.setattr("transformers.AutoTokenizer.from_pretrained", MockTokenizer)
+    return MockESMModel, MockTokenizer
+
+def test_embed_sequence_extracts_1280_dim_vector(mock_transformers_model):
+    """Verify single sequence embedding returns 1280-dimensional vector"""
     # Arrange
-    monkeypatch.setattr("esm.pretrained.esm1v_t33_650M_UR90S_1", lambda: (mock_esm_model, None))
-    extractor = ESMEmbeddingExtractor(model_name="esm1v_t33_650M_UR90S_1", device="cpu")
+    extractor = ESMEmbeddingExtractor(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu"
+    )
 
     # Act
-    embeddings = extractor.extract_embeddings(["QVQLVQSGAEVKKPGA"])
+    embedding = extractor.embed_sequence("QVQLVQSGAEVKKPGA")
 
     # Assert
-    assert embeddings.shape == (1, 1280)
+    assert embedding.shape == (1280,)  # Single vector
+    assert isinstance(embedding, np.ndarray)
 
-def test_embeddings_processes_batches(mock_esm_model, monkeypatch):
-    """Verify batch processing handles multiple sequences"""
+def test_extract_batch_embeddings_handles_multiple_sequences(mock_transformers_model):
+    """Verify batch processing returns correct shape"""
     # Arrange
-    monkeypatch.setattr("esm.pretrained.esm1v_t33_650M_UR90S_1", lambda: (mock_esm_model, None))
-    extractor = ESMEmbeddingExtractor(model_name="esm1v_t33_650M_UR90S_1", device="cpu", batch_size=2)
+    extractor = ESMEmbeddingExtractor(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        batch_size=2
+    )
     sequences = ["QVQLVQSGAEVKKPGA"] * 10
 
     # Act
-    embeddings = extractor.extract_embeddings(sequences)
+    embeddings = extractor.extract_batch_embeddings(sequences)
 
     # Assert
-    assert embeddings.shape == (10, 1280)
+    assert embeddings.shape == (10, 1280)  # (n_sequences, embedding_dim)
 
-def test_embeddings_rejects_sequences_with_gaps(mock_esm_model, monkeypatch):
-    """Verify sequences with gaps are rejected"""
+def test_embed_sequence_rejects_invalid_amino_acids():
+    """Verify embed_sequence raises ValueError for invalid sequences"""
     # Arrange
-    monkeypatch.setattr("esm.pretrained.esm1v_t33_650M_UR90S_1", lambda: (mock_esm_model, None))
-    extractor = ESMEmbeddingExtractor(model_name="esm1v_t33_650M_UR90S_1", device="cpu")
+    extractor = ESMEmbeddingExtractor(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu"
+    )
 
-    # Act & Assert
-    with pytest.raises(ValueError, match="gap character"):
-        extractor.extract_embeddings(["QVQL-VQSG"])
+    # Act & Assert - embed_sequence raises on invalid input
+    with pytest.raises(ValueError, match="Invalid amino acid"):
+        extractor.embed_sequence("QVQL-VQSG")  # Gap character
+
+def test_extract_batch_embeddings_handles_invalid_sequences_gracefully(mock_transformers_model):
+    """Verify batch extractor logs warning and uses placeholder for invalid sequences"""
+    # Arrange
+    extractor = ESMEmbeddingExtractor(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu"
+    )
+    sequences = ["QVQLVQSG", "INVALID-SEQ", "QVQLVQSG"]  # Middle one has gap
+
+    # Act - extract_batch_embeddings uses placeholder "M" instead of raising
+    embeddings = extractor.extract_batch_embeddings(sequences)
+
+    # Assert - Still returns embeddings (placeholder used for invalid)
+    assert embeddings.shape == (3, 1280)
 ```
 
 **Mocking Strategy:**
-- ✅ Mock ESM model loading (`esm.pretrained.esm1v_t33_650M_UR90S_1`)
+- ✅ Mock `transformers.AutoModel.from_pretrained()` (uses HuggingFace, not esm.pretrained)
+- ✅ Mock `transformers.AutoTokenizer.from_pretrained()`
 - ✅ Return fake torch tensors for embeddings
 - ❌ Don't mock sequence validation (that's the behavior we're testing!)
 
@@ -401,23 +490,31 @@ def test_embeddings_rejects_sequences_with_gaps(mock_esm_model, monkeypatch):
 
 **Example Tests:**
 ```python
-def test_boughter_to_jain_pipeline():
+def test_boughter_to_jain_pipeline(mock_transformers_model):
     """Verify Boughter training set can predict on Jain test set"""
-    # Arrange: Load Boughter training data
+    # Arrange: Load Boughter training data (VH only)
     boughter = BoughterDataset()
-    df_train = boughter.load(fragment="VH_only", include_mild=False)
+    df_train = boughter.load_data(include_mild=False)  # Returns VH_sequence, VL_sequence
 
     # Arrange: Load Jain test data
     jain = JainDataset()
-    df_test = jain.load(stage="parity", fragment="VH_only")
+    df_test = jain.load_data(stage="parity")  # Returns VH_sequence, VL_sequence
 
-    # Act: Train classifier (with mocked embeddings to speed up test)
+    # Arrange: Extract embeddings from VH sequences
+    extractor = ESMEmbeddingExtractor(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu"
+    )
+    X_train = extractor.extract_batch_embeddings(df_train["VH_sequence"].tolist())
+    y_train = df_train["label"].values
+
+    X_test = extractor.extract_batch_embeddings(df_test["VH_sequence"].tolist())
+
+    # Act: Train classifier
     classifier = BinaryClassifier(params=TEST_PARAMS)
-    X_train, y_train = mock_embed_sequences(df_train["sequence"], df_train["label"])
     classifier.fit(X_train, y_train)
 
     # Act: Predict on Jain
-    X_test, y_test = mock_embed_sequences(df_test["sequence"], df_test["label"])
     predictions = classifier.predict(X_test)
 
     # Assert: Predictions are valid
@@ -425,19 +522,28 @@ def test_boughter_to_jain_pipeline():
     assert all(pred in [0, 1] for pred in predictions)
     # Don't assert exact accuracy (that's fragile), just verify pipeline works
 
-def test_fragment_compatibility():
-    """Verify all 16 fragment types can be loaded and embedded"""
+def test_fragment_csv_creation():
+    """Verify all 16 fragment types can be created from full dataset"""
     # Arrange
-    fragments = ["VH_only", "VL_only", "H-CDR3", "Full", ...]  # All 16 fragments
     dataset = BoughterDataset()
+    df = dataset.load_data(include_mild=False)
+    output_dir = Path("test_output/boughter_fragments")
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Act & Assert
-    for fragment in fragments:
-        df = dataset.load(fragment=fragment)
-        assert len(df) > 0
-        assert "sequence" in df.columns
-        # Verify sequences are valid for embedding (no gaps)
-        assert not df["sequence"].str.contains("-").any()
+    # Act: Create fragment CSVs
+    dataset.create_fragment_csvs(df, output_dir=str(output_dir))
+
+    # Assert: All 16 fragments exist
+    expected_fragments = dataset.get_supported_fragments()
+    assert len(expected_fragments) == 16
+    for fragment in expected_fragments:
+        fragment_file = output_dir / f"{fragment}_boughter.csv"
+        assert fragment_file.exists(), f"Fragment {fragment} not created"
+
+        # Verify fragment CSV has valid sequences (no gaps)
+        df_fragment = pd.read_csv(fragment_file, comment="#")
+        assert "sequence" in df_fragment.columns
+        assert not df_fragment["sequence"].str.contains("-").any()
 ```
 
 ---
@@ -492,15 +598,17 @@ def test_reproduce_novo_nordisk_results():
 ### What to Mock (✅ Allowed)
 
 1. **ESM Model Loading**
-   - Mock `esm.pretrained.esm1v_t33_650M_UR90S_1()` to avoid 650MB download
+   - Mock `transformers.AutoModel.from_pretrained()` to avoid 650MB download
+   - Mock `transformers.AutoTokenizer.from_pretrained()`
    - Return fake torch tensors for embeddings
+   - Model: `facebook/esm1v_t33_650M_UR90S_1`
 
 2. **File I/O (Selectively)**
    - Mock missing files for error handling tests
    - Use small mock CSV files for fast unit tests
 
 3. **External APIs / Network Calls** (if added)
-   - Mock HuggingFace API calls
+   - Mock HuggingFace API calls (model downloads)
    - Mock any web requests
 
 4. **GPU Operations** (if applicable)
@@ -520,7 +628,7 @@ def test_reproduce_novo_nordisk_results():
    - Don't mock label assignment
 
 3. **Business Rules**
-   - Don't mock threshold logic (PSR 0.4, ELISA 0.5)
+   - Don't mock threshold logic (PSR 0.5495, ELISA 0.5)
    - Don't mock flagging strategies (0 vs 1-3 vs 4+)
 
 **Principle:** Mock I/O boundaries, test behavior everywhere else.
@@ -549,11 +657,36 @@ def test_reproduce_novo_nordisk_results():
 3. **Mock Model** (`mock_models.py`)
    ```python
    class MockESMModel:
-       """Mock ESM model for tests (no 650MB download)"""
-       def __call__(self, tokens):
-           batch_size = tokens.shape[0]
-           seq_len = tokens.shape[1]
-           return {"representations": {33: torch.rand(batch_size, seq_len, 1280)}}
+       """Mock HuggingFace transformers ESM model (no 650MB download)"""
+       def __init__(self, *args, **kwargs):
+           pass
+
+       def to(self, device):
+           return self
+
+       def eval(self):
+           return self
+
+       def __call__(self, input_ids, attention_mask, output_hidden_states=False):
+           batch_size = input_ids.shape[0]
+           seq_len = input_ids.shape[1]
+           hidden_states = torch.rand(batch_size, seq_len, 1280)
+           return type('obj', (object,), {'hidden_states': (None, hidden_states)})()
+
+   class MockTokenizer:
+       """Mock HuggingFace tokenizer"""
+       def __init__(self, *args, **kwargs):
+           pass
+
+       def __call__(self, sequences, **kwargs):
+           if isinstance(sequences, str):
+               sequences = [sequences]
+           batch_size = len(sequences)
+           max_len = max(len(s) for s in sequences) + 2  # +2 for CLS/EOS
+           return {
+               "input_ids": torch.randint(0, 100, (batch_size, max_len)),
+               "attention_mask": torch.ones(batch_size, max_len)
+           }
    ```
 
 ### Test Database
@@ -744,9 +877,10 @@ jobs:
 ```
 
 **CI Mocking Strategy:**
-- ✅ Mock ESM model loading (no 650MB download in CI)
+- ✅ Mock transformers model loading (no 650MB ESM download in CI)
 - ✅ Use CPU-only tests (no GPU in CI)
 - ✅ Use small mock datasets (fast CI runs)
+- ✅ Mock HuggingFace Hub API calls
 
 ---
 
@@ -755,19 +889,24 @@ jobs:
 ### ✅ Good Test (Tests Behavior)
 
 ```python
-def test_classifier_handles_empty_sequence_list():
-    """Verify classifier raises ValueError for empty input"""
+def test_classifier_handles_empty_embedding_array():
+    """Verify classifier behavior with empty embeddings array"""
     # Arrange
     classifier = BinaryClassifier(params=TEST_PARAMS)
-    classifier.is_fitted = True
+    X_train = np.random.rand(100, 1280)
+    y_train = np.array([0, 1] * 50)
+    classifier.fit(X_train, y_train)
 
-    # Act & Assert
-    with pytest.raises(ValueError, match="empty"):
-        classifier.predict([])
+    empty_embeddings = np.array([]).reshape(0, 1280)  # Shape: (0, 1280)
+
+    # Act & Assert - sklearn will raise on empty input
+    with pytest.raises(ValueError):
+        classifier.predict(empty_embeddings)
 ```
 
 **Why it's good:**
-- Tests observable behavior (raises ValueError)
+- Tests observable behavior (error on invalid input)
+- Uses correct API (embeddings array, not sequences)
 - Tests edge case (empty input)
 - Clear test name describes behavior
 - Single assertion, focused
@@ -796,21 +935,24 @@ def test_classifier_calls_logistic_regression():
 ### ✅ Good Test (Minimal Mock)
 
 ```python
-def test_embeddings_validates_sequences_before_extraction(mock_esm_model, monkeypatch):
-    """Verify invalid sequences are rejected before embedding"""
+def test_embed_sequence_validates_before_extraction(mock_transformers_model):
+    """Verify invalid sequences are rejected by embed_sequence"""
     # Arrange
-    monkeypatch.setattr("esm.pretrained.esm1v_t33_650M_UR90S_1", lambda: (mock_esm_model, None))
-    extractor = ESMEmbeddingExtractor(model_name="esm1v_t33_650M_UR90S_1", device="cpu")
+    extractor = ESMEmbeddingExtractor(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu"
+    )
 
-    # Act & Assert
+    # Act & Assert - embed_sequence raises ValueError for invalid sequences
     with pytest.raises(ValueError, match="Invalid amino acid"):
-        extractor.extract_embeddings(["QVQLVQSG-AEVKKPGA"])  # Gap character
+        extractor.embed_sequence("QVQLVQSG-AEVKKPGA")  # Gap character
 ```
 
 **Why it's good:**
-- Mocks only I/O boundary (ESM model loading)
+- Mocks only I/O boundary (transformers model loading via fixture)
 - Tests domain logic (sequence validation)
 - Verifies error handling behavior
+- Uses correct method name (`embed_sequence` not `extract_embeddings`)
 
 ### ❌ Bogus Test (Over-mocked)
 
@@ -819,19 +961,20 @@ def test_embeddings_processes_sequences(mocker):
     """Verify embeddings are extracted"""
     # Arrange
     mock_extractor = mocker.Mock()
-    mock_extractor.extract_embeddings.return_value = np.zeros((1, 1280))
+    mock_extractor.embed_sequence.return_value = np.zeros(1280)
 
     # Act
-    result = mock_extractor.extract_embeddings(["QVQLVQSG"])
+    result = mock_extractor.embed_sequence("QVQLVQSG")
 
     # Assert
-    assert result.shape == (1, 1280)
+    assert result.shape == (1280,)
 ```
 
 **Why it's bogus:**
-- Mocks the thing we're testing (ESMEmbeddingExtractor)
-- Test always passes (mock returns what we tell it to)
-- Doesn't test any real behavior
+- Mocks the thing we're testing (ESMEmbeddingExtractor itself)
+- Test always passes (mock returns exactly what we tell it to)
+- Doesn't test any real behavior (no validation, no processing)
+- Completely useless - would pass even if implementation is broken
 
 ---
 
@@ -869,10 +1012,18 @@ def test_embeddings_processes_sequences(mocker):
 ### Q: When is it OK to mock?
 
 **A:** Mock only I/O boundaries:
-- ✅ ESM model loading (heavy, slow)
+- ✅ Transformers model loading (650MB ESM model, heavy, slow)
 - ✅ Network requests (unreliable in tests)
 - ✅ File system (for error cases)
 - ❌ Not domain logic, not transformations, not business rules
+
+**How to mock ESM model:**
+```python
+@pytest.fixture
+def mock_transformers_model(monkeypatch):
+    monkeypatch.setattr("transformers.AutoModel.from_pretrained", MockESMModel)
+    monkeypatch.setattr("transformers.AutoTokenizer.from_pretrained", MockTokenizer)
+```
 
 ### Q: How do I test code that depends on large datasets?
 
