@@ -1,6 +1,16 @@
+> **⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup**
+>
+> This document describes an external audit request from 2025-11-01 during the initial Harvey script development.
+>
+> **For current pipeline documentation, see:** `test_datasets/harvey/README.md`
+>
+> Status warnings below are historical and do not reflect the current state.
+
+---
+
 # Harvey Preprocessing Script - Audit Request
 
-**Date:** 2025-11-01
+**Date:** 2025-11-01 (Historical)
 **Script:** `preprocessing/harvey/step2_extract_fragments.py`
 **Purpose:** Extract VHH (nanobody) fragments from Harvey dataset for ESM-1v testing
 

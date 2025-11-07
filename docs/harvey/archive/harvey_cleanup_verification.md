@@ -1,6 +1,16 @@
+> **⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup**
+>
+> This document describes the verification results from the 2025-11-05 Harvey cleanup execution.
+>
+> **For current pipeline documentation, see:** `test_datasets/harvey/README.md`
+>
+> This verification confirmed the cleanup was successful.
+
+---
+
 # Harvey Dataset Cleanup - Verification Results
 
-**Date:** 2025-11-05
+**Date:** 2025-11-05 (Historical)
 **Branch:** leroy-jenkins/harvey-cleanup
 **Status:** ✅ **ALL VERIFICATION CHECKS PASSED**
 

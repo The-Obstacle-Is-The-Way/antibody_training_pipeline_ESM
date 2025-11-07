@@ -1,8 +1,18 @@
+> **⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup**
+>
+> This document describes the cleanup investigation from 2025-11-05. The cleanup was subsequently approved and executed successfully.
+>
+> **For current pipeline documentation, see:** `test_datasets/harvey/README.md`
+>
+> Status warnings below are historical and do not reflect the current state.
+
+---
+
 # Harvey Dataset Cleanup - Senior Investigation
 
-**Date:** 2025-11-05
+**Date:** 2025-11-05 (Historical)
 **Branch:** leroy-jenkins/full-send
-**Status:** 🔍 **INVESTIGATION - AWAITING SENIOR APPROVAL**
+**Status:** 🔍 **INVESTIGATION - AWAITING SENIOR APPROVAL** (Historical - approved and completed)
 
 ---
 

@@ -1,8 +1,18 @@
+> **⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup**
+>
+> This document describes development work from 2025-11-01 during the initial Harvey dataset processing.
+>
+> **For current pipeline documentation, see:** `test_datasets/harvey/README.md`
+>
+> Status warnings below are historical and do not reflect the current state.
+
+---
+
 # Harvey Dataset – Data Discovery & Cleaning Log
 
-**Date:** 2025-11-01
+**Date:** 2025-11-01 (Historical)
 **Issue:** #4 – Harvey dataset preprocessing
-**Status:** ⚠️ **DATASET SOURCE VERIFICATION REQUIRED**
+**Status:** ⚠️ **DATASET SOURCE VERIFICATION REQUIRED** (Historical - resolved)
 
 ---
 

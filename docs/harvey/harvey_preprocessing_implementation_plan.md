@@ -1,16 +1,16 @@
 # Harvey Dataset – Preprocessing Implementation Plan
 
-**Date:** 2025-11-01
+**Date:** 2025-11-01 (Updated: 2025-11-06)
 **Issue:** #4 – Harvey dataset preprocessing
-**Status:** ⚠️ **DATASET SOURCE VERIFICATION REQUIRED**
+**Status:** ✅ **COMPLETE - Implementation validated and pipeline operational**
 
 ---
 
-## ⚠️ Dataset Source Verification Issue (2025-11-01 17:30)
+## Implementation Status (2025-11-06)
 
-**UPDATE:** Plan remains valid but dataset source requires verification. HuggingFace version (ZYMScott/polyreaction) identified as Harvey+GP-nano combined dataset, not pure Harvey 2022. Awaiting confirmation of correct source for Novo Nordisk replication.
+**UPDATE:** Implementation is complete and fully validated. Data source confirmed as the official Harvey Lab repository (`debbiemarkslab/nanobody-polyreactivity`), NOT the HuggingFace ZYMScott/polyreaction dataset.
 
-**Note:** Processing methodology documented below is correct and ready for use once correct dataset is verified.
+**Pipeline status:** All preprocessing scripts operational and verified. See `test_datasets/harvey/README.md` for current SSOT.
 
 ---
 

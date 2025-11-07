@@ -1,46 +1,29 @@
 # Harvey Dataset – Data Sources & Methodology
 
-**Date:** 2025-11-01
+**Date:** 2025-11-01 (Updated: 2025-11-06)
 **Issue:** #4 – Harvey dataset preprocessing
-**Status:** ⚠️ **DATASET SOURCE VERIFICATION REQUIRED**
+**Status:** ✅ **COMPLETE - Data source verified and pipeline validated**
 
 ---
 
-## ⚠️ CRITICAL: Dataset Source Verification Issue (2025-11-01)
+## Data Source Confirmed (2025-11-06)
 
-**FINDING:** The HuggingFace dataset `ZYMScott/polyreaction` (141,474 sequences) has been identified as **NOT the pure Harvey 2022 dataset**.
+**OFFICIAL SOURCE:** Harvey Lab GitHub Repository
+- **Repository:** `debbiemarkslab/nanobody-polyreactivity`
+- **Location:** `backend/app/experiments/`
+- **Files:**
+  - `high_polyreactivity_high_throughput.csv` (71,772 sequences)
+  - `low_polyreactivity_high_throughput.csv` (69,702 sequences)
 
-**Evidence from NbBench paper (Zhang et al. 2025, arxiv:2505.02022):**
+**Total:** 141,474 sequences → 141,021 after ANARCI annotation (99.68% success rate)
 
-The "PolyRx" task in NbBench Table 1 shows:
-- **References: Harvey/GP-nano [52, 53]**
-- [52] = Harvey et al. 2022 (Nature Communications)
-- [53] = Zhou et al. 2024 "GP-nano: a geometric graph network for nanobody polyreactivity prediction" (IEEE BIBM 2024)
+**IMPORTANT:** We do **NOT** use the HuggingFace `ZYMScott/polyreaction` dataset, which is a Harvey + GP-nano combined dataset created by the NbBench team.
 
-**What this means:**
-- HuggingFace `ZYMScott/polyreaction` = **Harvey + GP-nano COMBINED dataset**
-- Created by NbBench team as a curated benchmark
-- Data was "separately clustered and merged afterward to ensure balanced representation"
-- This is **NOT** the original Harvey dataset used by Novo Nordisk for testing
-
-**Harvey 2022 paper data availability statement:**
-> "The data that support this study are available from the corresponding author upon request."
-
-The original Harvey dataset is **NOT publicly deposited**. It must be requested from the authors (Debora S. Marks or Andrew C. Kruse).
-
-**Action Required:**
-1. ✅ Confirm with team whether we have access to original Harvey dataset
-2. ⬜ If not available: Request from Harvey/Marks/Kruse lab
-3. ⬜ Update `download_harvey_dataset.py` with correct source
-4. ⬜ Re-run processing on verified dataset
-
-**Note:** Processing scripts (`process_harvey.py`) remain valid. Only the input data source needs verification.
+**For current SSOT and pipeline details, see:** `test_datasets/harvey/README.md`
 
 ---
 
 ## Executive Summary
-
-**⚠️ NOTE:** The content below documents the HuggingFace dataset which may not be the correct source for Novo Nordisk replication. Treat as reference only until dataset source is verified.
 
 The Harvey dataset contains **141,474 nanobody sequences** with binary polyreactivity labels from deep sequencing of FACS-sorted pools. This dataset is used by Novo Nordisk (Sakhnini et al. 2025) to **test** their ESM-1v VH-based logistic regression model for predicting antibody non-specificity.
 
@@ -235,12 +218,12 @@ Harvey et al. reported TWO deep sequencing datasets:
 Harvey Lab (Harvard/Debbie Marks Lab)
     ↓ FACS + Deep Sequencing
 Initial Dataset: ~134K sequences (65K low + 69K high)
-    ↓ Preprocessing/Cleaning
-HuggingFace: 141,474 sequences (ZYMScott/polyreaction)
-    ↓ Downloaded 2025-11-01
-Local: test_datasets/harvey/processed/harvey.csv + harvey_hf/ splits
-    ↓ PENDING: ANARCI fragment extraction
-test_datasets/harvey/fragments/ fragment CSVs (VHH, H-CDRs, H-FWRs, etc.)
+    ↓ Published to GitHub (debbiemarkslab/nanobody-polyreactivity)
+Raw CSVs: 141,474 sequences (71,772 high + 69,702 low)
+    ↓ Step 1: Convert raw CSVs (step1_convert_raw_csvs.py)
+test_datasets/harvey/processed/harvey.csv (141,474 sequences)
+    ↓ Step 2: ANARCI annotation + fragment extraction (step2_extract_fragments.py)
+test_datasets/harvey/fragments/*.csv (141,021 sequences, 6 fragment types)
 ```
 
 ---
