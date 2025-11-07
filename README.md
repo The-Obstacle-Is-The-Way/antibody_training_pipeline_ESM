@@ -3,7 +3,7 @@
 <div align="center">
   <img src="assets/leeroy_jenkins.png" alt="Leeroy Jenkins" width="300"/>
   <br>
-  <em>"Alright chums, (I'm back)! Let's do this..."</em>
+  <em>"⏰ Times up, let's do this." - LEEROYYYYYYYYYYY JENKINNNNNNNNNS</em>
 </div>
 
 ---
