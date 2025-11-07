@@ -1151,3 +1151,56 @@ def mock_transformers_model(monkeypatch):
 **Author:** Claude Code
 **Date:** 2025-11-07
 **Status:** Awaiting Senior Approval
+
+---
+
+## Revision History
+
+### 2025-11-07 - API Corrections (Code Audit)
+
+**Summary:** Revised all test examples to match actual implementation APIs after comprehensive code audit.
+
+**Critical Corrections Made:**
+
+1. **BinaryClassifier API** (lines 17-29, 228-268, 892-912)
+   - ❌ **Before:** `classifier.predict([sequence])` accepting raw sequences
+   - ✅ **After:** `classifier.predict(embeddings)` expecting `np.ndarray` shape `(n, 1280)`
+   - **Reason:** Classifier operates on embeddings, not sequences. Sequence validation happens upstream in ESMEmbeddingExtractor.
+
+2. **PSR Threshold** (lines 22-25, 228-243, 631)
+   - ❌ **Before:** `0.4` threshold for PSR assay
+   - ✅ **After:** `0.5495` threshold (Novo parity value from `classifier.py:167`)
+   - **Reason:** Actual implementation uses calibrated threshold for exact Novo Nordisk parity.
+
+3. **ESMEmbeddingExtractor API** (lines 31-52, 364-476)
+   - ❌ **Before:** `extract_embeddings()` method, `esm.pretrained` library
+   - ✅ **After:** `embed_sequence()` and `extract_batch_embeddings()` methods, `transformers` library
+   - **Reason:** Implementation uses Hugging Face transformers, not Facebook ESM library directly.
+   - **Error Handling:**
+     - `embed_sequence()`: Raises `ValueError` for invalid sequences
+     - `extract_batch_embeddings()`: Logs warning + uses placeholder `"M"`
+
+4. **Dataset API** (lines 54-72, 289-355, 493-546)
+   - ❌ **Before:** `load_data(fragment="VH_only")`, returns `sequence` column
+   - ✅ **After:** `load_data(stage/subset/include_mild)`, returns `VH_sequence` and `VL_sequence` columns
+   - **Reason:** Datasets return paired sequences; fragments created separately via `create_fragment_csvs()`.
+
+5. **Mocking Strategy** (lines 74-84, 472-476, 600-604, 1020-1026)
+   - ❌ **Before:** Mock `esm.pretrained.esm1v_t33_650M_UR90S_1()`
+   - ✅ **After:** Mock `transformers.AutoModel.from_pretrained()` and `AutoTokenizer.from_pretrained()`
+   - **Reason:** Actual implementation uses Hugging Face transformers library.
+
+**Files Updated:**
+- All test examples throughout document
+- Mock fixtures (lines 657-690)
+- Integration test examples (lines 493-546)
+- Good vs Bogus test examples (lines 889-977)
+- FAQ section (lines 1012-1026)
+
+**Validation:** All corrections verified against source code:
+- `src/antibody_training_esm/core/classifier.py` (lines 122-182)
+- `src/antibody_training_esm/core/embeddings.py` (lines 44-149)
+- `src/antibody_training_esm/datasets/jain.py` (lines 85-120)
+- `src/antibody_training_esm/datasets/boughter.py` (lines 84-168)
+
+**Status:** Ready for implementation - all examples now match actual APIs.
