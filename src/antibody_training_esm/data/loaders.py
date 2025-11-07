@@ -12,7 +12,6 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from datasets import load_dataset
-from sklearn.preprocessing import StandardScaler
 
 logger = logging.getLogger(__name__)
 
@@ -21,20 +20,21 @@ def preprocess_raw_data(
     X: list[str],
     y: list[Any],
     embedding_extractor,
-    scaler: StandardScaler | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
-    Embed sequences and optionally scale embeddings
+    Embed sequences using ESM model
 
     Args:
         X: List of input protein sequences (strings)
         y: List or array of labels
         embedding_extractor: Instance with 'embed_sequence' or 'extract_batch_embeddings' method
-        scaler: Optional StandardScaler to fit/transform the embeddings
 
     Returns:
         X_embedded: Embedded input sequences
         y: Labels as numpy array
+
+    Notes:
+        No StandardScaler used - matches Novo Nordisk methodology
     """
     logger.info(f"Embedding {len(X)} sequences...")
 
@@ -43,10 +43,6 @@ def preprocess_raw_data(
         X_embedded = embedding_extractor.extract_batch_embeddings(X)
     else:
         X_embedded = np.array([embedding_extractor.embed_sequence(seq) for seq in X])
-
-    if scaler is not None:
-        logger.info("Scaling embeddings...")
-        X_embedded = scaler.fit_transform(X_embedded)
 
     return X_embedded, np.array(y)
 
