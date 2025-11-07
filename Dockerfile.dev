@@ -21,9 +21,10 @@ COPY src/ ./src/
 # uv sync installs to .venv/ and includes editable install automatically
 RUN uv sync --all-extras
 
-# Copy tests and test fixtures (can invalidate cache independently)
+# Copy tests and fixture datasets (can invalidate cache independently)
 COPY tests/ ./tests/
 COPY test_datasets/ ./test_datasets/
+COPY train_datasets/ ./train_datasets/
 
 # Export .venv/bin to PATH so installed commands are available
 ENV PATH="/app/.venv/bin:$PATH"
