@@ -44,9 +44,9 @@ htmlcov/
 .tox/
 .nox/
 
-# Test results
-test_results/*
-!test_results/.gitkeep
+# Test results (TRACKED - convenience for research repo)
+# test_results/*
+# !test_results/.gitkeep
 
 # Cache
 embeddings_cache/*
