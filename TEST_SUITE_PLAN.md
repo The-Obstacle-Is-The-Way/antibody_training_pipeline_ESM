@@ -926,6 +926,39 @@ pytest -n auto
 - E2E workflows tested: training, save/load, prediction, Novo methodology
 - **Bugfix:** Added KeyboardInterrupt handling to all CLI main() functions (train.py:35-37, test.py:593-595, preprocess.py:75-77)
 - Coverage: 65.23% (classifier 100%, embeddings 95.35%, train.py 100%, datasets 73-97%)
+- **3 Coverage Gaps Deferred:** cli/test.py (35.96%), trainer.py (17.04%), loaders.py (28.26%)
+
+### Phase 5: Coverage Gap Closure
+**Goal:** Close remaining coverage gaps deferred from Phase 4
+
+1. [ ] Write ModelTester integration tests (`tests/integration/test_model_tester.py`)
+   - Test full ModelTester workflow with real BinaryClassifier
+   - Exercise configuration branches, CSV loading, metrics computation
+   - Target: cli/test.py to ≥70% (currently 35.96%)
+
+2. [ ] Write data/loaders unit tests (`tests/unit/data/test_loaders.py`)
+   - Test load_sequences_from_csv, load_embeddings helpers
+   - Test error handling (missing files, malformed CSVs)
+   - Target: loaders.py to ≥80% (currently 28.26%)
+
+3. [ ] Refactor trainer.py config + enable skipped E2E tests
+   - Fix nested config structure (train_model expects flat config)
+   - Enable test_training_fails_with_missing_data_file
+   - Enable test_full_training_pipeline_end_to_end with real data
+   - Target: trainer.py to ≥85% (currently 17.04%)
+
+4. [ ] Enable skipped fragment/dataset tests
+   - Add ANARCI-annotated fixtures for 2 fragment tests
+   - Create distinct Jain parity CSV for stage filtering test
+   - Get base.py to ≥80% (currently 73.22%)
+
+5. [ ] Suppress sklearn warnings
+   - Add pytest.ini filters for 428 sklearn warnings
+   - Verify no new warnings introduced
+
+**Deliverable:** All coverage gates met, no skipped tests
+
+**Status:** NOT STARTED
 
 ---
 

@@ -63,15 +63,17 @@ Verify tests only target the public behaviors listed below—never the implement
 
 | Module / Area                                  | Target | Status |
 | ---------------------------------------------- | ------ | ------ |
-| `core/classifier.py`                           | ≥90%   | ✅ 100.00% (70/70 statements, 12/12 branches) |
-| `core/embeddings.py`                           | ≥85%   | ✅ 94.34% (82/86 statements, 20/20 branches) |
-| `core/trainer.py`                              | ≥85%   | 🔵 12.74% (Phase 4 scope - CLI/E2E tests will exercise trainer) |
-| `datasets/*.py` (each concrete loader)         | ≥80%   | ✅ boughter 91.49%, harvey 85.51%, jain 96.55%, shehata 88.04% |
-| `datasets/base.py` utilities (annotate/fragment)| ≥80% (current 72.68%; gap covers ANARCI-dependent code lines 274-326. Remediation: mock ANARCI/annotation flows in Phases 3–4 when integration tests land.) | ⚠️ 70.50% (183 stmts, 78 branches; gap = ANARCI lines 241-326) |
-| `data/loaders.py`                              | ≥80%   | 🔵 21.67% (Phase 4 scope - dataset loading helpers) |
-| `cli/*.py`                                     | ≥70%   | 🔵 0.00% (Phase 4 scope - CLI entry points) |
+| `core/classifier.py`                           | ≥90%   | ✅ 100.00% (70/70 statements) |
+| `core/embeddings.py`                           | ≥85%   | ✅ 95.35% (86/86 statements) |
+| `core/trainer.py`                              | ≥85%   | 🔵 **17.04% - DEFERRED TO PHASE 5** (needs trainer config refactor + E2E tests with real data) |
+| `datasets/*.py` (each concrete loader)         | ≥80%   | ✅ boughter 95.45%, harvey 87.27%, jain 96.88%, shehata 89.19% |
+| `datasets/base.py` utilities (annotate/fragment)| ≥80% | ⚠️ 73.22% (gap = ANARCI lines 241-326, documented exception) |
+| `data/loaders.py`                              | ≥80%   | 🔵 **28.26% - DEFERRED TO PHASE 5** (needs dedicated unit tests for load_sequences_from_csv, load_embeddings) |
+| `cli/train.py`                                 | ≥70%   | ✅ 100.00% (18/18 statements) |
+| `cli/preprocess.py`                            | ≥70%   | ✅ 80.00% (30/30 statements) |
+| `cli/test.py`                                  | ≥70%   | 🔵 **35.96% - DEFERRED TO PHASE 5** (needs ModelTester integration tests to exercise lines 84-472) |
 | Integration suites (`tests/integration/…`)     | ≥70% branch coverage through dataset→embedding→trainer stack (measure with `pytest --cov-branch`) | ✅ 89.7% base.py (70/78 branches), 100% classifier (12/12), 100% embeddings (20/20) |
-| End-to-end suites (`tests/e2e/…`)              | Smoke-level behavioral coverage | 🔵 Phase 4 (not started) |
+| End-to-end suites (`tests/e2e/…`)              | Smoke-level behavioral coverage | ✅ 17 E2E tests (train_pipeline, reproduce_novo), 3 skipped pending real data/refactors |
 
 > **Action:** If a target cannot be met in the current phase, document the gap, rationale, and remediation plan before sign-off.
 
@@ -122,11 +124,15 @@ Verify tests only target the public behaviors listed below—never the implement
     - This caused invalid coverage reporting (17.43% from incomplete run vs 65.23% actual)
   - **Branch Coverage:** Not re-measured (Phase 3 baseline: classifier 100%, embeddings 100%, base.py 89.7%)
   - **Quality:** Zero lint errors, zero type errors, zero formatting issues
-  - **Outstanding Risks:**
+  - **Outstanding Risks & Phase 5 Backlog:**
     - 2 skipped fragment tests (need ANARCI fixtures) - unchanged from Phase 3
     - 1 skipped trainer test (trainer.py config structure needs refactor)
     - 2 skipped E2E tests (need real datasets or full trainer implementation)
     - 428 sklearn warnings (deprecation + scorer issues) - up from 417 in Phase 3
-    - **Phase 4 Delivered:** CLI unit tests (61), E2E tests (17), full CLI coverage, Novo methodology tests
+    - **3 Coverage Gaps (Deferred to Phase 5):**
+      - `cli/test.py`: 35.96% vs ≥70% target (need ModelTester integration tests)
+      - `core/trainer.py`: 17.04% vs ≥85% target (need config refactor + E2E tests)
+      - `data/loaders.py`: 28.26% vs ≥80% target (need unit tests for load_sequences_from_csv, load_embeddings)
+    - **Phase 4 Delivered:** CLI unit tests (61), E2E tests (17), KeyboardInterrupt handling, full train.py/preprocess.py coverage
 
 Use this checklist as a living gate. After a phase passes, return to senior-review mode and keep the repo clean—no additional docs unless instructed.
