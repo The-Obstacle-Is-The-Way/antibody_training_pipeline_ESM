@@ -188,15 +188,32 @@ The Shehata dataset (Shehata et al. 2019) provides a critical test set of 398 hu
 ---
 
 # Citation
-This work is an implementation of the research conducted at Novo Nordisk and the University of Cambridge. If you use this code or its methodology in your research, please cite the original paper:
+
+This work implements the methodology from:
+
+**Sakhnini et al. (2025) - Novo Nordisk**
+> Sakhnini, L., Jensen, K.K., Blaabjerg, L.M., Kielsgaard, N.O., Weber, A.I., Ditlev, S.B., Nielsen, M.A., & Marcatili, P. (2025). Prediction of non-specific binding of therapeutic antibodies with protein language models and biophysical properties. *bioRxiv*. https://doi.org/10.1101/2024.11.04.621792
+
 ```bibtex
-@unpublished{Sakhnini2025preprint,
-  author  = {Sakhnini, Laila I. and Beltrame, Ludovica and Fulle, Simone and Sormanni, Pietro and Henriksen, Anette and Lorenzen, Nikolai and Vendruscolo, Michele and Granata, Daniele},
-  title   = {Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters},
-  note    = {Preprint posted on bioRxiv},
-  year    = {2025},
-  month   = {May},
-  doi     = {10.1101/2025.04.28.650927},
-  url     = {https://www.biorxiv.org/content/10.1101/2025.04.28.650927v1}
+@article{sakhnini2025prediction,
+  title={Prediction of non-specific binding of therapeutic antibodies with protein language models and biophysical properties},
+  author={Sakhnini, Lara and Jensen, Kasper Kongsbak and Blaabjerg, Lasse Mondrup and Kielsgaard, Nikolai Ormstrup and Weber, Abigail I and Ditlev, Simon Baatz and Nielsen, Morten A and Marcatili, Paolo},
+  journal={bioRxiv},
+  year={2025},
+  publisher={Cold Spring Harbor Laboratory},
+  doi={10.1101/2024.11.04.621792}
 }
 ```
+
+---
+
+## Dataset Attributions
+
+This repository uses training and test datasets from multiple published studies:
+
+- **Training**: Boughter et al. 2020 (914 VH sequences, ELISA polyreactivity)
+- **Test**: Jain et al. 2017 (86 clinical antibodies, per-antigen ELISA from Adimab)
+- **Test**: Harvey et al. 2022 / Mason et al. 2021 (141k nanobodies, PSR assay)
+- **Test**: Shehata et al. 2019 (398 antibodies, PSR cross-assay validation)
+
+**For complete citations, BibTeX entries, and data attribution details**, see [`CITATIONS.md`](CITATIONS.md).
