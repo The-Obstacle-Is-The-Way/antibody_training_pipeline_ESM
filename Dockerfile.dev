@@ -1,0 +1,26 @@
+FROM python:3.12-slim
+
+# Install uv package manager
+RUN pip install uv
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency files
+COPY pyproject.toml uv.lock ./
+
+# Create virtual environment and install dependencies
+# uv sync installs to .venv/ and includes editable install automatically
+RUN uv sync
+
+# Copy source code (invalidates cache on code changes)
+COPY src/ ./src/
+COPY tests/ ./tests/
+
+# Export .venv/bin to PATH so installed commands are available
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Run tests to verify build (use 'not e2e' to skip E2E tests)
+RUN pytest tests/ -m "not e2e" --tb=short -q
+
+CMD ["bash"]

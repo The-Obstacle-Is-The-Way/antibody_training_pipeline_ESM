@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./src:/app/src  # Hot reload source code
+      - ./tests:/app/tests  # Hot reload tests
+      - ./data:/app/data  # Mount data directory
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HF_HOME=/app/.cache/huggingface  # Cache model downloads
+    command: bash
