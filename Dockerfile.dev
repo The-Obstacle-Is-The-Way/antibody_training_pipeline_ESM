@@ -21,13 +21,15 @@ COPY src/ ./src/
 # uv sync installs to .venv/ and includes editable install automatically
 RUN uv sync --all-extras
 
-# Copy tests (can invalidate cache independently)
+# Copy tests and test fixtures (can invalidate cache independently)
 COPY tests/ ./tests/
+COPY test_datasets/ ./test_datasets/
 
 # Export .venv/bin to PATH so installed commands are available
 ENV PATH="/app/.venv/bin:$PATH"
 
-# Note: Tests requiring real datasets will fail during build (data excluded by .dockerignore)
-# Run tests manually after build: docker-compose run dev pytest tests/
+# Run test suite to verify clean environment (non-E2E tests only)
+# This proves the build works without local hacks or missing dependencies
+RUN pytest tests/ -m "not e2e" --tb=short -q
 
 CMD ["bash"]

@@ -53,14 +53,14 @@ htmlcov/
 # Logs
 *.log
 
-# Data (exclude large datasets from image)
+# Data (exclude large datasets from image, but KEEP test_datasets/)
 data/raw/
 data/processed/
-*.csv
-*.xlsx
-*.pkl
-*.pt
-*.pth
+data/**/*.csv
+data/**/*.xlsx
+data/**/*.pkl
+data/**/*.pt
+data/**/*.pth
 
 # Documentation
 docs/
