@@ -7,12 +7,12 @@ This document is the single checklist we use during every review cycle (end of e
 ## 1. Scope & Phase Gates
 
 - [x] Current phase deliverables match the plan (Phase 1: core unit tests, Phase 2: datasets, Phase 3: integrations, Phase 4: CLI/E2E, Phase 5: gap closure).
-  - **Phase 5 (80% Complete):** 37 new tests (17 ModelTester + 20 loaders), 2 fragment tests enabled, zero warnings achieved
+  - **Phase 5 (100% Complete):** 57 new tests (17 ModelTester + 20 loaders + 20 trainer), 2 fragment tests enabled, zero warnings achieved
   - Phase 4 delivered: 17 E2E tests (train_pipeline, reproduce_novo) + 61 CLI unit tests (train, test, preprocess)
   - Phase 3: 58 integration tests (embedding_compatibility, dataset_pipeline, cross_validation, model_persistence)
   - Phase 1-2: 182 core/dataset unit tests (excludes CLI tests)
-  - **ACTUAL TEST COUNTS:** 355 total (280 unit + 58 integration + 17 E2E), verified via `pytest --collect-only`
-  - **Coverage Jump:** 65.23% (Phase 4) → 80.33% (Phase 5) = +15.10% absolute improvement
+  - **ACTUAL TEST COUNTS:** 375 total (300 unit + 58 integration + 17 E2E), verified via `pytest --collect-only`
+  - **Coverage Jump:** 65.23% (Phase 4) → 90.17% (Phase 5) = +24.94% absolute improvement
 - [x] No code paths outside the declared phase were touched unless part of a documented defect fix.
   - Only CLI unit tests and E2E tests added
   - One defect fix: Moved ASSAY_THRESHOLDS to class attribute for documentation (src/antibody_training_esm/core/classifier.py:22-25)
@@ -125,15 +125,15 @@ Verify tests only target the public behaviors listed below—never the implement
     - This caused invalid coverage reporting (17.43% from incomplete run vs 65.23% actual)
   - **Branch Coverage:** Not re-measured (Phase 3 baseline: classifier 100%, embeddings 100%, base.py 89.7%)
   - **Quality:** Zero lint errors, zero type errors, zero formatting issues
-  - **Outstanding Risks & Phase 5 Backlog:**
+  - **Outstanding Risks (Phase 4 End):**
     - 2 skipped fragment tests (need ANARCI fixtures) - unchanged from Phase 3
     - 1 skipped trainer test (trainer.py config structure needs refactor)
     - 2 skipped E2E tests (need real datasets or full trainer implementation)
     - 428 sklearn warnings (deprecation + scorer issues) - up from 417 in Phase 3
-    - **3 Coverage Gaps (Deferred to Phase 5):**
-      - `cli/test.py`: 35.96% vs ≥70% target (need ModelTester integration tests)
-      - `core/trainer.py`: 17.04% vs ≥85% target (need config refactor + E2E tests)
-      - `data/loaders.py`: 28.26% vs ≥80% target (need unit tests for load_sequences_from_csv, load_embeddings)
+    - **3 Coverage Gaps Identified (All RESOLVED in Phase 5):**
+      - `cli/test.py`: 35.96% → **88.01%** via Task 1 (ModelTester integration tests)
+      - `core/trainer.py`: 17.04% → **100.00%** via Task 3 (trainer unit tests)
+      - `data/loaders.py`: 28.26% → **100.00%** via Task 2 (loaders unit tests)
     - **Phase 4 Delivered:** CLI unit tests (61), E2E tests (17), KeyboardInterrupt handling, full train.py/preprocess.py coverage
   - **Phase 5 Status: ✅ COMPLETE (5 of 5 tasks):**
     - ✅ Task 1: ModelTester integration tests (17 tests) → cli/test.py 88.01% (target ≥70%)
