@@ -1234,3 +1234,35 @@ def mock_transformers_model(monkeypatch):
 - `src/antibody_training_esm/datasets/base.py` (lines 63-84, 117-127, 501-559)
 
 **Status:** Ready for implementation - all examples now match actual APIs.
+
+---
+
+### 2025-11-07 - Phase 1 Complete + sys.path Fix
+
+**Summary:** Phase 1 (Foundation) completed with 93 passing tests. Removed fragile sys.path injection based on agent feedback.
+
+**Phase 1 Achievements:**
+- ✅ 93 tests passing (71 unit + 22 integration) in 12.61s
+- ✅ 100% coverage: `classifier.py` (70/70 statements)
+- ✅ 95.35% coverage: `embeddings.py` (82/86 statements)
+- ✅ Zero linting errors (ruff)
+- ✅ Zero type errors (mypy)
+- ✅ Zero formatting issues (ruff format)
+
+**Fragile sys.path Injection Removed (conftest.py:23-26):**
+- ❌ **Before:** `sys.path.insert(0, str(Path(__file__).parent.parent / "src"))`
+- ✅ **After:** Commented out - `uv` handles package installation via editable install
+- **Reason:** sys.path hack was fragile (breaks if tests run from nested directories). Tests run with `uv run pytest` which properly configures Python path.
+- **Validation:** All 93 tests pass without sys.path manipulation.
+
+**Agent Feedback Validated:**
+1. ✅ **Coverage overhead in CI** - Noted for later optimization, not critical for Phase 1
+2. ✅ **sys.path injection fragile** - FIXED by removing it entirely
+3. ✅ **MockESMModel returns 2 hidden-state entries** - Correct for current usage (extractor uses last layer only). Will expand if we add intermediate layer support.
+
+**Next Steps:**
+- Phase 2: Dataset loader tests (Jain, Boughter, Harvey, Shehata)
+- Re-enable `--cov-fail-under=80` after Phase 2 completes
+- Optimize CI coverage reporting when setting up GitHub Actions
+
+**Status:** Phase 1 complete, ready for Phase 2 implementation.

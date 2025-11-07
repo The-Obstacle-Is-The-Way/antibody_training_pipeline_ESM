@@ -172,14 +172,14 @@ class MockClassifier:
         predictions = classifier.predict(X)
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         """
         Initialize mock classifier.
 
         Args:
             **kwargs: Hyperparameters (stored but not used)
         """
-        self.params = kwargs
+        self.params: dict[str, Any] = dict(kwargs)
         self.is_fitted = False
         self.classes_ = np.array([0, 1])
 
@@ -237,7 +237,7 @@ class MockClassifier:
 
     def get_params(self, deep: bool = True) -> dict[str, Any]:
         """Mock get_params (sklearn API)."""
-        return dict(self.params)
+        return self.params.copy()
 
     def set_params(self, **params):
         """Mock set_params (sklearn API)."""
