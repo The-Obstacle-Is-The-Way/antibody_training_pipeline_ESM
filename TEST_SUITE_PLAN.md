@@ -1237,6 +1237,86 @@ def mock_transformers_model(monkeypatch):
 
 ---
 
+### 2025-11-07 - Phase 2 Complete: Dataset Loader Tests
+
+**Summary:** Phase 2 (Datasets) completed with 105 passing tests (29 base + 21 boughter + 15 harvey + 25 jain + 15 shehata). All dataset implementations exceed 80% coverage target.
+
+**Phase 2 Achievements:**
+- ✅ 105 tests passing (all unit tests) in 1.10s
+- ✅ 95.45% coverage: `boughter.py` (63/66 statements)
+- ✅ 87.27% coverage: `harvey.py` (48/55 statements)
+- ✅ 96.88% coverage: `jain.py` (93/96 statements)
+- ✅ 89.19% coverage: `shehata.py` (66/74 statements)
+- ✅ 33.88% coverage: `base.py` (62/183 statements)
+- ✅ Zero linting errors (ruff)
+- ✅ Zero type errors (mypy)
+- ✅ Zero formatting issues (ruff format)
+
+**Test Files Created:**
+1. `tests/unit/datasets/test_base.py` (29 tests)
+   - Initialization, sanitization, validation
+   - Fragment type constants
+   - Abstract method contracts
+
+2. `tests/unit/datasets/test_boughter.py` (21 tests)
+   - Novo flagging strategy (0 vs 1-3 vs 4+ flags)
+   - Subset filtering (flu, hiv_nat, etc.)
+   - DNA translation error handling
+   - Quality filtering (X in CDRs, empty CDRs)
+
+3. `tests/unit/datasets/test_harvey.py` (15 tests)
+   - Nanobody-specific behavior (VHH only, 6 fragments)
+   - IMGT position extraction
+   - High/low polyreactivity labeling
+   - Dual CSV loading
+
+4. `tests/unit/datasets/test_jain.py` (25 tests)
+   - Multi-stage loading (full/ssot/parity)
+   - ELISA filtering (removes 1-3 flags)
+   - Reclassification (Tier A/B/C)
+   - PSR/AC-SINS ranking
+
+5. `tests/unit/datasets/test_shehata.py` (15 tests)
+   - Excel loading (.xlsx files)
+   - PSR threshold calculation (98.24th percentile)
+   - Sequence sanitization (gap removal)
+   - B cell subset metadata
+
+**Mock Data Created:**
+- `tests/fixtures/mock_datasets/boughter_sample.csv` (20 sequences)
+- `tests/fixtures/mock_datasets/harvey_high_sample.csv` (5 sequences)
+- `tests/fixtures/mock_datasets/harvey_low_sample.csv` (7 sequences)
+- `tests/fixtures/mock_datasets/shehata_sample.csv` (15 sequences)
+- Note: `jain_sample.csv` already existed from Phase 1
+
+**Dependencies Added:**
+- `openpyxl==3.1.5` (dev) - Required for Shehata Excel file testing
+
+**Testing Philosophy Applied:**
+- ✅ Test behaviors, not implementation
+- ✅ Mock only I/O boundaries (file system, ESM model)
+- ✅ No mocking of pandas operations or domain logic
+- ✅ AAA pattern (Arrange-Act-Assert)
+- ✅ Clear test names describing behavior
+- ✅ Comprehensive edge case coverage
+
+**Coverage Notes:**
+- `base.py` coverage lower (33.88%) - Expected for abstract base class with many utility methods not yet exercised by concrete implementations
+- All concrete dataset implementations >80% coverage
+- Uncovered lines in dataset loaders are primarily:
+  - Convenience functions (load_*_data helpers)
+  - Default path logic when running outside test environment
+  - Error handling for edge cases not yet tested
+
+**Next Steps:**
+- Phase 3: Integration tests (dataset → embeddings → training pipelines)
+- Phase 4: CLI & E2E tests
+- Consider raising base.py coverage by testing fragment creation workflows
+
+**Status:** Phase 2 complete, ready for Phase 3 implementation.
+
+---
+
 ### 2025-11-07 - Phase 1 Complete + sys.path Fix
 
 **Summary:** Phase 1 (Foundation) completed with 93 passing tests. Removed fragile sys.path injection based on agent feedback.
