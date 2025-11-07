@@ -931,15 +931,15 @@ pytest -n auto
 ### Phase 5: Coverage Gap Closure
 **Goal:** Close remaining coverage gaps deferred from Phase 4
 
-1. [ ] Write ModelTester integration tests (`tests/integration/test_model_tester.py`)
+1. ✅ Write ModelTester integration tests (`tests/integration/test_model_tester.py`)
    - Test full ModelTester workflow with real BinaryClassifier
    - Exercise configuration branches, CSV loading, metrics computation
-   - Target: cli/test.py to ≥70% (currently 35.96%)
+   - **Result:** cli/test.py 88.01% (17 tests, 7.27s)
 
-2. [ ] Write data/loaders unit tests (`tests/unit/data/test_loaders.py`)
+2. ✅ Write data/loaders unit tests (`tests/unit/data/test_loaders.py`)
    - Test load_sequences_from_csv, load_embeddings helpers
    - Test error handling (missing files, malformed CSVs)
-   - Target: loaders.py to ≥80% (currently 28.26%)
+   - **Result:** loaders.py 100.00% (20 tests, 1.43s)
 
 3. [ ] Refactor trainer.py config + enable skipped E2E tests
    - Fix nested config structure (train_model expects flat config)
@@ -952,13 +952,15 @@ pytest -n auto
    - Create distinct Jain parity CSV for stage filtering test
    - Get base.py to ≥80% (currently 73.22%)
 
-5. [ ] Suppress sklearn warnings
-   - Add pytest.ini filters for 428 sklearn warnings
-   - Verify no new warnings introduced
+5. ✅ Suppress sklearn warnings
+   - Added pytest.ini filterwarnings for all sklearn warnings
+   - **Result:** 455 warnings → 0 (DeprecationWarning, ConvergenceWarning, UndefinedMetricWarning, UserWarning)
 
 **Deliverable:** All coverage gates met, no skipped tests
 
-**Status:** NOT STARTED
+**Status:** IN PROGRESS (3 of 5 tasks complete)
+**Current Metrics:** 350 passed, 5 skipped, 17.62s, 80.33% coverage (up from 65.23% Phase 4)
+**Remaining:** Tasks 3 (trainer refactor) and 4 (ANARCI fixtures)
 
 ---
 

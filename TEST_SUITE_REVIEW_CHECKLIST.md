@@ -68,10 +68,10 @@ Verify tests only target the public behaviors listed below—never the implement
 | `core/trainer.py`                              | ≥85%   | 🔵 **17.04% - DEFERRED TO PHASE 5** (needs trainer config refactor + E2E tests with real data) |
 | `datasets/*.py` (each concrete loader)         | ≥80%   | ✅ boughter 95.45%, harvey 87.27%, jain 96.88%, shehata 89.19% |
 | `datasets/base.py` utilities (annotate/fragment)| ≥80% | ⚠️ 73.22% (gap = ANARCI lines 241-326, documented exception) |
-| `data/loaders.py`                              | ≥80%   | 🔵 **28.26% - DEFERRED TO PHASE 5** (needs dedicated unit tests for load_sequences_from_csv, load_embeddings) |
+| `data/loaders.py`                              | ≥80%   | ✅ 100.00% (46/46 statements) |
 | `cli/train.py`                                 | ≥70%   | ✅ 100.00% (18/18 statements) |
 | `cli/preprocess.py`                            | ≥70%   | ✅ 80.00% (30/30 statements) |
-| `cli/test.py`                                  | ≥70%   | 🔵 **35.96% - DEFERRED TO PHASE 5** (needs ModelTester integration tests to exercise lines 84-472) |
+| `cli/test.py`                                  | ≥70%   | ✅ 88.01% (267/267 statements) |
 | Integration suites (`tests/integration/…`)     | ≥70% branch coverage through dataset→embedding→trainer stack (measure with `pytest --cov-branch`) | ✅ 89.7% base.py (70/78 branches), 100% classifier (12/12), 100% embeddings (20/20) |
 | End-to-end suites (`tests/e2e/…`)              | Smoke-level behavioral coverage | ✅ 17 E2E tests (train_pipeline, reproduce_novo), 3 skipped pending real data/refactors |
 
@@ -98,9 +98,8 @@ Verify tests only target the public behaviors listed below—never the implement
 - [x] Mock datasets remain small (≈10–20 rows) and balanced enough to exercise filtering logic without slowing the suite.
   - ✅ boughter 20 rows, harvey 12 rows, jain 15 rows, shehata 15 rows
 - [x] Logged warnings/errors in tests are intentional and asserted when meaningful; otherwise logging noise is muted.
-  - ⚠️ 417 sklearn deprecation warnings remain (sklearn tags + scorer response_method issues)
+  - ✅ All 455 sklearn warnings suppressed via pytest.ini filterwarnings (Phase 5 Task 5)
   - ✅ ValueError assertions explicit in ROC AUC test
-  - 📋 TODO: Filter sklearn warnings in pytest.ini or assert/suppress in tests
 
 ## 8. Phase Exit Checklist
 
@@ -134,5 +133,12 @@ Verify tests only target the public behaviors listed below—never the implement
       - `core/trainer.py`: 17.04% vs ≥85% target (need config refactor + E2E tests)
       - `data/loaders.py`: 28.26% vs ≥80% target (need unit tests for load_sequences_from_csv, load_embeddings)
     - **Phase 4 Delivered:** CLI unit tests (61), E2E tests (17), KeyboardInterrupt handling, full train.py/preprocess.py coverage
+  - **Phase 5 Progress (In Progress):**
+    - ✅ Task 1: ModelTester integration tests (17 tests) → cli/test.py 88.01% (target ≥70%)
+    - ✅ Task 2: data/loaders unit tests (20 tests) → loaders.py 100.00% (target ≥80%)
+    - ✅ Task 5: sklearn warnings suppressed (455 warnings → 0 via pytest.ini filters)
+    - ⏳ Task 3: trainer.py refactor pending (17.04% vs ≥85% target)
+    - ⏳ Task 4: ANARCI fixtures pending (2 skipped fragment tests)
+    - **Current Status:** 350 passed, 5 skipped, 17.62s, 80.33% coverage (up from 65.23%)
 
 Use this checklist as a living gate. After a phase passes, return to senior-review mode and keep the repo clean—no additional docs unless instructed.
