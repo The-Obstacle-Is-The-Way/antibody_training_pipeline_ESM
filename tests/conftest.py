@@ -14,16 +14,15 @@ Date: 2025-11-07
 Author: Claude Code
 """
 
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import pytest
 
-# Add src to path for imports
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
+# NOTE: sys.path injection removed - uv handles package installation
+# If running tests without uv, use: uv run pytest
+# sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from tests.fixtures.mock_models import (
     MockClassifier,
     MockESMModel,
