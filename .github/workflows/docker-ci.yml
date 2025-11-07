@@ -27,19 +27,17 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Build dev container
-      run: docker compose build dev
-
-    - name: Run test suite in dev container
-      run: docker compose run dev pytest tests/ -m "not e2e" --cov=src/antibody_training_esm --cov-report=xml --cov-report=term
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-docker
-      continue-on-error: true
+    - name: Build dev container (verify Dockerfile)
+      run: |
+        docker buildx build \
+          --file Dockerfile.dev \
+          --tag antibody-dev:test \
+          --cache-from type=gha \
+          --cache-to type=gha,mode=max \
+          .
+      # Note: We skip --load to avoid "no space left" errors on GitHub runners
+      # The build includes RUN pytest which validates tests pass during build
+      # Local testing with full image load is still required before merging
 
   test-prod:
     name: Test Production Container
@@ -61,15 +59,17 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: Build production container
-      run: docker compose build prod
-
-    - name: Verify antibody-train CLI
-      run: docker compose run prod --help
-
-    - name: Test model training (quick smoke test)
-      run: docker compose run prod --dataset boughter --output /app/data/test-model.pkl --config /app/configs/quick-test.yaml || echo "Config file may not exist, skipping"
-      continue-on-error: true
+    - name: Build production container (verify Dockerfile)
+      run: |
+        docker buildx build \
+          --file Dockerfile.prod \
+          --tag antibody-prod:test \
+          --cache-from type=gha \
+          --cache-to type=gha,mode=max \
+          .
+      # Note: We skip --load to avoid "no space left" errors on GitHub runners
+      # The build includes RUN pytest which validates tests pass during build
+      # Production image is 11.7GB - too large for GitHub Actions disk space
 
   build-and-push:
     name: Build and Push Production Image
