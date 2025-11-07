@@ -18,6 +18,7 @@ Verify tests only target the public behaviors listed below—never the implement
 - [ ] `ESMEmbeddingExtractor` usage sticks to `embed_sequence` / `extract_batch_embeddings`, mocks **HuggingFace transformers** (not `esm.pretrained`), and asserts validation/placeholder behaviors exactly as implemented.
 - [ ] Dataset loaders call `load_data(...)` without phantom `fragment` args, expect `VH_sequence`/`VL_sequence` columns, and use `create_fragment_csvs(df, suffix="")` only after `output_dir` is set on init.
 - [ ] Fragment helpers always use `get_fragment_types()` (never `get_supported_fragments()`).
+- [ ] TODO: Add trainer/loaders/CLI API contracts at the start of Phases 3 and 4 after auditing those modules.
 
 ## 3. Mocking & Fixture Policy
 
@@ -41,10 +42,10 @@ Verify tests only target the public behaviors listed below—never the implement
 | `core/embeddings.py`                           | ≥85%   |        |
 | `core/trainer.py`                              | ≥85%   |        |
 | `datasets/*.py` (each concrete loader)         | ≥80%   |        |
-| `datasets/base.py` utilities (annotate/fragment)| ≥80%  |        |
+| `datasets/base.py` utilities (annotate/fragment)| ≥80% (current 72.68%; gap covers ANARCI-dependent code lines 274-326. Remediation: mock ANARCI/annotation flows in Phases 3–4 when integration tests land.) |        |
 | `data/loaders.py`                              | ≥80%   |        |
 | `cli/*.py`                                     | ≥70%   |        |
-| Integration suites (`tests/integration/…`)     | ≥70% meaningful path coverage | |
+| Integration suites (`tests/integration/…`)     | ≥70% branch coverage through dataset→embedding→trainer stack (measure with `pytest --cov-branch`) | |
 | End-to-end suites (`tests/e2e/…`)              | Smoke-level behavioral coverage | |
 
 > **Action:** If a target cannot be met in the current phase, document the gap, rationale, and remediation plan before sign-off.
@@ -68,6 +69,7 @@ Verify tests only target the public behaviors listed below—never the implement
 - [ ] All findings from the senior review (e.g., fragile assertions, fixture pollution) are fixed or ticketed with owners and deadlines.
 - [ ] Documentation (plan + checklist) reflects the actual state—no stale instructions.
 - [ ] Next phase entry criteria are satisfied (e.g., Phase 3 can start only after dataset coverage + hygiene items are green).
+- [x] Phase 2 exit complete (datasets >80% with documented base.py exception); proceed to Phase 3 integration tests.
 - [ ] Final “ready” comment records test counts, runtime, coverage percentages, and outstanding risks.
 
 Use this checklist as a living gate. After a phase passes, return to senior-review mode and keep the repo clean—no additional docs unless instructed.
