@@ -46,4 +46,460 @@
 #8 12.91 tests/unit/core/test_classifier.py ....................................  [ 46%]
 #8 13.11 tests/unit/core/test_embeddings.py ..................................... [ 57%]
 #8 13.19                                                                          [ 57%]
-#8 13.19 tests/unit/core/test_trainer.py ............
+#8 13.19 tests/unit/core/test_trainer.py ....................                     [ 62%]
+#8 100.2 tests/unit/data/test_loaders.py ....................                     [ 68%]
+#8 100.2 tests/unit/datasets/test_base.py .....................................   [ 78%]
+#8 100.3 tests/unit/datasets/test_boughter.py .....................               [ 84%]
+#8 100.3 tests/unit/datasets/test_harvey.py ...............                       [ 88%]
+#8 100.4 tests/unit/datasets/test_jain.py .........................               [ 95%]
+#8 100.4 tests/unit/datasets/test_shehata.py ...............                      [100%]
+#8 100.7 
+#8 100.7 =================================== FAILURES ===================================
+#8 100.7 _____________________________ test_gap_characters ______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_boughter_embedding_compatibility.py:93: in test_gap_characters
+#8 100.7     ???
+#8 100.7 E   AssertionError: Gap characters detected - P0 blocker still present!
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 1: Gap Character Detection (P0 Blocker Check)
+#8 100.7 ======================================================================
+#8 100.7   ✗ MISSING: VH_only_boughter.csv
+#8 100.7   ✗ MISSING: VL_only_boughter.csv
+#8 100.7   ✗ MISSING: H-CDR1_boughter.csv
+#8 100.7   ✗ MISSING: H-CDR2_boughter.csv
+#8 100.7   ✗ MISSING: H-CDR3_boughter.csv
+#8 100.7   ✗ MISSING: L-CDR1_boughter.csv
+#8 100.7   ✗ MISSING: L-CDR2_boughter.csv
+#8 100.7   ✗ MISSING: L-CDR3_boughter.csv
+#8 100.7   ✗ MISSING: H-CDRs_boughter.csv
+#8 100.7   ✗ MISSING: L-CDRs_boughter.csv
+#8 100.7   ✗ MISSING: H-FWRs_boughter.csv
+#8 100.7   ✗ MISSING: L-FWRs_boughter.csv
+#8 100.7   ✗ MISSING: VH+VL_boughter.csv
+#8 100.7   ✗ MISSING: All-CDRs_boughter.csv
+#8 100.7   ✗ MISSING: All-FWRs_boughter.csv
+#8 100.7   ✗ MISSING: Full_boughter.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Gap characters detected - P0 blocker still present!
+#8 100.7 __________________________ test_amino_acid_validation __________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_boughter_embedding_compatibility.py:154: in test_amino_acid_validation
+#8 100.7     ???
+#8 100.7 E   AssertionError: Invalid amino acids detected
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 2: Amino Acid Validation
+#8 100.7 ======================================================================
+#8 100.7   Valid amino acids: ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y']
+#8 100.7   ✗ MISSING: VH_only_boughter.csv
+#8 100.7   ✗ MISSING: VL_only_boughter.csv
+#8 100.7   ✗ MISSING: H-CDRs_boughter.csv
+#8 100.7   ✗ MISSING: L-CDRs_boughter.csv
+#8 100.7   ✗ MISSING: Full_boughter.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Invalid amino acids detected
+#8 100.7 ______________________ test_previously_affected_sequences ______________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_boughter_embedding_compatibility.py:172: in test_previously_affected_sequences
+#8 100.7     ???
+#8 100.7 E   AssertionError: train_datasets/boughter/annotated/VH_only_boughter.csv not found
+#8 100.7 E   assert False
+#8 100.7 E    +  where False = exists()
+#8 100.7 E    +    where exists = PosixPath('train_datasets/boughter/annotated/VH_only_boughter.csv').exists
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 3: Previously Affected Sequences (Spot Check)
+#8 100.7 ======================================================================
+#8 100.7 _________________________ test_model_validation_logic __________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_boughter_embedding_compatibility.py:281: in test_model_validation_logic
+#8 100.7     ???
+#8 100.7 E   AssertionError: Dataset NOT compatible with ESM-1v
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 4: ESM Model Validation Simulation
+#8 100.7 ======================================================================
+#8 100.7   Simulating model.py:86-90 validation logic...
+#8 100.7   ✗ FAIL: train_datasets/boughter/annotated/VH_only_boughter.csv not found
+#8 100.7   ✗ FAIL: train_datasets/boughter/annotated/VL_only_boughter.csv not found
+#8 100.7   ✗ FAIL: train_datasets/boughter/annotated/Full_boughter.csv not found
+#8 100.7 
+#8 100.7   ✗ FAIL: Dataset NOT compatible with ESM-1v
+#8 100.7 _____________________________ test_data_integrity ______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_boughter_embedding_compatibility.py:381: in test_data_integrity
+#8 100.7     ???
+#8 100.7 E   AssertionError: Data integrity issues detected
+#8 100.7 E   assert (False)
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 5: Data Integrity Verification
+#8 100.7 ======================================================================
+#8 100.7 
+#8 100.7   Checking 16 fragment files:
+#8 100.7     ✗ MISSING: VH_only_boughter.csv
+#8 100.7     ✗ MISSING: VL_only_boughter.csv
+#8 100.7     ✗ MISSING: H-CDR1_boughter.csv
+#8 100.7     ✗ MISSING: H-CDR2_boughter.csv
+#8 100.7     ✗ MISSING: H-CDR3_boughter.csv
+#8 100.7     ✗ MISSING: L-CDR1_boughter.csv
+#8 100.7     ✗ MISSING: L-CDR2_boughter.csv
+#8 100.7     ✗ MISSING: L-CDR3_boughter.csv
+#8 100.7     ✗ MISSING: H-CDRs_boughter.csv
+#8 100.7     ✗ MISSING: L-CDRs_boughter.csv
+#8 100.7     ✗ MISSING: H-FWRs_boughter.csv
+#8 100.7     ✗ MISSING: L-FWRs_boughter.csv
+#8 100.7     ✗ MISSING: VH+VL_boughter.csv
+#8 100.7     ✗ MISSING: All-CDRs_boughter.csv
+#8 100.7     ✗ MISSING: All-FWRs_boughter.csv
+#8 100.7     ✗ MISSING: Full_boughter.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Data integrity issues detected
+#8 100.7 _____________________________ test_gap_characters ______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_harvey_embedding_compatibility.py:82: in test_gap_characters
+#8 100.7     ???
+#8 100.7 E   AssertionError: Gap characters detected - P0 blocker still present!
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 1: Gap Character Detection (P0 Blocker Check)
+#8 100.7 ======================================================================
+#8 100.7   ✗ MISSING: VHH_only_harvey.csv
+#8 100.7   ✗ MISSING: H-CDR1_harvey.csv
+#8 100.7   ✗ MISSING: H-CDR2_harvey.csv
+#8 100.7   ✗ MISSING: H-CDR3_harvey.csv
+#8 100.7   ✗ MISSING: H-CDRs_harvey.csv
+#8 100.7   ✗ MISSING: H-FWRs_harvey.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Gap characters detected - P0 blocker still present!
+#8 100.7 __________________________ test_amino_acid_validation __________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_harvey_embedding_compatibility.py:141: in test_amino_acid_validation
+#8 100.7     ???
+#8 100.7 E   AssertionError: Invalid amino acids detected
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 2: Amino Acid Validation
+#8 100.7 ======================================================================
+#8 100.7   Valid amino acids: ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y']
+#8 100.7   ✗ MISSING: VHH_only_harvey.csv
+#8 100.7   ✗ MISSING: H-CDRs_harvey.csv
+#8 100.7   ✗ MISSING: H-CDR3_harvey.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Invalid amino acids detected
+#8 100.7 ______________________ test_previously_affected_sequences ______________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_harvey_embedding_compatibility.py:156: in test_previously_affected_sequences
+#8 100.7     ???
+#8 100.7 E   AssertionError: test_datasets/harvey/fragments/VHH_only_harvey.csv not found
+#8 100.7 E   assert False
+#8 100.7 E    +  where False = exists()
+#8 100.7 E    +    where exists = PosixPath('test_datasets/harvey/fragments/VHH_only_harvey.csv').exists
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 3: Previously Affected Sequences (Spot Check)
+#8 100.7 ======================================================================
+#8 100.7 _________________________ test_model_validation_logic __________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_harvey_embedding_compatibility.py:204: in test_model_validation_logic
+#8 100.7     ???
+#8 100.7 E   AssertionError: test_datasets/harvey/fragments/VHH_only_harvey.csv not found
+#8 100.7 E   assert False
+#8 100.7 E    +  where False = exists()
+#8 100.7 E    +    where exists = PosixPath('test_datasets/harvey/fragments/VHH_only_harvey.csv').exists
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 4: ESM Model Validation Simulation
+#8 100.7 ======================================================================
+#8 100.7   Simulating model.py:86-90 validation logic...
+#8 100.7 _____________________________ test_data_integrity ______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_harvey_embedding_compatibility.py:306: in test_data_integrity
+#8 100.7     ???
+#8 100.7 E   AssertionError: Data integrity issues detected
+#8 100.7 E   assert (False)
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 5: Data Integrity Verification
+#8 100.7 ======================================================================
+#8 100.7 
+#8 100.7   Checking 6 fragment files:
+#8 100.7     ✗ MISSING: VHH_only_harvey.csv
+#8 100.7     ✗ MISSING: H-CDR1_harvey.csv
+#8 100.7     ✗ MISSING: H-CDR2_harvey.csv
+#8 100.7     ✗ MISSING: H-CDR3_harvey.csv
+#8 100.7     ✗ MISSING: H-CDRs_harvey.csv
+#8 100.7     ✗ MISSING: H-FWRs_harvey.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Data integrity issues detected
+#8 100.7 _____________________________ test_gap_characters ______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_jain_embedding_compatibility.py:97: in test_gap_characters
+#8 100.7     ???
+#8 100.7 E   AssertionError: Gap characters detected - P0 blocker present!
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 1: Gap Character Detection (P0 Blocker Check)
+#8 100.7 ======================================================================
+#8 100.7   ✗ MISSING: VH_only_jain.csv
+#8 100.7   ✗ MISSING: VL_only_jain.csv
+#8 100.7   ✗ MISSING: H-CDR1_jain.csv
+#8 100.7   ✗ MISSING: H-CDR2_jain.csv
+#8 100.7   ✗ MISSING: H-CDR3_jain.csv
+#8 100.7   ✗ MISSING: L-CDR1_jain.csv
+#8 100.7   ✗ MISSING: L-CDR2_jain.csv
+#8 100.7   ✗ MISSING: L-CDR3_jain.csv
+#8 100.7   ✗ MISSING: H-CDRs_jain.csv
+#8 100.7   ✗ MISSING: L-CDRs_jain.csv
+#8 100.7   ✗ MISSING: H-FWRs_jain.csv
+#8 100.7   ✗ MISSING: L-FWRs_jain.csv
+#8 100.7   ✗ MISSING: VH+VL_jain.csv
+#8 100.7   ✗ MISSING: All-CDRs_jain.csv
+#8 100.7   ✗ MISSING: All-FWRs_jain.csv
+#8 100.7   ✗ MISSING: Full_jain.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Gap characters detected - P0 blocker present!
+#8 100.7 __________________________ test_amino_acid_validation __________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_jain_embedding_compatibility.py:160: in test_amino_acid_validation
+#8 100.7     ???
+#8 100.7 E   AssertionError: Invalid amino acids detected
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 2: Amino Acid Validation
+#8 100.7 ======================================================================
+#8 100.7   Valid amino acids: ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'X', 'Y']
+#8 100.7   ✗ MISSING: VH_only_jain.csv
+#8 100.7   ✗ MISSING: VL_only_jain.csv
+#8 100.7   ✗ MISSING: H-CDRs_jain.csv
+#8 100.7   ✗ MISSING: L-CDRs_jain.csv
+#8 100.7   ✗ MISSING: Full_jain.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Invalid amino acids detected
+#8 100.7 _______________________________ test_stop_codons _______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_jain_embedding_compatibility.py:214: in test_stop_codons
+#8 100.7     ???
+#8 100.7 E   AssertionError: Stop codons detected - P0 blocker present!
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 3: Stop Codon Detection (P0 Blocker Check)
+#8 100.7 ======================================================================
+#8 100.7   ✗ MISSING: VH_only_jain.csv
+#8 100.7   ✗ MISSING: VL_only_jain.csv
+#8 100.7   ✗ MISSING: Full_jain.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Stop codons detected - P0 blocker present!
+#8 100.7 _________________________ test_model_validation_logic __________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_jain_embedding_compatibility.py:272: in test_model_validation_logic
+#8 100.7     ???
+#8 100.7 E   AssertionError: Dataset NOT compatible with ESM-1v
+#8 100.7 E   assert False
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 4: ESM Model Validation Simulation
+#8 100.7 ======================================================================
+#8 100.7   Simulating model.py:86-90 validation logic...
+#8 100.7   ✗ FAIL: test_datasets/jain/fragments/VH_only_jain.csv not found
+#8 100.7   ✗ FAIL: test_datasets/jain/fragments/VL_only_jain.csv not found
+#8 100.7   ✗ FAIL: test_datasets/jain/fragments/Full_jain.csv not found
+#8 100.7 
+#8 100.7   ✗ FAIL: Dataset NOT compatible with ESM-1v
+#8 100.7 _____________________________ test_data_integrity ______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_jain_embedding_compatibility.py:392: in test_data_integrity
+#8 100.7     ???
+#8 100.7 E   AssertionError: Data integrity issues detected
+#8 100.7 E   assert (False)
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ======================================================================
+#8 100.7 TEST 5: Data Integrity Verification
+#8 100.7 ======================================================================
+#8 100.7 
+#8 100.7   Checking 16 fragment files:
+#8 100.7   Expected rows per file: 137
+#8 100.7     ✗ MISSING: VH_only_jain.csv
+#8 100.7     ✗ MISSING: VL_only_jain.csv
+#8 100.7     ✗ MISSING: H-CDR1_jain.csv
+#8 100.7     ✗ MISSING: H-CDR2_jain.csv
+#8 100.7     ✗ MISSING: H-CDR3_jain.csv
+#8 100.7     ✗ MISSING: L-CDR1_jain.csv
+#8 100.7     ✗ MISSING: L-CDR2_jain.csv
+#8 100.7     ✗ MISSING: L-CDR3_jain.csv
+#8 100.7     ✗ MISSING: H-CDRs_jain.csv
+#8 100.7     ✗ MISSING: L-CDRs_jain.csv
+#8 100.7     ✗ MISSING: H-FWRs_jain.csv
+#8 100.7     ✗ MISSING: L-FWRs_jain.csv
+#8 100.7     ✗ MISSING: VH+VL_jain.csv
+#8 100.7     ✗ MISSING: All-CDRs_jain.csv
+#8 100.7     ✗ MISSING: All-FWRs_jain.csv
+#8 100.7     ✗ MISSING: Full_jain.csv
+#8 100.7 
+#8 100.7   ✗ FAIL: Data integrity issues detected
+#8 100.7 _____________________________ test_gap_characters ______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_shehata_embedding_compatibility.py:28: in test_gap_characters
+#8 100.7     ???
+#8 100.7 E   AssertionError: No fragment files found
+#8 100.7 E   assert []
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ============================================================
+#8 100.7 TEST 1: Gap Character Detection
+#8 100.7 ============================================================
+#8 100.7 ______________________ test_previously_affected_sequences ______________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_shehata_embedding_compatibility.py:115: in test_previously_affected_sequences
+#8 100.7     ???
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1026: in read_csv
+#8 100.7     return _read(filepath_or_buffer, kwds)
+#8 100.7            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:620: in _read
+#8 100.7     parser = TextFileReader(filepath_or_buffer, **kwds)
+#8 100.7              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1620: in __init__
+#8 100.7     self._engine = self._make_engine(f, self.engine)
+#8 100.7                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1880: in _make_engine
+#8 100.7     self.handles = get_handle(
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/common.py:873: in get_handle
+#8 100.7     handle = open(
+#8 100.7 E   FileNotFoundError: [Errno 2] No such file or directory: 'test_datasets/shehata/fragments/VH_only_shehata.csv'
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ============================================================
+#8 100.7 TEST 3: Previously Affected Sequences
+#8 100.7 ============================================================
+#8 100.7 _________________________ test_model_validation_logic __________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_shehata_embedding_compatibility.py:165: in test_model_validation_logic
+#8 100.7     ???
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1026: in read_csv
+#8 100.7     return _read(filepath_or_buffer, kwds)
+#8 100.7            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:620: in _read
+#8 100.7     parser = TextFileReader(filepath_or_buffer, **kwds)
+#8 100.7              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1620: in __init__
+#8 100.7     self._engine = self._make_engine(f, self.engine)
+#8 100.7                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1880: in _make_engine
+#8 100.7     self.handles = get_handle(
+#8 100.7 .venv/lib/python3.12/site-packages/pandas/io/common.py:873: in get_handle
+#8 100.7     handle = open(
+#8 100.7 E   FileNotFoundError: [Errno 2] No such file or directory: 'test_datasets/shehata/fragments/VH_only_shehata.csv'
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ============================================================
+#8 100.7 TEST 4: ESM Model Validation Simulation
+#8 100.7 ============================================================
+#8 100.7 _____________________________ test_data_integrity ______________________________
+#8 100.7 /Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/tests/integration/test_shehata_embedding_compatibility.py:246: in test_data_integrity
+#8 100.7     ???
+#8 100.7 E   AssertionError: Data integrity issues detected
+#8 100.7 E   assert (False)
+#8 100.7 ----------------------------- Captured stdout call -----------------------------
+#8 100.7 
+#8 100.7 ============================================================
+#8 100.7 TEST 5: Data Integrity
+#8 100.7 ============================================================
+#8 100.7   ❌ Missing: VH_only_shehata.csv
+#8 100.7   ❌ Missing: VL_only_shehata.csv
+#8 100.7   ❌ Missing: H-CDR1_shehata.csv
+#8 100.7   ❌ Missing: H-CDR2_shehata.csv
+#8 100.7   ❌ Missing: H-CDR3_shehata.csv
+#8 100.7   ❌ Missing: L-CDR1_shehata.csv
+#8 100.7   ❌ Missing: L-CDR2_shehata.csv
+#8 100.7   ❌ Missing: L-CDR3_shehata.csv
+#8 100.7   ❌ Missing: H-CDRs_shehata.csv
+#8 100.7   ❌ Missing: L-CDRs_shehata.csv
+#8 100.7   ❌ Missing: H-FWRs_shehata.csv
+#8 100.7   ❌ Missing: L-FWRs_shehata.csv
+#8 100.7   ❌ Missing: VH+VL_shehata.csv
+#8 100.7   ❌ Missing: Full_shehata.csv
+#8 100.7   ❌ Missing: All-CDRs_shehata.csv
+#8 100.7   ❌ Missing: All-FWRs_shehata.csv
+#8 100.7 
+#8 100.7 ❌ FAIL: Data integrity issues detected
+#8 100.7 =============================== warnings summary ===============================
+#8 100.7 src/antibody_training_esm/cli/test.py:54
+#8 100.7   /app/src/antibody_training_esm/cli/test.py:54: PytestCollectionWarning: cannot collect test class 'TestConfig' because it has a __init__ constructor (from: tests/integration/test_model_tester.py)
+#8 100.7     @dataclass
+#8 100.7 
+#8 100.7 src/antibody_training_esm/cli/test.py:54
+#8 100.7   /app/src/antibody_training_esm/cli/test.py:54: PytestCollectionWarning: cannot collect test class 'TestConfig' because it has a __init__ constructor (from: tests/unit/cli/test_test.py)
+#8 100.7     @dataclass
+#8 100.7 
+#8 100.7 tests/integration/test_cross_validation.py: 414 warnings
+#8 100.7 tests/unit/core/test_trainer.py: 210 warnings
+#8 100.7   /app/.venv/lib/python3.12/site-packages/sklearn/utils/_tags.py:338: DeprecationWarning: The following error was raised: 'BinaryClassifier' object has no attribute '__sklearn_tags__'. It seems that there are no classes that implement `__sklearn_tags__` in the MRO and/or all classes in the MRO call `super().__sklearn_tags__()`. Make sure to inherit from `BaseEstimator` which implements `__sklearn_tags__` (or alternatively define `__sklearn_tags__` but we don't recommend this approach). Note that `BaseEstimator` needs to be on the right side of other Mixins in the inheritance order. The default are now used instead since retrieving tags failed. This warning will be replaced by an error in 1.8.
+#8 100.7     warnings.warn(
+#8 100.7 
+#8 100.7 tests/integration/test_cross_validation.py: 3 warnings
+#8 100.7 tests/unit/core/test_trainer.py: 13 warnings
+#8 100.7   /app/.venv/lib/python3.12/site-packages/sklearn/model_selection/_validation.py:971: UserWarning: Scoring failed. The score on this train-test partition for these parameters will be set to nan. Details: 
+#8 100.7   Traceback (most recent call last):
+#8 100.7     File "/app/.venv/lib/python3.12/site-packages/sklearn/metrics/_scorer.py", line 152, in __call__
+#8 100.7       score = scorer._score(
+#8 100.7               ^^^^^^^^^^^^^^
+#8 100.7     File "/app/.venv/lib/python3.12/site-packages/sklearn/metrics/_scorer.py", line 400, in _score
+#8 100.7       y_pred = method_caller(
+#8 100.7                ^^^^^^^^^^^^^^
+#8 100.7     File "/app/.venv/lib/python3.12/site-packages/sklearn/metrics/_scorer.py", line 90, in _cached_call
+#8 100.7       result, _ = _get_response_values(
+#8 100.7                   ^^^^^^^^^^^^^^^^^^^^^
+#8 100.7     File "/app/.venv/lib/python3.12/site-packages/sklearn/utils/_response.py", line 235, in _get_response_values
+#8 100.7       raise ValueError(
+#8 100.7   ValueError: BinaryClassifier should either be a classifier to be used with response_method=predict_proba or the response_method should be 'predict'. Got a regressor with response_method=predict_proba instead.
+#8 100.7   
+#8 100.7     warnings.warn(
+#8 100.7 
+#8 100.7 tests/integration/test_model_tester.py: 17 warnings
+#8 100.7 tests/unit/core/test_trainer.py: 3 warnings
+#8 100.7   /app/.venv/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:473: ConvergenceWarning: lbfgs failed to converge after 10 iteration(s) (status=1):
+#8 100.7   STOP: TOTAL NO. OF ITERATIONS REACHED LIMIT
+#8 100.7   
+#8 100.7   Increase the number of iterations to improve the convergence (max_iter=10).
+#8 100.7   You might also want to scale the data as shown in:
+#8 100.7       https://scikit-learn.org/stable/modules/preprocessing.html
+#8 100.7   Please also refer to the documentation for alternative solver options:
+#8 100.7       https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+#8 100.7     n_iter_i = _check_optimize_result(
+#8 100.7 
+#8 100.7 tests/integration/test_model_tester.py::test_run_comprehensive_test_multiple_models
+#8 100.7 tests/integration/test_model_tester.py::test_run_comprehensive_test_multiple_models
+#8 100.7 tests/integration/test_model_tester.py::test_run_comprehensive_test_multiple_models
+#8 100.7 tests/integration/test_model_tester.py::test_run_comprehensive_test_multiple_datasets
+#8 100.7 tests/integration/test_model_tester.py::test_run_comprehensive_test_multiple_datasets
+#8 100.7 tests/integration/test_model_tester.py::test_run_comprehensive_test_multiple_datasets
+#8 100.7   /app/.venv/lib/python3.12/site-packages/sklearn/metrics/_classification.py:1731: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+#8 100.7     _warn_prf(average, modifier, f"{metric.capitalize()} is", result.shape[0])
+#8 100.7 
+#8 100.7 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+#8 100.7 =========================== short test summary info ============================
+#8 100.7 FAILED tests/integration/test_boughter_embedding_compatibility.py::test_gap_characters
+#8 100.7 FAILED tests/integration/test_boughter_embedding_compatibility.py::test_amino_acid_validation
+#8 100.7 FAILED tests/integration/test_boughter_embedding_compatibility.py::test_previously_affected_sequences
+#8 100.7 FAILED tests/integration/test_boughter_embedding_compatibility.py::test_model_validation_logic
+#8 100.7 FAILED tests/integration/test_boughter_embedding_compatibility.py::test_data_integrity
+#8 100.7 FAILED tests/integration/test_harvey_embedding_compatibility.py::test_gap_characters
+#8 100.7 FAILED tests/integration/test_harvey_embedding_compatibility.py::test_amino_acid_validation
+#8 100.7 FAILED tests/integration/test_harvey_embedding_compatibility.py::test_previously_affected_sequences
+#8 100.7 FAILED tests/integration/test_harvey_embedding_compatibility.py::test_model_validation_logic
+#8 100.7 FAILED tests/integration/test_harvey_embedding_compatibility.py::test_data_integrity
+#8 100.7 FAILED tests/integration/test_jain_embedding_compatibility.py::test_gap_characters
+#8 100.7 FAILED tests/integration/test_jain_embedding_compatibility.py::test_amino_acid_validation
+#8 100.7 FAILED tests/integration/test_jain_embedding_compatibility.py::test_stop_codons
+#8 100.7 FAILED tests/integration/test_jain_embedding_compatibility.py::test_model_validation_logic
+#8 100.7 FAILED tests/integration/test_jain_embedding_compatibility.py::test_data_integrity
+#8 100.7 FAILED tests/integration/test_shehata_embedding_compatibility.py::test_gap_characters
+#8 100.7 FAILED tests/integration/test_shehata_embedding_compatibility.py::test_previously_affected_sequences
+#8 100.7 FAILED tests/integration/test_shehata_embedding_compatibility.py::test_model_validation_logic
+#8 100.7 FAILED tests/integration/test_shehata_embedding_compatibility.py::test_data_integrity
