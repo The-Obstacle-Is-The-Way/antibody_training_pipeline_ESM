@@ -193,29 +193,75 @@ def test_harvey_nanobody_pipeline(
 
 
 @pytest.mark.integration
-@pytest.mark.skip(
-    reason="Fragment creation requires ANARCI-annotated CDR/FWR columns. "
-    "Functionality tested in unit tests (Phase 2). Mock data lacks annotation."
-)
-def test_boughter_fragment_csv_creation_pipeline(mock_dataset_paths, tmp_path):
+def test_boughter_fragment_csv_creation_pipeline(tmp_path):
     """Verify complete Boughter fragment CSV creation workflow"""
-    # NOTE: This test requires ANARCI-annotated data with CDR/FWR columns
-    # Mock CSV files only have VH_sequence/VL_sequence
-    # Fragment creation logic already tested in tests/unit/datasets/test_base.py
-    pass
+    # Arrange: Load annotated Boughter data
+    annotated_csv = (
+        Path(__file__).parent.parent / "fixtures/mock_datasets/boughter_annotated.csv"
+    )
+    df = pd.read_csv(annotated_csv)
+
+    # Arrange: Create BoughterDataset with output directory
+    dataset = BoughterDataset()
+    dataset.output_dir = Path(tmp_path)
+
+    # Act: Create fragment CSVs
+    dataset.create_fragment_csvs(df, suffix="")
+
+    # Assert: Verify fragment CSV files were created
+    fragment_types = dataset.get_fragment_types()
+    for ftype in fragment_types:
+        fragment_csv = tmp_path / f"{ftype}_boughter.csv"
+        assert fragment_csv.exists(), f"Fragment CSV for {ftype} not created"
+
+        # Assert: Verify CSV structure (skip comment line with comment='#')
+        df_fragment = pd.read_csv(fragment_csv, comment="#")
+        assert "id" in df_fragment.columns
+        assert "sequence" in df_fragment.columns
+        assert "label" in df_fragment.columns
+        assert "source" in df_fragment.columns
+        assert len(df_fragment) > 0, f"Fragment CSV for {ftype} is empty"
 
 
 @pytest.mark.integration
-@pytest.mark.skip(
-    reason="Fragment creation requires ANARCI-annotated CDR/FWR columns. "
-    "Functionality tested in unit tests (Phase 2). Mock data lacks annotation."
-)
-def test_jain_fragment_pipeline_with_suffix(mock_dataset_paths, tmp_path):
+def test_jain_fragment_pipeline_with_suffix(tmp_path):
     """Verify Jain fragment creation with custom suffix"""
-    # NOTE: This test requires ANARCI-annotated data with CDR/FWR columns
-    # Mock CSV files only have VH_sequence/VL_sequence
-    # Fragment creation logic already tested in tests/unit/datasets/test_base.py
-    pass
+    # Arrange: Load annotated Jain data
+    annotated_csv = (
+        Path(__file__).parent.parent / "fixtures/mock_datasets/jain_annotated.csv"
+    )
+    df = pd.read_csv(annotated_csv)
+
+    # Arrange: Create JainDataset with output directory
+    dataset = JainDataset()
+    dataset.output_dir = Path(tmp_path)
+
+    # Act: Create fragment CSVs with custom suffix
+    custom_suffix = "_full"
+    dataset.create_fragment_csvs(df, suffix=custom_suffix)
+
+    # Assert: Verify fragment CSV files with suffix were created
+    fragment_types = dataset.get_fragment_types()
+    for ftype in fragment_types:
+        fragment_csv = tmp_path / f"{ftype}_jain{custom_suffix}.csv"
+        assert fragment_csv.exists(), (
+            f"Fragment CSV for {ftype}{custom_suffix} not created"
+        )
+
+        # Assert: Verify CSV structure (skip comment line with comment='#')
+        df_fragment = pd.read_csv(fragment_csv, comment="#")
+        assert "id" in df_fragment.columns
+        assert "sequence" in df_fragment.columns
+        assert "label" in df_fragment.columns
+        assert "source" in df_fragment.columns
+        assert len(df_fragment) > 0, f"Fragment CSV for {ftype}{custom_suffix} is empty"
+
+    # Assert: Verify specific fragment content
+    vh_only_csv = tmp_path / f"VH_only_jain{custom_suffix}.csv"
+    df_vh_only = pd.read_csv(vh_only_csv, comment="#")
+    assert len(df_vh_only) == len(df), (
+        "VH_only fragment should have one row per input sequence"
+    )
 
 
 @pytest.mark.integration

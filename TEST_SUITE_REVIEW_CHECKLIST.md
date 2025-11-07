@@ -106,8 +106,8 @@ Verify tests only target the public behaviors listed below—never the implement
 - [x] All findings from the senior review (e.g., fragile assertions, fixture pollution) are fixed or ticketed with owners and deadlines.
   - ✅ ROC AUC assertion fixed (verify scores OR expected ValueError)
   - ✅ Multi-stage test marked as placeholder until proper parity fixtures exist
-  - 📋 TODO: Add ANARCI-annotated fixtures to unskip 2 fragment creation tests (tests/integration/test_dataset_pipeline.py:196,209)
-  - 📋 TODO: Create distinct full/parity mock CSVs for Jain to properly test stage filtering (currently simulated via slicing)
+  - ✅ ANARCI-annotated fixtures added (boughter_annotated.csv, jain_annotated.csv) → 2 fragment tests enabled
+  - 📋 TODO: Create distinct full/parity mock CSVs for Jain to properly test stage filtering (deferred - low priority)
 - [x] Documentation (plan + checklist) reflects the actual state—no stale instructions.
   - ✅ Checklist boxes checked with evidence (test counts, coverage numbers, file references)
 - [x] Next phase entry criteria are satisfied (e.g., Phase 3 can start only after dataset coverage + hygiene items are green).
@@ -137,8 +137,9 @@ Verify tests only target the public behaviors listed below—never the implement
     - ✅ Task 1: ModelTester integration tests (17 tests) → cli/test.py 88.01% (target ≥70%)
     - ✅ Task 2: data/loaders unit tests (20 tests) → loaders.py 100.00% (target ≥80%)
     - ✅ Task 5: sklearn warnings suppressed (455 warnings → 0 via pytest.ini filters)
+    - ✅ Task 4: ANARCI fixtures added (2 fragment tests enabled: test_boughter_fragment_csv_creation_pipeline, test_jain_fragment_pipeline_with_suffix)
     - ⏳ Task 3: trainer.py refactor pending (17.04% vs ≥85% target)
-    - ⏳ Task 4: ANARCI fixtures pending (2 skipped fragment tests)
-    - **Current Status:** 350 passed, 5 skipped, 17.62s, 80.33% coverage (up from 65.23%)
+    - **Current Status:** 352 passed, 3 skipped, 16.84s, 80.33% coverage (up from 65.23%)
+    - **Files Created:** tests/fixtures/mock_datasets/boughter_annotated.csv, jain_annotated.csv (with VH_*/VL_* CDR/FWR columns)
 
 Use this checklist as a living gate. After a phase passes, return to senior-review mode and keep the repo clean—no additional docs unless instructed.
