@@ -191,17 +191,19 @@ The Shehata dataset (Shehata et al. 2019) provides a critical test set of 398 hu
 
 This work implements the methodology from:
 
-**Sakhnini et al. (2025) - Novo Nordisk**
-> Sakhnini, L., Jensen, K.K., Blaabjerg, L.M., Kielsgaard, N.O., Weber, A.I., Ditlev, S.B., Nielsen, M.A., & Marcatili, P. (2025). Prediction of non-specific binding of therapeutic antibodies with protein language models and biophysical properties. *bioRxiv*. https://doi.org/10.1101/2024.11.04.621792
+**Sakhnini et al. (2025) - Novo Nordisk & University of Cambridge**
+> Sakhnini, L.I., Beltrame, L., Fulle, S., Sormanni, P., Henriksen, A., Lorenzen, N., Vendruscolo, M., & Granata, D. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *bioRxiv*. https://doi.org/10.1101/2025.04.28.650927
 
 ```bibtex
 @article{sakhnini2025prediction,
-  title={Prediction of non-specific binding of therapeutic antibodies with protein language models and biophysical properties},
-  author={Sakhnini, Lara and Jensen, Kasper Kongsbak and Blaabjerg, Lasse Mondrup and Kielsgaard, Nikolai Ormstrup and Weber, Abigail I and Ditlev, Simon Baatz and Nielsen, Morten A and Marcatili, Paolo},
+  title={Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters},
+  author={Sakhnini, Laila I. and Beltrame, Ludovica and Fulle, Simone and Sormanni, Pietro and Henriksen, Anette and Lorenzen, Nikolai and Vendruscolo, Michele and Granata, Daniele},
   journal={bioRxiv},
   year={2025},
+  month={May},
   publisher={Cold Spring Harbor Laboratory},
-  doi={10.1101/2024.11.04.621792}
+  doi={10.1101/2025.04.28.650927},
+  url={https://www.biorxiv.org/content/10.1101/2025.04.28.650927v1}
 }
 ```
 

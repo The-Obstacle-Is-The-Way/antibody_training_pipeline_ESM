@@ -83,17 +83,21 @@ Tingwan Sun and Yingda Xu from Adimab contributed to the PSR measurements in thi
 
 ## Methodology Papers
 
-### 5. Sakhnini et al. 2025 (Novo Nordisk) - Reference Methodology
+### 5. Sakhnini et al. 2025 (Novo Nordisk & Cambridge) - Reference Methodology
 
 **Full Citation:**
-> Sakhnini, L., Jensen, K.K., Blaabjerg, L.M., Kielsgaard, N.O., Weber, A.I., Ditlev, S.B., Nielsen, M.A., & Marcatili, P. (2025). Prediction of non-specific binding of therapeutic antibodies with protein language models and biophysical properties. *bioRxiv*. https://doi.org/10.1101/2024.11.04.621792
+> Sakhnini, L.I., Beltrame, L., Fulle, S., Sormanni, P., Henriksen, A., Lorenzen, N., Vendruscolo, M., & Granata, D. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *bioRxiv*. https://doi.org/10.1101/2025.04.28.650927
 
 **Usage in this repository:**
 - Reference implementation for comparison
 - ESM-1v embeddings + LogisticRegression methodology
 - Benchmark target: 66-71% CV accuracy on Jain dataset
+- Training on Boughter (>1000 sequences), testing on Jain (137 clinical antibodies), Shehata (398 antibodies), Harvey (140k nanobodies)
 
-**Note:** This paper reports using "publicly available" Jain data, but their results suggest access to disaggregated per-antigen ELISA values (evidenced by 0-7 flag system in Figure S1D), which are not available in the public PNAS supplementary files.
+**Key Findings:**
+- Heavy variable domain (VH) achieves highest predictability for non-specificity
+- Isoelectric point (pI) identified as key biophysical driver
+- 10-fold CV accuracy up to 71% on Boughter training set
 
 ---
 
@@ -225,12 +229,14 @@ Researchers seeking access to the same per-antigen ELISA data should contact the
 }
 
 @article{sakhnini2025prediction,
-  title={Prediction of non-specific binding of therapeutic antibodies with protein language models and biophysical properties},
-  author={Sakhnini, Lara and Jensen, Kasper Kongsbak and Blaabjerg, Lasse Mondrup and Kielsgaard, Nikolai Ormstrup and Weber, Abigail I and Ditlev, Simon Baatz and Nielsen, Morten A and Marcatili, Paolo},
+  title={Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters},
+  author={Sakhnini, Laila I. and Beltrame, Ludovica and Fulle, Simone and Sormanni, Pietro and Henriksen, Anette and Lorenzen, Nikolai and Vendruscolo, Michele and Granata, Daniele},
   journal={bioRxiv},
   year={2025},
+  month={May},
   publisher={Cold Spring Harbor Laboratory},
-  doi={10.1101/2024.11.04.621792}
+  doi={10.1101/2025.04.28.650927},
+  url={https://www.biorxiv.org/content/10.1101/2025.04.28.650927v1}
 }
 
 @article{rives2021biological,
