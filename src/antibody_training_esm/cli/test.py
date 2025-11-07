@@ -178,7 +178,9 @@ class ModelTester:
         if not os.path.exists(data_path):
             raise FileNotFoundError(f"Dataset file not found: {data_path}")
 
-        df = pd.read_csv(data_path)
+        # Defensive: Handle legacy files with comment headers
+        # New files (post-HF cleanup) are standard CSVs without comments
+        df = pd.read_csv(data_path, comment="#")
 
         sequence_col = self.config.sequence_column
         label_col = self.config.label_column

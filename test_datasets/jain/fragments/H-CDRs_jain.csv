@@ -1,9 +1,3 @@
-# Jain Dataset - ELISA-based Fragments (SSOT)
-# Source: test_datasets/jain/processed/jain_with_private_elisa_FULL.csv
-# Labeling: ELISA flags (0→specific, 1-3→mild, ≥4→non-specific)
-# Distribution: 94 specific / 22 non-specific / 21 mild
-# Generated: 2025-11-06
-# Script: preprocessing/jain/step3_extract_fragments.py
 id,sequence,label,elisa_flags,source
 abituzumab,GYTFSSFWINPRSGYTASFLGRGAMDY,0.0,0,jain2017_pnas
 abrilumab,GYTLSDLSFDPQDGETATGSSSSWFDP,0.0,0,jain2017_pnas
