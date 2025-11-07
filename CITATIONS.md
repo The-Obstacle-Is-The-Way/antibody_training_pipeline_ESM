@@ -127,7 +127,7 @@ This repository demonstrates:
 ## Acknowledgments
 
 We are grateful to:
-- **Adimab, LLC** (Maximiliano Vásquez, Tingwan Sun, Yingda Xu) for permission to use and share per-antigen ELISA data from the Jain 2017 dataset
+- **Adimab, LLC** (Tingwan Sun, Yingda Xu) for permission to use and share per-antigen ELISA data from the Jain 2017 dataset
 - **Novo Nordisk** (Sakhnini et al.) for publishing their methodology, enabling independent replication
 - **Facebook AI Research** for releasing the ESM-1v protein language model
 - All authors of the original papers for making their data publicly available
@@ -139,11 +139,9 @@ We are grateful to:
 This repository aims to provide full transparency and reproducibility. Unlike some published work that claims to use "publicly available data" while relying on privately shared disaggregated measurements, we explicitly document:
 
 1. **What data we use:** Disaggregated per-antigen ELISA values from Jain 2017 (with explicit permission from Adimab)
-2. **How to access it:** Contact information provided for researchers seeking the same data
-3. **Why it matters:** The disaggregated data enables more granular polyreactivity prediction (0-6 ELISA flags vs. binary aggregated flag)
+2. **Why it matters:** The disaggregated data enables more granular polyreactivity prediction (0-6 ELISA flags vs. binary aggregated flag)
 
-For researchers seeking access to the same per-antigen ELISA data:
-- **Contact:** Maximiliano Vásquez (Adimab, LLC) - max.vasquez@adimab.com
+Researchers seeking access to the same per-antigen ELISA data should contact the corresponding authors of Jain et al. 2017 (PNAS).
 
 ---
 
