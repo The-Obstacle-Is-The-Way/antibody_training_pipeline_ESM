@@ -6,15 +6,15 @@ RUN pip install uv
 # Set working directory
 WORKDIR /app
 
-# Copy dependency files
+# Copy dependency files AND source code (hatchling needs src/ for editable install)
 COPY pyproject.toml uv.lock ./
+COPY src/ ./src/
 
 # Create virtual environment and install dependencies
 # uv sync installs to .venv/ and includes editable install automatically
 RUN uv sync
 
-# Copy source code (invalidates cache on code changes)
-COPY src/ ./src/
+# Copy tests (can invalidate cache independently)
 COPY tests/ ./tests/
 
 # Export .venv/bin to PATH so installed commands are available
