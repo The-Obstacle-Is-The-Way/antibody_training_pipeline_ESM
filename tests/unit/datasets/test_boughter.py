@@ -151,7 +151,7 @@ def test_load_data_raises_error_for_missing_file():
 
 
 @pytest.mark.unit
-def test_load_data_renames_columns_correctly(boughter_sample_csv):
+def test_load_data_renames_columns_correctly(boughter_sample_csv, tmp_path):
     """Verify heavy_seq/light_seq columns are renamed to VH_sequence/VL_sequence."""
     # Arrange - Create CSV with old column names
     dataset = BoughterDataset()
@@ -160,7 +160,7 @@ def test_load_data_renames_columns_correctly(boughter_sample_csv):
         columns={"VH_sequence": "heavy_seq", "VL_sequence": "light_seq"}
     )
 
-    temp_csv = Path(boughter_sample_csv).parent / "temp_boughter_old_names.csv"
+    temp_csv = tmp_path / "boughter_old_names.csv"
     df_old_names.to_csv(temp_csv, index=False)
 
     # Act
@@ -172,8 +172,7 @@ def test_load_data_renames_columns_correctly(boughter_sample_csv):
     assert "heavy_seq" not in df.columns
     assert "light_seq" not in df.columns
 
-    # Cleanup
-    temp_csv.unlink()
+    # tmp_path auto-cleanup by pytest
 
 
 # ==================== Flag Filtering Tests ====================
@@ -210,8 +209,9 @@ def test_load_data_includes_mild_flags_when_requested(boughter_sample_csv):
     # Act
     df = dataset.load_data(processed_csv=str(boughter_sample_csv), include_mild=True)
 
-    # Assert - All flags should be present
-    assert df["flags"].isin([0, 1, 2, 3, 4, 5, 6]).any()
+    # Assert - All flags should be present, including mild flags (1-3)
+    assert df["flags"].isin([0, 1, 2, 3, 4, 5, 6]).all()  # All flags are valid
+    assert df["flags"].isin([1, 2, 3]).any()  # At least one mild flag present
     assert len(df) == 20  # All 20 sequences kept
 
 
@@ -249,7 +249,7 @@ def test_flag_nonspecific_is_4_plus():
 
 
 @pytest.mark.unit
-def test_load_data_filters_by_valid_subset(boughter_sample_csv):
+def test_load_data_filters_by_valid_subset(boughter_sample_csv, tmp_path):
     """Verify subset parameter filters data when valid subset provided."""
     # Arrange - Add subset column to mock data
     dataset = BoughterDataset()
@@ -259,7 +259,7 @@ def test_load_data_filters_by_valid_subset(boughter_sample_csv):
     df_original["subset"] = [
         "flu" if i % 2 == 0 else "hiv_nat" for i in range(len(df_original))
     ]
-    temp_csv = Path(boughter_sample_csv).parent / "temp_boughter_with_subset.csv"
+    temp_csv = tmp_path / "boughter_with_subset.csv"
     df_original.to_csv(temp_csv, index=False)
 
     # Act
@@ -275,8 +275,7 @@ def test_load_data_filters_by_valid_subset(boughter_sample_csv):
     assert len(df_hiv) < len(df_original)
     assert len(df_flu) + len(df_hiv) == len(df_original)
 
-    # Cleanup
-    temp_csv.unlink()
+    # tmp_path auto-cleanup by pytest
 
 
 @pytest.mark.unit

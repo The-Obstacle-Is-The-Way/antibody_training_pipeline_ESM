@@ -541,3 +541,244 @@ def test_sanitization_workflow_on_realistic_data():
     assert sanitized.isupper()
     assert len(sanitized) == 121  # Actual length of the sequence
     assert all(aa in AntibodyDataset.VALID_AMINO_ACIDS for aa in sanitized)
+
+
+# ============================================================================
+# Fragment Creation Tests (create_fragments, create_fragment_csvs)
+# ============================================================================
+
+
+@pytest.mark.unit
+def test_create_fragments_generates_all_fragment_types():
+    """Verify create_fragments returns all 16 fragment types for full antibody"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset")
+    row = pd.Series(
+        {
+            "id": "AB001",
+            "VH_sequence": "QVQLVQSGAEVKKPGA",
+            "VL_sequence": "DIQMTQSPSSLSASVG",
+            "VH_CDR1": "GFTFS",
+            "VH_CDR2": "YISSG",
+            "VH_CDR3": "ARYDDY",
+            "VL_CDR1": "RASQS",
+            "VL_CDR2": "AASTL",
+            "VL_CDR3": "QQSYST",
+            "VH_FWR1": "QVQLVQ",
+            "VH_FWR2": "SGAEVK",
+            "VH_FWR3": "KPGA",
+            "VH_FWR4": "",
+            "VL_FWR1": "DIQMTQ",
+            "VL_FWR2": "SPSSLSA",
+            "VL_FWR3": "SVG",
+            "VL_FWR4": "",
+            "label": 0,
+        }
+    )
+
+    # Act
+    fragments = dataset.create_fragments(row)
+
+    # Assert
+    expected_fragments = dataset.get_fragment_types()
+    assert len(fragments) == len(expected_fragments)
+    for ftype in expected_fragments:
+        assert ftype in fragments
+        seq, label, source = fragments[ftype]
+        assert isinstance(seq, str)
+        assert label == 0
+        assert source == "AB001"
+
+
+@pytest.mark.unit
+def test_create_fragments_concatenates_cdrs_correctly():
+    """Verify create_fragments concatenates CDR regions correctly"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset")
+    row = pd.Series(
+        {
+            "id": "AB002",
+            "VH_CDR1": "AAA",
+            "VH_CDR2": "BBB",
+            "VH_CDR3": "CCC",
+            "VL_CDR1": "DDD",
+            "VL_CDR2": "EEE",
+            "VL_CDR3": "FFF",
+            "label": 1,
+        }
+    )
+
+    # Act
+    fragments = dataset.create_fragments(row)
+
+    # Assert
+    assert fragments["H-CDRs"][0] == "AAABBBCCC"  # Heavy CDRs concatenated
+    assert fragments["L-CDRs"][0] == "DDDEEEFFF"  # Light CDRs concatenated
+    assert fragments["All-CDRs"][0] == "AAABBBCCCDDDEEEFFF"  # All CDRs concatenated
+
+
+@pytest.mark.unit
+def test_create_fragments_handles_missing_vl_sequence():
+    """Verify create_fragments handles nanobodies (no VL chain)"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset")
+    row = pd.Series(
+        {
+            "id": "NANO001",
+            "VH_sequence": "QVQLVQSGAEVKKPGA",
+            "VH_CDR1": "GFTFS",
+            "VH_CDR2": "YISSG",
+            "VH_CDR3": "ARYDDY",
+            "label": 0,
+        }
+    )
+
+    # Act
+    fragments = dataset.create_fragments(row)
+
+    # Assert - VL fragments should be empty strings
+    assert fragments["VL_only"][0] == ""
+    assert fragments["VH_only"][0] == "QVQLVQSGAEVKKPGA"
+    assert "H-CDRs" in fragments
+    assert fragments["H-CDRs"][0] == "GFTFSYISSGARYDDY"
+
+
+@pytest.mark.unit
+def test_create_fragments_preserves_label():
+    """Verify create_fragments preserves label in all fragments"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset")
+    row = pd.Series(
+        {
+            "id": "AB003",
+            "VH_sequence": "QVQLVQSG",
+            "VL_sequence": "DIQMTQSP",
+            "label": 1,  # Non-specific
+        }
+    )
+
+    # Act
+    fragments = dataset.create_fragments(row)
+
+    # Assert - All fragments should have label=1
+    for ftype, (_seq, label, _source) in fragments.items():
+        assert label == 1, f"Fragment {ftype} has wrong label"
+
+
+@pytest.mark.unit
+def test_create_fragment_csvs_writes_all_files(tmp_path):
+    """Verify create_fragment_csvs writes CSV for each fragment type"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+    df = pd.DataFrame(
+        {
+            "id": ["AB001", "AB002"],
+            "VH_sequence": ["QVQLVQSG", "EVQLVESG"],
+            "VL_sequence": ["DIQMTQSP", "QSALTQPA"],
+            "VH_CDR1": ["GFTFS", "GFTFD"],
+            "VH_CDR2": ["YISSG", "AISGS"],
+            "VH_CDR3": ["ARYDDY", "AKDIQY"],
+            "VL_CDR1": ["RASQS", "TGTSSD"],
+            "VL_CDR2": ["AASTL", "DVSNR"],
+            "VL_CDR3": ["QQSYST", "SSYTSS"],
+            "VH_FWR1": ["QVQL", "EVQL"],
+            "VH_FWR2": ["VQSG", "VESG"],
+            "VH_FWR3": ["", ""],
+            "VH_FWR4": ["", ""],
+            "VL_FWR1": ["DIQM", "QSAL"],
+            "VL_FWR2": ["TQSP", "TQPA"],
+            "VL_FWR3": ["", ""],
+            "VL_FWR4": ["", ""],
+            "label": [0, 1],
+        }
+    )
+
+    # Act
+    dataset.create_fragment_csvs(df, suffix="")
+
+    # Assert - All fragment types should have CSV files
+    fragment_types = dataset.get_fragment_types()
+    for ftype in fragment_types:
+        csv_file = tmp_path / f"{ftype}_test_dataset.csv"
+        assert csv_file.exists(), f"Fragment CSV not created for {ftype}"
+
+        # Verify CSV structure
+        df_fragment = pd.read_csv(csv_file, comment="#")
+        assert "id" in df_fragment.columns
+        assert "sequence" in df_fragment.columns
+        assert "label" in df_fragment.columns
+        assert "source" in df_fragment.columns
+
+
+@pytest.mark.unit
+def test_create_fragment_csvs_includes_metadata_header(tmp_path):
+    """Verify create_fragment_csvs writes metadata headers"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+    df = pd.DataFrame(
+        {
+            "id": ["AB001"],
+            "VH_sequence": ["QVQLVQSG"],
+            "VL_sequence": ["DIQMTQSP"],
+            "label": [0],
+        }
+    )
+
+    # Act
+    dataset.create_fragment_csvs(df, suffix="")
+
+    # Assert - Check metadata in VH_only CSV
+    vh_csv = tmp_path / "VH_only_test_dataset.csv"
+    with open(vh_csv) as f:
+        lines = f.readlines()
+
+    assert lines[0].startswith("# Dataset:")
+    assert lines[1].startswith("# Fragment type:")
+    assert lines[2].startswith("# Total sequences:")
+    assert lines[3].startswith("# Label distribution:")
+
+
+@pytest.mark.unit
+def test_create_fragment_csvs_handles_suffix(tmp_path):
+    """Verify create_fragment_csvs uses suffix parameter correctly"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+    df = pd.DataFrame(
+        {
+            "id": ["AB001"],
+            "VH_sequence": ["QVQLVQSG"],
+            "VL_sequence": ["DIQMTQSP"],
+            "label": [0],
+        }
+    )
+
+    # Act
+    dataset.create_fragment_csvs(df, suffix="_filtered")
+
+    # Assert - Files should have suffix
+    vh_csv = tmp_path / "VH_only_test_dataset_filtered.csv"
+    assert vh_csv.exists()
+
+
+@pytest.mark.unit
+def test_create_fragment_csvs_skips_empty_fragments(tmp_path):
+    """Verify create_fragment_csvs skips fragment types with no data"""
+    # Arrange - Create dataset with only VH (no VL)
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+    df = pd.DataFrame(
+        {
+            "id": ["NANO001"],
+            "VH_sequence": ["QVQLVQSG"],
+            # No VL_sequence - nanobody
+            "label": [0],
+        }
+    )
+
+    # Act
+    dataset.create_fragment_csvs(df, suffix="")
+
+    # Assert - VL fragments should not exist or be empty
+    vl_csv = tmp_path / "VL_only_test_dataset.csv"
+    if vl_csv.exists():
+        df_vl = pd.read_csv(vl_csv, comment="#")
+        assert len(df_vl) == 0 or df_vl["sequence"].str.len().sum() == 0
