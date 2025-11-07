@@ -590,6 +590,9 @@ Examples:
 
         return 0
 
+    except KeyboardInterrupt:
+        print("Error during testing: Interrupted by user", file=sys.stderr)
+        return 1
     except Exception as e:
         print(f"Error during testing: {e}", file=sys.stderr)
         return 1

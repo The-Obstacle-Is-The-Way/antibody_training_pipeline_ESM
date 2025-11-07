@@ -72,6 +72,9 @@ scripts maintain bit-for-bit parity with published methods.
 
         return 0
 
+    except KeyboardInterrupt:
+        print("\n❌ Error: Interrupted by user", file=sys.stderr)
+        return 1
     except Exception as e:
         print(f"\n❌ Error: {e}", file=sys.stderr)
         return 1

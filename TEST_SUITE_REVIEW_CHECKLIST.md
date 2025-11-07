@@ -114,18 +114,19 @@ Verify tests only target the public behaviors listed below—never the implement
 - [x] Phase 2 exit complete (datasets >80% with documented base.py exception); proceed to Phase 3 integration tests.
   - ✅ Phase 2: 196 unit tests, dataset coverage 86.57% avg (base.py 70.50% documented)
 - [x] Final "ready" comment records test counts, runtime, coverage percentages, and outstanding risks.
-  - **Phase 4 Complete:** 120 passed (61 CLI unit + 46 E2E + 13 other), 5 skipped, 15.33s runtime
+  - **Phase 4 Complete:** 313 passed, 5 skipped, 17.68s runtime
   - **Test Counts:** 318 total (243 unit + 58 integration + 17 E2E)
-  - **Coverage:** 17.43% overall (classifier 55.71%, embeddings 22.09%, trainer/cli/loaders deferred)
-    - Note: CLI modules show 0% coverage because tests mock the main entry points (train_model, ModelTester, argparse)
-    - E2E tests increase classifier coverage from 51.94% to 55.71% via predict/predict_proba workflows
+  - **Coverage:** 65.23% overall (classifier 100%, embeddings 95.35%, train.py 100%, datasets 73-97%)
+  - **Bugfix (Critical):** Added KeyboardInterrupt handling to all CLI files (train.py:35-37, test.py:593-595, preprocess.py:75-77)
+    - Previously the test suite would abort mid-run on KeyboardInterrupt test (test_train.py:217)
+    - This caused invalid coverage reporting (17.43% from incomplete run vs 65.23% actual)
   - **Branch Coverage:** Not re-measured (Phase 3 baseline: classifier 100%, embeddings 100%, base.py 89.7%)
   - **Quality:** Zero lint errors, zero type errors, zero formatting issues
   - **Outstanding Risks:**
     - 2 skipped fragment tests (need ANARCI fixtures) - unchanged from Phase 3
     - 1 skipped trainer test (trainer.py config structure needs refactor)
     - 2 skipped E2E tests (need real datasets or full trainer implementation)
-    - 417 sklearn warnings (deprecation + scorer issues) - unchanged from Phase 3
+    - 428 sklearn warnings (deprecation + scorer issues) - up from 417 in Phase 3
     - **Phase 4 Delivered:** CLI unit tests (61), E2E tests (17), full CLI coverage, Novo methodology tests
 
 Use this checklist as a living gate. After a phase passes, return to senior-review mode and keep the repo clean—no additional docs unless instructed.

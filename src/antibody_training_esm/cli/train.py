@@ -32,6 +32,9 @@ def main():
         train_model(args.config)
         print("\n✅ Training completed successfully!")
         return 0
+    except KeyboardInterrupt:
+        print("\n❌ Training failed: Interrupted by user", file=sys.stderr)
+        return 1
     except Exception as e:
         print(f"\n❌ Training failed: {e}", file=sys.stderr)
         return 1

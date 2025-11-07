@@ -921,10 +921,11 @@ pytest -n auto
 
 **Status:** ✅ COMPLETED (2025-11-07)
 - Added 74 tests (61 CLI unit + 13 E2E)
-- All tests passing (120 passed, 5 skipped with clear reasons)
+- All tests passing (313 passed, 5 skipped with clear reasons)
 - CLI argument parsing, config loading, error handling fully tested
 - E2E workflows tested: training, save/load, prediction, Novo methodology
-- Coverage: Classifier 55.71%, overall 17.43%
+- **Bugfix:** Added KeyboardInterrupt handling to all CLI main() functions (train.py:35-37, test.py:593-595, preprocess.py:75-77)
+- Coverage: 65.23% (classifier 100%, embeddings 95.35%, train.py 100%, datasets 73-97%)
 
 ---
 
