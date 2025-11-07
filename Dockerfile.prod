@@ -21,7 +21,8 @@ COPY src/ ./src/
 # --frozen ensures we use exact versions from uv.lock for reproducibility
 RUN uv sync --frozen --all-extras
 
-# Copy fixture datasets for testing/validation
+# Copy tests and fixture datasets for validation
+COPY tests/ ./tests/
 COPY train_datasets/ ./train_datasets/
 COPY test_datasets/ ./test_datasets/
 
