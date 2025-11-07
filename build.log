@@ -1,0 +1,49 @@
+#1 [internal] load local bake definitions
+#1 reading from stdin 631B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile.dev
+#2 transferring dockerfile: 1.00kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 DONE 0.1s
+
+#4 [1/9] FROM docker.io/library/python:3.12-slim@sha256:d86b4c74b936c438cd4cc3a9f7256b9a7c27ad68c7caf8c205e18d9845af0164
+#4 resolve docker.io/library/python:3.12-slim@sha256:d86b4c74b936c438cd4cc3a9f7256b9a7c27ad68c7caf8c205e18d9845af0164 done
+#4 DONE 0.0s
+
+#5 [8/9] COPY tests/ ./tests/
+#5 CACHED
+
+#6 [internal] load .dockerignore
+#6 transferring context: 665B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 11.80kB done
+#7 DONE 0.0s
+
+#8 [9/9] RUN /app/.venv/bin/pytest tests/ -m "not e2e" --tb=short -q
+#8 10.98 ============================= test session starts ==============================
+#8 10.98 platform linux -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0
+#8 10.98 rootdir: /app
+#8 10.98 configfile: pyproject.toml
+#8 10.98 plugins: cov-7.0.0, sugar-1.1.1, anyio-4.11.0, xdist-3.8.0
+#8 10.98 collected 375 items / 17 deselected / 358 selected
+#8 10.98 
+#8 10.98 tests/integration/test_boughter_embedding_compatibility.py FFFFF         [  1%]
+#8 11.00 tests/integration/test_cross_validation.py ..............                [  5%]
+#8 11.29 tests/integration/test_dataset_pipeline.py ..........                    [  8%]
+#8 11.75 tests/integration/test_harvey_embedding_compatibility.py FFFFF           [  9%]
+#8 11.76 tests/integration/test_jain_embedding_compatibility.py FFFFF             [ 10%]
+#8 11.78 tests/integration/test_model_persistence.py ..............               [ 14%]
+#8 11.82 tests/integration/test_model_tester.py .................                 [ 19%]
+#8 12.79 tests/integration/test_shehata_embedding_compatibility.py F.FFF          [ 20%]
+#8 12.87 tests/unit/cli/test_preprocess.py ...............                        [ 25%]
+#8 12.88 tests/unit/cli/test_test.py ........................                     [ 31%]
+#8 12.90 tests/unit/cli/test_train.py ..................                          [ 36%]
+#8 12.91 tests/unit/core/test_classifier.py ....................................  [ 46%]
+#8 13.11 tests/unit/core/test_embeddings.py ..................................... [ 57%]
+#8 13.19                                                                          [ 57%]
+#8 13.19 tests/unit/core/test_trainer.py ............
