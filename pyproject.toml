@@ -129,5 +129,6 @@ exclude_lines = [
 
 [dependency-groups]
 dev = [
+    "openpyxl>=3.1.5",
     "types-pyyaml>=6.0.12.20250915",
 ]

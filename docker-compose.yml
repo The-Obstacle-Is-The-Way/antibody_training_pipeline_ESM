@@ -1,0 +1,25 @@
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./src:/app/src  # Hot reload source code
+      - ./tests:/app/tests  # Hot reload tests
+      - ./data:/app/data  # Mount data directory
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HF_HOME=/app/.cache/huggingface  # Cache model downloads
+    command: bash
+
+  prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ./data:/app/data  # Mount data directory for model output
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HF_HOME=/app/.cache/huggingface  # Use cached model weights
+    # Default entrypoint is antibody-train, override as needed
+    # Example: docker-compose run prod --dataset boughter --output /app/data/model.pkl

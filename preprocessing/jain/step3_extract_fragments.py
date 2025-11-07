@@ -259,15 +259,8 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
 
     print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
-    # Add metadata comment header
-    header_comment = (
-        "# Jain Dataset - ELISA-based Fragments (SSOT)\n"
-        "# Source: test_datasets/jain/processed/jain_with_private_elisa_FULL.csv\n"
-        "# Labeling: ELISA flags (0→specific, 1-3→mild, ≥4→non-specific)\n"
-        "# Distribution: 94 specific / 22 non-specific / 21 mild\n"
-        "# Generated: 2025-11-06\n"
-        "# Script: preprocessing/jain/step3_extract_fragments.py\n"
-    )
+    # NOTE: Metadata moved to manifest.yml to maintain CSV compatibility
+    # All fragments are standard CSVs (no comment headers) for HuggingFace compatibility
 
     for fragment_name, (column_name, _sequence_alias) in fragments.items():
         output_path = output_dir / f"{fragment_name}_jain.csv"
@@ -283,10 +276,8 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
             }
         )
 
-        # Write with metadata header
-        with open(output_path, "w") as f:
-            f.write(header_comment)
-            fragment_df.to_csv(f, index=False)
+        # Write standard CSV (matches Shehata/Harvey format)
+        fragment_df.to_csv(output_path, index=False)
 
         # Show stats
         min_len = fragment_df["sequence"].str.len().min()
@@ -336,14 +327,21 @@ def create_manifest(output_dir: Path, source_path: Path, script_path: Path):
 
     manifest_content = f"""# Jain Dataset Fragment Provenance Manifest
 # Generated: 2025-11-06
+# Format: Standard CSV (no comment headers) for HuggingFace compatibility
 
 source_file: {source_rel}
 source_sha256: {source_sha}
 script: {script_rel}
 
+csv_format:
+  type: standard
+  columns: [id, sequence, label, elisa_flags, source]
+  comment_headers: false
+  note: All fragments are plain CSVs compatible with pd.read_csv(path)
+
 labeling_rule: ELISA-based
   - elisa_flags = 0     → Specific (label 0)
-  - elisa_flags = 1-3   → Mild (label NaN)
+  - elisa_flags = 1-3   → Mild (label NaN) - excluded from training
   - elisa_flags >= 4    → Non-specific (label 1)
 
 expected_counts:
@@ -353,13 +351,24 @@ expected_counts:
   mild: 21
   test_set: 116  # excludes mild
 
+fragments_include_nan_labels: true
+  note: |
+    Fragments contain all 137 antibodies including 21 "mild" with label=NaN.
+    For training, use canonical/ files which exclude mild antibodies.
+    To filter: df = df[df['label'].notna()]
+
+compatibility:
+  - Matches Shehata/Harvey fragment format (standard CSVs)
+  - Compatible with HuggingFace datasets library
+  - No special read parameters required (pd.read_csv works directly)
+
 note: |
   This replaces the old fragments (67/27/43 distribution) that used
   flags_total labeling from the paper. The ELISA-based labeling is
   the single source of truth (SSOT) for all jain data.
 
-  Legacy fragments (67/27/43 distribution) are no longer tracked in the working tree.
-  Recover from git history if needed (commit 09d6121).
+  Previous version (commit 09d6121) included comment headers that broke
+  standard CSV parsers. Current version uses standard CSV format.
 """
 
     manifest_path = output_dir / "manifest.yml"

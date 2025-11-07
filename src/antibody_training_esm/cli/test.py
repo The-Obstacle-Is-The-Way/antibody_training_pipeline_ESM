@@ -27,6 +27,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import torch
 import yaml
 
 # Scikit-learn imports
@@ -62,7 +63,7 @@ class TestConfig:
     metrics: list[str] | None = None
     save_predictions: bool = True
     batch_size: int = 32  # Batch size for embedding extraction
-    device: str = "cpu"  # Device to use for inference [cuda, cpu, mps]
+    device: str = "mps"  # Device to use for inference [cuda, cpu, mps] - MUST match training config
 
     def __post_init__(self):
         if self.metrics is None:
@@ -124,15 +125,36 @@ class ModelTester:
             hasattr(model, "embedding_extractor")
             and model.embedding_extractor.device != self.config.device
         ):
-            self.logger.info(
-                f"Updating device from {model.embedding_extractor.device} to {self.config.device}"
+            self.logger.warning(
+                f"Device mismatch: model trained on {model.embedding_extractor.device}, "
+                f"test config specifies {self.config.device}. Recreating extractor..."
             )
-            # Recreate embedding extractor with new device
+
+            # CRITICAL: Explicit cleanup to prevent semaphore leaks (P0 bug fix)
+            # See P0_SEMAPHORE_LEAK.md for details
+            old_device = str(model.embedding_extractor.device)
+            old_extractor = model.embedding_extractor
+
+            # Delete old extractor before creating new one
+            del model.embedding_extractor
+            del old_extractor
+
+            # Clear device-specific GPU cache
+            if old_device.startswith("cuda"):
+                torch.cuda.empty_cache()
+            elif old_device.startswith("mps"):
+                torch.mps.empty_cache()
+
+            self.logger.info(f"Cleaned up old extractor on {old_device}")
+
+            # NOW create new extractor (no leak)
             batch_size = getattr(model, "batch_size", 32)
             model.embedding_extractor = ESMEmbeddingExtractor(
                 model.model_name, self.config.device, batch_size
             )
             model.device = self.config.device
+
+            self.logger.info(f"Created new extractor on {self.config.device}")
 
         # Update batch_size if different from config
         if (
@@ -156,7 +178,9 @@ class ModelTester:
         if not os.path.exists(data_path):
             raise FileNotFoundError(f"Dataset file not found: {data_path}")
 
-        df = pd.read_csv(data_path)
+        # Defensive: Handle legacy files with comment headers
+        # New files (post-HF cleanup) are standard CSVs without comments
+        df = pd.read_csv(data_path, comment="#")
 
         sequence_col = self.config.sequence_column
         label_col = self.config.label_column
@@ -566,6 +590,9 @@ Examples:
 
         return 0
 
+    except KeyboardInterrupt:
+        print("Error during testing: Interrupted by user", file=sys.stderr)
+        return 1
     except Exception as e:
         print(f"Error during testing: {e}", file=sys.stderr)
         return 1

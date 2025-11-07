@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 class BinaryClassifier:
     """Binary classifier for protein sequences using ESM-1V embeddings"""
 
+    # Assay-specific thresholds (Novo Nordisk methodology)
+    ASSAY_THRESHOLDS = {
+        "ELISA": 0.5,  # Training data type (Boughter, Jain)
+        "PSR": 0.5495,  # PSR assay type (Shehata, Harvey) - EXACT Novo parity
+    }
+
     def __init__(self, params: dict | None = None, **kwargs):
         """
         Initialize the binary classifier
@@ -161,19 +167,13 @@ class BinaryClassifier:
         if not self.is_fitted:
             raise ValueError("Classifier must be fitted before making predictions")
 
-        # Dataset-specific threshold mapping
-        ASSAY_THRESHOLDS = {
-            "ELISA": 0.5,  # Training data type (Boughter, Jain)
-            "PSR": 0.5495,  # PSR assay type (Shehata, Harvey) - EXACT Novo parity
-        }
-
         # Determine which threshold to use
         if assay_type is not None:
-            if assay_type not in ASSAY_THRESHOLDS:
+            if assay_type not in self.ASSAY_THRESHOLDS:
                 raise ValueError(
-                    f"Unknown assay_type '{assay_type}'. Must be one of: {list(ASSAY_THRESHOLDS.keys())}"
+                    f"Unknown assay_type '{assay_type}'. Must be one of: {list(self.ASSAY_THRESHOLDS.keys())}"
                 )
-            threshold = ASSAY_THRESHOLDS[assay_type]
+            threshold = self.ASSAY_THRESHOLDS[assay_type]
 
         # Get probabilities and apply threshold
         probabilities = self.classifier.predict_proba(X)

@@ -1,0 +1,36 @@
+FROM python:3.12-slim
+
+# Install system dependencies (gcc needed for psutil, build-essential for other C extensions)
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv package manager
+RUN pip install uv
+
+# Set working directory
+WORKDIR /app
+
+# Copy dependency files AND source code (hatchling needs src/ for editable install)
+COPY pyproject.toml uv.lock ./
+COPY src/ ./src/
+
+# Create virtual environment and install dependencies (including dev extras for pytest)
+# uv sync installs to .venv/ and includes editable install automatically
+RUN uv sync --all-extras
+
+# Copy tests and fixture datasets (can invalidate cache independently)
+COPY tests/ ./tests/
+COPY test_datasets/ ./test_datasets/
+COPY train_datasets/ ./train_datasets/
+
+# Export .venv/bin to PATH so installed commands are available
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Run test suite to verify clean environment (non-E2E tests only)
+# This proves the build works without local hacks or missing dependencies
+RUN pytest tests/ -m "not e2e" --tb=short -q
+
+CMD ["bash"]
