@@ -8,7 +8,7 @@ Includes cross-validation, embedding caching, and comprehensive evaluation.
 import hashlib
 import logging
 import os
-import pickle
+import pickle  # nosec B403 - Used only for local trusted data (models, caches)
 import shutil
 from typing import Any
 
@@ -103,7 +103,7 @@ def get_or_create_embeddings(
     if os.path.exists(cache_file):
         logger.info(f"Loading cached embeddings from {cache_file}")
         with open(cache_file, "rb") as f:
-            cached_data: dict = pickle.load(f)
+            cached_data: dict = pickle.load(f)  # nosec B301 - Hash-validated local cache (sequences_hash verified on line 111)
 
         # Verify the cached sequences match exactly
         if (

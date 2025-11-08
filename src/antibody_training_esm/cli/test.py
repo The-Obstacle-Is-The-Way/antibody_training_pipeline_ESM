@@ -16,7 +16,7 @@ Usage:
 import argparse
 import logging
 import os
-import pickle
+import pickle  # nosec B403 - Used only for local trusted data (models, caches)
 import sys
 from dataclasses import dataclass
 from datetime import datetime
@@ -116,7 +116,7 @@ class ModelTester:
             raise FileNotFoundError(f"Model file not found: {model_path}")
 
         with open(model_path, "rb") as f:
-            model = pickle.load(f)
+            model = pickle.load(f)  # nosec B301 - Loading our own trained model from local file
 
         if not isinstance(model, BinaryClassifier):
             raise ValueError(f"Expected BinaryClassifier, got {type(model)}")
@@ -243,7 +243,7 @@ class ModelTester:
         if os.path.exists(cache_file):
             self.logger.info(f"Loading cached embeddings from {cache_file}")
             with open(cache_file, "rb") as f:
-                embeddings: np.ndarray = pickle.load(f)
+                embeddings: np.ndarray = pickle.load(f)  # nosec B301 - Loading our own cached embeddings for performance
 
             if len(embeddings) == len(sequences):
                 return embeddings

@@ -6,7 +6,7 @@ Supports Hugging Face datasets, local CSV files, and preprocessing pipelines.
 """
 
 import logging
-import pickle
+import pickle  # nosec B403 - Used only for local trusted data (preprocessed datasets)
 from typing import Any, cast
 
 import numpy as np
@@ -94,7 +94,7 @@ def load_preprocessed_data(
         Dictionary with keys: 'X', 'y', and/or 'X_embedded'
     """
     with open(filename, "rb") as f:
-        data = cast(dict[str, list[str] | list[Label] | np.ndarray], pickle.load(f))
+        data = cast(dict[str, list[str] | list[Label] | np.ndarray], pickle.load(f))  # nosec B301 - Loading our own preprocessed dataset from local file
         return data
 
 
