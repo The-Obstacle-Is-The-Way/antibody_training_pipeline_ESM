@@ -150,8 +150,9 @@ class ModelTester:
 
             # NOW create new extractor (no leak)
             batch_size = getattr(model, "batch_size", DEFAULT_BATCH_SIZE)
+            revision = getattr(model, "revision", "main")  # Backwards compatibility
             model.embedding_extractor = ESMEmbeddingExtractor(
-                model.model_name, self.config.device, batch_size
+                model.model_name, self.config.device, batch_size, revision=revision
             )
             model.device = self.config.device
 

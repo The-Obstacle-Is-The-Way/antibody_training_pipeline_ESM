@@ -26,6 +26,7 @@ class ESMEmbeddingExtractor:
         device: str,
         batch_size: int = DEFAULT_BATCH_SIZE,
         max_length: int = DEFAULT_MAX_SEQ_LENGTH,
+        revision: str = "main",
     ):
         """
         Initialize ESM embedding extractor
@@ -35,20 +36,29 @@ class ESMEmbeddingExtractor:
             device: Device to run model on ('cpu', 'cuda', or 'mps')
             batch_size: Number of sequences to process per batch
             max_length: Maximum sequence length for tokenizer truncation/padding
+            revision: HuggingFace model revision (commit SHA or branch name) for reproducibility
         """
         self.model_name = model_name
         self.device = device
         self.batch_size = batch_size
         self.max_length = max_length
+        self.revision = revision
 
-        # Load model with output_hidden_states enabled
-        self.model = AutoModel.from_pretrained(model_name, output_hidden_states=True)
+        # Load model with output_hidden_states enabled + pinned revision for reproducibility
+        self.model = AutoModel.from_pretrained(
+            model_name,
+            output_hidden_states=True,
+            revision=revision,  # nosec B615 - Pinned to specific version for scientific reproducibility
+        )
         self.model.to(device)
         self.model.eval()
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_name,
+            revision=revision,  # nosec B615 - Pinned to specific version for scientific reproducibility
+        )
         logger.info(
-            f"ESM model {model_name} loaded on {device} with batch_size={batch_size} "
-            f"and max_length={max_length}"
+            f"ESM model {model_name} (revision={revision}) loaded on {device} "
+            f"with batch_size={batch_size} and max_length={max_length}"
         )
 
     def embed_sequence(self, sequence: str) -> np.ndarray:

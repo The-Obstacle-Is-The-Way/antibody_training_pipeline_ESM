@@ -9,6 +9,7 @@
 # Model configuration
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"  # ESM-1V model from HuggingFace (pretrained)
+  revision: "main"  # HuggingFace model revision (for reproducibility - pin to commit SHA in production)
   device: "mps"  # [cuda, cpu, mps] - use MPS for Apple Silicon
 
 # Data configuration

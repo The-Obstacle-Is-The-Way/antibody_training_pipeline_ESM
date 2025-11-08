@@ -103,6 +103,7 @@ def load_hf_dataset(
     split: str,
     text_column: str,
     label_column: str,
+    revision: str = "main",
 ) -> tuple[list[str], list[Label]]:
     """
     Load dataset from Hugging Face datasets library
@@ -112,12 +113,17 @@ def load_hf_dataset(
         split: Which split to load (e.g., 'train', 'test', 'validation')
         text_column: Name of the column containing the sequences
         label_column: Name of the column containing the labels
+        revision: HuggingFace dataset revision (commit SHA or branch name) for reproducibility
 
     Returns:
         X: List of input sequences
         y: List of labels
     """
-    dataset = load_dataset(dataset_name, split=split)
+    dataset = load_dataset(
+        dataset_name,
+        split=split,
+        revision=revision,  # nosec B615 - Pinned to specific version for scientific reproducibility
+    )
     X = list(dataset[text_column])
     y = cast(list[Label], list(dataset[label_column]))
 

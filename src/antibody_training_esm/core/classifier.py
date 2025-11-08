@@ -45,9 +45,10 @@ class BinaryClassifier:
         batch_size = params.get(
             "batch_size", DEFAULT_BATCH_SIZE
         )  # Default if not provided
+        revision = params.get("revision", "main")  # HF model revision (default: "main")
 
         self.embedding_extractor = ESMEmbeddingExtractor(
-            params["model_name"], params["device"], batch_size
+            params["model_name"], params["device"], batch_size, revision=revision
         )
 
         # Get all LogisticRegression hyperparameters from config (with defaults)
@@ -92,6 +93,7 @@ class BinaryClassifier:
         self.penalty = penalty
         self.solver = solver
         self.batch_size = batch_size
+        self.revision = revision  # Store HF model revision for reproducibility
 
         # Store all params for sklearn compatibility
         self._params = params
@@ -244,6 +246,9 @@ class BinaryClassifier:
         batch_size = getattr(
             self, "batch_size", DEFAULT_BATCH_SIZE
         )  # Default if not stored (backwards compatibility)
+        revision = getattr(
+            self, "revision", "main"
+        )  # Default if not stored (backwards compatibility)
         self.embedding_extractor = ESMEmbeddingExtractor(
-            self.model_name, self.device, batch_size
+            self.model_name, self.device, batch_size, revision=revision
         )
