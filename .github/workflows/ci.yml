@@ -1,0 +1,236 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop, leroy-jenkins/full-send ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # Job 1: Code Quality Gates
+  quality:
+    name: Code Quality (ruff, mypy, bandit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 3.12
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Ruff lint
+      run: uv run ruff check .
+      continue-on-error: false
+
+    - name: Ruff format check
+      run: uv run ruff format --check .
+      continue-on-error: false
+
+    - name: Type checking with mypy
+      run: uv run mypy src/ --strict
+      continue-on-error: true  # Start lenient, tighten later
+
+    - name: Security scan with bandit
+      run: |
+        uv pip install bandit
+        uv run bandit -r src/ -f json -o bandit-report.json || true
+        uv run bandit -r src/
+      continue-on-error: true  # Start lenient
+
+    - name: Upload quality reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: quality-reports
+        path: |
+          bandit-report.json
+        retention-days: 30
+
+  # Job 2: Unit Tests with Coverage
+  test-unit:
+    name: Unit Tests (Python 3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 3.12
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Run unit tests with coverage
+      run: |
+        uv run pytest tests/unit/ \
+          --cov=src/antibody_training_esm \
+          --cov-report=xml \
+          --cov-report=html \
+          --cov-report=term \
+          --junitxml=junit-unit.xml \
+          -v
+      continue-on-error: false
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage.xml
+        flags: unit
+        name: unit-tests
+        fail_ci_if_error: false  # Don't fail if Codecov is down
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: unit-test-results
+        path: |
+          junit-unit.xml
+          htmlcov/
+        retention-days: 30
+
+    - name: Check coverage threshold
+      run: |
+        uv run coverage report --fail-under=70 || echo "⚠️ Coverage below 70% - this will be enforced later"
+      continue-on-error: true  # Start lenient
+
+  # Job 3: Integration Tests
+  test-integration:
+    name: Integration Tests (Python 3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 3.12
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Cache ESM-1v model
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/huggingface
+        key: huggingface-esm1v-${{ runner.os }}-${{ hashFiles('**/pyproject.toml') }}
+        restore-keys: |
+          huggingface-esm1v-${{ runner.os }}-
+
+    - name: Run integration tests
+      run: |
+        uv run pytest tests/integration/ \
+          --junitxml=junit-integration.xml \
+          -v
+      continue-on-error: false
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: integration-test-results
+        path: junit-integration.xml
+        retention-days: 30
+
+  # Job 4: Dependency Security Scanning
+  security:
+    name: Dependency Security Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 3.12
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Install security tools
+      run: |
+        uv pip install pip-audit safety
+
+    - name: Run pip-audit (CVE check)
+      run: |
+        uv run pip-audit --format json --output pip-audit.json || true
+        uv run pip-audit
+      continue-on-error: true  # Start lenient, will enforce HIGH/CRITICAL later
+
+    - name: Run Safety check
+      run: |
+        uv run safety check --json --output safety-report.json || true
+        uv run safety check
+      continue-on-error: true  # Start lenient
+
+    - name: Upload security reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-reports
+        path: |
+          pip-audit.json
+          safety-report.json
+        retention-days: 30
+
+  # Summary job - requires all others to pass
+  ci-success:
+    name: CI Pipeline Success
+    runs-on: ubuntu-latest
+    needs: [quality, test-unit, test-integration, security]
+    if: always()
+
+    steps:
+    - name: Check all jobs
+      run: |
+        if [ "${{ needs.quality.result }}" != "success" ] || \
+           [ "${{ needs.test-unit.result }}" != "success" ] || \
+           [ "${{ needs.test-integration.result }}" != "success" ]; then
+          echo "❌ CI Pipeline failed"
+          exit 1
+        fi
+        echo "✅ All CI checks passed!"
+
+    - name: Summary
+      run: |
+        echo "### CI Pipeline Results ✅" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Code Quality:** ${{ needs.quality.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Unit Tests:** ${{ needs.test-unit.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Integration Tests:** ${{ needs.test-integration.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Security Scan:** ${{ needs.security.result }} (advisory only)" >> $GITHUB_STEP_SUMMARY
