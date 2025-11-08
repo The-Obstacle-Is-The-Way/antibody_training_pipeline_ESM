@@ -196,7 +196,7 @@ jobs:
       run: |
         uv run safety check --json --output safety-report.json || true
         uv run safety check
-      continue-on-error: true  # Start lenient
+      continue-on-error: true  # ⚠️ ADVISORY: Dependency vulnerabilities (similar to pip-audit findings)
 
     - name: Upload security reports
       uses: actions/upload-artifact@v4
