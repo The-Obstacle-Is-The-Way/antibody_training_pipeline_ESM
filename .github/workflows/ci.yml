@@ -44,9 +44,9 @@ jobs:
     - name: Security scan with bandit
       run: |
         uv pip install bandit
-        uv run bandit -r src/ -f json -o bandit-report.json || true
+        uv run bandit -r src/ -f json -o bandit-report.json
         uv run bandit -r src/
-      continue-on-error: true  # ⚠️ ADVISORY: 11 issues (1 HIGH) - mostly dependency warnings, not code vulnerabilities
+      continue-on-error: false  # ✅ ENFORCED: Bandit must remain clean (0 findings)
 
     - name: Upload quality reports
       uses: actions/upload-artifact@v4
@@ -186,17 +186,19 @@ jobs:
       run: |
         uv pip install pip-audit safety
 
+    - name: Export requirements for security scans
+      run: uv export --format=requirements-txt --no-hashes --output security-reqs.txt
+
     - name: Run pip-audit (CVE check)
       run: |
-        uv run pip-audit --format json --output pip-audit.json || true
-        uv run pip-audit
-      continue-on-error: true  # ⚠️ ADVISORY: ~24 dependency vulnerabilities (keras, transformers, torch, etc.) - upstream issues
+        uv run pip-audit -r security-reqs.txt -f json -o pip-audit.json
+        uv run pip-audit -r security-reqs.txt
+      continue-on-error: false  # ✅ ENFORCED: Fail CI if CVEs are introduced
 
     - name: Run Safety check
       run: |
-        uv run safety check --json --output safety-report.json || true
-        uv run safety check
-      continue-on-error: true  # ⚠️ ADVISORY: Dependency vulnerabilities (similar to pip-audit findings)
+        uv run safety check -r security-reqs.txt || true
+      continue-on-error: true  # ⚠️ ADVISORY: Safety remains informational while we evaluate the new `scan` workflow
 
     - name: Upload security reports
       uses: actions/upload-artifact@v4

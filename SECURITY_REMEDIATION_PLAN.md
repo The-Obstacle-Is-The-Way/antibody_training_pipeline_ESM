@@ -10,15 +10,15 @@ This plan addresses security scanner findings with a **pragmatic, research-focus
 1. **Quick wins** - Document pickle usage as intentional (1 hour) ✅ DONE
 2. **Scientific integrity** - Pin HuggingFace model versions for reproducibility (2 hours) ✅ DONE
 3. **Real vulnerabilities** - Upgrade low-risk dependencies with known CVEs (1 hour) ✅ DONE
-4. **Defer heavy lifts** - Production-grade hardening not needed for research context (keras, torch, transformers)
+4. **CI enforcement** - Make Bandit + pip-audit blocking in GitHub Actions (30 min) ✅ DONE
 
-**All immediate security work complete! Remaining: High-risk ML dependency upgrades (deferred to separate effort).**
+**All immediate security work complete! Remaining: Monitor heavyweight ML libraries (torch, transformers) for future advisories and schedule upgrades when research bandwidth allows.**
 
 ## Current Security Posture
 
 ✅ **Code-level security:** Bandit clean (0 issues, 10 documented suppressions)
-✅ **Low-risk dependencies:** All upgraded (authlib, brotli, h2, jupyterlab)
-⚠️ **High-risk dependencies:** 18 CVEs remaining (keras, torch, transformers - deferred to separate effort)
+✅ **Dependencies:** `pip-audit -r <(uv export --format=requirements-txt --no-hashes)` reports 0 CVEs across the locked environment (torch 2.9.0, transformers 4.57.1, etc.)
+⚠️ **Watchlist:** Torch/transformers upgrades still require full regression testing for scientific reproducibility (no CVEs today, but keep on radar)
 
 ## Findings Snapshot (Corrected & Verified)
 
@@ -29,12 +29,11 @@ This plan addresses security scanner findings with a **pragmatic, research-focus
 | Bandit      | HF unpinned (B615)                       | 3     | MEDIUM   | ✅ **RESOLVED** | Revisions pinned |
 | Bandit      | MD5 weak hash (B303)                     | 0     | N/A      | ✅ **FIXED** | SHA-256 cache keys |
 | **TOTAL**   | **Bandit**                               | **0 open** | 0 HIGH / 0 MED / 0 LOW | All documented or fixed | N/A |
-| pip-audit   | Low-risk CVEs (authlib, brotli, h2, jupyterlab) | 0 | N/A | ✅ **FIXED** | Upgraded to latest versions |
-| pip-audit   | High-risk CVEs (keras, torch, transformers) | 18 | Various | ⚠️ **REAL** | Defer (separate effort) |
+| pip-audit   | Locked dependencies (exported via `uv export`) | 0 | N/A | ✅ **CLEAN** | Run `uv export --format=requirements-txt --no-hashes --output pip-audit-reqs.txt && uv run pip-audit -r pip-audit-reqs.txt` |
 
-**Verified counts from actual scans:**
-- Bandit: 0 issues (10 documented suppressions)
-- pip-audit: 18 CVEs remaining in 10 packages (low-risk deps upgraded 2025-11-08)
+**Verified counts from actual scans (2025-11-08):**
+- Bandit: 0 issues (10 documented suppressions) via `uv run bandit -r src/antibody_training_esm`
+- pip-audit: 0 CVEs when auditing the uv lock (`uv export --format=requirements-txt --no-hashes --output pip-audit-reqs.txt && uv run pip-audit -r pip-audit-reqs.txt`)
 
 ## Recent Fixes Completed
 
@@ -84,11 +83,23 @@ This plan addresses security scanner findings with a **pragmatic, research-focus
   - Upgraded jupyterlab 4.4.3 → 4.4.10 (fixes 1 CVE: GHSA-vvfj-2jqx-52jm)
   - Added explicit version constraints to pyproject.toml
   - Regenerated uv.lock with updated dependencies
-- **Impact:** Eliminated 6 CVEs (24 → 18 remaining)
+- **Impact:** Low-risk CVEs eliminated; auditing the uv lock now reports 0 outstanding issues
 - **Verification:**
   - All 400 tests pass with 90.79% coverage
   - Bandit: 0 issues (10 nosec suppressions)
   - No compatibility issues with core ML pipeline
+
+### ✅ Stream 4: CI Enforcement & Accurate CVE Auditing (Completed 2025-11-08)
+- **Branch:** `security/bandit-pickle-nosec`
+- **Commits:** eae2e96 (doc updates), _current_ (CI enforcement)
+- **Changes:**
+  - Switched GitHub Actions Bandit step to fail the build on any finding (no more `continue-on-error`)
+  - Export uv-managed requirements before running `pip-audit`; CI now fails if the exported lock contains CVEs
+  - Kept Safety as advisory while we evaluate the newer `safety scan` UX
+- **Impact:** Prevents regressions—Bandit and pip-audit must remain clean before merge
+- **Verification:**
+  - Local Bandit run matches CI (0 findings)
+  - `pip-audit -r pip-audit-reqs.txt` returns “No known vulnerabilities found”
 
 ## Remediation Streams (Priority Order)
 
@@ -229,71 +240,60 @@ uv run pytest tests/
 
 **Effort:** 1 hour
 **Risk:** Very low (these don't affect core ML pipeline)
-**Impact:** Fixes 6 CVEs (24 → 18 remaining)
+**Impact:** Keeps the locked dependency set clean (pip-audit now reports 0 CVEs)
 
-#### Phase 2: High-Risk Upgrades (2 days) ⚠️ DEFER TO SEPARATE EFFORT
+#### Phase 2: High-Risk Upgrades / Watchlist (2 days) ⚠️ DEFER TO SEPARATE EFFORT
 
-**Goal:** Upgrade ML dependencies after thorough testing.
-
-**Packages requiring extensive testing:**
-
-| Package | Current | Fixed | CVEs | Risk Level | Why Risky |
-|---------|---------|-------|------|------------|-----------|
-| keras | 3.10.0 | 3.11.0+ | 5+ | **HIGH** | May break model serialization |
-| torch | 2.7.1 | 2.8.0 | 1+ | **HIGH** | May break MPS backend (Apple Silicon) |
-| transformers | 4.52.4 | 4.53.0 | 4+ | **HIGH** | May affect ESM model loading |
+**Goal:** Schedule deep regression testing before bumping heavyweight ML dependencies (torch, transformers). No CVEs remain today, but major upgrades can invalidate cached embeddings and trained models.
 
 **Why defer:**
-- Need dedicated testing time (retrain models, compare results)
-- May break Apple Silicon support (MPS backend)
-- May invalidate existing trained models (.pkl files)
-- Research velocity > security for these (not exploitable in our context)
+- Need dedicated time to regenerate embeddings, retrain models, and compare metrics across external benches (Jain/Harvey/Shehata)
+- Potential Apple Silicon regressions when torch changes its MPS backend
+- Transformers upgrades can subtly change tokenization limits and ESM hidden-state layouts
 
-**When to do:**
-- Dedicated security hardening sprint
-- After current research milestones complete
-- With coordinated model retraining effort
+**When to revisit:**
+- After a research milestone when we can freeze data + configs for side-by-side comparison
+- If a real CVE lands in torch/transformers affecting local workflows
+- Before publishing a new release / paper that cites software bill of materials
 
-**Testing checklist for Phase 2 (when ready):**
+**Testing checklist (when we do tackle it):**
 ```bash
-# Create branch
-git checkout -b security/high-risk-deps
+git checkout -b security/ml-stack-refresh
 
-# Upgrade one at a time
-1. Test keras upgrade → verify model loading
-2. Test transformers → compare embeddings on sample
-3. Test torch → verify MPS backend on Apple Silicon
+# Upgrade one package at a time for clean blame
+1. torch → re-run embedding extraction smoke tests + MPS sanity check
+2. transformers → compare cached embeddings on sample sequences (hash + cosine sim)
 
-# Only merge if ALL tests pass and results match baseline
+# Only merge if:
+# - bandit/pip-audit stay green
+# - pytest + integration suites pass
+# - External benchmarks stay within tolerance (±1% absolute accuracy)
 ```
 
-### Stream 4: CI Enforcement (30 min) ✅ DO AFTER STREAMS 1-2
+### Stream 4: CI Enforcement (30 min) ✅ COMPLETED
 
 **Goal:** Prevent security regressions.
 
-**Current state (.github/workflows/ci.yml):**
+**Key changes in `.github/workflows/ci.yml`:**
 ```yaml
 - name: Security scan with bandit
-  run: bandit -r src/
-  continue-on-error: true  # ⚠️ ADVISORY
-```
-
-**Updated (after nosec comments + HF pinning):**
-```yaml
-- name: Security scan with bandit
-  run: bandit -r src/
+  run: |
+    uv pip install bandit
+    uv run bandit -r src/ -f json -o bandit-report.json
+    uv run bandit -r src/
   continue-on-error: false  # ✅ ENFORCED
 
-- name: Run pip-audit (with ignores)
+- name: Export requirements for security scans
+  run: uv export --format=requirements-txt --no-hashes --output security-reqs.txt
+
+- name: Run pip-audit (CVE check)
   run: |
-    uv run pip-audit \
-      --ignore-vuln GHSA-wj6h-64fc-37mp  # ecdsa - no fix available
-  continue-on-error: true  # ⚠️ ADVISORY until Phase 2 deps upgraded
+    uv run pip-audit -r security-reqs.txt -f json -o pip-audit.json
+    uv run pip-audit -r security-reqs.txt
+  continue-on-error: false  # ✅ ENFORCED: lock must stay clean
 ```
 
-**Effort:** 30 min
-**Risk:** None
-**Dependencies:** Complete Streams 1-2 first
+**Why:** Running pip-audit directly against the exported uv lock removes false positives from the host interpreter and guarantees we’re auditing exactly what ships.
 
 ## Execution Checklist (Priority Order)
 
@@ -303,23 +303,24 @@ git checkout -b security/high-risk-deps
 | ✅ Document pickle + add nosec | P1 | 1hr | None | **DONE** | Branch: security/bandit-pickle-nosec |
 | ✅ Pin HF models/datasets | P1 | 2hr | Low | **DONE** | Branch: security/bandit-pickle-nosec |
 | ✅ Upgrade low-risk deps | P2 | 1hr | Low | **DONE** | authlib 1.6.5, brotli 1.2.0, h2 4.3.0, jupyterlab 4.4.10 |
-| Update CI enforcement | P2 | 30min | None | ☐ | After P1 tasks complete |
-| Upgrade high-risk deps | P3 | 2 days | **HIGH** | ☐ | keras, torch, transformers - separate branch |
+| ✅ Update CI enforcement | P2 | 30min | None | **DONE** | Bandit + pip-audit blocking in `.github/workflows/ci.yml` |
+| Upgrade high-risk deps | P3 | 2 days | **HIGH** | ☐ | torch/transformers watchlist – schedule when ready |
 | **(DEFERRED)** JSON+NPZ migration | P4 | 3-5 days | Medium | ☐ | Only if deploying to production |
 
-**Immediate work (Streams 1-3 Phase 1):** ✅ COMPLETE → All Bandit warnings eliminated, 6 CVEs fixed
-**Remaining:** Stream 4 (CI enforcement - 30min) + Stream 3 Phase 2 (high-risk deps - deferred)
+**Immediate work (Streams 1-4):** ✅ COMPLETE → Bandit clean, pip-audit enforced, dependencies upgraded
+**Remaining:** Stream 3 Phase 2 (high-risk ML deps, deferred) + optional JSON/NPZ migration if ever needed
 
 ## Verification Matrix
 
 | Verification Step | Tools | Pass Criteria | Current Status |
 |-------------------|-------|---------------|----------------|
 | Code security scan | `bandit -r src/` | 0 issues (all nosec'd) | ✅ 0 issues (10 nosec suppressions) |
-| Low-risk deps | `pip-audit` | authlib/brotli/h2/jupyterlab updated | ✅ All upgraded (authlib 1.6.5, brotli 1.2.0, h2 4.3.0, jupyterlab 4.4.10) |
+| Dependency audit | `uv export --format=requirements-txt --no-hashes --output pip-audit-reqs.txt && uv run pip-audit -r pip-audit-reqs.txt` | 0 CVEs reported | ✅ Clean (torch 2.9.0, transformers 4.57.1, etc.) |
 | Model version pinning | Config review | `revision=` in config + code | ✅ Implemented (`configs/config.yaml`, embeddings, loaders) |
 | ESM model loads | Smoke test | Model loads with pinned revision | ✅ Implicit via test suite (400 tests) |
 | Training pipeline | `pytest tests/` | All tests pass | ✅ All 400 tests passing (90.79% coverage) |
 | Embeddings unchanged | Manual check | Cache still works after pinning | ✅ Verified via test suite |
+| CI enforcement | `.github/workflows/ci.yml` | Bandit + pip-audit blocking | ✅ Implemented (security job fails on findings) |
 
 ## What We're NOT Fixing (And Why)
 
@@ -332,13 +333,13 @@ git checkout -b security/high-risk-deps
 
 **When to reconsider:** If deploying to production with public API
 
-### ❌ Immediate keras/torch/transformers Upgrades
+### ❌ Immediate torch/transformers Upgrades
 **Why not:**
-- High compatibility risk (may break MPS, ESM loading, model serialization)
-- Time-consuming validation (retrain + compare results)
-- Not urgent (CVEs not exploitable in local research context)
+- No active CVEs in the locked versions; upgrades would be purely for feature drift
+- High compatibility risk (may break MPS, ESM loading, cached embeddings, or model serialization)
+- Requires full retraining + external benchmarking to maintain Novo reproducibility guarantees
 
-**When to reconsider:** Dedicated security sprint with time for thorough testing
+**When to reconsider:** During a dedicated ML-stack refresh sprint or if a real CVE is disclosed
 
 ### ❌ ECDSA Upgrade
 **Why not:**
@@ -347,10 +348,9 @@ git checkout -b security/high-risk-deps
 
 ## Open Questions / Risks
 
-### Compatibility Risks (Phase 2 Dependencies)
-- ⚠️ **torch 2.8.0:** May break MPS backend on Apple Silicon
-- ⚠️ **keras 3.11.0:** May change model serialization → can't load old .pkl
-- ⚠️ **transformers 4.53.0:** May produce different embeddings
+### Compatibility Risks (Phase 2 Watchlist)
+- ⚠️ **torch major bumps (>2.9):** May break MPS backend or require re-exporting cached embeddings
+- ⚠️ **transformers major bumps (>4.57):** May change tokenizer defaults or ESM hidden-state layout, invalidating cached hashes
 
 ### Migration Coordination
 - 📅 **HF pinning:** Document exact commit SHA in paper methods
@@ -359,21 +359,18 @@ git checkout -b security/high-risk-deps
 
 ## Success Criteria
 
-### After Immediate Work (Streams 1-2, ~3 hours)
+### After Immediate Work (Streams 1-4, ~4 hours total)
 - ✅ Bandit: 0 issues (all nosec'd with justification)
 - ✅ HF models: Pinned to specific revisions
-- ✅ CI: Enforces Bandit (no regressions)
-- ✅ Tests: All 400 tests still pass
-- ✅ Docs: README + USAGE.md updated
-
-### After Low-Risk Deps (Stream 3 Phase 1, ~4 hours total)
-- ✅ pip-audit: 6 fewer CVEs (24 → 18)
-- ✅ Tests: All still pass after upgrades
+- ✅ pip-audit: `uv export --format=requirements-txt --no-hashes --output pip-audit-reqs.txt && uv run pip-audit -r pip-audit-reqs.txt` → 0 CVEs
+- ✅ CI: Bandit + pip-audit steps fail the build on regression
+- ✅ Tests: All 400 tests still pass (90.79% coverage)
+- ✅ Docs: README/SECURITY plan updated
 
 ### Future (Stream 3 Phase 2, separate effort)
-- ✅ High-risk deps: keras, torch, transformers upgraded
-- ✅ ESM pipeline: Validated and results match baseline
-- ✅ pip-audit: <5 CVEs (acceptable residual risk)
+- ✅ Torch/transformers refreshed with full regression suite
+- ✅ External benches re-run to confirm scientific reproducibility
+- ✅ pip-audit: stays green after the refresh
 
 ## Appendix: Code Locations
 
@@ -396,10 +393,10 @@ git checkout -b security/high-risk-deps
 
 ---
 
-**✅ Streams 1-3 Phase 1 COMPLETE!**
+**✅ Streams 1-4 COMPLETE!**
 
-**Remaining work:**
-- **Optional:** Stream 4 (CI enforcement - 30min) - Update CI to fail on Bandit issues
-- **Deferred:** Stream 3 Phase 2 (high-risk ML deps - 2 days) - keras, torch, transformers upgrades
+**Remaining work (deferred):**
+- Stream 3 Phase 2 – torch/transformers upgrade & validation sprint (≈2 days)
+- JSON+NPZ migration if we ever ship a production API
 
-**Current state:** Production-ready security posture for research codebase. All low-hanging fruit addressed.
+**Current state:** Production-ready security posture for the research codebase. All low-hanging fruit addressed; CI prevents regressions.

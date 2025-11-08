@@ -245,4 +245,4 @@ This repository uses training and test datasets from multiple published studies:
 - **Test**: Shehata et al. 2019 (398 antibodies, PSR cross-assay validation)
 
 **For complete citations, BibTeX entries, and data attribution details**, see [`CITATIONS.md`](CITATIONS.md).
-# Codecov integration test
+
