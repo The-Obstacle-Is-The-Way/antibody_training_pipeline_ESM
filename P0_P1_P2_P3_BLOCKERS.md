@@ -113,7 +113,7 @@ Functions use `typing.Any` for label types instead of more specific types (e.g.,
 **Suggested fix (optional):**
 Use TypeVar or Union types for better type safety:
 ```python
-from typing import TypeVar, Union
+from typing import TypeVar
 
 LabelType = TypeVar('LabelType', int, float, bool, str)
 
@@ -121,7 +121,7 @@ def preprocess_raw_data(
     X: list[str],
     y: list[LabelType],
     embedding_extractor,
-) -> tuple[np.ndarray, np.ndarray[LabelType]]:
+) -> tuple[np.ndarray, np.ndarray]:
     ...
 ```
 
