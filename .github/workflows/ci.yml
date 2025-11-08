@@ -39,7 +39,7 @@ jobs:
 
     - name: Type checking with mypy
       run: uv run mypy src/ --strict
-      continue-on-error: true  # Start lenient, tighten later
+      continue-on-error: false  # ✅ ENFORCED: Full type safety achieved (P3 completion)
 
     - name: Security scan with bandit
       run: |
@@ -112,8 +112,8 @@ jobs:
 
     - name: Check coverage threshold
       run: |
-        uv run coverage report --fail-under=70 || echo "⚠️ Coverage below 70% - this will be enforced later"
-      continue-on-error: true  # Start lenient
+        uv run coverage report --fail-under=70
+      continue-on-error: false  # ✅ ENFORCED: Currently at 90.79% coverage
 
   # Job 3: Integration Tests
   test-integration:
