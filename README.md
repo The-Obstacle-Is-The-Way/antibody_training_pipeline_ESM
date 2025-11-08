@@ -12,7 +12,6 @@
 
 [![CI Pipeline](https://github.com/the-obstacle-is-the-way/antibody_training_pipeline_ESM/actions/workflows/ci.yml/badge.svg)](https://github.com/the-obstacle-is-the-way/antibody_training_pipeline_ESM/actions/workflows/ci.yml)
 [![Docker CI](https://github.com/the-obstacle-is-the-way/antibody_training_pipeline_ESM/actions/workflows/docker-ci.yml/badge.svg)](https://github.com/the-obstacle-is-the-way/antibody_training_pipeline_ESM/actions/workflows/docker-ci.yml)
-[![codecov](https://codecov.io/gh/the-obstacle-is-the-way/antibody_training_pipeline_ESM/branch/main/graph/badge.svg)](https://codecov.io/gh/the-obstacle-is-the-way/antibody_training_pipeline_ESM)
 [![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
