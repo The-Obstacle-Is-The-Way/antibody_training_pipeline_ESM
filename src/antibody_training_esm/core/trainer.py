@@ -93,7 +93,9 @@ def get_or_create_embeddings(
     """
     # Create a hash of the sequences to ensure cache validity
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.md5(sequences_str.encode()).hexdigest()[:8]
+    # Use SHA-256 (non-cryptographic usage) to satisfy security scanners and
+    # prevent weak-hash findings while keeping deterministic cache keys.
+    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[:12]
     cache_file = os.path.join(
         cache_path, f"{dataset_name}_{sequences_hash}_embeddings.pkl"
     )
