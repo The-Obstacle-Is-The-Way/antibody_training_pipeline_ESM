@@ -42,6 +42,9 @@ INPUT_137 = BASE_DIR / "test_datasets/jain/processed/jain_with_private_elisa_FUL
 INPUT_SD03 = BASE_DIR / "test_datasets/jain/processed/jain_sd03.csv"
 OUTPUT_116 = BASE_DIR / "test_datasets/jain/processed/jain_ELISA_ONLY_116.csv"
 OUTPUT_86 = BASE_DIR / "test_datasets/jain/canonical/jain_86_novo_parity.csv"
+OUTPUT_VH = (
+    BASE_DIR / "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+)  # VH-only benchmark
 
 # P5e-S2 Method Constants
 PSR_THRESHOLD = 0.4
@@ -307,11 +310,24 @@ def save_86_dataset(df):
     # Ensure output directory exists
     OUTPUT_86.parent.mkdir(parents=True, exist_ok=True)
 
-    # Save
+    # Save full canonical version
     df.to_csv(OUTPUT_86, index=False)
     print(f"\n  ✅ Saved 86-antibody dataset → {OUTPUT_86.relative_to(BASE_DIR)}")
-    print("     Confusion matrix: [[40, 19], [10, 17]]")
-    print("     Accuracy: 66.28%")
+    print("     Format: VH+VL+metadata (24 columns)")
+    print("     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
+    print()
+
+    # Save VH-only benchmark version
+    # NOTE: Column must be 'vh_sequence' not 'sequence' for JainDataset.load_data() compatibility
+    df_vh = df[["id", "vh_sequence", "label"]].copy()
+    df_vh.to_csv(OUTPUT_VH, index=False)
+    print(f"  ✅ Saved VH-only benchmark → {OUTPUT_VH.relative_to(BASE_DIR)}")
+    print("     Format: [id, vh_sequence, label] for model inference")
+    print("     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
+    print()
+
+    print("  📊 Confusion matrix: [[40, 19], [10, 17]]")
+    print("  📈 Accuracy: 66.28%")
 
     return OUTPUT_86
 

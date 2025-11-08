@@ -61,8 +61,9 @@ python3 preprocessing/jain/step1_convert_excel_to_csv.py
 - `test_datasets/jain/processed/jain_sd03.csv` (PSR/AC-SINS data)
 
 **Output:**
-- `test_datasets/jain/processed/jain_ELISA_ONLY_116.csv` (116 antibodies)
-- `test_datasets/jain/canonical/jain_86_novo_parity.csv` (86 antibodies)
+- `test_datasets/jain/processed/jain_ELISA_ONLY_116.csv` (116 antibodies, SSOT)
+- `test_datasets/jain/canonical/jain_86_novo_parity.csv` (86 antibodies, VH+VL+metadata)
+- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, VH-only for benchmarking)
 
 **Run:**
 ```bash
@@ -79,8 +80,27 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
   ↓ Reclassify 5 spec→nonspec (3 PSR>0.4 + eldelumab + infliximab)
 89 spec / 27 nonspec
   ↓ Remove 30 by PSR primary, AC-SINS tiebreaker
-86 antibodies (59 spec / 27 nonspec) ✅ OUTPUT 2
+86 antibodies (59 spec / 27 nonspec)
+  ↓ Save both formats
+  ├─ jain_86_novo_parity.csv (VH+VL+metadata, 24 cols) ✅ OUTPUT 2
+  └─ VH_only_jain_86_p5e_s2.csv (VH-only, 3 cols) ✅ OUTPUT 3
 ```
+
+**File Formats:**
+
+| File | Rows | Columns | Purpose |
+|------|------|---------|---------|
+| jain_86_novo_parity.csv | 86 | 24 | Full data (VH+VL+metadata) |
+| VH_only_jain_86_p5e_s2.csv | 86 | 3 | VH-only benchmark (model inference) |
+
+**Column Schema - VH_only_jain_86_p5e_s2.csv:**
+```
+id: Antibody INN name
+vh_sequence: VH amino acid sequence
+label: 0.0 = specific, 1.0 = non-specific
+```
+
+**Note:** Column is `vh_sequence` (not `sequence`) for JainDataset compatibility.
 
 **Result:** Confusion matrix [[40, 19], [10, 17]] - **EXACT MATCH** (66.28% accuracy)
 
@@ -140,5 +160,5 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 
 ---
 
-**Last Updated:** 2025-11-05
+**Last Updated:** 2025-11-07
 **Status:** ✅ Production Ready (Novo Parity Achieved)

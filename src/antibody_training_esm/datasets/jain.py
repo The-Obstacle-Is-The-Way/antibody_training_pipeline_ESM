@@ -133,6 +133,8 @@ class JainDataset(AntibodyDataset):
         column_mapping = {
             "heavy_seq": "VH_sequence",
             "light_seq": "VL_sequence",
+            "vh_sequence": "VH_sequence",  # Support VH-only files
+            "vl_sequence": "VL_sequence",  # Support VL-only files
         }
         df = df.rename(columns=column_mapping)
 

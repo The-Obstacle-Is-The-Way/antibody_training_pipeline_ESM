@@ -58,7 +58,7 @@ def real_dataset_paths():
     """Paths to real preprocessed datasets"""
     return {
         "boughter_train": "train_datasets/boughter/boughter_translated.csv",
-        "jain_parity": "test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv",
+        "jain_parity": "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv",
     }
 
 
@@ -69,9 +69,7 @@ def real_dataset_paths():
 @pytest.mark.slow
 @pytest.mark.skipif(
     not Path("train_datasets/boughter/boughter_translated.csv").exists()
-    or not Path(
-        "test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv"
-    ).exists(),
+    or not Path("test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv").exists(),
     reason="Requires real preprocessed Boughter and Jain datasets. "
     "Run preprocessing scripts first: "
     "python preprocessing/boughter/stage2_stage3_annotation_qc.py && "
@@ -99,7 +97,7 @@ def test_reproduce_novo_jain_accuracy_with_real_data(
     # Arrange: Load Jain parity test data
     jain = JainDataset()
     df_test = jain.load_data(
-        full_csv_path=real_dataset_paths["jain_parity"], stage="parity"
+        full_csv_path=real_dataset_paths["jain_parity"], stage="full"
     )
 
     # Verify test set size matches Novo parity (86 antibodies)
