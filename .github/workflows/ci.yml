@@ -2,9 +2,9 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [ main, develop, leroy-jenkins/full-send ]
+    branches: [ dev, leroy-jenkins/full-send ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ dev, leroy-jenkins/full-send ]
 
 jobs:
   # Job 1: Code Quality Gates
