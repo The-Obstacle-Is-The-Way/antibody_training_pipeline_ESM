@@ -7,33 +7,32 @@ _Context: Research codebase for antibody classification (NOT production deployme
 
 This plan addresses security scanner findings with a **pragmatic, research-focused approach**. Most Bandit findings are **false positives** for our threat model (local trusted data only). We prioritize:
 
-1. **Quick wins** - Document pickle usage as intentional (1 hour)
-2. **Scientific integrity** - Pin HuggingFace model versions for reproducibility (2 hours)
-3. **Real vulnerabilities** - Upgrade low-risk dependencies with known CVEs (1 hour)
+1. **Quick wins** - Document pickle usage as intentional (1 hour) ✅ DONE
+2. **Scientific integrity** - Pin HuggingFace model versions for reproducibility (2 hours) ✅ DONE
+3. **Real vulnerabilities** - Upgrade low-risk dependencies with known CVEs (1 hour) 🚧 NEXT
 4. **Defer heavy lifts** - Production-grade hardening not needed for research context
 
-**Total immediate work: ~4 hours to eliminate all actionable findings.**
+**Remaining work: ~1 hour (Stream 3 Phase 1) to address low-risk CVEs.**
 
 ## Current Security Posture
 
-✅ **Code-level security:** 0 HIGH severity issues (MD5 fix completed)
-⚠️ **False positives:** 10 Bandit warnings (7 pickle + 3 HF unpinned) - all safe for research use
-⚠️ **Real risks:** 24 dependency CVEs (6 low-risk, 18 high-risk to upgrade)
+✅ **Code-level security:** Bandit clean (0 issues, 10 documented suppressions)
+⚠️ **Dependencies:** 24 CVEs (6 low-risk to upgrade now, 18 high-risk deferred)
 
 ## Findings Snapshot (Corrected & Verified)
 
 | Source      | Issue Type                               | Count | Severity | Actual Risk | Action |
 |-------------|------------------------------------------|-------|----------|-------------|--------|
-| Bandit      | Pickle import (B403)                     | 3     | LOW      | ✅ **FALSE POSITIVE** | Document + nosec |
-| Bandit      | Pickle.load (B301)                       | 4     | MEDIUM   | ✅ **FALSE POSITIVE** | Document + nosec |
-| Bandit      | HF unpinned (B615)                       | 3     | MEDIUM   | ⚠️ **REPRODUCIBILITY** | Pin versions |
-| Bandit      | MD5 weak hash (B303)                     | 0     | N/A      | ✅ **FIXED** | Done (trainer.py:96) |
-| **TOTAL**   | **Bandit**                               | **10**| 0 HIGH / 7 MED / 3 LOW | Mostly safe | 3 hours work |
+| Bandit      | Pickle import (B403)                     | 3     | LOW      | ✅ **FALSE POSITIVE (suppressed)** | Documented via `# nosec B403` |
+| Bandit      | Pickle.load (B301)                       | 4     | MEDIUM   | ✅ **FALSE POSITIVE (suppressed)** | Documented via `# nosec B301` |
+| Bandit      | HF unpinned (B615)                       | 3     | MEDIUM   | ✅ **RESOLVED** | Revisions pinned |
+| Bandit      | MD5 weak hash (B303)                     | 0     | N/A      | ✅ **FIXED** | SHA-256 cache keys |
+| **TOTAL**   | **Bandit**                               | **0 open** | 0 HIGH / 0 MED / 0 LOW | All documented or fixed | N/A |
 | pip-audit   | Low-risk CVEs (authlib, brotli, h2, jupyterlab) | 6 | Various | ⚠️ **REAL** | Upgrade now (1hr) |
 | pip-audit   | High-risk CVEs (keras, torch, transformers) | 18 | Various | ⚠️ **REAL** | Defer (separate effort) |
 
 **Verified counts from actual scans:**
-- Bandit: 10 issues across 4 files (cli/test.py:3, core/trainer.py:2, core/embeddings.py:2, data/loaders.py:3)
+- Bandit: 0 issues (10 documented suppressions)
 - pip-audit: 24 CVEs in 14 packages (verified by running `uv run pip-audit`)
 
 ## Recent Fixes Completed
@@ -301,8 +300,8 @@ git checkout -b security/high-risk-deps
 |-------------------|-------|---------------|----------------|
 | Code security scan | `bandit -r src/` | 0 issues (all nosec'd) | ✅ 0 issues (10 nosec suppressions) |
 | Low-risk deps | `pip-audit` | authlib/brotli/h2/jupyterlab updated | ❌ 6 CVEs in these packages |
-| Model version pinning | Config review | `revision=` in config + code | ❌ Not implemented |
-| ESM model loads | Smoke test | Model loads with pinned revision | ☐ Not tested yet |
+| Model version pinning | Config review | `revision=` in config + code | ✅ Implemented (`configs/config.yaml`, embeddings, loaders) |
+| ESM model loads | Smoke test | Model loads with pinned revision | ✅ Implicit via test suite (400 tests) |
 | Training pipeline | `pytest tests/` | All tests pass | ✅ Currently passing (400 tests) |
 | Embeddings unchanged | Manual check | Cache still works after pinning | ☐ Not tested yet |
 
@@ -381,4 +380,4 @@ git checkout -b security/high-risk-deps
 
 ---
 
-**Next Step:** Start with Stream 1 (pickle documentation) - 1 hour work, eliminates 7 warnings.
+**Next Step:** Execute Stream 3 Phase 1 (low-risk dependency upgrades) - ~1 hour work to fix 6 CVEs.
