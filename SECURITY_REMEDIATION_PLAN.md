@@ -17,7 +17,7 @@ This plan addresses security scanner findings with a **pragmatic, research-focus
 ## Current Security Posture
 
 ✅ **Code-level security:** Bandit clean (0 issues, 10 documented suppressions)
-✅ **Dependencies:** `pip-audit -r <(uv export --format=requirements-txt --no-hashes)` reports 0 CVEs across the locked environment (torch 2.9.0, transformers 4.57.1, etc.)
+✅ **Dependencies:** `uv export --format=requirements-txt --no-hashes --output pip-audit-reqs.txt && uv run pip-audit -r pip-audit-reqs.txt` reports 0 CVEs across the locked environment (torch 2.9.0, transformers 4.57.1, etc.)
 ⚠️ **Watchlist:** Torch/transformers upgrades still require full regression testing for scientific reproducibility (no CVEs today, but keep on radar)
 
 ## Findings Snapshot (Corrected & Verified)
