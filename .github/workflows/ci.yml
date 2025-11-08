@@ -207,7 +207,6 @@ jobs:
         name: security-reports
         path: |
           pip-audit.json
-          safety-report.json
         retention-days: 30
 
   # Summary job - requires all others to pass
@@ -235,4 +234,4 @@ jobs:
         echo "- **Code Quality:** ${{ needs.quality.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Unit Tests:** ${{ needs.test-unit.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Integration Tests:** ${{ needs.test-integration.result }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Security Scan:** ${{ needs.security.result }} (advisory only)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Security Scan:** ${{ needs.security.result }}" >> $GITHUB_STEP_SUMMARY
