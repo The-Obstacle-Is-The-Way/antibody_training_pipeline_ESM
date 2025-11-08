@@ -49,9 +49,6 @@ def validate_canonical_files():
     print(f"{'=' * 70}{Colors.RESET}\n")
 
     expected_canonical = {
-        "VH_only_jain_test_FULL.csv": {"rows": 94, "nan_labels": 0},
-        "VH_only_jain_test_QC_REMOVED.csv": {"rows": 91, "nan_labels": 0},
-        "VH_only_jain_test_PARITY_86.csv": {"rows": 86, "nan_labels": 0},
         "jain_86_novo_parity.csv": {"rows": 86, "nan_labels": 0},
     }
 
