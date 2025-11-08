@@ -28,6 +28,7 @@ Reference:
 - Boughter et al., "Biochemical patterns of antibody polyreactivity revealed through a bioinformatics-based analysis of CDR loops"
 """
 
+import logging
 from pathlib import Path
 from typing import Any, NoReturn
 
@@ -57,7 +58,9 @@ class BoughterDataset(AntibodyDataset):
     # Dataset subsets
     SUBSETS = ["flu", "hiv_nat", "hiv_cntrl", "hiv_plos", "gut_hiv", "mouse_iga"]
 
-    def __init__(self, output_dir: Path | None = None, logger=None):
+    def __init__(
+        self, output_dir: Path | None = None, logger: logging.Logger | None = None
+    ):
         """
         Initialize Boughter dataset loader.
 

@@ -101,7 +101,7 @@ class AntibodyDataset(ABC):
     # ========== ABSTRACT METHODS (MUST BE IMPLEMENTED) ==========
 
     @abstractmethod
-    def load_data(self, **kwargs) -> pd.DataFrame:
+    def load_data(self, **kwargs: Any) -> pd.DataFrame:
         """
         Load raw dataset from source files.
 
@@ -395,7 +395,7 @@ class AntibodyDataset(ABC):
         fragment_types = self.get_fragment_types()
 
         # Helper to concatenate regions
-        def concat(*regions):
+        def concat(*regions: Any) -> str:
             return "".join(str(r) for r in regions if pd.notna(r) and r != "")
 
         # Full antibody fragments
@@ -517,7 +517,9 @@ class AntibodyDataset(ABC):
         fragment_types = self.get_fragment_types()
 
         # Collect fragments for each type
-        fragment_data: dict[str, list] = {ftype: [] for ftype in fragment_types}
+        fragment_data: dict[str, list[dict[str, Any]]] = {
+            ftype: [] for ftype in fragment_types
+        }
 
         for _, row in df.iterrows():
             fragments = self.create_fragments(row)

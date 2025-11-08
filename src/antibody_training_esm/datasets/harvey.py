@@ -22,6 +22,7 @@ Reference:
 - Harvey et al., Engineering highly expressed antibodies for nanobody discovery platforms
 """
 
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -47,7 +48,9 @@ class HarveyDataset(AntibodyDataset):
     numbering and pre-extracted CDR regions.
     """
 
-    def __init__(self, output_dir: Path | None = None, logger=None):
+    def __init__(
+        self, output_dir: Path | None = None, logger: logging.Logger | None = None
+    ):
         """
         Initialize Harvey dataset loader.
 

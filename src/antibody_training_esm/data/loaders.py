@@ -7,7 +7,7 @@ Supports Hugging Face datasets, local CSV files, and preprocessing pipelines.
 
 import logging
 import pickle
-from typing import cast
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -20,7 +20,7 @@ type Label = int | float | bool | str
 def preprocess_raw_data(
     X: list[str],
     y: list[Label],
-    embedding_extractor,
+    embedding_extractor: Any,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
     Embed sequences using ESM model
@@ -53,7 +53,7 @@ def store_preprocessed_data(
     y: list[Label] | None = None,
     X_embedded: np.ndarray | None = None,
     filename: str | None = None,
-):
+) -> None:
     """
     Store preprocessed data to pickle file
 

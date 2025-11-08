@@ -22,6 +22,7 @@ Reference:
   Supplementary Material mmc2.xlsx
 """
 
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -46,7 +47,9 @@ class ShehataDataset(AntibodyDataset):
     # Default PSR threshold (98.24th percentile based on paper: 7/398 non-specific)
     DEFAULT_PSR_PERCENTILE = 0.9824
 
-    def __init__(self, output_dir: Path | None = None, logger=None):
+    def __init__(
+        self, output_dir: Path | None = None, logger: logging.Logger | None = None
+    ):
         """
         Initialize Shehata dataset loader.
 
