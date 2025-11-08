@@ -104,17 +104,30 @@ python_functions = ["test_*"]
 addopts = [
     "-v",
     "-ra",
+    "--strict-markers",
+]
+markers = [
+    "e2e: End-to-end tests (expensive, run on schedule)",
+    "slow: Slow tests (>30s, run on schedule)",
+    "unit: Fast unit tests (run on every PR)",
+    "integration: Integration tests (run on every PR)",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
 ]
 
 [tool.coverage.run]
-source = ["."]
+source = ["src"]
 omit = [
     "tests/*",
     "experiments/*",
     "reference_repos/*",
     "**/__pycache__/*",
     ".venv/*",
+    "**/conftest.py",
 ]
+branch = true
 
 [tool.coverage.report]
 precision = 2
