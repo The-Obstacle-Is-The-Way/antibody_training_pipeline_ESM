@@ -342,7 +342,7 @@ class AntibodyDataset(ABC):
         # Annotate heavy chains
         if "VH_sequence" in df.columns:
             self.logger.info("Annotating VH sequences...")
-            vh_annotations = df.apply(  # type: ignore[call-overload]
+            vh_annotations: pd.Series = df.apply(
                 lambda row: self.annotate_sequence(
                     row.get("id", f"seq_{row.name}"), row["VH_sequence"], "H"
                 )
@@ -360,7 +360,7 @@ class AntibodyDataset(ABC):
         # Annotate light chains (if present)
         if "VL_sequence" in df.columns:
             self.logger.info("Annotating VL sequences...")
-            vl_annotations = df.apply(  # type: ignore[call-overload]
+            vl_annotations: pd.Series = df.apply(
                 lambda row: self.annotate_sequence(
                     row.get("id", f"seq_{row.name}"), row["VL_sequence"], "L"
                 )

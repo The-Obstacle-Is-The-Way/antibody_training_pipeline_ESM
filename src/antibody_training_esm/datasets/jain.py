@@ -32,10 +32,12 @@ Reference:
 """
 
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
 from .base import AntibodyDataset
+from .default_paths import JAIN_FULL_CSV, JAIN_OUTPUT_DIR, JAIN_SD03_CSV
 
 
 class JainDataset(AntibodyDataset):
@@ -67,7 +69,7 @@ class JainDataset(AntibodyDataset):
         """
         super().__init__(
             dataset_name="jain",
-            output_dir=output_dir or Path("test_datasets/jain/fragments"),
+            output_dir=output_dir or JAIN_OUTPUT_DIR,
             logger=logger,
         )
 
@@ -82,11 +84,12 @@ class JainDataset(AntibodyDataset):
         """
         return self.FULL_ANTIBODY_FRAGMENTS
 
-    def load_data(  # type: ignore[override]
+    def load_data(
         self,
-        full_csv_path: str | None = None,
-        sd03_csv_path: str | None = None,
+        full_csv_path: str | Path | None = None,
+        sd03_csv_path: str | Path | None = None,
         stage: str = "full",
+        **_: Any,
     ) -> pd.DataFrame:
         """
         Load Jain dataset from CSV files.
@@ -107,11 +110,9 @@ class JainDataset(AntibodyDataset):
         """
         # Default paths
         if full_csv_path is None:
-            full_csv_path = (
-                "test_datasets/jain/processed/jain_with_private_elisa_FULL.csv"
-            )
+            full_csv_path = JAIN_FULL_CSV
         if sd03_csv_path is None:
-            sd03_csv_path = "test_datasets/jain/processed/jain_sd03.csv"
+            sd03_csv_path = JAIN_SD03_CSV
 
         full_csv = Path(full_csv_path)
         sd03_csv = Path(sd03_csv_path)

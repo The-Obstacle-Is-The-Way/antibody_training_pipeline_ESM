@@ -12,13 +12,21 @@ import torch
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
 
+from .config import DEFAULT_BATCH_SIZE, DEFAULT_MAX_SEQ_LENGTH
+
 logger = logging.getLogger(__name__)
 
 
 class ESMEmbeddingExtractor:
     """Extract ESM-1V embeddings for protein sequences with proper batching and GPU management"""
 
-    def __init__(self, model_name: str, device: str, batch_size: int = 32):
+    def __init__(
+        self,
+        model_name: str,
+        device: str,
+        batch_size: int = DEFAULT_BATCH_SIZE,
+        max_length: int = DEFAULT_MAX_SEQ_LENGTH,
+    ):
         """
         Initialize ESM embedding extractor
 
@@ -26,19 +34,21 @@ class ESMEmbeddingExtractor:
             model_name: HuggingFace model identifier (e.g., 'facebook/esm1v_t33_650M_UR90S_1')
             device: Device to run model on ('cpu', 'cuda', or 'mps')
             batch_size: Number of sequences to process per batch
+            max_length: Maximum sequence length for tokenizer truncation/padding
         """
         self.model_name = model_name
         self.device = device
         self.batch_size = batch_size
+        self.max_length = max_length
 
         # Load model with output_hidden_states enabled
         self.model = AutoModel.from_pretrained(model_name, output_hidden_states=True)
         self.model.to(device)
         self.model.eval()
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-
         logger.info(
-            f"ESM model {model_name} loaded on {device} with batch_size={batch_size}"
+            f"ESM model {model_name} loaded on {device} with batch_size={batch_size} "
+            f"and max_length={max_length}"
         )
 
     def embed_sequence(self, sequence: str) -> np.ndarray:
@@ -67,7 +77,10 @@ class ESMEmbeddingExtractor:
 
             # Tokenize the sequence
             inputs = self.tokenizer(
-                sequence, return_tensors="pt", truncation=True, max_length=1024
+                sequence,
+                return_tensors="pt",
+                truncation=True,
+                max_length=self.max_length,
             )
             inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
@@ -144,7 +157,7 @@ class ESMEmbeddingExtractor:
                     return_tensors="pt",
                     padding=True,
                     truncation=True,
-                    max_length=1024,
+                    max_length=self.max_length,
                 )
                 inputs = {k: v.to(self.device) for k, v in inputs.items()}
 

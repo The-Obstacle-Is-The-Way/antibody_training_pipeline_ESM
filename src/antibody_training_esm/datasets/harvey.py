@@ -23,10 +23,16 @@ Reference:
 """
 
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
 from .base import AntibodyDataset
+from .default_paths import (
+    HARVEY_HIGH_POLY_CSV,
+    HARVEY_LOW_POLY_CSV,
+    HARVEY_OUTPUT_DIR,
+)
 
 
 class HarveyDataset(AntibodyDataset):
@@ -51,7 +57,7 @@ class HarveyDataset(AntibodyDataset):
         """
         super().__init__(
             dataset_name="harvey",
-            output_dir=output_dir or Path("train_datasets/harvey/fragments"),
+            output_dir=output_dir or HARVEY_OUTPUT_DIR,
             logger=logger,
         )
 
@@ -88,10 +94,11 @@ class HarveyDataset(AntibodyDataset):
                 positions.append(row[col])
         return "".join(positions)
 
-    def load_data(  # type: ignore[override]
+    def load_data(
         self,
-        high_csv_path: str | None = None,
-        low_csv_path: str | None = None,
+        high_csv_path: str | Path | None = None,
+        low_csv_path: str | Path | None = None,
+        **_: Any,
     ) -> pd.DataFrame:
         """
         Load Harvey dataset from high/low polyreactivity CSV files.
@@ -108,13 +115,9 @@ class HarveyDataset(AntibodyDataset):
         """
         # Default paths
         if high_csv_path is None:
-            high_csv_path = (
-                "test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv"
-            )
+            high_csv_path = HARVEY_HIGH_POLY_CSV
         if low_csv_path is None:
-            low_csv_path = (
-                "test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv"
-            )
+            low_csv_path = HARVEY_LOW_POLY_CSV
 
         # Validate paths
         high_csv = Path(high_csv_path)
