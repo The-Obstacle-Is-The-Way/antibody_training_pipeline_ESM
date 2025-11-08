@@ -2,9 +2,9 @@ name: Docker CI/CD
 
 on:
   push:
-    branches: [ main, develop, leroy-jenkins/full-send ]
+    branches: [ dev, leroy-jenkins/full-send ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ dev, leroy-jenkins/full-send ]
 
 jobs:
   test-dev:
