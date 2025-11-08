@@ -255,9 +255,10 @@ def main():
         print("✗ VALIDATION FAILED - Fix issues before HuggingFace release")
         print(f"{'=' * 70}{Colors.RESET}\n")
         print("To fix issues:")
-        print("  1. Run: python3 preprocessing/jain/step3_extract_fragments.py")
-        print("  2. Run: python3 preprocessing/jain/step4_build_canonical_sets.py")
-        print("  3. Re-run this validation script")
+        print("  1. Run: python3 preprocessing/jain/step1_convert_excel_to_csv.py")
+        print("  2. Run: python3 preprocessing/jain/step2_preprocess_p5e_s2.py")
+        print("  3. Run: python3 preprocessing/jain/step3_extract_fragments.py")
+        print("  4. Re-run this validation script")
         print()
         return 1
 

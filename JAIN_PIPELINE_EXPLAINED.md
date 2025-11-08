@@ -1,7 +1,7 @@
 # Jain Processing Pipeline - Clear Explanation
 
 **Date:** 2025-11-07
-**Status:** CRITICAL BUG - step4 overwrites step2 output
+**Status:** ✅ RESOLVED - step4 deleted (was legacy code with file collision bug)
 
 ---
 
@@ -300,4 +300,28 @@ IMPORTANT: step4 is OPTIONAL and creates VH-only test sets.
 
 ---
 
-**Bottom line:** step4 has a FILE COLLISION BUG that needs to be fixed by removing the redundant/wrong `jain_86_novo_parity.csv` creation.
+**Bottom line:** step4 had a FILE COLLISION BUG and has been DELETED (2025-11-07).
+
+## Resolution (2025-11-07)
+
+**Action Taken:** Deleted `preprocessing/jain/step4_build_canonical_sets.py`
+
+**Rationale:**
+- step4 was LEGACY CODE from before P5e-S2 implementation
+- It created VH-only files using outdated heuristics (VH length filtering)
+- It hardcoded all labels to 0, making it impossible to match Novo's confusion matrix
+- It overwrote step2's correct output whenever run
+
+**Official Jain Pipeline:**
+```bash
+# Step 1: Convert Excel to CSV
+python3 preprocessing/jain/step1_convert_excel_to_csv.py
+
+# Step 2: Create Novo parity dataset (59 specific + 27 non-specific)
+python3 preprocessing/jain/step2_preprocess_p5e_s2.py
+
+# Step 3 (Optional): Extract fragment files for VH/VL/CDR slices
+python3 preprocessing/jain/step3_extract_fragments.py
+```
+
+**Result:** No more file collision, canonical dataset always has correct 59/27 split.

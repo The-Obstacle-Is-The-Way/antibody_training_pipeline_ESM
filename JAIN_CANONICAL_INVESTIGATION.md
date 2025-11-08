@@ -1,8 +1,8 @@
 # Jain Canonical Dataset Investigation
 
 **Date:** 2025-11-07
-**Status:** ✅ RESOLVED - Bug confirmed and fixed
-**Verdict:** FILE COLLISION BUG - step4 was overwriting step2's correct output
+**Status:** ✅ RESOLVED AND DELETED - step4 removed from codebase
+**Verdict:** FILE COLLISION BUG - step4 was legacy code overwriting step2's correct output
 
 ---
 
@@ -242,3 +242,27 @@ simtuzumab, sirukumab
 ---
 
 **Conclusion:** This WAS a file collision bug where step4 overwrote step2's correct output with an all-specific test set that cannot match Novo's published confusion matrix. Bug is now fixed by running step2 standalone.
+
+---
+
+## Final Resolution (2025-11-07)
+
+**Action Taken:** DELETED `preprocessing/jain/step4_build_canonical_sets.py`
+
+**Why Deletion Was Correct:**
+1. step4 was LEGACY CODE from before P5e-S2 methodology
+2. It used outdated VH-length heuristics instead of Novo's method
+3. It hardcoded label=0 for all antibodies (impossible to match Novo matrix)
+4. It created file collision with step2's authoritative output
+5. It was NOT part of Novo Nordisk's documented methodology
+
+**Files Also Updated:**
+- ✅ Deleted P0-BUG.md (obsolete analysis)
+- ✅ Updated scripts/validation/validate_jain_csvs.py (removed step4 reference)
+- ✅ Updated JAIN_PIPELINE_EXPLAINED.md (documented deletion)
+- ✅ Updated JAIN_CANONICAL_INVESTIGATION.md (this file)
+
+**Result:**
+- No more file collision risk
+- Canonical dataset always has correct 59 specific / 27 non-specific split
+- Clear pipeline: step1 → step2 → (optional step3 for fragments)
