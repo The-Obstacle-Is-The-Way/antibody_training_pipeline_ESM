@@ -180,7 +180,9 @@ def test_get_or_create_embeddings_creates_new_embeddings(tmp_path, mock_embeddin
     mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
     # Cache file should be created
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.md5(sequences_str.encode()).hexdigest()[:8]
+    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
+        :12
+    ]  # Changed to SHA-256 (12 chars)
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
     assert cache_file.exists()
 
@@ -194,7 +196,9 @@ def test_get_or_create_embeddings_loads_from_cache(tmp_path, mock_embeddings):
 
     # Create cached embeddings
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.md5(sequences_str.encode()).hexdigest()[:8]
+    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
+        :12
+    ]  # Changed to SHA-256 (12 chars)
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     cache_data = {
@@ -232,7 +236,9 @@ def test_get_or_create_embeddings_recomputes_on_hash_mismatch(
 
     # Create cached embeddings with WRONG hash
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.md5(sequences_str.encode()).hexdigest()[:8]
+    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
+        :12
+    ]  # Changed to SHA-256 (12 chars)
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     wrong_cache_data = {

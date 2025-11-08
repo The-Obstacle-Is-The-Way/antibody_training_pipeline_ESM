@@ -275,7 +275,9 @@ def test_load_hf_dataset_calls_datasets_library(mock_load_dataset):
     X, y = load_hf_dataset("test_dataset", "train", "sequence", "label")
 
     # Assert
-    mock_load_dataset.assert_called_once_with("test_dataset", split="train")
+    mock_load_dataset.assert_called_once_with(
+        "test_dataset", split="train", revision="main"
+    )
     assert X == ["ACDEF", "GHIKL"]
     assert y == [0, 1]
 
