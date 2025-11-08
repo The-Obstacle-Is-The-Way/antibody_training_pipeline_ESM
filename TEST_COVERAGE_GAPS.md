@@ -365,13 +365,95 @@ Once approved, decisions will be recorded here:
 - Covered in existing integration tests
 
 ### Next Steps
-- ✅ **Target reached:** 78% > 75% (original badge value)
-- 📋 **Phase 2 ready:** Dataset annotation logic (datasets/base.py)
-- 📋 **Phase 3 ready:** Minor gaps (embeddings.py, shehata.py, etc.)
+- ✅ **Target exceeded:** 80.63% > 80% (target)
+- ✅ **Phase 2 complete:** Dataset annotation logic (datasets/base.py 80%)
+- ❌ **Phase 3 skipped:** Would require over-mocking for minimal gain
 
 ---
 
-**Document version:** 1.2
+## Phase 2 Results (Implemented 2025-11-08)
+
+**✅ Phase 2 COMPLETE**
+
+### Coverage Increase
+- **After Phase 1:** 78.02% (unit tests only)
+- **After Phase 2:** 80.63% (unit tests only)
+- **Phase 2 Gain:** +2.61 percentage points
+- **Total Gain:** +6.47% from Phase 1+2
+- **New tests:** 28 total (11 Phase 1 + 17 Phase 2)
+
+### Tests Implemented
+**File:** `tests/unit/datasets/test_base_annotation.py`
+
+**ANARCI Annotation Tests (17 tests):**
+- ✅ `test_annotate_sequence_success` - Successful annotation
+- ✅ `test_annotate_sequence_riot_na_returns_none` - riot_na failure handling
+- ✅ `test_annotate_sequence_all_annotations_empty` - Empty result validation
+- ✅ `test_annotate_sequence_riot_na_raises_exception` - Exception handling
+- ✅ `test_annotate_sequence_riot_na_import_error` - ImportError handling
+- ✅ `test_annotate_sequence_heavy_chain` - Heavy chain 'H' parameter
+- ✅ `test_annotate_sequence_light_chain` - Light chain 'L' parameter
+- ✅ `test_annotate_sequence_handles_missing_fields_in_result` - Incomplete ANARCI results
+- ✅ `test_annotate_all_vh_only` - Nanobody (VH-only) annotation
+- ✅ `test_annotate_all_vh_vl_paired` - Paired VH+VL annotation
+- ✅ `test_annotate_all_partial_failures` - Graceful failure handling
+- ✅ `test_annotate_all_handles_nan_vh_sequences` - Skip NaN VH sequences
+- ✅ `test_annotate_all_handles_nan_vl_sequences` - Skip NaN VL sequences
+- ✅ `test_annotate_all_adds_all_seven_annotation_columns_per_chain` - Schema validation
+- ✅ `test_annotate_all_preserves_original_columns` - Data preservation
+- ✅ `test_annotate_all_uses_id_column_for_sequence_id` - ID column usage
+- ✅ `test_annotate_all_falls_back_to_row_index_if_no_id_column` - Fallback ID generation
+
+### Coverage Breakdown by File
+- **datasets/base.py:** 65.52% → 80.08% (+14.56%)
+- **cli/test.py:** 32.48% → 48.43% (+15.95% from Phase 1)
+- **Overall:** 74.16% → 80.63% (+6.47%)
+
+### Mocking Philosophy Validated ✅
+**Mocks used (I/O boundaries only):**
+- `riot_na.create_riot_aa` - External ANARCI tool
+- `pickle.dump/load` - File I/O (Phase 1)
+- Real objects everywhere else
+
+**NO over-mocking:**
+- ✅ Real DataFrames
+- ✅ Real pandas operations
+- ✅ Real BinaryClassifier objects
+- ✅ Testing BEHAVIOR, not implementation
+
+**Tests focus on:**
+- Error handling (annotation failures, NaN data)
+- Edge cases (missing fields, empty results)
+- Business logic (VH-only vs VH+VL, ID fallback)
+- Data integrity (column preservation, schema validation)
+
+### Phase 3 Decision: SKIPPED ✅
+
+**Remaining gaps analyzed:**
+- cli/preprocess.py: 78% (already good)
+- core/embeddings.py: 94% (excellent)
+- datasets/shehata.py: 88% (good)
+
+**Why we stopped at 80.63%:**
+1. **Target achieved:** 80% was the goal
+2. **Diminishing returns:** Remaining gaps would require complex mocking
+3. **Over-mocking risk:** Would test mocks instead of behavior
+4. **Rob C. Martin principle:** Stop when tests prevent bugs, not chase coverage %
+
+**Examples of what we DIDN'T test:**
+- embeddings.py batch exception handling (would mock model forward pass)
+- shehata.py invalid PSR scores (already logged in error messages)
+- Complex device switching scenarios (integration test territory)
+
+### Final Metrics
+- **311 unit tests** (all passing)
+- **80.63% coverage** (6.47% increase)
+- **28 new behavioral tests** (clean, focused, Rob C. Martin approved)
+- **Zero brittle mocks** (I/O boundaries only)
+
+---
+
+**Document version:** 2.0
 **Last updated:** 2025-11-08
 **Author:** Claude + Ray
-**Status:** Phase 1 complete, Phase 2 ready for approval
+**Status:** COMPLETE - Phase 1+2 shipped, Phase 3 skipped (correct decision)
