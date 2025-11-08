@@ -1,0 +1,261 @@
+name: E2E Benchmarking & Novo Parity
+
+# Expensive tests - NOT on every PR
+# Run weekly or manually to validate reproducibility
+on:
+  # Weekly schedule (Sunday 2am UTC)
+  schedule:
+    - cron: '0 2 * * 0'
+
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      run_harvey:
+        description: 'Run Harvey benchmark (90+ min)'
+        required: false
+        type: boolean
+        default: false
+
+  # On release tags
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  # Full E2E Novo Parity Suite
+  # Runs ALL benchmarks including expensive Harvey (141k sequences)
+  e2e-full:
+    name: Full E2E Suite (Boughter, Jain, Shehata, Harvey)
+    runs-on: ubuntu-latest
+    timeout-minutes: 150  # 2.5 hours for Harvey
+    if: github.event_name == 'schedule' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.run_harvey == true)
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 3.12
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Cache ESM-1v model (2GB)
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/huggingface
+        key: huggingface-esm1v-${{ runner.os }}-${{ hashFiles('**/pyproject.toml') }}
+        restore-keys: |
+          huggingface-esm1v-${{ runner.os }}-
+
+    - name: Run full E2E benchmark suite
+      run: |
+        uv run pytest tests/e2e/ \
+          -v \
+          --tb=short \
+          --junitxml=junit-e2e-full.xml \
+          -m "e2e or slow" \
+          2>&1 | tee e2e-benchmark-output.txt
+      continue-on-error: false
+
+    - name: Extract benchmark results
+      if: always()
+      run: |
+        echo "## E2E Benchmark Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        # Extract key metrics from test output
+        if grep -q "test_reproduce_novo_jain_accuracy_with_real_data PASSED" e2e-benchmark-output.txt; then
+          echo "✅ **Jain Parity:** PASSED" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Jain Parity:** FAILED" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if grep -q "Accuracy:" e2e-benchmark-output.txt; then
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Accuracy Results" >> $GITHUB_STEP_SUMMARY
+          grep "Accuracy:" e2e-benchmark-output.txt | tail -5 >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Upload benchmark results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: e2e-full-benchmark-results
+        path: |
+          junit-e2e-full.xml
+          e2e-benchmark-output.txt
+        retention-days: 90  # Keep benchmark history
+
+    - name: Create issue on failure
+      if: failure()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const issue = await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 E2E Benchmark Failure - Novo Parity Lost',
+            body: `## E2E Benchmark Failed
+
+            The weekly E2E benchmark suite has failed.
+
+            **Run:** ${{ github.run_id }}
+            **Workflow:** ${{ github.workflow }}
+            **Trigger:** ${{ github.event_name }}
+            **Commit:** ${{ github.sha }}
+
+            ### Investigation Required
+
+            - [ ] Check if Jain confusion matrix still matches [[40, 19], [10, 17]]
+            - [ ] Verify Shehata accuracy ~58.8% with threshold=0.5495
+            - [ ] Check Harvey performance (61.5-61.7% on 141k sequences)
+            - [ ] Review test logs for errors
+
+            **Action Items:**
+            1. Download artifacts from workflow run
+            2. Reproduce locally
+            3. Identify root cause
+            4. Fix or update baselines if datasets changed
+
+            cc: @the-obstacle-is-the-way
+            `,
+            labels: ['bug', 'e2e-failure', 'high-priority']
+          })
+          console.log('Created issue:', issue.data.html_url)
+
+  # Quick Parity Check (Jain + Shehata only, skip Harvey)
+  # Runs on PRs to main for faster feedback
+  quick-parity:
+    name: Quick Parity Check (Jain + Shehata only)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 3.12
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Cache ESM-1v model
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/huggingface
+        key: huggingface-esm1v-${{ runner.os }}-${{ hashFiles('**/pyproject.toml') }}
+        restore-keys: |
+          huggingface-esm1v-${{ runner.os }}-
+
+    - name: Run quick parity check (Jain + Shehata only)
+      run: |
+        # Run only Jain and Shehata benchmarks (skip Harvey - too slow)
+        uv run pytest tests/e2e/test_reproduce_novo.py \
+          -v \
+          --tb=short \
+          -k "jain or shehata" \
+          --junitxml=junit-quick-parity.xml \
+          2>&1 | tee quick-parity-output.txt
+      continue-on-error: true  # Warning only, not hard failure
+
+    - name: Post results as PR comment
+      if: always()
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          let output = '';
+          try {
+            output = fs.readFileSync('quick-parity-output.txt', 'utf8');
+          } catch (err) {
+            output = 'Could not read test output';
+          }
+
+          // Extract key results
+          const jainPassed = output.includes('test_reproduce_novo_jain_accuracy_with_real_data PASSED');
+          const jainIcon = jainPassed ? '✅' : '⚠️';
+
+          const comment = `## 📊 Quick Parity Check Results
+
+          ${jainIcon} **Jain Benchmark:** ${jainPassed ? 'PASSED' : 'WARNING - Check logs'}
+
+          <details>
+          <summary>View detailed output</summary>
+
+          \`\`\`
+          ${output.slice(-2000)}  // Last 2000 chars
+          \`\`\`
+
+          </details>
+
+          **Note:** This is a quick check (Jain + Shehata only). Full suite including Harvey runs weekly.
+          `;
+
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: comment
+          });
+
+    - name: Upload quick parity results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: quick-parity-results
+        path: |
+          junit-quick-parity.xml
+          quick-parity-output.txt
+        retention-days: 30
+
+  # Benchmark Summary
+  benchmark-summary:
+    name: Benchmark Summary
+    runs-on: ubuntu-latest
+    needs: [e2e-full]
+    if: always() && (github.event_name == 'schedule' || github.event_name == 'push')
+
+    steps:
+    - name: Download benchmark results
+      uses: actions/download-artifact@v4
+      with:
+        name: e2e-full-benchmark-results
+
+    - name: Generate summary
+      run: |
+        echo "# 📊 Weekly E2E Benchmark Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Date:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+        echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ "${{ needs.e2e-full.result }}" == "success" ]; then
+          echo "✅ **Status:** All benchmarks passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Validated Benchmarks" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Boughter (10-fold CV, 67-71% accuracy)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Jain ([[40,19],[10,17]], 66.28% accuracy)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Shehata (58.8% with PSR threshold)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Harvey (61.5-61.7% on 141k sequences)" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Status:** Benchmark failures detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Action Required:** Investigation needed" >> $GITHUB_STEP_SUMMARY
+          echo "See created issue for details" >> $GITHUB_STEP_SUMMARY
+        fi

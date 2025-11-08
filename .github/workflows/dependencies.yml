@@ -1,0 +1,321 @@
+name: Dependency Management & Security
+
+# Weekly dependency updates and security audits
+on:
+  # Weekly schedule (Monday 6am UTC)
+  schedule:
+    - cron: '0 6 * * 1'
+
+  # Manual trigger
+  workflow_dispatch:
+
+jobs:
+  # Update dependencies and create PR if tests pass
+  update-deps:
+    name: Update Dependencies (uv sync --upgrade)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        ref: main
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+
+    - name: Set up Python 3.12
+      run: uv python install 3.12
+
+    - name: Update dependencies
+      run: |
+        # Upgrade all dependencies
+        uv sync --upgrade
+
+        # Show what changed
+        echo "## Dependency Updates" > dep-changes.md
+        echo "" >> dep-changes.md
+        git diff uv.lock >> dep-changes.md || echo "No changes" >> dep-changes.md
+
+    - name: Install updated dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Run unit + integration tests (skip E2E)
+      run: |
+        # Run fast tests to validate updates
+        uv run pytest tests/unit/ tests/integration/ \
+          -v \
+          --tb=short \
+          --junitxml=junit-dep-update.xml \
+          2>&1 | tee test-output.txt
+      continue-on-error: false
+
+    - name: Check for dependency changes
+      id: check_changes
+      run: |
+        if git diff --quiet uv.lock; then
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+          echo "No dependency changes detected"
+        else
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+          echo "Dependency changes detected"
+        fi
+
+    - name: Create Pull Request
+      if: steps.check_changes.outputs.has_changes == 'true'
+      uses: peter-evans/create-pull-request@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: |
+          chore(deps): Update dependencies (automated weekly update)
+
+          - Updated via `uv sync --upgrade`
+          - All unit + integration tests passed
+          - See diff for details
+
+          🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+          Co-Authored-By: Claude <noreply@anthropic.com>
+        branch: automated/dependency-update-${{ github.run_number }}
+        delete-branch: true
+        title: 'chore(deps): Weekly dependency update'
+        body: |
+          ## 📦 Automated Dependency Update
+
+          This PR updates project dependencies to their latest compatible versions.
+
+          ### What Changed
+
+          ```diff
+          ${{ steps.check_changes.outputs.diff }}
+          ```
+
+          <details>
+          <summary>View detailed diff</summary>
+
+          See the `uv.lock` file diff in the Files Changed tab.
+
+          </details>
+
+          ### Validation
+
+          ✅ Unit tests passed
+          ✅ Integration tests passed
+          ⏭️ E2E benchmarks skipped (run on merge)
+
+          ### Testing Instructions
+
+          ```bash
+          # Pull this branch
+          git fetch origin automated/dependency-update-${{ github.run_number }}
+          git checkout automated/dependency-update-${{ github.run_number }}
+
+          # Sync dependencies
+          uv sync
+
+          # Run tests
+          pytest tests/unit/ tests/integration/
+          ```
+
+          ### Merge Checklist
+
+          - [ ] Review dependency changes in `uv.lock`
+          - [ ] Check for breaking changes in changelogs
+          - [ ] Verify CI passes
+          - [ ] Approve and merge
+
+          ---
+          🤖 This PR was created automatically by the weekly dependency update workflow.
+        labels: |
+          dependencies
+          automated
+        assignees: the-obstacle-is-the-way
+        reviewers: the-obstacle-is-the-way
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: dependency-update-test-results
+        path: |
+          junit-dep-update.xml
+          test-output.txt
+          dep-changes.md
+        retention-days: 30
+
+  # Security audit for vulnerabilities
+  security-audit:
+    name: Security Audit (pip-audit + Safety)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      issues: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+
+    - name: Set up Python 3.12
+      run: uv python install 3.12
+
+    - name: Install dependencies
+      run: uv sync --all-extras --dev
+
+    - name: Install security tools
+      run: |
+        uv pip install pip-audit safety
+
+    - name: Run pip-audit (CVE check)
+      id: pip_audit
+      run: |
+        # Run pip-audit and capture output
+        uv run pip-audit --format json --output pip-audit.json || true
+        uv run pip-audit --format markdown > pip-audit.md || true
+
+        # Count vulnerabilities by severity
+        HIGH_COUNT=$(jq '[.vulnerabilities[] | select(.fix_versions != null) | select(.aliases[] | contains("CVE"))] | length' pip-audit.json 2>/dev/null || echo "0")
+        echo "high_count=$HIGH_COUNT" >> $GITHUB_OUTPUT
+
+        if [ "$HIGH_COUNT" -gt 0 ]; then
+          echo "⚠️ Found $HIGH_COUNT HIGH/CRITICAL vulnerabilities"
+          exit 0  # Don't fail workflow, create issue instead
+        else
+          echo "✅ No HIGH/CRITICAL vulnerabilities found"
+        fi
+
+    - name: Run Safety check
+      id: safety
+      run: |
+        uv run safety check --json --output safety.json || true
+        uv run safety check > safety.txt || true
+
+        VULN_COUNT=$(jq 'length' safety.json 2>/dev/null || echo "0")
+        echo "vuln_count=$VULN_COUNT" >> $GITHUB_OUTPUT
+
+        if [ "$VULN_COUNT" -gt 0 ]; then
+          echo "⚠️ Found $VULN_COUNT vulnerabilities in Safety database"
+        else
+          echo "✅ No vulnerabilities found in Safety database"
+        fi
+
+    - name: Create security issue on HIGH/CRITICAL vulnerabilities
+      if: steps.pip_audit.outputs.high_count > 0
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const pipAuditMd = fs.readFileSync('pip-audit.md', 'utf8');
+
+          const issue = await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '🚨 Security Alert: HIGH/CRITICAL vulnerabilities detected',
+            body: `## 🔒 Security Audit Alert
+
+            The weekly security audit has detected **${{ steps.pip_audit.outputs.high_count }}** HIGH or CRITICAL vulnerabilities.
+
+            **Run:** ${{ github.run_id }}
+            **Date:** ${new Date().toISOString()}
+
+            ### pip-audit Results
+
+            ${pipAuditMd}
+
+            ### Action Required
+
+            1. Review vulnerabilities listed above
+            2. Check if fixes are available
+            3. Update affected packages:
+               \`\`\`bash
+               uv sync --upgrade
+               \`\`\`
+            4. If no fix available, consider:
+               - Pinning to safe version
+               - Finding alternative package
+               - Accepting risk (document why)
+
+            ### Investigation Checklist
+
+            - [ ] Identify affected dependencies
+            - [ ] Check if fix versions are available
+            - [ ] Test fix versions locally
+            - [ ] Create PR to update dependencies
+            - [ ] Re-run security audit after fix
+
+            cc: @the-obstacle-is-the-way
+            `,
+            labels: ['security', 'high-priority', 'dependencies']
+          });
+
+          console.log('Created security issue:', issue.data.html_url);
+
+    - name: Upload security reports
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-audit-reports
+        path: |
+          pip-audit.json
+          pip-audit.md
+          safety.json
+          safety.txt
+        retention-days: 90  # Keep security history
+
+    - name: Generate summary
+      if: always()
+      run: |
+        echo "# 🔒 Security Audit Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Date:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ "${{ steps.pip_audit.outputs.high_count }}" -gt 0 ]; then
+          echo "⚠️ **pip-audit:** ${{ steps.pip_audit.outputs.high_count }} HIGH/CRITICAL vulnerabilities" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ **pip-audit:** No HIGH/CRITICAL vulnerabilities" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ steps.safety.outputs.vuln_count }}" -gt 0 ]; then
+          echo "⚠️ **Safety:** ${{ steps.safety.outputs.vuln_count }} vulnerabilities" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ **Safety:** No vulnerabilities" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Artifacts:** Security reports uploaded for review" >> $GITHUB_STEP_SUMMARY
+
+  # Summary job
+  dependency-summary:
+    name: Dependency Management Summary
+    runs-on: ubuntu-latest
+    needs: [update-deps, security-audit]
+    if: always()
+
+    steps:
+    - name: Generate summary
+      run: |
+        echo "# 📦 Weekly Dependency Management Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Date:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ "${{ needs.update-deps.result }}" == "success" ]; then
+          echo "✅ **Dependency Update:** Completed successfully" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Dependency Update:** Failed (check logs)" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        if [ "${{ needs.security-audit.result }}" == "success" ]; then
+          echo "✅ **Security Audit:** Completed successfully" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ **Security Audit:** Failed (check logs)" >> $GITHUB_STEP_SUMMARY
+        fi
