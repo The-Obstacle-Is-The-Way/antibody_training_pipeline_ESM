@@ -29,11 +29,12 @@ Reference:
 """
 
 from pathlib import Path
-from typing import NoReturn
+from typing import Any, NoReturn
 
 import pandas as pd
 
 from .base import AntibodyDataset
+from .default_paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_PROCESSED_CSV
 
 
 class BoughterDataset(AntibodyDataset):
@@ -66,7 +67,7 @@ class BoughterDataset(AntibodyDataset):
         """
         super().__init__(
             dataset_name="boughter",
-            output_dir=output_dir or Path("train_datasets/boughter/annotated"),
+            output_dir=output_dir or BOUGHTER_ANNOTATED_DIR,
             logger=logger,
         )
 
@@ -81,11 +82,12 @@ class BoughterDataset(AntibodyDataset):
         """
         return self.FULL_ANTIBODY_FRAGMENTS
 
-    def load_data(  # type: ignore[override]
+    def load_data(
         self,
-        processed_csv: str | None = None,
+        processed_csv: str | Path | None = None,
         subset: str | None = None,
         include_mild: bool = False,
+        **_: Any,
     ) -> pd.DataFrame:
         """
         Load Boughter dataset from processed CSV.
@@ -107,7 +109,7 @@ class BoughterDataset(AntibodyDataset):
         """
         # Default path
         if processed_csv is None:
-            processed_csv = "train_datasets/boughter/boughter_translated.csv"
+            processed_csv = BOUGHTER_PROCESSED_CSV
 
         csv_file = Path(processed_csv)
         if not csv_file.exists():

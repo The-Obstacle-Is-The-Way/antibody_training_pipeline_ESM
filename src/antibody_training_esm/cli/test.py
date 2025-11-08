@@ -44,6 +44,7 @@ from sklearn.metrics import (
 
 # Package imports (using professional package paths)
 from antibody_training_esm.core.classifier import BinaryClassifier
+from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
 # Configure matplotlib for better plots
@@ -62,7 +63,7 @@ class TestConfig:
     output_dir: str = "./test_results"
     metrics: list[str] | None = None
     save_predictions: bool = True
-    batch_size: int = 32  # Batch size for embedding extraction
+    batch_size: int = DEFAULT_BATCH_SIZE  # Batch size for embedding extraction
     device: str = "mps"  # Device to use for inference [cuda, cpu, mps] - MUST match training config
 
     def __post_init__(self):
@@ -148,7 +149,7 @@ class ModelTester:
             self.logger.info(f"Cleaned up old extractor on {old_device}")
 
             # NOW create new extractor (no leak)
-            batch_size = getattr(model, "batch_size", 32)
+            batch_size = getattr(model, "batch_size", DEFAULT_BATCH_SIZE)
             model.embedding_extractor = ESMEmbeddingExtractor(
                 model.model_name, self.config.device, batch_size
             )

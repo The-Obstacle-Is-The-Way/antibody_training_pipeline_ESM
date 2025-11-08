@@ -7,18 +7,19 @@ Supports Hugging Face datasets, local CSV files, and preprocessing pipelines.
 
 import logging
 import pickle
-from typing import Any
+from typing import cast
 
 import numpy as np
 import pandas as pd
 from datasets import load_dataset
 
 logger = logging.getLogger(__name__)
+type Label = int | float | bool | str
 
 
 def preprocess_raw_data(
     X: list[str],
-    y: list[Any],
+    y: list[Label],
     embedding_extractor,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
@@ -49,7 +50,7 @@ def preprocess_raw_data(
 
 def store_preprocessed_data(
     X: list[str] | None = None,
-    y: list[Any] | None = None,
+    y: list[Label] | None = None,
     X_embedded: np.ndarray | None = None,
     filename: str | None = None,
 ):
@@ -68,7 +69,7 @@ def store_preprocessed_data(
     if filename is None:
         raise ValueError("filename is required")
 
-    data: dict[str, list[str] | list[Any] | np.ndarray] = {}
+    data: dict[str, list[str] | list[Label] | np.ndarray] = {}
     if X_embedded is not None:
         data["X_embedded"] = X_embedded
     if X is not None:
@@ -80,7 +81,9 @@ def store_preprocessed_data(
         pickle.dump(data, f)
 
 
-def load_preprocessed_data(filename: str) -> dict[str, Any]:
+def load_preprocessed_data(
+    filename: str,
+) -> dict[str, list[str] | list[Label] | np.ndarray]:
     """
     Load preprocessed data from pickle file
 
@@ -91,7 +94,7 @@ def load_preprocessed_data(filename: str) -> dict[str, Any]:
         Dictionary with keys: 'X', 'y', and/or 'X_embedded'
     """
     with open(filename, "rb") as f:
-        data: dict[str, Any] = pickle.load(f)
+        data = cast(dict[str, list[str] | list[Label] | np.ndarray], pickle.load(f))
         return data
 
 
@@ -100,7 +103,7 @@ def load_hf_dataset(
     split: str,
     text_column: str,
     label_column: str,
-) -> tuple[list[str], list[Any]]:
+) -> tuple[list[str], list[Label]]:
     """
     Load dataset from Hugging Face datasets library
 
@@ -115,15 +118,15 @@ def load_hf_dataset(
         y: List of labels
     """
     dataset = load_dataset(dataset_name, split=split)
-    X = dataset[text_column]
-    y = dataset[label_column]
+    X = list(dataset[text_column])
+    y = cast(list[Label], list(dataset[label_column]))
 
-    return list(X), list(y)
+    return X, y
 
 
 def load_local_data(
     file_path: str, text_column: str, label_column: str
-) -> tuple[list[str], list[Any]]:
+) -> tuple[list[str], list[Label]]:
     """
     Load training data from local CSV file
 
@@ -138,12 +141,12 @@ def load_local_data(
     """
     train_df = pd.read_csv(file_path, comment="#")  # Handle comment lines in CSV
     X_train = train_df[text_column].tolist()
-    y_train = train_df[label_column].tolist()
+    y_train = cast(list[Label], train_df[label_column].tolist())
 
     return X_train, y_train
 
 
-def load_data(config: dict) -> tuple[list[str], list[int]]:
+def load_data(config: dict) -> tuple[list[str], list[Label]]:
     """
     Load training data from either Hugging Face or local file based on config
 

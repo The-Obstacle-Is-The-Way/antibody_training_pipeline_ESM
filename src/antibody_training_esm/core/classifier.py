@@ -10,6 +10,7 @@ import logging
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 
+from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
 logger = logging.getLogger(__name__)
@@ -40,7 +41,9 @@ class BinaryClassifier:
             params = kwargs
 
         random_state = params["random_state"]
-        batch_size = params.get("batch_size", 32)  # Default to 32 if not provided
+        batch_size = params.get(
+            "batch_size", DEFAULT_BATCH_SIZE
+        )  # Default if not provided
 
         self.embedding_extractor = ESMEmbeddingExtractor(
             params["model_name"], params["device"], batch_size
@@ -61,14 +64,20 @@ class BinaryClassifier:
             class_weight=class_weight,
         )
 
-        print(
-            f"Classifier initialized: C={C}, penalty={penalty}, solver={solver}, "
-            f"random_state={random_state}, class_weight={class_weight}"
+        logger.info(
+            "Classifier initialized: C=%s, penalty=%s, solver=%s, random_state=%s, class_weight=%s",
+            C,
+            penalty,
+            solver,
+            random_state,
+            class_weight,
         )
-        print(
-            f"  VERIFICATION: LogisticRegression config = "
-            f"C={self.classifier.C}, penalty={self.classifier.penalty}, "
-            f"solver={self.classifier.solver}, class_weight={self.classifier.class_weight}"
+        logger.info(
+            "VERIFICATION: LogisticRegression config = C=%s, penalty=%s, solver=%s, class_weight=%s",
+            self.classifier.C,
+            self.classifier.penalty,
+            self.classifier.solver,
+            self.classifier.class_weight,
         )
 
         # Store all hyperparameters for recreation and sklearn compatibility
@@ -232,8 +241,8 @@ class BinaryClassifier:
         self.__dict__.update(state)
         # Recreate embedding extractor with fixed configuration
         batch_size = getattr(
-            self, "batch_size", 32
-        )  # Default to 32 if not stored (backwards compatibility)
+            self, "batch_size", DEFAULT_BATCH_SIZE
+        )  # Default if not stored (backwards compatibility)
         self.embedding_extractor = ESMEmbeddingExtractor(
             self.model_name, self.device, batch_size
         )

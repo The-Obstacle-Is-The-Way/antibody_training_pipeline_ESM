@@ -23,10 +23,12 @@ Reference:
 """
 
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
 from .base import AntibodyDataset
+from .default_paths import SHEHATA_EXCEL_PATH, SHEHATA_OUTPUT_DIR
 
 
 class ShehataDataset(AntibodyDataset):
@@ -54,7 +56,7 @@ class ShehataDataset(AntibodyDataset):
         """
         super().__init__(
             dataset_name="shehata",
-            output_dir=output_dir or Path("test_datasets/shehata/fragments"),
+            output_dir=output_dir or SHEHATA_OUTPUT_DIR,
             logger=logger,
         )
 
@@ -108,10 +110,11 @@ class ShehataDataset(AntibodyDataset):
 
         return threshold
 
-    def load_data(  # type: ignore[override]
+    def load_data(
         self,
-        excel_path: str | None = None,
+        excel_path: str | Path | None = None,
         psr_threshold: float | None = None,
+        **_: Any,
     ) -> pd.DataFrame:
         """
         Load Shehata dataset from Excel file.
@@ -129,7 +132,7 @@ class ShehataDataset(AntibodyDataset):
         """
         # Default path
         if excel_path is None:
-            excel_path = "test_datasets/shehata/raw/shehata-mmc2.xlsx"
+            excel_path = SHEHATA_EXCEL_PATH
 
         excel_file = Path(excel_path)
         if not excel_file.exists():

@@ -13,7 +13,7 @@
 
 - **P0 Blockers:** 0 (No critical bugs, security issues, or production failures)
 - **P1 High:** 0 (No major code smells or portability-breaking configs)
-- **P2 Medium:** 6 issues (type suppressions, typing.Any usage, hard-coded paths, magic numbers, logging)
+- **P2 Medium:** 0 outstanding (6 issues resolved on 2025-11-08)
 - **P3 Low:** 3 issues (CI lenience, type checking permissiveness, file size)
 
 **Conclusion:** Codebase is clean, well-structured, and professionally maintained. All issues found are minor technical debt that can be addressed incrementally. **No blockers to production deployment or authorship claim.**
@@ -47,234 +47,71 @@ The codebase:
 
 ---
 
-## P2 (Medium Priority) - 6 Issues
+## P2 (Medium Priority) - 0 Outstanding (6 issues resolved 2025-11-08)
 
-### Issue 1: Type Suppressions in Dataset Classes (6 instances in src/, 7 total)
+### Issue 1: Type Suppressions in Dataset Classes — ✅ Resolved
 
-**Severity:** Medium
-**Category:** Code smell - type safety
+**Status:** All dataset loaders now match the abstract signature without suppressions and pandas helpers are typed explicitly.
 
-**Locations (production code):**
-```
-src/antibody_training_esm/datasets/jain.py:85         def load_data(  # type: ignore[override]
-src/antibody_training_esm/datasets/shehata.py:111     def load_data(  # type: ignore[override]
-src/antibody_training_esm/datasets/harvey.py:91       def load_data(  # type: ignore[override]
-src/antibody_training_esm/datasets/boughter.py:84     def load_data(  # type: ignore[override]
-src/antibody_training_esm/datasets/base.py:345        vh_annotations = df.apply(  # type: ignore[call-overload]
-src/antibody_training_esm/datasets/base.py:363        vl_annotations = df.apply(  # type: ignore[call-overload]
-```
+- Added optional `**_: Any` parameters so every `load_data` override satisfies `AntibodyDataset.load_data` while keeping strongly-typed keyword arguments (`src/antibody_training_esm/datasets/jain.py:87`, `shehata.py:106`, `harvey.py:88`, `boughter.py:84`).
+- The `df.apply` calls in `AntibodyDataset.annotate_all` now type-check without suppressions (`src/antibody_training_esm/datasets/base.py:328-360`), so the `# type: ignore[call-overload]` comments were dropped entirely.
 
-**Additional locations (tests):**
-```
-tests/unit/datasets/test_base.py:255                  dataset.sanitize_sequence(None)  # type: ignore
-```
-
-**Problem:**
-Type checkers (mypy) are being silenced instead of fixing the underlying type mismatch. This masks potential type errors.
-
-**Why it's a problem:**
-- Makes future refactoring harder (no type safety net)
-- Indicates API design mismatch between base class and subclasses
-- Can hide real bugs during maintenance
-
-**Suggested fix:**
-1. **For `load_data()` overrides**: Add `@typing.overload` signatures to properly type the different argument combinations, OR use a typed Protocol instead of inheritance
-2. **For `df.apply()` lambdas**: Use explicit lambda type annotations or restructure to use vectorized operations
-
-**Impact if not fixed:** Low - Tests cover this behavior, but future refactoring could introduce type errors.
+**Verification:** `rg "type: ignore" src/antibody_training_esm` returns no matches; the lone suppression in `tests/unit/datasets/test_base.py:255` remains intentionally scoped to tests.
 
 ---
 
-### Issue 2: typing.Any Usage in Data Loaders (6 instances)
+### Issue 2: `typing.Any` Usage in Data Loaders — ✅ Resolved
 
-**Severity:** Medium
-**Category:** Type safety - generic type handling
+**Status:** Introduced a `Label` type alias so every loader function preserves label types end-to-end.
 
-**Locations:**
-```
-src/antibody_training_esm/data/loaders.py:10          from typing import Any
-src/antibody_training_esm/data/loaders.py:21          y: list[Any],
-src/antibody_training_esm/data/loaders.py:52          y: list[Any] | None = None,
-src/antibody_training_esm/data/loaders.py:71          data: dict[str, list[str] | list[Any] | np.ndarray] = {}
-src/antibody_training_esm/data/loaders.py:83          def load_preprocessed_data(filename: str) -> dict[str, Any]:
-src/antibody_training_esm/data/loaders.py:94          data: dict[str, Any] = pickle.load(f)
-src/antibody_training_esm/data/loaders.py:103         ) -> tuple[list[str], list[Any]]:
-src/antibody_training_esm/data/loaders.py:126         ) -> tuple[list[str], list[Any]]:
-```
+- Added `type Label = int | float | bool | str` and rewired all loader utilities to accept/return `list[Label]`, including pickle storage and HuggingFace/local dataset readers (`src/antibody_training_esm/data/loaders.py:10-148`).
+- Applied `cast(...)` only where unavoidable (pickle and HuggingFace outputs), keeping the rest of the API strongly typed without `typing.Any`.
 
-**Problem:**
-Functions use `typing.Any` for label types instead of more specific types (e.g., `int`, `str`, `bool`). This reduces type safety and loses information about what data is actually expected.
-
-**Why it's acceptable (for now):**
-- These are generic data loading utilities that handle heterogeneous label types
-- Different datasets use different label formats (int, float, bool)
-- This is intentional flexibility, not a bug
-
-**Suggested fix (optional):**
-Use TypeVar or Union types for better type safety:
-```python
-from typing import TypeVar
-
-LabelType = TypeVar('LabelType', int, float, bool, str)
-
-def preprocess_raw_data(
-    X: list[str],
-    y: list[LabelType],
-    embedding_extractor,
-) -> tuple[np.ndarray, np.ndarray]:
-    ...
-```
-
-**Impact if not fixed:** Low - Code works correctly, just loses some type information.
+**Result:** No production code relies on `Any` for labels anymore, satisfying the original concern.
 
 ---
 
-### Issue 3: Hard-coded Relative Dataset Paths (3 instances)
+### Issue 3: Hard-coded Relative Dataset Paths — ✅ Resolved
 
-**Severity:** Medium
-**Category:** Configuration management
+**Status:** All default dataset paths now live in a single module, eliminating scattered literals.
 
-**Locations:**
-```
-src/antibody_training_esm/datasets/boughter.py:69     output_dir=output_dir or Path("train_datasets/boughter/annotated")
-src/antibody_training_esm/datasets/boughter.py:110    processed_csv = "train_datasets/boughter/boughter_translated.csv"
-src/antibody_training_esm/datasets/harvey.py:54       output_dir=output_dir or Path("train_datasets/harvey/fragments")
-```
+- Added `src/antibody_training_esm/datasets/default_paths.py` with canonical `Path` constants for every dataset (`default_paths.py:10-26`).
+- Updated each loader to import those constants for both constructor defaults and fallback file paths (`boughter.py:19-115`, `harvey.py:19-107`, `jain.py:19-117`, `shehata.py:19-109`).
 
-*(Similar patterns exist in jain.py and shehata.py)*
-
-**Problem:**
-Default dataset paths are hard-coded as string literals instead of being configured via YAML or environment variables. This makes it harder to:
-- Move datasets to different locations
-- Deploy to different environments (dev/staging/prod)
-- Use the code on different machines without code changes
-
-**Why it's acceptable (for now):**
-- These are **relative paths**, not absolute paths (portable across machines)
-- They're only used as **fallback defaults** when `output_dir` is not provided
-- The actual datasets are shipped with the repo at these locations
-- Users can override by passing `output_dir` parameter
-
-**Suggested fix (for production deployment):**
-Move defaults to YAML config or environment variables:
-```yaml
-# config.yml
-datasets:
-  boughter:
-    output_dir: train_datasets/boughter/annotated
-    processed_csv: train_datasets/boughter/boughter_translated.csv
-```
-
-Or use environment variables:
-```python
-DEFAULT_BOUGHTER_DIR = os.getenv("BOUGHTER_OUTPUT_DIR", "train_datasets/boughter/annotated")
-```
-
-**Impact if not fixed:** Low - Current structure works for single-machine research workflow.
+**Benefit:** Moving datasets or overriding paths now only requires editing one module (or swapping constants via future config/env hooks) instead of touching four separate loaders.
 
 ---
 
-### Issue 4: Duplicated Magic Number - `batch_size = 32`
+### Issue 4: Duplicated Magic Number (`batch_size = 32`) — ✅ Resolved
 
-**Severity:** Medium
-**Category:** Magic number - maintainability
+**Status:** Introduced `core/config.py` and replaced every hard-coded default with the shared constant.
 
-**Locations (7 instances across 4 files):**
-```
-src/antibody_training_esm/cli/test.py:65              batch_size: int = 32
-src/antibody_training_esm/cli/test.py:151             batch_size = getattr(model, "batch_size", 32)
-src/antibody_training_esm/core/trainer.py:234         cv_params["batch_size"] = config["training"].get("batch_size", 32)
-src/antibody_training_esm/core/trainer.py:325         classifier_params["batch_size"] = config["training"].get("batch_size", 32)
-src/antibody_training_esm/core/embeddings.py:21       def __init__(self, model_name: str, device: str, batch_size: int = 32):
-src/antibody_training_esm/core/classifier.py:43       batch_size = params.get("batch_size", 32)
-src/antibody_training_esm/core/classifier.py:235      batch_size = getattr(self, "batch_size", 32)
-```
+- Added `DEFAULT_BATCH_SIZE = 32` to `src/antibody_training_esm/core/config.py:8` and imported it where needed (`cli/test.py:47`, `core/trainer.py:28`, `core/classifier.py:13`, `core/embeddings.py:15`).
+- Updated all default usages—dataclass defaults, config fallbacks, and embedding extractor parameters—to read from the constant (`cli/test.py:66/152`, `core/trainer.py:236/329`, `core/classifier.py:45/238`, `core/embeddings.py:27`).
 
-**Problem:**
-The default batch size of 32 is scattered across **4 files** (cli/test.py, core/trainer.py, core/embeddings.py, core/classifier.py). If you need to change it, you'd have to hunt down every instance.
-
-**Suggested fix:**
-Create a central config constant:
-```python
-# src/antibody_training_esm/core/config.py
-DEFAULT_BATCH_SIZE = 32
-DEFAULT_MAX_SEQ_LENGTH = 1024
-```
-
-Then import and use throughout:
-```python
-from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
-
-batch_size = params.get("batch_size", DEFAULT_BATCH_SIZE)
-```
-
-**Impact if not fixed:** Low - Easy to change if needed, but error-prone (risk of missing an instance).
+**Result:** Changing the batch size now requires editing a single constant (or wiring it to YAML later) rather than hunting across four modules.
 
 ---
 
-### Issue 5: Hardcoded Tokenizer Max Length - `max_length = 1024`
+### Issue 5: Hardcoded Tokenizer Max Length (`max_length = 1024`) — ✅ Resolved
 
-**Severity:** Medium
-**Category:** Magic number - configurability
+**Status:** The embedding extractor now exposes a configurable `max_length` backed by the shared constant.
 
-**Locations:**
-```
-src/antibody_training_esm/core/embeddings.py:70       max_length=1024
-src/antibody_training_esm/core/embeddings.py:147      max_length=1024
-```
+- Added `DEFAULT_MAX_SEQ_LENGTH = 1024` next to the batch-size constant (`src/antibody_training_esm/core/config.py:9`).
+- Extended `ESMEmbeddingExtractor.__init__` with a `max_length` parameter, stored it on the instance, and wired both the single-sequence and batch tokenization calls to `self.max_length` (`core/embeddings.py:22-93`, `core/embeddings.py:113-165`).
 
-**Problem:**
-The tokenizer's max sequence length is hardcoded. ESM-1v technically supports up to 1024 tokens, but for antibody sequences (typically 100-150 AA), this wastes memory and compute.
-
-**Suggested fix:**
-Make it configurable via YAML config:
-```yaml
-model:
-  max_length: 512  # Sufficient for VH+VL combined (~250 AA)
-```
-
-Or use a domain-specific default:
-```python
-# src/antibody_training_esm/core/config.py
-DEFAULT_MAX_SEQ_LENGTH = 512  # Antibodies rarely exceed 250 AA
-```
-
-**Impact if not fixed:** Low - Current value works fine, just wastes resources slightly.
+**Next step (optional):** Thread this parameter through YAML/CLI to let operators pick 512 for antibody-specific workloads without touching code.
 
 ---
 
-### Issue 6: Print Statements in Production Code
+### Issue 6: `print()` Statements in Production Code — ✅ Resolved
 
-**Severity:** Medium
-**Category:** Logging consistency
+**Status:** All core modules now log via `logging.Logger`.
 
-**Locations:**
-```
-src/antibody_training_esm/core/classifier.py:64       print(f"Classifier initialized: C={C}, ...")
-src/antibody_training_esm/core/classifier.py:68       print(f"  VERIFICATION: LogisticRegression config = ...")
-src/antibody_training_esm/core/trainer.py:383         print("Training completed successfully!")
-```
+- Replaced the classifier initialization `print` statements with structured `logger.info` calls that capture all hyperparameters for traceability (`src/antibody_training_esm/core/classifier.py:64-79`).
+- Swapped the `print` in the `train_model` CLI guard for `logging.getLogger(__name__).info`, keeping console output consistent with the rest of the pipeline (`core/trainer.py:399-404`).
 
-**Problem:**
-Core library files use `print()` instead of `logger` for production logging. This:
-- Bypasses structured logging (can't filter by level, timestamp, module)
-- Can't be controlled by log levels (DEBUG, INFO, WARNING, ERROR)
-- Doesn't integrate with logging frameworks (no JSON output, no log aggregation)
-- Makes it harder to silence output in library usage
-
-**Note:** CLI files (`cli/train.py`, `cli/test.py`) **correctly** use `print()` for user-facing output. This is appropriate for CLI tools.
-
-**Suggested fix:**
-Replace with logger calls in core library code:
-```python
-# Instead of:
-print(f"Classifier initialized: C={C}, ...")
-
-# Use:
-logger.info(f"Classifier initialized: C={C}, ...")
-```
-
-**Impact if not fixed:** Low - Output still works, just less professional and harder to control.
+**Note:** CLI modules still use `print()` intentionally for user-facing UX; all library code now relies on logging.
 
 ---
 
@@ -390,12 +227,14 @@ These common code smells were **actively searched for and not found in productio
 
 All P0 and P1 categories are clean. The codebase can be deployed to production as-is.
 
-### For Technical Debt Cleanup (P2) - Estimated 3-4 hours total:
-1. **Fix `type: ignore` suppressions** (1-2 hours) - Add proper type overloads or Protocols
-2. **Centralize magic numbers into `config.py`** (30 min) - Create DEFAULT_BATCH_SIZE and DEFAULT_MAX_SEQ_LENGTH constants
-3. **Replace `print()` with `logger` in core code** (15 min) - 3 instances to fix
-4. **Add TypeVar for label types** (30 min) - Replace `typing.Any` with generic type parameters
-5. **Move dataset paths to config** (1 hour) - Create YAML config for dataset locations
+### For Technical Debt Cleanup (P2):
+**✅ Completed on 2025-11-08.** All six previously identified items were implemented:
+1. Removed every `type: ignore` in `src/` via signature fixes and typed pandas casts.
+2. Added a `Label` type alias to `data/loaders.py`, eliminating `typing.Any` for labels.
+3. Centralized dataset paths inside `datasets/default_paths.py`.
+4. Introduced `core/config.py` for shared batch-size / max-seq-length defaults and rewired all callers.
+5. Added a configurable `max_length` parameter to `ESMEmbeddingExtractor`.
+6. Replaced `print()` statements in core modules with `logger.info`.
 
 ### For Long-term Quality (P3):
 1. **Tighten CI gates incrementally** (ongoing) - Enforce mypy strict, coverage threshold

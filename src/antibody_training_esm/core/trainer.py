@@ -25,6 +25,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 from antibody_training_esm.core.classifier import BinaryClassifier
+from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.data.loaders import load_data
 
@@ -231,7 +232,7 @@ def perform_cross_validation(
     cv_params = config["classifier"].copy()
     cv_params["model_name"] = config["model"]["name"]
     cv_params["device"] = config["model"]["device"]
-    cv_params["batch_size"] = config["training"].get("batch_size", 32)
+    cv_params["batch_size"] = config["training"].get("batch_size", DEFAULT_BATCH_SIZE)
     cv_classifier = BinaryClassifier(cv_params)
 
     # Use full BinaryClassifier for CV (no StandardScaler - matches Novo methodology)
@@ -322,7 +323,9 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
         classifier_params = config["classifier"].copy()
         classifier_params["model_name"] = config["model"]["name"]
         classifier_params["device"] = config["model"]["device"]
-        classifier_params["batch_size"] = config["training"].get("batch_size", 32)
+        classifier_params["batch_size"] = config["training"].get(
+            "batch_size", DEFAULT_BATCH_SIZE
+        )
         classifier = BinaryClassifier(classifier_params)
 
         # Get or create embeddings
@@ -380,4 +383,4 @@ if __name__ == "__main__":
     config_path = sys.argv[1] if len(sys.argv) > 1 else "configs/config.yaml"
     results = train_model(config_path)
 
-    print("Training completed successfully!")
+    logging.getLogger(__name__).info("Training completed successfully!")
