@@ -9,8 +9,11 @@ description = "Professional antibody training pipeline using ESM protein languag
 license = {text = "Apache-2.0"}
 requires-python = ">=3.12"
 dependencies = [
+    "authlib>=1.6.5",
     "biopython>=1.80",
+    "brotli>=1.2.0",
     "datasets>=4.2.0",
+    "h2>=4.3.0",
     "jupyterlab>=4.4.9",
     "matplotlib>=3.7.0",
     "more-itertools",
