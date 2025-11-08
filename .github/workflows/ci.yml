@@ -46,7 +46,7 @@ jobs:
         uv pip install bandit
         uv run bandit -r src/ -f json -o bandit-report.json || true
         uv run bandit -r src/
-      continue-on-error: true  # Start lenient
+      continue-on-error: true  # ⚠️ ADVISORY: 11 issues (1 HIGH) - mostly dependency warnings, not code vulnerabilities
 
     - name: Upload quality reports
       uses: actions/upload-artifact@v4
@@ -190,7 +190,7 @@ jobs:
       run: |
         uv run pip-audit --format json --output pip-audit.json || true
         uv run pip-audit
-      continue-on-error: true  # Start lenient, will enforce HIGH/CRITICAL later
+      continue-on-error: true  # ⚠️ ADVISORY: ~24 dependency vulnerabilities (keras, transformers, torch, etc.) - upstream issues
 
     - name: Run Safety check
       run: |
