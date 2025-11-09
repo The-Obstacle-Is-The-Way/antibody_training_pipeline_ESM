@@ -1,6 +1,6 @@
 # CONTRIBUTING
 
-**1.** We write clean, tested, typed, and linted code. Test-driven development is the standard.
+**1.** We write clean, tested, typed, linted code. Test-driven development is the standard.
 
 **2.** We ship with velocity and iterate. We learn by building and say no to mental masturbation.
 

@@ -558,32 +558,46 @@ This plan follows modern documentation frameworks:
 
 ---
 
-### Phase 1: Create Archive Structure (1 hour)
+### Phase 1: Create Archive Structure ✅ **COMPLETE**
 
 **Priority:** P1 - Create before moving any files (discoverability)
 
+**Status:** ✅ **ALL TASKS COMPLETE** (completed 2025-11-09)
+
 **Rationale:** Archive README must exist BEFORE we start moving docs, so historical context is discoverable
 
-- [ ] Create `archive/migrations/`, `archive/investigations/`, `archive/plans/`, `archive/summaries/`
-- [ ] Write `archive/README.md` with:
+- [x] Create `archive/migrations/`, `archive/investigations/`, `archive/plans/`, `archive/summaries/`
+- [x] Write `archive/README.md` with:
   - Index of all archived docs (table: filename, date, category, summary)
   - Archive policy (what gets archived, naming conventions)
   - Cross-references to related active docs
-- [ ] DO NOT move files yet (just create structure)
+- [x] DO NOT move files yet (just create structure)
 
-### Phase 2: Write New Overview Document (1-2 hours)
+**Deliverables:**
+- ✅ Created 4 subdirectories: `migrations/`, `investigations/`, `plans/`, `summaries/`
+- ✅ Comprehensive `archive/README.md` with index of 14 archived docs
+- ✅ Clear archive policy and criteria documented
+
+### Phase 2: Write New Overview Document ✅ **COMPLETE**
 
 **Priority:** P1 - Foundational "what is this?" doc
 
+**Status:** ✅ **ALL TASKS COMPLETE** (completed 2025-11-09)
+
 **Rationale:** Newcomers need high-level context before diving into installation/training guides
 
-- [ ] Create `docs/overview.md` (see template in "Proposed Structure" section above)
-- [ ] Extract content from:
+- [x] Create `docs/overview.md` (comprehensive system overview)
+- [x] Extract content from:
   - Root `README.md` (Project Description, Model Architecture)
   - `CLAUDE.md` (Project Overview, Core Pipeline Flow)
-- [ ] Include architecture diagram (ESM → embeddings → classifier → predictions)
-- [ ] Add navigation links to user/dev/research guides
-- [ ] Get senior review before proceeding
+- [x] Include architecture diagram (ASCII pipeline visualization)
+- [x] Add navigation links to user/dev/research guides
+- [x] Update `docs/README.md` to prominently link to overview
+
+**Deliverables:**
+- ✅ Created `docs/overview.md` (10KB, comprehensive system introduction)
+- ✅ Covers: Problem, Solution, Architecture, Capabilities, Tech Stack, Results, Navigation
+- ✅ Links from `docs/README.md`: "New to the project? Start with the System Overview"
 
 ---
 
