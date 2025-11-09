@@ -17,6 +17,8 @@ Testing philosophy:
 - Follow AAA pattern (Arrange-Act-Assert)
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 
 import pandas as pd
@@ -28,7 +30,7 @@ from antibody_training_esm.datasets.shehata import ShehataDataset
 
 
 @pytest.fixture
-def shehata_sample_csv():
+def shehata_sample_csv() -> Path:
     """Path to mock Shehata CSV (15 antibodies with PSR scores)."""
     return (
         Path(__file__).parent.parent.parent
@@ -37,7 +39,7 @@ def shehata_sample_csv():
 
 
 @pytest.fixture
-def shehata_sample_excel(shehata_sample_csv, tmp_path):
+def shehata_sample_excel(shehata_sample_csv: Path, tmp_path: Path) -> Path:
     """Convert CSV to Excel for testing Excel loading."""
     df = pd.read_csv(shehata_sample_csv)
     excel_path = tmp_path / "shehata_sample.xlsx"
@@ -49,7 +51,7 @@ def shehata_sample_excel(shehata_sample_csv, tmp_path):
 
 
 @pytest.mark.unit
-def test_shehata_dataset_initializes_with_default_output_dir():
+def test_shehata_dataset_initializes_with_default_output_dir() -> None:
     """Verify ShehataDataset initializes with default output directory."""
     # Arrange & Act
     dataset = ShehataDataset()
@@ -60,7 +62,7 @@ def test_shehata_dataset_initializes_with_default_output_dir():
 
 
 @pytest.mark.unit
-def test_shehata_dataset_initializes_with_custom_output_dir(tmp_path):
+def test_shehata_dataset_initializes_with_custom_output_dir(tmp_path: Path) -> None:
     """Verify ShehataDataset accepts custom output directory."""
     # Arrange
     custom_dir = tmp_path / "custom_shehata"
@@ -74,7 +76,7 @@ def test_shehata_dataset_initializes_with_custom_output_dir(tmp_path):
 
 
 @pytest.mark.unit
-def test_shehata_dataset_returns_full_antibody_fragments():
+def test_shehata_dataset_returns_full_antibody_fragments() -> None:
     """Verify ShehataDataset returns 16 full antibody fragment types."""
     # Arrange
     dataset = ShehataDataset()
@@ -94,7 +96,7 @@ def test_shehata_dataset_returns_full_antibody_fragments():
 
 
 @pytest.mark.unit
-def test_load_data_reads_excel_successfully(shehata_sample_excel):
+def test_load_data_reads_excel_successfully(shehata_sample_excel: Path) -> None:
     """Verify load_data reads Excel file and returns DataFrame."""
     # Arrange
     dataset = ShehataDataset()
@@ -113,7 +115,7 @@ def test_load_data_reads_excel_successfully(shehata_sample_excel):
 
 
 @pytest.mark.unit
-def test_load_data_requires_valid_sequences(shehata_sample_excel):
+def test_load_data_requires_valid_sequences(shehata_sample_excel: Path) -> None:
     """Verify loaded data contains valid antibody sequences."""
     # Arrange
     dataset = ShehataDataset()
@@ -131,7 +133,7 @@ def test_load_data_requires_valid_sequences(shehata_sample_excel):
 
 
 @pytest.mark.unit
-def test_load_data_creates_binary_labels_from_psr(shehata_sample_excel):
+def test_load_data_creates_binary_labels_from_psr(shehata_sample_excel: Path) -> None:
     """Verify labels are created from PSR threshold (PSR > threshold → label=1)."""
     # Arrange
     dataset = ShehataDataset()
@@ -151,7 +153,7 @@ def test_load_data_creates_binary_labels_from_psr(shehata_sample_excel):
 
 
 @pytest.mark.unit
-def test_load_data_raises_error_for_missing_file():
+def test_load_data_raises_error_for_missing_file() -> None:
     """Verify load_data raises FileNotFoundError for missing Excel file."""
     # Arrange
     dataset = ShehataDataset()
@@ -162,7 +164,9 @@ def test_load_data_raises_error_for_missing_file():
 
 
 @pytest.mark.unit
-def test_load_data_sanitizes_sequences_removes_gaps(shehata_sample_csv, tmp_path):
+def test_load_data_sanitizes_sequences_removes_gaps(
+    shehata_sample_csv: Path, tmp_path: Path
+) -> None:
     """Verify load_data removes IMGT gap characters from sequences."""
     # Arrange - Add gaps to sequences
     df_with_gaps = pd.read_csv(shehata_sample_csv)
@@ -192,7 +196,7 @@ def test_load_data_sanitizes_sequences_removes_gaps(shehata_sample_csv, tmp_path
 
 
 @pytest.mark.unit
-def test_calculate_psr_threshold_uses_default_percentile():
+def test_calculate_psr_threshold_uses_default_percentile() -> None:
     """Verify calculate_psr_threshold uses 98.24th percentile by default."""
     # Arrange
     dataset = ShehataDataset()
@@ -207,7 +211,7 @@ def test_calculate_psr_threshold_uses_default_percentile():
 
 
 @pytest.mark.unit
-def test_calculate_psr_threshold_accepts_custom_percentile():
+def test_calculate_psr_threshold_accepts_custom_percentile() -> None:
     """Verify calculate_psr_threshold accepts custom percentile."""
     # Arrange
     dataset = ShehataDataset()
@@ -222,7 +226,7 @@ def test_calculate_psr_threshold_accepts_custom_percentile():
 
 
 @pytest.mark.unit
-def test_load_data_uses_manual_psr_threshold(shehata_sample_excel):
+def test_load_data_uses_manual_psr_threshold(shehata_sample_excel: Path) -> None:
     """Verify load_data accepts manual PSR threshold."""
     # Arrange
     dataset = ShehataDataset()
@@ -246,7 +250,7 @@ def test_load_data_uses_manual_psr_threshold(shehata_sample_excel):
 
 
 @pytest.mark.unit
-def test_psr_above_threshold_is_nonspecific(shehata_sample_excel):
+def test_psr_above_threshold_is_nonspecific(shehata_sample_excel: Path) -> None:
     """Verify PSR > threshold → label=1 (non-specific)."""
     # Arrange
     dataset = ShehataDataset()
@@ -260,7 +264,7 @@ def test_psr_above_threshold_is_nonspecific(shehata_sample_excel):
 
 
 @pytest.mark.unit
-def test_psr_below_threshold_is_specific(shehata_sample_excel):
+def test_psr_below_threshold_is_specific(shehata_sample_excel: Path) -> None:
     """Verify PSR ≤ threshold → label=0 (specific)."""
     # Arrange
     dataset = ShehataDataset()
@@ -277,7 +281,7 @@ def test_psr_below_threshold_is_specific(shehata_sample_excel):
 
 
 @pytest.mark.unit
-def test_load_data_includes_b_cell_subset(shehata_sample_excel):
+def test_load_data_includes_b_cell_subset(shehata_sample_excel: Path) -> None:
     """Verify load_data includes B cell subset metadata."""
     # Arrange
     dataset = ShehataDataset()
@@ -297,7 +301,7 @@ def test_load_data_includes_b_cell_subset(shehata_sample_excel):
 
 
 @pytest.mark.unit
-def test_complete_shehata_workflow(shehata_sample_excel):
+def test_complete_shehata_workflow(shehata_sample_excel: Path) -> None:
     """Verify complete Shehata dataset workflow: init → load → validate."""
     # Arrange
     dataset = ShehataDataset()

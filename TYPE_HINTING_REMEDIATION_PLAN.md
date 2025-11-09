@@ -6,7 +6,7 @@ _Last updated: 2025-11-08_
 
 **TL;DR:** Another AI enforced strict mypy (`disallow_untyped_defs = true`) without adding type annotations to test/preprocessing code. Result: **546 errors** across **46 files**. Production code (`src/`) is clean. This is **mechanical but time-consuming** (5-7 hours). Plan below provides step-by-step instructions to fix systematically.
 
-**Status:** Phases A & B complete; Phase C underway (tests/unit/data ✅, remaining clusters pending).
+**Status:** Phases A & B complete; Phase C underway (tests/unit/data ✅, tests/unit/datasets ✅, remaining clusters pending).
 
 **Impact:** Blocks `make all` and CI until fixed.
 
@@ -33,7 +33,8 @@ Type enforcement landed before the codebase was ready. This blocks CI / `make al
 - ✅ Phase A – Inventory completed via `.mypy_failures.txt` (546-error baseline)
 - ✅ Phase B – Fixtures typed (`tests/fixtures/mock_*`) – commit `3352ad7`
 - ✅ Phase C (kickoff) – `tests/unit/data/test_loaders.py` typed – commit `0dcb166`
-- ⏳ Remaining ≈513 errors (546 − 33 fixed) across the rest of Phases C–E
+- ✅ Phase C – `tests/unit/datasets/*` typed (base, annotation, boughter, harvey, jain, shehata) – commit `fix: Add type annotations to dataset tests`
+- ⏳ Remaining ≈373 errors (546 − 173 fixed) across the rest of Phases C–E
 
 ## 4. Scope
 
@@ -110,9 +111,9 @@ git commit -m "fix: Add type annotations to test fixtures"
 
 **Files to Fix (in order):**
 1. ✅ `tests/unit/data/test_loaders.py` (22 errors) – done 2025-11-08 (commit `0dcb166`)
-2. `tests/unit/datasets/test_base.py` (many errors) - 30 min
-3. `tests/unit/datasets/test_base_annotation.py` (many errors) - 30 min
-4. `tests/unit/datasets/test_*.py` (remaining dataset tests) - 1 hour
+2. ✅ `tests/unit/datasets/test_base.py` (many errors) – included in commit `fix: Add type annotations to dataset tests`
+3. ✅ `tests/unit/datasets/test_base_annotation.py` (many errors) – included in commit `fix: Add type annotations to dataset tests`
+4. ✅ `tests/unit/datasets/test_*.py` (boughter, harvey, jain, shehata) – included in commit `fix: Add type annotations to dataset tests`
 5. `tests/unit/core/test_*.py` (99 errors) - 1 hour
 6. `tests/unit/cli/test_*.py` (76 errors) - 45 min
 7. `tests/integration/test_*.py` (88 errors) - 45 min
@@ -272,7 +273,7 @@ git commit -m "chore: Complete type annotation remediation - mypy clean"
 
 - [x] Phase B: Fix `tests/fixtures/` (11 errors)
 - [x] Phase C: Fix `tests/unit/data/` (22 errors)
-- [ ] Phase C: Fix `tests/unit/datasets/` (140 errors)
+- [x] Phase C: Fix `tests/unit/datasets/` (140 errors)
 - [ ] Phase C: Fix `tests/unit/core/` (99 errors)
 - [ ] Phase C: Fix `tests/unit/cli/` (76 errors)
 - [ ] Phase C: Fix `tests/integration/` (88 errors)

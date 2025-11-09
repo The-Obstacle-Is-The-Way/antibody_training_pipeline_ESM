@@ -21,6 +21,9 @@ Date: 2025-11-08
 Phase: Coverage improvement - Phase 2
 """
 
+from __future__ import annotations
+
+from typing import Any
 from unittest.mock import patch
 
 import pandas as pd
@@ -36,7 +39,7 @@ from antibody_training_esm.datasets.base import AntibodyDataset
 class ConcreteDataset(AntibodyDataset):
     """Concrete implementation of AntibodyDataset for testing."""
 
-    def load_data(self, **kwargs) -> pd.DataFrame:
+    def load_data(self, **kwargs: Any) -> pd.DataFrame:
         """Return a simple test DataFrame"""
         return pd.DataFrame(
             {
@@ -58,7 +61,7 @@ class ConcreteDataset(AntibodyDataset):
 
 
 @pytest.mark.unit
-def test_annotate_sequence_success():
+def test_annotate_sequence_success() -> None:
     """Test successful ANARCI annotation of single sequence"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -90,7 +93,7 @@ def test_annotate_sequence_success():
 
 
 @pytest.mark.unit
-def test_annotate_sequence_riot_na_returns_none():
+def test_annotate_sequence_riot_na_returns_none() -> None:
     """Test annotate_sequence when riot_na fails to annotate"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -106,7 +109,7 @@ def test_annotate_sequence_riot_na_returns_none():
 
 
 @pytest.mark.unit
-def test_annotate_sequence_all_annotations_empty():
+def test_annotate_sequence_all_annotations_empty() -> None:
     """Test annotate_sequence when ANARCI returns all empty strings"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -132,7 +135,7 @@ def test_annotate_sequence_all_annotations_empty():
 
 
 @pytest.mark.unit
-def test_annotate_sequence_riot_na_raises_exception():
+def test_annotate_sequence_riot_na_raises_exception() -> None:
     """Test annotate_sequence handles exceptions from riot_na"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -148,7 +151,7 @@ def test_annotate_sequence_riot_na_raises_exception():
 
 
 @pytest.mark.unit
-def test_annotate_sequence_riot_na_import_error():
+def test_annotate_sequence_riot_na_import_error() -> None:
     """Test annotate_sequence handles ImportError when riot_na not installed"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -165,7 +168,7 @@ def test_annotate_sequence_riot_na_import_error():
 
 
 @pytest.mark.unit
-def test_annotate_sequence_heavy_chain():
+def test_annotate_sequence_heavy_chain() -> None:
     """Test annotate_sequence correctly passes heavy chain ('H') to riot_na"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -191,7 +194,7 @@ def test_annotate_sequence_heavy_chain():
 
 
 @pytest.mark.unit
-def test_annotate_sequence_light_chain():
+def test_annotate_sequence_light_chain() -> None:
     """Test annotate_sequence correctly passes light chain ('L') to riot_na"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -217,7 +220,7 @@ def test_annotate_sequence_light_chain():
 
 
 @pytest.mark.unit
-def test_annotate_sequence_handles_missing_fields_in_result():
+def test_annotate_sequence_handles_missing_fields_in_result() -> None:
     """Test annotate_sequence fills in missing fields with empty strings"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -252,7 +255,7 @@ def test_annotate_sequence_handles_missing_fields_in_result():
 
 
 @pytest.mark.unit
-def test_annotate_all_vh_only():
+def test_annotate_all_vh_only() -> None:
     """Test annotate_all annotates VH-only dataset (nanobody)"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -295,7 +298,7 @@ def test_annotate_all_vh_only():
 
 
 @pytest.mark.unit
-def test_annotate_all_vh_vl_paired():
+def test_annotate_all_vh_vl_paired() -> None:
     """Test annotate_all annotates paired VH+VL dataset"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -327,7 +330,9 @@ def test_annotate_all_vh_vl_paired():
         "FWR4": "FL4",
     }
 
-    def mock_riot_side_effect(seq_id, sequence, chain):
+    def mock_riot_side_effect(
+        seq_id: str, sequence: str, chain: str
+    ) -> dict[str, str] | None:
         if chain == "H":
             return mock_vh_result
         elif chain == "L":
@@ -354,7 +359,7 @@ def test_annotate_all_vh_vl_paired():
 
 
 @pytest.mark.unit
-def test_annotate_all_partial_failures():
+def test_annotate_all_partial_failures() -> None:
     """Test annotate_all handles partial annotation failures gracefully"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -376,7 +381,9 @@ def test_annotate_all_partial_failures():
         "FWR4": "",
     }
 
-    def mock_riot_side_effect(seq_id, sequence, chain):
+    def mock_riot_side_effect(
+        seq_id: str, sequence: str, chain: str
+    ) -> dict[str, str] | None:
         if "FAIL" in seq_id:
             return None  # Annotation failed for this sequence
         return mock_vh_result
@@ -399,7 +406,7 @@ def test_annotate_all_partial_failures():
 
 
 @pytest.mark.unit
-def test_annotate_all_handles_nan_vh_sequences():
+def test_annotate_all_handles_nan_vh_sequences() -> None:
     """Test annotate_all skips NaN VH sequences"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -438,7 +445,7 @@ def test_annotate_all_handles_nan_vh_sequences():
 
 
 @pytest.mark.unit
-def test_annotate_all_handles_nan_vl_sequences():
+def test_annotate_all_handles_nan_vl_sequences() -> None:
     """Test annotate_all skips NaN VL sequences"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -470,7 +477,9 @@ def test_annotate_all_handles_nan_vl_sequences():
         "FWR4": "FL4",
     }
 
-    def mock_riot_side_effect(seq_id, sequence, chain):
+    def mock_riot_side_effect(
+        seq_id: str, sequence: str, chain: str
+    ) -> dict[str, str] | None:
         if chain == "H":
             return mock_vh_result
         elif chain == "L":
@@ -493,7 +502,7 @@ def test_annotate_all_handles_nan_vl_sequences():
 
 
 @pytest.mark.unit
-def test_annotate_all_adds_all_seven_annotation_columns_per_chain():
+def test_annotate_all_adds_all_seven_annotation_columns_per_chain() -> None:
     """Test annotate_all adds all 7 annotation columns (4 FWRs + 3 CDRs) per chain"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -550,7 +559,7 @@ def test_annotate_all_adds_all_seven_annotation_columns_per_chain():
 
 
 @pytest.mark.unit
-def test_annotate_all_preserves_original_columns():
+def test_annotate_all_preserves_original_columns() -> None:
     """Test annotate_all preserves original DataFrame columns"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -590,7 +599,7 @@ def test_annotate_all_preserves_original_columns():
 
 
 @pytest.mark.unit
-def test_annotate_all_uses_id_column_for_sequence_id():
+def test_annotate_all_uses_id_column_for_sequence_id() -> None:
     """Test annotate_all uses 'id' column for sequence identifiers"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -623,7 +632,7 @@ def test_annotate_all_uses_id_column_for_sequence_id():
 
 
 @pytest.mark.unit
-def test_annotate_all_falls_back_to_row_index_if_no_id_column():
+def test_annotate_all_falls_back_to_row_index_if_no_id_column() -> None:
     """Test annotate_all uses row index as fallback when 'id' column missing"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")

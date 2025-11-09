@@ -20,6 +20,8 @@ Date: 2025-11-07
 Author: Claude Code
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 
 import pandas as pd
@@ -33,7 +35,7 @@ from antibody_training_esm.datasets.jain import JainDataset
 
 
 @pytest.mark.unit
-def test_jain_dataset_initializes_with_default_output_dir():
+def test_jain_dataset_initializes_with_default_output_dir() -> None:
     """Verify JainDataset initializes with default output directory"""
     # Arrange & Act
     dataset = JainDataset()
@@ -44,7 +46,7 @@ def test_jain_dataset_initializes_with_default_output_dir():
 
 
 @pytest.mark.unit
-def test_jain_dataset_initializes_with_custom_output_dir(tmp_path):
+def test_jain_dataset_initializes_with_custom_output_dir(tmp_path: Path) -> None:
     """Verify JainDataset can use custom output directory"""
     # Arrange
     custom_dir = tmp_path / "custom_jain_output"
@@ -58,7 +60,7 @@ def test_jain_dataset_initializes_with_custom_output_dir(tmp_path):
 
 
 @pytest.mark.unit
-def test_jain_dataset_returns_full_antibody_fragments():
+def test_jain_dataset_returns_full_antibody_fragments() -> None:
     """Verify Jain dataset uses 16 full antibody fragment types"""
     # Arrange
     dataset = JainDataset()
@@ -77,7 +79,7 @@ def test_jain_dataset_returns_full_antibody_fragments():
 
 
 @pytest.mark.unit
-def test_load_data_reads_mock_csv(jain_sample_csv):
+def test_load_data_reads_mock_csv(jain_sample_csv: Path) -> None:
     """Verify load_data can read mock Jain CSV file"""
     # Arrange
     dataset = JainDataset()
@@ -95,7 +97,7 @@ def test_load_data_reads_mock_csv(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_has_required_columns(jain_sample_csv):
+def test_load_data_has_required_columns(jain_sample_csv: Path) -> None:
     """Verify loaded data has all required columns"""
     # Arrange
     dataset = JainDataset()
@@ -120,7 +122,7 @@ def test_load_data_has_required_columns(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_contains_valid_labels(jain_sample_csv):
+def test_load_data_contains_valid_labels(jain_sample_csv: Path) -> None:
     """Verify labels are binary (0 or 1)"""
     # Arrange
     dataset = JainDataset()
@@ -133,7 +135,7 @@ def test_load_data_contains_valid_labels(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_contains_valid_sequences(jain_sample_csv):
+def test_load_data_contains_valid_sequences(jain_sample_csv: Path) -> None:
     """Verify sequences are non-empty strings"""
     # Arrange
     dataset = JainDataset()
@@ -154,7 +156,7 @@ def test_load_data_contains_valid_sequences(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_filter_elisa_1to3_removes_mild_aggregators(jain_sample_csv):
+def test_filter_elisa_1to3_removes_mild_aggregators(jain_sample_csv: Path) -> None:
     """Verify filter_elisa_1to3 removes ELISA flags 1-3"""
     # Arrange
     dataset = JainDataset()
@@ -172,7 +174,7 @@ def test_filter_elisa_1to3_removes_mild_aggregators(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_filter_elisa_1to3_keeps_flag_0(jain_sample_csv):
+def test_filter_elisa_1to3_keeps_flag_0(jain_sample_csv: Path) -> None:
     """Verify filter_elisa_1to3 keeps ELISA flag 0 (clean)"""
     # Arrange
     dataset = JainDataset()
@@ -187,7 +189,7 @@ def test_filter_elisa_1to3_keeps_flag_0(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_filter_elisa_1to3_keeps_flag_4plus(jain_sample_csv):
+def test_filter_elisa_1to3_keeps_flag_4plus(jain_sample_csv: Path) -> None:
     """Verify filter_elisa_1to3 keeps ELISA flags 4+ (high polyreactivity)"""
     # Arrange
     dataset = JainDataset()
@@ -203,7 +205,7 @@ def test_filter_elisa_1to3_keeps_flag_4plus(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_filter_elisa_1to3_preserves_dataframe_columns(jain_sample_csv):
+def test_filter_elisa_1to3_preserves_dataframe_columns(jain_sample_csv: Path) -> None:
     """Verify filtering doesn't drop required columns"""
     # Arrange
     dataset = JainDataset()
@@ -223,7 +225,7 @@ def test_filter_elisa_1to3_preserves_dataframe_columns(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_full_stage_returns_all_antibodies(jain_sample_csv):
+def test_load_data_full_stage_returns_all_antibodies(jain_sample_csv: Path) -> None:
     """Verify 'full' stage loads all 10 mock antibodies"""
     # Arrange
     dataset = JainDataset()
@@ -236,7 +238,7 @@ def test_load_data_full_stage_returns_all_antibodies(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_ssot_stage_filters_elisa_1to3(jain_sample_csv):
+def test_load_data_ssot_stage_filters_elisa_1to3(jain_sample_csv: Path) -> None:
     """Verify 'ssot' stage applies ELISA 1-3 filtering"""
     # Arrange
     dataset = JainDataset()
@@ -253,7 +255,7 @@ def test_load_data_ssot_stage_filters_elisa_1to3(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_parity_stage_is_smallest(jain_sample_csv):
+def test_load_data_parity_stage_is_smallest(jain_sample_csv: Path) -> None:
     """Verify 'parity' stage has fewest antibodies (most filtering)"""
     # Arrange
     dataset = JainDataset()
@@ -286,7 +288,7 @@ def test_load_data_parity_stage_is_smallest(jain_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_raises_error_for_missing_file():
+def test_load_data_raises_error_for_missing_file() -> None:
     """Verify load_data raises FileNotFoundError for missing CSV"""
     # Arrange
     dataset = JainDataset()
@@ -302,7 +304,7 @@ def test_load_data_raises_error_for_missing_file():
 
 
 @pytest.mark.unit
-def test_reclassify_5_antibodies_adds_metadata_columns():
+def test_reclassify_5_antibodies_adds_metadata_columns() -> None:
     """Verify reclassify_5_antibodies adds metadata columns"""
     # Arrange
     dataset = JainDataset()
@@ -324,7 +326,7 @@ def test_reclassify_5_antibodies_adds_metadata_columns():
 
 
 @pytest.mark.unit
-def test_reclassify_5_antibodies_tier_a_psr():
+def test_reclassify_5_antibodies_tier_a_psr() -> None:
     """Verify Tier A antibodies (PSR >0.4) are reclassified"""
     # Arrange
     dataset = JainDataset()
@@ -350,7 +352,7 @@ def test_reclassify_5_antibodies_tier_a_psr():
 
 
 @pytest.mark.unit
-def test_reclassify_5_antibodies_tier_b_tm():
+def test_reclassify_5_antibodies_tier_b_tm() -> None:
     """Verify Tier B antibody (extreme Tm) is reclassified"""
     # Arrange
     dataset = JainDataset()
@@ -373,7 +375,7 @@ def test_reclassify_5_antibodies_tier_b_tm():
 
 
 @pytest.mark.unit
-def test_reclassify_5_antibodies_tier_c_clinical():
+def test_reclassify_5_antibodies_tier_c_clinical() -> None:
     """Verify Tier C antibody (clinical evidence) is reclassified"""
     # Arrange
     dataset = JainDataset()
@@ -390,7 +392,7 @@ def test_reclassify_5_antibodies_tier_c_clinical():
 
 
 @pytest.mark.unit
-def test_reclassify_5_antibodies_preserves_other_antibodies():
+def test_reclassify_5_antibodies_preserves_other_antibodies() -> None:
     """Verify reclassification doesn't affect other antibodies"""
     # Arrange
     dataset = JainDataset()
@@ -422,7 +424,7 @@ def test_reclassify_5_antibodies_preserves_other_antibodies():
 
 
 @pytest.mark.unit
-def test_remove_30_by_psr_acsins_keeps_all_nonspecific():
+def test_remove_30_by_psr_acsins_keeps_all_nonspecific() -> None:
     """Verify removal only affects specific antibodies, not non-specific"""
     # Arrange
     dataset = JainDataset()
@@ -456,7 +458,7 @@ def test_remove_30_by_psr_acsins_keeps_all_nonspecific():
 
 
 @pytest.mark.unit
-def test_remove_30_by_psr_acsins_sorts_by_psr_primary():
+def test_remove_30_by_psr_acsins_sorts_by_psr_primary() -> None:
     """Verify removal prioritizes PSR over AC-SINS"""
     # Arrange
     dataset = JainDataset()
@@ -491,7 +493,7 @@ def test_remove_30_by_psr_acsins_sorts_by_psr_primary():
 
 
 @pytest.mark.unit
-def test_remove_30_by_psr_acsins_uses_acsins_tiebreaker():
+def test_remove_30_by_psr_acsins_uses_acsins_tiebreaker() -> None:
     """Verify AC-SINS is used as tiebreaker when PSR is equal"""
     # Arrange
     dataset = JainDataset()
@@ -529,7 +531,7 @@ def test_remove_30_by_psr_acsins_uses_acsins_tiebreaker():
 
 
 @pytest.mark.unit
-def test_full_jain_dataset_workflow(jain_sample_csv, tmp_path):
+def test_full_jain_dataset_workflow(jain_sample_csv: Path, tmp_path: Path) -> None:
     """Verify complete Jain dataset initialization and loading workflow"""
     # Arrange
     output_dir = tmp_path / "jain_output"
@@ -558,7 +560,7 @@ def test_full_jain_dataset_workflow(jain_sample_csv, tmp_path):
 
 
 @pytest.mark.unit
-def test_jain_constants_match_novo_parity():
+def test_jain_constants_match_novo_parity() -> None:
     """Verify Jain constants match Novo Nordisk parity requirements"""
     # Arrange & Act
     dataset = JainDataset()

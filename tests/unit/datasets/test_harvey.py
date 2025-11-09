@@ -16,6 +16,8 @@ Testing philosophy:
 - Follow AAA pattern (Arrange-Act-Assert)
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 
 import pandas as pd
@@ -27,7 +29,7 @@ from antibody_training_esm.datasets.harvey import HarveyDataset
 
 
 @pytest.fixture
-def harvey_high_csv():
+def harvey_high_csv() -> Path:
     """Path to mock Harvey high polyreactivity CSV (5 sequences)."""
     return (
         Path(__file__).parent.parent.parent
@@ -36,7 +38,7 @@ def harvey_high_csv():
 
 
 @pytest.fixture
-def harvey_low_csv():
+def harvey_low_csv() -> Path:
     """Path to mock Harvey low polyreactivity CSV (7 sequences)."""
     return (
         Path(__file__).parent.parent.parent
@@ -48,7 +50,7 @@ def harvey_low_csv():
 
 
 @pytest.mark.unit
-def test_harvey_dataset_initializes_with_default_output_dir():
+def test_harvey_dataset_initializes_with_default_output_dir() -> None:
     """Verify HarveyDataset initializes with default output directory."""
     # Arrange & Act
     dataset = HarveyDataset()
@@ -59,7 +61,7 @@ def test_harvey_dataset_initializes_with_default_output_dir():
 
 
 @pytest.mark.unit
-def test_harvey_dataset_initializes_with_custom_output_dir(tmp_path):
+def test_harvey_dataset_initializes_with_custom_output_dir(tmp_path: Path) -> None:
     """Verify HarveyDataset accepts custom output directory."""
     # Arrange
     custom_dir = tmp_path / "custom_harvey"
@@ -73,7 +75,7 @@ def test_harvey_dataset_initializes_with_custom_output_dir(tmp_path):
 
 
 @pytest.mark.unit
-def test_harvey_dataset_returns_nanobody_fragments():
+def test_harvey_dataset_returns_nanobody_fragments() -> None:
     """Verify HarveyDataset returns 6 nanobody fragment types (VHH only)."""
     # Arrange
     dataset = HarveyDataset()
@@ -94,7 +96,9 @@ def test_harvey_dataset_returns_nanobody_fragments():
 
 
 @pytest.mark.unit
-def test_load_data_reads_both_csv_files(harvey_high_csv, harvey_low_csv):
+def test_load_data_reads_both_csv_files(
+    harvey_high_csv: Path, harvey_low_csv: Path
+) -> None:
     """Verify load_data reads and combines high/low polyreactivity CSVs."""
     # Arrange
     dataset = HarveyDataset()
@@ -113,7 +117,9 @@ def test_load_data_reads_both_csv_files(harvey_high_csv, harvey_low_csv):
 
 
 @pytest.mark.unit
-def test_load_data_assigns_correct_labels(harvey_high_csv, harvey_low_csv):
+def test_load_data_assigns_correct_labels(
+    harvey_high_csv: Path, harvey_low_csv: Path
+) -> None:
     """Verify high polyreactivity → label=1, low polyreactivity → label=0."""
     # Arrange
     dataset = HarveyDataset()
@@ -132,7 +138,9 @@ def test_load_data_assigns_correct_labels(harvey_high_csv, harvey_low_csv):
 
 
 @pytest.mark.unit
-def test_load_data_extracts_valid_sequences(harvey_high_csv, harvey_low_csv):
+def test_load_data_extracts_valid_sequences(
+    harvey_high_csv: Path, harvey_low_csv: Path
+) -> None:
     """Verify IMGT extraction produces valid antibody sequences."""
     # Arrange
     dataset = HarveyDataset()
@@ -152,7 +160,7 @@ def test_load_data_extracts_valid_sequences(harvey_high_csv, harvey_low_csv):
 
 
 @pytest.mark.unit
-def test_load_data_raises_error_for_missing_high_csv():
+def test_load_data_raises_error_for_missing_high_csv() -> None:
     """Verify load_data raises FileNotFoundError for missing high CSV."""
     # Arrange
     dataset = HarveyDataset()
@@ -165,7 +173,7 @@ def test_load_data_raises_error_for_missing_high_csv():
 
 
 @pytest.mark.unit
-def test_load_data_raises_error_for_missing_low_csv(harvey_high_csv):
+def test_load_data_raises_error_for_missing_low_csv(harvey_high_csv: Path) -> None:
     """Verify load_data raises FileNotFoundError for missing low CSV."""
     # Arrange
     dataset = HarveyDataset()
@@ -178,7 +186,9 @@ def test_load_data_raises_error_for_missing_low_csv(harvey_high_csv):
 
 
 @pytest.mark.unit
-def test_load_data_creates_sequence_ids(harvey_high_csv, harvey_low_csv):
+def test_load_data_creates_sequence_ids(
+    harvey_high_csv: Path, harvey_low_csv: Path
+) -> None:
     """Verify load_data creates unique sequence IDs."""
     # Arrange
     dataset = HarveyDataset()
@@ -198,7 +208,7 @@ def test_load_data_creates_sequence_ids(harvey_high_csv, harvey_low_csv):
 
 
 @pytest.mark.unit
-def test_extract_sequence_from_imgt_removes_gaps():
+def test_extract_sequence_from_imgt_removes_gaps() -> None:
     """Verify IMGT extraction removes gap characters (-)."""
     # Arrange
     dataset = HarveyDataset()
@@ -215,7 +225,7 @@ def test_extract_sequence_from_imgt_removes_gaps():
 
 
 @pytest.mark.unit
-def test_extract_sequence_from_imgt_handles_missing_values():
+def test_extract_sequence_from_imgt_handles_missing_values() -> None:
     """Verify IMGT extraction handles NaN/missing values."""
     # Arrange
     dataset = HarveyDataset()
@@ -231,7 +241,7 @@ def test_extract_sequence_from_imgt_handles_missing_values():
 
 
 @pytest.mark.unit
-def test_extract_sequence_from_imgt_concatenates_correctly():
+def test_extract_sequence_from_imgt_concatenates_correctly() -> None:
     """Verify IMGT extraction concatenates positions in order."""
     # Arrange
     dataset = HarveyDataset()
@@ -252,7 +262,9 @@ def test_extract_sequence_from_imgt_concatenates_correctly():
 
 
 @pytest.mark.unit
-def test_harvey_dataset_has_no_light_chain(harvey_high_csv, harvey_low_csv):
+def test_harvey_dataset_has_no_light_chain(
+    harvey_high_csv: Path, harvey_low_csv: Path
+) -> None:
     """Verify Harvey dataset contains VH_sequence only (no VL_sequence)."""
     # Arrange
     dataset = HarveyDataset()
@@ -268,7 +280,7 @@ def test_harvey_dataset_has_no_light_chain(harvey_high_csv, harvey_low_csv):
 
 
 @pytest.mark.unit
-def test_harvey_dataset_uses_nanobody_fragment_constant():
+def test_harvey_dataset_uses_nanobody_fragment_constant() -> None:
     """Verify Harvey uses NANOBODY_FRAGMENTS constant."""
     # Arrange
     dataset = HarveyDataset()
@@ -285,7 +297,7 @@ def test_harvey_dataset_uses_nanobody_fragment_constant():
 
 
 @pytest.mark.unit
-def test_complete_harvey_workflow(harvey_high_csv, harvey_low_csv):
+def test_complete_harvey_workflow(harvey_high_csv: Path, harvey_low_csv: Path) -> None:
     """Verify complete Harvey dataset workflow: init → load → validate."""
     # Arrange
     dataset = HarveyDataset()
