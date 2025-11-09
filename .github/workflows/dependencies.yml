@@ -9,6 +9,11 @@ on:
   # Manual trigger
   workflow_dispatch:
 
+# Prevent overlapping weekly runs
+concurrency:
+  group: dependency-${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   # Update dependencies and create PR if tests pass
   update-deps:
@@ -47,6 +52,7 @@ jobs:
 
     - name: Run unit + integration tests (skip E2E)
       run: |
+        set -o pipefail
         # Run fast tests to validate updates
         uv run pytest tests/unit/ tests/integration/ \
           -v \
@@ -83,10 +89,6 @@ jobs:
           - Updated via `uv sync --upgrade`
           - All unit + integration tests passed
           - See diff for details
-
-          🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-          Co-Authored-By: Claude <noreply@anthropic.com>
         branch: automated/dependency-update-${{ github.run_number }}
         delete-branch: true
         title: 'chore(deps): Weekly dependency update'
