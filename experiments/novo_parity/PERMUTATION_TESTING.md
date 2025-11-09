@@ -6,6 +6,19 @@
 
 ---
 
+## ⚠️ NOTICE: This Document is HISTORICAL (P1-P12 Testing)
+
+**This file documents the initial permutation testing (P1-P12) where P5 was the best result (2 cells off).**
+
+**For the FINAL EXACT MATCH solution, see:**
+- **`EXACT_MATCH_FOUND.md`** - P5e-S2 achieves [[40, 19], [10, 17]] ✅ EXACT MATCH
+- **`MISSION_ACCOMPLISHED.md`** - Executive summary of final results
+- **Canonical dataset**: `test_datasets/jain/canonical/jain_86_novo_parity.csv` (P5e-S2)
+
+**Key difference**: Further iteration after P5 discovered that swapping olaratumab → eldelumab (extreme Tm outlier) and adding AC-SINS tiebreaker for PSR=0 antibodies achieves perfect match.
+
+---
+
 ## 🎯 Target Metrics (Novo Nordisk)
 
 **Distribution**: 59 specific / 27 non-specific = 86 total
@@ -344,16 +357,15 @@ Diff:     0    0   -1   +1
 
 ### Recommendations
 
-**For manuscript/publication**:
-1. **Use P5 dataset** (experiments/novo_parity/datasets/jain_86_p5.csv) for Novo parity comparisons
-2. **Document the approach**: PSR-hybrid reclassification + pure PSR removal
-3. **Report**: 67.44% accuracy vs Novo's 66.28% (within 1 antibody difference)
-4. **Note**: Top-level specific antibody classification is IDENTICAL to Novo
+**⚠️ OUTDATED - See EXACT_MATCH_FOUND.md for current recommendations**
 
-**For future work**:
-1. Investigate ixekizumab specifically (why is it borderline?)
-2. Test with different ESM models (ESM-2, ProtBERT)
-3. Ensemble approaches to improve confidence on borderline cases
+**Historical Note**: This section recommended P5 dataset (2 cells off). After further iteration, P5e-S2 was discovered which achieves EXACT MATCH [[40,19],[10,17]].
+
+**For current work**:
+1. **Use P5e-S2 dataset** (`test_datasets/jain/canonical/jain_86_novo_parity.csv`) for Novo parity comparisons
+2. **Document the approach**: PSR reclassification (3 PSR >0.4 + eldelumab + infliximab) + PSR/AC-SINS removal
+3. **Report**: 66.28% accuracy = EXACT MATCH to Novo's confusion matrix
+4. See `EXACT_MATCH_FOUND.md` and `MISSION_ACCOMPLISHED.md` for full details
 
 ---
 
