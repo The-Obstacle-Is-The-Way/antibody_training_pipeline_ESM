@@ -35,7 +35,7 @@ class MockESMModel:
         embeddings = outputs.hidden_states[-1]  # Shape: (batch, seq_len, 1280)
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Initialize mock model (accepts any args to match real API).
 
@@ -46,12 +46,12 @@ class MockESMModel:
         self.device_type = "cpu"
         self.eval_mode = False
 
-    def to(self, device: str):
+    def to(self, device: str) -> "MockESMModel":
         """Mock device assignment."""
         self.device_type = device
         return self
 
-    def eval(self):
+    def eval(self) -> "MockESMModel":
         """Mock eval mode (no gradient computation)."""
         self.eval_mode = True
         return self
@@ -61,7 +61,7 @@ class MockESMModel:
         input_ids: torch.Tensor,
         attention_mask: torch.Tensor,
         output_hidden_states: bool = False,
-    ):
+    ) -> Any:
         """
         Mock forward pass (returns random embeddings).
 
@@ -82,7 +82,7 @@ class MockESMModel:
 
         # Mock output object (mimics transformers.modeling_outputs)
         class MockOutput:
-            def __init__(self, hidden_states):
+            def __init__(self, hidden_states: torch.Tensor) -> None:
                 # Return tuple of layers (we only populate the last layer)
                 self.hidden_states = (None, hidden_states)
 
@@ -102,7 +102,7 @@ class MockTokenizer:
         input_ids = inputs["input_ids"]  # Shape: (batch, seq_len)
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """
         Initialize mock tokenizer (accepts any args to match real API).
 
@@ -119,8 +119,8 @@ class MockTokenizer:
         padding: bool = True,
         truncation: bool = False,
         max_length: int | None = None,
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> dict[str, torch.Tensor]:
         """
         Mock tokenization (returns random token IDs).
 
@@ -183,7 +183,7 @@ class MockClassifier:
         self.is_fitted = False
         self.classes_ = np.array([0, 1])
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "MockClassifier":
         """
         Mock fit (just marks as fitted).
 
@@ -239,7 +239,7 @@ class MockClassifier:
         """Mock get_params (sklearn API)."""
         return self.params.copy()
 
-    def set_params(self, **params):
+    def set_params(self, **params: Any) -> "MockClassifier":
         """Mock set_params (sklearn API)."""
         self.params.update(params)
         return self
