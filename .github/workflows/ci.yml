@@ -186,7 +186,7 @@ jobs:
       run: uv sync --frozen --no-dev
 
     - name: Install security tools
-      run: uv pip install pip-audit safety
+      run: uv pip install "pip-audit[sarif]" safety
 
     - name: Verify pip-audit installation
       run: |
@@ -195,12 +195,12 @@ jobs:
     - name: Run pip-audit (installed environment)
       run: |
         uv run python -m pip_audit --progress-spinner=off --format json --output pip-audit.json
-        uv run python -m pip_audit --progress-spinner=off --format sarif --output pip-audit.sarif || true
+        uv run python -m pip_audit --progress-spinner=off --format sarif --output pip-audit.sarif
       continue-on-error: false  # ✅ ENFORCED: Fail CI if CVEs are introduced
 
     - name: Upload pip-audit SARIF to GitHub Security
       uses: github/codeql-action/upload-sarif@v3
-      if: always()
+      if: always() && hashFiles('pip-audit.sarif') != ''
       with:
         sarif_file: pip-audit.sarif
         category: pip-audit
