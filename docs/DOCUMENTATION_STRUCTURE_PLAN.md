@@ -601,22 +601,35 @@ This plan follows modern documentation frameworks:
 
 ---
 
-### Phase 3: Create User Guide (Additive - Don't Move Old Files Yet)
+### Phase 3: Create User Guide ✅ **COMPLETE**
 
 **Priority:** P2 - User-facing docs
+
+**Status:** ✅ **ALL TASKS COMPLETE** (completed 2025-11-09)
 
 **Strategy:** Write new guides WITHOUT archiving old docs (parallel operation to avoid broken links)
 
 **Estimated Time:** 3-4 hours
 
-- [ ] Write `user-guide/installation.md` (extract from `README.md`)
-- [ ] Write `user-guide/getting-started.md` (extract from `README.md` + `CLAUDE.md`)
-- [ ] Write `user-guide/training.md` (extract from `CLAUDE.md`)
-- [ ] Write `user-guide/testing.md` (extract from `CLAUDE.md`)
-- [ ] Write `user-guide/preprocessing.md` (overview + links to dataset docs)
-- [ ] Write `user-guide/troubleshooting.md` (MPS leak from archive, common errors)
-- [ ] Link from `docs/README.md` to new guides (update navigation hub)
-- [ ] DO NOT delete or move old files yet
+- [x] Write `user-guide/installation.md` (extract from `README.md`)
+- [x] Write `user-guide/getting-started.md` (extract from `README.md` + `CLAUDE.md`)
+- [x] Write `user-guide/training.md` (extract from `CLAUDE.md`)
+- [x] Write `user-guide/testing.md` (extract from `CLAUDE.md`)
+- [x] Write `user-guide/preprocessing.md` (overview + links to dataset docs)
+- [x] Write `user-guide/troubleshooting.md` (MPS leak from archive, common errors)
+- [x] Link from `docs/README.md` to new guides (update navigation hub)
+- [x] DO NOT delete or move old files yet
+
+**Deliverables:**
+- ✅ Created `docs/user-guide/` with 6 comprehensive guides (total: ~70KB)
+- ✅ `installation.md` (4.8KB) - uv setup, environment configuration
+- ✅ `getting-started.md` (6.7KB) - quickstart tutorial, first training run
+- ✅ `training.md` (11.1KB) - config structure, CLI usage, hyperparameter tuning
+- ✅ `testing.md` (18.9KB) - testing commands, dataset-specific examples, interpretation
+- ✅ `preprocessing.md` (13.7KB) - all 4 datasets, fragment extraction, validation
+- ✅ `troubleshooting.md` (15.8KB) - common errors, MPS leak fix, cache issues
+- ✅ Fixed inaccuracies in 3 subsequent commits (f543490, 20f9618, 750823c)
+- ✅ All guides validated against actual CLI signatures, configs, and file paths
 
 ### Phase 4: Create Developer Guide (Additive - Consolidate Without Deleting)
 
