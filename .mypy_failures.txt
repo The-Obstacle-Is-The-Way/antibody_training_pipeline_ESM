@@ -1,111 +1,20 @@
-scripts/validation/validate_jain_csvs.py:45: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/validation/validate_jain_csvs.py:111: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/validation/validate_jain_csvs.py:169: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/validation/validate_jain_csvs.py:215: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/validation/validate_fragments.py:18: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/validation/validate_fragments.py:120: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/validation/validate_fragments.py:140: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/validation/validate_fragments.py:192: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/validation/validate_fragments.py:192: note: Use "-> None" if function does not return a value
-scripts/testing/demo_assay_specific_thresholds.py:14: error: Function is missing a type annotation  [no-untyped-def]
-scripts/testing/demo_assay_specific_thresholds.py:70: error: Function is missing a return type annotation  [no-untyped-def]
-scripts/testing/demo_assay_specific_thresholds.py:70: note: Use "-> None" if function does not return a value
-preprocessing/shehata/validate_conversion.py:85: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/shehata/validate_conversion.py:195: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/shehata/validate_conversion.py:195: note: Use "-> None" if function does not return a value
-preprocessing/shehata/step2_extract_fragments.py:150: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/shehata/step2_extract_fragments.py:214: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/shehata/step2_extract_fragments.py:214: note: Use "-> None" if function does not return a value
-preprocessing/shehata/step1_convert_excel_to_csv.py:247: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/shehata/step1_convert_excel_to_csv.py:282: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/shehata/step1_convert_excel_to_csv.py:282: note: Use "-> None" if function does not return a value
-preprocessing/jain/test_novo_parity.py:20: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/test_novo_parity.py:20: note: Use "-> None" if function does not return a value
-preprocessing/jain/step3_extract_fragments.py:47: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/jain/step3_extract_fragments.py:220: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/step3_extract_fragments.py:298: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/step3_extract_fragments.py:381: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/step3_extract_fragments.py:381: note: Use "-> None" if function does not return a value
-preprocessing/jain/step2_preprocess_p5e_s2.py:60: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/step2_preprocess_p5e_s2.py:80: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/jain/step2_preprocess_p5e_s2.py:115: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/jain/step2_preprocess_p5e_s2.py:168: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/jain/step2_preprocess_p5e_s2.py:241: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/jain/step2_preprocess_p5e_s2.py:304: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/jain/step2_preprocess_p5e_s2.py:335: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/step1_convert_excel_to_csv.py:37: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/step1_convert_excel_to_csv.py:194: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/step1_convert_excel_to_csv.py:273: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/jain/step1_convert_excel_to_csv.py:273: note: Use "-> None" if function does not return a value
-preprocessing/harvey/test_psr_threshold.py:22: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/harvey/test_psr_threshold.py:41: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/harvey/test_psr_threshold.py:41: note: Use "-> None" if function does not return a value
-preprocessing/harvey/step2_extract_fragments.py:141: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/harvey/step2_extract_fragments.py:198: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/harvey/step2_extract_fragments.py:198: note: Use "-> None" if function does not return a value
-preprocessing/harvey/step1_convert_raw_csvs.py:30: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/harvey/step1_convert_raw_csvs.py:116: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/harvey/step1_convert_raw_csvs.py:116: note: Use "-> None" if function does not return a value
-preprocessing/boughter/validate_stages2_3.py:40: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/validate_stages2_3.py:144: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/validate_stages2_3.py:164: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/validate_stages2_3.py:221: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/validate_stages2_3.py:221: note: Use "-> None" if function does not return a value
-preprocessing/boughter/validate_stage1.py:73: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/validate_stage1.py:274: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/validate_stage1.py:358: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/validate_stage1.py:358: note: Use "-> None" if function does not return a value
-preprocessing/boughter/stage2_stage3_annotation_qc.py:88: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/stage2_stage3_annotation_qc.py:243: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/stage2_stage3_annotation_qc.py:328: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/stage2_stage3_annotation_qc.py:428: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/stage2_stage3_annotation_qc.py:457: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/stage2_stage3_annotation_qc.py:457: note: Use "-> None" if function does not return a value
-preprocessing/boughter/stage1_dna_translation.py:453: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/stage1_dna_translation.py:497: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/stage1_dna_translation.py:497: note: Use "-> None" if function does not return a value
-preprocessing/boughter/audit_training_qc.py:36: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:42: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:48: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:54: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:57: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:66: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:79: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:82: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:92: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:98: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/audit_training_qc.py:141: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/train_hyperparameter_sweep.py:31: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/train_hyperparameter_sweep.py:44: error: Function is missing a return type annotation  [no-untyped-def]
-preprocessing/boughter/train_hyperparameter_sweep.py:44: note: Use "-> None" if function does not return a value
-preprocessing/boughter/train_hyperparameter_sweep.py:64: error: Function is missing a type annotation  [no-untyped-def]
-preprocessing/boughter/train_hyperparameter_sweep.py:143: error: Function is missing a type annotation  [no-untyped-def]
-tests/integration/test_dataset_pipeline.py:105: error: Argument 2 to "fit" of "BinaryClassifier" has incompatible type "ExtensionArray | ndarray[tuple[Any, ...], dtype[Any]]"; expected "ndarray[tuple[Any, ...], dtype[Any]]"  [arg-type]
-tests/integration/test_dataset_pipeline.py:153: error: Argument 2 to "fit" of "BinaryClassifier" has incompatible type "ExtensionArray | ndarray[tuple[Any, ...], dtype[Any]]"; expected "ndarray[tuple[Any, ...], dtype[Any]]"  [arg-type]
-tests/integration/test_dataset_pipeline.py:187: error: Argument 2 to "fit" of "BinaryClassifier" has incompatible type "ExtensionArray | ndarray[tuple[Any, ...], dtype[Any]]"; expected "ndarray[tuple[Any, ...], dtype[Any]]"  [arg-type]
-tests/integration/test_dataset_pipeline.py:343: error: Argument 2 to "fit" of "BinaryClassifier" has incompatible type "ExtensionArray | ndarray[tuple[Any, ...], dtype[Any]]"; expected "ndarray[tuple[Any, ...], dtype[Any]]"  [arg-type]
-tests/integration/test_dataset_pipeline.py:346: error: Argument 2 to "fit" of "BinaryClassifier" has incompatible type "ExtensionArray | ndarray[tuple[Any, ...], dtype[Any]]"; expected "ndarray[tuple[Any, ...], dtype[Any]]"  [arg-type]
-tests/integration/test_dataset_pipeline.py:384: error: Argument 2 to "fit" of "BinaryClassifier" has incompatible type "ExtensionArray | ndarray[tuple[Any, ...], dtype[Any]]"; expected "ndarray[tuple[Any, ...], dtype[Any]]"  [arg-type]
-tests/e2e/test_reproduce_novo.py:41: error: Function is missing a return type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:57: error: Function is missing a return type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:78: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:147: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:180: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:214: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:239: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:268: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:329: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:366: error: Function is missing a return type annotation  [no-untyped-def]
-tests/e2e/test_reproduce_novo.py:366: note: Use "-> None" if function does not return a value
-tests/e2e/test_train_pipeline.py:37: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:60: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:88: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:132: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:153: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:181: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:218: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:250: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:266: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:276: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:315: error: Function is missing a type annotation  [no-untyped-def]
-tests/e2e/test_train_pipeline.py:339: error: Function is missing a type annotation  [no-untyped-def]
+Traceback (most recent call last):
+  File "/Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/.venv/bin/mypy", line 10, in <module>
+    sys.exit(console_entry())
+             ^^^^^^^^^^^^^^^
+  File "/Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM/.venv/lib/python3.12/site-packages/mypy/__main__.py", line 15, in console_entry
+    main()
+  File "mypy/main.py", line 127, in main
+  File "mypy/main.py", line 211, in run_build
+  File "mypy/build.py", line 194, in build
+  File "mypy/build.py", line 270, in _build
+  File "mypy/build.py", line 2976, in dispatch
+  File "mypy/build.py", line 3381, in process_graph
+  File "mypy/build.py", line 3468, in process_fresh_modules
+  File "mypy/build.py", line 2129, in load_tree
+  File "mypy/nodes.py", line 414, in deserialize
+  File "mypy/nodes.py", line 4650, in deserialize
+  File "mypy/nodes.py", line 4547, in deserialize
+  File "mypy/nodes.py", line 268, in deserialize
+  File "mypy/nodes.py", line 1315, in deserialize
+KeyError: 'setter_type'

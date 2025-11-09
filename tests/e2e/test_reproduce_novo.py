@@ -23,7 +23,10 @@ Date: 2025-11-07
 Phase: 4 (CLI & E2E Tests)
 """
 
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pytest
@@ -38,7 +41,7 @@ from antibody_training_esm.datasets.jain import JainDataset
 
 
 @pytest.fixture
-def novo_classifier_params():
+def novo_classifier_params() -> dict[str, Any]:
     """Novo Nordisk classifier parameters"""
     return {
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",
@@ -54,7 +57,7 @@ def novo_classifier_params():
 
 
 @pytest.fixture
-def real_dataset_paths():
+def real_dataset_paths() -> dict[str, str]:
     """Paths to real preprocessed datasets"""
     return {
         "boughter_train": "train_datasets/boughter/boughter_translated.csv",
@@ -76,8 +79,10 @@ def real_dataset_paths():
     "python preprocessing/jain/step2_preprocess_p5e_s2.py",
 )
 def test_reproduce_novo_jain_accuracy_with_real_data(
-    mock_transformers_model, novo_classifier_params, real_dataset_paths
-):
+    mock_transformers_model: tuple[Any, Any],
+    novo_classifier_params: dict[str, Any],
+    real_dataset_paths: dict[str, str],
+) -> None:
     """Verify we can reproduce Novo Nordisk Jain accuracy (66-71%) with real data
 
     Published result: 66-71% accuracy on Jain parity set (86 antibodies)
@@ -144,7 +149,7 @@ def test_reproduce_novo_jain_accuracy_with_real_data(
 
 
 @pytest.mark.e2e
-def test_psr_threshold_calibration(mock_transformers_model):
+def test_psr_threshold_calibration(mock_transformers_model: tuple[Any, Any]) -> None:
     """Verify PSR threshold (0.5495) is correctly applied
 
     Novo Nordisk calibrated threshold to 0.5495 for exact parity.
@@ -177,7 +182,7 @@ def test_psr_threshold_calibration(mock_transformers_model):
 
 
 @pytest.mark.e2e
-def test_elisa_threshold_default(mock_transformers_model):
+def test_elisa_threshold_default(mock_transformers_model: tuple[Any, Any]) -> None:
     """Verify ELISA threshold (0.5) is default
 
     ELISA assay uses standard 0.5 threshold (unlike PSR's 0.5495).
@@ -211,7 +216,9 @@ def test_elisa_threshold_default(mock_transformers_model):
 
 
 @pytest.mark.e2e
-def test_novo_flag_filtering_excludes_mild(mock_transformers_model):
+def test_novo_flag_filtering_excludes_mild(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify Novo methodology excludes mild flags (1-3) from training
 
     Novo Nordisk excludes antibodies with 1-3 flags (mild polyreactivity).
@@ -236,7 +243,7 @@ def test_novo_flag_filtering_excludes_mild(mock_transformers_model):
     # Mock load_data to use our test DataFrame
     original_load = boughter.load_data
 
-    def mock_load(*args, include_mild=False, **kwargs):
+    def mock_load(*args: Any, include_mild: bool = False, **kwargs: Any) -> Any:
         if include_mild:
             return df
         else:
@@ -265,7 +272,9 @@ def test_novo_flag_filtering_excludes_mild(mock_transformers_model):
 
 
 @pytest.mark.e2e
-def test_cross_dataset_predictions_are_valid(mock_transformers_model):
+def test_cross_dataset_predictions_are_valid(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify cross-dataset predictions produce valid outputs
 
     This smoke test verifies the pipeline works across datasets,
@@ -326,7 +335,9 @@ def test_cross_dataset_predictions_are_valid(mock_transformers_model):
 
 
 @pytest.mark.e2e
-def test_training_is_reproducible_with_same_seed(mock_transformers_model):
+def test_training_is_reproducible_with_same_seed(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify training is deterministic with fixed random seed"""
     # Arrange
     np.random.seed(42)
@@ -363,7 +374,7 @@ def test_training_is_reproducible_with_same_seed(mock_transformers_model):
 
 
 @pytest.mark.e2e
-def test_novo_parameters_documented_correctly():
+def test_novo_parameters_documented_correctly() -> None:
     """Verify Novo parameters are documented in classifier"""
     # Arrange & Act
     classifier = BinaryClassifier(
