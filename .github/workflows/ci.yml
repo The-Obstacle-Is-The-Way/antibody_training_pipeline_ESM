@@ -186,7 +186,10 @@ jobs:
       run: uv sync --frozen --no-dev
 
     - name: Install security tools
-      run: uv run pip install pip-audit safety
+      run: uv pip install pip-audit safety
+
+    - name: Verify pip-audit installation
+      run: uv run python -c "import sys, pip_audit; print('pip-audit', pip_audit.__version__, 'via', sys.executable)"
 
     - name: Run pip-audit (installed environment)
       run: uv run python -m pip_audit --progress-spinner=off -f json -o pip-audit.json
