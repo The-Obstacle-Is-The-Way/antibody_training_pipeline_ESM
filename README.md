@@ -184,32 +184,49 @@ This codebase uses Python's `pickle` module for:
 
 # Datasets
 
-## Shehata Dataset
+This pipeline uses four antibody datasets for training and evaluation:
 
-The Shehata dataset (Shehata et al. 2019) provides a critical test set of 398 human antibodies with polyspecific reagent (PSR) assay measurements. This dataset is used to evaluate model performance on fragment-level predictions.
+## Boughter Dataset (Training)
 
-**Quick Start:**
+**Source:** Boughter et al. (2020)
+**Size:** 914 VH sequences
+**Assay:** ELISA polyreactivity assay
+**Usage:** Primary training dataset
 
-1. Download the raw data from the [Sakhnini et al. 2025 paper supplementary materials](https://doi.org/10.1016/j.cell.2024.12.025) (files: `mmc2.xlsx`)
-2. Place the Excel file in `test_datasets/` directory
-3. Run Phase 1 preprocessing (Excel → CSV conversion):
+**Documentation:** See `docs/datasets/boughter/` for preprocessing steps and data sources.
 
-   ```bash
-   python3 preprocessing/shehata/step1_convert_excel_to_csv.py
-   ```
+---
 
-4. Run Phase 2 preprocessing (fragment extraction):
+## Jain Dataset (Test - Novo Parity Benchmark)
 
-   ```bash
-   python3 preprocessing/shehata/step2_extract_fragments.py
-   ```
+**Source:** Jain et al. (2017)
+**Size:** 86 clinical antibodies
+**Assay:** Per-antigen ELISA (Adimab dataset)
+**Usage:** Primary test dataset, Novo Nordisk exact parity validation
 
-**Output Files:**
+**Documentation:** See `docs/datasets/jain/` for preprocessing steps and data sources.
 
-- `test_datasets/shehata/processed/shehata.csv` - Full paired VH+VL sequences (398 antibodies)
-- `test_datasets/shehata/fragments/*.csv` - 16 fragment-specific files (VH, VL, H-CDR1, H-CDR2, H-CDR3, L-CDR1, L-CDR2, L-CDR3, H-CDRs, L-CDRs, H-FWRs, L-FWRs, VH+VL, All-CDRs, All-FWRs, Full)
+---
 
-**Methodology:** All sequences are annotated using ANARCI with IMGT numbering scheme, following the exact procedure described in Sakhnini et al. 2025 (Section 4.3). For detailed information about data sources and preprocessing steps, see [`docs/shehata/shehata_data_sources.md`](docs/shehata/shehata_data_sources.md).
+## Harvey Dataset (Test - Nanobodies)
+
+**Source:** Harvey et al. (2022) / Mason et al. (2021)
+**Size:** 141,021 nanobody sequences
+**Assay:** PSR (polyspecific reagent) assay
+**Usage:** Large-scale nanobody test set
+
+**Documentation:** See `docs/datasets/harvey/` for preprocessing steps and data sources.
+
+---
+
+## Shehata Dataset (Test - PSR Cross-Validation)
+
+**Source:** Shehata et al. (2019)
+**Size:** 398 human antibodies
+**Assay:** PSR (polyspecific reagent) assay
+**Usage:** Cross-assay validation (PSR vs ELISA)
+
+**Documentation:** See `docs/datasets/shehata/` for preprocessing steps and data sources.
 
 ---
 
