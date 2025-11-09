@@ -36,7 +36,7 @@ Type enforcement landed before the codebase was ready. This blocks CI / `make al
 - ✅ Phase C – `tests/unit/datasets/*` typed (base, annotation, boughter, harvey, jain, shehata) – commit `7d79238`
 - ✅ Shared pytest glue – `tests/conftest.py` fully annotated (commit `fc68eb8`)
 - ✅ `tests/unit/core/test_classifier.py` typed with passing slice tests (commit `d82dcda`)
-- ✅ `tests/unit/core/test_embeddings.py` + `tests/unit/core/test_trainer.py` typed (mypy + pytest slices passing; commit pending in this change set)
+- ✅ `tests/unit/core/test_embeddings.py` + `tests/unit/core/test_trainer.py` typed (mypy + pytest slices passing; commit `2658869`)
 - ⏳ Remaining **313** mypy errors (updated `.mypy_failures.txt`, 2025-11-08) concentrated in the yet-to-fix Phase C/D/E directories (breakdown below)
 
 ## 4. Scope
