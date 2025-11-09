@@ -8,7 +8,7 @@
 
 **4. It is okay to be wrong, for this is how we learn.**
 
-**5. We do not gatekeep. If you genuinely want to learn and contribute, we help you onboard.**
+**5. We do not gatekeep. If you genuinely want to learn and contribute, we will help you onboard.**
 
 **6. We don't pretend to know shit we don't know. We express uncertainty instead of presenting guesses as facts.**
 
