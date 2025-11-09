@@ -185,30 +185,18 @@ jobs:
     - name: Sync production dependencies for security audit
       run: uv sync --frozen --no-dev
 
-    - name: Install security tools (with SARIF support)
-      run: |
-        uv run pip install "pip-audit[sarif]" safety
-        uv run python -c "import pip_audit, sarif_om; print(f'✓ pip-audit {pip_audit.__version__} with SARIF support')"
+    - name: Install security tools
+      run: uv run pip install pip-audit safety
 
     - name: Run pip-audit (installed environment)
-      run: |
-        uv run python -m pip_audit --progress-spinner=off --format json --output pip-audit.json
-        uv run python -m pip_audit --progress-spinner=off --format sarif --output pip-audit.sarif
+      run: uv run python -m pip_audit --progress-spinner=off -f json -o pip-audit.json
       continue-on-error: false  # ✅ ENFORCED: Fail CI if CVEs are introduced
-
-    - name: Upload pip-audit SARIF to GitHub Security
-      uses: github/codeql-action/upload-sarif@v3
-      if: always() && hashFiles('pip-audit.sarif') != ''
-      with:
-        sarif_file: pip-audit.sarif
-        category: pip-audit
 
     - name: Export requirements for Safety scan
       run: uv export --format=requirements-txt --no-dev --no-editable --output-file security-reqs.txt
 
-    - name: Run Safety scan
-      run: |
-        uv run safety scan --target security-reqs.txt --output json --save-as safety-report.json || true
+    - name: Run Safety scan (informational)
+      run: uv run safety scan --file security-reqs.txt --output json --save-as safety-report.json || true
       continue-on-error: true  # ⚠️ ADVISORY: Safety remains informational
 
     - name: Upload security reports
@@ -218,7 +206,6 @@ jobs:
         name: security-reports
         path: |
           pip-audit.json
-          pip-audit.sarif
           safety-report.json
         retention-days: 30
 
