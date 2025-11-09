@@ -19,7 +19,10 @@ Date: 2025-11-07
 Phase: 5 (Coverage Gap Closure)
 """
 
+from __future__ import annotations
+
 import pickle
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import numpy as np
@@ -39,7 +42,7 @@ from antibody_training_esm.data.loaders import (
 
 
 @pytest.fixture
-def mock_embedding_extractor():
+def mock_embedding_extractor() -> Mock:
     """Mock embedding extractor with batch method"""
     extractor = Mock()
     extractor.extract_batch_embeddings = Mock(
@@ -52,7 +55,7 @@ def mock_embedding_extractor():
 
 
 @pytest.fixture
-def sample_csv_data():
+def sample_csv_data() -> pd.DataFrame:
     """Sample CSV data for testing"""
     return pd.DataFrame(
         {
@@ -67,7 +70,9 @@ def sample_csv_data():
 
 
 @pytest.mark.unit
-def test_load_local_data_reads_csv(tmp_path, sample_csv_data):
+def test_load_local_data_reads_csv(
+    tmp_path: Path, sample_csv_data: pd.DataFrame
+) -> None:
     """Verify load_local_data reads CSV correctly"""
     # Arrange
     csv_path = tmp_path / "test.csv"
@@ -84,7 +89,7 @@ def test_load_local_data_reads_csv(tmp_path, sample_csv_data):
 
 
 @pytest.mark.unit
-def test_load_local_data_handles_comments(tmp_path):
+def test_load_local_data_handles_comments(tmp_path: Path) -> None:
     """Verify load_local_data handles comment lines in CSV"""
     # Arrange
     csv_path = tmp_path / "test_comments.csv"
@@ -102,7 +107,7 @@ def test_load_local_data_handles_comments(tmp_path):
 
 
 @pytest.mark.unit
-def test_load_local_data_raises_on_missing_file():
+def test_load_local_data_raises_on_missing_file() -> None:
     """Verify load_local_data raises error for missing file"""
     # Act & Assert
     with pytest.raises(FileNotFoundError):
@@ -110,7 +115,9 @@ def test_load_local_data_raises_on_missing_file():
 
 
 @pytest.mark.unit
-def test_load_local_data_raises_on_missing_column(tmp_path, sample_csv_data):
+def test_load_local_data_raises_on_missing_column(
+    tmp_path: Path, sample_csv_data: pd.DataFrame
+) -> None:
     """Verify load_local_data raises error for missing column"""
     # Arrange
     csv_path = tmp_path / "test.csv"
@@ -125,7 +132,7 @@ def test_load_local_data_raises_on_missing_column(tmp_path, sample_csv_data):
 
 
 @pytest.mark.unit
-def test_preprocess_raw_data_uses_batch_method(mock_embedding_extractor):
+def test_preprocess_raw_data_uses_batch_method(mock_embedding_extractor: Mock) -> None:
     """Verify preprocess_raw_data uses batch embedding if available"""
     # Arrange
     X = ["ACDEF", "GHIKL", "MNPQR"]
@@ -141,7 +148,7 @@ def test_preprocess_raw_data_uses_batch_method(mock_embedding_extractor):
 
 
 @pytest.mark.unit
-def test_preprocess_raw_data_falls_back_to_single_embedding():
+def test_preprocess_raw_data_falls_back_to_single_embedding() -> None:
     """Verify preprocess_raw_data falls back to embed_sequence"""
     # Arrange
     extractor = Mock(spec=["embed_sequence"])  # Only has embed_sequence method
@@ -161,7 +168,9 @@ def test_preprocess_raw_data_falls_back_to_single_embedding():
 
 
 @pytest.mark.unit
-def test_preprocess_raw_data_converts_labels_to_numpy(mock_embedding_extractor):
+def test_preprocess_raw_data_converts_labels_to_numpy(
+    mock_embedding_extractor: Mock,
+) -> None:
     """Verify preprocess_raw_data converts labels to numpy array"""
     # Arrange
     X = ["ACDEF"]
@@ -179,7 +188,7 @@ def test_preprocess_raw_data_converts_labels_to_numpy(mock_embedding_extractor):
 
 
 @pytest.mark.unit
-def test_store_preprocessed_data_saves_all_data(tmp_path):
+def test_store_preprocessed_data_saves_all_data(tmp_path: Path) -> None:
     """Verify store_preprocessed_data saves all provided data"""
     # Arrange
     X = ["ACDEF", "GHIKL"]
@@ -202,7 +211,7 @@ def test_store_preprocessed_data_saves_all_data(tmp_path):
 
 
 @pytest.mark.unit
-def test_store_preprocessed_data_saves_embeddings_only(tmp_path):
+def test_store_preprocessed_data_saves_embeddings_only(tmp_path: Path) -> None:
     """Verify store_preprocessed_data can save embeddings only"""
     # Arrange
     X_embedded = np.random.rand(3, 1280)
@@ -220,7 +229,7 @@ def test_store_preprocessed_data_saves_embeddings_only(tmp_path):
 
 
 @pytest.mark.unit
-def test_store_preprocessed_data_requires_filename():
+def test_store_preprocessed_data_requires_filename() -> None:
     """Verify store_preprocessed_data raises error if filename missing"""
     # Act & Assert
     with pytest.raises(ValueError, match="filename is required"):
@@ -231,7 +240,7 @@ def test_store_preprocessed_data_requires_filename():
 
 
 @pytest.mark.unit
-def test_load_preprocessed_data_loads_pickle(tmp_path):
+def test_load_preprocessed_data_loads_pickle(tmp_path: Path) -> None:
     """Verify load_preprocessed_data loads pickle correctly"""
     # Arrange
     data = {"X": ["ACDEF"], "y": [0], "X_embedded": np.random.rand(1, 1280)}
@@ -250,7 +259,7 @@ def test_load_preprocessed_data_loads_pickle(tmp_path):
 
 
 @pytest.mark.unit
-def test_load_preprocessed_data_raises_on_missing_file():
+def test_load_preprocessed_data_raises_on_missing_file() -> None:
     """Verify load_preprocessed_data raises error for missing file"""
     # Act & Assert
     with pytest.raises(FileNotFoundError):
@@ -262,7 +271,7 @@ def test_load_preprocessed_data_raises_on_missing_file():
 
 @pytest.mark.unit
 @patch("antibody_training_esm.data.loaders.load_dataset")
-def test_load_hf_dataset_calls_datasets_library(mock_load_dataset):
+def test_load_hf_dataset_calls_datasets_library(mock_load_dataset: Mock) -> None:
     """Verify load_hf_dataset calls HuggingFace datasets library"""
     # Arrange
     mock_dataset = {
@@ -284,7 +293,7 @@ def test_load_hf_dataset_calls_datasets_library(mock_load_dataset):
 
 @pytest.mark.unit
 @patch("antibody_training_esm.data.loaders.load_dataset")
-def test_load_hf_dataset_returns_lists(mock_load_dataset):
+def test_load_hf_dataset_returns_lists(mock_load_dataset: Mock) -> None:
     """Verify load_hf_dataset returns lists, not numpy arrays"""
     # Arrange
     mock_dataset = {
@@ -306,7 +315,7 @@ def test_load_hf_dataset_returns_lists(mock_load_dataset):
 
 @pytest.mark.unit
 @patch("antibody_training_esm.data.loaders.load_hf_dataset")
-def test_load_data_dispatches_to_hf(mock_load_hf):
+def test_load_data_dispatches_to_hf(mock_load_hf: Mock) -> None:
     """Verify load_data dispatches to load_hf_dataset"""
     # Arrange
     config = {
@@ -336,7 +345,7 @@ def test_load_data_dispatches_to_hf(mock_load_hf):
 
 @pytest.mark.unit
 @patch("antibody_training_esm.data.loaders.load_local_data")
-def test_load_data_dispatches_to_local(mock_load_local):
+def test_load_data_dispatches_to_local(mock_load_local: Mock) -> None:
     """Verify load_data dispatches to load_local_data"""
     # Arrange
     config = {
@@ -361,7 +370,7 @@ def test_load_data_dispatches_to_local(mock_load_local):
 
 
 @pytest.mark.unit
-def test_load_data_raises_on_unknown_source():
+def test_load_data_raises_on_unknown_source() -> None:
     """Verify load_data raises error for unknown source"""
     # Arrange
     config = {"data": {"source": "unknown"}}
@@ -375,7 +384,9 @@ def test_load_data_raises_on_unknown_source():
 
 
 @pytest.mark.unit
-def test_end_to_end_csv_to_embeddings(tmp_path, mock_embedding_extractor):
+def test_end_to_end_csv_to_embeddings(
+    tmp_path: Path, mock_embedding_extractor: Mock
+) -> None:
     """Verify end-to-end workflow: CSV → load → preprocess → save → load"""
     # Arrange
     csv_path = tmp_path / "train.csv"
@@ -403,7 +414,7 @@ def test_end_to_end_csv_to_embeddings(tmp_path, mock_embedding_extractor):
 
 
 @pytest.mark.unit
-def test_load_local_data_handles_empty_csv(tmp_path):
+def test_load_local_data_handles_empty_csv(tmp_path: Path) -> None:
     """Verify load_local_data handles empty CSV gracefully"""
     # Arrange
     csv_path = tmp_path / "empty.csv"
@@ -418,7 +429,9 @@ def test_load_local_data_handles_empty_csv(tmp_path):
 
 
 @pytest.mark.unit
-def test_preprocess_raw_data_handles_single_sequence(mock_embedding_extractor):
+def test_preprocess_raw_data_handles_single_sequence(
+    mock_embedding_extractor: Mock,
+) -> None:
     """Verify preprocess_raw_data handles single sequence"""
     # Arrange
     X = ["ACDEF"]
