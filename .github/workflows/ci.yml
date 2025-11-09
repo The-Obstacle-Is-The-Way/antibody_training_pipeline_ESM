@@ -191,8 +191,8 @@ jobs:
 
     - name: Run pip-audit (CVE check)
       run: |
-        PIPAPI_PYTHON_LOCATION=.venv/bin/python uv run pip-audit -r security-reqs.txt -f json -o pip-audit.json
-        PIPAPI_PYTHON_LOCATION=.venv/bin/python uv run pip-audit -r security-reqs.txt
+        uv run pip-audit --no-deps -r security-reqs.txt -f json -o pip-audit.json
+        uv run pip-audit --no-deps -r security-reqs.txt
       continue-on-error: false  # ✅ ENFORCED: Fail CI if CVEs are introduced
 
     - name: Run Safety check
