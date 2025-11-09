@@ -1,12 +1,12 @@
 # Type-Hint Remediation Strategy
 
-_Last updated: 2025-11-08_
+_Last updated: 2025-11-08 (Phase C – CLI/integration next)_
 
 ## Executive Summary
 
 **TL;DR:** Another AI enforced strict mypy (`disallow_untyped_defs = true`) without adding type annotations to test/preprocessing code. Result: **546 errors** across **46 files**. Production code (`src/`) is clean. This is **mechanical but time-consuming** (5-7 hours). Plan below provides step-by-step instructions to fix systematically.
 
-**Status:** Phases A & B complete; Phase C underway (tests/unit/data ✅, tests/unit/datasets ✅, remaining clusters pending).
+**Status:** Phases A & B complete; Phase C in progress – fixtures, `tests/unit/data`, `tests/unit/datasets`, `tests/conftest.py`, and the entire `tests/unit/core/` tree are now typed; remaining Phase C clusters (CLI, integration, e2e) are pending.
 
 **Impact:** Blocks `make all` and CI until fixed.
 
@@ -32,9 +32,12 @@ Type enforcement landed before the codebase was ready. This blocks CI / `make al
 
 - ✅ Phase A – Inventory completed via `.mypy_failures.txt` (546-error baseline)
 - ✅ Phase B – Fixtures typed (`tests/fixtures/mock_*`) – commit `3352ad7`
-- ✅ Phase C (kickoff) – `tests/unit/data/test_loaders.py` typed – commit `0dcb166`
-- ✅ Phase C – `tests/unit/datasets/*` typed (base, annotation, boughter, harvey, jain, shehata) – commit `fix: Add type annotations to dataset tests`
-- ⏳ Remaining ≈373 errors (546 − 173 fixed) across the rest of Phases C–E
+- ✅ Phase C – `tests/unit/data/test_loaders.py` typed and API tightened to accept `Path | str` / `Sequence[...]` (commit `0b274a3` for loaders, `0dcb166` for tests)
+- ✅ Phase C – `tests/unit/datasets/*` typed (base, annotation, boughter, harvey, jain, shehata) – commit `7d79238`
+- ✅ Shared pytest glue – `tests/conftest.py` fully annotated (commit `fc68eb8`)
+- ✅ `tests/unit/core/test_classifier.py` typed with passing slice tests (commit `d82dcda`)
+- ✅ `tests/unit/core/test_embeddings.py` + `tests/unit/core/test_trainer.py` typed (mypy + pytest slices passing; commit pending in this change set)
+- ⏳ Remaining **313** mypy errors (updated `.mypy_failures.txt`, 2025-11-08) concentrated in the yet-to-fix Phase C/D/E directories (breakdown below)
 
 ## 4. Scope
 
@@ -44,32 +47,33 @@ Type enforcement landed before the codebase was ready. This blocks CI / `make al
 - **0 errors in `src/`** (production code is clean ✅)
 - **All errors are in test/support code** (safe to fix without runtime risk)
 
-### Error Breakdown by Directory
+### Error Breakdown by Directory (post-Phase C updates)
 
 ```
-Priority 1 (Fix First - Cascades to Tests):
-  11 errors - tests/fixtures/          (mock models, sequences)
+Priority 1 (Shared fixtures/utilities):
+   0 errors - tests/fixtures/ ✅
+   0 errors - tests/conftest.py ✅
 
 Priority 2 (Test Files - Mechanical Fixes):
- 140 errors - tests/unit/datasets/     (dataset loader tests)
-  99 errors - tests/unit/core/         (core module tests)
-  88 errors - tests/integration/       (integration tests)
-  76 errors - tests/unit/cli/          (CLI tests)
-  22 errors - tests/unit/data/         (data loader tests)
-  22 errors - tests/e2e/               (end-to-end tests)
+   0 errors - tests/unit/core/         ✅ (classifier, embeddings, trainer)
+ 100 errors - tests/unit/cli/          (test_preprocess.py, test_test.py, test_train.py, test_model_tester.py)
+ 108 errors - tests/integration/       (model tester/persistence/dataset pipeline + dataset compat suites)
+  23 errors - tests/e2e/               (train pipeline + reproduce novo flows)
+   0 errors - tests/unit/data/ ✅
+   0 errors - tests/unit/datasets/ ✅
 
 Priority 3 (Preprocessing Scripts):
-  29 errors - preprocessing/boughter/  (Boughter preprocessing)
-  15 errors - preprocessing/jain/      (Jain preprocessing)
-   6 errors - preprocessing/shehata/   (Shehata preprocessing)
-   6 errors - preprocessing/harvey/    (Harvey preprocessing)
+  34 errors - preprocessing/boughter/
+  18 errors - preprocessing/jain/
+   9 errors - preprocessing/shehata/
+   9 errors - preprocessing/harvey/
 
 Priority 4 (Utility Scripts):
-   8 errors - scripts/validation/      (validation scripts)
-   2 errors - scripts/testing/         (testing scripts)
+   9 errors - scripts/validation/
+   3 errors - scripts/testing/
 ```
 
-**All errors are `Function is missing a type annotation [no-untyped-def]` - very mechanical to fix.**
+**All remaining failures are `no-untyped-def`; no behavioural regressions observed so far.**
 
 ## 5. Strategy
 
@@ -111,13 +115,13 @@ git commit -m "fix: Add type annotations to test fixtures"
 
 **Files to Fix (in order):**
 1. ✅ `tests/unit/data/test_loaders.py` (22 errors) – done 2025-11-08 (commit `0dcb166`)
-2. ✅ `tests/unit/datasets/test_base.py` (many errors) – included in commit `fix: Add type annotations to dataset tests`
-3. ✅ `tests/unit/datasets/test_base_annotation.py` (many errors) – included in commit `fix: Add type annotations to dataset tests`
-4. ✅ `tests/unit/datasets/test_*.py` (boughter, harvey, jain, shehata) – included in commit `fix: Add type annotations to dataset tests`
-5. `tests/unit/core/test_*.py` (99 errors) - 1 hour
-6. `tests/unit/cli/test_*.py` (76 errors) - 45 min
-7. `tests/integration/test_*.py` (88 errors) - 45 min
-8. `tests/e2e/test_*.py` (22 errors) - 20 min
+2. ✅ `tests/unit/datasets/test_base.py` – included in commit `7d79238`
+3. ✅ `tests/unit/datasets/test_base_annotation.py` – included in commit `7d79238`
+4. ✅ `tests/unit/datasets/test_*.py` (boughter, harvey, jain, shehata) – included in commit `7d79238`
+5. ✅ `tests/unit/core/test_*.py` – classifier, embeddings, and trainer suites fully typed (commits `d82dcda` + current change)
+6. `tests/unit/cli/test_*.py` (**~100 errors**) – ~45 minutes (three CLI entrypoint suites + model tester)
+7. `tests/integration/test_*.py` (**~108 errors**) – ~45 minutes (model tester/persistence/dataset compatibility suites)
+8. `tests/e2e/test_*.py` (**23 errors**) – ~20 minutes (train pipeline + reproduce novo)
 
 **Pattern to Follow:**
 ```python
@@ -161,10 +165,10 @@ git commit -m "fix: Add type annotations to dataset tests"
 **Time Estimate: 1-2 hours**
 
 **Files to Fix:**
-1. `preprocessing/boughter/*.py` (29 errors) - 30 min
-2. `preprocessing/jain/*.py` (15 errors) - 20 min
-3. `preprocessing/shehata/*.py` (6 errors) - 15 min
-4. `preprocessing/harvey/*.py` (6 errors) - 15 min
+1. `preprocessing/boughter/*.py` (34 errors) - 30 min
+2. `preprocessing/jain/*.py` (18 errors) - 20 min
+3. `preprocessing/shehata/*.py` (9 errors) - 15 min
+4. `preprocessing/harvey/*.py` (9 errors) - 15 min
 
 **Pattern to Follow:**
 ```python
@@ -199,8 +203,8 @@ git commit -m "fix: Add type annotations to Boughter preprocessing"
 **Time Estimate: 15-30 minutes**
 
 **Files to Fix:**
-1. `scripts/validation/*.py` (8 errors)
-2. `scripts/testing/*.py` (2 errors)
+1. `scripts/validation/*.py` (9 errors)
+2. `scripts/testing/*.py` (3 errors)
 
 **Commands:**
 ```bash
@@ -249,12 +253,12 @@ git commit -m "chore: Complete type annotation remediation - mypy clean"
 
 ## 7. Deliverables
 
-1. ✅ Clean `mypy` run (zero errors)
-2. ✅ All 400+ tests still passing
-3. ✅ `make all` passes (ruff + mypy + pytest + coverage)
-4. ✅ `.mypy_failures.txt` removed
-5. ✅ Logical git commits (one per phase/directory)
-6. ✅ Updated documentation if needed
+- [ ] Clean `mypy` run (zero errors)
+- [ ] All 400+ tests still passing
+- [ ] `make all` passes (ruff + mypy + pytest + coverage)
+- [ ] `.mypy_failures.txt` removed
+- [x] Logical git commits (one per phase/directory) – ongoing per-cluster commits
+- [x] Updated documentation as progress advances (this file)
 
 ## 8. Total Time Estimate
 
@@ -274,15 +278,15 @@ git commit -m "chore: Complete type annotation remediation - mypy clean"
 - [x] Phase B: Fix `tests/fixtures/` (11 errors)
 - [x] Phase C: Fix `tests/unit/data/` (22 errors)
 - [x] Phase C: Fix `tests/unit/datasets/` (140 errors)
-- [ ] Phase C: Fix `tests/unit/core/` (99 errors)
-- [ ] Phase C: Fix `tests/unit/cli/` (76 errors)
-- [ ] Phase C: Fix `tests/integration/` (88 errors)
-- [ ] Phase C: Fix `tests/e2e/` (22 errors)
-- [ ] Phase D: Fix `preprocessing/boughter/` (29 errors)
-- [ ] Phase D: Fix `preprocessing/jain/` (15 errors)
-- [ ] Phase D: Fix `preprocessing/shehata/` (6 errors)
-- [ ] Phase D: Fix `preprocessing/harvey/` (6 errors)
-- [ ] Phase E: Fix `scripts/` (10 errors)
+- [x] Phase C: Fix `tests/unit/core/` (classifier + embeddings + trainer)
+- [ ] Phase C: Fix `tests/unit/cli/` (~100 errors)
+- [ ] Phase C: Fix `tests/integration/` (~108 errors)
+- [ ] Phase C: Fix `tests/e2e/` (23 errors)
+- [ ] Phase D: Fix `preprocessing/boughter/` (34 errors)
+- [ ] Phase D: Fix `preprocessing/jain/` (18 errors)
+- [ ] Phase D: Fix `preprocessing/shehata/` (9 errors)
+- [ ] Phase D: Fix `preprocessing/harvey/` (9 errors)
+- [ ] Phase E: Fix `scripts/` (12 errors total – validation 9, testing 3)
 - [ ] Phase F: Run `uv run mypy .` → 0 errors
 - [ ] Phase F: Run `uv run pytest -v` → all pass
 - [ ] Phase F: Run `make all` → all pass

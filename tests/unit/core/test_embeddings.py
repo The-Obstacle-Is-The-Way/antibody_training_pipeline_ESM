@@ -14,6 +14,10 @@ Date: 2025-11-07
 Coverage Target: 85%+
 """
 
+from __future__ import annotations
+
+from typing import Any
+
 import numpy as np
 import pytest
 import torch
@@ -27,7 +31,9 @@ from tests.conftest import assert_valid_embeddings
 
 
 @pytest.mark.unit
-def test_extractor_initializes_with_model_name(mock_transformers_model):
+def test_extractor_initializes_with_model_name(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify extractor initializes with model name"""
     # Act
     extractor = ESMEmbeddingExtractor(
@@ -41,7 +47,9 @@ def test_extractor_initializes_with_model_name(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_extractor_initializes_with_custom_batch_size(mock_transformers_model):
+def test_extractor_initializes_with_custom_batch_size(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify extractor accepts custom batch size"""
     # Act
     extractor = ESMEmbeddingExtractor(
@@ -53,7 +61,9 @@ def test_extractor_initializes_with_custom_batch_size(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_extractor_creates_model_and_tokenizer(mock_transformers_model):
+def test_extractor_creates_model_and_tokenizer(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify extractor loads model and tokenizer"""
     # Act
     extractor = ESMEmbeddingExtractor(
@@ -66,7 +76,9 @@ def test_extractor_creates_model_and_tokenizer(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_extractor_puts_model_in_eval_mode(mock_transformers_model):
+def test_extractor_puts_model_in_eval_mode(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify model is set to eval mode (no gradient computation)"""
     # Act
     extractor = ESMEmbeddingExtractor(
@@ -83,7 +95,10 @@ def test_extractor_puts_model_in_eval_mode(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_embed_sequence_returns_1280_dim_vector(embedding_extractor, valid_sequences):
+def test_embed_sequence_returns_1280_dim_vector(
+    embedding_extractor: ESMEmbeddingExtractor,
+    valid_sequences: dict[str, Any],
+) -> None:
     """Verify single sequence embedding returns 1280-dimensional vector"""
     # Arrange
     sequence = valid_sequences["VH"]
@@ -96,7 +111,9 @@ def test_embed_sequence_returns_1280_dim_vector(embedding_extractor, valid_seque
 
 
 @pytest.mark.unit
-def test_embed_sequence_handles_short_sequence(embedding_extractor):
+def test_embed_sequence_handles_short_sequence(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify extractor handles short sequences"""
     # Arrange
     short_seq = "QVQLVQSG"  # 8 amino acids
@@ -109,7 +126,10 @@ def test_embed_sequence_handles_short_sequence(embedding_extractor):
 
 
 @pytest.mark.unit
-def test_embed_sequence_handles_long_sequence(embedding_extractor, valid_sequences):
+def test_embed_sequence_handles_long_sequence(
+    embedding_extractor: ESMEmbeddingExtractor,
+    valid_sequences: dict[str, Any],
+) -> None:
     """Verify extractor handles long sequences"""
     # Arrange
     long_seq = valid_sequences["long"]  # ~250 amino acids
@@ -122,7 +142,9 @@ def test_embed_sequence_handles_long_sequence(embedding_extractor, valid_sequenc
 
 
 @pytest.mark.unit
-def test_embed_sequence_strips_whitespace(embedding_extractor):
+def test_embed_sequence_strips_whitespace(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify extractor strips leading/trailing whitespace"""
     # Arrange
     sequence_with_whitespace = "  QVQLVQSG  "
@@ -135,7 +157,9 @@ def test_embed_sequence_strips_whitespace(embedding_extractor):
 
 
 @pytest.mark.unit
-def test_embed_sequence_converts_to_uppercase(embedding_extractor):
+def test_embed_sequence_converts_to_uppercase(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify extractor converts sequences to uppercase"""
     # Arrange
     lowercase_seq = "qvqlvqsg"
@@ -154,8 +178,9 @@ def test_embed_sequence_converts_to_uppercase(embedding_extractor):
 
 @pytest.mark.unit
 def test_embed_sequence_rejects_sequence_with_gap(
-    embedding_extractor, invalid_sequences
-):
+    embedding_extractor: ESMEmbeddingExtractor,
+    invalid_sequences: dict[str, Any],
+) -> None:
     """Verify extractor raises ValueError for sequences with gaps"""
     # Arrange
     sequence_with_gap = invalid_sequences["gap"]
@@ -167,8 +192,9 @@ def test_embed_sequence_rejects_sequence_with_gap(
 
 @pytest.mark.unit
 def test_embed_sequence_rejects_sequence_with_invalid_aa(
-    embedding_extractor, invalid_sequences
-):
+    embedding_extractor: ESMEmbeddingExtractor,
+    invalid_sequences: dict[str, Any],
+) -> None:
     """Verify extractor raises ValueError for invalid amino acids"""
     # Arrange
     sequence_with_invalid_aa = invalid_sequences["invalid_aa"]
@@ -179,7 +205,10 @@ def test_embed_sequence_rejects_sequence_with_invalid_aa(
 
 
 @pytest.mark.unit
-def test_embed_sequence_rejects_empty_sequence(embedding_extractor, invalid_sequences):
+def test_embed_sequence_rejects_empty_sequence(
+    embedding_extractor: ESMEmbeddingExtractor,
+    invalid_sequences: dict[str, Any],
+) -> None:
     """Verify extractor raises ValueError for empty sequences"""
     # Arrange
     empty_seq = invalid_sequences["empty"]
@@ -190,7 +219,9 @@ def test_embed_sequence_rejects_empty_sequence(embedding_extractor, invalid_sequ
 
 
 @pytest.mark.unit
-def test_embed_sequence_accepts_all_valid_amino_acids(embedding_extractor):
+def test_embed_sequence_accepts_all_valid_amino_acids(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify extractor accepts all 20 standard amino acids + X"""
     # Arrange - sequence with all valid amino acids
     all_valid_aas = "ACDEFGHIKLMNPQRSTVWYX"
@@ -203,7 +234,9 @@ def test_embed_sequence_accepts_all_valid_amino_acids(embedding_extractor):
 
 
 @pytest.mark.unit
-def test_embed_sequence_rejects_numbers(embedding_extractor):
+def test_embed_sequence_rejects_numbers(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify extractor rejects sequences with numbers"""
     # Arrange
     sequence_with_numbers = "QVQLVQ123SGAEVKKPGA"
@@ -214,7 +247,9 @@ def test_embed_sequence_rejects_numbers(embedding_extractor):
 
 
 @pytest.mark.unit
-def test_embed_sequence_rejects_special_chars(embedding_extractor):
+def test_embed_sequence_rejects_special_chars(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify extractor rejects sequences with special characters"""
     # Arrange
     sequence_with_special = "QVQLVQ!@#SGAEVKKPGA"
@@ -231,8 +266,9 @@ def test_embed_sequence_rejects_special_chars(embedding_extractor):
 
 @pytest.mark.unit
 def test_extract_batch_embeddings_handles_multiple_sequences(
-    embedding_extractor, valid_sequences
-):
+    embedding_extractor: ESMEmbeddingExtractor,
+    valid_sequences: dict[str, Any],
+) -> None:
     """Verify batch extraction returns correct shape"""
     # Arrange
     sequences = valid_sequences["batch"]  # 5 sequences
@@ -246,8 +282,9 @@ def test_extract_batch_embeddings_handles_multiple_sequences(
 
 @pytest.mark.unit
 def test_extract_batch_embeddings_handles_single_sequence(
-    embedding_extractor, valid_sequences
-):
+    embedding_extractor: ESMEmbeddingExtractor,
+    valid_sequences: dict[str, Any],
+) -> None:
     """Verify batch extraction works with single sequence"""
     # Arrange
     sequences = [valid_sequences["VH"]]
@@ -260,7 +297,9 @@ def test_extract_batch_embeddings_handles_single_sequence(
 
 
 @pytest.mark.unit
-def test_extract_batch_embeddings_handles_large_batch(embedding_extractor):
+def test_extract_batch_embeddings_handles_large_batch(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify batch extraction handles large batches"""
     # Arrange - 100 sequences
     sequences = ["QVQLVQSGAEVKKPGA"] * 100
@@ -273,7 +312,9 @@ def test_extract_batch_embeddings_handles_large_batch(embedding_extractor):
 
 
 @pytest.mark.unit
-def test_extract_batch_embeddings_batch_size_smaller_than_input(embedding_extractor):
+def test_extract_batch_embeddings_batch_size_smaller_than_input(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify batch processing works when batch_size < len(sequences)"""
     # Arrange
     sequences = ["QVQLVQSGAEVKKPGA"] * 50
@@ -287,7 +328,9 @@ def test_extract_batch_embeddings_batch_size_smaller_than_input(embedding_extrac
 
 
 @pytest.mark.unit
-def test_extract_batch_embeddings_batch_size_larger_than_input(embedding_extractor):
+def test_extract_batch_embeddings_batch_size_larger_than_input(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify batch processing works when batch_size > len(sequences)"""
     # Arrange
     sequences = ["QVQLVQSGAEVKKPGA"] * 5
@@ -307,8 +350,8 @@ def test_extract_batch_embeddings_batch_size_larger_than_input(embedding_extract
 
 @pytest.mark.unit
 def test_extract_batch_embeddings_handles_invalid_sequences_gracefully(
-    embedding_extractor,
-):
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify batch extractor uses placeholder for invalid sequences"""
     # Arrange - mixed valid and invalid
     sequences = [
@@ -327,7 +370,9 @@ def test_extract_batch_embeddings_handles_invalid_sequences_gracefully(
 
 
 @pytest.mark.unit
-def test_extract_batch_embeddings_strips_whitespace_in_batch(embedding_extractor):
+def test_extract_batch_embeddings_strips_whitespace_in_batch(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify batch extractor strips whitespace from all sequences"""
     # Arrange
     sequences = [
@@ -343,7 +388,9 @@ def test_extract_batch_embeddings_strips_whitespace_in_batch(embedding_extractor
 
 
 @pytest.mark.unit
-def test_extract_batch_embeddings_converts_to_uppercase_in_batch(embedding_extractor):
+def test_extract_batch_embeddings_converts_to_uppercase_in_batch(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify batch extractor converts all sequences to uppercase"""
     # Arrange
     sequences = [
@@ -364,7 +411,9 @@ def test_extract_batch_embeddings_converts_to_uppercase_in_batch(embedding_extra
 
 
 @pytest.mark.unit
-def test_embed_sequence_handles_single_amino_acid(embedding_extractor):
+def test_embed_sequence_handles_single_amino_acid(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify extractor handles single amino acid (edge case)"""
     # Arrange
     single_aa = "M"
@@ -377,7 +426,9 @@ def test_embed_sequence_handles_single_amino_acid(embedding_extractor):
 
 
 @pytest.mark.unit
-def test_embed_sequence_handles_homopolymer(embedding_extractor):
+def test_embed_sequence_handles_homopolymer(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify extractor handles homopolymers (all same amino acid)"""
     # Arrange
     homopolymer = "AAAAAAAAAA"
@@ -390,10 +441,12 @@ def test_embed_sequence_handles_homopolymer(embedding_extractor):
 
 
 @pytest.mark.unit
-def test_extract_batch_embeddings_handles_empty_list(embedding_extractor):
+def test_extract_batch_embeddings_handles_empty_list(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify batch extractor handles empty sequence list"""
     # Arrange
-    empty_list = []
+    empty_list: list[str] = []
 
     # Act
     embeddings = embedding_extractor.extract_batch_embeddings(empty_list)
@@ -406,8 +459,8 @@ def test_extract_batch_embeddings_handles_empty_list(embedding_extractor):
 
 @pytest.mark.unit
 def test_extract_batch_embeddings_handles_variable_length_sequences(
-    embedding_extractor,
-):
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify batch extractor handles sequences of different lengths"""
     # Arrange - varying lengths: 8, 16, 100 amino acids
     sequences = [
@@ -429,7 +482,9 @@ def test_extract_batch_embeddings_handles_variable_length_sequences(
 
 
 @pytest.mark.unit
-def test_clear_gpu_cache_for_cpu_device(embedding_extractor):
+def test_clear_gpu_cache_for_cpu_device(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify _clear_gpu_cache() does nothing on CPU (no crash)"""
     # Arrange
     embedding_extractor.device = "cpu"
@@ -443,12 +498,14 @@ def test_clear_gpu_cache_for_cpu_device(embedding_extractor):
 
 @pytest.mark.unit
 @pytest.mark.gpu
-def test_clear_gpu_cache_for_cuda_device(mock_transformers_model, monkeypatch):
+def test_clear_gpu_cache_for_cuda_device(
+    mock_transformers_model: tuple[Any, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Verify _clear_gpu_cache() calls torch.cuda.empty_cache() on CUDA"""
     # Arrange
     cuda_empty_cache_called = False
 
-    def mock_empty_cache():
+    def mock_empty_cache() -> None:
         nonlocal cuda_empty_cache_called
         cuda_empty_cache_called = True
 
@@ -467,12 +524,14 @@ def test_clear_gpu_cache_for_cuda_device(mock_transformers_model, monkeypatch):
 
 @pytest.mark.unit
 @pytest.mark.gpu
-def test_clear_gpu_cache_for_mps_device(mock_transformers_model, monkeypatch):
+def test_clear_gpu_cache_for_mps_device(
+    mock_transformers_model: tuple[Any, Any], monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Verify _clear_gpu_cache() calls torch.mps.empty_cache() on MPS"""
     # Arrange
     mps_empty_cache_called = False
 
-    def mock_empty_cache():
+    def mock_empty_cache() -> None:
         nonlocal mps_empty_cache_called
         mps_empty_cache_called = True
 
@@ -495,7 +554,10 @@ def test_clear_gpu_cache_for_mps_device(mock_transformers_model, monkeypatch):
 
 
 @pytest.mark.unit
-def test_embed_sequence_returns_finite_values(embedding_extractor, valid_sequences):
+def test_embed_sequence_returns_finite_values(
+    embedding_extractor: ESMEmbeddingExtractor,
+    valid_sequences: dict[str, Any],
+) -> None:
     """Verify embeddings contain no NaN or Inf values"""
     # Arrange
     sequence = valid_sequences["VH"]
@@ -510,8 +572,9 @@ def test_embed_sequence_returns_finite_values(embedding_extractor, valid_sequenc
 
 @pytest.mark.unit
 def test_extract_batch_embeddings_returns_finite_values(
-    embedding_extractor, valid_sequences
-):
+    embedding_extractor: ESMEmbeddingExtractor,
+    valid_sequences: dict[str, Any],
+) -> None:
     """Verify batch embeddings contain no NaN or Inf values"""
     # Arrange
     sequences = valid_sequences["batch"]
@@ -525,7 +588,10 @@ def test_extract_batch_embeddings_returns_finite_values(
 
 
 @pytest.mark.unit
-def test_embed_sequence_returns_numpy_array(embedding_extractor, valid_sequences):
+def test_embed_sequence_returns_numpy_array(
+    embedding_extractor: ESMEmbeddingExtractor,
+    valid_sequences: dict[str, Any],
+) -> None:
     """Verify embed_sequence returns numpy array, not torch tensor"""
     # Arrange
     sequence = valid_sequences["VH"]
@@ -540,8 +606,9 @@ def test_embed_sequence_returns_numpy_array(embedding_extractor, valid_sequences
 
 @pytest.mark.unit
 def test_extract_batch_embeddings_returns_numpy_array(
-    embedding_extractor, valid_sequences
-):
+    embedding_extractor: ESMEmbeddingExtractor,
+    valid_sequences: dict[str, Any],
+) -> None:
     """Verify extract_batch_embeddings returns numpy array"""
     # Arrange
     sequences = valid_sequences["batch"]
@@ -560,7 +627,9 @@ def test_extract_batch_embeddings_returns_numpy_array(
 
 
 @pytest.mark.unit
-def test_full_embedding_extraction_workflow(mock_transformers_model):
+def test_full_embedding_extraction_workflow(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify complete workflow: init → embed_sequence → extract_batch"""
     # Arrange
     extractor = ESMEmbeddingExtractor(
@@ -584,7 +653,9 @@ def test_full_embedding_extraction_workflow(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_embeddings_consistent_across_calls(embedding_extractor):
+def test_embeddings_consistent_across_calls(
+    embedding_extractor: ESMEmbeddingExtractor,
+) -> None:
     """Verify same sequence produces similar embeddings across calls"""
     # Arrange
     sequence = "QVQLVQSGAEVKKPGA"
@@ -604,7 +675,9 @@ def test_embeddings_consistent_across_calls(embedding_extractor):
 
 
 @pytest.mark.unit
-def test_readme_example_embedding_workflow(mock_transformers_model):
+def test_readme_example_embedding_workflow(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify example from README/docstrings works correctly"""
     # This test ensures documentation examples stay accurate
 
