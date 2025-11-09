@@ -29,34 +29,77 @@
 
 ## Current State
 
-### ✅ What We Have Now
+### ✅ What We Have Now (November 2025)
 
-**Workflows:**
-- `.github/workflows/docker-ci.yml` - Docker build (basic, disk space issues)
+**Active Workflows (5):**
 
-**Coverage:**
-- ✅ Docker dev container build (test execution during build)
-- ✅ Docker prod container build (test execution during build)
-- ⚠️ Builds fail on image export due to disk space (11.7GB images)
-- ⚠️ Build and Push job skipped (only on main, currently disabled)
+1. **`.github/workflows/ci.yml`** - Primary CI Pipeline
+   - ✅ Code quality gates (ruff lint + format check)
+   - ✅ Type checking (mypy --strict on src/)
+   - ✅ Security scanning (bandit on src/)
+   - ✅ Unit tests with coverage (pytest, 90.79% coverage enforced)
+   - ✅ Integration tests (multi-component tests)
+   - ✅ Coverage reporting (Codecov integration)
+   - ✅ Test result artifacts (JUnit XML, HTML coverage reports)
+   - Triggers: push/PR to dev, leroy-jenkins/full-send
+   - Runtime: ~10 minutes
 
-**Limitations:**
-- **No Python environment CI** (only Docker, which is currently broken for prod)
-- **No code quality gates** (no ruff, mypy, bandit in CI)
-- **No security scanning** (no dependency audits)
-- **No automated releases**
-- **No performance benchmarks** (manual testing only)
-- **No test reporting** (tests run in Docker but results not captured)
-- **No dependency updates** (manual uv sync)
-- **No documentation builds**
-- **No coverage tracking** (never set up)
+2. **`.github/workflows/docker-ci.yml`** - Docker CI/CD
+   - ✅ Dev container build validation
+   - ✅ Prod container build validation
+   - ⚠️ Image export disabled (11.7GB size, runner disk space limit)
+   - ⚠️ GHCR publishing works only on main branch
+   - Triggers: push/PR to all branches
+   - Runtime: ~15-20 minutes
 
-### 🔴 Known Issues
+3. **`.github/workflows/codeql.yml`** - CodeQL Security Analysis
+   - ✅ SAST scanning for Python codebase
+   - ✅ Automated security vulnerability detection
+   - Triggers: push to main branches, PRs, schedule (weekly)
+   - Runtime: ~5 minutes
 
-1. **Disk Space:** GitHub Actions runners have ~14GB disk space, our images are 11.7GB each
-2. **Multi-arch Infeasible:** Cross-building amd64+arm64 requires QEMU and doubles build time/space
-3. **Large Datasets:** Harvey test set (141k sequences) takes ~90 minutes to process
-4. **Model Download:** ESM-1v is 2GB and must be cached efficiently
+4. **`.github/workflows/dependencies.yml`** - Dependency Security & Updates
+   - ✅ pip-audit security scanning
+   - ✅ Automated dependency vulnerability detection
+   - ✅ Dependabot configuration for auto-updates
+   - Triggers: push, PR, schedule (daily)
+   - Runtime: ~3 minutes
+
+5. **`.github/workflows/benchmark.yml`** - E2E Benchmarking & Novo Parity
+   - ✅ Full pipeline benchmarks (Boughter → Jain)
+   - ✅ Novo Nordisk parity validation (confusion matrix check)
+   - ✅ Performance regression detection
+   - Triggers: schedule (weekly), manual workflow_dispatch
+   - Runtime: ~45-60 minutes (expensive, not on every PR)
+
+### ✅ Achieved Goals
+
+Compared to target state, we **already have**:
+
+- ✅ Python environment testing (Python 3.12)
+- ✅ Comprehensive quality gates (ruff, mypy, bandit)
+- ✅ Tiered test execution (fast unit tests on PR, E2E on schedule)
+- ✅ Docker build validation (skip image load due to disk space)
+- ✅ Automated dependency management (dependabot + pip-audit)
+- ✅ Performance benchmarking (scheduled weekly)
+- ✅ Security scanning (CodeQL SAST + pip-audit)
+- ✅ Reproducibility validation (Novo parity checks on schedule)
+- ✅ Test reporting (JUnit XML, coverage artifacts, Codecov)
+
+### 🔴 Remaining Gaps
+
+1. **Automated Releases** - No semantic versioning or changelog generation yet
+2. **Documentation Deployment** - No GitHub Pages build yet
+3. **Multi-arch Docker** - amd64 only (arm64 build requires QEMU, doubles time/space)
+4. **Docker Image Publishing** - Only works on main (11.7GB images hit runner disk limits)
+5. **Model Artifact Management** - No HuggingFace model registry integration yet
+
+### ⚠️ Known Constraints
+
+1. **Disk Space:** GitHub Actions runners have ~14GB disk space, our Docker images are 11.7GB
+2. **E2E Test Duration:** Harvey dataset (141k sequences) takes ~90 minutes - runs on schedule only
+3. **Model Download:** ESM-1v is 2GB - cached via actions/cache to avoid repeated downloads
+4. **Coverage Enforcement:** 70% minimum threshold (currently at 90.79%)
 
 ---
 

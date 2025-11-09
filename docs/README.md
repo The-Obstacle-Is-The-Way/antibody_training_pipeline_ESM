@@ -19,47 +19,87 @@ This directory contains technical documentation for the antibody training pipeli
 
 ---
 
-## Current Documentation
+## Current Documentation Structure
 
-### Core Technical Docs
+### 📁 Development Documentation (`development/`)
 
-- **`excel_to_csv_conversion_methods.md`** - Data processing and conversion methods
-- **`FIXES_APPLIED.md`** - Bug fixes and corrections
-- **`MPS_MEMORY_LEAK_FIX.md`** - Memory leak fix for MPS backend
-- **`TRAINING_SETUP_STATUS.md`** - Model training setup and configuration
-- **`METHODOLOGY_AND_DIVERGENCES.md`** - Overall methodology comparison with Novo
-- **`ASSAY_SPECIFIC_THRESHOLDS.md`** - ELISA vs PSR threshold handling
+Technical guides for contributors and developers:
 
-### Cleanup & Audit Docs
+- **CI/CD & Infrastructure**
+  - `CICD_SPEC.md` - CI/CD pipeline specification
+  - `CICD_SETUP_GUIDE.md` - GitHub Actions setup guide
+  - `BRANCH_PROTECTION_WALKTHROUGH.md` - Branch protection configuration
+  - `DOCKER_DEPLOYMENT.md` - Docker deployment guide
+  - `DOCKER_USAGE.md` - Docker development workflow
 
-- **`DOCS_AUDIT_STATUS.md`** - Documentation audit results
-- **`CLEANUP_PLAN.md`** - Cleanup execution plan
+- **Code Quality & Security**
+  - `TYPE_CHECKING_STRATEGY.md` - mypy type checking strategy
+  - `TYPE_HINTING_REMEDIATION_PLAN.md` - Type hint improvements
+  - `SECURITY_REMEDIATION_PLAN.md` - Security best practices
+  - `CODEQL_FINDINGS.md` - CodeQL security analysis
+
+- **Testing & Coverage**
+  - `TEST_SUITE_PLAN.md` - Test suite architecture
+  - `TEST_SUITE_REVIEW_CHECKLIST.md` - Testing guidelines
+  - `TEST_COVERAGE_GAPS.md` - Coverage improvement tracking
+
+- **Other**
+  - `IMPORT_AND_STRUCTURE_GUIDE.md` - v2.0.0 import structure guide
+  - `P0_P1_P2_P3_BLOCKERS.md` - Priority issue tracking
+  - `excel_to_csv_conversion_methods.md` - Data preprocessing methods
+
+### 📁 Research Documentation (`research/`)
+
+Scientific methodology and validation:
+
+- `METHODOLOGY_AND_DIVERGENCES.md` - Pipeline methodology vs paper
+- `NOVO_PARITY_ANALYSIS.md` - Novo Nordisk replication analysis
+- `NOVO_REPLICATION_PLAN.md` - Replication strategy
+- `NOVO_TRAINING_METHODOLOGY.md` - Training methodology details
+- `CODEBASE_AUDIT_VS_NOVO.md` - Implementation audit
+- `CRITICAL_IMPLEMENTATION_ANALYSIS.md` - Key implementation details
+- `ASSAY_SPECIFIC_THRESHOLDS.md` - ELISA vs PSR thresholds
+- `BENCHMARK_TEST_RESULTS.md` - Cross-dataset validation results
+- `COMPLETE_VALIDATION_RESULTS.md` - Comprehensive validation report
+
+### 📁 Archive (`archive/`)
+
+Historical documentation from development process:
+
+- **Completed Plans**
+  - `CLEANUP_PLAN.md` - Jain dataset cleanup plan (completed 2025-11-05)
+  - `CLEANUP_COMPLETE_SUMMARY.md` - Cleanup execution summary
+  - `STRICT_QC_CLEANUP_PLAN.md` - Quality control cleanup plan
+  - `TRAINING_SETUP_STATUS.md` - Training setup status report
+
+- **Investigations & Fixes**
+  - `FIXES_APPLIED.md` - Bug fixes and corrections log
+  - `MPS_MEMORY_LEAK_FIX.md` - MPS memory leak fix (2025-11-03)
+  - `P0_SEMAPHORE_LEAK.md` - Semaphore leak investigation
+  - `SCRIPTS_AUDIT.md` - Script audit report
+  - `RESIDUAL_TYPE_ERRORS.md` - Type error tracking
+
+- **Codebase Reorganization**
+  - `CODEBASE_REORGANIZATION_PLAN.md` - v2.0.0 restructuring plan
+  - `TEST_DATASETS_REORGANIZATION_PLAN.md` - Test dataset reorganization
+  - `REPOSITORY_MODERNIZATION_PLAN.md` - 2025 tooling upgrade plan
+
+- **Audit Reports**
+  - `DOCS_AUDIT_STATUS.md` - Documentation audit (pre-reorganization)
+  - `PHASE1_TEST_RESULTS.md` - Phase 1 test results
+
+### 📁 Dataset Documentation (`datasets/`)
+
+Dataset-specific preprocessing and validation:
+
+- **`boughter/`** - Training dataset (914 VH sequences, ELISA polyreactivity)
+- **`jain/`** - Test dataset (86 clinical antibodies, Novo parity benchmark)
+- **`harvey/`** - Test dataset (nanobodies, PSR assay)
+- **`shehata/`** - Test dataset (398 antibodies, PSR cross-validation)
+
+Each dataset directory contains preprocessing scripts, validation reports, and data source documentation.
 
 ---
 
-## Archive
-
-The `archive/` directory contains historical documentation from the reverse engineering process:
-
-- **`failed_attempts/`** - Incorrect reverse engineering attempts (pre-P5e)
-- **`p5_close_attempt/`** - P5 result (2 cells off from exact match)
-- **`key_insights/`** - Important discoveries (e.g., mathematical proof)
-- **`preprocessing/`** - 137→116 antibody QC documentation
-- **`historical/`** - Pre-parity training results and old analyses
-
-See `archive/README.md` for details.
-
----
-
-## Dataset-Specific Documentation
-
-- **`boughter/`** - Boughter dataset documentation
-- **`harvey/`** - Harvey dataset documentation
-- **`jain/`** - Jain dataset documentation (historical - see experiments/novo_parity/ for final)
-- **`shehata/`** - Shehata dataset documentation
-- **`investigation/`** - Various investigations
-
----
-
-**Last Updated**: November 3, 2025
-**Branch**: `novo-parity-exp-cleaned`
+**Last Updated**: 2025-11-09
+**Branch**: `docs/canonical-structure`
