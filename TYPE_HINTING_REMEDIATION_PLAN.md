@@ -6,7 +6,7 @@ _Last updated: 2025-11-08_
 
 **TL;DR:** Another AI enforced strict mypy (`disallow_untyped_defs = true`) without adding type annotations to test/preprocessing code. Result: **546 errors** across **46 files**. Production code (`src/`) is clean. This is **mechanical but time-consuming** (5-7 hours). Plan below provides step-by-step instructions to fix systematically.
 
-**Status:** Phase A (Inventory) complete. Ready to execute Phases B-F.
+**Status:** Phases A & B complete; Phase C underway (tests/unit/data ✅, remaining clusters pending).
 
 **Impact:** Blocks `make all` and CI until fixed.
 
@@ -27,6 +27,13 @@ Type enforcement landed before the codebase was ready. This blocks CI / `make al
 1. Restore a passing `make all` without weakening the stricter mypy settings.
 2. Eliminate “missing type annotation” errors systematically (no mass `Any`, no broad config relaxations).
 3. Keep runtime code paths untouched; only add hints or light refactors that clarify intent.
+
+## Progress Snapshot (2025-11-08)
+
+- ✅ Phase A – Inventory completed via `.mypy_failures.txt` (546-error baseline)
+- ✅ Phase B – Fixtures typed (`tests/fixtures/mock_*`) – commit `3352ad7`
+- ✅ Phase C (kickoff) – `tests/unit/data/test_loaders.py` typed – commit `0dcb166`
+- ⏳ Remaining ≈513 errors (546 − 33 fixed) across the rest of Phases C–E
 
 ## 4. Scope
 
@@ -71,9 +78,11 @@ Priority 4 (Utility Scripts):
 2. ✅ Grouped failures by path cluster
 3. ✅ Prioritized shared utilities first (fixtures, helpers)
 
-### Phase B – Fix Shared Utilities (Priority 1)
+### Phase B – Fix Shared Utilities (Priority 1) ✅ COMPLETE
 
 **Time Estimate: 30 minutes**
+
+**Status:** Completed 2025-11-08 (commit `3352ad7`). Fixtures now provide typed mocks/models that downstream tests rely on.
 
 **Files to Fix:**
 1. `tests/fixtures/mock_models.py` (11 errors)
@@ -100,7 +109,7 @@ git commit -m "fix: Add type annotations to test fixtures"
 **Time Estimate: 3-4 hours**
 
 **Files to Fix (in order):**
-1. `tests/unit/data/test_loaders.py` (22 errors) - 20 min
+1. ✅ `tests/unit/data/test_loaders.py` (22 errors) – done 2025-11-08 (commit `0dcb166`)
 2. `tests/unit/datasets/test_base.py` (many errors) - 30 min
 3. `tests/unit/datasets/test_base_annotation.py` (many errors) - 30 min
 4. `tests/unit/datasets/test_*.py` (remaining dataset tests) - 1 hour
@@ -261,8 +270,8 @@ git commit -m "chore: Complete type annotation remediation - mypy clean"
 
 ## 9. Execution Checklist
 
-- [ ] Phase B: Fix `tests/fixtures/` (11 errors)
-- [ ] Phase C: Fix `tests/unit/data/` (22 errors)
+- [x] Phase B: Fix `tests/fixtures/` (11 errors)
+- [x] Phase C: Fix `tests/unit/data/` (22 errors)
 - [ ] Phase C: Fix `tests/unit/datasets/` (140 errors)
 - [ ] Phase C: Fix `tests/unit/core/` (99 errors)
 - [ ] Phase C: Fix `tests/unit/cli/` (76 errors)
