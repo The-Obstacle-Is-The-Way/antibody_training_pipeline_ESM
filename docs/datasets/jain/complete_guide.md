@@ -20,17 +20,18 @@
 
 **METHOD 1 - Canonical File (86 antibodies for parity):**
 ```bash
-# Create config file for canonical format
+# Create config file specifying model, data, AND column override
 cat > configs/test_jain_parity.yaml <<EOF
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+data_paths:
+  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
 label_column: "label"
 EOF
 
-# Test with 86-antibody parity subset
-uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
-  --config configs/test_jain_parity.yaml
+# Test with config ONLY (--config ignores --model/--data if provided)
+uv run antibody-test --config configs/test_jain_parity.yaml
 
 Expected: [[40, 19], [10, 17]], 66.28% accuracy (EXACT Novo parity)
 ```
@@ -341,18 +342,19 @@ experiments/novo_parity/
 ### Task 1: Verify Novo Parity
 
 ```bash
-# MUST use 86-antibody canonical file with config override
+# MUST use 86-antibody canonical file with full config
 # Create config file
 cat > configs/test_jain_parity.yaml <<EOF
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+data_paths:
+  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
 label_column: "label"
 EOF
 
-# Run parity test
-uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
-  --config configs/test_jain_parity.yaml
+# Run parity test (--config ONLY, no --model/--data)
+uv run antibody-test --config configs/test_jain_parity.yaml
 
 # Expected: [[40, 19], [10, 17]], 66.28% (EXACT parity)
 ```
@@ -360,14 +362,11 @@ uv run antibody-test \
 ### Task 2: Compare 86-antibody Parity vs 137-antibody Full Set
 
 ```bash
-# Test 1: Parity subset (86 antibodies) - REQUIRES canonical file
-uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
-  --config configs/test_jain_parity.yaml
+# Test 1: Parity subset (86 antibodies) - use config with canonical file
+uv run antibody-test --config configs/test_jain_parity.yaml
 # Expected: [[40, 19], [10, 17]] (66.28% - Novo parity)
 
-# Test 2: Full dataset (137 antibodies) - fragment file
+# Test 2: Full dataset (137 antibodies) - use fragment file directly
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
   --data test_datasets/jain/fragments/VH_only_jain.csv

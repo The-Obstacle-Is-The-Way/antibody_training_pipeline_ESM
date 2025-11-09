@@ -414,17 +414,18 @@ test_datasets/jain/
 
 **Command (CURRENT v2.0 - Novo Parity):**
 ```bash
-# Create config for canonical file format
+# Create config with model_paths, data_paths, AND column override
 cat > configs/test_jain_parity.yaml <<EOF
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+data_paths:
+  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
 label_column: "label"
 EOF
 
-# Test with 86-antibody parity subset (REQUIRED for Novo parity)
-uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
-  --config configs/test_jain_parity.yaml
+# Test with config ONLY (no --model/--data, they're ignored with --config)
+uv run antibody-test --config configs/test_jain_parity.yaml
 ```
 
 **Expected:** 66.28% accuracy ([[40, 19], [10, 17]] confusion matrix - EXACT parity)
