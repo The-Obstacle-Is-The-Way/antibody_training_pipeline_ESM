@@ -101,6 +101,9 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Detected version: $VERSION"
 
+    - name: Set lowercase repository owner
+      run: echo "OWNER_LC=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
     - name: Build and push production image
       id: docker_build
       uses: docker/build-push-action@v5
@@ -109,8 +112,8 @@ jobs:
         file: ./Dockerfile.prod
         push: true
         tags: |
-          ghcr.io/${{ github.repository_owner }}/antibody-training:latest
-          ghcr.io/${{ github.repository_owner }}/antibody-training:${{ steps.version.outputs.version }}
+          ghcr.io/${{ env.OWNER_LC }}/antibody-training:latest
+          ghcr.io/${{ env.OWNER_LC }}/antibody-training:${{ steps.version.outputs.version }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
