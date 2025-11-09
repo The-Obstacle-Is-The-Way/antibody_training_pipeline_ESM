@@ -5,6 +5,8 @@ on:
     branches: [ dev, leroy-jenkins/full-send ]
   pull_request:
     branches: [ dev, leroy-jenkins/full-send ]
+  release:
+    types: [ published ]
 
 jobs:
   test-dev:
@@ -74,7 +76,7 @@ jobs:
   build-and-push:
     name: Build and Push Production Image
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/leroy-jenkins/full-send'
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/leroy-jenkins/full-send') || github.event_name == 'release'
     needs: [test-dev, test-prod]
     permissions:
       contents: read
