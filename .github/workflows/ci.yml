@@ -188,14 +188,18 @@ jobs:
     - name: Install security tools
       run: uv pip install pip-audit safety
 
+    - name: Verify pip-audit installation
+      run: |
+        uv run python -c "import sys, pip_audit; print('pip-audit version:', pip_audit.__version__); print('Python executable:', sys.executable)"
+
     - name: Run pip-audit (installed environment)
       run: |
-        uv run pip-audit --progress-spinner=off --format json --output pip-audit.json
-        uv run pip-audit --progress-spinner=off
+        uv run python -m pip_audit --progress-spinner=off --format json --output pip-audit.json
+        uv run python -m pip_audit --progress-spinner=off
       continue-on-error: false  # ✅ ENFORCED: Fail CI if CVEs are introduced
 
     - name: Export requirements for Safety check
-      run: uv export --format=requirements-txt --no-dev --output-file security-reqs.txt
+      run: uv export --format=requirements-txt --no-dev --no-editable --output-file security-reqs.txt
 
     - name: Run Safety check
       run: |
