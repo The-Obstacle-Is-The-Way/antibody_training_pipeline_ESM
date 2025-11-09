@@ -1,92 +1,66 @@
-# Type Checking Strategy & Progress
+# Type Checking Strategy - Completion Report
 
-**Goal:** Achieve 100% type safety with mypy - no `Any` types, no `type: ignore` comments
+**Goal:** Achieve 100% type safety with mypy on core pipeline code
 
-**Total Errors:** 75 across 13 files → **ALL FIXED** ✅
+**Status:** ✅ **COMPLETE** (November 2025)
 
-**Status:** ✅ **COMPLETE** - 100% Type-Safe Codebase Achieved
-
----
-
-## Error Classification
-
-### Priority 1: Quick Wins (10 errors - ~15 min)
-
-**Category A: PEP 484 no_implicit_optional (6 errors)**
-- ❌ `data.py:48` - Argument `X` default `None` incompatible with `list[str]`
-- ❌ `data.py:49` - Argument `y` default `None` incompatible with `list[Any]`
-- ❌ `data.py:51` - Argument `filename` default `None` incompatible with `str`
-- ❌ `classifier.py:14` - Argument `params` default `None` incompatible with `dict[Any, Any]`
-- ❌ `preprocessing/shehata/step1_convert_excel_to_csv.py:89` - Argument `psr_threshold` default `None` incompatible with `float`
-- ❌ `preprocessing/boughter/stage1_dna_translation.py:329` - Using `any` instead of `Any`
-
-**Fix:** Add `| None` to type hints or remove default=None
-
-**Category B: Missing Type Annotations (4 errors)**
-- ❌ `model.py:95` - Need type annotation for `cleaned_sequences`
-- ❌ `preprocessing/boughter/validate_stage1.py:205` - Need type annotation for `subset_counts`
-- ❌ `test.py:84` - Need type annotation for `results`
-- ❌ `test.py:85` - Need type annotation for `cached_embedding_files`
-
-**Fix:** Add explicit type hints (e.g., `results: dict[str, Any] = {}`)
+**Result:** Core pipeline (`src/antibody_training_esm/`) passes `mypy --strict` with zero errors
 
 ---
 
-### Priority 2: Core Production Files (16 errors - ~30 min)
+## Summary
 
-**Category C: List vs ndarray Type Mismatches (6 errors)**
-- ❌ `data.py:62` - Assigning `list[str]` to `ndarray` variable
-- ❌ `data.py:64` - Assigning `list[Any]` to `ndarray` variable
-- ❌ `train.py:278` - Assigning `ndarray` to `list[int]` variable (y_train)
-- ❌ `train.py:282` - Passing `list[int]` to function expecting `ndarray`
-- ❌ `train.py:286` - Passing `list[int]` to function expecting `ndarray`
-- ❌ `train.py:292` - Passing `list[int]` to function expecting `ndarray`
+### ✅ Achieved (35 core pipeline errors fixed)
 
-**Fix:** Use proper numpy types throughout, ensure y_train is typed as `np.ndarray` not `list`
+Fixed all type errors in production code:
 
-**Category D: Returning Any from Typed Functions (9 errors)**
-- ❌ `data.py:75` - Returning `Any` from function declared to return `dict[Any, Any]`
-- ❌ `model.py:70` - Returning `Any` from function declared to return `ndarray`
-- ❌ `classifier.py:168` - Returning `Any` from function declared to return `ndarray`
-- ❌ `classifier.py:183` - Returning `Any` from function declared to return `ndarray`
-- ❌ `classifier.py:199` - Returning `Any` from function declared to return `float`
-- ❌ `train.py:51` - Returning `Any` from function declared to return `dict[Any, Any]`
-- ❌ `train.py:85` - Returning `Any` from function declared to return `ndarray`
-- ❌ `test.py:225` - Returning `Any` from function declared to return `ndarray`
+- **PEP 484 implicit Optional issues** (6 fixes)
+  - Added `| None` to type hints for optional parameters
+  - Fixed `data.py`, `classifier.py`, core modules
 
-**Fix:** Add explicit return type annotations or cast return values
+- **Missing type annotations** (4 fixes)
+  - Added explicit type hints to variables
+  - Fixed `model.py`, `test.py` inference failures
 
-**Category E: Return Type Signature Mismatches (4 errors)**
-- ❌ `train.py:203` - Returning `dict[str, dict[str, Any]]` but expecting `dict[str, float]`
-- ❌ `train.py:215` - Returning `None` but expecting `str`
-- ❌ `preprocessing/boughter/stage1_dna_translation.py:449` - Returning `tuple[list, list]` but expecting `list[dict]`
-- ❌ `preprocessing/shehata/validate_conversion.py:74` - Returning `DataFrame` but expecting `dict`
+- **List vs ndarray type mismatches** (6 fixes)
+  - Corrected numpy array types throughout pipeline
+  - Fixed `data.py`, `train.py` type flow
 
-**Fix:** Fix function return type annotations to match actual return values
+- **Return type annotation issues** (13 fixes)
+  - Fixed `Any` return types from typed functions
+  - Corrected return type signature mismatches
+  - Fixed `classifier.py`, `train.py`, `test.py`, `model.py`
 
----
+### ⚠️ Deferred (40 preprocessing script errors)
 
-### Priority 3: Preprocessing Scripts (40 errors - DEFER TO RESIDUAL)
+Preprocessing/validation scripts not type-checked:
 
-**Category F: Validation Script Type Issues (30+ errors)**
-- 18 errors in `scripts/validation/validate_fragments.py`
-- 16 errors in `preprocessing/boughter/validate_stages2_3.py`
-- 2 errors in `preprocessing/shehata/step1_convert_excel_to_csv.py`
-- 4 errors in `preprocessing/jain/validate_conversion.py`
+- `scripts/validation/validate_fragments.py` (18 errors)
+- `preprocessing/boughter/validate_stages2_3.py` (16 errors)
+- `preprocessing/shehata/step1_convert_excel_to_csv.py` (2 errors)
+- `preprocessing/jain/validate_conversion.py` (4 errors)
 
-**Issues:**
-- `"object" has no attribute "append"` - DataFrame column access needs type hints
-- `Unsupported target for indexed assignment ("object")` - Same issue
-- `Incompatible types in assignment (float vs int)` - Math operations
-- Missing module attributes - Import issues
+**Rationale for deferral:**
 
-**Rationale for Deferral:**
-- These are one-time preprocessing/validation scripts
-- Not part of core production pipeline (train/inference)
-- Would require significant pandas typing work
+- One-time data preprocessing scripts (not production pipeline)
+- Would require extensive pandas stub typing
 - Low ROI for production stability
+- Documented in `docs/archive/RESIDUAL_TYPE_ERRORS.md`
 
-**Recommendation:** Document as residual work, add to backlog
+### 🎯 CI Enforcement
+
+Type safety enforced in CI pipeline:
+
+```yaml
+# .github/workflows/ci.yml
+- name: Type checking with mypy
+  run: uv run mypy src/ --strict
+  continue-on-error: false  # ✅ ENFORCED: blocks merge on type errors
+```
+
+**Coverage:** Core pipeline only (`src/antibody_training_esm/`)
+**Strictness:** `--strict` mode (disallow_untyped_defs=true)
+**Result:** Zero type errors in production code
 
 ---
 
