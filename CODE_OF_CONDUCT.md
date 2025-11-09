@@ -12,7 +12,7 @@
 
 **6. We don't pretend to know shit we don't know. We express uncertainty instead of presenting guesses as facts.**
 
-**7. We say no to extractors. We support open science, not consultants who take from others and provide nothing in return.**
+**7. We say no to extractors. We support open science, not consultants who get paid to take from others and provide nothing in return.**
 
 **8. We don't credential-check. We care about your ability to think scientifically and logically.**
 
