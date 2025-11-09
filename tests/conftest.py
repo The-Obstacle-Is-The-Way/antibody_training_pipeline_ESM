@@ -14,7 +14,10 @@ Date: 2025-11-07
 Author: Claude Code
 """
 
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -49,7 +52,9 @@ from tests.fixtures.mock_sequences import (
 
 
 @pytest.fixture
-def mock_transformers_model(monkeypatch):
+def mock_transformers_model(
+    monkeypatch: pytest.MonkeyPatch,
+) -> tuple[Any, Any]:
     """
     Mock Hugging Face transformers ESM-1v model and tokenizer.
 
@@ -68,11 +73,11 @@ def mock_transformers_model(monkeypatch):
     """
 
     # Mock model
-    def mock_automodel(*args, **kwargs):
+    def mock_automodel(*args: Any, **kwargs: Any) -> MockESMModel:
         return MockESMModel(*args, **kwargs)
 
     # Mock tokenizer
-    def mock_autotokenizer(*args, **kwargs):
+    def mock_autotokenizer(*args: Any, **kwargs: Any) -> MockTokenizer:
         return MockTokenizer(*args, **kwargs)
 
     monkeypatch.setattr("transformers.AutoModel.from_pretrained", mock_automodel)
@@ -84,7 +89,7 @@ def mock_transformers_model(monkeypatch):
 
 
 @pytest.fixture
-def mock_sklearn_classifier(monkeypatch):
+def mock_sklearn_classifier(monkeypatch: pytest.MonkeyPatch) -> Any:
     """
     Mock sklearn LogisticRegression for deterministic testing.
 
@@ -99,7 +104,7 @@ def mock_sklearn_classifier(monkeypatch):
             # Predictions are deterministic: [0, 1, 0, 1, ...]
     """
 
-    def mock_logistic_regression(*args, **kwargs):
+    def mock_logistic_regression(*args: Any, **kwargs: Any) -> MockClassifier:
         return MockClassifier(*args, **kwargs)
 
     monkeypatch.setattr(
@@ -115,7 +120,7 @@ def mock_sklearn_classifier(monkeypatch):
 
 
 @pytest.fixture
-def valid_sequences():
+def valid_sequences() -> dict[str, Any]:
     """
     Valid antibody sequences for testing.
 
@@ -132,7 +137,7 @@ def valid_sequences():
 
 
 @pytest.fixture
-def invalid_sequences():
+def invalid_sequences() -> dict[str, Any]:
     """
     Invalid antibody sequences for error testing.
 
@@ -148,7 +153,7 @@ def invalid_sequences():
 
 
 @pytest.fixture
-def mock_embeddings():
+def mock_embeddings() -> dict[str, np.ndarray]:
     """
     Mock ESM-1v embeddings for testing classifier.
 
@@ -170,7 +175,7 @@ def mock_embeddings():
 
 
 @pytest.fixture
-def mock_dataset_small():
+def mock_dataset_small() -> pd.DataFrame:
     """
     Small mock dataset (10 samples, balanced).
 
@@ -181,7 +186,7 @@ def mock_dataset_small():
 
 
 @pytest.fixture
-def mock_dataset_large():
+def mock_dataset_large() -> pd.DataFrame:
     """
     Larger mock dataset (100 samples, balanced).
 
@@ -192,7 +197,7 @@ def mock_dataset_large():
 
 
 @pytest.fixture
-def mock_dataset_imbalanced():
+def mock_dataset_imbalanced() -> pd.DataFrame:
     """
     Imbalanced mock dataset (10 samples, all class 0).
 
@@ -208,7 +213,7 @@ def mock_dataset_imbalanced():
 
 
 @pytest.fixture
-def fixture_dir():
+def fixture_dir() -> Path:
     """
     Path to test fixtures directory.
 
@@ -219,7 +224,7 @@ def fixture_dir():
 
 
 @pytest.fixture
-def mock_dataset_dir(fixture_dir):
+def mock_dataset_dir(fixture_dir: Path) -> Path:
     """
     Path to mock dataset CSV files.
 
@@ -230,7 +235,7 @@ def mock_dataset_dir(fixture_dir):
 
 
 @pytest.fixture
-def jain_sample_csv(mock_dataset_dir):
+def jain_sample_csv(mock_dataset_dir: Path) -> Path:
     """
     Path to mock Jain dataset CSV.
 
@@ -243,7 +248,7 @@ def jain_sample_csv(mock_dataset_dir):
 
 
 @pytest.fixture
-def boughter_sample_csv(mock_dataset_dir):
+def boughter_sample_csv(mock_dataset_dir: Path) -> Path:
     """
     Path to mock Boughter dataset CSV.
 
@@ -261,7 +266,7 @@ def boughter_sample_csv(mock_dataset_dir):
 
 
 @pytest.fixture
-def default_classifier_params():
+def default_classifier_params() -> dict[str, Any]:
     """
     Default hyperparameters for BinaryClassifier.
 
@@ -281,8 +286,10 @@ def default_classifier_params():
 
 @pytest.fixture
 def fitted_classifier(
-    mock_embeddings, default_classifier_params, mock_transformers_model
-):
+    mock_embeddings: dict[str, np.ndarray],
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: tuple[Any, Any],
+) -> Any:
     """
     Pre-fitted BinaryClassifier for testing predictions.
 
@@ -303,7 +310,7 @@ def fitted_classifier(
 
 
 @pytest.fixture
-def embedding_extractor(mock_transformers_model):
+def embedding_extractor(mock_transformers_model: tuple[Any, Any]) -> Any:
     """
     ESMEmbeddingExtractor with mocked model (no download).
 
@@ -322,7 +329,7 @@ def embedding_extractor(mock_transformers_model):
 # ============================================================================
 
 
-def assert_valid_predictions(predictions: np.ndarray, expected_len: int):
+def assert_valid_predictions(predictions: np.ndarray, expected_len: int) -> None:
     """
     Assert that predictions are valid binary labels.
 
@@ -338,7 +345,7 @@ def assert_valid_predictions(predictions: np.ndarray, expected_len: int):
     assert predictions.dtype in [np.int32, np.int64, int]
 
 
-def assert_valid_embeddings(embeddings: np.ndarray, expected_shape: tuple):
+def assert_valid_embeddings(embeddings: np.ndarray, expected_shape: tuple) -> None:
     """
     Assert that embeddings have correct shape and dtype.
 
@@ -357,7 +364,7 @@ def assert_valid_embeddings(embeddings: np.ndarray, expected_shape: tuple):
 
 def assert_valid_dataframe(
     df: pd.DataFrame, required_columns: list[str], min_rows: int = 1
-):
+) -> None:
     """
     Assert that DataFrame has required columns and minimum rows.
 
@@ -380,7 +387,7 @@ def assert_valid_dataframe(
 # ============================================================================
 
 
-def pytest_configure(config):
+def pytest_configure(config: pytest.Config) -> None:
     """
     Configure pytest markers.
 
