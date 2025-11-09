@@ -14,8 +14,8 @@ This document contains our trained model's performance on all test datasets, com
 
 ### Our Results
 
-**Test file:** `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv`
-**Size:** 86 antibodies (after QC removals)
+**Test file:** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv`
+**Size:** 86 antibodies (P5e-S2 subset, Novo parity benchmark)
 
 ```
 Confusion Matrix: [[40, 19], [10, 17]]
