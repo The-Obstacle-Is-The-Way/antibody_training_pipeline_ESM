@@ -10,13 +10,15 @@ This validates the P0 blocker fix for gap characters.
 Date: 2025-11-02
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
 import pandas as pd
 
 
-def test_gap_characters():
+def test_gap_characters() -> None:
     """Test 1: Verify no gap characters in any fragment CSV"""
     print("\n" + "=" * 60)
     print("TEST 1: Gap Character Detection")
@@ -47,7 +49,7 @@ def test_gap_characters():
     assert all_clean, "Gap characters detected"
 
 
-def test_amino_acid_validation():
+def test_amino_acid_validation() -> None:
     """Test 2: Verify all sequences contain only valid amino acids"""
     print("\n" + "=" * 60)
     print("TEST 2: Amino Acid Validation")
@@ -101,7 +103,7 @@ def test_amino_acid_validation():
     assert all_valid, "Invalid amino acids detected"
 
 
-def test_previously_affected_sequences():
+def test_previously_affected_sequences() -> None:
     """Test 3: Spot-check sequences that previously had gaps"""
     print("\n" + "=" * 60)
     print("TEST 3: Previously Affected Sequences")
@@ -152,7 +154,7 @@ def test_previously_affected_sequences():
     assert all_clean, "Some sequences still have issues"
 
 
-def test_model_validation_logic():
+def test_model_validation_logic() -> None:
     """Test 4: Simulate model.py validation logic"""
     print("\n" + "=" * 60)
     print("TEST 4: ESM Model Validation Simulation")
@@ -193,7 +195,7 @@ def test_model_validation_logic():
     assert all_valid, "Some sequences would fail ESM validation"
 
 
-def test_data_integrity():
+def test_data_integrity() -> None:
     """Test 5: Verify data integrity after regeneration"""
     print("\n" + "=" * 60)
     print("TEST 5: Data Integrity")
@@ -246,7 +248,7 @@ def test_data_integrity():
     assert all_exist and all_398, "Data integrity issues detected"
 
 
-def main():
+def main() -> int:
     """Run all tests"""
     print("=" * 60)
     print("Shehata Dataset ESM Embedding Compatibility Test")
