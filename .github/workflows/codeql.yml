@@ -1,0 +1,49 @@
+name: CodeQL Security Analysis
+
+on:
+  # Run on pushes to main branches
+  push:
+    branches: [ leroy-jenkins/full-send, dev ]
+
+  # Run on PRs
+  pull_request:
+    branches: [ leroy-jenkins/full-send, dev ]
+
+  # Weekly scheduled scan (Sunday 3am UTC - offset from other jobs)
+  schedule:
+    - cron: '0 3 * * 0'
+
+  # Manual trigger
+  workflow_dispatch:
+
+# Don't run multiple CodeQL scans simultaneously
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: CodeQL Analysis (Python)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    permissions:
+      security-events: write  # Upload results to GitHub Security tab
+      contents: read
+      actions: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: python
+        # Run extended query suite (more thorough, catches more issues)
+        queries: security-extended,security-and-quality
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:python"
