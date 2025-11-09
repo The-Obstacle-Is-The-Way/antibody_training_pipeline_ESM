@@ -383,6 +383,6 @@ if __name__ == "__main__":
     import sys
 
     config_path = sys.argv[1] if len(sys.argv) > 1 else "configs/config.yaml"
-    results = train_model(config_path)
+    train_model(config_path)  # Call for side effects (model training and saving)
 
     logging.getLogger(__name__).info("Training completed successfully!")

@@ -11,3 +11,4 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [pandas-stubs, types-PyYAML]
+        exclude: ^(experiments/|reference_repos/)

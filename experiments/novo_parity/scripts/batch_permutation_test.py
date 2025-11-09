@@ -300,6 +300,7 @@ def test_permutation(perm_id, reclass_strategy, removal_strategy, description):
 
     # Get reclassification IDs
     reclass_func = RECLASSIFICATION_STRATEGIES[reclass_strategy][1]
+    reclass_ids = []  # Initialize to empty list (defensive coding)
     if callable(reclass_func):
         if reclass_strategy in ["R1", "R2"]:
             reclass_ids = reclass_func()
