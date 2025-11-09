@@ -384,22 +384,64 @@ uv run antibody-test \
 **Symptoms:**
 
 ```python
-KeyError: 'sequence'
+ValueError: Sequence column 'sequence' not found in dataset. Available columns: ['id', 'vh_sequence', 'vl_sequence', ...]
 ```
 
-**Solution:**
+**Root Cause:**
 
-Ensure test CSV has standardized `sequence` column:
+You're trying to test with a **canonical file** using default config:
 
 ```bash
-# Check CSV structure
-head -n 5 test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+# THIS FAILS (canonical file has vh_sequence, not sequence)
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+```
 
-# Expected format:
-# id,sequence,label
-# jain_001,EVQLVESGGG...,0
+**Solution 1: Use Fragment Files (Recommended)**
 
-# All fragment CSVs from preprocessing have standardized columns
+Fragment files have standardized `sequence` column:
+
+```bash
+# THIS WORKS (fragment file has sequence column)
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/fragments/VH_only_jain.csv
+```
+
+**Solution 2: Create Config for Canonical Files**
+
+If you need to use canonical files (for metadata access):
+
+```yaml
+# test_config_canonical.yaml
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+data_paths:
+  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+sequence_column: "vh_sequence"  # Override for canonical file
+label_column: "label"
+```
+
+Then run:
+```bash
+uv run antibody-test --config test_config_canonical.yaml
+```
+
+**Understanding File Types:**
+
+| File Type | Location | Columns | Use Case |
+|-----------|----------|---------|----------|
+| Canonical | `test_datasets/{dataset}/canonical/` | `vh_sequence`, `vl_sequence` | Full metadata, requires config |
+| Fragment | `test_datasets/{dataset}/fragments/` | `sequence`, `label` | Standardized, works with defaults |
+
+**Check CSV columns:**
+```bash
+head -n 1 test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+# Output: id,vh_sequence,label (needs sequence_column: "vh_sequence")
+
+head -n 1 test_datasets/jain/fragments/VH_only_jain.csv
+# Output: id,sequence,label (works with defaults)
 ```
 
 ---
@@ -425,9 +467,10 @@ Cross-dataset generalization is **inherently challenging**:
 
 ```bash
 # Train ELISA, test ELISA (Boughter → Jain)
+# Use fragment file for compatibility with default config
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 ```
 
 **2. Tune Assay-Specific Thresholds (PSR Assays)**

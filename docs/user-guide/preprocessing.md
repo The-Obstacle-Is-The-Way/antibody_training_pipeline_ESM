@@ -71,8 +71,18 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 
 **Outputs:**
-- `test_datasets/jain/canonical/jain_86_novo_parity.csv` - Full sequences (86 antibodies)
-- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH only (Novo parity benchmark)
+
+**Canonical files** (original column names):
+- `test_datasets/jain/canonical/jain_86_novo_parity.csv` - Full data (columns: `id`, `vh_sequence`, `vl_sequence`, ...)
+- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH only (columns: `id`, `vh_sequence`, `label`)
+
+**Fragment files** (standardized columns):
+- `test_datasets/jain/fragments/VH_only_jain.csv` - VH fragment (columns: `id`, `sequence`, `label`) **← Use for testing**
+- Additional fragment files in `test_datasets/jain/fragments/` (H-CDRs, L-CDRs, etc.)
+
+**Column Naming:**
+- **Canonical files** use `vh_sequence`/`vl_sequence` (original source data)
+- **Fragment files** use `sequence` (standardized for training/testing)
 
 ---
 
@@ -87,11 +97,18 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
 **Outputs:**
-- `test_datasets/harvey/processed/harvey.csv` - Combined raw data
-- `test_datasets/harvey/fragments/VHH_only_harvey.csv` - Full VHH domain
+
+**Processed files:**
+- `test_datasets/harvey/processed/harvey.csv` - Combined raw data (intermediate)
+
+**Fragment files** (standardized columns):
+- `test_datasets/harvey/fragments/VHH_only_harvey.csv` - Full VHH (columns: `id`, `sequence`, `label`, ...)
 - `test_datasets/harvey/fragments/H-CDR1_harvey.csv` - Individual CDRs
 - `test_datasets/harvey/fragments/H-CDRs_harvey.csv` - Concatenated CDRs
 - `test_datasets/harvey/fragments/H-FWRs_harvey.csv` - Concatenated FWRs
+
+**Column Naming:**
+- All fragment files use standardized `sequence` column (ready for testing)
 
 **Note:** Fragment naming pattern: `{fragmentName}_harvey.csv` (not `harvey_{fragmentName}.csv`)
 
@@ -108,13 +125,20 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 ```
 
 **Outputs:**
-- `test_datasets/shehata/processed/shehata.csv` - Combined processed data
-- `test_datasets/shehata/fragments/VH_only_shehata.csv` - VH domain
+
+**Processed files:**
+- `test_datasets/shehata/processed/shehata.csv` - Combined processed data (intermediate)
+
+**Fragment files** (standardized columns):
+- `test_datasets/shehata/fragments/VH_only_shehata.csv` - VH domain (columns: `id`, `sequence`, `label`, ...)
 - `test_datasets/shehata/fragments/H-CDRs_shehata.csv` - Heavy CDRs
 - `test_datasets/shehata/fragments/All-CDRs_shehata.csv` - All CDRs
 - (16 fragment files total, pattern: `{fragmentName}_shehata.csv`)
 
-**Note:** No `shehata_full.csv` in canonical/ - processed data in `processed/` directory
+**Column Naming:**
+- All fragment files use standardized `sequence` column (ready for testing)
+
+**Note:** No canonical/ directory with CSVs - only fragments/ (processed outputs only)
 
 ---
 

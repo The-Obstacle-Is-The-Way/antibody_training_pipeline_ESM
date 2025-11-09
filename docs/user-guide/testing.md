@@ -16,16 +16,42 @@ Testing involves:
 
 ---
 
+## Understanding Dataset File Types
+
+Before testing, it's important to understand the two types of CSV files in the pipeline:
+
+### Canonical Files vs Fragment Files
+
+**Fragment Files** (`test_datasets/{dataset}/fragments/*.csv`) - **RECOMMENDED**:
+- Standardized column names: `sequence`, `label`
+- Ready for testing with default CLI (no config override needed)
+- Created by preprocessing scripts
+- **Use these for most testing workflows**
+
+**Canonical Files** (`test_datasets/{dataset}/canonical/*.csv`) - **ADVANCED**:
+- Original column names from source data (`vh_sequence`, `vl_sequence`)
+- Includes all metadata (flags, PSR scores, etc.)
+- Requires config override with `sequence_column: "vh_sequence"`
+- Use for custom analysis requiring full metadata
+
+**Which to use?**
+- **Quick testing:** Use fragment files (work with `--model` and `--data` CLI flags)
+- **Metadata analysis:** Use canonical files with test config YAML
+
+---
+
 ## Quick Testing Commands
 
-### Test with Model and Data Paths
+### Test with Model and Data Paths (Recommended)
 
 ```bash
-# Test trained model on Jain dataset
+# Test trained model on Jain dataset (using fragment file)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 ```
+
+**Note:** Fragment files have standardized `sequence` column - no config override needed.
 
 ### Test with Configuration File
 
@@ -37,14 +63,14 @@ uv run antibody-test --create-config
 uv run antibody-test --config test_config.yaml
 ```
 
-**Example test_config.yaml:**
+**Example test_config.yaml (fragment file):**
 
 ```yaml
 model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "test_datasets/jain/fragments/VH_only_jain.csv"  # Fragment file
 
 output_dir: "./test_results"
 device: "auto"  # or "cpu", "cuda", "mps"
@@ -60,19 +86,21 @@ The pipeline includes three test datasets with preprocessed fragment files:
 ### Jain Dataset (Novo Parity Benchmark)
 
 ```bash
+# Using fragment file (recommended - standardized columns)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 ```
 
 **Details:**
 
-- **Size:** 86 clinical antibodies
+- **Size:** 137 antibodies (fragment file includes full Jain dataset)
+  - 86 antibodies from P5e-S2 subset (Novo parity benchmark)
 - **Assay:** ELISA (per-antigen binding)
 - **Fragment:** VH
-- **File:** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv`
-- **Expected Accuracy:** 66.28% (Novo Nordisk exact parity)
-- **Expected Confusion Matrix:** [[40, 19], [10, 17]]
+- **File:** `test_datasets/jain/fragments/VH_only_jain.csv` (standardized `sequence` column)
+- **Alternative:** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 only, requires config override)
+- **Expected Accuracy:** ~66% on P5e-S2 subset (Novo Nordisk parity)
 
 ---
 
@@ -184,12 +212,51 @@ uv run antibody-test \
 
 ---
 
+## Using Canonical Files (Advanced)
+
+Canonical files preserve original column names and full metadata. To use them, create a test config:
+
+**Example: Test with Jain canonical file**
+
+```yaml
+# test_config_jain_canonical.yaml
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+
+data_paths:
+  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+
+sequence_column: "vh_sequence"  # Override for canonical file
+label_column: "label"
+output_dir: "./test_results"
+device: "auto"
+batch_size: 16
+```
+
+Then run:
+
+```bash
+uv run antibody-test --config test_config_jain_canonical.yaml
+```
+
+**Why the override?**
+- Canonical files use `vh_sequence` instead of `sequence` (original source data columns)
+- Fragment files use standardized `sequence` column (preprocessed for training/testing)
+- Config override tells the CLI which column to read
+
+**When to use canonical files:**
+- Access to full metadata (ELISA flags, PSR scores, source annotations)
+- Reproducing exact paper methodology with original data structure
+- Custom analysis requiring features beyond sequence + label
+
+---
+
 ## Understanding Test Results
 
 ### Standard Output
 
 ```
-✅ Loaded model: models/boughter_train_jain_test_vh.pkl
+✅ Loaded model: models/boughter_vh_esm1v_logreg.pkl
 ✅ Loaded test data: 86 samples
 ✅ Extracted embeddings (86 x 1280)
 ✅ Predictions complete
