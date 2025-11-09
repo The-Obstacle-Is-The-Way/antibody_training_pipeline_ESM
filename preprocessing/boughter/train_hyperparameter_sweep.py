@@ -8,10 +8,16 @@ Current performance (no StandardScaler): ~68% CV, 68.09% Jain test
 Target: 71.0% CV (Novo's benchmark)
 """
 
+from __future__ import annotations
+
 import logging
 import os
 from datetime import datetime
+from pathlib import Path
+from typing import Any, TypedDict
 
+import numpy as np
+import numpy.typing as npt
 import pandas as pd
 import yaml
 from sklearn.linear_model import LogisticRegression
@@ -25,10 +31,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+class HyperParamConfig(TypedDict, total=False):
+    C: float
+    penalty: str
+    solver: str
+    class_weight: str
+
+
 class HyperparameterSweep:
     """Run systematic hyperparameter sweep for LogisticRegression"""
 
-    def __init__(self, config_path):
+    def __init__(self, config_path: str | Path) -> None:
         with open(config_path) as f:
             self.config = yaml.safe_load(f)
 
@@ -38,17 +51,19 @@ class HyperparameterSweep:
         self.train_df = pd.read_csv(train_file)
 
         # Extract embeddings once (cache)
-        self.embeddings = None
-        self.labels = None
+        self.embeddings: npt.NDArray[np.float64] | None = None
+        self.labels: npt.NDArray[np.int_] | None = None
 
-    def extract_embeddings(self):
+    def extract_embeddings(self) -> None:
         """Extract ESM embeddings once for all experiments"""
         if self.embeddings is not None:
             return
 
         logger.info("Extracting ESM embeddings...")
         sequences = self.train_df[self.config["data"]["sequence_column"]].tolist()
-        self.labels = self.train_df[self.config["data"]["label_column"]].values
+        self.labels = self.train_df[self.config["data"]["label_column"]].to_numpy(
+            dtype=int
+        )
 
         # Initialize embedding extractor
         model_name = self.config["model"]["name"]
@@ -61,7 +76,13 @@ class HyperparameterSweep:
         logger.info(f"Extracted embeddings shape: {self.embeddings.shape}")
         logger.info(f"Labels shape: {self.labels.shape}")
 
-    def test_hyperparameters(self, C, penalty, solver, class_weight="balanced"):
+    def test_hyperparameters(
+        self,
+        C: float,
+        penalty: str,
+        solver: str,
+        class_weight: str = "balanced",
+    ) -> dict[str, Any]:
         """Test a single hyperparameter configuration"""
         logger.info(f"\n{'=' * 70}")
         logger.info(
@@ -70,7 +91,10 @@ class HyperparameterSweep:
         logger.info(f"{'=' * 70}")
 
         # Use embeddings directly (no scaling - matches Novo methodology)
+        if self.embeddings is None or self.labels is None:
+            raise RuntimeError("Embeddings must be extracted before testing.")
         X = self.embeddings
+        y = self.labels
 
         # Create classifier with specified hyperparameters
         try:
@@ -90,7 +114,7 @@ class HyperparameterSweep:
             cv_results = cross_validate(
                 clf,
                 X,
-                self.labels,
+                y,
                 cv=cv,
                 scoring=["accuracy", "f1", "roc_auc", "precision", "recall"],
                 return_train_score=True,
@@ -140,7 +164,9 @@ class HyperparameterSweep:
                 "error": str(e),
             }
 
-    def run_sweep(self, output_dir="hyperparameter_sweep_results"):
+    def run_sweep(
+        self, output_dir: str = "hyperparameter_sweep_results"
+    ) -> pd.DataFrame:
         """Run full hyperparameter sweep"""
         os.makedirs(output_dir, exist_ok=True)
 
@@ -148,7 +174,7 @@ class HyperparameterSweep:
         self.extract_embeddings()
 
         # Define sweep grid
-        sweep_grid = [
+        sweep_grid: list[HyperParamConfig] = [
             # Priority 1: C sweep with default solver (L2 penalty)
             {"C": 0.001, "penalty": "l2", "solver": "lbfgs"},
             {"C": 0.01, "penalty": "l2", "solver": "lbfgs"},
@@ -250,6 +276,11 @@ class HyperparameterSweep:
         return valid_results
 
 
+def main(config_path: str | Path = "configs/config.yaml") -> int:
+    sweep = HyperparameterSweep(config_path)
+    sweep.run_sweep()
+    return 0
+
+
 if __name__ == "__main__":
-    sweep = HyperparameterSweep("configs/config.yaml")
-    results = sweep.run_sweep()
+    raise SystemExit(main())

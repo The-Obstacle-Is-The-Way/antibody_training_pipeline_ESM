@@ -31,7 +31,8 @@ match Novo Nordisk's exact method.
 For historical reference, see: preprocessing/process_jain_OLD_94to86.py.bak
 """
 
-import sys
+from __future__ import annotations
+
 from pathlib import Path
 
 import pandas as pd
@@ -57,7 +58,7 @@ TIER_C_CLINICAL = "infliximab"  # 61% ADA rate + chimeric
 ALL_RECLASSIFIED = TIER_A_PSR + [TIER_B_EXTREME_TM, TIER_C_CLINICAL]
 
 
-def load_data():
+def load_data() -> pd.DataFrame:
     """Load 137-antibody FULL dataset with all metadata"""
     print("=" * 80)
     print("Jain Dataset Preprocessing: P5e-S2 Novo Nordisk Parity Method")
@@ -65,9 +66,9 @@ def load_data():
     print("\nStep 0: Loading data...")
 
     if not INPUT_137.exists():
-        print(f"ERROR: {INPUT_137} not found!")
-        print("Please ensure the source data is available.")
-        sys.exit(1)
+        raise FileNotFoundError(
+            f"{INPUT_137} not found! Please ensure the source data is available."
+        )
 
     df = pd.read_csv(INPUT_137)
     print(f"  ✓ Loaded {len(df)} antibodies from FULL dataset")
@@ -77,7 +78,7 @@ def load_data():
     return df
 
 
-def step1_remove_elisa_1to3(df):
+def step1_remove_elisa_1to3(df: pd.DataFrame) -> pd.DataFrame:
     """
     Step 1: Remove ELISA 1-3 (mild aggregators) → 116 antibodies (SSOT)
 
@@ -112,7 +113,7 @@ def step1_remove_elisa_1to3(df):
     return df_116
 
 
-def step2_merge_biophysical_data(df):
+def step2_merge_biophysical_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     Step 2: Merge biophysical data (PSR, AC-SINS, HIC, Tm) from SD03
 
@@ -123,8 +124,7 @@ def step2_merge_biophysical_data(df):
     print("=" * 80)
 
     if not INPUT_SD03.exists():
-        print(f"ERROR: {INPUT_SD03} not found!")
-        sys.exit(1)
+        raise FileNotFoundError(f"{INPUT_SD03} not found!")
 
     sd03 = pd.read_csv(INPUT_SD03)
     print(f"  ✓ Loaded SD03: {len(sd03)} rows")
@@ -165,7 +165,7 @@ def step2_merge_biophysical_data(df):
     return merged
 
 
-def step3_reclassify_5_antibodies(df):
+def step3_reclassify_5_antibodies(df: pd.DataFrame) -> pd.DataFrame:
     """
     Step 3: Reclassify 5 specific → non-specific
 
@@ -238,7 +238,7 @@ def step3_reclassify_5_antibodies(df):
     return df
 
 
-def step4_remove_30_by_psr_acsins(df):
+def step4_remove_30_by_psr_acsins(df: pd.DataFrame) -> pd.DataFrame:
     """
     Step 4: Remove 30 specific antibodies by PSR primary, AC-SINS tiebreaker
 
@@ -265,15 +265,17 @@ def step4_remove_30_by_psr_acsins(df):
     specific_sorted = specific.sort_values(
         by=["psr", "ac_sins", "id"], ascending=[False, False, True]
     )
+    specific_sorted["id"] = specific_sorted["id"].astype(str)
 
     # Top 30 to remove
     to_remove = specific_sorted.head(30)
 
-    print("\n  Top 30 by PSR/AC-SINS (to remove):")
-    for i, row in enumerate(to_remove.itertuples(), 1):
-        psr_val = row.psr if not pd.isna(row.psr) else 0.0
-        acsins_val = row.ac_sins if not pd.isna(row.ac_sins) else 0.0
-        print(f"    {i:2d}. {row.id:20s} PSR={psr_val:.3f} AC-SINS={acsins_val:.1f}")
+    print("\n  Top 30 by PSR/AC-SINS (to remove)")
+    print(
+        to_remove[["id", "psr", "ac_sins"]]
+        .rename(columns={"id": "antibody_id"})
+        .to_string(index=False)
+    )
 
     # Keep bottom 59 specific + all 27 non-specific
     specific_keep = specific_sorted.tail(59)
@@ -301,7 +303,7 @@ def step4_remove_30_by_psr_acsins(df):
     return df_86
 
 
-def save_86_dataset(df):
+def save_86_dataset(df: pd.DataFrame) -> Path:
     """Save final 86-antibody Novo parity dataset"""
     print("\n" + "=" * 80)
     print("SAVING OUTPUTS")
@@ -332,17 +334,25 @@ def save_86_dataset(df):
     return OUTPUT_86
 
 
-def main():
+def main() -> int:
     """Main preprocessing pipeline"""
 
     # Load data
-    df_137 = load_data()
+    try:
+        df_137 = load_data()
+    except FileNotFoundError as exc:
+        print(f"ERROR: {exc}")
+        return 1
 
     # Step 1: Remove ELISA 1-3 → 116 SSOT
     df_116 = step1_remove_elisa_1to3(df_137)
 
     # Step 2: Merge biophysical data
-    df_116 = step2_merge_biophysical_data(df_116)
+    try:
+        df_116 = step2_merge_biophysical_data(df_116)
+    except FileNotFoundError as exc:
+        print(f"ERROR: {exc}")
+        return 1
 
     # Step 3: Reclassify 5 specific → non-specific
     df_116 = step3_reclassify_5_antibodies(df_116)
@@ -374,8 +384,8 @@ def main():
 
     print("\n" + "=" * 80)
 
-    return df_86
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

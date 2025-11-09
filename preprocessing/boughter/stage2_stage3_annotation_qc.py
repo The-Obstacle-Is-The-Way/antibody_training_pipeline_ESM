@@ -36,9 +36,10 @@ Results Summary:
 Reference: See docs/boughter/boughter_data_sources.md for complete methodology
 """
 
-import sys
+from __future__ import annotations
+
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 import riot_na
@@ -85,7 +86,7 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] 
 
         # Extract all fragments, converting None to empty string
         # ANARCI returns None for regions it cannot identify
-        def safe_str(value):
+        def safe_str(value: str | None) -> str:
             """Convert None to empty string, preserve actual strings."""
             return value if value is not None else ""
 
@@ -151,7 +152,7 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] 
         return None
 
 
-def process_antibody(row: pd.Series) -> dict | None:
+def process_antibody(row: pd.Series) -> dict[str, Any] | None:
     """
     Annotate heavy and light chains, create all 16 fragments.
 
@@ -240,7 +241,7 @@ def annotate_all(df: pd.DataFrame) -> pd.DataFrame:
     return df_annotated
 
 
-def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
+def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
     """
     Create separate CSV files for each of the 16 fragment types.
 
@@ -325,7 +326,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
     print(f"\n✓ All {len(fragments)} fragment files created in: {output_dir}")
 
 
-def export_training_subset(df: pd.DataFrame, output_path: Path):
+def export_training_subset(df: pd.DataFrame, output_path: Path) -> None:
     """
     Export the canonical training subset used by the model pipeline.
 
@@ -425,7 +426,7 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     return df_clean
 
 
-def print_annotation_stats(df: pd.DataFrame):
+def print_annotation_stats(df: pd.DataFrame) -> None:
     """Print CDR length distributions and annotation statistics."""
     print("\n" + "=" * 70)
     print("CDR Length Distributions (Strict IMGT)")
@@ -454,7 +455,7 @@ def print_annotation_stats(df: pd.DataFrame):
                 print(f"  {length:2d} aa: {count:4d} sequences")
 
 
-def main():
+def main() -> int:
     """Main processing pipeline."""
     # Load Stage 1 output
     input_csv = Path("train_datasets/boughter/processed/boughter.csv")
@@ -464,7 +465,7 @@ def main():
         print(
             "Please run preprocessing/boughter/stage1_dna_translation.py first (Stage 1)"
         )
-        sys.exit(1)
+        return 1
 
     print("=" * 70)
     print("Boughter Dataset - Stage 2: ANARCI Annotation")
@@ -508,7 +509,8 @@ def main():
     print("  2. Check annotation_failures.log for any issues")
     print("  3. Review quality metrics in validation report")
     print("  4. Use fragment files for ESM embedding and training")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

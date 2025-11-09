@@ -27,6 +27,8 @@ Date: 2025-10-31
 Issue: #3 - Shehata dataset preprocessing (Phase 2)
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -147,7 +149,7 @@ def process_shehata_dataset(csv_path: str) -> pd.DataFrame:
     return df_annotated
 
 
-def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
+def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
     """
     Create separate CSV files for each fragment type.
 
@@ -211,7 +213,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
     print(f"\n✓ All fragments saved to: {output_dir}/")
 
 
-def main():
+def main() -> int:
     """Main processing pipeline."""
     # Paths
     csv_path = Path("test_datasets/shehata/processed/shehata.csv")
@@ -220,7 +222,7 @@ def main():
     if not csv_path.exists():
         print(f"Error: {csv_path} not found!")
         print("Please run preprocessing/shehata/step1_convert_excel_to_csv.py first.")
-        sys.exit(1)
+        return 1
 
     print("=" * 60)
     print("Shehata Dataset: Fragment Extraction (Phase 2)")
@@ -259,7 +261,8 @@ def main():
     print("  2. Run model inference on fragment-specific CSVs")
     print("  3. Compare results with paper (Sakhnini et al. 2025)")
     print("  4. Create PR to close Issue #3")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -5,6 +5,8 @@ This tests our trained model on the Harvey dataset (141,021 nanobodies)
 using the PSR-specific threshold (0.5495) discovered from Shehata analysis.
 """
 
+from __future__ import annotations
+
 import os
 import sys
 
@@ -13,13 +15,24 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 
 import pickle
 import time
+from typing import TypedDict
 
 import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from sklearn.metrics import accuracy_score, confusion_matrix
 
 
-def print_metrics(y_true, y_pred, dataset_name):
+class MetricsResult(TypedDict):
+    cm: npt.NDArray[np.int_]
+    accuracy: float
+
+
+def print_metrics(
+    y_true: npt.NDArray[np.int_] | list[int],
+    y_pred: npt.NDArray[np.int_] | list[int],
+    dataset_name: str,
+) -> MetricsResult:
     """Calculate and print performance metrics"""
     cm = confusion_matrix(y_true, y_pred)
     acc = accuracy_score(y_true, y_pred)
@@ -35,10 +48,10 @@ def print_metrics(y_true, y_pred, dataset_name):
     print(f"Specificity: {cm[0, 0] / (cm[0, 0] + cm[0, 1]) * 100:.1f}%")
     print(f"{'=' * 60}\n")
 
-    return {"cm": cm, "accuracy": acc}
+    return {"cm": cm, "accuracy": float(acc)}
 
 
-def main():
+def main() -> int:
     print("=" * 60)
     print("HARVEY DATASET TEST - PSR Threshold 0.5495")
     print("=" * 60)
@@ -76,7 +89,7 @@ def main():
 
     df = pd.read_csv(harvey_file, comment="#")
     sequences = df["sequence"].tolist()
-    y_true = df["label"].values
+    y_true = df["label"].to_numpy(dtype=int)
 
     print(f"  Dataset size: {len(sequences)} sequences")
     print(f"  Class distribution: {pd.Series(y_true).value_counts().to_dict()}")
@@ -119,7 +132,8 @@ def main():
     print("=" * 60)
     print("✓ Harvey test completed!")
     print("=" * 60)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

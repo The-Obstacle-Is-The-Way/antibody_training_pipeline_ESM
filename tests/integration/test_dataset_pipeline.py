@@ -94,7 +94,7 @@ def test_boughter_to_jain_pipeline(
     X_train = extractor.extract_batch_embeddings(
         df_train["VH_sequence"].head(20).tolist()
     )
-    y_train = df_train["label"].head(20).values
+    y_train = df_train["label"].head(20).to_numpy(dtype=int)
 
     X_test = extractor.extract_batch_embeddings(
         df_test["VH_sequence"].head(10).tolist()
@@ -147,7 +147,7 @@ def test_jain_to_shehata_pipeline(
     X_train = extractor.extract_batch_embeddings(
         df_train["VH_sequence"].head(15).tolist()
     )
-    y_train = df_train["label"].head(15).values
+    y_train = df_train["label"].head(15).to_numpy(dtype=int)
 
     X_test = extractor.extract_batch_embeddings(df_test["VH_sequence"].head(5).tolist())
 
@@ -185,7 +185,7 @@ def test_harvey_nanobody_pipeline(
     )
 
     X = extractor.extract_batch_embeddings(df["VH_sequence"].tolist())
-    y = df["label"].values
+    y = df["label"].to_numpy(dtype=int)
 
     # Act: Train classifier on nanobodies
     classifier = BinaryClassifier(params=test_params)
@@ -340,12 +340,12 @@ def test_jain_multi_stage_pipeline(
     X_full = extractor.extract_batch_embeddings(
         df_full["VH_sequence"].head(10).tolist()
     )
-    y_full = df_full["label"].head(10).values
+    y_full = df_full["label"].head(10).to_numpy(dtype=int)
 
     X_parity = extractor.extract_batch_embeddings(
         df_parity["VH_sequence"].head(10).tolist()
     )
-    y_parity = df_parity["label"].head(10).values
+    y_parity = df_parity["label"].head(10).to_numpy(dtype=int)
 
     # Act: Train separate classifiers
     classifier_full = BinaryClassifier(params=test_params)
@@ -388,7 +388,7 @@ def test_boughter_mild_flag_filtering_pipeline(
     X_no_mild = extractor.extract_batch_embeddings(
         df_no_mild["VH_sequence"].head(10).tolist()
     )
-    y_no_mild = df_no_mild["label"].head(10).values
+    y_no_mild = df_no_mild["label"].head(10).to_numpy(dtype=int)
 
     # Act: Train classifier on filtered data
     classifier = BinaryClassifier(params=test_params)

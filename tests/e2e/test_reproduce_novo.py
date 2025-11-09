@@ -116,10 +116,10 @@ def test_reproduce_novo_jain_accuracy_with_real_data(
     )
 
     X_train = extractor.extract_batch_embeddings(df_train["VH_sequence"].tolist())
-    y_train = df_train["label"].values
+    y_train = df_train["label"].to_numpy(dtype=int)
 
     X_test = extractor.extract_batch_embeddings(df_test["VH_sequence"].tolist())
-    y_test = df_test["label"].values
+    y_test = df_test["label"].to_numpy(dtype=int)
 
     # Act: Train classifier (Novo methodology)
     classifier = BinaryClassifier(params=novo_classifier_params)
@@ -218,6 +218,7 @@ def test_elisa_threshold_default(mock_transformers_model: tuple[Any, Any]) -> No
 @pytest.mark.e2e
 def test_novo_flag_filtering_excludes_mild(
     mock_transformers_model: tuple[Any, Any],
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Verify Novo methodology excludes mild flags (1-3) from training
 
@@ -241,16 +242,16 @@ def test_novo_flag_filtering_excludes_mild(
     )
 
     # Mock load_data to use our test DataFrame
-    original_load = boughter.load_data
-
-    def mock_load(*args: Any, include_mild: bool = False, **kwargs: Any) -> Any:
+    def mock_load(
+        *args: Any, include_mild: bool = False, **kwargs: Any
+    ) -> pd.DataFrame:
         if include_mild:
             return df
         else:
             # Exclude flags 1-3
             return df[~df["flags"].isin([1, 2, 3])].copy()
 
-    boughter.load_data = mock_load
+    monkeypatch.setattr(boughter, "load_data", mock_load)
 
     # Act
     df_no_mild = boughter.load_data(include_mild=False)
@@ -263,9 +264,6 @@ def test_novo_flag_filtering_excludes_mild(
     # Assert: Flags 0 and 4+ retained
     assert 0 in df_no_mild["flags"].values
     assert 4 in df_no_mild["flags"].values
-
-    # Restore original method
-    boughter.load_data = original_load
 
 
 # ==================== Cross-Dataset Generalization Tests ====================
@@ -307,7 +305,7 @@ def test_cross_dataset_predictions_are_valid(
     )
 
     X_train = extractor.extract_batch_embeddings(df_train["VH_sequence"].tolist())
-    y_train = df_train["label"].values
+    y_train = df_train["label"].to_numpy(dtype=int)
 
     X_test = extractor.extract_batch_embeddings(df_test["VH_sequence"].tolist())
 

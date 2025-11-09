@@ -13,6 +13,8 @@ Methods:
 Date: 2025-10-31
 """
 
+from __future__ import annotations
+
 import hashlib
 from pathlib import Path
 
@@ -84,7 +86,7 @@ def method3_csv_direct(csv_path: str) -> pd.DataFrame:
 
 def compare_sequences(
     df1: pd.DataFrame, df2: pd.DataFrame, col1: str, col2: str, name: str
-):
+) -> bool:
     """
     Compare sequences between two DataFrames.
 
@@ -117,12 +119,11 @@ def compare_sequences(
     if mismatches == 0:
         print(f"    ✓ All {len(df1)} sequences match!")
         return True
-    else:
-        print(f"    ✗ {mismatches} mismatches found")
-        return False
+    print(f"    ✗ {mismatches} mismatches found")
+    return False
 
 
-def calculate_checksum(filepath: str) -> str:
+def calculate_checksum(filepath: str | Path) -> str:
     """Calculate SHA256 checksum of file."""
     sha256 = hashlib.sha256()
     with open(filepath, "rb") as f:
@@ -192,7 +193,7 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
         return False
 
 
-def main():
+def main() -> int:
     excel_path = Path("test_datasets/shehata/raw/shehata-mmc2.xlsx")
     csv_path = Path("test_datasets/shehata/processed/shehata.csv")
 
@@ -202,12 +203,12 @@ def main():
 
     if not excel_path.exists():
         print(f"✗ Excel file not found: {excel_path}")
-        return
+        return 1
 
     if not csv_path.exists():
         print(f"✗ CSV file not found: {csv_path}")
         print("  Run preprocessing/shehata/step1_convert_excel_to_csv.py first!")
-        return
+        return 1
 
     print("\nReading files with multiple methods...\n")
 
@@ -295,7 +296,8 @@ def main():
     else:
         print("✗ Validation Failed - P0 Blocker Detected")
     print("=" * 60)
+    return 0 if fragments_valid else 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

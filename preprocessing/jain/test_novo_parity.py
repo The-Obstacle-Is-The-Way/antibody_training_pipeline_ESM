@@ -10,6 +10,8 @@ Usage:
     python preprocessing/jain/test_novo_parity.py
 """
 
+from __future__ import annotations
+
 import pickle
 
 import numpy as np
@@ -17,7 +19,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 
-def main():
+def main() -> None:
     print("=" * 80)
     print("NOVO NORDISK PARITY VERIFICATION")
     print("=" * 80)

@@ -21,13 +21,15 @@ Date: 2025-11-01
 Issue: #4 - Harvey dataset preprocessing
 """
 
-import sys
+from __future__ import annotations
+
+from collections.abc import Sequence
 from pathlib import Path
 
 import pandas as pd
 
 
-def extract_sequence_from_imgt(row, imgt_cols):
+def extract_sequence_from_imgt(row: pd.Series, imgt_cols: Sequence[str]) -> str:
     """
     Extract full sequence from IMGT-numbered position columns.
 
@@ -113,7 +115,7 @@ def convert_harvey_csvs(
     return df_combined
 
 
-def main():
+def main() -> int:
     """Main conversion pipeline."""
     # Paths
     high_csv = Path("test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv")
@@ -124,12 +126,12 @@ def main():
     if not high_csv.exists():
         print(f"Error: {high_csv} not found!")
         print("Please ensure raw files are in test_datasets/harvey/raw/")
-        sys.exit(1)
+        return 1
 
     if not low_csv.exists():
         print(f"Error: {low_csv} not found!")
         print("Please ensure raw files are in test_datasets/harvey/raw/")
-        sys.exit(1)
+        return 1
 
     print("=" * 70)
     print("Harvey Dataset: CSV Conversion")
@@ -153,7 +155,8 @@ def main():
         "  1. Run preprocessing/harvey/step2_extract_fragments.py to extract fragments"
     )
     print("  2. Validate with scripts/validation/validate_fragments.py")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

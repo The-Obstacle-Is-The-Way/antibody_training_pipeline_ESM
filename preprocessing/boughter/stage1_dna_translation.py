@@ -27,9 +27,11 @@ Novo Nordisk Flagging Strategy:
 Reference: See docs/boughter/boughter_data_sources.md for methodology
 """
 
+from __future__ import annotations
+
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, TypedDict
 
 import pandas as pd
 from Bio import SeqIO
@@ -450,7 +452,7 @@ def process_subset(
     return results, failures
 
 
-def print_dataset_stats(df: pd.DataFrame):
+def print_dataset_stats(df: pd.DataFrame) -> None:
     """Print comprehensive dataset statistics."""
     print("\n" + "=" * 70)
     print("Boughter Dataset - Stage 1 Complete")
@@ -494,13 +496,20 @@ def print_dataset_stats(df: pd.DataFrame):
             print(f"  {label_name}: {count:4d} ({pct:5.2f}%)")
 
 
-def main():
+class SubsetPaths(TypedDict):
+    heavy_dna: Path
+    light_dna: Path
+    flags: Path
+    flag_format: Literal["numreact", "yn"]
+
+
+def main() -> int:
     """Main processing pipeline."""
     # Define dataset structure
     # Raw data is in boughter_raw/ (not committed to git)
     base_dir = Path("train_datasets/boughter/raw")
 
-    subsets = {
+    subsets: dict[str, SubsetPaths] = {
         "flu": {
             "heavy_dna": base_dir / "flu_fastaH.txt",
             "light_dna": base_dir / "flu_fastaL.txt",
@@ -574,7 +583,8 @@ def main():
     print("\n" + "=" * 70)
     print("Stage 1 Complete - Ready for Stage 2 (ANARCI annotation)")
     print("=" * 70)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
