@@ -1,6 +1,6 @@
 # CODE OF CONDUCT
 
-**1.** When we are wrong, we promptly admit it. It is okay to be wrong, for this is how we learn.
+**1.** When we are wrong, we promptly admit it. It's okay to be wrong, for this is how we learn.
 
 **2.** If you disagree with an implementation, provide a biophysical rationale from first principles. You are encouraged to fork the repository and provide proof of your implementation.
 
