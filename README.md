@@ -67,7 +67,7 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 To get started, clone the repository and set up the Python environment.
 1. Clone the Repository
 ```bash
-git clone https://github.com/ludocomito/antibody_training_pipeline_ESM.git
+git clone https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM.git
 cd antibody_training_pipeline_ESM
 ```
 2. Create the Environment
