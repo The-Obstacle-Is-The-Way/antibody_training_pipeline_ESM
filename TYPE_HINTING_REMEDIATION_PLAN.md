@@ -2,6 +2,16 @@
 
 _Last updated: 2025-11-08_
 
+## Executive Summary
+
+**TL;DR:** Another AI enforced strict mypy (`disallow_untyped_defs = true`) without adding type annotations to test/preprocessing code. Result: **546 errors** across **46 files**. Production code (`src/`) is clean. This is **mechanical but time-consuming** (5-7 hours). Plan below provides step-by-step instructions to fix systematically.
+
+**Status:** Phase A (Inventory) complete. Ready to execute Phases B-F.
+
+**Impact:** Blocks `make all` and CI until fixed.
+
+**Risk:** Low - all errors are in test/support code, not production.
+
 ## 1. Background
 
 - Commit `5003e6c` flipped `[tool.mypy].disallow_untyped_defs = true` for the entire repo.
@@ -20,39 +30,206 @@ Type enforcement landed before the codebase was ready. This blocks CI / `make al
 
 ## 4. Scope
 
-Modules currently failing mypy (per latest run):
+**Verified as of 2025-11-08:**
 
-- `tests/` (unit + integration suites, fixtures, mocks)
-- `preprocessing/` scripts for Boughter, Jain, Harvey, Shehata datasets
-- `scripts/validation/` and `scripts/testing/`
-- Selected `tests/fixtures` helpers
+- **546 mypy errors** across **46 files**
+- **0 errors in `src/`** (production code is clean ✅)
+- **All errors are in test/support code** (safe to fix without runtime risk)
 
-Production `src/` modules are already typed and should stay that way. The plan focuses on test/support code.
+### Error Breakdown by Directory
+
+```
+Priority 1 (Fix First - Cascades to Tests):
+  11 errors - tests/fixtures/          (mock models, sequences)
+
+Priority 2 (Test Files - Mechanical Fixes):
+ 140 errors - tests/unit/datasets/     (dataset loader tests)
+  99 errors - tests/unit/core/         (core module tests)
+  88 errors - tests/integration/       (integration tests)
+  76 errors - tests/unit/cli/          (CLI tests)
+  22 errors - tests/unit/data/         (data loader tests)
+  22 errors - tests/e2e/               (end-to-end tests)
+
+Priority 3 (Preprocessing Scripts):
+  29 errors - preprocessing/boughter/  (Boughter preprocessing)
+  15 errors - preprocessing/jain/      (Jain preprocessing)
+   6 errors - preprocessing/shehata/   (Shehata preprocessing)
+   6 errors - preprocessing/harvey/    (Harvey preprocessing)
+
+Priority 4 (Utility Scripts):
+   8 errors - scripts/validation/      (validation scripts)
+   2 errors - scripts/testing/         (testing scripts)
+```
+
+**All errors are `Function is missing a type annotation [no-untyped-def]` - very mechanical to fix.**
 
 ## 5. Strategy
 
-### Phase A – Inventory & Ordering
+### Phase A – Inventory & Ordering ✅ COMPLETE
 
-1. Capture the canonical error listing once (e.g., `uv run mypy . > .mypy_failures.txt`).
-2. Group failures by path cluster (fixtures, dataset tests, preprocessing, etc.).
-3. Prioritise shared utilities first (fixtures, helper modules) because downstream tests inherit their annotations.
+1. ✅ Generated `.mypy_failures.txt` with 546 errors
+2. ✅ Grouped failures by path cluster
+3. ✅ Prioritized shared utilities first (fixtures, helpers)
 
-### Phase B – Fix Shared Utilities
+### Phase B – Fix Shared Utilities (Priority 1)
 
-1. `tests/fixtures/` and `tests/fixtures/mock_models.py` – add `Protocol`/`TypedDict` where useful, otherwise inject `-> None` and typed params.
-2. `tests/unit/data/test_loaders.py` + `tests/unit/datasets/test_base.py` – add helper aliases (`Sequence[str]`, `NDArray[np.float32]`, etc.) to reduce duplication.
-3. Re-run mypy after each sub-cluster; commit in logical chunks to keep diffs reviewable.
+**Time Estimate: 30 minutes**
 
-### Phase C – Annotate Dataset/Preprocessing Scripts
+**Files to Fix:**
+1. `tests/fixtures/mock_models.py` (11 errors)
+   - Add `-> None` to all `__init__` methods
+   - Add return types to all mock methods
+   - Add parameter types to all functions
 
-1. Introduce lightweight helper types (e.g., `Row = dict[str, str | float]`) to make annotations concise.
-2. For CLI-style scripts returning nothing, explicitly declare `-> None`.
-3. Where third-party libs return untyped objects (e.g., Pandas), prefer `pd.DataFrame`/`pd.Series` instead of `Any`.
+**Commands:**
+```bash
+# Fix fixtures
+# (Apply type annotations to all functions)
 
-### Phase D – Integration & Regression
+# Verify
+uv run mypy tests/fixtures/ --no-error-summary
+# Expected: 0 errors
 
-1. Once mypy passes locally, run `make all` (ruff, mypy, pytest) to ensure no regressions.
-2. Update documentation (`SECURITY_REMEDIATION_PLAN.md` / `CONTRIBUTING.md`) with the requirement to include type hints in new tests/scripts.
+# Commit
+git add tests/fixtures/
+git commit -m "fix: Add type annotations to test fixtures"
+```
+
+### Phase C – Fix Test Files (Priority 2)
+
+**Time Estimate: 3-4 hours**
+
+**Files to Fix (in order):**
+1. `tests/unit/data/test_loaders.py` (22 errors) - 20 min
+2. `tests/unit/datasets/test_base.py` (many errors) - 30 min
+3. `tests/unit/datasets/test_base_annotation.py` (many errors) - 30 min
+4. `tests/unit/datasets/test_*.py` (remaining dataset tests) - 1 hour
+5. `tests/unit/core/test_*.py` (99 errors) - 1 hour
+6. `tests/unit/cli/test_*.py` (76 errors) - 45 min
+7. `tests/integration/test_*.py` (88 errors) - 45 min
+8. `tests/e2e/test_*.py` (22 errors) - 20 min
+
+**Pattern to Follow:**
+```python
+# Before:
+def test_something(mock_data):
+    result = function_under_test()
+    assert result is not None
+
+# After:
+def test_something(mock_data: pd.DataFrame) -> None:
+    result = function_under_test()
+    assert result is not None
+```
+
+**Common Type Annotations:**
+- Test functions: `-> None`
+- Pytest fixtures: `-> Generator[Type, None, None]` or `-> Type`
+- Mock data: `-> pd.DataFrame`, `-> dict[str, Any]`, `-> list[str]`
+
+**Commands:**
+```bash
+# Fix each test file
+# (Apply type annotations)
+
+# Verify after each file/group
+uv run mypy tests/unit/data/ --no-error-summary
+uv run mypy tests/unit/datasets/ --no-error-summary
+# etc.
+
+# Commit in logical chunks (by subdirectory)
+git add tests/unit/data/
+git commit -m "fix: Add type annotations to data loader tests"
+
+git add tests/unit/datasets/
+git commit -m "fix: Add type annotations to dataset tests"
+# etc.
+```
+
+### Phase D – Fix Preprocessing Scripts (Priority 3)
+
+**Time Estimate: 1-2 hours**
+
+**Files to Fix:**
+1. `preprocessing/boughter/*.py` (29 errors) - 30 min
+2. `preprocessing/jain/*.py` (15 errors) - 20 min
+3. `preprocessing/shehata/*.py` (6 errors) - 15 min
+4. `preprocessing/harvey/*.py` (6 errors) - 15 min
+
+**Pattern to Follow:**
+```python
+# Before:
+def process_data(input_file):
+    df = pd.read_csv(input_file)
+    return df
+
+# After:
+def process_data(input_file: str | Path) -> pd.DataFrame:
+    df = pd.read_csv(input_file)
+    return df
+```
+
+**Commands:**
+```bash
+# Fix each preprocessing directory
+# (Apply type annotations)
+
+# Verify
+uv run mypy preprocessing/boughter/ --no-error-summary
+# etc.
+
+# Commit by dataset
+git add preprocessing/boughter/
+git commit -m "fix: Add type annotations to Boughter preprocessing"
+# etc.
+```
+
+### Phase E – Fix Utility Scripts (Priority 4)
+
+**Time Estimate: 15-30 minutes**
+
+**Files to Fix:**
+1. `scripts/validation/*.py` (8 errors)
+2. `scripts/testing/*.py` (2 errors)
+
+**Commands:**
+```bash
+# Fix scripts
+# (Apply type annotations)
+
+# Verify
+uv run mypy scripts/ --no-error-summary
+
+# Commit
+git add scripts/
+git commit -m "fix: Add type annotations to utility scripts"
+```
+
+### Phase F – Final Verification
+
+**Time Estimate: 10 minutes**
+
+**Commands:**
+```bash
+# Run full mypy check
+uv run mypy .
+# Expected: Found 0 errors
+
+# Run full test suite
+uv run pytest -v
+# Expected: All tests pass
+
+# Run all code quality checks
+make all
+# Expected: All checks pass
+
+# Remove temporary file
+rm .mypy_failures.txt
+
+# Final commit
+git add .
+git commit -m "chore: Complete type annotation remediation - mypy clean"
+```
 
 ## 6. Guardrails
 
@@ -62,14 +239,65 @@ Production `src/` modules are already typed and should stay that way. The plan f
 
 ## 7. Deliverables
 
-1. Clean `mypy` run (zero errors).
-2. `.mypy_failures.txt` removed (used only as temporary scratch).
-3. PR description summarising clusters fixed and future watch areas (if any remain).
+1. ✅ Clean `mypy` run (zero errors)
+2. ✅ All 400+ tests still passing
+3. ✅ `make all` passes (ruff + mypy + pytest + coverage)
+4. ✅ `.mypy_failures.txt` removed
+5. ✅ Logical git commits (one per phase/directory)
+6. ✅ Updated documentation if needed
 
-## 8. Next Steps
+## 8. Total Time Estimate
 
-1. Generate the baseline failure file.
-2. Start with `tests/fixtures/` and `tests/unit/datasets/test_base*.py`.
-3. Iterate through Phases B–D, committing per cluster.
+**Total: 5-7 hours of focused work**
 
-Let’s execute this plan carefully so we keep strict typing **and** a green CI. Homie, we’ve got this. 💪
+- Phase A (Inventory): ✅ DONE
+- Phase B (Fixtures): 30 min
+- Phase C (Tests): 3-4 hours
+- Phase D (Preprocessing): 1-2 hours
+- Phase E (Scripts): 15-30 min
+- Phase F (Verification): 10 min
+
+**Can be parallelized:** Multiple AI agents or developers can work on different phases simultaneously (e.g., one on tests, one on preprocessing).
+
+## 9. Execution Checklist
+
+- [ ] Phase B: Fix `tests/fixtures/` (11 errors)
+- [ ] Phase C: Fix `tests/unit/data/` (22 errors)
+- [ ] Phase C: Fix `tests/unit/datasets/` (140 errors)
+- [ ] Phase C: Fix `tests/unit/core/` (99 errors)
+- [ ] Phase C: Fix `tests/unit/cli/` (76 errors)
+- [ ] Phase C: Fix `tests/integration/` (88 errors)
+- [ ] Phase C: Fix `tests/e2e/` (22 errors)
+- [ ] Phase D: Fix `preprocessing/boughter/` (29 errors)
+- [ ] Phase D: Fix `preprocessing/jain/` (15 errors)
+- [ ] Phase D: Fix `preprocessing/shehata/` (6 errors)
+- [ ] Phase D: Fix `preprocessing/harvey/` (6 errors)
+- [ ] Phase E: Fix `scripts/` (10 errors)
+- [ ] Phase F: Run `uv run mypy .` → 0 errors
+- [ ] Phase F: Run `uv run pytest -v` → all pass
+- [ ] Phase F: Run `make all` → all pass
+
+## 10. How Another AI Agent Should Execute This
+
+**Step-by-step instructions:**
+
+1. Read this entire document first
+2. Start with Phase B (fixtures) - **DO NOT SKIP THIS**
+3. For each file:
+   - Read the file
+   - Find all functions missing type annotations
+   - Add `-> None` for functions that don't return anything
+   - Add `-> Type` for functions that return values
+   - Add parameter types (use mypy error messages as hints)
+4. After each file/group, verify with `uv run mypy <path>`
+5. Commit when a phase is complete
+6. Move to next phase
+7. Final verification with `make all`
+
+**DO NOT:**
+- Skip fixtures (causes cascade failures)
+- Use `# type: ignore` without justification
+- Use `Any` as a cop-out (be specific with types)
+- Batch all changes into one commit (commit per phase)
+
+Let's execute this plan carefully so we keep strict typing **and** a green CI. Homie, we've got this. 💪

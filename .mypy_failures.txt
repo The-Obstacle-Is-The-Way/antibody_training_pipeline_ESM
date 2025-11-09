@@ -1,0 +1,693 @@
+tests/unit/cli/test_preprocess.py:34: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:37: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:55: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:55: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:68: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:68: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:83: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:83: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:96: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:96: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:111: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:111: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:131: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:131: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:148: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:148: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:165: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:165: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:182: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:182: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:199: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:199: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:221: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:221: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:241: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:241: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:260: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:260: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:276: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:276: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_preprocess.py:289: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_preprocess.py:289: note: Use "-> None" if function does not return a value
+tests/integration/test_shehata_embedding_compatibility.py:19: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_shehata_embedding_compatibility.py:19: note: Use "-> None" if function does not return a value
+tests/integration/test_shehata_embedding_compatibility.py:50: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_shehata_embedding_compatibility.py:50: note: Use "-> None" if function does not return a value
+tests/integration/test_shehata_embedding_compatibility.py:104: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_shehata_embedding_compatibility.py:104: note: Use "-> None" if function does not return a value
+tests/integration/test_shehata_embedding_compatibility.py:155: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_shehata_embedding_compatibility.py:155: note: Use "-> None" if function does not return a value
+tests/integration/test_shehata_embedding_compatibility.py:196: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_shehata_embedding_compatibility.py:196: note: Use "-> None" if function does not return a value
+tests/integration/test_shehata_embedding_compatibility.py:249: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_jain_embedding_compatibility.py:34: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_jain_embedding_compatibility.py:34: note: Use "-> None" if function does not return a value
+tests/integration/test_jain_embedding_compatibility.py:100: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_jain_embedding_compatibility.py:100: note: Use "-> None" if function does not return a value
+tests/integration/test_jain_embedding_compatibility.py:163: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_jain_embedding_compatibility.py:163: note: Use "-> None" if function does not return a value
+tests/integration/test_jain_embedding_compatibility.py:217: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_jain_embedding_compatibility.py:217: note: Use "-> None" if function does not return a value
+tests/integration/test_jain_embedding_compatibility.py:275: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_jain_embedding_compatibility.py:275: note: Use "-> None" if function does not return a value
+tests/integration/test_jain_embedding_compatibility.py:395: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_harvey_embedding_compatibility.py:34: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_harvey_embedding_compatibility.py:34: note: Use "-> None" if function does not return a value
+tests/integration/test_harvey_embedding_compatibility.py:85: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_harvey_embedding_compatibility.py:85: note: Use "-> None" if function does not return a value
+tests/integration/test_harvey_embedding_compatibility.py:144: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_harvey_embedding_compatibility.py:144: note: Use "-> None" if function does not return a value
+tests/integration/test_harvey_embedding_compatibility.py:191: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_harvey_embedding_compatibility.py:191: note: Use "-> None" if function does not return a value
+tests/integration/test_harvey_embedding_compatibility.py:229: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_harvey_embedding_compatibility.py:229: note: Use "-> None" if function does not return a value
+tests/integration/test_harvey_embedding_compatibility.py:309: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_boughter_embedding_compatibility.py:34: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_boughter_embedding_compatibility.py:34: note: Use "-> None" if function does not return a value
+tests/integration/test_boughter_embedding_compatibility.py:96: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_boughter_embedding_compatibility.py:96: note: Use "-> None" if function does not return a value
+tests/integration/test_boughter_embedding_compatibility.py:157: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_boughter_embedding_compatibility.py:157: note: Use "-> None" if function does not return a value
+tests/integration/test_boughter_embedding_compatibility.py:226: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_boughter_embedding_compatibility.py:226: note: Use "-> None" if function does not return a value
+tests/integration/test_boughter_embedding_compatibility.py:284: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_boughter_embedding_compatibility.py:284: note: Use "-> None" if function does not return a value
+tests/integration/test_boughter_embedding_compatibility.py:384: error: Function is missing a return type annotation  [no-untyped-def]
+tests/fixtures/mock_sequences.py:134: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_jain_csvs.py:45: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_jain_csvs.py:111: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_jain_csvs.py:169: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_jain_csvs.py:215: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_fragments.py:18: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_fragments.py:120: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_fragments.py:140: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_fragments.py:192: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/validation/validate_fragments.py:192: note: Use "-> None" if function does not return a value
+scripts/testing/demo_assay_specific_thresholds.py:14: error: Function is missing a type annotation  [no-untyped-def]
+scripts/testing/demo_assay_specific_thresholds.py:70: error: Function is missing a return type annotation  [no-untyped-def]
+scripts/testing/demo_assay_specific_thresholds.py:70: note: Use "-> None" if function does not return a value
+preprocessing/shehata/validate_conversion.py:85: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/shehata/validate_conversion.py:195: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/shehata/validate_conversion.py:195: note: Use "-> None" if function does not return a value
+preprocessing/shehata/step2_extract_fragments.py:150: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/shehata/step2_extract_fragments.py:214: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/shehata/step2_extract_fragments.py:214: note: Use "-> None" if function does not return a value
+preprocessing/shehata/step1_convert_excel_to_csv.py:247: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/shehata/step1_convert_excel_to_csv.py:282: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/shehata/step1_convert_excel_to_csv.py:282: note: Use "-> None" if function does not return a value
+preprocessing/jain/test_novo_parity.py:20: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/test_novo_parity.py:20: note: Use "-> None" if function does not return a value
+preprocessing/jain/step3_extract_fragments.py:47: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/jain/step3_extract_fragments.py:220: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/step3_extract_fragments.py:298: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/step3_extract_fragments.py:381: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/step3_extract_fragments.py:381: note: Use "-> None" if function does not return a value
+preprocessing/jain/step2_preprocess_p5e_s2.py:60: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/step2_preprocess_p5e_s2.py:80: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/jain/step2_preprocess_p5e_s2.py:115: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/jain/step2_preprocess_p5e_s2.py:168: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/jain/step2_preprocess_p5e_s2.py:241: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/jain/step2_preprocess_p5e_s2.py:304: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/jain/step2_preprocess_p5e_s2.py:335: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/step1_convert_excel_to_csv.py:37: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/step1_convert_excel_to_csv.py:194: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/step1_convert_excel_to_csv.py:273: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/jain/step1_convert_excel_to_csv.py:273: note: Use "-> None" if function does not return a value
+preprocessing/harvey/test_psr_threshold.py:22: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/harvey/test_psr_threshold.py:41: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/harvey/test_psr_threshold.py:41: note: Use "-> None" if function does not return a value
+preprocessing/harvey/step2_extract_fragments.py:141: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/harvey/step2_extract_fragments.py:198: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/harvey/step2_extract_fragments.py:198: note: Use "-> None" if function does not return a value
+preprocessing/harvey/step1_convert_raw_csvs.py:30: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/harvey/step1_convert_raw_csvs.py:116: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/harvey/step1_convert_raw_csvs.py:116: note: Use "-> None" if function does not return a value
+preprocessing/boughter/validate_stages2_3.py:40: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/validate_stages2_3.py:144: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/validate_stages2_3.py:164: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/validate_stages2_3.py:221: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/validate_stages2_3.py:221: note: Use "-> None" if function does not return a value
+preprocessing/boughter/validate_stage1.py:73: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/validate_stage1.py:274: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/validate_stage1.py:358: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/validate_stage1.py:358: note: Use "-> None" if function does not return a value
+preprocessing/boughter/stage2_stage3_annotation_qc.py:88: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/stage2_stage3_annotation_qc.py:243: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/stage2_stage3_annotation_qc.py:328: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/stage2_stage3_annotation_qc.py:428: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/stage2_stage3_annotation_qc.py:457: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/stage2_stage3_annotation_qc.py:457: note: Use "-> None" if function does not return a value
+preprocessing/boughter/stage1_dna_translation.py:453: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/stage1_dna_translation.py:497: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/stage1_dna_translation.py:497: note: Use "-> None" if function does not return a value
+preprocessing/boughter/audit_training_qc.py:36: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:42: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:48: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:54: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:57: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:66: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:79: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:82: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:92: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:98: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/audit_training_qc.py:141: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:39: error: Function is missing a type annotation for one or more arguments  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:61: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:61: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:93: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:93: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:109: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:109: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:135: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:135: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:151: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:151: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:168: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:168: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:194: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:194: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:220: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:220: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:255: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:255: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:298: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:330: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:357: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:379: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:402: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:402: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:441: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:473: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:496: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:496: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:553: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:553: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:593: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:593: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base_annotation.py:626: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base_annotation.py:626: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:42: error: Function is missing a type annotation for one or more arguments  [no-untyped-def]
+tests/unit/datasets/test_base.py:72: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:84: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:98: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:112: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:112: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:125: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:125: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:141: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:141: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:158: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:158: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:180: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:180: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:195: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:195: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:210: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:210: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:225: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:225: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:237: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:237: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:248: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:248: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:259: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:259: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:273: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:273: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:285: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:285: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:302: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:302: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:326: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:326: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:342: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:342: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:356: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:356: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:375: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:375: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:396: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:396: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:425: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:425: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:444: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:444: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:461: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:461: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:475: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:475: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:489: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:489: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:508: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:531: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:531: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:552: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:552: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:594: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:594: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:621: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:621: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:647: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:647: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_base.py:669: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:714: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:742: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_base.py:764: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:42: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:55: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:70: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:87: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:105: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:105: note: Use "-> None" if function does not return a value
+tests/unit/data/test_loaders.py:113: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:128: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:144: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:144: note: Use "-> None" if function does not return a value
+tests/unit/data/test_loaders.py:164: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:182: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:205: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:223: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:223: note: Use "-> None" if function does not return a value
+tests/unit/data/test_loaders.py:234: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:253: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:253: note: Use "-> None" if function does not return a value
+tests/unit/data/test_loaders.py:265: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:287: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:309: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:339: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:364: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:364: note: Use "-> None" if function does not return a value
+tests/unit/data/test_loaders.py:378: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:406: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/data/test_loaders.py:421: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:31: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:40: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:52: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:52: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_shehata.py:63: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:77: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:77: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_shehata.py:97: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:116: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:134: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:154: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:154: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_shehata.py:165: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:195: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:195: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_shehata.py:210: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:210: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_shehata.py:225: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:249: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:263: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:280: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_shehata.py:300: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:36: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:36: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:47: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:61: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:61: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:80: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:98: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:123: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:136: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:157: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:175: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:190: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:206: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:226: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:239: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:256: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:289: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:289: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:305: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:305: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:327: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:327: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:353: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:353: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:376: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:376: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:393: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:393: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:425: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:425: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:459: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:459: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:494: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:494: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_jain.py:532: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:561: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_jain.py:561: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_harvey.py:30: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:39: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:51: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:51: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_harvey.py:62: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:76: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:76: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_harvey.py:97: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:116: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:135: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:155: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:155: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_harvey.py:168: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:181: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:201: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:201: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_harvey.py:218: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:218: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_harvey.py:234: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:234: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_harvey.py:255: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:271: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_harvey.py:271: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_harvey.py:288: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:31: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:43: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:43: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:54: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:68: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:68: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:88: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:105: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:123: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:143: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:143: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:154: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:182: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:204: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:219: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:219: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:229: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:229: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:239: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:239: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:252: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:282: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:295: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:313: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:313: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:327: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:327: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:350: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:350: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:373: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/datasets/test_boughter.py:373: note: Use "-> None" if function does not return a value
+tests/unit/datasets/test_boughter.py:399: error: Function is missing a type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:38: error: Function is missing a type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:49: error: Function is missing a return type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:54: error: Function is missing a return type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:59: error: Function is missing a return type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:85: error: Function is missing a type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:105: error: Function is missing a type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:115: error: Function is missing a return type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:115: error: Function is missing a type annotation for one or more arguments  [no-untyped-def]
+tests/fixtures/mock_models.py:186: error: Function is missing a return type annotation  [no-untyped-def]
+tests/fixtures/mock_models.py:242: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/train_hyperparameter_sweep.py:31: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/train_hyperparameter_sweep.py:44: error: Function is missing a return type annotation  [no-untyped-def]
+preprocessing/boughter/train_hyperparameter_sweep.py:44: note: Use "-> None" if function does not return a value
+preprocessing/boughter/train_hyperparameter_sweep.py:64: error: Function is missing a type annotation  [no-untyped-def]
+preprocessing/boughter/train_hyperparameter_sweep.py:143: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:52: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:71: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:75: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:87: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:102: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:118: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:135: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:151: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:173: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:184: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:195: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:211: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:222: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:233: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:246: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:264: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:283: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:306: error: Function is missing a type annotation  [no-untyped-def]
+tests/conftest.py:325: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:341: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:358: error: Function is missing a return type annotation  [no-untyped-def]
+tests/conftest.py:383: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:30: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:58: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:84: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:107: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:137: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:154: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:181: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:224: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:267: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:304: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:361: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:372: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:391: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:418: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_persistence.py:448: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:34: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:49: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:65: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:112: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:159: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:196: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:227: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:268: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:297: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:349: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:389: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_dataset_pipeline.py:424: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:30: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:45: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:58: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:75: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:93: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:117: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:161: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:186: error: Function is missing a return type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:198: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:231: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:264: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:283: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:307: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:329: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:348: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:372: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_cross_validation.py:392: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:41: error: Function is missing a return type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:57: error: Function is missing a return type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:78: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:147: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:180: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:214: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:239: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:268: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:329: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:366: error: Function is missing a return type annotation  [no-untyped-def]
+tests/e2e/test_reproduce_novo.py:366: note: Use "-> None" if function does not return a value
+tests/unit/core/test_trainer.py:35: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:73: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:82: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:88: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:96: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:108: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:130: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:143: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:143: note: Use "-> None" if function does not return a value
+tests/unit/core/test_trainer.py:150: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:164: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:190: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:228: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:274: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:308: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:338: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:371: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:395: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:416: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:438: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:473: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:496: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:530: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:573: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_trainer.py:586: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:30: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:44: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:56: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:69: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:86: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:99: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:112: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:125: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:138: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:156: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:169: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:182: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:193: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:206: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:217: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:233: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:248: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:263: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:276: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:290: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:309: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:330: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:346: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:367: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:380: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:393: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:408: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:432: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:446: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:451: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:451: note: Use "-> None" if function does not return a value
+tests/unit/core/test_embeddings.py:470: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:475: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:475: note: Use "-> None" if function does not return a value
+tests/unit/core/test_embeddings.py:498: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:512: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:528: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:542: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:563: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:587: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_embeddings.py:607: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:29: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:52: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:78: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:97: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:122: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:149: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:170: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:198: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:215: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:234: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:251: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:268: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:296: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:309: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:322: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:336: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:350: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:369: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:385: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:401: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:417: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:439: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:455: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:471: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:486: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:505: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:520: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:540: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:552: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:569: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:583: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:602: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:615: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:636: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:655: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/core/test_classifier.py:687: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:39: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:59: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:59: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_test.py:72: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:94: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:121: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:143: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:172: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:196: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:223: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:238: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:258: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:281: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:299: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:327: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:348: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:377: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:377: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_test.py:393: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:393: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_test.py:407: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:407: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_test.py:424: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:424: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_test.py:437: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:437: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_test.py:461: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:486: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:511: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:539: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_test.py:555: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:37: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:51: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:75: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:94: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:110: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:128: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:140: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:170: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:193: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:209: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:221: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:235: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:264: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:284: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_model_tester.py:304: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:38: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:63: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:79: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:96: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:109: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:130: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:144: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:155: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:172: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:188: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:199: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:217: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:236: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:263: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:277: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:320: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:354: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:365: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:386: error: Function is missing a type annotation  [no-untyped-def]
+tests/integration/test_model_tester.py:415: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:37: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:60: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:88: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:132: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:153: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:181: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:218: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:250: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:266: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:276: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:315: error: Function is missing a type annotation  [no-untyped-def]
+tests/e2e/test_train_pipeline.py:339: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:35: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:45: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:58: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:72: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:89: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:102: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:121: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:144: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:157: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:178: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:191: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:204: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:217: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:239: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:239: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_train.py:252: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:252: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_train.py:275: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:287: error: Function is missing a type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:310: error: Function is missing a return type annotation  [no-untyped-def]
+tests/unit/cli/test_train.py:310: note: Use "-> None" if function does not return a value
+tests/unit/cli/test_train.py:324: error: Function is missing a type annotation  [no-untyped-def]
+Found 546 errors in 46 files (checked 81 source files)
