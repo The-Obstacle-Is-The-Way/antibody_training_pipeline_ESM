@@ -431,7 +431,7 @@ Test a single model on multiple datasets in one command:
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
   --data \
-    test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
+    test_datasets/jain/fragments/VH_only_jain.csv \
     test_datasets/shehata/fragments/VH_only_shehata.csv \
     test_datasets/harvey/fragments/VHH_only_harvey.csv
 ```
@@ -444,7 +444,7 @@ model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "test_datasets/jain/fragments/VH_only_jain.csv"
   - "test_datasets/shehata/fragments/VH_only_shehata.csv"
   - "test_datasets/harvey/fragments/VHH_only_harvey.csv"
 
@@ -460,7 +460,7 @@ uv run antibody-test --config test_config_multi.yaml
 ```bash
 # Test on multiple datasets sequentially
 for data_file in \
-  test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
+  test_datasets/jain/fragments/VH_only_jain.csv \
   test_datasets/shehata/fragments/VH_only_shehata.csv; do
   echo "Testing on $data_file..."
   uv run antibody-test \
@@ -553,7 +553,7 @@ uv run antibody-test \
   --model \
     models/boughter_vh_esm1v_logreg.pkl \
     models/boughter_vh_esm2_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 ```
 
 **Method 2: Test Configuration**
@@ -565,7 +565,7 @@ model_paths:
   - "models/boughter_vh_esm2_logreg.pkl"
 
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "test_datasets/jain/fragments/VH_only_jain.csv"
 
 output_dir: "./test_results"
 ```
@@ -620,15 +620,15 @@ file models/boughter_vh_esm1v_logreg.pkl
 **Solution:** Ensure test CSV has standardized `sequence` column:
 
 ```bash
-# Check CSV structure
-head -n 5 test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+# Check CSV structure (use fragment file)
+head -n 5 test_datasets/jain/fragments/VH_only_jain.csv
 
 # Expected format:
-# id,sequence,label
-# jain_001,EVQLVESGGG...,0
+# id,sequence,label,elisa_flags,source
+# abituzumab,QVQLQQSGGELAKPGASVKVSCKASGYTFSSFWMHWVRQAPGQGLEWIGYINPRSGYTEYNEIFRDKATMTTDTSTSTAYMELSSLRSEDTAVYYCASFLGRGAMDYWGQGTTVTVSS,0.0,0,jain2017_pnas
 ```
 
-Fragment CSVs from preprocessing already have standardized `sequence` column.
+**Note:** Fragment CSVs from preprocessing already have standardized `sequence` column. Canonical CSVs use `vh_sequence` instead (see "Using Canonical Files" section above for config override).
 
 ---
 

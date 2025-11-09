@@ -371,10 +371,10 @@ FileNotFoundError: models/my_model.pkl not found
 # Check model exists
 ls -lh models/
 
-# Verify model path in command
+# Verify model path in command (using fragment file for compatibility)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \  # Correct path
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 ```
 
 ---
