@@ -18,35 +18,51 @@ Testing involves:
 
 ## Quick Testing Commands
 
-### Test with Default Config
-
-If you trained with default config, test on Jain dataset:
+### Test with Model and Data Paths
 
 ```bash
+# Test trained model on Jain dataset
 uv run antibody-test \
-  --model models/boughter_train_jain_test_vh.pkl \
-  --dataset jain
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
-### Test with Custom Dataset
+### Test with Configuration File
 
 ```bash
-uv run antibody-test \
-  --model models/my_model.pkl \
-  --test-file test_datasets/harvey/fragments/harvey_VHH_only.csv \
-  --fragment VHH_only
+# Create sample test config
+uv run antibody-test --create-config
+
+# Test using config
+uv run antibody-test --config test_config.yaml
+```
+
+**Example test_config.yaml:**
+
+```yaml
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+
+data_paths:
+  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+
+output_dir: "./test_results"
+device: "auto"  # or "cpu", "cuda", "mps"
+batch_size: 16
 ```
 
 ---
 
 ## Test Dataset Options
 
-The pipeline includes three pre-configured test datasets:
+The pipeline includes three test datasets with preprocessed fragment files:
 
 ### Jain Dataset (Novo Parity Benchmark)
 
 ```bash
-uv run antibody-test --model models/boughter_train_jain_test_vh.pkl --dataset jain
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
 **Details:**
@@ -54,6 +70,7 @@ uv run antibody-test --model models/boughter_train_jain_test_vh.pkl --dataset ja
 - **Size:** 86 clinical antibodies
 - **Assay:** ELISA (per-antigen binding)
 - **Fragment:** VH
+- **File:** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv`
 - **Expected Accuracy:** 66.28% (Novo Nordisk exact parity)
 - **Expected Confusion Matrix:** [[40, 19], [10, 17]]
 
@@ -62,7 +79,10 @@ uv run antibody-test --model models/boughter_train_jain_test_vh.pkl --dataset ja
 ### Harvey Dataset (Nanobodies)
 
 ```bash
-uv run antibody-test --model models/boughter_harvey_vhh.pkl --dataset harvey
+# Test on full VHH sequences
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/harvey/fragments/VHH_only_harvey.csv
 ```
 
 **Details:**
@@ -70,6 +90,7 @@ uv run antibody-test --model models/boughter_harvey_vhh.pkl --dataset harvey
 - **Size:** 141,021 nanobody sequences
 - **Assay:** PSR (polyspecific reagent)
 - **Fragment:** VHH_only (full nanobody VHH domain)
+- **File:** `test_datasets/harvey/fragments/VHH_only_harvey.csv`
 - **Note:** Large-scale test, may take 10-30 minutes
 
 **Fragment-Level Testing:**
@@ -77,17 +98,25 @@ uv run antibody-test --model models/boughter_harvey_vhh.pkl --dataset harvey
 ```bash
 # Test on VHH CDRs only
 uv run antibody-test \
-  --model models/boughter_harvey_vhh_cdrs.pkl \
-  --test-file test_datasets/harvey/fragments/harvey_VHH-CDRs.csv \
-  --fragment VHH-CDRs
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/harvey/fragments/H-CDRs_harvey.csv
 ```
+
+**Available Harvey Fragments:**
+
+- `VHH_only_harvey.csv` - Full VHH domain
+- `H-CDR1_harvey.csv`, `H-CDR2_harvey.csv`, `H-CDR3_harvey.csv` - Individual CDRs
+- `H-CDRs_harvey.csv` - Concatenated CDRs
+- `H-FWRs_harvey.csv` - Concatenated FWRs
 
 ---
 
 ### Shehata Dataset (PSR Cross-Validation)
 
 ```bash
-uv run antibody-test --model models/boughter_shehata_vh.pkl --dataset shehata
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/shehata/fragments/VH_only_shehata.csv
 ```
 
 **Details:**
@@ -95,53 +124,63 @@ uv run antibody-test --model models/boughter_shehata_vh.pkl --dataset shehata
 - **Size:** 398 human antibodies
 - **Assay:** PSR (polyspecific reagent)
 - **Fragment:** VH
+- **File:** `test_datasets/shehata/fragments/VH_only_shehata.csv`
 - **Note:** Cross-assay validation (train ELISA, test PSR)
 
 ---
 
 ## Fragment-Level Testing
 
-Test models on specific antibody fragments:
+All datasets provide fragment-specific CSV files. Test on specific antibody regions:
 
-### CDR Testing
+### Shehata Fragments (Most Complete)
 
 ```bash
 # Test on H-CDRs (Heavy Chain CDRs)
 uv run antibody-test \
-  --model models/boughter_jain_h_cdrs.pkl \
-  --test-file test_datasets/jain/fragments/jain_H-CDRs.csv \
-  --fragment H-CDRs
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/shehata/fragments/H-CDRs_shehata.csv
 
 # Test on All-CDRs (Heavy + Light)
 uv run antibody-test \
-  --model models/boughter_jain_all_cdrs.pkl \
-  --test-file test_datasets/jain/fragments/jain_All-CDRs.csv \
-  --fragment All-CDRs
-```
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/shehata/fragments/All-CDRs_shehata.csv
 
----
-
-### FWR Testing (Framework Regions)
-
-```bash
 # Test on H-FWRs (Heavy Framework Regions)
 uv run antibody-test \
-  --model models/boughter_jain_h_fwrs.pkl \
-  --test-file test_datasets/jain/fragments/jain_H-FWRs.csv \
-  --fragment H-FWRs
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/shehata/fragments/H-FWRs_shehata.csv
+
+# Test on combined VH+VL
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/shehata/fragments/VH+VL_shehata.csv
 ```
 
----
+**Available Shehata Fragments:**
 
-### VH + VL Combined Testing
+- `VH_only_shehata.csv`, `VL_only_shehata.csv` - Variable domains
+- `H-CDR1_shehata.csv`, `H-CDR2_shehata.csv`, `H-CDR3_shehata.csv` - Heavy CDRs
+- `L-CDR1_shehata.csv`, `L-CDR2_shehata.csv`, `L-CDR3_shehata.csv` - Light CDRs
+- `H-CDRs_shehata.csv`, `L-CDRs_shehata.csv`, `All-CDRs_shehata.csv` - Concatenated CDRs
+- `H-FWRs_shehata.csv`, `L-FWRs_shehata.csv`, `All-FWRs_shehata.csv` - Framework regions
+- `VH+VL_shehata.csv`, `Full_shehata.csv` - Combined sequences
+
+### Boughter Fragments (Training Set)
 
 ```bash
-# Test on combined VH+VL sequences
+# Test on training set fragments (for cross-validation)
 uv run antibody-test \
-  --model models/boughter_jain_vh_vl.pkl \
-  --test-file test_datasets/jain/fragments/jain_VH_VL.csv \
-  --fragment VH_VL
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data train_datasets/boughter/annotated/VH_only_boughter.csv
 ```
+
+**Available Boughter Fragments:**
+
+- `train_datasets/boughter/annotated/VH_only_boughter.csv` - VH domain (914 sequences)
+- `train_datasets/boughter/annotated/H-CDRs_boughter.csv` - Heavy CDRs
+- `train_datasets/boughter/annotated/All-CDRs_boughter.csv` - All CDRs
+- (See `train_datasets/boughter/annotated/` for all 16 fragments)
 
 ---
 
@@ -250,15 +289,59 @@ Actual  Neg  [40     19]   ← True Neg: 40, False Pos: 19
 
 ### ELISA → PSR Prediction
 
-Training on ELISA (Boughter) and testing on PSR (Harvey/Shehata) requires **assay-specific threshold tuning**:
+Training on ELISA (Boughter) and testing on PSR (Harvey/Shehata) requires **assay-specific threshold tuning**.
+
+**Method 1: Test Configuration (Recommended)**
+
+Create a test config with PSR-specific threshold:
+
+```yaml
+# test_config_psr.yaml
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+
+data_paths:
+  - "test_datasets/shehata/fragments/VH_only_shehata.csv"
+
+output_dir: "./test_results"
+device: "auto"
+batch_size: 16
+
+# PSR assay-specific threshold
+threshold: 0.5495  # Novo Nordisk PSR threshold (default ELISA: 0.5)
+```
+
+```bash
+uv run antibody-test --config test_config_psr.yaml
+```
+
+**Method 2: Manual Threshold Adjustment (Python)**
+
+Load model and adjust threshold manually:
 
 ```python
-# Adjust threshold for PSR assay
-classifier = BinaryClassifier.load("models/boughter_train_jain_test_vh.pkl")
-classifier.threshold = 0.5495  # Novo Nordisk PSR threshold
+import pickle
+import numpy as np
+from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
-# Predict on PSR dataset
-predictions = classifier.predict(test_embeddings)
+# Load model
+with open("models/boughter_vh_esm1v_logreg.pkl", "rb") as f:
+    classifier = pickle.load(f)
+
+# Extract embeddings for test data
+extractor = ESMEmbeddingExtractor(
+    model_name="facebook/esm1v_t33_650M_UR90S_1",
+    device="auto",
+    batch_size=16
+)
+test_embeddings = extractor.extract_embeddings(test_sequences)
+
+# Get prediction probabilities
+probs = classifier.predict_proba(test_embeddings)[:, 1]
+
+# Apply PSR-specific threshold
+psr_threshold = 0.5495  # Novo Nordisk PSR threshold
+predictions = (probs > psr_threshold).astype(int)
 ```
 
 **Why different thresholds?**
@@ -273,15 +356,49 @@ See [Research Notes - Assay-Specific Thresholds](../research/ASSAY_SPECIFIC_THRE
 
 ## Batch Testing (Multiple Datasets)
 
-Test a single model on multiple datasets:
+**Method 1: Multiple Data Paths (Recommended)**
+
+Test a single model on multiple datasets in one command:
 
 ```bash
-# Test on all three datasets
-for dataset in jain harvey shehata; do
-  echo "Testing on $dataset..."
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data \
+    test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
+    test_datasets/shehata/fragments/VH_only_shehata.csv \
+    test_datasets/harvey/fragments/VHH_only_harvey.csv
+```
+
+**Method 2: Test Configuration File**
+
+```yaml
+# test_config_multi.yaml
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+
+data_paths:
+  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "test_datasets/shehata/fragments/VH_only_shehata.csv"
+  - "test_datasets/harvey/fragments/VHH_only_harvey.csv"
+
+output_dir: "./test_results"
+```
+
+```bash
+uv run antibody-test --config test_config_multi.yaml
+```
+
+**Method 3: Shell Loop**
+
+```bash
+# Test on multiple datasets sequentially
+for data_file in \
+  test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
+  test_datasets/shehata/fragments/VH_only_shehata.csv; do
+  echo "Testing on $data_file..."
   uv run antibody-test \
-    --model models/boughter_train_jain_test_vh.pkl \
-    --dataset $dataset
+    --model models/boughter_vh_esm1v_logreg.pkl \
+    --data "$data_file"
 done
 ```
 
@@ -317,8 +434,7 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 ```bash
 uv run antibody-test \
   --model models/my_model.pkl \
-  --test-file /path/to/my_test_data.csv \
-  --fragment VH
+  --data /path/to/my_test_data.csv
 ```
 
 ---
@@ -361,16 +477,46 @@ embeddings_cache/
 
 ## Comparing Models
 
+**Method 1: Multiple Models on Same Dataset**
+
 Compare performance of different models on same test set:
 
 ```bash
-# Compare VH vs H-CDRs vs All-CDRs
-for fragment in VH H-CDRs All-CDRs; do
-  echo "Testing $fragment model..."
+uv run antibody-test \
+  --model \
+    models/boughter_vh_esm1v_logreg.pkl \
+    models/boughter_vh_esm2_logreg.pkl \
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+```
+
+**Method 2: Test Configuration**
+
+```yaml
+# test_config_compare.yaml
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "models/boughter_vh_esm2_logreg.pkl"
+
+data_paths:
+  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+
+output_dir: "./test_results"
+```
+
+**Method 3: Compare Fragment Performance**
+
+Test same model on different fragments to evaluate which regions are most predictive:
+
+```bash
+# Compare VH vs CDRs vs FWRs performance
+for fragment_file in \
+  VH_only_shehata.csv \
+  H-CDRs_shehata.csv \
+  H-FWRs_shehata.csv; do
+  echo "Testing on $fragment_file..."
   uv run antibody-test \
-    --model models/boughter_jain_${fragment}.pkl \
-    --test-file test_datasets/jain/canonical/jain_p5e_s2.csv \
-    --fragment $fragment
+    --model models/boughter_vh_esm1v_logreg.pkl \
+    --data test_datasets/shehata/fragments/$fragment_file
 done
 ```
 
@@ -395,24 +541,27 @@ done
 ls -lh models/
 
 # Verify model is valid pickle
-file models/boughter_train_jain_test_vh.pkl
+file models/boughter_vh_esm1v_logreg.pkl
 ```
 
 ---
 
-### Issue: Fragment column not found in test CSV
+### Issue: Sequence column not found in test CSV
 
-**Symptoms:** `KeyError: 'VH'`
+**Symptoms:** `KeyError: 'sequence'`
 
-**Solution:** Ensure fragment column matches model training:
+**Solution:** Ensure test CSV has standardized `sequence` column:
 
 ```bash
-# Check available fragments
-head -n 1 test_datasets/jain/canonical/jain_p5e_s2.csv
+# Check CSV structure
+head -n 5 test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
-# Use correct fragment name
-uv run antibody-test --model models/my_model.pkl --dataset jain --fragment VH
+# Expected format:
+# id,sequence,label
+# jain_001,EVQLVESGGG...,0
 ```
+
+Fragment CSVs from preprocessing already have standardized `sequence` column.
 
 ---
 
@@ -422,10 +571,10 @@ uv run antibody-test --model models/my_model.pkl --dataset jain --fragment VH
 
 **Possible causes:**
 
-1. **Model trained on wrong fragment:** Train VH, test VH (not VL)
-2. **Model trained on different dataset:** Cross-dataset generalization is hard
-3. **Assay mismatch:** ELISA ≠ PSR (adjust threshold)
-4. **Overfitting:** High train CV, low test (increase regularization)
+1. **Model trained on different fragment:** Train on VH, test on VH (not CDRs/FWRs)
+2. **Cross-dataset generalization:** Models trained on one dataset may not generalize to others
+3. **Assay mismatch:** ELISA ≠ PSR (adjust threshold to 0.5495 for PSR)
+4. **Overfitting:** High train CV, low test accuracy (increase regularization in training config)
 
 See [Troubleshooting Guide](troubleshooting.md) for detailed debugging.
 
@@ -441,15 +590,19 @@ uv run python -c "import torch; print(torch.cuda.is_available())"
 
 # Force GPU usage
 export CUDA_VISIBLE_DEVICES=0  # Use GPU 0
-uv run antibody-test --model models/my_model.pkl --dataset harvey
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/harvey/fragments/VHH_only_harvey.csv \
+  --device cuda
 ```
 
 Or reduce batch size:
 
-```yaml
-# In training config (if retraining)
-hardware:
-  batch_size: 8  # Reduce from 16
+```bash
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/harvey/fragments/VHH_only_harvey.csv \
+  --batch-size 8  # Reduce from default (16)
 ```
 
 ---

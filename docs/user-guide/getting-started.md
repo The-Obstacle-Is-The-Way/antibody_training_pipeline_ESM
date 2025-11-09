@@ -85,7 +85,7 @@ uv run antibody-train --config configs/config.yaml
 ✅ Test Set (Jain):
    - Accuracy: 66.28%
    - Confusion Matrix: [[40, 19], [10, 17]]
-✅ Model saved to: models/boughter_train_jain_test_vh.pkl
+✅ Model saved to: models/boughter_vh_esm1v_logreg.pkl
 ```
 
 **Training Time:**

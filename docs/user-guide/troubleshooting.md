@@ -373,33 +373,33 @@ ls -lh models/
 
 # Verify model path in command
 uv run antibody-test \
-  --model models/boughter_train_jain_test_vh.pkl \  # Correct path
-  --dataset jain
+  --model models/boughter_vh_esm1v_logreg.pkl \  # Correct path
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
 ---
 
-### "Fragment column not found" in Test CSV
+### "Sequence column not found" in Test CSV
 
 **Symptoms:**
 
 ```python
-KeyError: 'VH'
+KeyError: 'sequence'
 ```
 
 **Solution:**
 
-Ensure test CSV has matching fragment column:
+Ensure test CSV has standardized `sequence` column:
 
 ```bash
-# Check available columns
-head -n 1 test_datasets/jain/canonical/jain_p5e_s2.csv
+# Check CSV structure
+head -n 5 test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
-# Use correct fragment
-uv run antibody-test \
-  --model models/my_model.pkl \
-  --test-file test_datasets/jain/canonical/jain_p5e_s2.csv \
-  --fragment VH  # Must match CSV column
+# Expected format:
+# id,sequence,label
+# jain_001,EVQLVESGGG...,0
+
+# All fragment CSVs from preprocessing have standardized columns
 ```
 
 ---
@@ -421,31 +421,55 @@ Cross-dataset generalization is **inherently challenging**:
 
 **Solutions:**
 
-**1. Match Assay Types**
+**1. Use Correct Dataset Files**
 
-```yaml
+```bash
 # Train ELISA, test ELISA (Boughter → Jain)
-data:
-  train_file: "train_datasets/boughter/canonical/boughter_processed_stage3.csv"
-  test_file: "test_datasets/jain/canonical/jain_p5e_s2.csv"
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
-**2. Tune Assay-Specific Thresholds**
+**2. Tune Assay-Specific Thresholds (PSR Assays)**
 
-For ELISA → PSR prediction:
+For ELISA → PSR prediction, adjust threshold in test config:
+
+```yaml
+# test_config_psr.yaml
+model_paths:
+  - "models/boughter_vh_esm1v_logreg.pkl"
+
+data_paths:
+  - "test_datasets/shehata/fragments/VH_only_shehata.csv"
+
+threshold: 0.5495  # Novo Nordisk PSR threshold (default ELISA: 0.5)
+```
+
+Or manually in Python:
 
 ```python
-# Adjust PSR threshold
-classifier = BinaryClassifier.load("models/my_model.pkl")
-classifier.threshold = 0.5495  # Novo Nordisk PSR threshold
+import pickle
+
+# Load model
+with open("models/boughter_vh_esm1v_logreg.pkl", "rb") as f:
+    classifier = pickle.load(f)
+
+# Get prediction probabilities
+probs = classifier.predict_proba(test_embeddings)[:, 1]
+
+# Apply PSR threshold
+psr_predictions = (probs > 0.5495).astype(int)
 ```
 
 **3. Match Fragment Types**
 
-```yaml
-# Train VH, test VH (not VL or CDRs)
-data:
-  fragment_column: "VH"
+Train and test on same fragment type:
+
+```bash
+# If trained on VH, test on VH (not CDRs or FWRs)
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/shehata/fragments/VH_only_shehata.csv  # VH only
 ```
 
 **4. Accept Lower Performance**

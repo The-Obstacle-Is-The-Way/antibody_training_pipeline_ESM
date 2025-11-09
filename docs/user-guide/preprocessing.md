@@ -52,7 +52,11 @@ python3 preprocessing/boughter/stage1_dna_translation.py
 python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 ```
 
-**Output:** `train_datasets/boughter/canonical/boughter_processed_stage3.csv`
+**Outputs:**
+- `train_datasets/boughter/annotated/VH_only_boughter.csv` - VH sequences (1,065 rows)
+- `train_datasets/boughter/annotated/*_boughter.csv` - 16 fragment CSVs (H-CDRs, L-CDRs, etc.)
+
+**Note:** Training subset (914 sequences) selected from VH_only_boughter.csv based on polyreactivity labels.
 
 ---
 
@@ -66,7 +70,9 @@ python3 preprocessing/jain/step1_convert_excel_to_csv.py
 python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 
-**Output:** `test_datasets/jain/canonical/jain_p5e_s2.csv`
+**Outputs:**
+- `test_datasets/jain/canonical/jain_86_novo_parity.csv` - Full sequences (86 antibodies)
+- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH only (Novo parity benchmark)
 
 ---
 
@@ -80,10 +86,14 @@ python3 preprocessing/harvey/step1_convert_raw_csvs.py
 python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
-**Output:**
-- `test_datasets/harvey/canonical/harvey_full.csv`
-- `test_datasets/harvey/fragments/harvey_VHH_only.csv`
-- `test_datasets/harvey/fragments/harvey_VHH-CDRs.csv`
+**Outputs:**
+- `test_datasets/harvey/processed/harvey.csv` - Combined raw data
+- `test_datasets/harvey/fragments/VHH_only_harvey.csv` - Full VHH domain
+- `test_datasets/harvey/fragments/H-CDR1_harvey.csv` - Individual CDRs
+- `test_datasets/harvey/fragments/H-CDRs_harvey.csv` - Concatenated CDRs
+- `test_datasets/harvey/fragments/H-FWRs_harvey.csv` - Concatenated FWRs
+
+**Note:** Fragment naming pattern: `{fragmentName}_harvey.csv` (not `harvey_{fragmentName}.csv`)
 
 ---
 
@@ -97,10 +107,14 @@ python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 python3 preprocessing/shehata/step2_extract_fragments.py
 ```
 
-**Output:**
-- `test_datasets/shehata/canonical/shehata_full.csv`
-- `test_datasets/shehata/fragments/shehata_VH.csv`
-- `test_datasets/shehata/fragments/shehata_All-CDRs.csv`
+**Outputs:**
+- `test_datasets/shehata/processed/shehata.csv` - Combined processed data
+- `test_datasets/shehata/fragments/VH_only_shehata.csv` - VH domain
+- `test_datasets/shehata/fragments/H-CDRs_shehata.csv` - Heavy CDRs
+- `test_datasets/shehata/fragments/All-CDRs_shehata.csv` - All CDRs
+- (16 fragment files total, pattern: `{fragmentName}_shehata.csv`)
+
+**Note:** No `shehata_full.csv` in canonical/ - processed data in `processed/` directory
 
 ---
 
