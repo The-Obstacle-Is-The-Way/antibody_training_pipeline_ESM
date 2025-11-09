@@ -313,7 +313,7 @@ class ModelTester:
         return results
 
     def plot_confusion_matrix(
-        self, results: dict[str, dict], dataset_name: str
+        self, results: dict[str, dict[str, Any]], dataset_name: str
     ) -> None:
         """Create confusion matrix visualization"""
         self.logger.info(f"Creating confusion matrix for {dataset_name}")
@@ -358,7 +358,7 @@ class ModelTester:
         self.logger.info(f"Confusion matrix saved to {plot_file}")
 
     def save_detailed_results(
-        self, results: dict[str, dict], dataset_name: str
+        self, results: dict[str, dict[str, Any]], dataset_name: str
     ) -> None:
         """Save detailed results to files"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

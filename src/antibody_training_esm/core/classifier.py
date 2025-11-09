@@ -26,7 +26,7 @@ class BinaryClassifier:
         "PSR": 0.5495,  # PSR assay type (Shehata, Harvey) - EXACT Novo parity
     }
 
-    def __init__(self, params: dict | None = None, **kwargs: Any):
+    def __init__(self, params: dict[str, Any] | None = None, **kwargs: Any):
         """
         Initialize the binary classifier
 
@@ -98,7 +98,7 @@ class BinaryClassifier:
         # Store all params for sklearn compatibility
         self._params = params
 
-    def get_params(self, deep: bool = True) -> dict:  # noqa: ARG002
+    def get_params(self, deep: bool = True) -> dict[str, Any]:  # noqa: ARG002
         """
         Get parameters for sklearn compatibility (required for cross_val_score)
 

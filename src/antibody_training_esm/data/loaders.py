@@ -154,7 +154,7 @@ def load_local_data(
     return X_train, y_train
 
 
-def load_data(config: dict) -> tuple[list[str], list[Label]]:
+def load_data(config: dict[str, Any]) -> tuple[list[str], list[Label]]:
     """
     Load training data from either Hugging Face or local file based on config
 

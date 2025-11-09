@@ -52,7 +52,7 @@ class ESMEmbeddingExtractor:
         )
         self.model.to(device)
         self.model.eval()
-        self.tokenizer = AutoTokenizer.from_pretrained(
+        self.tokenizer = AutoTokenizer.from_pretrained(  # type: ignore[no-untyped-call]
             model_name,
             revision=revision,  # nosec B615 - Pinned to specific version for scientific reproducibility
         )
