@@ -70,7 +70,6 @@ def main():
     # Make predictions
     print("Making predictions...")
     y_pred = classifier.predict(X_test)
-    y_proba = classifier.predict_proba(X_test)
     print("✅ Predictions complete")
     print()
 
