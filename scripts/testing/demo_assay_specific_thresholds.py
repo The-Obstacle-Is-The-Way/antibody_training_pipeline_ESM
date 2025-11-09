@@ -5,13 +5,26 @@ This demonstrates how to use the classifier's assay_type parameter
 to get calibrated predictions for different assay types.
 """
 
-import pickle
+from __future__ import annotations
 
+import pickle
+from pathlib import Path
+
+import numpy as np
+import numpy.typing as npt
 import pandas as pd
 from sklearn.metrics import accuracy_score, confusion_matrix
 
+from antibody_training_esm.core.classifier import BinaryClassifier
 
-def test_with_assay_type(model, test_file, dataset_name, assay_type, target_cm):
+
+def test_with_assay_type(
+    model: BinaryClassifier,
+    test_file: str | Path,
+    dataset_name: str,
+    assay_type: str,
+    target_cm: npt.NDArray[np.int_],
+) -> tuple[npt.NDArray[np.int_], float]:
     """Test model with assay-specific threshold"""
     print(f"\n{'=' * 60}")
     print(f"Testing {dataset_name} with assay_type='{assay_type}'")
@@ -30,7 +43,7 @@ def test_with_assay_type(model, test_file, dataset_name, assay_type, target_cm):
             f"Expected 'vh_sequence' or 'sequence' column in {test_file}, "
             f"found columns: {list(df.columns)}"
         )
-    y_true = df["label"].values
+    y_true = df["label"].to_numpy(dtype=int)
 
     print(f"  Dataset size: {len(sequences)} sequences")
     print(f"  Class distribution: {pd.Series(y_true).value_counts().to_dict()}")
@@ -64,10 +77,10 @@ def test_with_assay_type(model, test_file, dataset_name, assay_type, target_cm):
     else:
         print("  ✗ Significant difference from Novo")
 
-    return cm, acc
+    return cm, float(acc)
 
 
-def main():
+def main() -> int:
     print("=" * 60)
     print("TESTING ASSAY-SPECIFIC THRESHOLDS")
     print("=" * 60)
@@ -78,9 +91,6 @@ def main():
     with open(model_path, "rb") as f:
         model = pickle.load(f)
     print("  Model loaded successfully!")
-
-    # Benchmarks
-    import numpy as np
 
     novo_jain = np.array([[40, 19], [10, 17]])  # 66.28% accuracy (Novo benchmark)
     # Note: Shehata is an external test set with expected performance, not a Novo benchmark
@@ -144,7 +154,8 @@ predictions = model.predict(X_embeddings)
     print("=" * 60)
     print("Testing completed!")
     print("=" * 60)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

@@ -27,13 +27,15 @@ Outputs:
 Reference: See docs/boughter/boughter_data_sources.md for Stage 1 methodology
 """
 
-import sys
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
 
-def validate_stage1_output() -> dict:
+def validate_stage1_output() -> dict[str, Any]:
     """Validate Stage 1 output (boughter.csv)."""
     print("\n" + "=" * 70)
     print("Stage 1 Validation: DNA Translation & Novo Flagging")
@@ -70,10 +72,13 @@ def validate_stage1_output() -> dict:
     print(f"  Stop codons (*) in light: {light_stops}")
 
     # Excessive X's (>5%)
-    def check_x_ratio(seq):
+    def check_x_ratio(seq: str | float | None) -> bool:
         if pd.isna(seq):
             return False
-        return seq.count("X") / len(seq) > 0.05
+        seq_str = str(seq)
+        if not seq_str:
+            return False
+        return seq_str.count("X") / len(seq_str) > 0.05
 
     heavy_x = df["heavy_seq"].apply(check_x_ratio).sum()
     light_x = df["light_seq"].apply(check_x_ratio).sum()
@@ -125,7 +130,7 @@ def validate_stage1_output() -> dict:
     }
 
 
-def validate_stage2_output() -> dict:
+def validate_stage2_output() -> dict[str, Any]:
     """Validate Stage 2 output (fragment CSVs + annotation)."""
     print("\n" + "=" * 70)
     print("Stage 2 Validation: ANARCI Annotation & Fragment Extraction")
@@ -271,7 +276,9 @@ def validate_stage2_output() -> dict:
     }
 
 
-def generate_report(stage1_results: dict, stage2_results: dict):
+def generate_report(
+    stage1_results: dict[str, Any], stage2_results: dict[str, Any]
+) -> None:
     """Generate validation report."""
     print("\n" + "=" * 70)
     print("Validation Summary")
@@ -355,7 +362,7 @@ def generate_report(stage1_results: dict, stage2_results: dict):
     print(f"\n✓ Validation report saved to: {report_path}")
 
 
-def main():
+def main() -> int:
     """Main validation pipeline."""
     print("=" * 70)
     print("Boughter Dataset Validation")
@@ -373,12 +380,10 @@ def main():
     # Exit with appropriate code
     if stage1_results["success"] and stage2_results["success"]:
         if stage2_results["target_met"]:
-            sys.exit(0)  # Success
-        else:
-            sys.exit(1)  # Warning - below target
-    else:
-        sys.exit(2)  # Error - pipeline incomplete
+            return 0  # Success
+        return 1  # Warning - below target
+    return 2  # Error - pipeline incomplete
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

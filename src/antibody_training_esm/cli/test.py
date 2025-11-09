@@ -16,7 +16,7 @@ Usage:
 import argparse
 import logging
 import os
-import pickle
+import pickle  # nosec B403 - Used only for local trusted data (models, caches)
 import sys
 from dataclasses import dataclass
 from datetime import datetime
@@ -66,7 +66,7 @@ class TestConfig:
     batch_size: int = DEFAULT_BATCH_SIZE  # Batch size for embedding extraction
     device: str = "mps"  # Device to use for inference [cuda, cpu, mps] - MUST match training config
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.metrics is None:
             self.metrics = [
                 "accuracy",
@@ -116,7 +116,7 @@ class ModelTester:
             raise FileNotFoundError(f"Model file not found: {model_path}")
 
         with open(model_path, "rb") as f:
-            model = pickle.load(f)
+            model = pickle.load(f)  # nosec B301 - Loading our own trained model from local file
 
         if not isinstance(model, BinaryClassifier):
             raise ValueError(f"Expected BinaryClassifier, got {type(model)}")
@@ -150,8 +150,9 @@ class ModelTester:
 
             # NOW create new extractor (no leak)
             batch_size = getattr(model, "batch_size", DEFAULT_BATCH_SIZE)
+            revision = getattr(model, "revision", "main")  # Backwards compatibility
             model.embedding_extractor = ESMEmbeddingExtractor(
-                model.model_name, self.config.device, batch_size
+                model.model_name, self.config.device, batch_size, revision=revision
             )
             model.device = self.config.device
 
@@ -243,7 +244,7 @@ class ModelTester:
         if os.path.exists(cache_file):
             self.logger.info(f"Loading cached embeddings from {cache_file}")
             with open(cache_file, "rb") as f:
-                embeddings: np.ndarray = pickle.load(f)
+                embeddings: np.ndarray = pickle.load(f)  # nosec B301 - Loading our own cached embeddings for performance
 
             if len(embeddings) == len(sequences):
                 return embeddings
@@ -311,7 +312,9 @@ class ModelTester:
 
         return results
 
-    def plot_confusion_matrix(self, results: dict[str, dict], dataset_name: str):
+    def plot_confusion_matrix(
+        self, results: dict[str, dict[str, Any]], dataset_name: str
+    ) -> None:
         """Create confusion matrix visualization"""
         self.logger.info(f"Creating confusion matrix for {dataset_name}")
 
@@ -354,7 +357,9 @@ class ModelTester:
 
         self.logger.info(f"Confusion matrix saved to {plot_file}")
 
-    def save_detailed_results(self, results: dict[str, dict], dataset_name: str):
+    def save_detailed_results(
+        self, results: dict[str, dict[str, Any]], dataset_name: str
+    ) -> None:
         """Save detailed results to files"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -392,7 +397,7 @@ class ModelTester:
 
         self.logger.info(f"Detailed results saved to {results_file}")
 
-    def cleanup_cached_embeddings(self):
+    def cleanup_cached_embeddings(self) -> None:
         """Delete cached embedding files"""
         self.logger.info("Cleaning up cached embedding files...")
         for cache_file in self.cached_embedding_files:
@@ -403,7 +408,7 @@ class ModelTester:
                 except Exception as e:
                     self.logger.warning(f"Failed to delete {cache_file}: {e}")
 
-    def run_comprehensive_test(self):
+    def run_comprehensive_test(self) -> dict[str, dict[str, Any]]:
         """Run testing pipeline"""
         self.logger.info("Starting model testing")
         self.logger.info(f"Models to test: {self.config.model_paths}")
@@ -421,8 +426,8 @@ class ModelTester:
 
                 # Load dataset
                 try:
-                    sequences, labels = self.load_dataset(data_path)
-                    labels = np.array(labels)
+                    sequences, labels_list = self.load_dataset(data_path)
+                    labels: np.ndarray = np.array(labels_list)
                 except Exception as e:
                     self.logger.error(f"Failed to load dataset {data_path}: {e}")
                     continue
@@ -481,7 +486,7 @@ def load_config_file(config_path: str) -> TestConfig:
     return TestConfig(**config_dict)
 
 
-def create_sample_test_config():
+def create_sample_test_config() -> None:
     """Create a sample test configuration file"""
     sample_config = {
         "model_paths": ["./models/antibody_classifier.pkl"],
@@ -499,7 +504,7 @@ def create_sample_test_config():
     print("Sample test configuration created: test_config.yaml")
 
 
-def main():
+def main() -> int:
     """Main entry point for antibody-test CLI"""
     parser = argparse.ArgumentParser(
         description="Testing for antibody classification models",

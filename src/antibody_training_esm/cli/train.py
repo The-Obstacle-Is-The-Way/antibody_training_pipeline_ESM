@@ -10,7 +10,7 @@ import sys
 from antibody_training_esm.core.trainer import train_model
 
 
-def main():
+def main() -> int:
     """Main entry point for training CLI"""
     parser = argparse.ArgumentParser(
         description="Train antibody classification model using ESM-1V embeddings",

@@ -17,6 +17,8 @@ Date: 2025-11-01
 Issue: #4 - Harvey dataset preprocessing
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -138,7 +140,7 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
     return df_annotated
 
 
-def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
+def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
     """
     Create separate CSV files for each VHH fragment type.
 
@@ -195,7 +197,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
     print(f"\n[OK] All fragments saved to: {output_dir}/")
 
 
-def main():
+def main() -> int:
     """Main processing pipeline."""
     # Paths
     csv_path = Path("test_datasets/harvey/processed/harvey.csv")
@@ -207,7 +209,7 @@ def main():
             "Please run preprocessing/harvey/step1_convert_raw_csvs.py to generate from raw Harvey CSVs."
         )
         print("Raw CSVs should be in: test_datasets/harvey/raw/")
-        sys.exit(1)
+        return 1
 
     print("=" * 70)
     print("Harvey Dataset: VHH Fragment Extraction")
@@ -247,7 +249,8 @@ def main():
     print("  2. Run model inference on fragment-specific CSVs")
     print("  3. Compare results with paper (Sakhnini et al. 2025)")
     print("  4. Create PR to close Issue #4")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

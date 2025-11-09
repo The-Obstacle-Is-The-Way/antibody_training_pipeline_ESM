@@ -8,10 +8,13 @@ Date: 2025-11-07
 Phase: 5 Task 3 (Trainer Coverage Gap Closure)
 """
 
+from __future__ import annotations
+
 import hashlib
 import os
 import pickle
 from pathlib import Path
+from typing import Any
 from unittest.mock import Mock, patch
 
 import numpy as np
@@ -32,7 +35,7 @@ from antibody_training_esm.core.trainer import (
 
 
 @pytest.fixture
-def nested_config(tmp_path):
+def nested_config(tmp_path: Path) -> dict[str, Any]:
     """Proper nested config structure that trainer.py expects"""
     config = {
         "training": {
@@ -70,7 +73,7 @@ def nested_config(tmp_path):
 
 
 @pytest.fixture
-def config_yaml_path(nested_config, tmp_path):
+def config_yaml_path(nested_config: dict[str, Any], tmp_path: Path) -> str:
     """Write config to YAML file"""
     config_path = tmp_path / "config.yaml"
     with open(config_path, "w") as f:
@@ -79,13 +82,13 @@ def config_yaml_path(nested_config, tmp_path):
 
 
 @pytest.fixture
-def mock_embeddings():
+def mock_embeddings() -> np.ndarray:
     """Mock ESM embeddings (1280-dimensional)"""
     return np.random.rand(20, 1280).astype(np.float32)
 
 
 @pytest.fixture
-def mock_labels():
+def mock_labels() -> np.ndarray:
     """Mock binary labels"""
     return np.array([0, 1] * 10)
 
@@ -93,7 +96,9 @@ def mock_labels():
 # ==================== setup_logging Tests ====================
 
 
-def test_setup_logging_creates_logger(nested_config, tmp_path):
+def test_setup_logging_creates_logger(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
     """Verify setup_logging creates logger with correct config"""
     # Act
     logger = setup_logging(nested_config)
@@ -105,7 +110,7 @@ def test_setup_logging_creates_logger(nested_config, tmp_path):
     assert (tmp_path / "train.log").exists()
 
 
-def test_setup_logging_creates_log_directory(tmp_path):
+def test_setup_logging_creates_log_directory(tmp_path: Path) -> None:
     """Verify setup_logging creates log directory if missing"""
     # Arrange
     nested_log_dir = tmp_path / "logs" / "nested" / "path"
@@ -127,7 +132,9 @@ def test_setup_logging_creates_log_directory(tmp_path):
 # ==================== load_config Tests ====================
 
 
-def test_load_config_loads_yaml_file(config_yaml_path, nested_config):
+def test_load_config_loads_yaml_file(
+    config_yaml_path: str, nested_config: dict[str, Any]
+) -> None:
     """Verify load_config loads YAML file correctly"""
     # Act
     loaded_config = load_config(config_yaml_path)
@@ -140,14 +147,14 @@ def test_load_config_loads_yaml_file(config_yaml_path, nested_config):
     assert "data" in loaded_config
 
 
-def test_load_config_raises_on_missing_file():
+def test_load_config_raises_on_missing_file() -> None:
     """Verify load_config raises FileNotFoundError for missing file"""
     # Act & Assert
     with pytest.raises(FileNotFoundError):
         load_config("nonexistent_config.yaml")
 
 
-def test_load_config_raises_on_invalid_yaml(tmp_path):
+def test_load_config_raises_on_invalid_yaml(tmp_path: Path) -> None:
     """Verify load_config raises error for invalid YAML"""
     # Arrange
     invalid_yaml = tmp_path / "invalid.yaml"
@@ -161,7 +168,9 @@ def test_load_config_raises_on_invalid_yaml(tmp_path):
 # ==================== get_or_create_embeddings Tests ====================
 
 
-def test_get_or_create_embeddings_creates_new_embeddings(tmp_path, mock_embeddings):
+def test_get_or_create_embeddings_creates_new_embeddings(
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
     """Verify embeddings are created when cache doesn't exist"""
     # Arrange
     sequences = ["QVQLVQSG"] * 20
@@ -180,12 +189,16 @@ def test_get_or_create_embeddings_creates_new_embeddings(tmp_path, mock_embeddin
     mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
     # Cache file should be created
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.md5(sequences_str.encode()).hexdigest()[:8]
+    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
+        :12
+    ]  # Changed to SHA-256 (12 chars)
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
     assert cache_file.exists()
 
 
-def test_get_or_create_embeddings_loads_from_cache(tmp_path, mock_embeddings):
+def test_get_or_create_embeddings_loads_from_cache(
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
     """Verify embeddings are loaded from cache when available"""
     # Arrange
     sequences = ["QVQLVQSG"] * 20
@@ -194,7 +207,9 @@ def test_get_or_create_embeddings_loads_from_cache(tmp_path, mock_embeddings):
 
     # Create cached embeddings
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.md5(sequences_str.encode()).hexdigest()[:8]
+    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
+        :12
+    ]  # Changed to SHA-256 (12 chars)
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     cache_data = {
@@ -222,8 +237,8 @@ def test_get_or_create_embeddings_loads_from_cache(tmp_path, mock_embeddings):
 
 
 def test_get_or_create_embeddings_recomputes_on_hash_mismatch(
-    tmp_path, mock_embeddings
-):
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
     """Verify embeddings are recomputed if cache hash doesn't match"""
     # Arrange
     sequences = ["QVQLVQSG"] * 20
@@ -232,7 +247,9 @@ def test_get_or_create_embeddings_recomputes_on_hash_mismatch(
 
     # Create cached embeddings with WRONG hash
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.md5(sequences_str.encode()).hexdigest()[:8]
+    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
+        :12
+    ]  # Changed to SHA-256 (12 chars)
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     wrong_cache_data = {
@@ -265,7 +282,9 @@ def test_get_or_create_embeddings_recomputes_on_hash_mismatch(
 # ==================== evaluate_model Tests ====================
 
 
-def test_evaluate_model_computes_all_metrics(mock_embeddings, mock_labels):
+def test_evaluate_model_computes_all_metrics(
+    mock_embeddings: np.ndarray, mock_labels: np.ndarray
+) -> None:
     """Verify evaluate_model computes all requested metrics"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
@@ -299,7 +318,9 @@ def test_evaluate_model_computes_all_metrics(mock_embeddings, mock_labels):
         assert 0.0 <= value <= 1.0
 
 
-def test_evaluate_model_computes_subset_of_metrics(mock_embeddings, mock_labels):
+def test_evaluate_model_computes_subset_of_metrics(
+    mock_embeddings: np.ndarray, mock_labels: np.ndarray
+) -> None:
     """Verify evaluate_model only computes requested metrics"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
@@ -329,7 +350,9 @@ def test_evaluate_model_computes_subset_of_metrics(mock_embeddings, mock_labels)
     assert "roc_auc" not in results  # Not requested
 
 
-def test_evaluate_model_logs_results(mock_embeddings, mock_labels):
+def test_evaluate_model_logs_results(
+    mock_embeddings: np.ndarray, mock_labels: np.ndarray
+) -> None:
     """Verify evaluate_model logs results to logger"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
@@ -363,8 +386,8 @@ def test_evaluate_model_logs_results(mock_embeddings, mock_labels):
 
 
 def test_perform_cross_validation_returns_cv_results(
-    mock_embeddings, mock_labels, nested_config
-):
+    mock_embeddings: np.ndarray, mock_labels: np.ndarray, nested_config: dict[str, Any]
+) -> None:
     """Verify perform_cross_validation returns CV results for all metrics"""
     # Arrange
     mock_logger = Mock()
@@ -387,8 +410,8 @@ def test_perform_cross_validation_returns_cv_results(
 
 
 def test_perform_cross_validation_uses_stratified_kfold_when_configured(
-    mock_embeddings, mock_labels, nested_config
-):
+    mock_embeddings: np.ndarray, mock_labels: np.ndarray, nested_config: dict[str, Any]
+) -> None:
     """Verify stratified K-fold is used when stratify=True"""
     # Arrange
     nested_config["classifier"]["stratify"] = True
@@ -408,8 +431,8 @@ def test_perform_cross_validation_uses_stratified_kfold_when_configured(
 
 
 def test_perform_cross_validation_uses_regular_kfold_when_stratify_false(
-    mock_embeddings, mock_labels, nested_config
-):
+    mock_embeddings: np.ndarray, mock_labels: np.ndarray, nested_config: dict[str, Any]
+) -> None:
     """Verify regular K-fold is used when stratify=False"""
     # Arrange
     nested_config["classifier"]["stratify"] = False
@@ -429,7 +452,9 @@ def test_perform_cross_validation_uses_regular_kfold_when_stratify_false(
 # ==================== save_model Tests ====================
 
 
-def test_save_model_saves_classifier_to_file(nested_config, tmp_path):
+def test_save_model_saves_classifier_to_file(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
     """Verify save_model saves classifier to pickle file"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
@@ -464,7 +489,9 @@ def test_save_model_saves_classifier_to_file(nested_config, tmp_path):
     assert hasattr(loaded_classifier, "predict")
 
 
-def test_save_model_returns_none_when_save_disabled(nested_config):
+def test_save_model_returns_none_when_save_disabled(
+    nested_config: dict[str, Any],
+) -> None:
     """Verify save_model returns None when save_model=False"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
@@ -487,7 +514,9 @@ def test_save_model_returns_none_when_save_disabled(nested_config):
     assert model_path is None
 
 
-def test_save_model_creates_save_directory_if_missing(nested_config, tmp_path):
+def test_save_model_creates_save_directory_if_missing(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
     """Verify save_model creates model_save_dir if it doesn't exist"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
@@ -514,6 +543,7 @@ def test_save_model_creates_save_directory_if_missing(nested_config, tmp_path):
     model_path = save_model(classifier, nested_config, mock_logger)
 
     # Assert
+    assert model_path is not None
     assert Path(model_path).exists()
     assert nested_dir.exists()
 
@@ -522,8 +552,10 @@ def test_save_model_creates_save_directory_if_missing(nested_config, tmp_path):
 
 
 def test_train_model_loads_config_and_completes_pipeline(
-    config_yaml_path, tmp_path, mock_transformers_model
-):
+    config_yaml_path: str,
+    tmp_path: Path,
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify train_model loads config and completes full training pipeline"""
     # Arrange: Create minimal training CSV
     import pandas as pd
@@ -564,7 +596,7 @@ def test_train_model_loads_config_and_completes_pipeline(
     assert "cv_accuracy" in results["cv_metrics"]
 
 
-def test_train_model_raises_on_training_failure(config_yaml_path):
+def test_train_model_raises_on_training_failure(config_yaml_path: str) -> None:
     """Verify train_model raises exception on training failure"""
     # Arrange: Point to non-existent training data
     config = load_config(config_yaml_path)
@@ -578,8 +610,10 @@ def test_train_model_raises_on_training_failure(config_yaml_path):
 
 
 def test_train_model_deletes_cache_after_training(
-    config_yaml_path, tmp_path, mock_transformers_model
-):
+    config_yaml_path: str,
+    tmp_path: Path,
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify train_model deletes embeddings cache after training"""
     # Arrange
     import pandas as pd

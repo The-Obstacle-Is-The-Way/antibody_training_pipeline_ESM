@@ -14,7 +14,10 @@ Date: 2025-11-07
 Phase: 3 (Integration Tests)
 """
 
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -31,7 +34,7 @@ from antibody_training_esm.datasets.shehata import ShehataDataset
 
 
 @pytest.fixture
-def test_params():
+def test_params() -> dict[str, Any]:
     """Standard classifier params for integration tests"""
     return {
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",
@@ -46,7 +49,7 @@ def test_params():
 
 
 @pytest.fixture
-def mock_dataset_paths():
+def mock_dataset_paths() -> Any:
     """Paths to mock dataset CSV files"""
     fixtures_dir = Path(__file__).parent.parent / "fixtures/mock_datasets"
     return {
@@ -63,8 +66,10 @@ def mock_dataset_paths():
 
 @pytest.mark.integration
 def test_boughter_to_jain_pipeline(
-    mock_transformers_model, test_params, mock_dataset_paths
-):
+    mock_transformers_model: tuple[Any, Any],
+    test_params: dict[str, Any],
+    mock_dataset_paths: Any,
+) -> None:
     """Verify Boughter training set can predict on Jain test set (VH sequences)"""
     # Arrange: Load Boughter training data from mock
     boughter = BoughterDataset()
@@ -89,7 +94,7 @@ def test_boughter_to_jain_pipeline(
     X_train = extractor.extract_batch_embeddings(
         df_train["VH_sequence"].head(20).tolist()
     )
-    y_train = df_train["label"].head(20).values
+    y_train = df_train["label"].head(20).to_numpy(dtype=int)
 
     X_test = extractor.extract_batch_embeddings(
         df_test["VH_sequence"].head(10).tolist()
@@ -110,8 +115,11 @@ def test_boughter_to_jain_pipeline(
 
 @pytest.mark.integration
 def test_jain_to_shehata_pipeline(
-    mock_transformers_model, test_params, mock_dataset_paths, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    test_params: dict[str, Any],
+    mock_dataset_paths: Any,
+    tmp_path: Path,
+) -> None:
     """Verify Jain training can predict on Shehata test set (different assay types)"""
     # Arrange: Load Jain training data from mock
     jain = JainDataset()
@@ -139,7 +147,7 @@ def test_jain_to_shehata_pipeline(
     X_train = extractor.extract_batch_embeddings(
         df_train["VH_sequence"].head(15).tolist()
     )
-    y_train = df_train["label"].head(15).values
+    y_train = df_train["label"].head(15).to_numpy(dtype=int)
 
     X_test = extractor.extract_batch_embeddings(df_test["VH_sequence"].head(5).tolist())
 
@@ -157,8 +165,10 @@ def test_jain_to_shehata_pipeline(
 
 @pytest.mark.integration
 def test_harvey_nanobody_pipeline(
-    mock_transformers_model, test_params, mock_dataset_paths
-):
+    mock_transformers_model: tuple[Any, Any],
+    test_params: dict[str, Any],
+    mock_dataset_paths: Any,
+) -> None:
     """Verify Harvey nanobody dataset works in full pipeline (VHH only, no VL)"""
     # Arrange: Load Harvey nanobody data from mock
     harvey = HarveyDataset()
@@ -175,7 +185,7 @@ def test_harvey_nanobody_pipeline(
     )
 
     X = extractor.extract_batch_embeddings(df["VH_sequence"].tolist())
-    y = df["label"].values
+    y = df["label"].to_numpy(dtype=int)
 
     # Act: Train classifier on nanobodies
     classifier = BinaryClassifier(params=test_params)
@@ -193,7 +203,7 @@ def test_harvey_nanobody_pipeline(
 
 
 @pytest.mark.integration
-def test_boughter_fragment_csv_creation_pipeline(tmp_path):
+def test_boughter_fragment_csv_creation_pipeline(tmp_path: Path) -> None:
     """Verify complete Boughter fragment CSV creation workflow"""
     # Arrange: Load annotated Boughter data
     annotated_csv = (
@@ -224,7 +234,7 @@ def test_boughter_fragment_csv_creation_pipeline(tmp_path):
 
 
 @pytest.mark.integration
-def test_jain_fragment_pipeline_with_suffix(tmp_path):
+def test_jain_fragment_pipeline_with_suffix(tmp_path: Path) -> None:
     """Verify Jain fragment creation with custom suffix"""
     # Arrange: Load annotated Jain data
     annotated_csv = (
@@ -265,7 +275,9 @@ def test_jain_fragment_pipeline_with_suffix(tmp_path):
 
 
 @pytest.mark.integration
-def test_harvey_nanobody_fragments_pipeline(mock_dataset_paths, tmp_path):
+def test_harvey_nanobody_fragments_pipeline(
+    mock_dataset_paths: Any, tmp_path: Path
+) -> None:
     """Verify Harvey creates 6 nanobody fragments (not 16 full antibody fragments)"""
     # Arrange: Load Harvey nanobody data from mock
     harvey = HarveyDataset(output_dir=tmp_path)
@@ -295,8 +307,10 @@ def test_harvey_nanobody_fragments_pipeline(mock_dataset_paths, tmp_path):
 
 @pytest.mark.integration
 def test_jain_multi_stage_pipeline(
-    mock_transformers_model, test_params, mock_dataset_paths
-):
+    mock_transformers_model: tuple[Any, Any],
+    test_params: dict[str, Any],
+    mock_dataset_paths: Any,
+) -> None:
     """Verify training on different Jain stages produces different results
 
     NOTE: Placeholder test - Currently simulates parity stage by slicing full dataset.
@@ -326,12 +340,12 @@ def test_jain_multi_stage_pipeline(
     X_full = extractor.extract_batch_embeddings(
         df_full["VH_sequence"].head(10).tolist()
     )
-    y_full = df_full["label"].head(10).values
+    y_full = df_full["label"].head(10).to_numpy(dtype=int)
 
     X_parity = extractor.extract_batch_embeddings(
         df_parity["VH_sequence"].head(10).tolist()
     )
-    y_parity = df_parity["label"].head(10).values
+    y_parity = df_parity["label"].head(10).to_numpy(dtype=int)
 
     # Act: Train separate classifiers
     classifier_full = BinaryClassifier(params=test_params)
@@ -347,8 +361,10 @@ def test_jain_multi_stage_pipeline(
 
 @pytest.mark.integration
 def test_boughter_mild_flag_filtering_pipeline(
-    mock_transformers_model, test_params, mock_dataset_paths
-):
+    mock_transformers_model: tuple[Any, Any],
+    test_params: dict[str, Any],
+    mock_dataset_paths: Any,
+) -> None:
     """Verify include_mild parameter affects training data distribution"""
     # Arrange: Load Boughter with and without mild flags from mock
     boughter = BoughterDataset()
@@ -372,7 +388,7 @@ def test_boughter_mild_flag_filtering_pipeline(
     X_no_mild = extractor.extract_batch_embeddings(
         df_no_mild["VH_sequence"].head(10).tolist()
     )
-    y_no_mild = df_no_mild["label"].head(10).values
+    y_no_mild = df_no_mild["label"].head(10).to_numpy(dtype=int)
 
     # Act: Train classifier on filtered data
     classifier = BinaryClassifier(params=test_params)
@@ -387,8 +403,8 @@ def test_boughter_mild_flag_filtering_pipeline(
 
 @pytest.mark.integration
 def test_full_pipeline_from_sequences_to_predictions(
-    mock_transformers_model, test_params
-):
+    mock_transformers_model: tuple[Any, Any], test_params: dict[str, Any]
+) -> None:
     """Verify complete pipeline: raw sequences → embeddings → training → predictions"""
     # Arrange: Raw sequences (simulate user input)
     sequences = [
@@ -421,7 +437,9 @@ def test_full_pipeline_from_sequences_to_predictions(
 
 
 @pytest.mark.integration
-def test_pipeline_handles_batch_processing(mock_transformers_model, test_params):
+def test_pipeline_handles_batch_processing(
+    mock_transformers_model: tuple[Any, Any], test_params: dict[str, Any]
+) -> None:
     """Verify pipeline handles large batches efficiently"""
     # Arrange: Create 50 sequences (test batching logic)
     base_seq = "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMH"

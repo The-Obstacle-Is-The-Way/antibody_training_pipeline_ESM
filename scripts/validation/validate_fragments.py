@@ -8,14 +8,17 @@ from the preprocessing pipeline.
 Date: 2025-11-01
 """
 
-import sys
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
 
-def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16):
+def validate_fragment_directory(
+    dataset_dir: Path, expected_fragments: int = 16
+) -> dict[str, Any]:
     """
     Validate fragment extraction output directory.
 
@@ -117,7 +120,7 @@ def validate_fragment_directory(dataset_dir: Path, expected_fragments: int = 16)
     return results
 
 
-def validate_label_distribution(csv_path: Path):
+def validate_label_distribution(csv_path: Path) -> dict[str, float | int]:
     """Validate label distribution matches expected pattern."""
     df = pd.read_csv(csv_path, comment="#")
 
@@ -139,7 +142,7 @@ def validate_label_distribution(csv_path: Path):
 
 def print_validation_report(
     dataset_name: str, dataset_dir: Path, expected_fragments: int = 16
-):
+) -> bool:
     """Print comprehensive validation report."""
     print("=" * 60)
     print(f"{dataset_name.upper()} Dataset Validation")
@@ -186,10 +189,10 @@ def print_validation_report(
         print("✗ VALIDATION FAILED")
     print("=" * 60)
 
-    return results["valid"]
+    return bool(results["valid"])
 
 
-def main():
+def main() -> int:
     """Validate all processed datasets."""
     datasets = [
         ("jain", Path("test_datasets/jain/fragments"), 16),  # Full antibodies (VH+VL)
@@ -216,8 +219,8 @@ def main():
         else:
             print(f"⚠ Skipping {name} - directory not found: {path}\n")
 
-    sys.exit(0 if all_valid else 1)
+    return 0 if all_valid else 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

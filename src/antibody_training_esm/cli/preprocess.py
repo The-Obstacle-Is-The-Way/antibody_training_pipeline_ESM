@@ -8,7 +8,7 @@ import argparse
 import sys
 
 
-def main():
+def main() -> int:
     """
     Main entry point for preprocessing CLI.
 

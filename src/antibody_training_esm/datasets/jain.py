@@ -31,6 +31,7 @@ Reference:
 - Jain et al. (2017), "Biophysical properties of the clinical-stage antibody landscape"
 """
 
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -59,7 +60,9 @@ class JainDataset(AntibodyDataset):
     TIER_B_EXTREME_TM = "eldelumab"  # Extreme Tm outlier (59.50°C)
     TIER_C_CLINICAL = "infliximab"  # 61% ADA rate + chimeric
 
-    def __init__(self, output_dir: Path | None = None, logger=None):
+    def __init__(
+        self, output_dir: Path | None = None, logger: logging.Logger | None = None
+    ):
         """
         Initialize Jain dataset loader.
 

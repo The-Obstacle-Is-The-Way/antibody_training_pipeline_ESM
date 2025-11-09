@@ -6,8 +6,10 @@ Supports Hugging Face datasets, local CSV files, and preprocessing pipelines.
 """
 
 import logging
-import pickle
-from typing import cast
+import pickle  # nosec B403 - Used only for local trusted data (preprocessed datasets)
+from collections.abc import Sequence
+from pathlib import Path
+from typing import Any, cast
 
 import numpy as np
 import pandas as pd
@@ -18,9 +20,9 @@ type Label = int | float | bool | str
 
 
 def preprocess_raw_data(
-    X: list[str],
-    y: list[Label],
-    embedding_extractor,
+    X: Sequence[str],
+    y: Sequence[Label],
+    embedding_extractor: Any,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
     Embed sequences using ESM model
@@ -49,11 +51,11 @@ def preprocess_raw_data(
 
 
 def store_preprocessed_data(
-    X: list[str] | None = None,
-    y: list[Label] | None = None,
+    X: Sequence[str] | None = None,
+    y: Sequence[Label] | None = None,
     X_embedded: np.ndarray | None = None,
     filename: str | None = None,
-):
+) -> None:
     """
     Store preprocessed data to pickle file
 
@@ -69,7 +71,7 @@ def store_preprocessed_data(
     if filename is None:
         raise ValueError("filename is required")
 
-    data: dict[str, list[str] | list[Label] | np.ndarray] = {}
+    data: dict[str, Sequence[str] | Sequence[Label] | np.ndarray] = {}
     if X_embedded is not None:
         data["X_embedded"] = X_embedded
     if X is not None:
@@ -94,7 +96,7 @@ def load_preprocessed_data(
         Dictionary with keys: 'X', 'y', and/or 'X_embedded'
     """
     with open(filename, "rb") as f:
-        data = cast(dict[str, list[str] | list[Label] | np.ndarray], pickle.load(f))
+        data = cast(dict[str, list[str] | list[Label] | np.ndarray], pickle.load(f))  # nosec B301 - Loading our own preprocessed dataset from local file
         return data
 
 
@@ -103,6 +105,7 @@ def load_hf_dataset(
     split: str,
     text_column: str,
     label_column: str,
+    revision: str = "main",
 ) -> tuple[list[str], list[Label]]:
     """
     Load dataset from Hugging Face datasets library
@@ -112,12 +115,17 @@ def load_hf_dataset(
         split: Which split to load (e.g., 'train', 'test', 'validation')
         text_column: Name of the column containing the sequences
         label_column: Name of the column containing the labels
+        revision: HuggingFace dataset revision (commit SHA or branch name) for reproducibility
 
     Returns:
         X: List of input sequences
         y: List of labels
     """
-    dataset = load_dataset(dataset_name, split=split)
+    dataset = load_dataset(
+        dataset_name,
+        split=split,
+        revision=revision,  # nosec B615 - Pinned to specific version for scientific reproducibility
+    )
     X = list(dataset[text_column])
     y = cast(list[Label], list(dataset[label_column]))
 
@@ -125,7 +133,7 @@ def load_hf_dataset(
 
 
 def load_local_data(
-    file_path: str, text_column: str, label_column: str
+    file_path: str | Path, text_column: str, label_column: str
 ) -> tuple[list[str], list[Label]]:
     """
     Load training data from local CSV file
@@ -146,7 +154,7 @@ def load_local_data(
     return X_train, y_train
 
 
-def load_data(config: dict) -> tuple[list[str], list[Label]]:
+def load_data(config: dict[str, Any]) -> tuple[list[str], list[Label]]:
     """
     Load training data from either Hugging Face or local file based on config
 

@@ -22,10 +22,14 @@ Date: 2025-11-07
 Phase: 4 (CLI & E2E Tests)
 """
 
+from __future__ import annotations
+
 import contextlib
 import sys
+from collections.abc import Generator
 from io import StringIO
-from unittest.mock import Mock, patch
+from pathlib import Path
+from unittest.mock import MagicMock, Mock, patch
 
 import pytest
 import yaml
@@ -36,7 +40,7 @@ from antibody_training_esm.cli.test import TestConfig, create_sample_test_config
 
 
 @pytest.fixture
-def mock_model_tester():
+def mock_model_tester() -> Generator[MagicMock, None, None]:
     """Mock ModelTester class"""
     with patch("antibody_training_esm.cli.test.ModelTester") as mock:
         instance = Mock()
@@ -56,7 +60,7 @@ def mock_model_tester():
 
 
 @pytest.mark.unit
-def test_test_cli_requires_model_and_data_or_config():
+def test_test_cli_requires_model_and_data_or_config() -> None:
     """Verify CLI requires either --config or both --model and --data"""
     # Arrange
     with patch("sys.argv", ["antibody-test"]):
@@ -69,7 +73,9 @@ def test_test_cli_requires_model_and_data_or_config():
 
 
 @pytest.mark.unit
-def test_test_cli_accepts_model_and_data_arguments(mock_model_tester):
+def test_test_cli_accepts_model_and_data_arguments(
+    mock_model_tester: MagicMock,
+) -> None:
     """Verify CLI accepts --model and --data arguments"""
     # Arrange
     with patch(
@@ -91,7 +97,9 @@ def test_test_cli_accepts_model_and_data_arguments(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_accepts_multiple_models_and_datasets(mock_model_tester):
+def test_test_cli_accepts_multiple_models_and_datasets(
+    mock_model_tester: MagicMock,
+) -> None:
     """Verify CLI accepts multiple --model and --data paths"""
     # Arrange
     with patch(
@@ -118,7 +126,9 @@ def test_test_cli_accepts_multiple_models_and_datasets(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_accepts_config_file(mock_model_tester, tmp_path):
+def test_test_cli_accepts_config_file(
+    mock_model_tester: MagicMock, tmp_path: Path
+) -> None:
     """Verify CLI accepts --config argument"""
     # Arrange
     config_file = tmp_path / "test_config.yaml"
@@ -140,7 +150,9 @@ def test_test_cli_accepts_config_file(mock_model_tester, tmp_path):
 
 
 @pytest.mark.unit
-def test_test_cli_loads_config_from_yaml(mock_model_tester, tmp_path):
+def test_test_cli_loads_config_from_yaml(
+    mock_model_tester: MagicMock, tmp_path: Path
+) -> None:
     """Verify CLI correctly loads configuration from YAML file"""
     # Arrange
     config_file = tmp_path / "test_config.yaml"
@@ -169,7 +181,9 @@ def test_test_cli_loads_config_from_yaml(mock_model_tester, tmp_path):
 
 
 @pytest.mark.unit
-def test_test_cli_overrides_device_from_config(mock_model_tester, tmp_path):
+def test_test_cli_overrides_device_from_config(
+    mock_model_tester: MagicMock, tmp_path: Path
+) -> None:
     """Verify CLI --device overrides config file device"""
     # Arrange
     config_file = tmp_path / "test_config.yaml"
@@ -193,7 +207,9 @@ def test_test_cli_overrides_device_from_config(mock_model_tester, tmp_path):
 
 
 @pytest.mark.unit
-def test_test_cli_overrides_batch_size_from_config(mock_model_tester, tmp_path):
+def test_test_cli_overrides_batch_size_from_config(
+    mock_model_tester: MagicMock, tmp_path: Path
+) -> None:
     """Verify CLI --batch-size overrides config file batch_size"""
     # Arrange
     config_file = tmp_path / "test_config.yaml"
@@ -220,7 +236,7 @@ def test_test_cli_overrides_batch_size_from_config(mock_model_tester, tmp_path):
 
 
 @pytest.mark.unit
-def test_test_cli_returns_zero_on_success(mock_model_tester):
+def test_test_cli_returns_zero_on_success(mock_model_tester: MagicMock) -> None:
     """Verify CLI returns 0 exit code when testing succeeds"""
     # Arrange
     with patch(
@@ -235,7 +251,7 @@ def test_test_cli_returns_zero_on_success(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_prints_success_message(mock_model_tester):
+def test_test_cli_prints_success_message(mock_model_tester: MagicMock) -> None:
     """Verify CLI prints success message after testing"""
     # Arrange
     with patch(
@@ -255,7 +271,7 @@ def test_test_cli_prints_success_message(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_prints_results_summary(mock_model_tester):
+def test_test_cli_prints_results_summary(mock_model_tester: MagicMock) -> None:
     """Verify CLI prints results summary after testing"""
     # Arrange
     with patch(
@@ -278,7 +294,7 @@ def test_test_cli_prints_results_summary(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_returns_one_on_failure(mock_model_tester):
+def test_test_cli_returns_one_on_failure(mock_model_tester: MagicMock) -> None:
     """Verify CLI returns 1 exit code when testing fails"""
     # Arrange
     mock_model_tester.return_value.run_comprehensive_test.side_effect = RuntimeError(
@@ -296,7 +312,7 @@ def test_test_cli_returns_one_on_failure(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_prints_error_message_on_failure(mock_model_tester):
+def test_test_cli_prints_error_message_on_failure(mock_model_tester: MagicMock) -> None:
     """Verify CLI prints error message to stderr when testing fails"""
     # Arrange
     error_msg = "Model file not found"
@@ -324,7 +340,7 @@ def test_test_cli_prints_error_message_on_failure(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_creates_sample_config_file(tmp_path):
+def test_test_cli_creates_sample_config_file(tmp_path: Path) -> None:
     """Verify --create-config creates sample config file"""
     # Arrange
     import os
@@ -345,7 +361,7 @@ def test_test_cli_creates_sample_config_file(tmp_path):
 
 
 @pytest.mark.unit
-def test_create_sample_test_config_writes_valid_yaml(tmp_path):
+def test_create_sample_test_config_writes_valid_yaml(tmp_path: Path) -> None:
     """Verify create_sample_test_config writes valid YAML"""
     # Arrange
     import os
@@ -374,7 +390,7 @@ def test_create_sample_test_config_writes_valid_yaml(tmp_path):
 
 
 @pytest.mark.unit
-def test_test_config_has_default_metrics():
+def test_test_config_has_default_metrics() -> None:
     """Verify TestConfig sets default metrics"""
     # Arrange & Act
     config = TestConfig(
@@ -390,7 +406,7 @@ def test_test_config_has_default_metrics():
 
 
 @pytest.mark.unit
-def test_test_config_accepts_custom_sequence_column():
+def test_test_config_accepts_custom_sequence_column() -> None:
     """Verify TestConfig accepts custom sequence_column"""
     # Arrange & Act
     config = TestConfig(
@@ -404,7 +420,7 @@ def test_test_config_accepts_custom_sequence_column():
 
 
 @pytest.mark.unit
-def test_test_config_accepts_custom_label_column():
+def test_test_config_accepts_custom_label_column() -> None:
     """Verify TestConfig accepts custom label_column"""
     # Arrange & Act
     config = TestConfig(
@@ -421,7 +437,7 @@ def test_test_config_accepts_custom_label_column():
 
 
 @pytest.mark.unit
-def test_test_cli_shows_help_message():
+def test_test_cli_shows_help_message() -> None:
     """Verify CLI shows help message with --help"""
     # Arrange
     with patch("sys.argv", ["antibody-test", "--help"]):
@@ -434,7 +450,7 @@ def test_test_cli_shows_help_message():
 
 
 @pytest.mark.unit
-def test_test_cli_help_includes_examples():
+def test_test_cli_help_includes_examples() -> None:
     """Verify CLI help includes usage examples"""
     # Arrange
     with patch("sys.argv", ["antibody-test", "--help"]):
@@ -458,7 +474,7 @@ def test_test_cli_help_includes_examples():
 
 
 @pytest.mark.unit
-def test_test_cli_accepts_cpu_device(mock_model_tester):
+def test_test_cli_accepts_cpu_device(mock_model_tester: MagicMock) -> None:
     """Verify CLI accepts cpu device"""
     # Arrange
     with patch(
@@ -483,7 +499,7 @@ def test_test_cli_accepts_cpu_device(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_accepts_cuda_device(mock_model_tester):
+def test_test_cli_accepts_cuda_device(mock_model_tester: MagicMock) -> None:
     """Verify CLI accepts cuda device"""
     # Arrange
     with patch(
@@ -508,7 +524,7 @@ def test_test_cli_accepts_cuda_device(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_accepts_mps_device(mock_model_tester):
+def test_test_cli_accepts_mps_device(mock_model_tester: MagicMock) -> None:
     """Verify CLI accepts mps device"""
     # Arrange
     with patch(
@@ -536,7 +552,7 @@ def test_test_cli_accepts_mps_device(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_uses_default_output_dir(mock_model_tester):
+def test_test_cli_uses_default_output_dir(mock_model_tester: MagicMock) -> None:
     """Verify CLI uses default output directory"""
     # Arrange
     with patch(
@@ -552,7 +568,7 @@ def test_test_cli_uses_default_output_dir(mock_model_tester):
 
 
 @pytest.mark.unit
-def test_test_cli_accepts_custom_output_dir(mock_model_tester):
+def test_test_cli_accepts_custom_output_dir(mock_model_tester: MagicMock) -> None:
     """Verify CLI accepts custom output directory"""
     # Arrange
     with patch(

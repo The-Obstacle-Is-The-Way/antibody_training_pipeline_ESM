@@ -12,6 +12,13 @@ Date: 2025-11-07
 Philosophy: Real sequences for realistic tests, edge cases for robustness
 """
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import pandas as pd
+
 # Valid antibody sequences (real-world examples)
 
 # Heavy chain variable region (VH) - 117 amino acids
@@ -131,7 +138,7 @@ def validate_sequence(sequence: str) -> bool:
     return all(aa in VALID_AMINO_ACIDS for aa in sequence.upper())
 
 
-def create_mock_dataframe(n_samples: int = 10, balanced: bool = True):
+def create_mock_dataframe(n_samples: int = 10, balanced: bool = True) -> pd.DataFrame:
     """
     Create mock pandas DataFrame for testing datasets.
 

@@ -14,6 +14,11 @@ Date: 2025-11-07
 Phase: 3 (Integration Tests)
 """
 
+from __future__ import annotations
+
+from pathlib import Path
+from typing import Any
+
 import numpy as np
 import pytest
 from sklearn.model_selection import StratifiedKFold, cross_val_score
@@ -27,7 +32,7 @@ from antibody_training_esm.datasets.jain import JainDataset
 
 
 @pytest.fixture
-def cv_params():
+def cv_params() -> dict[str, Any]:
     """Cross-validation classifier params"""
     return {
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",
@@ -42,7 +47,7 @@ def cv_params():
 
 
 @pytest.fixture
-def sample_embeddings():
+def sample_embeddings() -> tuple[Any, Any]:
     """Generate sample embeddings for CV testing"""
     np.random.seed(42)
     # 50 samples, 1280 dimensions (ESM embedding size)
@@ -56,8 +61,10 @@ def sample_embeddings():
 
 @pytest.mark.integration
 def test_classifier_works_with_cross_val_score(
-    mock_transformers_model, cv_params, sample_embeddings
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    sample_embeddings: tuple[Any, Any],
+) -> None:
     """Verify BinaryClassifier is compatible with sklearn cross_val_score"""
     # Arrange
     X, y = sample_embeddings
@@ -73,8 +80,10 @@ def test_classifier_works_with_cross_val_score(
 
 @pytest.mark.integration
 def test_stratified_kfold_maintains_class_balance(
-    mock_transformers_model, cv_params, sample_embeddings
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    sample_embeddings: tuple[Any, Any],
+) -> None:
     """Verify StratifiedKFold creates balanced folds"""
     # Arrange
     X, y = sample_embeddings
@@ -91,8 +100,10 @@ def test_stratified_kfold_maintains_class_balance(
 
 @pytest.mark.integration
 def test_cross_validation_reproducibility(
-    mock_transformers_model, cv_params, sample_embeddings
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    sample_embeddings: tuple[Any, Any],
+) -> None:
     """Verify CV results are reproducible with same random_state"""
     # Arrange
     X, y = sample_embeddings
@@ -115,8 +126,10 @@ def test_cross_validation_reproducibility(
 
 @pytest.mark.integration
 def test_cross_validation_with_multiple_metrics(
-    mock_transformers_model, cv_params, sample_embeddings
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    sample_embeddings: tuple[Any, Any],
+) -> None:
     """Verify CV works with different scoring metrics"""
     # Arrange
     X, y = sample_embeddings
@@ -159,8 +172,10 @@ def test_cross_validation_with_multiple_metrics(
 
 @pytest.mark.integration
 def test_cross_validation_with_precision_recall(
-    mock_transformers_model, cv_params, sample_embeddings
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    sample_embeddings: tuple[Any, Any],
+) -> None:
     """Verify CV works with precision and recall scoring"""
     # Arrange
     X, y = sample_embeddings
@@ -183,9 +198,8 @@ def test_cross_validation_with_precision_recall(
 
 
 @pytest.fixture
-def mock_dataset_paths():
+def mock_dataset_paths() -> Any:
     """Paths to mock dataset CSV files"""
-    from pathlib import Path
 
     fixtures_dir = Path(__file__).parent.parent / "fixtures/mock_datasets"
     return {
@@ -196,8 +210,10 @@ def mock_dataset_paths():
 
 @pytest.mark.integration
 def test_boughter_cross_validation_pipeline(
-    mock_transformers_model, cv_params, mock_dataset_paths
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    mock_dataset_paths: Any,
+) -> None:
     """Verify full CV pipeline on Boughter dataset"""
     # Arrange: Load Boughter data from mock
     boughter = BoughterDataset()
@@ -229,8 +245,10 @@ def test_boughter_cross_validation_pipeline(
 
 @pytest.mark.integration
 def test_jain_cross_validation_pipeline(
-    mock_transformers_model, cv_params, mock_dataset_paths
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    mock_dataset_paths: Any,
+) -> None:
     """Verify full CV pipeline on Jain dataset"""
     # Arrange: Load Jain from mock
     jain = JainDataset()
@@ -262,8 +280,10 @@ def test_jain_cross_validation_pipeline(
 
 @pytest.mark.integration
 def test_cross_validation_with_different_fold_counts(
-    mock_transformers_model, cv_params, sample_embeddings
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    sample_embeddings: tuple[Any, Any],
+) -> None:
     """Verify CV works with different numbers of folds"""
     # Arrange
     X, y = sample_embeddings
@@ -280,7 +300,9 @@ def test_cross_validation_with_different_fold_counts(
 
 
 @pytest.mark.integration
-def test_leave_one_out_cross_validation(mock_transformers_model, cv_params):
+def test_leave_one_out_cross_validation(
+    mock_transformers_model: tuple[Any, Any], cv_params: dict[str, Any]
+) -> None:
     """Verify classifier works with Leave-One-Out CV (small dataset)"""
     # Arrange: Small dataset for LOO CV
     np.random.seed(42)
@@ -304,7 +326,9 @@ def test_leave_one_out_cross_validation(mock_transformers_model, cv_params):
 
 
 @pytest.mark.integration
-def test_cross_validation_with_imbalanced_data(mock_transformers_model, cv_params):
+def test_cross_validation_with_imbalanced_data(
+    mock_transformers_model: tuple[Any, Any], cv_params: dict[str, Any]
+) -> None:
     """Verify stratified CV handles imbalanced datasets correctly"""
     # Arrange: Imbalanced dataset (80% class 0, 20% class 1)
     np.random.seed(42)
@@ -326,7 +350,9 @@ def test_cross_validation_with_imbalanced_data(mock_transformers_model, cv_param
 
 
 @pytest.mark.integration
-def test_cross_validation_with_minimal_samples(mock_transformers_model, cv_params):
+def test_cross_validation_with_minimal_samples(
+    mock_transformers_model: tuple[Any, Any], cv_params: dict[str, Any]
+) -> None:
     """Verify CV behavior with minimal samples (edge case)"""
     # Arrange: Minimal dataset (6 samples, 3 folds = 2 samples per fold)
     np.random.seed(42)
@@ -346,8 +372,10 @@ def test_cross_validation_with_minimal_samples(mock_transformers_model, cv_param
 
 @pytest.mark.integration
 def test_cross_validation_mean_and_std_calculation(
-    mock_transformers_model, cv_params, sample_embeddings
-):
+    mock_transformers_model: tuple[Any, Any],
+    cv_params: dict[str, Any],
+    sample_embeddings: tuple[Any, Any],
+) -> None:
     """Verify mean and std calculation from CV scores"""
     # Arrange
     X, y = sample_embeddings
@@ -370,8 +398,8 @@ def test_cross_validation_mean_and_std_calculation(
 
 @pytest.mark.integration
 def test_get_params_returns_valid_sklearn_parameters(
-    mock_transformers_model, cv_params
-):
+    mock_transformers_model: tuple[Any, Any], cv_params: dict[str, Any]
+) -> None:
     """Verify get_params() returns parameters that can be used in CV"""
     # Arrange
     classifier = BinaryClassifier(params=cv_params)
@@ -390,8 +418,8 @@ def test_get_params_returns_valid_sklearn_parameters(
 
 @pytest.mark.integration
 def test_set_params_works_during_cross_validation(
-    mock_transformers_model, sample_embeddings
-):
+    mock_transformers_model: tuple[Any, Any], sample_embeddings: tuple[Any, Any]
+) -> None:
     """Verify set_params() allows parameter updates during CV grid search"""
     # Arrange
     X, y = sample_embeddings

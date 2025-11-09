@@ -17,6 +17,8 @@ Testing philosophy:
 - Follow AAA pattern (Arrange-Act-Assert)
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 
 import pandas as pd
@@ -28,7 +30,7 @@ from antibody_training_esm.datasets.boughter import BoughterDataset
 
 
 @pytest.fixture
-def boughter_sample_csv():
+def boughter_sample_csv() -> Path:
     """Path to mock Boughter CSV file (20 antibodies, balanced labels)."""
     return (
         Path(__file__).parent.parent.parent
@@ -40,7 +42,7 @@ def boughter_sample_csv():
 
 
 @pytest.mark.unit
-def test_boughter_dataset_initializes_with_default_output_dir():
+def test_boughter_dataset_initializes_with_default_output_dir() -> None:
     """Verify BoughterDataset initializes with default output directory."""
     # Arrange & Act
     dataset = BoughterDataset()
@@ -51,7 +53,7 @@ def test_boughter_dataset_initializes_with_default_output_dir():
 
 
 @pytest.mark.unit
-def test_boughter_dataset_initializes_with_custom_output_dir(tmp_path):
+def test_boughter_dataset_initializes_with_custom_output_dir(tmp_path: Path) -> None:
     """Verify BoughterDataset accepts custom output directory."""
     # Arrange
     custom_dir = tmp_path / "custom_output"
@@ -65,7 +67,7 @@ def test_boughter_dataset_initializes_with_custom_output_dir(tmp_path):
 
 
 @pytest.mark.unit
-def test_boughter_dataset_returns_full_antibody_fragments():
+def test_boughter_dataset_returns_full_antibody_fragments() -> None:
     """Verify BoughterDataset returns 16 full antibody fragment types."""
     # Arrange
     dataset = BoughterDataset()
@@ -85,7 +87,7 @@ def test_boughter_dataset_returns_full_antibody_fragments():
 
 
 @pytest.mark.unit
-def test_load_data_reads_csv_successfully(boughter_sample_csv):
+def test_load_data_reads_csv_successfully(boughter_sample_csv: Path) -> None:
     """Verify load_data reads CSV file and returns DataFrame."""
     # Arrange
     dataset = BoughterDataset()
@@ -102,7 +104,7 @@ def test_load_data_reads_csv_successfully(boughter_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_requires_valid_sequences(boughter_sample_csv):
+def test_load_data_requires_valid_sequences(boughter_sample_csv: Path) -> None:
     """Verify loaded data contains valid antibody sequences."""
     # Arrange
     dataset = BoughterDataset()
@@ -120,7 +122,7 @@ def test_load_data_requires_valid_sequences(boughter_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_creates_binary_labels_from_flags(boughter_sample_csv):
+def test_load_data_creates_binary_labels_from_flags(boughter_sample_csv: Path) -> None:
     """Verify labels are created from flags (0 flags → 0, 4+ flags → 1)."""
     # Arrange
     dataset = BoughterDataset()
@@ -140,7 +142,7 @@ def test_load_data_creates_binary_labels_from_flags(boughter_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_raises_error_for_missing_file():
+def test_load_data_raises_error_for_missing_file() -> None:
     """Verify load_data raises FileNotFoundError for missing CSV."""
     # Arrange
     dataset = BoughterDataset()
@@ -151,7 +153,9 @@ def test_load_data_raises_error_for_missing_file():
 
 
 @pytest.mark.unit
-def test_load_data_renames_columns_correctly(boughter_sample_csv, tmp_path):
+def test_load_data_renames_columns_correctly(
+    boughter_sample_csv: Path, tmp_path: Path
+) -> None:
     """Verify heavy_seq/light_seq columns are renamed to VH_sequence/VL_sequence."""
     # Arrange - Create CSV with old column names
     dataset = BoughterDataset()
@@ -179,7 +183,7 @@ def test_load_data_renames_columns_correctly(boughter_sample_csv, tmp_path):
 
 
 @pytest.mark.unit
-def test_load_data_excludes_mild_flags_by_default(boughter_sample_csv):
+def test_load_data_excludes_mild_flags_by_default(boughter_sample_csv: Path) -> None:
     """Verify include_mild=False excludes flags 1-3 (Novo methodology)."""
     # Arrange
     dataset = BoughterDataset()
@@ -201,7 +205,9 @@ def test_load_data_excludes_mild_flags_by_default(boughter_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_includes_mild_flags_when_requested(boughter_sample_csv):
+def test_load_data_includes_mild_flags_when_requested(
+    boughter_sample_csv: Path,
+) -> None:
     """Verify include_mild=True keeps all flags including 1-3."""
     # Arrange
     dataset = BoughterDataset()
@@ -216,7 +222,7 @@ def test_load_data_includes_mild_flags_when_requested(boughter_sample_csv):
 
 
 @pytest.mark.unit
-def test_flag_0_is_specific():
+def test_flag_0_is_specific() -> None:
     """Verify FLAG_SPECIFIC constant is 0."""
     # Arrange & Act
     dataset = BoughterDataset()
@@ -226,7 +232,7 @@ def test_flag_0_is_specific():
 
 
 @pytest.mark.unit
-def test_flag_mild_is_1_to_3():
+def test_flag_mild_is_1_to_3() -> None:
     """Verify FLAG_MILD constant is [1, 2, 3]."""
     # Arrange & Act
     dataset = BoughterDataset()
@@ -236,7 +242,7 @@ def test_flag_mild_is_1_to_3():
 
 
 @pytest.mark.unit
-def test_flag_nonspecific_is_4_plus():
+def test_flag_nonspecific_is_4_plus() -> None:
     """Verify FLAG_NONSPECIFIC constant is [4, 5, 6, 7]."""
     # Arrange & Act
     dataset = BoughterDataset()
@@ -249,7 +255,9 @@ def test_flag_nonspecific_is_4_plus():
 
 
 @pytest.mark.unit
-def test_load_data_filters_by_valid_subset(boughter_sample_csv, tmp_path):
+def test_load_data_filters_by_valid_subset(
+    boughter_sample_csv: Path, tmp_path: Path
+) -> None:
     """Verify subset parameter filters data when valid subset provided."""
     # Arrange - Add subset column to mock data
     dataset = BoughterDataset()
@@ -279,7 +287,7 @@ def test_load_data_filters_by_valid_subset(boughter_sample_csv, tmp_path):
 
 
 @pytest.mark.unit
-def test_load_data_raises_error_for_invalid_subset(boughter_sample_csv):
+def test_load_data_raises_error_for_invalid_subset(boughter_sample_csv: Path) -> None:
     """Verify load_data raises ValueError for invalid subset name."""
     # Arrange
     dataset = BoughterDataset()
@@ -292,7 +300,7 @@ def test_load_data_raises_error_for_invalid_subset(boughter_sample_csv):
 
 
 @pytest.mark.unit
-def test_load_data_returns_all_data_when_no_subset(boughter_sample_csv):
+def test_load_data_returns_all_data_when_no_subset(boughter_sample_csv: Path) -> None:
     """Verify load_data returns all data when subset=None."""
     # Arrange
     dataset = BoughterDataset()
@@ -310,7 +318,7 @@ def test_load_data_returns_all_data_when_no_subset(boughter_sample_csv):
 
 
 @pytest.mark.unit
-def test_translate_dna_to_protein_raises_not_implemented():
+def test_translate_dna_to_protein_raises_not_implemented() -> None:
     """Verify translate_dna_to_protein always raises NotImplementedError."""
     # Arrange
     dataset = BoughterDataset()
@@ -324,7 +332,7 @@ def test_translate_dna_to_protein_raises_not_implemented():
 
 
 @pytest.mark.unit
-def test_filter_quality_issues_removes_x_in_cdrs():
+def test_filter_quality_issues_removes_x_in_cdrs() -> None:
     """Verify filter_quality_issues removes sequences with X in CDRs."""
     # Arrange
     dataset = BoughterDataset()
@@ -347,7 +355,7 @@ def test_filter_quality_issues_removes_x_in_cdrs():
 
 
 @pytest.mark.unit
-def test_filter_quality_issues_removes_empty_cdrs():
+def test_filter_quality_issues_removes_empty_cdrs() -> None:
     """Verify filter_quality_issues removes sequences with empty CDRs."""
     # Arrange
     dataset = BoughterDataset()
@@ -370,7 +378,7 @@ def test_filter_quality_issues_removes_empty_cdrs():
 
 
 @pytest.mark.unit
-def test_filter_quality_issues_returns_dataframe():
+def test_filter_quality_issues_returns_dataframe() -> None:
     """Verify filter_quality_issues returns a DataFrame."""
     # Arrange
     dataset = BoughterDataset()
@@ -396,7 +404,7 @@ def test_filter_quality_issues_returns_dataframe():
 
 
 @pytest.mark.unit
-def test_complete_boughter_workflow(boughter_sample_csv):
+def test_complete_boughter_workflow(boughter_sample_csv: Path) -> None:
     """Verify complete Boughter dataset workflow: init → load → validate."""
     # Arrange
     dataset = BoughterDataset()

@@ -12,14 +12,15 @@ Date: 2025-10-31
 Issue: #3 - Shehata dataset preprocessing
 """
 
-import sys
+from __future__ import annotations
+
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 
 
-def sanitize_sequence(seq: str) -> str:
+def sanitize_sequence(seq: str | float | None) -> str | float | None:
     """
     Sanitize protein sequence by removing gap characters and invalid residues.
 
@@ -47,7 +48,7 @@ def sanitize_sequence(seq: str) -> str:
     return seq
 
 
-def validate_sequences(df: pd.DataFrame) -> dict:
+def validate_sequences(df: pd.DataFrame) -> dict[str, Any]:
     """
     Validate protein sequences for quality.
 
@@ -244,7 +245,7 @@ def convert_excel_to_csv(
     return df_csv
 
 
-def compare_with_original(csv_df: pd.DataFrame, excel_path: str):
+def compare_with_original(csv_df: pd.DataFrame, excel_path: str) -> None:
     """Compare CSV output with original Excel for validation."""
     print("\n" + "=" * 60)
     print("VALIDATION: Comparing CSV with original Excel")
@@ -279,7 +280,7 @@ def compare_with_original(csv_df: pd.DataFrame, excel_path: str):
     print("\nConversion validation complete!")
 
 
-def main():
+def main() -> int:
     """Main entry point for command-line execution."""
     excel_path = Path("test_datasets/shehata/raw/shehata-mmc2.xlsx")
     output_path = Path("test_datasets/shehata/processed/shehata.csv")
@@ -287,7 +288,7 @@ def main():
     if not excel_path.exists():
         print(f"Error: {excel_path} not found!")
         print("Please run this script from the repository root.")
-        sys.exit(1)
+        return 1
 
     print("=" * 60)
     print("Shehata Dataset: Excel → CSV Conversion")
@@ -313,7 +314,8 @@ def main():
     print(f"  1. Review {output_path}")
     print("  2. Compare with test_datasets/jain.csv format")
     print("  3. Test loading with data.load_local_data()")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

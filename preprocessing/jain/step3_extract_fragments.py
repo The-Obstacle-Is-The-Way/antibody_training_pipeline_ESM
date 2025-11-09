@@ -33,6 +33,8 @@ Date: 2025-11-06
 Issue: Jain label discrepancy fix (38.7% error rate in old fragments)
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -44,7 +46,7 @@ from tqdm.auto import tqdm
 annotator = riot_na.create_riot_aa()
 
 
-def jain_label_from_elisa(elisa_flags):
+def jain_label_from_elisa(elisa_flags: int | float | None) -> int | None:
     """
     Convert ELISA flags to binary label.
 
@@ -217,7 +219,7 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
     return df_annotated
 
 
-def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
+def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
     """
     Create separate CSV files for each fragment type.
 
@@ -295,7 +297,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path):
     print(f"\n✓ All fragments saved to: {output_dir}/")
 
 
-def create_manifest(output_dir: Path, source_path: Path, script_path: Path):
+def create_manifest(output_dir: Path, source_path: Path, script_path: Path) -> None:
     """
     Create manifest.yml for provenance tracking.
 
@@ -378,7 +380,7 @@ note: |
     print(f"\n✓ Manifest created: {manifest_path}")
 
 
-def main():
+def main() -> int:
     """Main processing pipeline."""
     # Paths
     csv_path = Path("test_datasets/jain/processed/jain_with_private_elisa_FULL.csv")
@@ -390,7 +392,7 @@ def main():
         print(
             "This script requires jain_with_private_elisa_FULL.csv (ELISA-based SSOT)."
         )
-        sys.exit(1)
+        return 1
 
     print("=" * 70)
     print("Jain Dataset: Fragment Extraction (ELISA-based SSOT)")
@@ -446,7 +448,8 @@ def main():
         "  2. Commit changes with a clear provenance message "
         "(legacy 67/27/43 fragments remain available in git history at commit 09d6121)"
     )
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

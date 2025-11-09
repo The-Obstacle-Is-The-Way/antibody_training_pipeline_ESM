@@ -19,7 +19,10 @@ Checks:
 Date: 2025-11-04
 """
 
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -33,28 +36,36 @@ STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")
 EXTENDED_AA = set("ACDEFGHIKLMNPQRSTVWYX")  # X is semi-acceptable
 
 
-def check_stop_codons(df, seq_col="sequence"):
+def check_stop_codons(
+    df: pd.DataFrame, seq_col: str = "sequence"
+) -> tuple[pd.DataFrame, int]:
     """Check for stop codons (*) in sequences"""
     has_stop = df[seq_col].str.contains(r"\*", na=False, regex=True)
     return df[has_stop], has_stop.sum()
 
 
-def check_gap_characters(df, seq_col="sequence"):
+def check_gap_characters(
+    df: pd.DataFrame, seq_col: str = "sequence"
+) -> tuple[pd.DataFrame, int]:
     """Check for gap characters (-) in sequences"""
     has_gaps = df[seq_col].str.contains("-", na=False)
     return df[has_gaps], has_gaps.sum()
 
 
-def check_unknown_aa(df, seq_col="sequence"):
+def check_unknown_aa(
+    df: pd.DataFrame, seq_col: str = "sequence"
+) -> tuple[pd.DataFrame, int]:
     """Check for unknown amino acids (X) in sequences"""
     has_X = df[seq_col].str.contains("X", na=False)
     return df[has_X], has_X.sum()
 
 
-def check_non_standard_aa(df, seq_col="sequence"):
+def check_non_standard_aa(
+    df: pd.DataFrame, seq_col: str = "sequence"
+) -> tuple[pd.DataFrame, int]:
     """Check for any non-standard amino acids (not in ACDEFGHIKLMNPQRSTVWYX)"""
 
-    def has_non_standard(seq):
+    def has_non_standard(seq: str | float | None) -> bool:
         if pd.isna(seq):
             return False
         return any(aa not in EXTENDED_AA for aa in str(seq))
@@ -63,7 +74,9 @@ def check_non_standard_aa(df, seq_col="sequence"):
     return df[non_standard_mask], non_standard_mask.sum()
 
 
-def check_sequence_lengths(df, seq_col="sequence", min_len=95, max_len=500):
+def check_sequence_lengths(
+    df: pd.DataFrame, seq_col: str = "sequence", min_len: int = 95, max_len: int = 500
+) -> dict[str, Any]:
     """Check for sequences that are too short or too long"""
     lengths = df[seq_col].str.len()
     too_short = lengths < min_len
@@ -76,10 +89,12 @@ def check_sequence_lengths(df, seq_col="sequence", min_len=95, max_len=500):
     }
 
 
-def check_homopolymers(df, seq_col="sequence", min_repeat=7):
+def check_homopolymers(
+    df: pd.DataFrame, seq_col: str = "sequence", min_repeat: int = 7
+) -> tuple[pd.DataFrame, int]:
     """Check for long runs of repeated amino acids (e.g., AAAAAAA)"""
 
-    def has_homopolymer(seq):
+    def has_homopolymer(seq: str | float | None) -> bool:
         if pd.isna(seq):
             return False
         # Check for any amino acid repeated 7+ times
@@ -89,13 +104,15 @@ def check_homopolymers(df, seq_col="sequence", min_repeat=7):
     return df[homopolymer_mask], homopolymer_mask.sum()
 
 
-def check_empty_sequences(df, seq_col="sequence"):
+def check_empty_sequences(
+    df: pd.DataFrame, seq_col: str = "sequence"
+) -> tuple[pd.DataFrame, int]:
     """Check for empty or whitespace-only sequences"""
     is_empty = df[seq_col].isna() | (df[seq_col].str.strip() == "")
     return df[is_empty], is_empty.sum()
 
 
-def check_cdr_lengths(df):
+def check_cdr_lengths(df: pd.DataFrame) -> list[tuple[str, pd.DataFrame, int]]:
     """Check for suspiciously short/long CDRs"""
     issues = []
 
@@ -138,7 +155,7 @@ def check_cdr_lengths(df):
     return issues
 
 
-def audit_dataset(file_path, dataset_name):
+def audit_dataset(file_path: Path, dataset_name: str) -> dict[str, Any]:
     """Run comprehensive QC audit on a dataset"""
     print(f"\n{'=' * 80}")
     print(f"QC AUDIT: {dataset_name}")
@@ -329,7 +346,7 @@ def audit_dataset(file_path, dataset_name):
     }
 
 
-if __name__ == "__main__":
+def main() -> int:
     print("=" * 80)
     print("BOUGHTER TRAINING SET QC AUDIT")
     print("Searching for any QC issues that might explain Novo's 3.5% accuracy gap")
@@ -373,3 +390,8 @@ if __name__ == "__main__":
         )
         print("❌ Novo may have filtered these, explaining part of the accuracy gap")
         print("❌ Recommend additional QC filtering to match Novo's methodology")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

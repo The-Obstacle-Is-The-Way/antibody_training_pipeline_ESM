@@ -39,14 +39,14 @@ jobs:
 
     - name: Type checking with mypy
       run: uv run mypy src/ --strict
-      continue-on-error: true  # Start lenient, tighten later
+      continue-on-error: false  # ✅ ENFORCED: Full type safety achieved (P3 completion)
 
     - name: Security scan with bandit
       run: |
         uv pip install bandit
-        uv run bandit -r src/ -f json -o bandit-report.json || true
+        uv run bandit -r src/ -f json -o bandit-report.json
         uv run bandit -r src/
-      continue-on-error: true  # Start lenient
+      continue-on-error: false  # ✅ ENFORCED: Bandit must remain clean (0 findings)
 
     - name: Upload quality reports
       uses: actions/upload-artifact@v4
@@ -112,8 +112,8 @@ jobs:
 
     - name: Check coverage threshold
       run: |
-        uv run coverage report --fail-under=70 || echo "⚠️ Coverage below 70% - this will be enforced later"
-      continue-on-error: true  # Start lenient
+        uv run coverage report --fail-under=70
+      continue-on-error: false  # ✅ ENFORCED: Currently at 90.79% coverage
 
   # Job 3: Integration Tests
   test-integration:
@@ -179,24 +179,25 @@ jobs:
     - name: Set up Python 3.12
       run: uv python install 3.12
 
-    - name: Install dependencies
-      run: uv sync --all-extras --dev
+    - name: Sync production dependencies for security audit
+      run: uv sync --frozen --no-dev
 
     - name: Install security tools
-      run: |
-        uv pip install pip-audit safety
+      run: uv pip install pip-audit safety
 
-    - name: Run pip-audit (CVE check)
-      run: |
-        uv run pip-audit --format json --output pip-audit.json || true
-        uv run pip-audit
-      continue-on-error: true  # Start lenient, will enforce HIGH/CRITICAL later
+    - name: Verify pip-audit installation
+      run: uv run python -c "import sys, pip_audit; print('pip-audit', pip_audit.__version__, 'via', sys.executable)"
 
-    - name: Run Safety check
-      run: |
-        uv run safety check --json --output safety-report.json || true
-        uv run safety check
-      continue-on-error: true  # Start lenient
+    - name: Run pip-audit (installed environment)
+      run: uv run python -m pip_audit --progress-spinner=off -f json -o pip-audit.json
+      continue-on-error: false  # ✅ ENFORCED: Fail CI if CVEs are introduced
+
+    - name: Export requirements for Safety scan
+      run: uv export --format=requirements-txt --no-dev --no-editable --output-file security-reqs.txt
+
+    - name: Run Safety scan (informational)
+      run: uv run safety scan --file security-reqs.txt --output json --save-as safety-report.json || true
+      continue-on-error: true  # ⚠️ ADVISORY: Safety remains informational
 
     - name: Upload security reports
       uses: actions/upload-artifact@v4
@@ -220,7 +221,8 @@ jobs:
       run: |
         if [ "${{ needs.quality.result }}" != "success" ] || \
            [ "${{ needs.test-unit.result }}" != "success" ] || \
-           [ "${{ needs.test-integration.result }}" != "success" ]; then
+           [ "${{ needs.test-integration.result }}" != "success" ] || \
+           [ "${{ needs.security.result }}" != "success" ]; then
           echo "❌ CI Pipeline failed"
           exit 1
         fi
@@ -233,4 +235,4 @@ jobs:
         echo "- **Code Quality:** ${{ needs.quality.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Unit Tests:** ${{ needs.test-unit.result }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Integration Tests:** ${{ needs.test-integration.result }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Security Scan:** ${{ needs.security.result }} (advisory only)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Security Scan:** ${{ needs.security.result }}" >> $GITHUB_STEP_SUMMARY

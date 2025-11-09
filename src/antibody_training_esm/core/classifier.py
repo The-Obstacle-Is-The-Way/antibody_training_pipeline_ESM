@@ -6,6 +6,7 @@ Includes sklearn compatibility, assay-specific thresholds, and model serializati
 """
 
 import logging
+from typing import Any
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
@@ -25,7 +26,7 @@ class BinaryClassifier:
         "PSR": 0.5495,  # PSR assay type (Shehata, Harvey) - EXACT Novo parity
     }
 
-    def __init__(self, params: dict | None = None, **kwargs):
+    def __init__(self, params: dict[str, Any] | None = None, **kwargs: Any):
         """
         Initialize the binary classifier
 
@@ -44,9 +45,10 @@ class BinaryClassifier:
         batch_size = params.get(
             "batch_size", DEFAULT_BATCH_SIZE
         )  # Default if not provided
+        revision = params.get("revision", "main")  # HF model revision (default: "main")
 
         self.embedding_extractor = ESMEmbeddingExtractor(
-            params["model_name"], params["device"], batch_size
+            params["model_name"], params["device"], batch_size, revision=revision
         )
 
         # Get all LogisticRegression hyperparameters from config (with defaults)
@@ -91,11 +93,12 @@ class BinaryClassifier:
         self.penalty = penalty
         self.solver = solver
         self.batch_size = batch_size
+        self.revision = revision  # Store HF model revision for reproducibility
 
         # Store all params for sklearn compatibility
         self._params = params
 
-    def get_params(self, deep: bool = True) -> dict:  # noqa: ARG002
+    def get_params(self, deep: bool = True) -> dict[str, Any]:  # noqa: ARG002
         """
         Get parameters for sklearn compatibility (required for cross_val_score)
 
@@ -119,7 +122,7 @@ class BinaryClassifier:
         }
         return valid_params
 
-    def set_params(self, **params):
+    def set_params(self, **params: Any) -> "BinaryClassifier":
         """
         Set parameters for sklearn compatibility (required for cross_val_score)
 
@@ -130,11 +133,11 @@ class BinaryClassifier:
             self
         """
         self._params.update(params)
-        # Reinitialize with new parameters
-        self.__init__(self._params)
+        # Reinitialize with new parameters (sklearn compatibility pattern)
+        self.__init__(self._params)  # type: ignore[misc]
         return self
 
-    def fit(self, X: np.ndarray, y: np.ndarray):
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None:
         """
         Fit the classifier to the data
 
@@ -229,20 +232,23 @@ class BinaryClassifier:
         score: float = self.classifier.score(X, y)
         return score
 
-    def __getstate__(self):
+    def __getstate__(self) -> dict[str, Any]:
         """Custom pickle method - don't save the ESM model"""
         state = self.__dict__.copy()
         # Remove the embedding_extractor (it will be recreated on load)
         state.pop("embedding_extractor", None)
         return state
 
-    def __setstate__(self, state):
+    def __setstate__(self, state: dict[str, Any]) -> None:
         """Custom unpickle method - recreate ESM model with correct config"""
         self.__dict__.update(state)
         # Recreate embedding extractor with fixed configuration
         batch_size = getattr(
             self, "batch_size", DEFAULT_BATCH_SIZE
         )  # Default if not stored (backwards compatibility)
+        revision = getattr(
+            self, "revision", "main"
+        )  # Default if not stored (backwards compatibility)
         self.embedding_extractor = ESMEmbeddingExtractor(
-            self.model_name, self.device, batch_size
+            self.model_name, self.device, batch_size, revision=revision
         )

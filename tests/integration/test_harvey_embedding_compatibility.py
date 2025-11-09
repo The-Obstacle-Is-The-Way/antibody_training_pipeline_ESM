@@ -22,6 +22,8 @@ Issue: #4 - Harvey dataset preprocessing
 P0 Fix: preprocessing/harvey/step2_extract_fragments.py:48
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -31,7 +33,7 @@ import pandas as pd
 VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWYX")
 
 
-def test_gap_characters():
+def test_gap_characters() -> None:
     """
     Test 1: Verify no gap characters in any fragment CSV.
 
@@ -82,7 +84,7 @@ def test_gap_characters():
     assert all_clean, "Gap characters detected - P0 blocker still present!"
 
 
-def test_amino_acid_validation():
+def test_amino_acid_validation() -> None:
     """
     Test 2: Verify all sequences contain only valid amino acids.
 
@@ -141,7 +143,7 @@ def test_amino_acid_validation():
     assert all_valid, "Invalid amino acids detected"
 
 
-def test_previously_affected_sequences():
+def test_previously_affected_sequences() -> None:
     """
     Test 3: Spot-check sequences that previously had gaps.
 
@@ -188,7 +190,7 @@ def test_previously_affected_sequences():
     assert total_gaps == 0 and all_clean, "Gaps still present after fix"
 
 
-def test_model_validation_logic():
+def test_model_validation_logic() -> None:
     """
     Test 4: Simulate model.py validation logic.
 
@@ -226,7 +228,7 @@ def test_model_validation_logic():
     assert len(invalid_sequences) == 0, "Dataset NOT compatible with ESM-1v"
 
 
-def test_data_integrity():
+def test_data_integrity() -> None:
     """
     Test 5: Verify data integrity after regeneration.
 
@@ -306,7 +308,7 @@ def test_data_integrity():
     assert all_valid and expected_rows is not None, "Data integrity issues detected"
 
 
-def main():
+def main() -> int:
     """Run all tests and report results."""
     print("\n" + "=" * 70)
     print("Harvey Dataset - ESM-1v Embedding Compatibility Test Suite")

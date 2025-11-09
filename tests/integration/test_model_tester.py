@@ -21,8 +21,11 @@ Date: 2025-11-07
 Phase: 5 (Coverage Gap Closure)
 """
 
+from __future__ import annotations
+
 import pickle
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -35,7 +38,9 @@ from antibody_training_esm.core.classifier import BinaryClassifier
 
 
 @pytest.fixture
-def trained_classifier(mock_transformers_model, tmp_path):
+def trained_classifier(
+    mock_transformers_model: tuple[Any, Any], tmp_path: Path
+) -> Path:
     """Create a trained BinaryClassifier for testing"""
     # Train a simple classifier
     np.random.seed(42)
@@ -60,7 +65,7 @@ def trained_classifier(mock_transformers_model, tmp_path):
 
 
 @pytest.fixture
-def test_dataset_csv(tmp_path):
+def test_dataset_csv(tmp_path: Path) -> Path:
     """Create a test dataset CSV"""
     data = pd.DataFrame(
         {
@@ -76,7 +81,9 @@ def test_dataset_csv(tmp_path):
 
 
 @pytest.fixture
-def test_config(trained_classifier, test_dataset_csv, tmp_path):
+def test_config(
+    trained_classifier: Path, test_dataset_csv: Path, tmp_path: Path
+) -> TestConfig:
     """Create ModelTester test configuration"""
     return TestConfig(
         model_paths=[str(trained_classifier)],
@@ -93,7 +100,7 @@ def test_config(trained_classifier, test_dataset_csv, tmp_path):
 
 
 @pytest.mark.integration
-def test_model_tester_initialization(test_config):
+def test_model_tester_initialization(test_config: TestConfig) -> None:
     """Verify ModelTester initializes correctly"""
     # Act
     tester = ModelTester(test_config)
@@ -106,7 +113,7 @@ def test_model_tester_initialization(test_config):
 
 
 @pytest.mark.integration
-def test_model_tester_creates_output_directory(tmp_path):
+def test_model_tester_creates_output_directory(tmp_path: Path) -> None:
     """Verify ModelTester creates output directory"""
     # Arrange
     output_dir = tmp_path / "custom_results"
@@ -127,7 +134,7 @@ def test_model_tester_creates_output_directory(tmp_path):
 
 
 @pytest.mark.integration
-def test_load_model_succeeds(test_config, trained_classifier):
+def test_load_model_succeeds(test_config: TestConfig, trained_classifier: Path) -> None:
     """Verify ModelTester loads trained model successfully"""
     # Arrange
     tester = ModelTester(test_config)
@@ -141,7 +148,7 @@ def test_load_model_succeeds(test_config, trained_classifier):
 
 
 @pytest.mark.integration
-def test_load_model_raises_on_missing_file(test_config):
+def test_load_model_raises_on_missing_file(test_config: TestConfig) -> None:
     """Verify load_model raises error for missing file"""
     # Arrange
     tester = ModelTester(test_config)
@@ -152,7 +159,9 @@ def test_load_model_raises_on_missing_file(test_config):
 
 
 @pytest.mark.integration
-def test_load_model_raises_on_invalid_type(test_config, tmp_path):
+def test_load_model_raises_on_invalid_type(
+    test_config: TestConfig, tmp_path: Path
+) -> None:
     """Verify load_model raises error for invalid model type"""
     # Arrange
     tester = ModelTester(test_config)
@@ -169,7 +178,7 @@ def test_load_model_raises_on_invalid_type(test_config, tmp_path):
 
 
 @pytest.mark.integration
-def test_load_dataset_succeeds(test_config, test_dataset_csv):
+def test_load_dataset_succeeds(test_config: TestConfig, test_dataset_csv: Path) -> None:
     """Verify ModelTester loads dataset successfully"""
     # Arrange
     tester = ModelTester(test_config)
@@ -185,7 +194,7 @@ def test_load_dataset_succeeds(test_config, test_dataset_csv):
 
 
 @pytest.mark.integration
-def test_load_dataset_raises_on_missing_file(test_config):
+def test_load_dataset_raises_on_missing_file(test_config: TestConfig) -> None:
     """Verify load_dataset raises error for missing file"""
     # Arrange
     tester = ModelTester(test_config)
@@ -196,7 +205,9 @@ def test_load_dataset_raises_on_missing_file(test_config):
 
 
 @pytest.mark.integration
-def test_load_dataset_raises_on_missing_column(test_config, tmp_path):
+def test_load_dataset_raises_on_missing_column(
+    test_config: TestConfig, tmp_path: Path
+) -> None:
     """Verify load_dataset raises error for missing column"""
     # Arrange
     tester = ModelTester(test_config)
@@ -214,7 +225,11 @@ def test_load_dataset_raises_on_missing_column(test_config, tmp_path):
 
 
 @pytest.mark.integration
-def test_embed_sequences(mock_transformers_model, test_config, trained_classifier):
+def test_embed_sequences(
+    mock_transformers_model: tuple[Any, Any],
+    test_config: TestConfig,
+    trained_classifier: Path,
+) -> None:
     """Verify ModelTester embeds sequences correctly"""
     # Arrange
     tester = ModelTester(test_config)
@@ -234,8 +249,11 @@ def test_embed_sequences(mock_transformers_model, test_config, trained_classifie
 
 @pytest.mark.integration
 def test_evaluate_pretrained(
-    mock_transformers_model, test_config, trained_classifier, test_dataset_csv
-):
+    mock_transformers_model: tuple[Any, Any],
+    test_config: TestConfig,
+    trained_classifier: Path,
+    test_dataset_csv: Path,
+) -> None:
     """Verify ModelTester evaluates model correctly"""
     # Arrange
     tester = ModelTester(test_config)
@@ -260,7 +278,9 @@ def test_evaluate_pretrained(
 
 
 @pytest.mark.integration
-def test_run_comprehensive_test_single_model(mock_transformers_model, test_config):
+def test_run_comprehensive_test_single_model(
+    mock_transformers_model: tuple[Any, Any], test_config: TestConfig
+) -> None:
     """Verify run_comprehensive_test works with single model/dataset"""
     # Arrange
     tester = ModelTester(test_config)
@@ -275,8 +295,11 @@ def test_run_comprehensive_test_single_model(mock_transformers_model, test_confi
 
 @pytest.mark.integration
 def test_run_comprehensive_test_multiple_models(
-    mock_transformers_model, trained_classifier, test_dataset_csv, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: Path,
+    test_dataset_csv: Path,
+    tmp_path: Path,
+) -> None:
     """Verify run_comprehensive_test works with multiple models"""
     # Arrange: Train second model
     np.random.seed(43)
@@ -318,8 +341,11 @@ def test_run_comprehensive_test_multiple_models(
 
 @pytest.mark.integration
 def test_run_comprehensive_test_multiple_datasets(
-    mock_transformers_model, trained_classifier, test_dataset_csv, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: Path,
+    test_dataset_csv: Path,
+    tmp_path: Path,
+) -> None:
     """Verify run_comprehensive_test works with multiple datasets"""
     # Arrange: Create second dataset
     data2 = pd.DataFrame(
@@ -351,7 +377,7 @@ def test_run_comprehensive_test_multiple_datasets(
 
 
 @pytest.mark.integration
-def test_model_tester_creates_log_file(test_config):
+def test_model_tester_creates_log_file(test_config: TestConfig) -> None:
     """Verify ModelTester creates log file"""
     # Act
     ModelTester(test_config)
@@ -362,7 +388,9 @@ def test_model_tester_creates_log_file(test_config):
 
 
 @pytest.mark.integration
-def test_model_tester_cleanup_embeddings(mock_transformers_model, test_config):
+def test_model_tester_cleanup_embeddings(
+    mock_transformers_model: tuple[Any, Any], test_config: TestConfig
+) -> None:
     """Verify ModelTester cleanup removes cached embeddings"""
     # Arrange
     tester = ModelTester(test_config)
@@ -384,8 +412,8 @@ def test_model_tester_cleanup_embeddings(mock_transformers_model, test_config):
 
 @pytest.mark.integration
 def test_model_tester_handles_empty_dataset(
-    mock_transformers_model, test_config, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any], test_config: TestConfig, tmp_path: Path
+) -> None:
     """Verify ModelTester handles empty dataset gracefully"""
     # Arrange
     empty_csv = tmp_path / "empty.csv"
@@ -413,8 +441,11 @@ def test_model_tester_handles_empty_dataset(
 
 @pytest.mark.integration
 def test_model_tester_custom_metrics(
-    mock_transformers_model, trained_classifier, test_dataset_csv, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: Path,
+    test_dataset_csv: Path,
+    tmp_path: Path,
+) -> None:
     """Verify ModelTester uses custom metrics"""
     # Arrange
     config = TestConfig(

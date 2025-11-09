@@ -45,7 +45,7 @@ Per email communication from Maximiliano Vásquez (Adimab), the per-antigen ELIS
 ### 3. Harvey et al. 2022 - Large-Scale Nanobody Dataset
 
 **Full Citation (Primary Dataset):**
-> Harvey, E.P., Ge, Y., LaRochelle, J.R., Kang, J., DiMaio, F., De Yoreo, M., Baker, D., Pultz, I.S., Garrett, S., Blair, L., Knight, K., & Crispin, M. (2022). A biophysical basis for mucophilic antigen binding. *Journal of Experimental Medicine*, 219(3), e20211671. https://doi.org/10.1084/jem.20211671
+> Harvey, E.P., Ge, Y., LaRochelle, J.R., Kang, J., DiMaio, F., De Yoreo, M., Baker, D., Pultz, I.S., Garrett, S., Blair, L., Knight, K., & Crispin, M. (2022). A biophysical basis for mucophilic antigen binding. *Journal of Experimental Medicine*, 219(3), e20211671. https://rupress.org/jem/article/219/3/e20211671/212228/A-biophysical-basis-for-mucophilic-antigen-binding
 
 **Additional Citation (Methodology):**
 > Mason, D.M., Friedensohn, S., Weber, C.R., Jordi, C., Wagner, B., Meng, S.M., Ehling, R.A., Bonati, L., Dahinden, J., Gainza, P., Correia, B.E., & Reddy, S.T. (2021). Optimization of therapeutic antibodies by predicting antigen specificity from antibody sequence via deep learning. *Nature Biomedical Engineering*, 5, 600-612. https://doi.org/10.1038/s41551-021-00699-9

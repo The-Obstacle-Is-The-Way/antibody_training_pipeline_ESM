@@ -14,8 +14,11 @@ Date: 2025-11-07
 Phase: 3 (Integration Tests)
 """
 
+from __future__ import annotations
+
 import pickle
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pytest
@@ -27,7 +30,7 @@ from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
 
 @pytest.fixture
-def trained_classifier(mock_transformers_model):
+def trained_classifier(mock_transformers_model: tuple[Any, Any]) -> BinaryClassifier:
     """Create and train a classifier for persistence tests"""
     # Arrange: Create classifier with specific params
     params = {
@@ -56,8 +59,10 @@ def trained_classifier(mock_transformers_model):
 
 @pytest.mark.integration
 def test_save_and_load_trained_classifier(
-    mock_transformers_model, trained_classifier, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: BinaryClassifier,
+    tmp_path: Path,
+) -> None:
     """Verify trained classifier can be saved and loaded"""
     # Arrange
     model_path = tmp_path / "test_classifier.pkl"
@@ -82,8 +87,10 @@ def test_save_and_load_trained_classifier(
 
 @pytest.mark.integration
 def test_loaded_classifier_can_predict(
-    mock_transformers_model, trained_classifier, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: BinaryClassifier,
+    tmp_path: Path,
+) -> None:
     """Verify loaded classifier can make predictions"""
     # Arrange: Save and load classifier
     model_path = tmp_path / "test_classifier.pkl"
@@ -105,8 +112,10 @@ def test_loaded_classifier_can_predict(
 
 @pytest.mark.integration
 def test_loaded_classifier_predictions_match_original(
-    mock_transformers_model, trained_classifier, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: BinaryClassifier,
+    tmp_path: Path,
+) -> None:
     """Verify loaded classifier produces same predictions as original"""
     # Arrange: Create test data
     np.random.seed(42)
@@ -135,8 +144,10 @@ def test_loaded_classifier_predictions_match_original(
 
 @pytest.mark.integration
 def test_esm_model_not_saved_with_classifier(
-    mock_transformers_model, trained_classifier, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: BinaryClassifier,
+    tmp_path: Path,
+) -> None:
     """Verify ESM embedding extractor is not serialized (recreated on load)"""
     # Arrange: Save classifier
     model_path = tmp_path / "test_classifier.pkl"
@@ -152,8 +163,10 @@ def test_esm_model_not_saved_with_classifier(
 
 @pytest.mark.integration
 def test_loaded_classifier_recreates_embedding_extractor(
-    mock_transformers_model, trained_classifier, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: BinaryClassifier,
+    tmp_path: Path,
+) -> None:
     """Verify embedding extractor is recreated when classifier is loaded"""
     # Arrange: Save classifier
     model_path = tmp_path / "test_classifier.pkl"
@@ -178,7 +191,9 @@ def test_loaded_classifier_recreates_embedding_extractor(
 
 
 @pytest.mark.integration
-def test_all_hyperparameters_preserved_after_load(mock_transformers_model, tmp_path):
+def test_all_hyperparameters_preserved_after_load(
+    mock_transformers_model: tuple[Any, Any], tmp_path: Path
+) -> None:
     """Verify all classifier hyperparameters are preserved through save/load"""
     # Arrange: Create classifier with specific hyperparameters
     original_params = {
@@ -221,7 +236,9 @@ def test_all_hyperparameters_preserved_after_load(mock_transformers_model, tmp_p
 
 
 @pytest.mark.integration
-def test_fitted_state_preserved_after_load(mock_transformers_model, tmp_path):
+def test_fitted_state_preserved_after_load(
+    mock_transformers_model: tuple[Any, Any], tmp_path: Path
+) -> None:
     """Verify is_fitted flag is preserved through save/load"""
     # Arrange: Create untrained classifier
     params = {
@@ -264,7 +281,9 @@ def test_fitted_state_preserved_after_load(mock_transformers_model, tmp_path):
 
 
 @pytest.mark.integration
-def test_load_classifier_without_batch_size_param(mock_transformers_model, tmp_path):
+def test_load_classifier_without_batch_size_param(
+    mock_transformers_model: tuple[Any, Any], tmp_path: Path
+) -> None:
     """Verify backward compatibility when loading models without batch_size"""
     # Arrange: Create classifier and remove batch_size (simulate old model)
     params = {
@@ -301,7 +320,9 @@ def test_load_classifier_without_batch_size_param(mock_transformers_model, tmp_p
 
 
 @pytest.mark.integration
-def test_save_multiple_models_to_different_files(mock_transformers_model, tmp_path):
+def test_save_multiple_models_to_different_files(
+    mock_transformers_model: tuple[Any, Any], tmp_path: Path
+) -> None:
     """Verify multiple models can be saved independently"""
     # Arrange: Create two different classifiers
     params_1 = {
@@ -358,7 +379,9 @@ def test_save_multiple_models_to_different_files(mock_transformers_model, tmp_pa
 
 
 @pytest.mark.integration
-def test_load_from_nonexistent_file_raises_error(mock_transformers_model):
+def test_load_from_nonexistent_file_raises_error(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify loading from missing file raises FileNotFoundError"""
     # Arrange
     nonexistent_path = Path("/tmp/nonexistent_model.pkl")
@@ -369,7 +392,9 @@ def test_load_from_nonexistent_file_raises_error(mock_transformers_model):
 
 
 @pytest.mark.integration
-def test_load_from_corrupt_file_raises_error(mock_transformers_model, tmp_path):
+def test_load_from_corrupt_file_raises_error(
+    mock_transformers_model: tuple[Any, Any], tmp_path: Path
+) -> None:
     """Verify loading from corrupt pickle file raises error"""
     # Arrange: Create corrupt file
     corrupt_path = tmp_path / "corrupt_model.pkl"
@@ -389,8 +414,10 @@ def test_load_from_corrupt_file_raises_error(mock_transformers_model, tmp_path):
 
 @pytest.mark.integration
 def test_loaded_classifier_predict_proba_matches_original(
-    mock_transformers_model, trained_classifier, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: BinaryClassifier,
+    tmp_path: Path,
+) -> None:
     """Verify predict_proba results match between original and loaded classifier"""
     # Arrange: Create test data
     np.random.seed(42)
@@ -416,8 +443,10 @@ def test_loaded_classifier_predict_proba_matches_original(
 
 @pytest.mark.integration
 def test_loaded_classifier_respects_assay_thresholds(
-    mock_transformers_model, trained_classifier, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: BinaryClassifier,
+    tmp_path: Path,
+) -> None:
     """Verify loaded classifier respects ELISA and PSR thresholds"""
     # Arrange: Save and load classifier
     model_path = tmp_path / "test_classifier.pkl"
@@ -445,7 +474,9 @@ def test_loaded_classifier_respects_assay_thresholds(
 
 
 @pytest.mark.integration
-def test_full_train_save_load_predict_pipeline(mock_transformers_model, tmp_path):
+def test_full_train_save_load_predict_pipeline(
+    mock_transformers_model: tuple[Any, Any], tmp_path: Path
+) -> None:
     """Verify complete pipeline: train → save → load → predict"""
     # Step 1: Train classifier
     params = {

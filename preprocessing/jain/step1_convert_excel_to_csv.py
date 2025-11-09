@@ -22,6 +22,8 @@ Date: 2025-11-03
 Status: CORRECTED - Using ELISA-only (NOT total flags!)
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any
 
@@ -34,7 +36,7 @@ VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
 ASSAY_CLUSTERS: dict[str, Any] = {}
 
 
-def load_data():
+def load_data() -> pd.DataFrame:
     """Load private ELISA + public SD files."""
     print("Loading data files...")
 
@@ -191,7 +193,7 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def save_outputs(df: pd.DataFrame):
+def save_outputs(df: pd.DataFrame) -> None:
     """Save conversion outputs."""
     output_dir = Path("test_datasets/jain/processed")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -270,7 +272,7 @@ def prepare_output(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def main():
+def main() -> int:
     print("=" * 80)
     print("Jain Dataset Conversion - CORRECTED ELISA-ONLY Methodology")
     print("=" * 80)
@@ -297,7 +299,8 @@ def main():
     print("  2. jain_ELISA_ONLY_116.csv - ELISA-only test set (116 antibodies)")
     print("\nNext step:")
     print("  Investigate what QC Novo applied to get from 116 → 86")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

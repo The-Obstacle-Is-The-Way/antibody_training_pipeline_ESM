@@ -22,6 +22,8 @@ Issue: Jain dataset label discrepancy fix (ELISA-based SSOT)
 Expected: 137 antibodies (94 specific, 22 non-specific, 21 mild)
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -31,7 +33,7 @@ import pandas as pd
 VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWYX")
 
 
-def test_gap_characters():
+def test_gap_characters() -> None:
     """
     Test 1: Verify no gap characters in any fragment CSV.
 
@@ -97,7 +99,7 @@ def test_gap_characters():
     assert all_clean, "Gap characters detected - P0 blocker present!"
 
 
-def test_amino_acid_validation():
+def test_amino_acid_validation() -> None:
     """
     Test 2: Verify all sequences contain only valid amino acids.
 
@@ -160,7 +162,7 @@ def test_amino_acid_validation():
     assert all_valid, "Invalid amino acids detected"
 
 
-def test_stop_codons():
+def test_stop_codons() -> None:
     """
     Test 3: Verify no stop codons in sequences.
 
@@ -214,7 +216,7 @@ def test_stop_codons():
     assert all_clean, "Stop codons detected - P0 blocker present!"
 
 
-def test_model_validation_logic():
+def test_model_validation_logic() -> None:
     """
     Test 4: Simulate model.py validation logic.
 
@@ -272,7 +274,7 @@ def test_model_validation_logic():
     assert all_passed, "Dataset NOT compatible with ESM-1v"
 
 
-def test_data_integrity():
+def test_data_integrity() -> None:
     """
     Test 5: Verify data integrity.
 
@@ -392,7 +394,7 @@ def test_data_integrity():
     assert all_valid and expected_rows == 137, "Data integrity issues detected"
 
 
-def main():
+def main() -> int:
     """Run all tests and report results."""
     print("\n" + "=" * 70)
     print("Jain Dataset - ESM-1v Embedding Compatibility Test Suite")

@@ -167,6 +167,19 @@ If any check fails, the commit is blocked until issues are resolved.
 3. **If pre-commit blocks**: Review the errors and fix them - the hooks ensure quality
 4. **For quick checks**: Use individual commands like `make lint` or `make typecheck`
 
+## Security
+
+### Pickle Usage
+
+This codebase uses Python's `pickle` module for:
+- **Trained ML models**: Saving/loading BinaryClassifier models (`.pkl` files)
+- **Embedding caches**: Caching expensive ESM embeddings for performance
+- **Preprocessed datasets**: Storing locally processed data
+
+**Threat Model**: All pickle files are generated and consumed locally by trusted code. There is no internet-exposed API and no loading of untrusted pickle files.
+
+**For Production Deployment**: If deploying this pipeline to a production environment with external access, consider migrating to JSON + NPZ format for artifact serialization. See `SECURITY_REMEDIATION_PLAN.md` for details.
+
 ---
 
 # Datasets
@@ -232,4 +245,4 @@ This repository uses training and test datasets from multiple published studies:
 - **Test**: Shehata et al. 2019 (398 antibodies, PSR cross-assay validation)
 
 **For complete citations, BibTeX entries, and data attribution details**, see [`CITATIONS.md`](CITATIONS.md).
-# Codecov integration test
+

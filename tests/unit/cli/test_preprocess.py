@@ -18,9 +18,13 @@ Date: 2025-11-07
 Phase: 4 (CLI & E2E Tests)
 """
 
+from __future__ import annotations
+
 import contextlib
 import sys
+from collections.abc import Callable
 from io import StringIO
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -31,14 +35,18 @@ from antibody_training_esm.cli.preprocess import main
 
 
 @pytest.fixture
-def capture_output():
+def capture_output() -> Callable[..., tuple[Any, str, str]]:
     """Fixture to capture stdout and stderr"""
 
-    def _capture(func, args):
+    def _capture(
+        func: Callable[..., Any],
+        *args: Any,
+        **kwargs: Any,
+    ) -> tuple[Any, str, str]:
         old_stdout, old_stderr = sys.stdout, sys.stderr
         sys.stdout, sys.stderr = StringIO(), StringIO()
         try:
-            result = func()
+            result = func(*args, **kwargs)
             stdout_val = sys.stdout.getvalue()
             stderr_val = sys.stderr.getvalue()
             return result, stdout_val, stderr_val
@@ -52,7 +60,7 @@ def capture_output():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_requires_dataset_argument():
+def test_preprocess_cli_requires_dataset_argument() -> None:
     """Verify CLI requires --dataset argument"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess"]):
@@ -65,7 +73,7 @@ def test_preprocess_cli_requires_dataset_argument():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_accepts_valid_dataset():
+def test_preprocess_cli_accepts_valid_dataset() -> None:
     """Verify CLI accepts valid dataset names"""
     # Arrange
     valid_datasets = ["jain", "harvey", "shehata", "boughter"]
@@ -80,7 +88,7 @@ def test_preprocess_cli_accepts_valid_dataset():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_rejects_invalid_dataset():
+def test_preprocess_cli_rejects_invalid_dataset() -> None:
     """Verify CLI rejects invalid dataset names"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--dataset", "invalid"]):
@@ -93,7 +101,7 @@ def test_preprocess_cli_rejects_invalid_dataset():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_accepts_short_flag():
+def test_preprocess_cli_accepts_short_flag() -> None:
     """Verify CLI accepts -d short flag"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "-d", "jain"]):
@@ -108,7 +116,7 @@ def test_preprocess_cli_accepts_short_flag():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_prints_guidance_message():
+def test_preprocess_cli_prints_guidance_message() -> None:
     """Verify CLI prints guidance message for preprocessing"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--dataset", "jain"]):
@@ -128,7 +136,7 @@ def test_preprocess_cli_prints_guidance_message():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_provides_correct_script_path_for_jain():
+def test_preprocess_cli_provides_correct_script_path_for_jain() -> None:
     """Verify CLI provides correct preprocessing script for Jain dataset"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--dataset", "jain"]):
@@ -145,7 +153,7 @@ def test_preprocess_cli_provides_correct_script_path_for_jain():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_provides_correct_script_path_for_harvey():
+def test_preprocess_cli_provides_correct_script_path_for_harvey() -> None:
     """Verify CLI provides correct preprocessing script for Harvey dataset"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--dataset", "harvey"]):
@@ -162,7 +170,7 @@ def test_preprocess_cli_provides_correct_script_path_for_harvey():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_provides_correct_script_path_for_shehata():
+def test_preprocess_cli_provides_correct_script_path_for_shehata() -> None:
     """Verify CLI provides correct preprocessing script for Shehata dataset"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--dataset", "shehata"]):
@@ -179,7 +187,7 @@ def test_preprocess_cli_provides_correct_script_path_for_shehata():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_provides_correct_script_path_for_boughter():
+def test_preprocess_cli_provides_correct_script_path_for_boughter() -> None:
     """Verify CLI provides correct preprocessing script for Boughter dataset"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--dataset", "boughter"]):
@@ -196,7 +204,7 @@ def test_preprocess_cli_provides_correct_script_path_for_boughter():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_explains_ssot_rationale():
+def test_preprocess_cli_explains_ssot_rationale() -> None:
     """Verify CLI explains why scripts are SSOT"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--dataset", "jain"]):
@@ -218,7 +226,7 @@ def test_preprocess_cli_explains_ssot_rationale():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_references_documentation():
+def test_preprocess_cli_references_documentation() -> None:
     """Verify CLI references README and docs"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--dataset", "jain"]):
@@ -238,7 +246,7 @@ def test_preprocess_cli_references_documentation():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_handles_exceptions_gracefully():
+def test_preprocess_cli_handles_exceptions_gracefully() -> None:
     """Verify CLI handles unexpected exceptions"""
     # Arrange
     with (
@@ -257,7 +265,7 @@ def test_preprocess_cli_handles_exceptions_gracefully():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_returns_zero_on_success():
+def test_preprocess_cli_returns_zero_on_success() -> None:
     """Verify CLI returns 0 exit code on success"""
     # Arrange
     for dataset in ["jain", "harvey", "shehata", "boughter"]:
@@ -273,7 +281,7 @@ def test_preprocess_cli_returns_zero_on_success():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_shows_help_message():
+def test_preprocess_cli_shows_help_message() -> None:
     """Verify CLI shows help message with --help"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--help"]):
@@ -286,7 +294,7 @@ def test_preprocess_cli_shows_help_message():
 
 
 @pytest.mark.unit
-def test_preprocess_cli_choices_documented_in_help():
+def test_preprocess_cli_choices_documented_in_help() -> None:
     """Verify CLI help documents all dataset choices"""
     # Arrange
     with patch("sys.argv", ["antibody-preprocess", "--help"]):

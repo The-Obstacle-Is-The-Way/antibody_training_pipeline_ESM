@@ -21,6 +21,11 @@ on:
     tags:
       - 'v*'
 
+# Prevent overlapping expensive runs (2.5 hours each)
+concurrency:
+  group: e2e-${{ github.workflow }}
+  cancel-in-progress: true
+
 jobs:
   # Full E2E Novo Parity Suite
   # Runs ALL benchmarks including expensive Harvey (141k sequences)
@@ -29,6 +34,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 150  # 2.5 hours for Harvey
     if: github.event_name == 'schedule' || github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.run_harvey == true)
+
+    permissions:
+      contents: read
+      issues: write  # Create issue on benchmark failure
 
     steps:
     - name: Checkout code
@@ -56,6 +65,7 @@ jobs:
 
     - name: Run full E2E benchmark suite
       run: |
+        set -o pipefail
         uv run pytest tests/e2e/ \
           -v \
           --tb=short \
@@ -164,6 +174,7 @@ jobs:
 
     - name: Run quick parity check (Jain + Shehata only)
       run: |
+        set -o pipefail
         # Run only Jain and Shehata benchmarks (skip Harvey - too slow)
         uv run pytest tests/e2e/test_reproduce_novo.py \
           -v \
@@ -232,6 +243,7 @@ jobs:
 
     steps:
     - name: Download benchmark results
+      if: needs.e2e-full.result != 'skipped'
       uses: actions/download-artifact@v4
       with:
         name: e2e-full-benchmark-results

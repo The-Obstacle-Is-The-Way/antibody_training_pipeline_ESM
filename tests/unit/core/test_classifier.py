@@ -14,6 +14,10 @@ Date: 2025-11-07
 Coverage Target: 90%+
 """
 
+from __future__ import annotations
+
+from typing import Any
+
 import numpy as np
 import pytest
 
@@ -26,7 +30,9 @@ from tests.conftest import assert_valid_predictions
 
 
 @pytest.mark.unit
-def test_classifier_initializes_with_default_params(mock_transformers_model):
+def test_classifier_initializes_with_default_params(
+    mock_transformers_model: Any,
+) -> None:
     """Verify classifier initializes with default hyperparameters"""
     # Arrange
     params = {
@@ -49,7 +55,9 @@ def test_classifier_initializes_with_default_params(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_classifier_initializes_with_custom_params(mock_transformers_model):
+def test_classifier_initializes_with_custom_params(
+    mock_transformers_model: Any,
+) -> None:
     """Verify classifier accepts custom hyperparameters"""
     # Arrange
     params = {
@@ -75,7 +83,7 @@ def test_classifier_initializes_with_custom_params(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_classifier_initializes_with_kwargs(mock_transformers_model):
+def test_classifier_initializes_with_kwargs(mock_transformers_model: Any) -> None:
     """Verify classifier supports sklearn-style kwargs initialization"""
     # Arrange / Act
     classifier = BinaryClassifier(
@@ -94,7 +102,7 @@ def test_classifier_initializes_with_kwargs(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_classifier_stores_embedding_extractor(mock_transformers_model):
+def test_classifier_stores_embedding_extractor(mock_transformers_model: Any) -> None:
     """Verify classifier creates embedding extractor during initialization"""
     # Arrange
     params = {
@@ -119,7 +127,7 @@ def test_classifier_stores_embedding_extractor(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_classifier_implements_get_params(mock_transformers_model):
+def test_classifier_implements_get_params(mock_transformers_model: Any) -> None:
     """Verify classifier implements sklearn get_params() interface"""
     # Arrange
     params = {
@@ -146,7 +154,7 @@ def test_classifier_implements_get_params(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_classifier_implements_set_params(mock_transformers_model):
+def test_classifier_implements_set_params(mock_transformers_model: Any) -> None:
     """Verify classifier implements sklearn set_params() interface"""
     # Arrange
     params = {
@@ -167,7 +175,9 @@ def test_classifier_implements_set_params(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_get_params_returns_only_valid_constructor_params(mock_transformers_model):
+def test_get_params_returns_only_valid_constructor_params(
+    mock_transformers_model: Any,
+) -> None:
     """Verify get_params() excludes non-constructor params like 'cv_folds'"""
     # Arrange
     params = {
@@ -196,8 +206,10 @@ def test_get_params_returns_only_valid_constructor_params(mock_transformers_mode
 
 @pytest.mark.unit
 def test_classifier_fits_on_embeddings(
-    mock_embeddings, default_classifier_params, mock_transformers_model
-):
+    mock_embeddings: dict[str, Any],
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify classifier can be fitted on embedding arrays"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -213,8 +225,10 @@ def test_classifier_fits_on_embeddings(
 
 @pytest.mark.unit
 def test_fit_accepts_numpy_arrays(
-    mock_embeddings, default_classifier_params, mock_transformers_model
-):
+    mock_embeddings: dict[str, Any],
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify fit() accepts np.ndarray for X and y"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -232,8 +246,9 @@ def test_fit_accepts_numpy_arrays(
 
 @pytest.mark.unit
 def test_fit_handles_balanced_dataset(
-    default_classifier_params, mock_transformers_model
-):
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify classifier handles balanced dataset (50/50 split)"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -249,8 +264,9 @@ def test_fit_handles_balanced_dataset(
 
 @pytest.mark.unit
 def test_fit_handles_imbalanced_dataset(
-    default_classifier_params, mock_transformers_model
-):
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify classifier handles imbalanced dataset (90/10 split)"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -265,7 +281,7 @@ def test_fit_handles_imbalanced_dataset(
 
 
 @pytest.mark.unit
-def test_fit_with_class_weight_balanced(mock_transformers_model):
+def test_fit_with_class_weight_balanced(mock_transformers_model: Any) -> None:
     """Verify classifier handles class_weight='balanced' for imbalanced data"""
     # Arrange
     params = {
@@ -293,7 +309,9 @@ def test_fit_with_class_weight_balanced(mock_transformers_model):
 
 
 @pytest.mark.unit
-def test_predict_returns_binary_labels(fitted_classifier, mock_embeddings):
+def test_predict_returns_binary_labels(
+    fitted_classifier: Any, mock_embeddings: dict[str, Any]
+) -> None:
     """Verify predictions are binary (0 or 1)"""
     # Arrange
     X_test = mock_embeddings["X_test"]
@@ -306,7 +324,9 @@ def test_predict_returns_binary_labels(fitted_classifier, mock_embeddings):
 
 
 @pytest.mark.unit
-def test_predict_returns_correct_shape(fitted_classifier, mock_embeddings):
+def test_predict_returns_correct_shape(
+    fitted_classifier: Any, mock_embeddings: dict[str, Any]
+) -> None:
     """Verify predictions have correct shape (n_samples,)"""
     # Arrange
     X_test = mock_embeddings["X_test"]
@@ -319,7 +339,7 @@ def test_predict_returns_correct_shape(fitted_classifier, mock_embeddings):
 
 
 @pytest.mark.unit
-def test_predict_handles_single_sample(fitted_classifier):
+def test_predict_handles_single_sample(fitted_classifier: Any) -> None:
     """Verify classifier handles single embedding (edge case)"""
     # Arrange
     X_single = np.random.rand(1, 1280).astype(np.float32)
@@ -333,7 +353,7 @@ def test_predict_handles_single_sample(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_predict_handles_large_batch(fitted_classifier):
+def test_predict_handles_large_batch(fitted_classifier: Any) -> None:
     """Verify classifier handles large batches efficiently"""
     # Arrange
     X_large = np.random.rand(1000, 1280).astype(np.float32)
@@ -348,8 +368,9 @@ def test_predict_handles_large_batch(fitted_classifier):
 
 @pytest.mark.unit
 def test_predict_before_fit_raises_error(
-    default_classifier_params, mock_transformers_model
-):
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify classifier raises error when predicting before fit"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -366,7 +387,7 @@ def test_predict_before_fit_raises_error(
 
 
 @pytest.mark.unit
-def test_predict_uses_default_threshold_0_5(fitted_classifier):
+def test_predict_uses_default_threshold_0_5(fitted_classifier: Any) -> None:
     """Verify default threshold is 0.5 (ELISA)"""
     # Arrange
     X = np.random.rand(1, 1280).astype(np.float32)
@@ -382,7 +403,7 @@ def test_predict_uses_default_threshold_0_5(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_predict_applies_elisa_threshold(fitted_classifier):
+def test_predict_applies_elisa_threshold(fitted_classifier: Any) -> None:
     """Verify assay_type='ELISA' uses 0.5 threshold"""
     # Arrange
     X = np.random.rand(1, 1280).astype(np.float32)
@@ -398,7 +419,7 @@ def test_predict_applies_elisa_threshold(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_predict_applies_psr_threshold(fitted_classifier):
+def test_predict_applies_psr_threshold(fitted_classifier: Any) -> None:
     """Verify assay_type='PSR' uses 0.5495 threshold (Novo parity)"""
     # Arrange
     X = np.random.rand(1, 1280).astype(np.float32)
@@ -414,7 +435,7 @@ def test_predict_applies_psr_threshold(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_predict_psr_threshold_boundary_case(fitted_classifier):
+def test_predict_psr_threshold_boundary_case(fitted_classifier: Any) -> None:
     """Verify PSR threshold boundary: 0.5495"""
     # Arrange
     X = np.random.rand(2, 1280).astype(np.float32)
@@ -436,7 +457,7 @@ def test_predict_psr_threshold_boundary_case(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_predict_custom_threshold_overrides_default(fitted_classifier):
+def test_predict_custom_threshold_overrides_default(fitted_classifier: Any) -> None:
     """Verify custom threshold overrides default 0.5"""
     # Arrange
     X = np.random.rand(1, 1280).astype(np.float32)
@@ -452,7 +473,7 @@ def test_predict_custom_threshold_overrides_default(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_predict_rejects_unknown_assay_type(fitted_classifier):
+def test_predict_rejects_unknown_assay_type(fitted_classifier: Any) -> None:
     """Verify classifier raises error for unknown assay_type"""
     # Arrange
     X = np.random.rand(1, 1280).astype(np.float32)
@@ -468,7 +489,9 @@ def test_predict_rejects_unknown_assay_type(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_predict_proba_returns_probabilities(fitted_classifier, mock_embeddings):
+def test_predict_proba_returns_probabilities(
+    fitted_classifier: Any, mock_embeddings: dict[str, Any]
+) -> None:
     """Verify predict_proba returns class probabilities"""
     # Arrange
     X_test = mock_embeddings["X_test"]
@@ -484,8 +507,9 @@ def test_predict_proba_returns_probabilities(fitted_classifier, mock_embeddings)
 
 @pytest.mark.unit
 def test_predict_proba_before_fit_raises_error(
-    default_classifier_params, mock_transformers_model
-):
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify predict_proba raises error before fit"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -502,7 +526,9 @@ def test_predict_proba_before_fit_raises_error(
 
 
 @pytest.mark.unit
-def test_score_returns_accuracy(fitted_classifier, mock_embeddings):
+def test_score_returns_accuracy(
+    fitted_classifier: Any, mock_embeddings: dict[str, Any]
+) -> None:
     """Verify score() returns mean accuracy"""
     # Arrange
     X_test = mock_embeddings["X_test"]
@@ -518,8 +544,9 @@ def test_score_returns_accuracy(fitted_classifier, mock_embeddings):
 
 @pytest.mark.unit
 def test_score_before_fit_raises_error(
-    default_classifier_params, mock_transformers_model
-):
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify score raises error before fit"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -537,7 +564,7 @@ def test_score_before_fit_raises_error(
 
 
 @pytest.mark.unit
-def test_predict_handles_empty_embedding_array(fitted_classifier):
+def test_predict_handles_empty_embedding_array(fitted_classifier: Any) -> None:
     """Verify classifier behavior with empty embeddings array"""
     # Arrange
     empty_embeddings = np.array([]).reshape(0, 1280)
@@ -550,8 +577,9 @@ def test_predict_handles_empty_embedding_array(fitted_classifier):
 
 @pytest.mark.unit
 def test_fit_handles_minimum_samples(
-    default_classifier_params, mock_transformers_model
-):
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify classifier handles minimum training samples (2 per class)"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -566,7 +594,7 @@ def test_fit_handles_minimum_samples(
 
 
 @pytest.mark.unit
-def test_predict_handles_all_zero_embeddings(fitted_classifier):
+def test_predict_handles_all_zero_embeddings(fitted_classifier: Any) -> None:
     """Verify classifier handles zero embeddings (edge case)"""
     # Arrange
     zero_embeddings = np.zeros((5, 1280), dtype=np.float32)
@@ -580,7 +608,7 @@ def test_predict_handles_all_zero_embeddings(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_predict_handles_nan_free_embeddings(fitted_classifier):
+def test_predict_handles_nan_free_embeddings(fitted_classifier: Any) -> None:
     """Verify classifier handles NaN-free embeddings correctly"""
     # Arrange
     valid_embeddings = np.random.rand(10, 1280).astype(np.float32)
@@ -599,7 +627,7 @@ def test_predict_handles_nan_free_embeddings(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_classifier_supports_getstate(fitted_classifier):
+def test_classifier_supports_getstate(fitted_classifier: Any) -> None:
     """Verify classifier implements __getstate__ for pickling"""
     # Act
     state = fitted_classifier.__getstate__()
@@ -612,7 +640,9 @@ def test_classifier_supports_getstate(fitted_classifier):
 
 
 @pytest.mark.unit
-def test_classifier_supports_setstate(fitted_classifier, mock_transformers_model):
+def test_classifier_supports_setstate(
+    fitted_classifier: Any, mock_transformers_model: Any
+) -> None:
     """Verify classifier implements __setstate__ for unpickling"""
     # Arrange
     state = fitted_classifier.__getstate__()
@@ -633,7 +663,9 @@ def test_classifier_supports_setstate(fitted_classifier, mock_transformers_model
 
 
 @pytest.mark.unit
-def test_full_fit_predict_workflow(default_classifier_params, mock_transformers_model):
+def test_full_fit_predict_workflow(
+    default_classifier_params: dict[str, Any], mock_transformers_model: Any
+) -> None:
     """Verify complete fit → predict workflow"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -653,8 +685,9 @@ def test_full_fit_predict_workflow(default_classifier_params, mock_transformers_
 
 @pytest.mark.unit
 def test_refit_classifier_updates_model(
-    default_classifier_params, mock_transformers_model
-):
+    default_classifier_params: dict[str, Any],
+    mock_transformers_model: Any,
+) -> None:
     """Verify classifier can be refitted with new data"""
     # Arrange
     classifier = BinaryClassifier(params=default_classifier_params)
@@ -684,7 +717,7 @@ def test_refit_classifier_updates_model(
 
 
 @pytest.mark.unit
-def test_readme_example_workflow(mock_transformers_model):
+def test_readme_example_workflow(mock_transformers_model: Any) -> None:
     """Verify example from README/docstrings works correctly"""
     # This test ensures documentation examples stay accurate
 

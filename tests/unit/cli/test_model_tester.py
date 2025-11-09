@@ -21,7 +21,10 @@ Date: 2025-11-08
 Phase: Coverage improvement - Phase 1
 """
 
+from __future__ import annotations
+
 import pickle
+from pathlib import Path
 from unittest.mock import Mock
 
 import pandas as pd
@@ -34,7 +37,7 @@ from antibody_training_esm.core.classifier import BinaryClassifier
 
 
 @pytest.fixture
-def test_config(tmp_path):
+def test_config(tmp_path: Path) -> TestConfig:
     """Create a test configuration"""
     return TestConfig(
         model_paths=["model.pkl"],
@@ -48,7 +51,7 @@ def test_config(tmp_path):
 
 
 @pytest.fixture
-def mock_binary_classifier():
+def mock_binary_classifier() -> BinaryClassifier:
     """Create a REAL BinaryClassifier for pickle tests (Mock can't be pickled)"""
     # Import real class
     from antibody_training_esm.core.classifier import BinaryClassifier
@@ -72,7 +75,7 @@ def mock_binary_classifier():
 
 
 @pytest.fixture
-def sample_dataset_csv(tmp_path):
+def sample_dataset_csv(tmp_path: Path) -> Path:
     """Create a sample test dataset CSV"""
     csv_path = tmp_path / "test_data.csv"
     df = pd.DataFrame(
@@ -91,7 +94,7 @@ def sample_dataset_csv(tmp_path):
 
 
 @pytest.fixture
-def sample_dataset_with_comments(tmp_path):
+def sample_dataset_with_comments(tmp_path: Path) -> Path:
     """Create a dataset CSV with legacy comment headers"""
     csv_path = tmp_path / "legacy_data.csv"
     with open(csv_path, "w") as f:
@@ -107,7 +110,9 @@ def sample_dataset_with_comments(tmp_path):
 
 
 @pytest.mark.unit
-def test_load_model_success(test_config, mock_binary_classifier, tmp_path):
+def test_load_model_success(
+    test_config: TestConfig, mock_binary_classifier: BinaryClassifier, tmp_path: Path
+) -> None:
     """Test successful model loading from pickle file"""
     # Arrange
     model_path = tmp_path / "model.pkl"
@@ -125,7 +130,7 @@ def test_load_model_success(test_config, mock_binary_classifier, tmp_path):
 
 
 @pytest.mark.unit
-def test_load_model_file_not_found(test_config):
+def test_load_model_file_not_found(test_config: TestConfig) -> None:
     """Test FileNotFoundError raised for missing model file"""
     # Arrange
     tester = ModelTester(test_config)
@@ -137,7 +142,7 @@ def test_load_model_file_not_found(test_config):
 
 
 @pytest.mark.unit
-def test_load_model_wrong_type(test_config, tmp_path):
+def test_load_model_wrong_type(test_config: TestConfig, tmp_path: Path) -> None:
     """Test ValueError raised for non-BinaryClassifier pickle"""
     # Arrange
     model_path = tmp_path / "wrong_model.pkl"
@@ -167,7 +172,9 @@ def test_load_model_wrong_type(test_config, tmp_path):
 
 
 @pytest.mark.unit
-def test_load_model_batch_size_update(test_config, mock_binary_classifier, tmp_path):
+def test_load_model_batch_size_update(
+    test_config: TestConfig, mock_binary_classifier: BinaryClassifier, tmp_path: Path
+) -> None:
     """Test batch_size updated when config differs from model"""
     # Arrange
     mock_binary_classifier.embedding_extractor.batch_size = 32
@@ -190,7 +197,9 @@ def test_load_model_batch_size_update(test_config, mock_binary_classifier, tmp_p
 
 
 @pytest.mark.unit
-def test_load_dataset_success(test_config, sample_dataset_csv):
+def test_load_dataset_success(
+    test_config: TestConfig, sample_dataset_csv: Path
+) -> None:
     """Test successful dataset loading from CSV"""
     # Arrange
     tester = ModelTester(test_config)
@@ -206,7 +215,7 @@ def test_load_dataset_success(test_config, sample_dataset_csv):
 
 
 @pytest.mark.unit
-def test_load_dataset_file_not_found(test_config):
+def test_load_dataset_file_not_found(test_config: TestConfig) -> None:
     """Test FileNotFoundError for non-existent dataset"""
     # Arrange
     tester = ModelTester(test_config)
@@ -218,7 +227,9 @@ def test_load_dataset_file_not_found(test_config):
 
 
 @pytest.mark.unit
-def test_load_dataset_legacy_comment_headers(test_config, sample_dataset_with_comments):
+def test_load_dataset_legacy_comment_headers(
+    test_config: TestConfig, sample_dataset_with_comments: Path
+) -> None:
     """Test backwards compatibility with # comment headers"""
     # Arrange
     tester = ModelTester(test_config)
@@ -232,7 +243,9 @@ def test_load_dataset_legacy_comment_headers(test_config, sample_dataset_with_co
 
 
 @pytest.mark.unit
-def test_load_dataset_custom_column_names(test_config, tmp_path):
+def test_load_dataset_custom_column_names(
+    test_config: TestConfig, tmp_path: Path
+) -> None:
     """Test custom column mapping (antigen_sequence, vh_sequence, etc.)"""
     # Arrange
     csv_path = tmp_path / "custom_cols.csv"
@@ -261,7 +274,9 @@ def test_load_dataset_custom_column_names(test_config, tmp_path):
 
 
 @pytest.mark.unit
-def test_load_dataset_missing_sequence_column(test_config, tmp_path):
+def test_load_dataset_missing_sequence_column(
+    test_config: TestConfig, tmp_path: Path
+) -> None:
     """Test clear error when sequence column is missing"""
     # Arrange
     csv_path = tmp_path / "missing_seq_col.csv"
@@ -281,7 +296,9 @@ def test_load_dataset_missing_sequence_column(test_config, tmp_path):
 
 
 @pytest.mark.unit
-def test_load_dataset_missing_label_column(test_config, tmp_path):
+def test_load_dataset_missing_label_column(
+    test_config: TestConfig, tmp_path: Path
+) -> None:
     """Test clear error when label column is missing"""
     # Arrange
     csv_path = tmp_path / "missing_label_col.csv"
@@ -301,7 +318,9 @@ def test_load_dataset_missing_label_column(test_config, tmp_path):
 
 
 @pytest.mark.unit
-def test_load_dataset_nan_labels_rejected(test_config, tmp_path):
+def test_load_dataset_nan_labels_rejected(
+    test_config: TestConfig, tmp_path: Path
+) -> None:
     """Test CRITICAL validation: NaN labels cause ValueError"""
     # Arrange
     csv_path = tmp_path / "nan_labels.csv"

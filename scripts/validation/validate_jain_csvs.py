@@ -14,6 +14,8 @@ Usage:
     python3 scripts/validation/validate_jain_csvs.py
 """
 
+from __future__ import annotations
+
 import sys
 from pathlib import Path
 
@@ -42,7 +44,7 @@ def test_csv_format(filepath: Path) -> tuple[bool, str]:
             return False, f"✗ Failed to parse: {str(e2)[:60]}"
 
 
-def validate_canonical_files():
+def validate_canonical_files() -> bool:
     """Validate canonical benchmark sets"""
     print(f"\n{Colors.BLUE}{'=' * 70}")
     print("CANONICAL FILES (Production Benchmarks)")
@@ -108,7 +110,7 @@ def validate_canonical_files():
     return all_pass
 
 
-def validate_fragment_files():
+def validate_fragment_files() -> bool:
     """Validate fragment files"""
     print(f"\n{Colors.BLUE}{'=' * 70}")
     print("FRAGMENT FILES (Research/Development)")
@@ -166,7 +168,7 @@ def validate_fragment_files():
     return all_pass
 
 
-def validate_manifest():
+def validate_manifest() -> bool:
     """Validate manifest file exists and is correct"""
     print(f"\n{Colors.BLUE}{'=' * 70}")
     print("MANIFEST FILE")
@@ -212,7 +214,7 @@ def validate_manifest():
     return all_present
 
 
-def main():
+def main() -> int:
     """Run all validations"""
     print(f"\n{Colors.BLUE}{'=' * 70}")
     print("JAIN DATASET CSV VALIDATION")

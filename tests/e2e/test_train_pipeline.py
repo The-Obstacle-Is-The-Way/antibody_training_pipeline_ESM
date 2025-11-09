@@ -19,8 +19,11 @@ Date: 2025-11-07
 Phase: 4 (CLI & E2E Tests)
 """
 
+from __future__ import annotations
+
 import pickle
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pytest
@@ -34,7 +37,7 @@ from antibody_training_esm.core.trainer import train_model
 
 
 @pytest.fixture
-def mock_training_config(tmp_path):
+def mock_training_config(tmp_path: Path) -> Path:
     """Create a mock training config file"""
     config = {
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",
@@ -57,7 +60,7 @@ def mock_training_config(tmp_path):
 
 
 @pytest.fixture
-def small_training_data(tmp_path):
+def small_training_data(tmp_path: Path) -> Path:
     """Create small CSV training data for fast E2E tests"""
     import pandas as pd
 
@@ -86,8 +89,11 @@ def small_training_data(tmp_path):
     reason="Requires real trainer implementation and large datasets. Enable when trainer is fully integrated.",
 )
 def test_full_training_pipeline_end_to_end(
-    mock_transformers_model, mock_training_config, small_training_data, tmp_path
-):
+    mock_transformers_model: tuple[Any, Any],
+    mock_training_config: Path,
+    small_training_data: Path,
+    tmp_path: Path,
+) -> None:
     """Verify complete training pipeline: config → train → save → load → predict"""
     # NOTE: This is a placeholder E2E test that will be enabled once:
     # 1. Trainer is fully implemented with dataset integration
@@ -129,7 +135,9 @@ def test_full_training_pipeline_end_to_end(
 
 
 @pytest.mark.e2e
-def test_dataset_to_embeddings_pipeline(mock_transformers_model, small_training_data):
+def test_dataset_to_embeddings_pipeline(
+    mock_transformers_model: tuple[Any, Any], small_training_data: Path
+) -> None:
     """Verify dataset loading → embedding extraction workflow"""
     # Arrange
     import pandas as pd
@@ -150,7 +158,9 @@ def test_dataset_to_embeddings_pipeline(mock_transformers_model, small_training_
 
 
 @pytest.mark.e2e
-def test_embeddings_to_training_pipeline(mock_transformers_model):
+def test_embeddings_to_training_pipeline(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify embedding extraction → training → prediction workflow"""
     # Arrange
     np.random.seed(42)
@@ -178,7 +188,9 @@ def test_embeddings_to_training_pipeline(mock_transformers_model):
 
 
 @pytest.mark.e2e
-def test_model_save_load_predict_workflow(mock_transformers_model, tmp_path):
+def test_model_save_load_predict_workflow(
+    mock_transformers_model: tuple[Any, Any], tmp_path: Path
+) -> None:
     """Verify training → save → load → predict workflow"""
     # Arrange
     np.random.seed(42)
@@ -215,7 +227,7 @@ def test_model_save_load_predict_workflow(mock_transformers_model, tmp_path):
 
 
 @pytest.mark.e2e
-def test_training_config_validation(tmp_path):
+def test_training_config_validation(tmp_path: Path) -> None:
     """Verify training config has all required fields"""
     # Arrange
     config = {
@@ -247,7 +259,7 @@ def test_training_config_validation(tmp_path):
 
 
 @pytest.mark.e2e
-def test_training_fails_with_invalid_config(tmp_path):
+def test_training_fails_with_invalid_config(tmp_path: Path) -> None:
     """Verify training fails gracefully with invalid config"""
     # Arrange
     config_path = tmp_path / "invalid_config.yaml"
@@ -263,7 +275,7 @@ def test_training_fails_with_invalid_config(tmp_path):
     reason="Requires trainer.py to be fully implemented with proper config structure. "
     "Current trainer expects nested config with 'training', 'model', etc. keys."
 )
-def test_training_fails_with_missing_data_file(tmp_path):
+def test_training_fails_with_missing_data_file(tmp_path: Path) -> None:
     """Verify training fails gracefully with missing data file"""
     # NOTE: This test will be enabled once trainer.py config structure is finalized
     pass
@@ -273,7 +285,9 @@ def test_training_fails_with_missing_data_file(tmp_path):
 
 
 @pytest.mark.e2e
-def test_multiple_classifiers_train_independently(mock_transformers_model):
+def test_multiple_classifiers_train_independently(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify multiple classifiers can be trained without interference"""
     # Arrange
     np.random.seed(42)
@@ -312,7 +326,9 @@ def test_multiple_classifiers_train_independently(mock_transformers_model):
 
 
 @pytest.mark.e2e
-def test_embedding_extractor_handles_batch_boundaries(mock_transformers_model):
+def test_embedding_extractor_handles_batch_boundaries(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify embedding extractor handles sequences at batch boundaries correctly"""
     # Arrange
     # Test with sequence counts that exercise batch boundaries
@@ -336,7 +352,9 @@ def test_embedding_extractor_handles_batch_boundaries(mock_transformers_model):
 
 
 @pytest.mark.e2e
-def test_training_completes_in_reasonable_time(mock_transformers_model):
+def test_training_completes_in_reasonable_time(
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
     """Verify training completes within time bounds (smoke test)"""
     import time
 

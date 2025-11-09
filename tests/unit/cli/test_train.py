@@ -19,10 +19,13 @@ Date: 2025-11-07
 Phase: 4 (CLI & E2E Tests)
 """
 
+from __future__ import annotations
+
 import contextlib
 import sys
+from collections.abc import Generator
 from io import StringIO
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
@@ -32,7 +35,7 @@ from antibody_training_esm.cli.train import main
 
 
 @pytest.fixture
-def mock_train_model():
+def mock_train_model() -> Generator[MagicMock, None, None]:
     """Mock train_model function"""
     with patch("antibody_training_esm.cli.train.train_model") as mock:
         yield mock
@@ -42,7 +45,7 @@ def mock_train_model():
 
 
 @pytest.mark.unit
-def test_train_cli_uses_default_config_path(mock_train_model):
+def test_train_cli_uses_default_config_path(mock_train_model: MagicMock) -> None:
     """Verify CLI uses default config path when not specified"""
     # Arrange
     with patch("sys.argv", ["antibody-train"]):
@@ -55,7 +58,7 @@ def test_train_cli_uses_default_config_path(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_accepts_custom_config_path(mock_train_model):
+def test_train_cli_accepts_custom_config_path(mock_train_model: MagicMock) -> None:
     """Verify CLI accepts custom config path via --config"""
     # Arrange
     custom_config = "custom/path/config.yaml"
@@ -69,7 +72,7 @@ def test_train_cli_accepts_custom_config_path(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_accepts_short_flag(mock_train_model):
+def test_train_cli_accepts_short_flag(mock_train_model: MagicMock) -> None:
     """Verify CLI accepts -c short flag"""
     # Arrange
     custom_config = "test/config.yaml"
@@ -86,7 +89,7 @@ def test_train_cli_accepts_short_flag(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_returns_zero_on_success(mock_train_model):
+def test_train_cli_returns_zero_on_success(mock_train_model: MagicMock) -> None:
     """Verify CLI returns 0 exit code when training succeeds"""
     # Arrange
     mock_train_model.return_value = None  # Success (no exception)
@@ -99,7 +102,7 @@ def test_train_cli_returns_zero_on_success(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_prints_success_message(mock_train_model):
+def test_train_cli_prints_success_message(mock_train_model: MagicMock) -> None:
     """Verify CLI prints success message after training"""
     # Arrange
     mock_train_model.return_value = None
@@ -118,7 +121,7 @@ def test_train_cli_prints_success_message(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_prints_config_path_on_start(mock_train_model):
+def test_train_cli_prints_config_path_on_start(mock_train_model: MagicMock) -> None:
     """Verify CLI prints config path when starting"""
     # Arrange
     custom_config = "my_config.yaml"
@@ -141,7 +144,7 @@ def test_train_cli_prints_config_path_on_start(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_returns_one_on_failure(mock_train_model):
+def test_train_cli_returns_one_on_failure(mock_train_model: MagicMock) -> None:
     """Verify CLI returns 1 exit code when training fails"""
     # Arrange
     mock_train_model.side_effect = RuntimeError("Training failed")
@@ -154,7 +157,7 @@ def test_train_cli_returns_one_on_failure(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_prints_error_message_on_failure(mock_train_model):
+def test_train_cli_prints_error_message_on_failure(mock_train_model: MagicMock) -> None:
     """Verify CLI prints error message to stderr when training fails"""
     # Arrange
     error_msg = "Config file not found"
@@ -175,7 +178,7 @@ def test_train_cli_prints_error_message_on_failure(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_handles_value_error(mock_train_model):
+def test_train_cli_handles_value_error(mock_train_model: MagicMock) -> None:
     """Verify CLI handles ValueError from train_model"""
     # Arrange
     mock_train_model.side_effect = ValueError("Invalid configuration")
@@ -188,7 +191,7 @@ def test_train_cli_handles_value_error(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_handles_file_not_found_error(mock_train_model):
+def test_train_cli_handles_file_not_found_error(mock_train_model: MagicMock) -> None:
     """Verify CLI handles FileNotFoundError from train_model"""
     # Arrange
     mock_train_model.side_effect = FileNotFoundError("Config not found")
@@ -201,7 +204,7 @@ def test_train_cli_handles_file_not_found_error(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_handles_runtime_error(mock_train_model):
+def test_train_cli_handles_runtime_error(mock_train_model: MagicMock) -> None:
     """Verify CLI handles RuntimeError from train_model"""
     # Arrange
     mock_train_model.side_effect = RuntimeError("Training error")
@@ -214,7 +217,7 @@ def test_train_cli_handles_runtime_error(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_handles_keyboard_interrupt(mock_train_model):
+def test_train_cli_handles_keyboard_interrupt(mock_train_model: MagicMock) -> None:
     """Verify CLI handles KeyboardInterrupt gracefully"""
     # Arrange
     mock_train_model.side_effect = KeyboardInterrupt()
@@ -236,7 +239,7 @@ def test_train_cli_handles_keyboard_interrupt(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_shows_help_message():
+def test_train_cli_shows_help_message() -> None:
     """Verify CLI shows help message with --help"""
     # Arrange
     with patch("sys.argv", ["antibody-train", "--help"]):
@@ -249,7 +252,7 @@ def test_train_cli_shows_help_message():
 
 
 @pytest.mark.unit
-def test_train_cli_help_describes_config_option():
+def test_train_cli_help_describes_config_option() -> None:
     """Verify CLI help describes --config option"""
     # Arrange
     with patch("sys.argv", ["antibody-train", "--help"]):
@@ -272,7 +275,9 @@ def test_train_cli_help_describes_config_option():
 
 
 @pytest.mark.unit
-def test_train_cli_invokes_train_model_exactly_once(mock_train_model):
+def test_train_cli_invokes_train_model_exactly_once(
+    mock_train_model: MagicMock,
+) -> None:
     """Verify CLI invokes train_model exactly once"""
     # Arrange
     with patch("sys.argv", ["antibody-train"]):
@@ -284,7 +289,9 @@ def test_train_cli_invokes_train_model_exactly_once(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_passes_config_path_to_train_model(mock_train_model):
+def test_train_cli_passes_config_path_to_train_model(
+    mock_train_model: MagicMock,
+) -> None:
     """Verify CLI passes correct config path to train_model"""
     # Arrange
     test_configs = [
@@ -307,7 +314,7 @@ def test_train_cli_passes_config_path_to_train_model(mock_train_model):
 
 
 @pytest.mark.unit
-def test_train_cli_handles_empty_string_config():
+def test_train_cli_handles_empty_string_config() -> None:
     """Verify CLI handles empty string config path"""
     # Arrange
     with patch("antibody_training_esm.cli.train.train_model") as mock_train:
@@ -321,7 +328,9 @@ def test_train_cli_handles_empty_string_config():
 
 
 @pytest.mark.unit
-def test_train_cli_handles_exception_with_no_message(mock_train_model):
+def test_train_cli_handles_exception_with_no_message(
+    mock_train_model: MagicMock,
+) -> None:
     """Verify CLI handles exception with no message"""
     # Arrange
     mock_train_model.side_effect = Exception()

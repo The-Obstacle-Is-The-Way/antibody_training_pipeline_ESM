@@ -18,9 +18,11 @@ Date: 2025-11-07
 Author: Claude Code
 """
 
+from __future__ import annotations
+
 import logging
 from pathlib import Path
-from typing import cast
+from typing import Any, cast
 
 import pandas as pd
 import pytest
@@ -39,7 +41,7 @@ class ConcreteDataset(AntibodyDataset):
     Implements abstract methods with minimal behavior to test base class logic.
     """
 
-    def load_data(self, **kwargs) -> pd.DataFrame:
+    def load_data(self, **kwargs: Any) -> pd.DataFrame:
         """Return a simple test DataFrame"""
         return pd.DataFrame(
             {
@@ -69,7 +71,7 @@ class ConcreteDataset(AntibodyDataset):
 
 
 @pytest.mark.unit
-def test_dataset_initializes_with_name_and_default_output(tmp_path):
+def test_dataset_initializes_with_name_and_default_output(tmp_path: Path) -> None:
     """Verify dataset initializes with dataset name and creates default output directory"""
     # Arrange & Act
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -81,7 +83,7 @@ def test_dataset_initializes_with_name_and_default_output(tmp_path):
 
 
 @pytest.mark.unit
-def test_dataset_initializes_with_custom_output_dir(tmp_path):
+def test_dataset_initializes_with_custom_output_dir(tmp_path: Path) -> None:
     """Verify dataset can use custom output directory"""
     # Arrange
     custom_dir = tmp_path / "custom_output"
@@ -95,7 +97,7 @@ def test_dataset_initializes_with_custom_output_dir(tmp_path):
 
 
 @pytest.mark.unit
-def test_dataset_creates_output_directory_on_init(tmp_path):
+def test_dataset_creates_output_directory_on_init(tmp_path: Path) -> None:
     """Verify output directory is created if it doesn't exist"""
     # Arrange
     output_dir = tmp_path / "new_directory"
@@ -109,7 +111,7 @@ def test_dataset_creates_output_directory_on_init(tmp_path):
 
 
 @pytest.mark.unit
-def test_dataset_accepts_custom_logger():
+def test_dataset_accepts_custom_logger() -> None:
     """Verify dataset can use custom logger"""
     # Arrange
     custom_logger = logging.getLogger("custom_test_logger")
@@ -122,7 +124,7 @@ def test_dataset_accepts_custom_logger():
 
 
 @pytest.mark.unit
-def test_dataset_creates_default_logger_if_none_provided():
+def test_dataset_creates_default_logger_if_none_provided() -> None:
     """Verify dataset creates a default logger when none is provided"""
     # Arrange & Act
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -138,7 +140,7 @@ def test_dataset_creates_default_logger_if_none_provided():
 
 
 @pytest.mark.unit
-def test_concrete_dataset_implements_load_data():
+def test_concrete_dataset_implements_load_data() -> None:
     """Verify concrete dataset implements load_data abstract method"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -155,7 +157,7 @@ def test_concrete_dataset_implements_load_data():
 
 
 @pytest.mark.unit
-def test_concrete_dataset_implements_get_fragment_types():
+def test_concrete_dataset_implements_get_fragment_types() -> None:
     """Verify concrete dataset implements get_fragment_types abstract method"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -177,7 +179,7 @@ def test_concrete_dataset_implements_get_fragment_types():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_removes_gaps():
+def test_sanitize_sequence_removes_gaps() -> None:
     """Verify sanitize_sequence removes gap characters"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -192,7 +194,7 @@ def test_sanitize_sequence_removes_gaps():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_removes_whitespace():
+def test_sanitize_sequence_removes_whitespace() -> None:
     """Verify sanitize_sequence removes whitespace"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -207,7 +209,7 @@ def test_sanitize_sequence_removes_whitespace():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_converts_to_uppercase():
+def test_sanitize_sequence_converts_to_uppercase() -> None:
     """Verify sanitize_sequence converts lowercase to uppercase"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -222,7 +224,7 @@ def test_sanitize_sequence_converts_to_uppercase():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_rejects_invalid_amino_acids():
+def test_sanitize_sequence_rejects_invalid_amino_acids() -> None:
     """Verify sanitize_sequence raises ValueError for invalid amino acids"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -234,7 +236,7 @@ def test_sanitize_sequence_rejects_invalid_amino_acids():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_rejects_empty_string():
+def test_sanitize_sequence_rejects_empty_string() -> None:
     """Verify sanitize_sequence raises ValueError for empty string"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -245,7 +247,7 @@ def test_sanitize_sequence_rejects_empty_string():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_rejects_none():
+def test_sanitize_sequence_rejects_none() -> None:
     """Verify sanitize_sequence raises ValueError for None"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -256,7 +258,7 @@ def test_sanitize_sequence_rejects_none():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_accepts_all_valid_amino_acids():
+def test_sanitize_sequence_accepts_all_valid_amino_acids() -> None:
     """Verify sanitize_sequence accepts all 20 standard amino acids"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -270,7 +272,7 @@ def test_sanitize_sequence_accepts_all_valid_amino_acids():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_rejects_numbers():
+def test_sanitize_sequence_rejects_numbers() -> None:
     """Verify sanitize_sequence raises ValueError for sequences with numbers"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -282,7 +284,7 @@ def test_sanitize_sequence_rejects_numbers():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_rejects_special_characters():
+def test_sanitize_sequence_rejects_special_characters() -> None:
     """Verify sanitize_sequence raises ValueError for special characters"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -299,7 +301,7 @@ def test_sanitize_sequence_rejects_special_characters():
 
 
 @pytest.mark.unit
-def test_validate_sequences_returns_statistics():
+def test_validate_sequences_returns_statistics() -> None:
     """Verify validate_sequences returns stats dictionary with correct structure"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -323,7 +325,7 @@ def test_validate_sequences_returns_statistics():
 
 
 @pytest.mark.unit
-def test_validate_sequences_counts_total_sequences():
+def test_validate_sequences_counts_total_sequences() -> None:
     """Verify validate_sequences counts total sequences correctly"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -339,7 +341,7 @@ def test_validate_sequences_counts_total_sequences():
 
 
 @pytest.mark.unit
-def test_validate_sequences_detects_missing_vh():
+def test_validate_sequences_detects_missing_vh() -> None:
     """Verify validate_sequences detects missing VH sequences"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -353,7 +355,7 @@ def test_validate_sequences_detects_missing_vh():
 
 
 @pytest.mark.unit
-def test_validate_sequences_detects_missing_vl():
+def test_validate_sequences_detects_missing_vl() -> None:
     """Verify validate_sequences detects missing VL sequences"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -372,7 +374,7 @@ def test_validate_sequences_detects_missing_vl():
 
 
 @pytest.mark.unit
-def test_validate_sequences_handles_dataframe_with_no_vl():
+def test_validate_sequences_handles_dataframe_with_no_vl() -> None:
     """Verify validate_sequences handles DataFrames without VL_sequence column"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -393,7 +395,7 @@ def test_validate_sequences_handles_dataframe_with_no_vl():
 
 
 @pytest.mark.unit
-def test_full_antibody_fragments_contains_16_types():
+def test_full_antibody_fragments_contains_16_types() -> None:
     """Verify FULL_ANTIBODY_FRAGMENTS constant has all 16 fragment types"""
     # Arrange & Act
     fragments = AntibodyDataset.FULL_ANTIBODY_FRAGMENTS
@@ -422,7 +424,7 @@ def test_full_antibody_fragments_contains_16_types():
 
 
 @pytest.mark.unit
-def test_nanobody_fragments_contains_6_types():
+def test_nanobody_fragments_contains_6_types() -> None:
     """Verify NANOBODY_FRAGMENTS constant has all 6 fragment types"""
     # Arrange & Act
     fragments = AntibodyDataset.NANOBODY_FRAGMENTS
@@ -441,7 +443,7 @@ def test_nanobody_fragments_contains_6_types():
 
 
 @pytest.mark.unit
-def test_valid_amino_acids_contains_20_standard_aa():
+def test_valid_amino_acids_contains_20_standard_aa() -> None:
     """Verify VALID_AMINO_ACIDS constant has all 20 standard amino acids"""
     # Arrange & Act
     valid_aas = AntibodyDataset.VALID_AMINO_ACIDS
@@ -458,7 +460,7 @@ def test_valid_amino_acids_contains_20_standard_aa():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_handles_mixed_case():
+def test_sanitize_sequence_handles_mixed_case() -> None:
     """Verify sanitize_sequence handles mixed case input"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -472,7 +474,7 @@ def test_sanitize_sequence_handles_mixed_case():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_handles_multiple_gaps():
+def test_sanitize_sequence_handles_multiple_gaps() -> None:
     """Verify sanitize_sequence removes multiple gap characters"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -486,7 +488,7 @@ def test_sanitize_sequence_handles_multiple_gaps():
 
 
 @pytest.mark.unit
-def test_sanitize_sequence_handles_combined_issues():
+def test_sanitize_sequence_handles_combined_issues() -> None:
     """Verify sanitize_sequence handles gaps + spaces + lowercase together"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -505,7 +507,7 @@ def test_sanitize_sequence_handles_combined_issues():
 
 
 @pytest.mark.unit
-def test_full_dataset_initialization_workflow(tmp_path):
+def test_full_dataset_initialization_workflow(tmp_path: Path) -> None:
     """Verify complete dataset initialization workflow"""
     # Arrange
     output_dir = tmp_path / "test_output"
@@ -528,7 +530,7 @@ def test_full_dataset_initialization_workflow(tmp_path):
 
 
 @pytest.mark.unit
-def test_sanitization_workflow_on_realistic_data():
+def test_sanitization_workflow_on_realistic_data() -> None:
     """Verify sanitization works on realistic antibody sequences"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -549,7 +551,7 @@ def test_sanitization_workflow_on_realistic_data():
 
 
 @pytest.mark.unit
-def test_create_fragments_generates_all_fragment_types():
+def test_create_fragments_generates_all_fragment_types() -> None:
     """Verify create_fragments returns all 16 fragment types for full antibody"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -591,7 +593,7 @@ def test_create_fragments_generates_all_fragment_types():
 
 
 @pytest.mark.unit
-def test_create_fragments_concatenates_cdrs_correctly():
+def test_create_fragments_concatenates_cdrs_correctly() -> None:
     """Verify create_fragments concatenates CDR regions correctly"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -618,7 +620,7 @@ def test_create_fragments_concatenates_cdrs_correctly():
 
 
 @pytest.mark.unit
-def test_create_fragments_handles_missing_vl_sequence():
+def test_create_fragments_handles_missing_vl_sequence() -> None:
     """Verify create_fragments handles nanobodies (no VL chain)"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -644,7 +646,7 @@ def test_create_fragments_handles_missing_vl_sequence():
 
 
 @pytest.mark.unit
-def test_create_fragments_preserves_label():
+def test_create_fragments_preserves_label() -> None:
     """Verify create_fragments preserves label in all fragments"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset")
@@ -666,7 +668,7 @@ def test_create_fragments_preserves_label():
 
 
 @pytest.mark.unit
-def test_create_fragment_csvs_writes_all_files(tmp_path):
+def test_create_fragment_csvs_writes_all_files(tmp_path: Path) -> None:
     """Verify create_fragment_csvs writes CSV for each fragment type"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
@@ -711,7 +713,7 @@ def test_create_fragment_csvs_writes_all_files(tmp_path):
 
 
 @pytest.mark.unit
-def test_create_fragment_csvs_includes_metadata_header(tmp_path):
+def test_create_fragment_csvs_includes_metadata_header(tmp_path: Path) -> None:
     """Verify create_fragment_csvs writes metadata headers"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
@@ -739,7 +741,7 @@ def test_create_fragment_csvs_includes_metadata_header(tmp_path):
 
 
 @pytest.mark.unit
-def test_create_fragment_csvs_handles_suffix(tmp_path):
+def test_create_fragment_csvs_handles_suffix(tmp_path: Path) -> None:
     """Verify create_fragment_csvs uses suffix parameter correctly"""
     # Arrange
     dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
@@ -761,7 +763,7 @@ def test_create_fragment_csvs_handles_suffix(tmp_path):
 
 
 @pytest.mark.unit
-def test_create_fragment_csvs_skips_empty_fragments(tmp_path):
+def test_create_fragment_csvs_skips_empty_fragments(tmp_path: Path) -> None:
     """Verify create_fragment_csvs skips fragment types with no data"""
     # Arrange - Create dataset with only VH (no VL)
     dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
