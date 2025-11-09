@@ -16,7 +16,7 @@
 
 **8. We don't credential-check. We care about your ability to think scientifically and logically.**
 
-**9. We do not discriminate based on credentials, race, age, gender, sexual identity, or any other personal characteristic.**
+**9. We do not discriminate based on race, age, gender, sexual identity, or other personal characteristics.**
 
 **10. We ship with velocity and iterate. We learn by building and say no to mental masturbation.**
 
