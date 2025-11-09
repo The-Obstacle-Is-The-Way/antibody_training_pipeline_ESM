@@ -24,10 +24,7 @@
 
 **12. We maintain respect. No harassment, no personal attacks. Disagree with ideas, not people.**
 
-**13. When conflicts arise, remember: it's not individual versus individual. It's the team versus the problem. We're on the same side, united against our common goal.**
+**13. When conflicts arise, we remember that it is not one individual versus another. It's the team versus the problem. We are on the same side, united against our common goal.**
 
 **14. We embody the spirit of personal agency and responsibility. You can just do things.**
 
----
-
-Clean. Ready to ship?
