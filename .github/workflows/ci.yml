@@ -195,16 +195,23 @@ jobs:
     - name: Run pip-audit (installed environment)
       run: |
         uv run python -m pip_audit --progress-spinner=off --format json --output pip-audit.json
-        uv run python -m pip_audit --progress-spinner=off
+        uv run python -m pip_audit --progress-spinner=off --format sarif --output pip-audit.sarif || true
       continue-on-error: false  # ✅ ENFORCED: Fail CI if CVEs are introduced
 
-    - name: Export requirements for Safety check
+    - name: Upload pip-audit SARIF to GitHub Security
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: pip-audit.sarif
+        category: pip-audit
+
+    - name: Export requirements for Safety scan
       run: uv export --format=requirements-txt --no-dev --no-editable --output-file security-reqs.txt
 
-    - name: Run Safety check
+    - name: Run Safety scan
       run: |
-        uv run safety check -r security-reqs.txt || true
-      continue-on-error: true  # ⚠️ ADVISORY: Safety remains informational while we evaluate the new `scan` workflow
+        uv run safety scan --target security-reqs.txt --output json --save-as safety-report.json || true
+      continue-on-error: true  # ⚠️ ADVISORY: Safety remains informational
 
     - name: Upload security reports
       uses: actions/upload-artifact@v4
@@ -213,6 +220,8 @@ jobs:
         name: security-reports
         path: |
           pip-audit.json
+          pip-audit.sarif
+          safety-report.json
         retention-days: 30
 
   # Summary job - requires all others to pass
