@@ -185,12 +185,10 @@ jobs:
     - name: Sync production dependencies for security audit
       run: uv sync --frozen --no-dev
 
-    - name: Install security tools
-      run: uv pip install "pip-audit[sarif]" safety
-
-    - name: Verify pip-audit installation
+    - name: Install security tools (with SARIF support)
       run: |
-        uv run python -c "import sys, pip_audit; print('pip-audit version:', pip_audit.__version__); print('Python executable:', sys.executable)"
+        uv run pip install "pip-audit[sarif]" safety
+        uv run python -c "import pip_audit, sarif_om; print(f'✓ pip-audit {pip_audit.__version__} with SARIF support')"
 
     - name: Run pip-audit (installed environment)
       run: |
