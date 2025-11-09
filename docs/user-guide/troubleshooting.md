@@ -284,12 +284,20 @@ Any change invalidates cache automatically, but manual clearing ensures fresh st
 
 **Possible Causes & Solutions:**
 
-**1. Wrong Fragment Column**
+**1. Wrong Column Names**
 
 ```yaml
-# Ensure fragment column exists in CSV
+# Ensure column names match CSV file
 data:
-  fragment_column: "VH"  # Must match CSV column name
+  sequence_column: "sequence"  # Default column name for sequences
+  label_column: "label"        # Default column name for labels
+```
+
+Check your CSV has these columns:
+```python
+import pandas as pd
+df = pd.read_csv("train.csv")
+print(df.columns)  # Should include 'sequence' and 'label'
 ```
 
 **2. Label Encoding Error**

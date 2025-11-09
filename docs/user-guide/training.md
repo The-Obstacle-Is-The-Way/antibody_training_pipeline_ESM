@@ -47,28 +47,26 @@ model:
   revision: "main"                         # Model revision (for reproducibility)
 
 data:
-  train_file: "train_datasets/boughter/canonical/boughter_processed_stage3.csv"
-  test_file: "test_datasets/jain/canonical/jain_p5e_s2.csv"
-  fragment_column: "VH"  # Sequence fragment to train on (VH, VL, CDRs, etc.)
+  train_file: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  sequence_column: "sequence"  # Column containing antibody sequences
+  label_column: "label"        # Column containing binary labels (0=specific, 1=non-specific)
 
 classifier:
-  type: "LogisticRegression"
-  params:
-    C: 1.0                    # Regularization strength (inverse)
-    max_iter: 1000            # Maximum iterations
-    penalty: "l2"             # Regularization type (l1, l2, elasticnet, none)
-    solver: "lbfgs"           # Optimization algorithm
-    random_state: 42          # Seed for reproducibility
+  type: "logistic_regression"
+  C: 1.0                      # Regularization strength (inverse)
+  penalty: "l2"               # Regularization type (l1, l2, elasticnet, none)
+  solver: "lbfgs"             # Optimization algorithm
+  max_iter: 1000              # Maximum iterations
+  random_state: 42            # Seed for reproducibility
+  cv_folds: 10                # Number of cross-validation folds
 
 training:
-  cv_folds: 10                # Number of cross-validation folds
-  random_state: 42            # Seed for CV splits
   save_model: true            # Save trained model to disk
+  model_name: "boughter_vh_esm1v_logreg"
+  model_save_dir: "./models"
 
 experiment:
-  name: "boughter_train_jain_test"
-  output_dir: "models/"
-  log_dir: "logs/"
+  name: "boughter_novo_reproduction"
 
 hardware:
   device: "auto"              # "auto", "cpu", "cuda", "mps"
@@ -83,15 +81,24 @@ hardware:
 
 Train on Boughter (914 VH, ELISA), test on Jain (86 clinical, ELISA):
 
+**Training config:**
 ```yaml
 data:
-  train_file: "train_datasets/boughter/canonical/boughter_processed_stage3.csv"
-  test_file: "test_datasets/jain/canonical/jain_p5e_s2.csv"
-  fragment_column: "VH"
+  train_file: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  sequence_column: "sequence"
+  label_column: "label"
 ```
 
+**Training:**
 ```bash
 uv run antibody-train --config configs/config.yaml
+```
+
+**Testing** (after training):
+```bash
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 ```
 
 **Expected Accuracy:** ~66.28% (Novo Nordisk exact parity)
@@ -102,15 +109,24 @@ uv run antibody-train --config configs/config.yaml
 
 Train on Boughter (914 VH, ELISA), test on Harvey (141k nanobodies, PSR):
 
+**Training config:**
 ```yaml
 data:
-  train_file: "train_datasets/boughter/canonical/boughter_processed_stage3.csv"
-  test_file: "test_datasets/harvey/fragments/harvey_VHH_only.csv"
-  fragment_column: "VHH_only"  # Nanobody-specific fragment
+  train_file: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  sequence_column: "sequence"
+  label_column: "label"
 ```
 
+**Training:**
 ```bash
-uv run antibody-train --config configs/boughter_harvey.yaml
+uv run antibody-train --config configs/config.yaml
+```
+
+**Testing** (after training):
+```bash
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/harvey/fragments/VHH_only_harvey.csv
 ```
 
 **Note:** Cross-assay (ELISA → PSR) and cross-species (human antibodies → nanobodies) may reduce performance.
@@ -121,15 +137,24 @@ uv run antibody-train --config configs/boughter_harvey.yaml
 
 Train on Boughter (914 VH, ELISA), test on Shehata (398, PSR):
 
+**Training config:**
 ```yaml
 data:
-  train_file: "train_datasets/boughter/canonical/boughter_processed_stage3.csv"
-  test_file: "test_datasets/shehata/fragments/shehata_VH.csv"
-  fragment_column: "VH"
+  train_file: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  sequence_column: "sequence"
+  label_column: "label"
 ```
 
+**Training:**
 ```bash
-uv run antibody-train --config configs/boughter_shehata.yaml
+uv run antibody-train --config configs/config.yaml
+```
+
+**Testing** (after training):
+```bash
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/shehata/fragments/VH_only_shehata.csv
 ```
 
 **Note:** Cross-assay prediction (ELISA → PSR) requires assay-specific threshold tuning.

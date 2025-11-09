@@ -184,8 +184,8 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 
 **Output Files:**
 
-- `train_datasets/boughter/canonical/boughter_processed_stage3.csv` (final)
-- `train_datasets/boughter/processed/` (intermediate stages)
+- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences, final training set)
+- `train_datasets/boughter/annotated/` (intermediate fragment files)
 
 ---
 
@@ -204,8 +204,17 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 
 **Output Files:**
 
-- `test_datasets/jain/canonical/jain_p5e_s2.csv` (86 antibodies)
-- `test_datasets/jain/raw/` (original Excel file)
+**Canonical files** (original column names):
+- `test_datasets/jain/canonical/jain_86_novo_parity.csv` - Full data (columns: `id`, `vh_sequence`, `vl_sequence`, ...)
+- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH only (columns: `id`, `vh_sequence`, `label`)
+
+**Fragment files** (standardized columns):
+- `test_datasets/jain/fragments/VH_only_jain.csv` - VH fragment (columns: `id`, `sequence`, `label`) **← Use for testing**
+- Additional fragment files in `test_datasets/jain/fragments/` (H-CDRs, L-CDRs, etc.)
+
+**Column Naming:**
+- **Canonical files** use `vh_sequence`/`vl_sequence` (original source data)
+- **Fragment files** use `sequence` (standardized for training/testing)
 
 **Critical Note:** Threshold selection (PSR > 0.5) matches Novo Nordisk's exact parity analysis.
 
@@ -226,10 +235,19 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 
 **Output Files:**
 
-- `test_datasets/harvey/canonical/harvey_full.csv` (141k sequences)
-- `test_datasets/harvey/fragments/harvey_VHH_only.csv`
-- `test_datasets/harvey/fragments/harvey_VHH-CDRs.csv`
-- `test_datasets/harvey/fragments/harvey_VHH-FWRs.csv`
+**Processed files:**
+- `test_datasets/harvey/processed/harvey.csv` - Combined raw data (intermediate)
+
+**Fragment files** (standardized columns):
+- `test_datasets/harvey/fragments/VHH_only_harvey.csv` - Full VHH (columns: `id`, `sequence`, `label`, ...)
+- `test_datasets/harvey/fragments/H-CDR1_harvey.csv` - Individual CDRs
+- `test_datasets/harvey/fragments/H-CDRs_harvey.csv` - Concatenated CDRs
+- `test_datasets/harvey/fragments/H-FWRs_harvey.csv` - Concatenated FWRs
+
+**Column Naming:**
+- All fragment files use standardized `sequence` column (ready for testing)
+
+**Note:** Fragment naming pattern: `{fragmentName}_harvey.csv` (not `harvey_{fragmentName}.csv`)
 
 ---
 
@@ -248,10 +266,19 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 
 **Output Files:**
 
-- `test_datasets/shehata/canonical/shehata_full.csv` (398 sequences)
-- `test_datasets/shehata/fragments/shehata_VH.csv`
-- `test_datasets/shehata/fragments/shehata_All-CDRs.csv`
-- `test_datasets/shehata/fragments/shehata_H-FWRs.csv`
+**Processed files:**
+- `test_datasets/shehata/processed/shehata.csv` - Combined processed data (intermediate)
+
+**Fragment files** (standardized columns):
+- `test_datasets/shehata/fragments/VH_only_shehata.csv` - VH domain (columns: `id`, `sequence`, `label`, ...)
+- `test_datasets/shehata/fragments/H-CDRs_shehata.csv` - Heavy CDRs
+- `test_datasets/shehata/fragments/All-CDRs_shehata.csv` - All CDRs
+- (16 fragment files total, pattern: `{fragmentName}_shehata.csv`)
+
+**Column Naming:**
+- All fragment files use standardized `sequence` column (ready for testing)
+
+**Note:** No canonical/ directory with CSVs - only fragments/ (processed outputs only)
 
 ---
 
