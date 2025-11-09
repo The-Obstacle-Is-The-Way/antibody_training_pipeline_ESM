@@ -18,10 +18,8 @@
 
 **9.** We ship with velocity and iterate. We learn by building and say no to mental masturbation.
 
-**10.** We write clean, tested, typed, linted code. Test-driven development is the standard.
+**10.** We maintain respect. No harassment, no personal attacks. Disagree with ideas, not people.
 
-**11.** We maintain respect. No harassment, no personal attacks. Disagree with ideas, not people.
+**11.** When conflicts arise, we remember that it is not one individual versus another. It's the team versus the problem. We are on the same side, united against our common goal.
 
-**12.** When conflicts arise, we remember that it is not one individual versus another. It's the team versus the problem. We are on the same side, united against our common goal.
-
-**13.** We embody the spirit of personal agency and responsibility. You can just do things.
+**12.** We embody the spirit of personal agency and responsibility. You can just do things.
