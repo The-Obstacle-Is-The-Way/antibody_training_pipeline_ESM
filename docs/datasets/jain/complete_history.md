@@ -35,7 +35,8 @@
 
 **TL;DR:** ⚠️ OUTDATED - This describes the OLD v1.x methodology.
 
-**CURRENT (v2.0):** Use `test_datasets/jain/fragments/VH_only_jain.csv` for testing (works with default CLI).
+**CURRENT (v2.0 - Novo Parity):** Use `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, requires config with `sequence_column: "vh_sequence"`).
+**For general testing:** Use `test_datasets/jain/fragments/VH_only_jain.csv` (137 antibodies, standardized columns).
 **OBSOLETE:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (file removed, retired methodology)
 
 **Historical Context (v1.x):**
@@ -411,16 +412,24 @@ test_datasets/jain/
 - Already validated to match Novo's 66.28% accuracy
 - High-confidence labels (no borderline antibodies)
 
-**Command (CURRENT v2.0):**
+**Command (CURRENT v2.0 - Novo Parity):**
 ```bash
-# RECOMMENDED: Use fragment file (works with default CLI)
+# Create config for canonical file format
+cat > configs/test_jain_parity.yaml <<EOF
+sequence_column: "vh_sequence"
+label_column: "label"
+EOF
+
+# Test with 86-antibody parity subset (REQUIRED for Novo parity)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
+  --config configs/test_jain_parity.yaml
 ```
 
-**Expected:** 66.28% accuracy ([[40, 19], [10, 17]] confusion matrix)
+**Expected:** 66.28% accuracy ([[40, 19], [10, 17]] confusion matrix - EXACT parity)
 
+**Note:** Fragment file `VH_only_jain.csv` has 137 antibodies (not the 86-antibody parity subset).
 **OBSOLETE:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (file removed)
 
 ---

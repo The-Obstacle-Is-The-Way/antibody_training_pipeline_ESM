@@ -80,13 +80,20 @@ jain/
 #   --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
-**Current Test (v2.0+):**
+**Current Test (v2.0+ - Novo Parity):**
 
 ```bash
-# RECOMMENDED: Use fragment file with current CLI
+# Create config for canonical file (vh_sequence column)
+cat > configs/test_jain_parity.yaml <<EOF
+sequence_column: "vh_sequence"
+label_column: "label"
+EOF
+
+# Test with 86-antibody parity subset (REQUIRED for parity)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
+  --config configs/test_jain_parity.yaml
 ```
 
 **Expected Result:**
@@ -96,6 +103,8 @@ Accuracy: 0.6628 (66.28%)
 ```
 
 ✅ Novo Nordisk parity confirmed!
+
+**Note:** Fragment file `VH_only_jain.csv` has 137 antibodies (not the 86-antibody parity subset).
 
 ---
 
