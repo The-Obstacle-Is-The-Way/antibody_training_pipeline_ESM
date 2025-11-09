@@ -1,15 +1,21 @@
 # Jain Dataset: Complete History & Processing Documentation
 
-> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+> **⚠️ HISTORICAL DOCUMENTATION - PARTIALLY OUTDATED**
 >
-> This document may reference `python test.py` commands which no longer exist in v2.0.0+.
-> Use `antibody-test` CLI instead: `antibody-test --model X --data Y`
+> This document contains historical research documenting retired methodologies from v1.x and early v2.0.
+> - **For current implementation:** See `preprocessing/jain/README.md` (SINGLE SOURCE OF TRUTH)
+> - **For user testing:** See `docs/user-guide/testing.md`
+> - **Last Updated:** 2025-11-04 (before label discrepancy fix on 2025-11-06)
+> - **Known issues:**
+>   - References non-existent file `VH_only_jain_test_PARITY_86.csv` (removed)
+>   - References `python test.py` commands (removed, use `uv run antibody-test`)
+>   - Describes retired 94→86 methodology
 >
-> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+> Read `docs/datasets/jain/README.md` for current status and known documentation issues.
 
 **Date:** 2025-11-04
-**Status:** ✅ Complete - All questions answered, methodology fully documented
-**Purpose:** Comprehensive reference for Jain dataset structure, processing, and test file selection
+**Status:** ⚠️ PARTIALLY OUTDATED - Historical reference only
+**Purpose:** Historical reference for Jain dataset research and methodology evolution
 
 ---
 
@@ -27,7 +33,13 @@
 
 ## Executive Summary
 
-**TL;DR:** Jain dataset is 100% figured out. We have 4 different test files (137 → 94 → 91 → 86 antibodies) depending on QC level. The "complex decision matrix" was fully reverse-engineered. Use **VH_only_jain_test_PARITY_86.csv** to match Novo's 66.28% accuracy exactly.
+**TL;DR:** ⚠️ OUTDATED - This describes the OLD v1.x methodology.
+
+**CURRENT (v2.0):** Use `test_datasets/jain/fragments/VH_only_jain.csv` for testing (works with default CLI).
+**OBSOLETE:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (file removed, retired methodology)
+
+**Historical Context (v1.x):**
+We had 4 different test files (137 → 94 → 91 → 86 antibodies) depending on QC level. The "complex decision matrix" was fully reverse-engineered.
 
 **Key Findings:**
 - ✅ Jain processing is **100% complete and correct**
@@ -399,15 +411,17 @@ test_datasets/jain/
 - Already validated to match Novo's 66.28% accuracy
 - High-confidence labels (no borderline antibodies)
 
-**Command:**
+**Command (CURRENT v2.0):**
 ```bash
-# Test production model (v2.0.0)
-antibody-test \
+# RECOMMENDED: Use fragment file (works with default CLI)
+uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 ```
 
-**Expected:** 66.28% accuracy (validated performance)
+**Expected:** 66.28% accuracy ([[40, 19], [10, 17]] confusion matrix)
+
+**OBSOLETE:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (file removed)
 
 ---
 

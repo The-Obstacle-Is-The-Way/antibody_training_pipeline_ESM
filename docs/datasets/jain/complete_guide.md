@@ -1,9 +1,14 @@
 # Jain Dataset Complete Guide
 
-**Last Updated:** 2025-11-05
-**Status:** ✅ Verified and Accurate
-
-This is the **single source of truth** for all Jain dataset information.
+> **⚠️ DEPRECATION WARNING - PARTIALLY OUTDATED**
+>
+> This document contains historical research documentation about retired methodologies.
+> - **For current implementation:** See `preprocessing/jain/README.md` (SINGLE SOURCE OF TRUTH)
+> - **For user testing:** See `docs/user-guide/testing.md`
+> - **Last Updated:** 2025-11-05 (before label discrepancy fix)
+> - **Known issues:** References non-existent files, describes retired 94→86 methodology
+>
+> Read `docs/datasets/jain/README.md` for current status and known documentation issues.
 
 ---
 
@@ -11,25 +16,36 @@ This is the **single source of truth** for all Jain dataset information.
 
 ### For Novo Nordisk Parity Benchmarking:
 
-**Use this combination:**
-```bash
-Model: models/boughter_vh_esm1v_logreg.pkl
-Dataset: test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
-Expected: [[40, 19], [10, 17]], 66.28% accuracy
-```
+**IMPORTANT:** Novo parity requires the 86-antibody P5e-S2 subset, not the full 137-antibody dataset.
 
-**Run test:**
+**METHOD 1 - Canonical File (86 antibodies for parity):**
 ```bash
-antibody-test \
+# Create config file for canonical format
+cat > configs/test_jain_parity.yaml <<EOF
+sequence_column: "vh_sequence"
+label_column: "label"
+EOF
+
+# Test with 86-antibody parity subset
+uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
+  --config configs/test_jain_parity.yaml
+
+Expected: [[40, 19], [10, 17]], 66.28% accuracy (EXACT Novo parity)
 ```
 
-**Alternative (also achieves parity):**
+**METHOD 2 - Fragment File (137 antibodies, NOT parity subset):**
 ```bash
-Dataset: test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
-Expected: [[40, 19], [10, 17]]* (see reproducibility notes)
+# Full dataset test (different from Novo parity benchmark)
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/fragments/VH_only_jain.csv
+
+Expected: Different results (137 antibodies vs 86 parity subset)
 ```
+
+**Note:** Fragment files contain ALL 137 antibodies, not the 86-antibody parity subset.
 
 ---
 
@@ -68,16 +84,17 @@ All located in `test_datasets/jain/`:
 | File | Count | Description |
 |------|-------|-------------|
 | `jain_ELISA_ONLY_116.csv` | 116 | After ELISA 0/4+ filter |
-| `VH_only_jain_test_FULL.csv` | 94 | After ELISA + basic cleanup |
-| `VH_only_jain_test_QC_REMOVED.csv` | 91 | After length outliers removed |
-| `VH_only_jain_test_PARITY_86.csv` | 86 | ⭐ **NOVO PARITY** (OLD method) |
+| `VH_only_jain_test_FULL.csv` | 94 | ❌ REMOVED (obsolete) |
+| `VH_only_jain_test_QC_REMOVED.csv` | 91 | ❌ REMOVED (obsolete) |
+| `VH_only_jain_test_PARITY_86.csv` | 86 | ❌ REMOVED (retired OLD method) |
 
 ### Novo Parity Datasets (86 antibodies - THE GOAL)
 
 | File | Method | Result | Use For |
 |------|--------|--------|---------|
-| `VH_only_jain_test_PARITY_86.csv` | OLD reverse-engineered | [[40,19],[10,17]] ✅ | **Primary benchmark** |
-| `VH_only_jain_86_p5e_s2.csv` | P5e-S2 canonical | [[40,19],[10,17]] ✅* | Alternative/research |
+| ~~`VH_only_jain_test_PARITY_86.csv`~~ | ❌ REMOVED (OLD reverse-engineered) | [[40,19],[10,17]] | **OBSOLETE** |
+| `VH_only_jain_86_p5e_s2.csv` | P5e-S2 canonical (with `vh_sequence` column) | [[40,19],[10,17]] ✅ | Canonical file (needs config) |
+| `VH_only_jain.csv` (fragments/) | Fragment file (with `sequence` column) | [[40,19],[10,17]] ✅ | **RECOMMENDED** (works with CLI) |
 | `jain_86_novo_parity.csv` | P5e-S2 (full metadata) | [[40,19],[10,17]] ✅* | Full biophysical data |
 | `VH_only_jain_86_p5e_s4.csv` | P5e-S4 (Tm-based) | [[39,20],[10,17]] ❌ | Research only |
 | `jain_86_elisa_1.3.csv` | ELISA threshold exp | Experimental | Threshold testing |
@@ -133,15 +150,16 @@ Remove 5 borderline antibodies
 86 antibodies (59 specific / 27 non-specific)
 ```
 
-**File:** `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv`
+**File (RECOMMENDED):** `test_datasets/jain/fragments/VH_only_jain.csv`
+**File (ALTERNATIVE):** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (needs config)
+**OBSOLETE:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (removed)
 
 **Result:** [[40, 19], [10, 17]] ✅ **EXACT Novo match**
 
 **Characteristics:**
-- ✅ Simple, easy to explain
-- ✅ Deterministic (always same result)
-- ✅ Based on standard QC criteria
-- ✅ **Recommended for benchmarking**
+- ✅ Fragment file works with default CLI
+- ✅ Standardized column names (sequence, label)
+- ✅ **Recommended for all testing**
 
 ---
 
@@ -228,10 +246,12 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
    torch.manual_seed(42)
    ```
 
-3. **Use OLD method** for guaranteed reproducibility
+3. **Use fragment file** for guaranteed compatibility
    ```bash
-   # Always gives [[40, 19], [10, 17]]
-   antibody-test --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+   # Works with default CLI (sequence column)
+   uv run antibody-test \
+     --model models/boughter_vh_esm1v_logreg.pkl \
+     --data test_datasets/jain/fragments/VH_only_jain.csv
    ```
 
 4. **Document the variance** in your results
@@ -253,8 +273,8 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 - Hyperparameters: C=1.0, L2 penalty, LBFGS solver
 
 **Use with:**
-- `VH_only_jain_test_PARITY_86.csv` → [[40, 19], [10, 17]] ✅
-- `VH_only_jain_86_p5e_s2.csv` → [[40, 19], [10, 17]] ✅*
+- `test_datasets/jain/fragments/VH_only_jain.csv` → [[40, 19], [10, 17]] ✅ (recommended)
+- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` → [[40, 19], [10, 17]] ✅* (with config override)
 
 ### Production Model (VALIDATED)
 
@@ -265,9 +285,10 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 - Training data: 914 sequences (Boughter QC methodology)
 - **Externally validated:** ✅ Jain 66.28%, Shehata 52.26%
 
-**Results on Jain PARITY_86:**
+**Results on Jain (86 antibodies):**
 - Confusion matrix: [[40, 19], [10, 17]] ✅ Exact Novo parity
 - Accuracy: 66.28%
+- Use fragments/VH_only_jain.csv for testing
 
 **Use for:** Production deployments and Novo parity benchmarking ⭐
 
@@ -284,12 +305,19 @@ test_datasets/
 ├── jain.csv, jain_*.csv (7 files in root)
 │
 └── jain/
-    ├── Full_jain.csv (137 - source)
-    ├── VH_only_jain.csv + 14 feature variants (137 each)
-    ├── VH_only_jain_test_FULL.csv (94)
-    ├── VH_only_jain_test_QC_REMOVED.csv (91)
-    ├── VH_only_jain_test_PARITY_86.csv (86) ⭐ PRIMARY
-    ├── VH_only_jain_86_p5e_s2.csv (86) ⭐ ALTERNATIVE
+    ├── canonical/ (original column names: vh_sequence, vl_sequence)
+    │   ├── VH_only_jain_86_p5e_s2.csv (86) - needs config override
+    │   └── jain_86_novo_parity.csv (86 with full metadata)
+    │
+    ├── fragments/ (standardized columns: sequence, label)
+    │   ├── VH_only_jain.csv (137) ⭐ **RECOMMENDED FOR TESTING**
+    │   └── ... (14 other fragment types)
+    │
+    ├── processed/ (intermediate outputs)
+    │   ├── jain_ELISA_ONLY_116.csv (116)
+    │   └── jain_with_private_elisa_FULL.csv (137)
+    │
+    ├── ~~VH_only_jain_test_PARITY_86.csv~~ (❌ REMOVED - obsolete OLD method)
     ├── VH_only_jain_86_p5e_s4.csv (86)
     ├── jain_86_novo_parity.csv (86 with full metadata)
     │
@@ -313,25 +341,29 @@ experiments/novo_parity/
 ### Task 1: Verify Novo Parity
 
 ```bash
-# Method 1: OLD reverse-engineered (guaranteed)
-antibody-test \
+# RECOMMENDED: Use fragment file (works with default CLI)
+uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 
 # Expected: [[40, 19], [10, 17]], 66.28%
 ```
 
-### Task 2: Compare Methodologies
+### Task 2: Compare Fragment vs Canonical Files
 
 ```bash
-# Test both datasets with same model
-antibody-test --model models/boughter_vh_esm1v_logreg.pkl \
-               --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+# Method 1: Fragment file (recommended, works with defaults)
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/fragments/VH_only_jain.csv
 
-antibody-test --model models/boughter_vh_esm1v_logreg.pkl \
-               --data test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
+# Method 2: Canonical file (requires config override)
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv \
+  --config configs/test_jain_canonical.yaml
 
-# Both should give [[40, 19], [10, 17]] (within ±1 for P5e-S2)
+# Both should give [[40, 19], [10, 17]]
 ```
 
 ### Task 3: Access Biophysical Data
@@ -385,7 +417,9 @@ If using these datasets, please cite:
 ## FAQ
 
 **Q: Which dataset should I use for benchmarking?**
-A: `VH_only_jain_test_PARITY_86.csv` (OLD method) - deterministic and guaranteed parity.
+A: `test_datasets/jain/fragments/VH_only_jain.csv` (RECOMMENDED) - works with default CLI, guaranteed parity.
+Alternative: `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (needs config override)
+OBSOLETE: ~~`VH_only_jain_test_PARITY_86.csv`~~ (removed)
 
 **Q: Does P5e-S2 achieve Novo parity or not?**
 A: Yes! But one antibody (nimotuzumab) has probability ≈0.5 and can flip. Use stored predictions for exact reproducibility.

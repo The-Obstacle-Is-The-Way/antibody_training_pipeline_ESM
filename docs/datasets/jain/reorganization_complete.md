@@ -1,8 +1,17 @@
 # Jain Dataset Reorganization - Complete
 
+> **⚠️ HISTORICAL DOCUMENTATION - PARTIALLY OUTDATED**
+>
+> This document describes the 2025-11-05 reorganization effort.
+> - **Note:** Fragment files were regenerated on 2025-11-06 (AFTER this reorg)
+> - **Known issues:** References non-existent file `VH_only_jain_test_PARITY_86.csv` and old `python3 test.py` commands
+> - **Current testing:** Use `uv run antibody-test` with `test_datasets/jain/fragments/VH_only_jain.csv`
+>
+> See `docs/datasets/jain/README.md` for current status.
+
 **Date:** 2025-11-05
 **Branch:** leroy-jenkins/full-send
-**Status:** ✅ **COMPLETE & VERIFIED**
+**Status:** ⚠️ PARTIALLY OUTDATED - Directory structure accurate, file references outdated
 
 ---
 
@@ -63,20 +72,30 @@ jain/
 
 ## Verification
 
-**Test:** OLD canonical benchmark with new paths
+**Historical Test (2025-11-05):** ⚠️ OUTDATED COMMAND
 
 ```bash
-python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+# OLD v1.x command (removed):
+# python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
+#   --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
-**Result:**
+**Current Test (v2.0+):**
+
+```bash
+# RECOMMENDED: Use fragment file with current CLI
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/fragments/VH_only_jain.csv
+```
+
+**Expected Result:**
 ```
 Confusion Matrix: [[40, 19], [10, 17]]
 Accuracy: 0.6628 (66.28%)
 ```
 
-✅ **PERFECT MATCH** - Novo Nordisk parity confirmed with new paths!
+✅ Novo Nordisk parity confirmed!
 
 ---
 
