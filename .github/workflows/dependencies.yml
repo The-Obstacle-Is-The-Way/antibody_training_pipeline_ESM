@@ -60,9 +60,15 @@ jobs:
       run: |
         if git diff --quiet uv.lock; then
           echo "has_changes=false" >> $GITHUB_OUTPUT
+          echo "diff=" >> $GITHUB_OUTPUT
           echo "No dependency changes detected"
         else
           echo "has_changes=true" >> $GITHUB_OUTPUT
+          {
+            echo 'diff<<EOF'
+            git --no-pager diff uv.lock
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
           echo "Dependency changes detected"
         fi
 
@@ -167,23 +173,27 @@ jobs:
     - name: Set up Python 3.12
       run: uv python install 3.12
 
-    - name: Install dependencies
-      run: uv sync --all-extras --dev
+    - name: Install production dependencies for security audit
+      run: uv sync --frozen --no-dev
 
     - name: Install security tools
-      run: |
-        uv pip install pip-audit safety
+      run: uv pip install pip-audit safety
 
     - name: Run pip-audit (CVE check)
       id: pip_audit
       run: |
         # Run pip-audit and capture output
-        uv run pip-audit --format json --output pip-audit.json || true
-        uv run pip-audit --format markdown > pip-audit.md || true
+        uv run python -m pip_audit --format json --output pip-audit.json || true
+        uv run python -m pip_audit --format columns > pip-audit.md || true
 
-        # Count vulnerabilities by severity
-        HIGH_COUNT=$(jq '[.vulnerabilities[] | select(.fix_versions != null) | select(.aliases[] | contains("CVE"))] | length' pip-audit.json 2>/dev/null || echo "0")
-        echo "high_count=$HIGH_COUNT" >> $GITHUB_OUTPUT
+        # Count HIGH/CRITICAL by severity or CVSS score >= 7.0
+        HIGH_COUNT=$(jq '
+          def sev_ok: (.severity? // .advisory?.severity? // empty) as $s
+            | ($s == "HIGH" or $s == "CRITICAL");
+          def cvss_ok: (.cvss?.score? // .advisory?.cvss?.score? // 0) >= 7.0;
+          [ .vulnerabilities[] | select(sev_ok or cvss_ok) ] | length
+        ' pip-audit.json 2>/dev/null || echo "0")
+        echo "high_count=$HIGH_COUNT" >> "$GITHUB_OUTPUT"
 
         if [ "$HIGH_COUNT" -gt 0 ]; then
           echo "⚠️ Found $HIGH_COUNT HIGH/CRITICAL vulnerabilities"
@@ -192,11 +202,14 @@ jobs:
           echo "✅ No HIGH/CRITICAL vulnerabilities found"
         fi
 
-    - name: Run Safety check
+    - name: Export requirements for Safety scan
+      run: uv export --format=requirements-txt --no-dev --no-editable --output-file security-reqs.txt
+
+    - name: Run Safety scan (informational)
       id: safety
       run: |
-        uv run safety check --json --output safety.json || true
-        uv run safety check > safety.txt || true
+        uv run safety scan --file security-reqs.txt --output json --save-as safety.json || true
+        uv run safety scan --file security-reqs.txt > safety.txt || true
 
         VULN_COUNT=$(jq 'length' safety.json 2>/dev/null || echo "0")
         echo "vuln_count=$VULN_COUNT" >> $GITHUB_OUTPUT
