@@ -7,6 +7,8 @@ Supports Hugging Face datasets, local CSV files, and preprocessing pipelines.
 
 import logging
 import pickle  # nosec B403 - Used only for local trusted data (preprocessed datasets)
+from collections.abc import Sequence
+from pathlib import Path
 from typing import Any, cast
 
 import numpy as np
@@ -18,8 +20,8 @@ type Label = int | float | bool | str
 
 
 def preprocess_raw_data(
-    X: list[str],
-    y: list[Label],
+    X: Sequence[str],
+    y: Sequence[Label],
     embedding_extractor: Any,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
@@ -49,8 +51,8 @@ def preprocess_raw_data(
 
 
 def store_preprocessed_data(
-    X: list[str] | None = None,
-    y: list[Label] | None = None,
+    X: Sequence[str] | None = None,
+    y: Sequence[Label] | None = None,
     X_embedded: np.ndarray | None = None,
     filename: str | None = None,
 ) -> None:
@@ -69,7 +71,7 @@ def store_preprocessed_data(
     if filename is None:
         raise ValueError("filename is required")
 
-    data: dict[str, list[str] | list[Label] | np.ndarray] = {}
+    data: dict[str, Sequence[str] | Sequence[Label] | np.ndarray] = {}
     if X_embedded is not None:
         data["X_embedded"] = X_embedded
     if X is not None:
@@ -131,7 +133,7 @@ def load_hf_dataset(
 
 
 def load_local_data(
-    file_path: str, text_column: str, label_column: str
+    file_path: str | Path, text_column: str, label_column: str
 ) -> tuple[list[str], list[Label]]:
     """
     Load training data from local CSV file
