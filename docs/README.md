@@ -2,6 +2,8 @@
 
 This directory contains technical documentation for the antibody training pipeline.
 
+**🆕 New to the project?** Start with the [System Overview](overview.md) to understand what this pipeline does and how it works.
+
 ---
 
 ## 🎯 **FOR NOVO NORDISK PARITY RESULTS (FINAL)**
