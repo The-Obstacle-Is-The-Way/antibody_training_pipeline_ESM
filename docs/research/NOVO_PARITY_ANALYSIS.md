@@ -176,21 +176,26 @@ Non-specific       0.47      0.63      0.54        27
 ```python
 import pandas as pd
 
-# Load current 91-antibody dataset
-df = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv')
+# NOTE: This process has been completed. Current files use updated naming convention.
+# Historical process (for reference):
+
+# Load current 91-antibody dataset (historical - now cleaned up)
+# df = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv')
 
 # Remove 5 identified antibodies (biology + confidence)
 drop_ids = ['muromonab', 'cetuximab', 'girentuximab', 'tabalumab', 'abituzumab']
-df_parity = df[~df['id'].isin(drop_ids)]
+# df_parity = df[~df['id'].isin(drop_ids)]
 
-# Save parity set
-df_parity.to_csv('test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv', index=False)
+# Current parity set (completed):
+df_parity = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv')
+# Also available with full metadata:
+df_full = pd.read_csv('test_datasets/jain/canonical/jain_86_novo_parity.csv')
 
-# Expected result:
-# - 86 total antibodies
-# - 59 specific (label=0)
-# - 27 non-specific (label=1)
-# - Confusion matrix: [[40,19],[10,17]]
+# Verified result:
+# - 86 total antibodies ✅
+# - 59 specific (label=0) ✅
+# - 27 non-specific (label=1) ✅
+# - Confusion matrix: [[40,19],[10,17]] ✅ EXACT MATCH
 ```
 
 ---
@@ -221,10 +226,16 @@ df_parity.to_csv('test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv',
 
 ## Files Generated
 
-- `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv` - Current 91-antibody set (3 length outliers removed)
-- `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` - ✅ Created and verified (86 antibodies, exact Novo parity)
-- `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv` - Original 94-antibody backup
-- `docs/NOVO_PARITY_ANALYSIS.md` - This document
+**Current Files (2025-11-09):**
+- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` - ✅ VH-only parity set (86 antibodies, exact Novo match)
+- `test_datasets/jain/canonical/jain_86_novo_parity.csv` - ✅ Full metadata version (includes VH, VL, all columns)
+- `test_datasets/jain/fragments/VH_only_jain.csv` - ✅ Fragment file (standardized `sequence` column for testing)
+- `docs/research/NOVO_PARITY_ANALYSIS.md` - This document
+
+**Historical Files (cleaned up 2025-11-05):**
+- `VH_only_jain_test_QC_REMOVED.csv` - (Replaced by VH_only_jain_86_p5e_s2.csv)
+- `VH_only_jain_test_PARITY_86.csv` - (Replaced by VH_only_jain_86_p5e_s2.csv)
+- `VH_only_jain_test_FULL.csv` - (Replaced by jain_86_novo_parity.csv)
 
 ---
 
