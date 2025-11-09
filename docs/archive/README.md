@@ -6,45 +6,62 @@ This directory contains **historical documentation** from the development proces
 
 ---
 
-## Directory Structure
+## Current Archive Files (Root Level)
 
-### `migrations/`
+**Note:** Subdirectories (`migrations/`, `investigations/`, `plans/`, `summaries/`) are staged for organization but files will be moved in Phase 6 of the documentation reorganization plan. Until then, all archive documents live at the root level (`docs/archive/*.md`).
+
+### Migrations (3 docs)
 Codebase reorganizations and structural changes:
 
-| File | Date | Description |
-|------|------|-------------|
+| Current Path | Date | Description |
+|--------------|------|-------------|
 | `CODEBASE_REORGANIZATION_PLAN.md` | 2025-11-05 | v2.0.0 restructuring plan (root files → src/) |
 | `TEST_DATASETS_REORGANIZATION_PLAN.md` | 2025-11 | Test dataset directory reorganization |
 | `REPOSITORY_MODERNIZATION_PLAN.md` | 2025-11-06 | 2025 tooling upgrade plan (uv, ruff, mypy) |
 
-### `investigations/`
+### Investigations (4 docs)
 One-off debugging sessions and issue investigations:
 
-| File | Date | Description |
-|------|------|-------------|
+| Current Path | Date | Description |
+|--------------|------|-------------|
 | `MPS_MEMORY_LEAK_FIX.md` | 2025-11-03 | Apple Silicon MPS memory leak fix (P0 bug) |
 | `P0_SEMAPHORE_LEAK.md` | 2025-11-05 | Semaphore leak investigation |
 | `SCRIPTS_AUDIT.md` | 2025-11-05 | Script audit report |
 | `RESIDUAL_TYPE_ERRORS.md` | 2025-11 | Deferred type errors in preprocessing scripts |
 
-### `plans/`
+### Plans (3 docs)
 Completed planning documents:
 
-| File | Date | Description |
-|------|------|-------------|
+| Current Path | Date | Description |
+|--------------|------|-------------|
 | `CLEANUP_PLAN.md` | 2025-11-05 | Jain dataset cleanup execution plan |
 | `STRICT_QC_CLEANUP_PLAN.md` | 2025-11 | Quality control cleanup plan |
 | `TRAINING_SETUP_STATUS.md` | 2025-11 | Training setup status report |
 
-### `summaries/`
+### Summaries (4 docs)
 Completion reports and status summaries:
 
-| File | Date | Description |
-|------|------|-------------|
+| Current Path | Date | Description |
+|--------------|------|-------------|
 | `CLEANUP_COMPLETE_SUMMARY.md` | 2025-11-05 | Jain cleanup execution summary |
 | `FIXES_APPLIED.md` | 2025-11 | Bug fixes and corrections log |
 | `PHASE1_TEST_RESULTS.md` | 2025-11 | Phase 1 test results |
 | `DOCS_AUDIT_STATUS.md` | 2025-11 | Documentation audit (pre-reorganization) |
+
+---
+
+## Planned Directory Structure (Phase 6)
+
+After Phase 6 of the documentation reorganization, files will be organized into subdirectories:
+
+```
+archive/
+├── README.md                     # This file
+├── migrations/                   # Codebase reorganizations (3 docs)
+├── investigations/               # Debugging sessions (4 docs)
+├── plans/                        # Completed plans (3 docs)
+└── summaries/                    # Completion reports (4 docs)
+```
 
 ---
 

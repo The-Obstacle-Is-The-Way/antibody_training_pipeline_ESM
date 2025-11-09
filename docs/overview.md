@@ -229,7 +229,8 @@ Accuracy: 66.28%
 ## Project Status
 
 **Current Version:** v0.1.0 (Initial public release)
-**Branch:** `leroy-jenkins/full-send` (production-ready)
+**Production Branch:** `leroy-jenkins/full-send` (stable, production-ready)
+**Active Development:** `docs/canonical-structure` (documentation reorganization)
 **CI Status:** ✅ All quality gates passing
 **Test Coverage:** 90.79% (enforced, 70% minimum)
 **Type Safety:** 100% (mypy --strict on core pipeline)
