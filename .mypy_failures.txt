@@ -1,35 +1,3 @@
-tests/unit/cli/test_preprocess.py:34: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:37: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:55: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:55: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:68: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:68: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:83: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:83: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:96: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:96: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:111: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:111: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:131: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:131: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:148: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:148: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:165: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:165: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:182: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:182: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:199: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:199: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:221: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:221: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:241: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:241: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:260: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:260: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:276: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:276: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_preprocess.py:289: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_preprocess.py:289: note: Use "-> None" if function does not return a value
 tests/integration/test_shehata_embedding_compatibility.py:19: error: Function is missing a return type annotation  [no-untyped-def]
 tests/integration/test_shehata_embedding_compatibility.py:19: note: Use "-> None" if function does not return a value
 tests/integration/test_shehata_embedding_compatibility.py:50: error: Function is missing a return type annotation  [no-untyped-def]
@@ -211,52 +179,6 @@ tests/e2e/test_reproduce_novo.py:268: error: Function is missing a type annotati
 tests/e2e/test_reproduce_novo.py:329: error: Function is missing a type annotation  [no-untyped-def]
 tests/e2e/test_reproduce_novo.py:366: error: Function is missing a return type annotation  [no-untyped-def]
 tests/e2e/test_reproduce_novo.py:366: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_test.py:39: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:59: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:59: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_test.py:72: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:94: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:121: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:143: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:172: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:196: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:223: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:238: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:258: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:281: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:299: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:327: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:348: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:377: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:377: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_test.py:393: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:393: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_test.py:407: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:407: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_test.py:424: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:424: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_test.py:437: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:437: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_test.py:461: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:486: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:511: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:539: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_test.py:555: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:37: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:51: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:75: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:94: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:110: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:128: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:140: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:170: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:193: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:209: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:221: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:235: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:264: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:284: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_model_tester.py:304: error: Function is missing a type annotation  [no-untyped-def]
 tests/integration/test_model_tester.py:38: error: Function is missing a type annotation  [no-untyped-def]
 tests/integration/test_model_tester.py:63: error: Function is missing a type annotation  [no-untyped-def]
 tests/integration/test_model_tester.py:79: error: Function is missing a type annotation  [no-untyped-def]
@@ -289,25 +211,3 @@ tests/e2e/test_train_pipeline.py:266: error: Function is missing a type annotati
 tests/e2e/test_train_pipeline.py:276: error: Function is missing a type annotation  [no-untyped-def]
 tests/e2e/test_train_pipeline.py:315: error: Function is missing a type annotation  [no-untyped-def]
 tests/e2e/test_train_pipeline.py:339: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:35: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:45: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:58: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:72: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:89: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:102: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:121: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:144: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:157: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:178: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:191: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:204: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:217: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:239: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:239: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_train.py:252: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:252: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_train.py:275: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:287: error: Function is missing a type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:310: error: Function is missing a return type annotation  [no-untyped-def]
-tests/unit/cli/test_train.py:310: note: Use "-> None" if function does not return a value
-tests/unit/cli/test_train.py:324: error: Function is missing a type annotation  [no-untyped-def]
