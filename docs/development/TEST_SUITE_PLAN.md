@@ -94,11 +94,22 @@ def mock_transformers_model(monkeypatch):
 
 ## Executive Summary
 
-This document outlines a comprehensive test suite for the antibody non-specificity prediction pipeline. The current codebase has **~3,474 lines of production code** with **only 4 integration tests** focused on embedding compatibility. We will implement a professional test suite following test-driven development (TDD) principles retroactively.
+This document outlines the testing philosophy and architecture for the antibody non-specificity prediction pipeline. The test suite follows professional TDD principles with emphasis on behavioral testing over implementation details.
 
-**Current Coverage:** ~5% (integration tests only)
-**Target Coverage:** 80%+ meaningful behavioral coverage
-**No Bogus Tests:** Every test must verify real behavior, not implementation details
+**Current Status (November 2025):**
+
+- **Test Files:** 24 test modules across unit/integration/e2e
+- **Test Functions:** 410 test cases
+- **Coverage:** 90.79% (enforced in CI, 70% minimum threshold)
+- **Test Types:** Unit (fast, isolated), Integration (multi-component), E2E (full pipeline)
+- **CI Integration:** All tests run on push/PR, coverage tracked via Codecov
+
+**Testing Philosophy:**
+
+- ✅ Test behaviors, not implementation (contracts over internals)
+- ✅ Minimize mocking (mock I/O boundaries, not domain logic)
+- ✅ Fast feedback (unit tests < 1s, integration < 10s, E2E on schedule)
+- ✅ Meaningful coverage (no bogus tests for metric gaming)
 
 ---
 
