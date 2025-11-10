@@ -35,18 +35,11 @@ This directory contains technical documentation for the antibody training pipeli
 
 - `docker.md` - Docker development and deployment
 - `testing-strategy.md` - Test architecture, patterns, coverage
-
-**Coming soon:**
 - `ci-cd.md` - CI/CD pipeline, workflows, enforcement
 
 ### 📁 Development Documentation (`development/`)
 
 **Legacy technical docs** (being consolidated into `developer-guide/`):
-
-- **CI/CD & Infrastructure**
-  - `CICD_SPEC.md` - CI/CD pipeline specification
-  - `CICD_SETUP_GUIDE.md` - GitHub Actions setup guide
-  - `BRANCH_PROTECTION_WALKTHROUGH.md` - Branch protection configuration
 
 - **Other**
   - `IMPORT_AND_STRUCTURE_GUIDE.md` - v2.0.0 import structure guide
