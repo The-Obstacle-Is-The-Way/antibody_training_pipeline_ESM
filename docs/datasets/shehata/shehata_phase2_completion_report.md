@@ -5,7 +5,7 @@
 > This document references old root imports (e.g., `from model import ESMEmbeddingExtractor`).
 > In v2.0.0+, use: `from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor`
 >
-> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+> See [v2-structure-migration.md](../../archive/migrations/v2-structure-migration.md) for import structure guide.
 
 **Date:** 2025-10-31 (Original) | 2025-11-02 (P0 Blocker Found & Fixed)
 **Issue:** #3 - Shehata dataset preprocessing (Phase 2)
