@@ -33,8 +33,9 @@ This directory contains technical documentation for the antibody training pipeli
 - `type-checking.md` - Type safety requirements, mypy configuration, best practices
 - `security.md` - Security model, pickle policy, dependency management, scanning
 
-**Coming soon:**
 - `docker.md` - Docker development and deployment
+
+**Coming soon:**
 - `testing-strategy.md` - Test architecture, patterns, coverage
 - `ci-cd.md` - CI/CD pipeline, workflows, enforcement
 
@@ -46,8 +47,6 @@ This directory contains technical documentation for the antibody training pipeli
   - `CICD_SPEC.md` - CI/CD pipeline specification
   - `CICD_SETUP_GUIDE.md` - GitHub Actions setup guide
   - `BRANCH_PROTECTION_WALKTHROUGH.md` - Branch protection configuration
-  - `DOCKER_DEPLOYMENT.md` - Docker deployment guide
-  - `DOCKER_USAGE.md` - Docker development workflow
 
 - **Testing & Coverage**
   - `TEST_SUITE_PLAN.md` - Test suite architecture

@@ -662,12 +662,14 @@ This plan follows modern documentation frameworks:
 - [x] Write `developer-guide/type-checking.md` (merge 2 type checking docs, remove error lists) - commits dec968c, 1840f59
 - [x] Write `developer-guide/security.md` (merge 2 security docs) - commits 7ac8c00, d771c56
 
-**Phase 4C-D (Remaining) - PENDING**
-- [ ] Write `developer-guide/docker.md` (merge 2 Docker docs)
+**Phase 4C (Large Merge) - COMPLETE ✅**
+- [x] Write `developer-guide/docker.md` (merge 2 Docker docs) - commits 3c22d4a, e57f436
+
+**Phase 4D (Remaining) - PENDING**
 - [ ] Write `developer-guide/testing-strategy.md` (merge 3 testing docs into single canonical guide)
 - [ ] Write `developer-guide/ci-cd.md` (merge 3 CI/CD docs, ensure accuracy after Phase 0 fix)
-- [ ] Link from `docs/README.md` to new guides
-- [ ] DO NOT delete old files yet (parallel operation)
+
+**Note:** Following SSOT strategy - deleting old source files immediately after creating consolidated guides (not deferring to Phase 6).
 
 ### Phase 5: Consolidate Research (Additive)
 
