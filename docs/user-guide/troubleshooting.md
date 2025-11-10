@@ -530,7 +530,7 @@ Cross-assay accuracy typically drops 5-10%:
 - **Same-assay (ELISA→ELISA):** 66-71%
 - **Cross-assay (ELISA→PSR):** 60-65%
 
-See [Research Notes - Benchmark Results](../research/BENCHMARK_TEST_RESULTS.md) for expected performance ranges.
+See [Research Notes - Benchmark Results](../research/benchmark-results.md) for expected performance ranges.
 
 ---
 

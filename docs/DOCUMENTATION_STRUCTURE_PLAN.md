@@ -440,9 +440,7 @@ datasets/
    - Cross-dataset validation results
    - Fragment-level performance
    - Comparison to paper
-   - **Sources:**
-     - `docs/research/BENCHMARK_TEST_RESULTS.md`
-     - `docs/research/COMPLETE_VALIDATION_RESULTS.md`
+   - **Source:** `docs/research/benchmark-results.md`
 
 **Files to Archive:**
 - All original files move to `archive/research/` with timestamps
@@ -881,9 +879,9 @@ All open questions from original plan have been resolved:
 | Old File | New Location | Action |
 |----------|--------------|--------|
 | ~~`ASSAY_SPECIFIC_THRESHOLDS.md`~~ | `research/assay-thresholds.md` | ✅ Renamed (lowercase) |
-| `BENCHMARK_TEST_RESULTS.md` | `research/benchmark-results.md` | Merge |
-| `CODEBASE_AUDIT_VS_NOVO.md` | `research/novo-parity.md` | Merge |
-| `COMPLETE_VALIDATION_RESULTS.md` | `research/benchmark-results.md` | Merge |
+| ~~`BENCHMARK_TEST_RESULTS.md`~~ | `research/benchmark-results.md` | ✅ Merged |
+| ~~`CODEBASE_AUDIT_VS_NOVO.md`~~ | `research/novo-parity.md` | ✅ Merged |
+| ~~`COMPLETE_VALIDATION_RESULTS.md`~~ | `research/benchmark-results.md` | ✅ Merged |
 | `CRITICAL_IMPLEMENTATION_ANALYSIS.md` | `research/methodology.md` | Merge |
 | `METHODOLOGY_AND_DIVERGENCES.md` | `research/methodology.md` | Merge |
 | `NOVO_PARITY_ANALYSIS.md` | `research/novo-parity.md` | Merge |
