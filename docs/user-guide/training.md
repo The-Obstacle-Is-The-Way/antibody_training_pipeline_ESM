@@ -163,53 +163,37 @@ uv run antibody-test \
 
 ## Training on Different Fragments
 
-The pipeline supports training on various antibody sequence fragments:
+The pipeline supports training on various antibody sequence fragments by using different fragment CSV files.
 
-### Variable Chains
+**How it works:** Fragment files are pre-generated during preprocessing and stored in `train_datasets/{dataset}/annotated/` or `train_datasets/{dataset}/fragments/`.
 
-```yaml
-data:
-  fragment_column: "VH"    # Variable Heavy chain
-  # OR
-  fragment_column: "VL"    # Variable Light chain
-  # OR
-  fragment_column: "VH_VL" # Combined VH + VL
-```
-
-### CDRs (Complementarity-Determining Regions)
+### Example: Train on Heavy CDRs Only
 
 ```yaml
 data:
-  fragment_column: "H-CDRs"    # All Heavy CDRs (H-CDR1/2/3)
-  # OR
-  fragment_column: "L-CDRs"    # All Light CDRs (L-CDR1/2/3)
-  # OR
-  fragment_column: "All-CDRs"  # All CDRs (H + L)
+  train_file: "train_datasets/boughter/annotated/H-CDRs_boughter.csv"
+  sequence_column: "sequence"
+  label_column: "label"
 ```
 
-### FWRs (Framework Regions)
-
-```yaml
-data:
-  fragment_column: "H-FWRs"    # Heavy Framework Regions
-  # OR
-  fragment_column: "L-FWRs"    # Light Framework Regions
-  # OR
-  fragment_column: "All-FWRs"  # All Framework Regions
+```bash
+uv run antibody-train --config configs/h_cdrs_config.yaml
 ```
 
-### Nanobody-Specific (Harvey Dataset)
+### Available Fragments
 
-```yaml
-data:
-  fragment_column: "VHH_only"    # Full nanobody VHH
-  # OR
-  fragment_column: "VHH-CDR1"    # VHH CDR1
-  # OR
-  fragment_column: "VHH-CDRs"    # All VHH CDRs
-```
+**Boughter (Training Set):**
+- `VH_only_boughter_training.csv` - Variable Heavy chain (default)
+- `H-CDR1_boughter.csv`, `H-CDR2_boughter.csv`, `H-CDR3_boughter.csv` - Individual Heavy CDRs
+- `H-CDRs_boughter.csv` - All Heavy CDRs concatenated
+- `H-FWRs_boughter.csv` - Heavy Framework Regions
+- (See `train_datasets/boughter/annotated/` for all 16 fragments)
 
-**Note:** Fragment availability depends on dataset. See `docs/datasets/{dataset}/` for supported fragments.
+**Fragment Naming Pattern:**
+- Format: `{fragmentName}_{dataset}.csv`
+- Examples: `VH_only_boughter.csv`, `All-CDRs_jain.csv`, `VHH_only_harvey.csv`
+
+**Note:** Fragment availability depends on dataset. See `docs/datasets/{dataset}/` for preprocessing details and `train_datasets/{dataset}/annotated/` for available files.
 
 ---
 
@@ -221,10 +205,11 @@ data:
 
 ```yaml
 classifier:
-  params:
-    C: 0.1   # Strong regularization (underfitting risk)
-    C: 1.0   # Default (balanced)
-    C: 10.0  # Weak regularization (overfitting risk)
+  C: 0.1   # Strong regularization (underfitting risk)
+  # OR
+  C: 1.0   # Default (balanced)
+  # OR
+  C: 10.0  # Weak regularization (overfitting risk)
 ```
 
 **Use cases:**
@@ -238,11 +223,13 @@ classifier:
 
 ```yaml
 classifier:
-  params:
-    penalty: "l2"          # Ridge (default, works well for most cases)
-    penalty: "l1"          # Lasso (feature selection, requires solver="liblinear")
-    penalty: "elasticnet"  # Elastic Net (L1 + L2, requires solver="saga")
-    penalty: "none"        # No regularization (overfitting risk)
+  penalty: "l2"          # Ridge (default, works well for most cases)
+  # OR
+  penalty: "l1"          # Lasso (feature selection, requires solver="liblinear")
+  # OR
+  penalty: "elasticnet"  # Elastic Net (L1 + L2, requires solver="saga")
+  # OR
+  penalty: "none"        # No regularization (overfitting risk)
 ```
 
 **Note:** Penalty type must match solver:
@@ -400,14 +387,15 @@ models/{experiment_name}_{fragment}.pkl
 ```yaml
 data:
   train_file: "/absolute/path/to/training_data.csv"
-  test_file: "/absolute/path/to/test_data.csv"
+  sequence_column: "sequence"  # Column name for sequences
+  label_column: "label"        # Column name for binary labels
 ```
 
 **CSV Format Requirements:**
 
 - Must have `sequence` column (antibody amino acid sequence)
 - Must have `label` column (0=specific, 1=non-specific)
-- Fragment column must match `fragment_column` setting
+- Column names can be customized via `sequence_column` and `label_column` config keys
 
 ---
 
