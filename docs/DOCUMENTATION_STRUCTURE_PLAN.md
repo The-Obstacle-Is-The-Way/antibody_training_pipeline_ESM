@@ -645,11 +645,13 @@ This plan follows modern documentation frameworks:
 - ✅ Config structure matches configs/config.yaml
 - ✅ CLI behavior matches src/antibody_training_esm/cli/train.py
 
-### Phase 4: Create Developer Guide (Additive - Consolidate Without Deleting)
+### Phase 4: Create Developer Guide (Additive - Consolidate Without Deleting) - COMPLETE ✅
 
 **Priority:** P2 - Contributor-facing docs
 
 **Strategy:** Write consolidated guides WITHOUT archiving sources (validate new content first)
+
+**Status:** All 8 developer guides complete (architecture, development-workflow, preprocessing-internals, type-checking, security, docker, testing-strategy, ci-cd)
 
 **Estimated Time:** 4-5 hours
 
@@ -665,11 +667,11 @@ This plan follows modern documentation frameworks:
 **Phase 4C (Large Merge) - COMPLETE ✅**
 - [x] Write `developer-guide/docker.md` (merge 2 Docker docs) - commits 3c22d4a, e57f436
 
-**Phase 4D-1 - COMPLETE**
-- [x] Write `developer-guide/testing-strategy.md` (merge 3 testing docs into single canonical guide) - commits bc3d571, 3f22833, 6c835b3
+**Phase 4D-1 - COMPLETE ✅**
+- [x] Write `developer-guide/testing-strategy.md` (merge 3 testing docs into single canonical guide) - commits bc3d571, 3f22833, 6c835b3, 6e7f69f
 
-**Phase 4D-2 - PENDING**
-- [ ] Write `developer-guide/ci-cd.md` (merge 3 CI/CD docs, ensure accuracy after Phase 0 fix)
+**Phase 4D-2 - COMPLETE ✅**
+- [x] Write `developer-guide/ci-cd.md` (merge 3 CI/CD docs, 749 lines) - commits f9937bd, b160eb1
 
 **Note:** Following SSOT strategy - deleting old source files immediately after creating consolidated guides (not deferring to Phase 6).
 
