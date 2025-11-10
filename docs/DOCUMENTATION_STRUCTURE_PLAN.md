@@ -628,8 +628,22 @@ This plan follows modern documentation frameworks:
 - ✅ `testing.md` (18.9KB) - testing commands, dataset-specific examples, interpretation
 - ✅ `preprocessing.md` (13.7KB) - all 4 datasets, fragment extraction, validation
 - ✅ `troubleshooting.md` (15.8KB) - common errors, MPS leak fix, cache issues
-- ✅ Fixed inaccuracies in 3 subsequent commits (f543490, 20f9618, 750823c)
-- ✅ All guides validated against actual CLI signatures, configs, and file paths
+
+**Accuracy Fixes** (Code of Conduct #1: "When we are wrong, we promptly admit it"):
+- ✅ **Initial fixes** (f543490, 20f9618, 750823c): Path corrections
+- ✅ **User guide fixes** (630fead): Fixed filenames, config keys, links (INCOMPLETE)
+- ✅ **Research doc fixes** (861a48c, e03b068): Fixed CSV references
+- ✅ **Complete training.md fix** (6e6e18f): Removed ALL unsupported config keys
+  - Removed fragment_column (4 sections: lines 164-196, 385-398)
+  - Fixed classifier.params nested structure (2 sections: lines 202-218, 222-239)
+  - Removed test_file reference
+  - Validated against configs/config.yaml and src/antibody_training_esm/data/loaders.py
+
+**Validation:**
+- ✅ All file paths verified with ls commands
+- ✅ All config keys verified with grep src/ configs/
+- ✅ Config structure matches configs/config.yaml
+- ✅ CLI behavior matches src/antibody_training_esm/cli/train.py
 
 ### Phase 4: Create Developer Guide (Additive - Consolidate Without Deleting)
 
