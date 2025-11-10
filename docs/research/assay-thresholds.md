@@ -124,7 +124,7 @@ with open("models/boughter_vh_esm1v_logreg.pkl", 'rb') as f:
     model = pickle.load(f)
 
 # Load Jain test data
-df = pd.read_csv("test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv")
+df = pd.read_csv("test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv")
 sequences = df['sequence'].tolist()
 
 # Extract embeddings

@@ -197,7 +197,7 @@ Non-specific       0.47      0.63      0.54        27
 - `VH_only_jain_test_QC_REMOVED.csv` - 91 antibodies (after VH length QC)
 - `VH_only_jain_test_PARITY_86.csv` - 86 antibodies (Novo parity set) ✅
 - `docs/JAIN_QC_REMOVALS_COMPLETE.md` - This document
-- `docs/NOVO_PARITY_ANALYSIS.md` - Detailed Novo parity analysis
+- `docs/research/novo-parity.md` - Detailed Novo parity analysis
 
 ---
 

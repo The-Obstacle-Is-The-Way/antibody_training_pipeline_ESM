@@ -1,11 +1,62 @@
+# Preprocessing Internals
+
+**Target Audience:** Developers implementing new dataset preprocessing pipelines
+
+**Purpose:** Document general preprocessing techniques, validation strategies, and Excel-to-CSV conversion methods used across datasets (Jain, Shehata).
+
+---
+
+## When to Use This Guide
+
+You need this guide if you're:
+
+- ✅ **Adding a new dataset** to the pipeline
+- ✅ **Implementing preprocessing scripts** for Excel/CSV data sources
+- ✅ **Validating dataset conversions** with multi-method cross-checking
+- ✅ **Deriving binary labels** from continuous scores (thresholds)
+- ✅ **Debugging preprocessing issues** (missing data, sequence validation)
+
+You DON'T need this guide if you're:
+
+- ❌ **Using existing preprocessed datasets** (see [User Guide - Preprocessing](../user-guide/preprocessing.md))
+- ❌ **Training/testing models** (see [User Guide - Training](../user-guide/training.md))
+
+---
+
+## Related Documentation
+
+- **User-facing:** [User Guide - Preprocessing](../user-guide/preprocessing.md) - How to run existing preprocessing scripts
+- **Dataset-specific:** `docs/datasets/{boughter,jain,harvey,shehata}/` - Dataset-specific preprocessing details
+- **Architecture:** [Developer Guide - Architecture](architecture.md) - System overview
+- **Testing:** [Developer Guide - Testing Strategy](testing-strategy.md) - How to test preprocessing code
+
+---
+
+## Quick Reference: Preprocessing Patterns
+
+All datasets follow similar patterns:
+
+1. **Step 1: Format Conversion** - Raw data (Excel, CSV, FASTA) → canonical CSV
+2. **Step 2: Fragment Extraction** - Canonical CSV → fragment CSVs (VH, CDRs, FWRs)
+3. **Step 3: Validation** - Multi-method verification, checksum generation
+4. **Step 4: Documentation** - Update dataset README with provenance
+
+**Key Files:**
+- `preprocessing/{dataset}/step1_*.py` - Format conversion
+- `preprocessing/{dataset}/step2_*.py` - Fragment extraction
+- `scripts/validation/validate_{dataset}_conversion.py` - Validation scripts
+- `docs/datasets/{dataset}/README.md` - Dataset documentation
+
+---
+
 # Excel to CSV Conversion Methods & Validation
 
-> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+> **⚠️ LEGACY DOCUMENTATION NOTE**
 >
 > This document may reference old root imports (e.g., `from data import load_data`).
 > In v2.0.0+, use: `from antibody_training_esm.data.loaders import load_data`
 >
-> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for current usage.
+> See [docs/archive/migrations/v2-structure-migration.md](../archive/migrations/) for migration details.
 
 **Purpose:** Document all available methods for converting supplementary Excel files (Shehata & Jain datasets) to CSV with validation.
 
@@ -24,7 +75,7 @@
 
 ### Method 1b: Python Script – Jain (RECOMMENDED) ⭐
 - **Tool:** `preprocessing/jain/step1_convert_excel_to_csv.py`
-- **Pros:** Deterministic flag derivation (Table 1 thresholds), full provenance columns, label handling consistent with Sakhnini et al.
+- **Pros:** Deterministic flag derivation (Table 1 thresholds), full provenance columns, label handling consistent with Sakhnini et al.
 - **Cons:** Requires Python environment
 - **Validation:** `scripts/validation/validate_jain_conversion.py` (rebuilds pipeline & checks SHA256)
 
@@ -109,7 +160,7 @@ python3 preprocessing/jain/step1_convert_excel_to_csv.py --verbose
 **What it does:**
 1. Loads SD01/SD02/SD03 spreadsheets (metadata, VH/VL sequences, biophysical assays)
 2. Sanitizes amino acid sequences (removes gaps/whitespace/non-standard residues)
-3. Applies Jain Table 1 thresholds (four developability flag clusters)
+3. Applies Jain Table 1 thresholds (four developability flag clusters)
 4. Emits `test_datasets/jain.csv` with explicit `flags_total`, `flag_category`, nullable `label`, and supporting assay columns
 
 ### Validation (Jain)
@@ -120,9 +171,9 @@ python3 scripts/validation/validate_jain_conversion.py
 
 **Checks performed:**
 - Re-runs the conversion pipeline in-memory and asserts equality with the CSV (`assert_frame_equal`)
-- Reports flag/label distributions (specific 67 / mild 67 / non_specific 3)
+- Reports flag/label distributions (specific 67 / mild 67 / non_specific 3)
 - Confirms VH/VL sequences contain only valid residues (`ACDEFGHIKLMNPQRSTVWYX`)
-- Prints Table 1 threshold clauses and SHA256 checksum (`b1a6d7399260aef1a894743877a726caa248d12d948b8216822cb2a5b9bc96a3`)
+- Prints Table 1 threshold clauses and SHA256 checksum (`b1a6d7399260aef1a894743877a726caa248d12d948b8216822cb2a5b9bc96a3`)
 
 ### Output Example (Jain)
 
@@ -493,3 +544,8 @@ After conversion, document:
 - ✓ Generates comprehensive logs
 
 **Ready to run:** `python3 preprocessing/shehata/step1_convert_excel_to_csv.py`
+
+---
+
+**Last Updated:** 2025-11-09
+**Branch:** `docs/canonical-structure`

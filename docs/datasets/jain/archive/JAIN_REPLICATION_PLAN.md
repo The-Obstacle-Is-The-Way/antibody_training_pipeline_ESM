@@ -225,7 +225,7 @@ Test model on corrected dataset:
 
 Update/delete files:
 - ✅ Keep: `docs/JAIN_QC_REMOVALS_COMPLETE.md`
-- ✅ Keep: `docs/NOVO_PARITY_ANALYSIS.md`
+- ✅ Keep: `docs/research/novo-parity.md`
 - ✅ Keep: `docs/jain/jain_conversion_verification_report.md`
 - ✅ Keep: `docs/jain/jain_data_sources.md`
 - ❌ Delete: All internal debug/investigation docs (see list in background bash)

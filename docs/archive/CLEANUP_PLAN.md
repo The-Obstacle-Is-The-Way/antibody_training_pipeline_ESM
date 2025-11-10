@@ -15,8 +15,8 @@
 3. **MPS_MEMORY_LEAK_FIX.md** - Technical fix
 4. **TRAINING_RESULTS.md** - Model training results
 5. **TRAINING_SETUP_STATUS.md** - Training setup
-6. **METHODOLOGY_AND_DIVERGENCES.md** - Overall methodology comparison
-7. **ASSAY_SPECIFIC_THRESHOLDS.md** - ELISA vs PSR thresholds
+6. **docs/research/methodology.md** - Overall methodology comparison (now canonical)
+7. **docs/research/assay-thresholds.md** - ELISA vs PSR thresholds (now canonical)
 8. **DOCS_AUDIT_STATUS.md** - This audit (NEW)
 9. **CLEANUP_PLAN.md** - This plan (NEW)
 
@@ -26,11 +26,11 @@
 
 #### archive/failed_attempts/ (Incorrect Reverse Engineering)
 
-**NOVO_PARITY_ANALYSIS.md**
-- ❌ WRONG: Claims "66.28% accuracy, cell-for-cell confusion matrix match"
-- Reality: Was 67.03% on 91 antibodies, removed 5 by model confidence
+**[ARCHIVED: old NOVO_PARITY_ANALYSIS.md]**
+- ❌ WRONG: Claimed "66.28% accuracy" but was actually 67.03% on 91 antibodies
+- Reality: Removed 5 antibodies by model confidence (incorrect approach)
 - Date: 2025-11-02
-- Superseded by: P5e-S2 exact match
+- Superseded by: docs/research/novo-parity.md (P5e-S2 exact match, 66.28%)
 
 **NOVO_ALIGNMENT_COMPLETE.md**
 - ⚠️ OUTDATED: Pre-reverse-engineering assumptions
@@ -121,7 +121,8 @@ Create `docs/archive/README.md` explaining:
 ### Step 3: Move Files (Preserve Git History)
 ```bash
 # Failed attempts
-git mv docs/NOVO_PARITY_ANALYSIS.md docs/archive/failed_attempts/
+# Already consolidated into docs/research/novo-parity.md
+# git mv docs/NOVO_PARITY_ANALYSIS.md docs/archive/failed_attempts/
 git mv docs/NOVO_ALIGNMENT_COMPLETE.md docs/archive/failed_attempts/
 git mv docs/NOVO_BENCHMARK_CONFUSION_MATRICES.md docs/archive/failed_attempts/
 git mv docs/JAIN_FLAG_DISCREPANCY_INVESTIGATION.md docs/archive/failed_attempts/
@@ -167,12 +168,12 @@ docs/
 ├── MPS_MEMORY_LEAK_FIX.md ✅
 ├── TRAINING_RESULTS.md ✅
 ├── TRAINING_SETUP_STATUS.md ✅
-├── METHODOLOGY_AND_DIVERGENCES.md ✅
-├── ASSAY_SPECIFIC_THRESHOLDS.md ✅
+├── docs/research/methodology.md ✅ (consolidated)
+├── docs/research/assay-thresholds.md ✅ (consolidated)
 ├── archive/
 │   ├── README.md (explains archive)
 │   ├── failed_attempts/
-│   │   ├── NOVO_PARITY_ANALYSIS.md
+│   │   ├── [ARCHIVED: old NOVO_PARITY_ANALYSIS.md - 91-ab approach]
 │   │   ├── NOVO_ALIGNMENT_COMPLETE.md
 │   │   ├── NOVO_BENCHMARK_CONFUSION_MATRICES.md
 │   │   └── JAIN_FLAG_DISCREPANCY_INVESTIGATION.md

@@ -42,7 +42,8 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 ---
 
 # Features
-### Implemented
+
+## Implemented
 - **Data Processing**: Scripts to load, clean, and process antibody datasets, including the Boughter et al. (2020) dataset used for training.
 
 - **Sequence Annotation**: Annotation of Complementarity-Determining Regions (CDRs) and extraction of the VH domain from full antibody sequences.
@@ -53,7 +54,7 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 
 - **Model Evaluation**: Standard evaluation metrics, including k-fold cross-validation, accuracy, sensitivity, and specificity, are implemented to assess model performance.
 
-### To-Be Implemented
+## To-Be Implemented
 - **Prediction Script**: A user-friendly script to quickly get non-specificity predictions for new antibody sequences.
 
 - **Biophysical Descriptor Module**: A feature to calculate and incorporate key biophysical parameters, such as the isoelectric point (pI), which was identified as a major driver of non-specificity.
@@ -179,6 +180,43 @@ This codebase uses Python's `pickle` module for:
 **Threat Model**: All pickle files are generated and consumed locally by trusted code. There is no internet-exposed API and no loading of untrusted pickle files.
 
 **For Production Deployment**: If deploying this pipeline to a production environment with external access, consider migrating to JSON + NPZ format for artifact serialization. See `SECURITY_REMEDIATION_PLAN.md` for details.
+
+---
+
+# Documentation
+
+## 📚 Project Documentation
+
+**🆕 New to the project?** Start with the [System Overview](docs/overview.md) to understand what this pipeline does and how it works.
+
+## For Users
+
+- **Installation & Setup**: See [Installation](#installation--setup) above
+- **Training Models**: [docs/user-guide/training.md](docs/user-guide/training.md)
+- **Testing Models**: [docs/user-guide/testing.md](docs/user-guide/testing.md)
+- **All User Guides**: `docs/user-guide/` (installation, getting-started, preprocessing, troubleshooting)
+
+## For Developers
+
+- **Architecture**: [docs/developer-guide/architecture.md](docs/developer-guide/architecture.md)
+- **Development Workflow**: [docs/developer-guide/development-workflow.md](docs/developer-guide/development-workflow.md)
+- **Testing Strategy**: [docs/developer-guide/testing-strategy.md](docs/developer-guide/testing-strategy.md)
+- **CI/CD**: [docs/developer-guide/ci-cd.md](docs/developer-guide/ci-cd.md)
+- **Type Checking**: [docs/developer-guide/type-checking.md](docs/developer-guide/type-checking.md)
+- **Security**: [docs/developer-guide/security.md](docs/developer-guide/security.md)
+- **Preprocessing Internals**: [docs/developer-guide/preprocessing-internals.md](docs/developer-guide/preprocessing-internals.md)
+- **Docker**: [docs/developer-guide/docker.md](docs/developer-guide/docker.md)
+
+## For Researchers
+
+- **Novo Parity Analysis**: [docs/research/novo-parity.md](docs/research/novo-parity.md)
+- **Methodology & Divergences**: [docs/research/methodology.md](docs/research/methodology.md)
+- **Assay Thresholds**: [docs/research/assay-thresholds.md](docs/research/assay-thresholds.md)
+- **Benchmark Results**: [docs/research/benchmark-results.md](docs/research/benchmark-results.md)
+
+## Dataset Documentation
+
+See [Datasets](#datasets) section below for dataset-specific preprocessing and validation docs.
 
 ---
 

@@ -2,6 +2,8 @@
 
 This directory contains technical documentation for the antibody training pipeline.
 
+**🆕 New to the project?** Start with the [System Overview](overview.md) to understand what this pipeline does and how it works.
+
 ---
 
 ## 🎯 **FOR NOVO NORDISK PARITY RESULTS (FINAL)**
@@ -21,46 +23,37 @@ This directory contains technical documentation for the antibody training pipeli
 
 ## Current Documentation Structure
 
-### 📁 Development Documentation (`development/`)
+### 📁 Developer Guide (`developer-guide/`)
 
-Technical guides for contributors and developers:
+**NEW:** Canonical developer documentation (consolidated from `development/`):
 
-- **CI/CD & Infrastructure**
-  - `CICD_SPEC.md` - CI/CD pipeline specification
-  - `CICD_SETUP_GUIDE.md` - GitHub Actions setup guide
-  - `BRANCH_PROTECTION_WALKTHROUGH.md` - Branch protection configuration
-  - `DOCKER_DEPLOYMENT.md` - Docker deployment guide
-  - `DOCKER_USAGE.md` - Docker development workflow
+- `architecture.md` - System architecture, core components, design patterns
+- `development-workflow.md` - Git workflow, commands, quality gates, common tasks
+- `preprocessing-internals.md` - Dataset preprocessing patterns and techniques
+- `type-checking.md` - Type safety requirements, mypy configuration, best practices
+- `security.md` - Security model, pickle policy, dependency management, scanning
 
-- **Code Quality & Security**
-  - `TYPE_CHECKING_STRATEGY.md` - mypy type checking strategy
-  - `TYPE_HINTING_REMEDIATION_PLAN.md` - Type hint improvements
-  - `SECURITY_REMEDIATION_PLAN.md` - Security best practices
-  - `CODEQL_FINDINGS.md` - CodeQL security analysis
+- `docker.md` - Docker development and deployment
+- `testing-strategy.md` - Test architecture, patterns, coverage
+- `ci-cd.md` - CI/CD pipeline, workflows, enforcement
 
-- **Testing & Coverage**
-  - `TEST_SUITE_PLAN.md` - Test suite architecture
-  - `TEST_SUITE_REVIEW_CHECKLIST.md` - Testing guidelines
-  - `TEST_COVERAGE_GAPS.md` - Coverage improvement tracking
+### 📁 ~~Development Documentation (`development/`)~~
 
-- **Other**
-  - `IMPORT_AND_STRUCTURE_GUIDE.md` - v2.0.0 import structure guide
-  - `P0_P1_P2_P3_BLOCKERS.md` - Priority issue tracking
-  - `excel_to_csv_conversion_methods.md` - Data preprocessing methods
+**ARCHIVED** - All files moved to `archive/` (Phase 6 complete):
+
+- **Migrations**
+  - ~~`IMPORT_AND_STRUCTURE_GUIDE.md`~~ → `archive/migrations/v2-structure-migration.md`
+- **Investigations**
+  - ~~`P0_P1_P2_P3_BLOCKERS.md`~~ → `archive/investigations/p0-blockers.md`
 
 ### 📁 Research Documentation (`research/`)
 
 Scientific methodology and validation:
 
-- `METHODOLOGY_AND_DIVERGENCES.md` - Pipeline methodology vs paper
-- `NOVO_PARITY_ANALYSIS.md` - Novo Nordisk replication analysis
-- `NOVO_REPLICATION_PLAN.md` - Replication strategy
-- `NOVO_TRAINING_METHODOLOGY.md` - Training methodology details
-- `CODEBASE_AUDIT_VS_NOVO.md` - Implementation audit
-- `CRITICAL_IMPLEMENTATION_ANALYSIS.md` - Key implementation details
-- `ASSAY_SPECIFIC_THRESHOLDS.md` - ELISA vs PSR thresholds
-- `BENCHMARK_TEST_RESULTS.md` - Cross-dataset validation results
-- `COMPLETE_VALIDATION_RESULTS.md` - Comprehensive validation report
+- `novo-parity.md` - Novo Nordisk parity analysis (replication, methodology, QC)
+- `methodology.md` - Implementation details, dataset analysis, divergences
+- `assay-thresholds.md` - ELISA vs PSR thresholds
+- `benchmark-results.md` - Cross-dataset validation results (Boughter, Jain, Harvey, Shehata)
 
 ### 📁 Archive (`archive/`)
 

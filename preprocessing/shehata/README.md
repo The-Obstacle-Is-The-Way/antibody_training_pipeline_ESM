@@ -105,7 +105,7 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 - ELISA (Jain): 0.5 (default)
 - PSR (Shehata): 0.549
 
-See `docs/ASSAY_SPECIFIC_THRESHOLDS.md` for details.
+See `docs/research/assay-thresholds.md` for details.
 
 ---
 
