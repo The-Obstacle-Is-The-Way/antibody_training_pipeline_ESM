@@ -176,7 +176,7 @@ The classifier automatically applies the correct threshold based on assay type.
 ### 🔬 For Researchers (Validating Methodology)
 
 - **Novo Parity Analysis:** [research/novo-parity.md](research/novo-parity.md)
-- **Methodology & Divergences:** [research/METHODOLOGY_AND_DIVERGENCES.md](research/METHODOLOGY_AND_DIVERGENCES.md)
+- **Methodology & Divergences:** [research/methodology.md](research/methodology.md)
 - **Assay Thresholds:** [research/ASSAY_SPECIFIC_THRESHOLDS.md](research/ASSAY_SPECIFIC_THRESHOLDS.md)
 - **Benchmark Results:** [research/BENCHMARK_TEST_RESULTS.md](research/BENCHMARK_TEST_RESULTS.md)
 
@@ -239,7 +239,7 @@ F1-Score: 0.540
 - **Assay dependency:** Models trained on ELISA may not generalize to PSR
 - **No mechanistic insight:** Black-box embeddings, opaque feature extraction
 
-See [research/METHODOLOGY_AND_DIVERGENCES.md](research/METHODOLOGY_AND_DIVERGENCES.md) for detailed analysis.
+See [research/methodology.md](research/methodology.md) for detailed analysis.
 
 ---
 

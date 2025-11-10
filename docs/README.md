@@ -50,9 +50,7 @@ This directory contains technical documentation for the antibody training pipeli
 Scientific methodology and validation:
 
 - `novo-parity.md` - Novo Nordisk parity analysis (replication, methodology, QC)
-- `METHODOLOGY_AND_DIVERGENCES.md` - Pipeline methodology vs paper
-- `CODEBASE_AUDIT_VS_NOVO.md` - Implementation audit
-- `CRITICAL_IMPLEMENTATION_ANALYSIS.md` - Key implementation details
+- `methodology.md` - Implementation details, dataset analysis, divergences
 - `ASSAY_SPECIFIC_THRESHOLDS.md` - ELISA vs PSR thresholds
 - `BENCHMARK_TEST_RESULTS.md` - Cross-dataset validation results
 - `COMPLETE_VALIDATION_RESULTS.md` - Comprehensive validation report

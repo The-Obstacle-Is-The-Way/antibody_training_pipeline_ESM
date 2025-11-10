@@ -115,7 +115,7 @@ This matches Novo's description: "mean (average of all token vectors) was used"
 | **Shehata** (398 B-cell) | **52.5%** | 58.8% | -6.3pp | Explainable (class imbalance) |
 | **Jain** (86 clinical) | **66.28%** | 68.6% | -2.3pp | Different methodology (documented) |
 
-**Source**: `docs/other/METHODOLOGY_AND_DIVERGENCES.md`
+**Source**: `docs/research/methodology.md`
 
 ### Statistical Analysis: Boughter 10-Fold CV Gap
 

@@ -250,7 +250,7 @@ For a deeper understanding of how the pipeline works:
 
 - **System Architecture:** See [System Overview](../overview.md)
 - **Core Components:** See [CLAUDE.md](../../CLAUDE.md) (Architecture section)
-- **Research Methodology:** See [Research - Methodology](../research/METHODOLOGY_AND_DIVERGENCES.md)
+- **Research Methodology:** See [Research - Methodology](../research/methodology.md)
 
 ---
 
