@@ -3,7 +3,7 @@
 **Created:** 2025-11-09
 **Last Updated:** 2025-11-10
 **Branch:** docs/canonical-structure
-**Status:** 🚧 In Progress - Phases 0-5 Complete (6/8 phases done)
+**Status:** 🚧 In Progress - Phases 0-6 Complete (7/8 phases done)
 
 ---
 
@@ -15,7 +15,7 @@ This document proposes a canonical documentation structure for the antibody trai
 - 📁 `docs/developer-guide/` - **8 files (NEW)** - architecture, workflow, preprocessing, type-checking, security, docker, testing, ci-cd
 - 📁 `docs/user-guide/` - **6 files (NEW)** - installation, getting-started, training, testing, preprocessing, troubleshooting
 - 📁 `docs/archive/` - 14 files (~4,300 lines) - historical cleanup/migration plans
-- 📁 `docs/development/` - **2 files** (reduced from 15) - IMPORT_AND_STRUCTURE_GUIDE.md, P0_P1_P2_P3_BLOCKERS.md
+- ~~📁 `docs/development/`~~ - **ARCHIVED** (2 files moved to archive/migrations/ and archive/investigations/)
 - 📁 `docs/research/` - **4 files** (~1,200 lines) - novo-parity, methodology, assay-thresholds, benchmark-results
 - 📁 `docs/datasets/` - 44 files (4 subdirs) - dataset-specific preprocessing docs
 - 📄 `docs/overview.md` - **NEW** - Cross-cutting system overview
@@ -700,12 +700,12 @@ This plan follows modern documentation frameworks:
 
 **Rationale:** Only archive after new guides are live and linked (reduces risk of broken references)
 
-- [ ] Move 14 archive docs to appropriate subdirectories with date prefixes (see Appendix)
-- [ ] Move original development docs to `archive/` (sources for consolidated guides)
-- [ ] Move original research docs to `archive/` (sources for consolidated guides)
-- [ ] Update `archive/README.md` index with all archived files
-- [ ] Verify no broken inbound links to archived files
-- [ ] Commit all moves in single atomic commit
+- [ ] Move 14 archive docs to appropriate subdirectories with date prefixes (DEFERRED - low priority)
+- [x] Move original development docs to `archive/` (2 files moved to migrations/ and investigations/)
+- [x] Research docs already deleted via SSOT strategy (Phases 3-5)
+- [x] Update `archive/README.md` index with all archived files
+- [x] Verify no broken inbound links to archived files (agent sweep confirmed clean)
+- [x] Commit in single atomic commit
 
 ---
 

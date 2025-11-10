@@ -8,9 +8,9 @@ This directory contains **historical documentation** from the development proces
 
 ## Current Archive Files (Root Level)
 
-**Note:** Subdirectories (`migrations/`, `investigations/`, `plans/`, `summaries/`) are staged for organization but files will be moved in Phase 6 of the documentation reorganization plan. Until then, all archive documents live at the root level (`docs/archive/*.md`).
+**Note:** Subdirectories (`migrations/`, `investigations/`, `plans/`, `summaries/`) are being populated. Most archive documents still live at root level (`docs/archive/*.md`) but are gradually being organized into subdirectories.
 
-### Migrations (3 docs)
+### Migrations (4 docs)
 Codebase reorganizations and structural changes:
 
 | Current Path | Date | Description |
@@ -18,8 +18,9 @@ Codebase reorganizations and structural changes:
 | `CODEBASE_REORGANIZATION_PLAN.md` | 2025-11-05 | v2.0.0 restructuring plan (root files → src/) |
 | `TEST_DATASETS_REORGANIZATION_PLAN.md` | 2025-11 | Test dataset directory reorganization |
 | `REPOSITORY_MODERNIZATION_PLAN.md` | 2025-11-06 | 2025 tooling upgrade plan (uv, ruff, mypy) |
+| `migrations/v2-structure-migration.md` | 2025-11 | v2.0.0 import structure guide (moved from docs/development/) |
 
-### Investigations (4 docs)
+### Investigations (5 docs)
 One-off debugging sessions and issue investigations:
 
 | Current Path | Date | Description |
@@ -28,6 +29,7 @@ One-off debugging sessions and issue investigations:
 | `P0_SEMAPHORE_LEAK.md` | 2025-11-05 | Semaphore leak investigation |
 | `SCRIPTS_AUDIT.md` | 2025-11-05 | Script audit report |
 | `RESIDUAL_TYPE_ERRORS.md` | 2025-11 | Deferred type errors in preprocessing scripts |
+| `investigations/p0-blockers.md` | 2025-11 | P0/P1/P2/P3 blocker tracking (moved from docs/development/) |
 
 ### Plans (3 docs)
 Completed planning documents:
@@ -57,8 +59,10 @@ After Phase 6 of the documentation reorganization, files will be organized into 
 ```
 archive/
 ├── README.md                     # This file
-├── migrations/                   # Codebase reorganizations (3 docs)
-├── investigations/               # Debugging sessions (4 docs)
+├── migrations/                   # Codebase reorganizations (4 docs)
+│   └── v2-structure-migration.md
+├── investigations/               # Debugging sessions (5 docs)
+│   └── p0-blockers.md
 ├── plans/                        # Completed plans (3 docs)
 └── summaries/                    # Completion reports (4 docs)
 ```
@@ -73,7 +77,7 @@ For current, evergreen documentation, see:
 - **Developer Guides:** `docs/developer-guide/` (pending Phase 4)
 - **Research Notes:** `docs/research/`
 - **Dataset Documentation:** `docs/datasets/`
-- **Development Documentation:** `docs/development/`
+- **Development Documentation:** ~~`docs/development/`~~ (archived as of Phase 6)
 
 ---
 
@@ -94,16 +98,18 @@ A document belongs in `archive/` if it meets ALL of these criteria:
 
 ### By Category
 
-**Migrations (3 docs):**
+**Migrations (4 docs):**
 - Codebase reorganization (v2.0.0 structure)
 - Test dataset reorganization
 - Repository modernization (2025 tooling)
+- v2.0.0 import structure guide
 
-**Investigations (4 docs):**
+**Investigations (5 docs):**
 - MPS memory leak fix (P0)
 - Semaphore leak investigation
 - Scripts audit
 - Residual type errors (deferred work)
+- P0/P1/P2/P3 blocker tracking
 
 **Plans (3 docs):**
 - Jain cleanup execution plan
@@ -116,7 +122,7 @@ A document belongs in `archive/` if it meets ALL of these criteria:
 - Phase 1 test results
 - Documentation audit (pre-reorg)
 
-**Total:** 14 archived documents
+**Total:** 16 archived documents
 
 ---
 
@@ -128,5 +134,5 @@ A document belongs in `archive/` if it meets ALL of these criteria:
 
 ---
 
-**Last Updated:** 2025-11-09
+**Last Updated:** 2025-11-10
 **Branch:** `docs/canonical-structure`
