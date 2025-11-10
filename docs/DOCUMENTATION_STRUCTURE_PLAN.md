@@ -1,8 +1,9 @@
 # Documentation Structure Plan
 
 **Created:** 2025-11-09
+**Last Updated:** 2025-11-10
 **Branch:** docs/canonical-structure
-**Status:** 📋 Proposed - Awaiting Senior Review
+**Status:** 🚧 In Progress - Phases 0-4 Complete (5/8 phases done)
 
 ---
 
@@ -10,13 +11,16 @@
 
 This document proposes a canonical documentation structure for the antibody training pipeline repository. The goal is to organize ~15,000 lines of existing documentation (across 4 directories + 44 dataset docs) into a logical, discoverable hierarchy that serves multiple audiences: **users**, **developers**, **researchers**, and **maintainers**.
 
-**Current State:**
+**Current State (as of 2025-11-10):**
+- 📁 `docs/developer-guide/` - **8 files (NEW)** - architecture, workflow, preprocessing, type-checking, security, docker, testing, ci-cd
+- 📁 `docs/user-guide/` - **6 files (NEW)** - installation, getting-started, training, testing, preprocessing, troubleshooting
 - 📁 `docs/archive/` - 14 files (~4,300 lines) - historical cleanup/migration plans
-- 📁 `docs/development/` - 15 files (~7,100 lines) - CI/CD, security, testing, Docker
+- 📁 `docs/development/` - **2 files** (reduced from 15) - IMPORT_AND_STRUCTURE_GUIDE.md, P0_P1_P2_P3_BLOCKERS.md
 - 📁 `docs/research/` - 9 files (~3,150 lines) - Novo parity analysis, methodology
 - 📁 `docs/datasets/` - 44 files (4 subdirs) - dataset-specific preprocessing docs
+- 📄 `docs/overview.md` - **NEW** - Cross-cutting system overview
 - 📄 `docs/ESM1V_ENSEMBLING_INVESTIGATION.md` - linked externally, must stay in root
-- 📄 `docs/README.md` - outdated index
+- 📄 `docs/README.md` - **UPDATED** - navigation hub with all new guides
 
 **Problems:**
 1. **No clear entry points** - users don't know where to start
@@ -799,7 +803,9 @@ All open questions from original plan have been resolved:
 
 ### 7. ✅ NEW - Additive vs Move-First Strategy
 
-**Decision:** Additive-first (write new guides, then archive old files in one commit)
+**Decision:** SSOT (Single Source of Truth) - Delete old source files immediately after creating consolidated guides
+
+**Rationale:** Prevents duplicate documentation, ensures navigation stays clean, maintains single authoritative source. Implemented consistently throughout Phases 3-4.
 
 **Reasoning:** Reduces risk of broken links, allows parallel testing of new structure, classic blue-green deployment pattern.
 
@@ -892,16 +898,19 @@ All open questions from original plan have been resolved:
 
 ## Revision History
 
-| Date | Version | Changes | Approver |
+| Date | Version | Changes | Status |
 |------|---------|---------|----------|
-| 2025-11-09 | v1.0 | Initial plan (5 categories, 12-16h effort) | - |
-| 2025-11-09 | v2.0 | **REVISED** - Incorporated senior feedback:<br>• Added Phase 0 (accuracy fixes for 4 outdated docs)<br>• Added `overview.md` (cross-cutting system doc)<br>• Added `developer-guide/preprocessing-internals.md`<br>• Changed strategy to additive-first (write new, then archive)<br>• Resolved all open questions<br>• Increased effort to 14-18h | Awaiting approval |
+| 2025-11-09 | v1.0 | Initial plan (5 categories, 12-16h effort) | Draft |
+| 2025-11-09 | v2.0 | **REVISED** - Incorporated senior feedback:<br>• Added Phase 0 (accuracy fixes for 4 outdated docs)<br>• Added `overview.md` (cross-cutting system doc)<br>• Added `developer-guide/preprocessing-internals.md`<br>• Changed strategy to additive-first (write new, then archive)<br>• Resolved all open questions<br>• Increased effort to 14-18h | Approved |
+| 2025-11-10 | v3.0 | **IN PROGRESS** - Execution update (Phases 0-4 complete):<br>• Changed strategy from additive-first to SSOT (delete sources immediately)<br>• Phase 0: Fixed 4 outdated docs (configs, imports, paths)<br>• Phase 1: Created overview.md (cross-cutting system doc)<br>• Phase 3: Created 6 user guides (installation, getting-started, training, testing, preprocessing, troubleshooting)<br>• Phase 4: Created 8 developer guides (architecture, workflow, preprocessing-internals, type-checking, security, docker, testing, ci-cd)<br>• Reduced docs/development/ from 15 files → 2 files<br>• Updated docs/README.md navigation<br>• Status: 5/8 phases complete (62.5%), ready for Phase 5 | Executing |
 
-**Approval Checklist:**
+**Execution Status:**
 
-- [ ] Senior review complete
-- [x] Open questions resolved (all 7 questions answered)
-- [x] Phase 0 accuracy fixes validated (4 outdated docs confirmed)
-- [x] Additive-first strategy approved (reduces risk)
-- [ ] Implementation roadmap approved
-- [ ] Ready to execute
+- ✅ Phase 0 complete (4 accuracy fixes)
+- ✅ Phase 1 complete (overview.md)
+- ✅ Phase 3 complete (6 user guides)
+- ✅ Phase 4 complete (8 developer guides)
+- ⏳ Phase 5 pending (consolidate research docs)
+- ⏳ Phase 6 pending (archive historical docs)
+- ⏳ Phase 7 pending (dataset docs cleanup)
+- ⏳ Phase 8 pending (final cleanup)
