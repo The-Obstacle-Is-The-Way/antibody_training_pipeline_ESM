@@ -685,12 +685,12 @@ This plan follows modern documentation frameworks:
 
 **Estimated Time:** 2-3 hours
 
-- [ ] Write `research/novo-parity.md` (merge 3 Novo parity docs)
-- [ ] Write `research/methodology.md` (merge 3 methodology docs)
+- [x] Write `research/novo-parity.md` (merge 3 Novo parity docs)
+- [x] Write `research/methodology.md` (merge 3 methodology docs)
 - [x] Rename `research/ASSAY_SPECIFIC_THRESHOLDS.md` → `research/assay-thresholds.md` (lowercase)
-- [ ] Write `research/benchmark-results.md` (merge 2 benchmark docs)
-- [ ] Link from `docs/README.md` to new research guides
-- [ ] DO NOT archive old files yet
+- [x] Write `research/benchmark-results.md` (merge 2 benchmark docs)
+- [x] Link from `docs/README.md` to new research guides (updated throughout)
+- [x] SSOT strategy: Old files deleted immediately (not Phase 6)
 
 ### Phase 6: Archive Old Documentation (1-2 hours)
 
