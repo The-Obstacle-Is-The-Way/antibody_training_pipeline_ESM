@@ -653,14 +653,17 @@ This plan follows modern documentation frameworks:
 
 **Estimated Time:** 4-5 hours
 
-- [ ] Write `developer-guide/architecture.md` (extract from `CLAUDE.md`)
-- [ ] Write `developer-guide/development-workflow.md` (consolidate git workflow + pre-commit hooks)
-- [ ] Write `developer-guide/testing-strategy.md` (merge 3 testing docs into single canonical guide)
+**Phase 4A (Quick Wins) - COMPLETE ✅**
+- [x] Write `developer-guide/preprocessing-internals.md` (move `excel_to_csv_conversion_methods.md`) - commits f7d322f, 0bb879b
+- [x] Write `developer-guide/architecture.md` (extract from `CLAUDE.md`) - commit 641ad4a
+- [x] Write `developer-guide/development-workflow.md` (consolidate git workflow + pre-commit hooks) - commit 9e4c953
+
+**Phase 4B-D (Remaining) - PENDING**
 - [ ] Write `developer-guide/type-checking.md` (merge 2 type checking docs, remove error lists)
-- [ ] Write `developer-guide/ci-cd.md` (merge 3 CI/CD docs, ensure accuracy after Phase 0 fix)
-- [ ] Write `developer-guide/docker.md` (merge 2 Docker docs)
 - [ ] Write `developer-guide/security.md` (merge 2 security docs)
-- [ ] Write `developer-guide/preprocessing-internals.md` (move `excel_to_csv_conversion_methods.md`)
+- [ ] Write `developer-guide/docker.md` (merge 2 Docker docs)
+- [ ] Write `developer-guide/testing-strategy.md` (merge 3 testing docs into single canonical guide)
+- [ ] Write `developer-guide/ci-cd.md` (merge 3 CI/CD docs, ensure accuracy after Phase 0 fix)
 - [ ] Link from `docs/README.md` to new guides
 - [ ] DO NOT delete old files yet (parallel operation)
 
