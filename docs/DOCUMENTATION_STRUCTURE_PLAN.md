@@ -434,7 +434,7 @@ datasets/
 3. **`assay-thresholds.md`** (KEEP)
    - ELISA vs PSR thresholds
    - Novo Nordisk exact parity (0.5495)
-   - **Source:** `docs/research/ASSAY_SPECIFIC_THRESHOLDS.md`
+   - **Source:** `docs/research/assay-thresholds.md`
 
 4. **`benchmark-results.md`** (CONSOLIDATE from 2 docs)
    - Cross-dataset validation results
@@ -689,7 +689,7 @@ This plan follows modern documentation frameworks:
 
 - [ ] Write `research/novo-parity.md` (merge 3 Novo parity docs)
 - [ ] Write `research/methodology.md` (merge 3 methodology docs)
-- [ ] Rename `research/ASSAY_SPECIFIC_THRESHOLDS.md` → `research/assay-thresholds.md` (lowercase)
+- [x] Rename `research/ASSAY_SPECIFIC_THRESHOLDS.md` → `research/assay-thresholds.md` (lowercase)
 - [ ] Write `research/benchmark-results.md` (merge 2 benchmark docs)
 - [ ] Link from `docs/README.md` to new research guides
 - [ ] DO NOT archive old files yet
@@ -880,7 +880,7 @@ All open questions from original plan have been resolved:
 
 | Old File | New Location | Action |
 |----------|--------------|--------|
-| `ASSAY_SPECIFIC_THRESHOLDS.md` | `research/assay-thresholds.md` | Rename (lowercase) |
+| ~~`ASSAY_SPECIFIC_THRESHOLDS.md`~~ | `research/assay-thresholds.md` | ✅ Renamed (lowercase) |
 | `BENCHMARK_TEST_RESULTS.md` | `research/benchmark-results.md` | Merge |
 | `CODEBASE_AUDIT_VS_NOVO.md` | `research/novo-parity.md` | Merge |
 | `COMPLETE_VALIDATION_RESULTS.md` | `research/benchmark-results.md` | Merge |

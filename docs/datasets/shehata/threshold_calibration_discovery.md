@@ -332,7 +332,7 @@ If we use Shehata's threshold (0.5495) on Jain:
 - **`src/antibody_training_esm/core/classifier.py:164-170`** - Dataset-specific threshold mapping (PSR: 0.5495, ELISA: 0.5)
 - ~~**`analyze_thresholds.py`**~~ - Threshold optimization script (DELETED - experimental, purpose fulfilled)
 - **`test_assay_specific_thresholds.py`** - Demonstration and validation
-- **`docs/ASSAY_SPECIFIC_THRESHOLDS.md`** - Comprehensive user-facing documentation (production doc)
+- **`docs/research/assay-thresholds.md`** - Comprehensive user-facing documentation (production doc)
 - **`docs/shehata/threshold_calibration_discovery.md`** - This technical note
 
 ---

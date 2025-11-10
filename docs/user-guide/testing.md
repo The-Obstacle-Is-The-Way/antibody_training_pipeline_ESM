@@ -417,7 +417,7 @@ predictions = (probs > psr_threshold).astype(int)
 - **PSR threshold:** 0.5495 (empirically derived for Novo parity)
 - Assays measure different binding properties
 
-See [Research Notes - Assay-Specific Thresholds](../research/ASSAY_SPECIFIC_THRESHOLDS.md) for details.
+See [Research Notes - Assay-Specific Thresholds](../research/assay-thresholds.md) for details.
 
 ---
 

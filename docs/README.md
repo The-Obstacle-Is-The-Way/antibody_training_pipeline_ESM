@@ -51,7 +51,7 @@ Scientific methodology and validation:
 
 - `novo-parity.md` - Novo Nordisk parity analysis (replication, methodology, QC)
 - `methodology.md` - Implementation details, dataset analysis, divergences
-- `ASSAY_SPECIFIC_THRESHOLDS.md` - ELISA vs PSR thresholds
+- `assay-thresholds.md` - ELISA vs PSR thresholds
 - `BENCHMARK_TEST_RESULTS.md` - Cross-dataset validation results
 - `COMPLETE_VALIDATION_RESULTS.md` - Comprehensive validation report
 
