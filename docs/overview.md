@@ -175,7 +175,7 @@ The classifier automatically applies the correct threshold based on assay type.
 
 ### 🔬 For Researchers (Validating Methodology)
 
-- **Novo Parity Analysis:** [research/NOVO_PARITY_ANALYSIS.md](research/NOVO_PARITY_ANALYSIS.md)
+- **Novo Parity Analysis:** [research/novo-parity.md](research/novo-parity.md)
 - **Methodology & Divergences:** [research/METHODOLOGY_AND_DIVERGENCES.md](research/METHODOLOGY_AND_DIVERGENCES.md)
 - **Assay Thresholds:** [research/ASSAY_SPECIFIC_THRESHOLDS.md](research/ASSAY_SPECIFIC_THRESHOLDS.md)
 - **Benchmark Results:** [research/BENCHMARK_TEST_RESULTS.md](research/BENCHMARK_TEST_RESULTS.md)
