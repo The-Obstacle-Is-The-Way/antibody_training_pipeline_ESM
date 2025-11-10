@@ -144,15 +144,15 @@ tests/
 ### Current Status
 
 **Test Counts:**
-- **Total tests:** 403 tests (291 unit + 112 integration/e2e)
+- **Total tests:** 403 tests (311 unit + 75 integration + 17 E2E)
 - **Test files:** 24 test modules
 
 **Coverage:**
-- **Overall:** 71.93% (enforced ≥70% in CI)
-- **Core modules:** 97.68% average (classifier 100%, embeddings 95.35%, trainer 100%)
-- **Datasets:** 86.57% average (boughter 95.45%, harvey 87.27%, jain 96.88%, shehata 89.19%)
-- **CLI:** 88.01% (test.py), 100% (train.py), 80% (preprocess.py)
-- **Data loaders:** 100% (loaders.py)
+- **Overall:** 90.80% (enforced ≥70% in CI)
+- **Core modules:** 97.96% average (classifier 100%, embeddings 94.50%, trainer 99.37%)
+- **Datasets:** 89.58% average (boughter 91.67%, harvey 86.11%, jain 96.64%, shehata 88.42%, base 85.06%)
+- **CLI:** 85.84% (test.py), 100% (train.py), 78.12% (preprocess.py)
+- **Data loaders:** 98.41% (loaders.py)
 
 **Quality:**
 - ✅ Zero linting errors (ruff)
@@ -342,21 +342,21 @@ def mock_transformers_model(monkeypatch):
 uv run coverage report --fail-under=70
 ```
 
-**Current Coverage:** 71.93% (enforced minimum: ≥70%)
+**Current Coverage:** 90.80% (enforced minimum: ≥70%)
 
 ### Per-Module Targets
 
 | Module / Area | Target | Current Status |
 |---------------|--------|----------------|
-| `core/classifier.py` | ≥90% | ✅ 100.00% (70/70 statements) |
-| `core/embeddings.py` | ≥85% | ✅ 95.35% (86/86 statements) |
-| `core/trainer.py` | ≥85% | ✅ 100.00% (135/135 statements) |
-| `datasets/*.py` (each) | ≥80% | ✅ 86.57% avg (boughter 95.45%, harvey 87.27%, jain 96.88%, shehata 89.19%) |
-| `datasets/base.py` | ≥80% | ⚠️ 73.22% (ANARCI lines 241-326 documented exception) |
-| `data/loaders.py` | ≥80% | ✅ 100.00% (46/46 statements) |
+| `core/classifier.py` | ≥90% | ✅ 100.00% (75/75 statements) |
+| `core/embeddings.py` | ≥85% | ✅ 94.50% (89/89 statements) |
+| `core/trainer.py` | ≥85% | ✅ 99.37% (136/136 statements) |
+| `datasets/*.py` (each) | ≥80% | ✅ 89.58% avg (boughter 91.67%, harvey 86.11%, jain 96.64%, shehata 88.42%) |
+| `datasets/base.py` | ≥80% | ✅ 85.06% (183/183 statements) |
+| `data/loaders.py` | ≥80% | ✅ 98.41% (49/49 statements) |
 | `cli/train.py` | ≥70% | ✅ 100.00% (18/18 statements) |
-| `cli/test.py` | ≥70% | ✅ 88.01% (267/267 statements) |
-| `cli/preprocess.py` | ≥70% | ✅ 80.00% (30/30 statements) |
+| `cli/test.py` | ≥70% | ✅ 85.84% (269/269 statements) |
+| `cli/preprocess.py` | ≥70% | ✅ 78.12% (30/30 statements) |
 
 **What NOT to Cover:**
 - `__init__.py` files (just imports)
