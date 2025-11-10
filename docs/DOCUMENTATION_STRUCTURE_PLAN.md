@@ -14,7 +14,7 @@ This document proposes a canonical documentation structure for the antibody trai
 **Current State (as of 2025-11-10):**
 - 📁 `docs/developer-guide/` - **8 files (NEW)** - architecture, workflow, preprocessing, type-checking, security, docker, testing, ci-cd
 - 📁 `docs/user-guide/` - **6 files (NEW)** - installation, getting-started, training, testing, preprocessing, troubleshooting
-- 📁 `docs/archive/` - 14 files (~4,300 lines) - historical cleanup/migration plans
+- 📁 `docs/archive/` - **16 files** (~4,300 lines) - historical cleanup/migration plans (14 root + 2 subdirs)
 - ~~📁 `docs/development/`~~ - **ARCHIVED** (2 files moved to archive/migrations/ and archive/investigations/)
 - 📁 `docs/research/` - **4 files** (~1,200 lines) - novo-parity, methodology, assay-thresholds, benchmark-results
 - 📁 `docs/datasets/` - 44 files (4 subdirs) - dataset-specific preprocessing docs
