@@ -233,7 +233,7 @@ Standard fragments across all datasets:
 1. Create `preprocessing/{dataset}/` directory
 2. Implement preprocessing pipeline (Excel/CSV → canonical format)
 3. Create `src/antibody_training_esm/datasets/{dataset}.py` extending `AntibodyDataset`
-4. Add dataset documentation in `docs/{dataset}/`
+4. Add dataset documentation in `docs/datasets/{dataset}/`
 5. Update `preprocessing/README.md`
 
 ### Training a New Model
@@ -272,10 +272,31 @@ Standard fragments across all datasets:
 - Call out new artifacts or data paths
 - Keep refactors separate from feature/data work
 
+## Documentation
+
+### Project Overview
+
+- **System Overview**: `docs/overview.md` - High-level introduction to the pipeline
+- **Architecture Deep Dive**: `docs/developer-guide/architecture.md` - Core components and design patterns
+- **Development Workflow**: `docs/developer-guide/development-workflow.md` - Git workflow, commands, quality gates
+
+### Research & Methodology
+
+- **Novo Parity Analysis**: `docs/research/novo-parity.md` - Exact reproduction of Novo Nordisk results
+- **Methodology**: `docs/research/methodology.md` - Implementation details and divergences
+- **Assay Thresholds**: `docs/research/assay-thresholds.md` - ELISA vs PSR thresholds
+- **Benchmark Results**: `docs/research/benchmark-results.md` - Cross-dataset validation
+
+### Dataset Documentation
+
+- **Boughter (Training)**: `docs/datasets/boughter/` - 914 VH sequences, ELISA polyreactivity
+- **Jain (Novo Parity)**: `docs/datasets/jain/` - 86 clinical antibodies, Novo benchmark
+- **Harvey (Nanobodies)**: `docs/datasets/harvey/` - 141k nanobody sequences, PSR assay
+- **Shehata (PSR)**: `docs/datasets/shehata/` - 398 antibodies, PSR cross-validation
+
 ## References
 
 - **Paper**: Sakhnini et al. (2025) - Prediction of Antibody Non-Specificity using PLMs
 - **Datasets**: See `CITATIONS.md` for full attributions
 - **Security**: See `SECURITY_REMEDIATION_PLAN.md` for pickle mitigation
 - **Architecture**: See `AGENTS.md` for build/test/commit guidelines
-- **Dataset docs**: `docs/{boughter,jain,harvey,shehata}/` for dataset-specific details

@@ -157,21 +157,23 @@ The classifier automatically applies the correct threshold based on assay type.
 
 ### 👤 For Users (Running the Pipeline)
 
-- **Installation:** See [Installation Guide](user-guide/installation.md) *(pending Phase 3)*
-- **Quick Start:** See [Getting Started](user-guide/getting-started.md) *(pending Phase 3)*
-- **Training Models:** See [Training Guide](user-guide/training.md) *(pending Phase 3)*
-- **Testing Models:** See [Testing Guide](user-guide/testing.md) *(pending Phase 3)*
-
-**Temporary (until Phase 3):** See root `README.md` for installation and basic usage.
+- **Installation:** [Installation Guide](user-guide/installation.md)
+- **Quick Start:** [Getting Started](user-guide/getting-started.md)
+- **Training Models:** [Training Guide](user-guide/training.md)
+- **Testing Models:** [Testing Guide](user-guide/testing.md)
+- **Preprocessing:** [Preprocessing Guide](user-guide/preprocessing.md)
+- **Troubleshooting:** [Troubleshooting Guide](user-guide/troubleshooting.md)
 
 ### 👨‍💻 For Developers (Contributing)
 
-- **Architecture Deep Dive:** See [Developer Guide](developer-guide/architecture.md) *(pending Phase 4)*
-- **Development Workflow:** See [Workflow Guide](developer-guide/development-workflow.md) *(pending Phase 4)*
-- **Testing Strategy:** See [Testing Guide](developer-guide/testing-strategy.md) *(pending Phase 4)*
-- **CI/CD Setup:** See [CI/CD Guide](developer-guide/ci-cd.md) *(pending Phase 4)*
-
-**Temporary (until Phase 4):** See `CLAUDE.md` for development commands and architecture.
+- **Architecture Deep Dive:** [Architecture Guide](developer-guide/architecture.md)
+- **Development Workflow:** [Workflow Guide](developer-guide/development-workflow.md)
+- **Testing Strategy:** [Testing Guide](developer-guide/testing-strategy.md)
+- **CI/CD Setup:** [CI/CD Guide](developer-guide/ci-cd.md)
+- **Type Checking:** [Type Checking Guide](developer-guide/type-checking.md)
+- **Security:** [Security Guide](developer-guide/security.md)
+- **Preprocessing Internals:** [Preprocessing Guide](developer-guide/preprocessing-internals.md)
+- **Docker:** [Docker Guide](developer-guide/docker.md)
 
 ### 🔬 For Researchers (Validating Methodology)
 

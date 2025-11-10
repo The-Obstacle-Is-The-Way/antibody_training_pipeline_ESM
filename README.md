@@ -182,6 +182,42 @@ This codebase uses Python's `pickle` module for:
 
 ---
 
+# Documentation
+
+### 📚 Project Documentation
+
+**🆕 New to the project?** Start with the [System Overview](docs/overview.md) to understand what this pipeline does and how it works.
+
+### For Users
+
+- **Installation & Setup**: See [Installation](#installation--setup) above
+- **Training Models**: See [Training & Testing](#training--testing) section in `CLAUDE.md`
+- **User Guides**: `docs/user-guide/` *(in development)*
+
+### For Developers
+
+- **Architecture**: [docs/developer-guide/architecture.md](docs/developer-guide/architecture.md)
+- **Development Workflow**: [docs/developer-guide/development-workflow.md](docs/developer-guide/development-workflow.md)
+- **Testing Strategy**: [docs/developer-guide/testing-strategy.md](docs/developer-guide/testing-strategy.md)
+- **CI/CD**: [docs/developer-guide/ci-cd.md](docs/developer-guide/ci-cd.md)
+- **Type Checking**: [docs/developer-guide/type-checking.md](docs/developer-guide/type-checking.md)
+- **Security**: [docs/developer-guide/security.md](docs/developer-guide/security.md)
+- **Preprocessing Internals**: [docs/developer-guide/preprocessing-internals.md](docs/developer-guide/preprocessing-internals.md)
+- **Docker**: [docs/developer-guide/docker.md](docs/developer-guide/docker.md)
+
+### For Researchers
+
+- **Novo Parity Analysis**: [docs/research/novo-parity.md](docs/research/novo-parity.md)
+- **Methodology & Divergences**: [docs/research/methodology.md](docs/research/methodology.md)
+- **Assay Thresholds**: [docs/research/assay-thresholds.md](docs/research/assay-thresholds.md)
+- **Benchmark Results**: [docs/research/benchmark-results.md](docs/research/benchmark-results.md)
+
+### Dataset Documentation
+
+See [Datasets](#datasets) section below for dataset-specific preprocessing and validation docs.
+
+---
+
 # Datasets
 
 This pipeline uses four antibody datasets for training and evaluation:

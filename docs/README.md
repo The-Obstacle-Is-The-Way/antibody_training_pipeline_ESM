@@ -37,13 +37,14 @@ This directory contains technical documentation for the antibody training pipeli
 - `testing-strategy.md` - Test architecture, patterns, coverage
 - `ci-cd.md` - CI/CD pipeline, workflows, enforcement
 
-### 📁 Development Documentation (`development/`)
+### 📁 ~~Development Documentation (`development/`)~~
 
-**Legacy technical docs** (being consolidated into `developer-guide/`):
+**ARCHIVED** - All files moved to `archive/` (Phase 6 complete):
 
-- **Other**
-  - `IMPORT_AND_STRUCTURE_GUIDE.md` - v2.0.0 import structure guide
-  - `P0_P1_P2_P3_BLOCKERS.md` - Priority issue tracking
+- **Migrations**
+  - ~~`IMPORT_AND_STRUCTURE_GUIDE.md`~~ → `archive/migrations/v2-structure-migration.md`
+- **Investigations**
+  - ~~`P0_P1_P2_P3_BLOCKERS.md`~~ → `archive/investigations/p0-blockers.md`
 
 ### 📁 Research Documentation (`research/`)
 
