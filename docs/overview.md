@@ -113,7 +113,7 @@ The classifier automatically applies the correct threshold based on assay type.
 ### 5. **Production-Ready Infrastructure**
 
 - **CI/CD:** 5 GitHub Actions workflows (quality gates, tests, Docker, security)
-- **Test Coverage:** 90.79% (400+ tests: unit, integration, E2E)
+- **Test Coverage:** 90.80% (403 tests: unit, integration, E2E)
 - **Type Safety:** 100% type coverage (mypy strict mode)
 - **Docker Support:** Dev + prod containers for reproducible environments
 - **Code Quality:** ruff (linting + formatting), bandit (security scanning)
