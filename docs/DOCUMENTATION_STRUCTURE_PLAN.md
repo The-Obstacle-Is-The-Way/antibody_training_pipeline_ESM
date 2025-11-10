@@ -658,9 +658,11 @@ This plan follows modern documentation frameworks:
 - [x] Write `developer-guide/architecture.md` (extract from `CLAUDE.md`) - commit 641ad4a
 - [x] Write `developer-guide/development-workflow.md` (consolidate git workflow + pre-commit hooks) - commit 9e4c953
 
-**Phase 4B-D (Remaining) - PENDING**
-- [ ] Write `developer-guide/type-checking.md` (merge 2 type checking docs, remove error lists)
-- [ ] Write `developer-guide/security.md` (merge 2 security docs)
+**Phase 4B (Medium Merges) - COMPLETE ✅**
+- [x] Write `developer-guide/type-checking.md` (merge 2 type checking docs, remove error lists) - commits dec968c, 1840f59
+- [x] Write `developer-guide/security.md` (merge 2 security docs) - commits 7ac8c00, d771c56
+
+**Phase 4C-D (Remaining) - PENDING**
 - [ ] Write `developer-guide/docker.md` (merge 2 Docker docs)
 - [ ] Write `developer-guide/testing-strategy.md` (merge 3 testing docs into single canonical guide)
 - [ ] Write `developer-guide/ci-cd.md` (merge 3 CI/CD docs, ensure accuracy after Phase 0 fix)

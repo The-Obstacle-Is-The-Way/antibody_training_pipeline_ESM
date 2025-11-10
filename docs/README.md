@@ -23,9 +23,24 @@ This directory contains technical documentation for the antibody training pipeli
 
 ## Current Documentation Structure
 
+### 📁 Developer Guide (`developer-guide/`)
+
+**NEW:** Canonical developer documentation (consolidated from `development/`):
+
+- `architecture.md` - System architecture, core components, design patterns
+- `development-workflow.md` - Git workflow, commands, quality gates, common tasks
+- `preprocessing-internals.md` - Dataset preprocessing patterns and techniques
+- `type-checking.md` - Type safety requirements, mypy configuration, best practices
+- `security.md` - Security model, pickle policy, dependency management, scanning
+
+**Coming soon:**
+- `docker.md` - Docker development and deployment
+- `testing-strategy.md` - Test architecture, patterns, coverage
+- `ci-cd.md` - CI/CD pipeline, workflows, enforcement
+
 ### 📁 Development Documentation (`development/`)
 
-Technical guides for contributors and developers:
+**Legacy technical docs** (being consolidated into `developer-guide/`):
 
 - **CI/CD & Infrastructure**
   - `CICD_SPEC.md` - CI/CD pipeline specification
@@ -33,12 +48,6 @@ Technical guides for contributors and developers:
   - `BRANCH_PROTECTION_WALKTHROUGH.md` - Branch protection configuration
   - `DOCKER_DEPLOYMENT.md` - Docker deployment guide
   - `DOCKER_USAGE.md` - Docker development workflow
-
-- **Code Quality & Security**
-  - `TYPE_CHECKING_STRATEGY.md` - mypy type checking strategy
-  - `TYPE_HINTING_REMEDIATION_PLAN.md` - Type hint improvements
-  - `SECURITY_REMEDIATION_PLAN.md` - Security best practices
-  - `CODEQL_FINDINGS.md` - CodeQL security analysis
 
 - **Testing & Coverage**
   - `TEST_SUITE_PLAN.md` - Test suite architecture
@@ -48,7 +57,6 @@ Technical guides for contributors and developers:
 - **Other**
   - `IMPORT_AND_STRUCTURE_GUIDE.md` - v2.0.0 import structure guide
   - `P0_P1_P2_P3_BLOCKERS.md` - Priority issue tracking
-  - `excel_to_csv_conversion_methods.md` - Data preprocessing methods
 
 ### 📁 Research Documentation (`research/`)
 
