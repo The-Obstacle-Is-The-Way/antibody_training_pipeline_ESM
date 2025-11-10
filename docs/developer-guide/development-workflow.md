@@ -37,7 +37,7 @@ make hooks       # Run pre-commit checks manually
 **Training/Testing:**
 ```bash
 make train       # Train with default config
-uv run antibody-test --model models/model.pkl --dataset jain  # Test model
+uv run antibody-test --model models/model.pkl --data test_datasets/jain/fragments/VH_only_jain.csv  # Test model
 ```
 
 ---
@@ -167,7 +167,7 @@ uv run antibody-train --config configs/my_experiment.yaml
 
 **Test trained model:**
 ```bash
-uv run antibody-test --model models/model.pkl --dataset jain
+uv run antibody-test --model models/model.pkl --data test_datasets/jain/fragments/VH_only_jain.csv
 ```
 
 **All CLI options:**
