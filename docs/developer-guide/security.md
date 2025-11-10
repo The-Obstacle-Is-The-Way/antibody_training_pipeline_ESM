@@ -20,8 +20,8 @@ Use this guide if you're:
 ## Related Documentation
 
 - **Workflow:** [Development Workflow](development-workflow.md) - Code quality commands
-- **CI/CD:** [CI/CD Guide](ci-cd.md) - Security gates in CI
 - **Architecture:** [Architecture](architecture.md) - System design
+- **Type Checking:** [Type Checking Guide](type-checking.md) - Type safety requirements
 
 ---
 

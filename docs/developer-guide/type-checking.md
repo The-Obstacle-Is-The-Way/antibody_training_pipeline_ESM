@@ -19,8 +19,8 @@ Use this guide if you're:
 ## Related Documentation
 
 - **Workflow:** [Development Workflow](development-workflow.md) - Code quality commands (`make typecheck`)
-- **CI/CD:** [CI/CD Guide](ci-cd.md) - How type checking runs in CI
 - **Architecture:** [Architecture](architecture.md) - Type safety philosophy
+- **Security:** [Security Guide](security.md) - Security scanning and best practices
 
 ---
 
