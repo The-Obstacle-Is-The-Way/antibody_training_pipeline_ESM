@@ -3,7 +3,7 @@
 **Created:** 2025-11-09
 **Last Updated:** 2025-11-10
 **Branch:** docs/canonical-structure
-**Status:** 🚧 In Progress - Phases 0-4 Complete (5/8 phases done)
+**Status:** 🚧 In Progress - Phases 0-5 Complete (6/8 phases done)
 
 ---
 
@@ -16,7 +16,7 @@ This document proposes a canonical documentation structure for the antibody trai
 - 📁 `docs/user-guide/` - **6 files (NEW)** - installation, getting-started, training, testing, preprocessing, troubleshooting
 - 📁 `docs/archive/` - 14 files (~4,300 lines) - historical cleanup/migration plans
 - 📁 `docs/development/` - **2 files** (reduced from 15) - IMPORT_AND_STRUCTURE_GUIDE.md, P0_P1_P2_P3_BLOCKERS.md
-- 📁 `docs/research/` - 9 files (~3,150 lines) - Novo parity analysis, methodology
+- 📁 `docs/research/` - **4 files** (~1,200 lines) - novo-parity, methodology, assay-thresholds, benchmark-results
 - 📁 `docs/datasets/` - 44 files (4 subdirs) - dataset-specific preprocessing docs
 - 📄 `docs/overview.md` - **NEW** - Cross-cutting system overview
 - 📄 `docs/ESM1V_ENSEMBLING_INVESTIGATION.md` - linked externally, must stay in root
@@ -118,12 +118,12 @@ Each top-level directory serves a distinct persona:
 - **Cross-linking:** Every doc links to related guides
 - **Search-friendly:** Keywords in first paragraph
 
-### 6. Additive-First Migration
+### 6. SSOT (Single Source of Truth)
 
-- **Write new content first** - Create new canonical guides before archiving old docs
-- **Parallel operation** - Old and new structures coexist during migration
-- **Link updates last** - Only update cross-references after new content is stable
-- **Archive in one commit** - Move all old files at once to avoid partial states
+- **Delete immediately** - Remove old source files in the same commit as creating consolidated guides
+- **Atomic commits** - Each commit includes: create new file + update all references + delete old sources
+- **No parallel operation** - Repository always in clean state with single authoritative source
+- **Exhaustive reference sweeps** - Use `rg` to find ALL references before each commit
 
 ---
 

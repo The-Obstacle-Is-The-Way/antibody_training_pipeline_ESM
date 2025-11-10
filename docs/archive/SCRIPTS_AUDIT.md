@@ -44,7 +44,7 @@
 **Why delete:**
 - ✅ Thresholds already discovered (ELISA: 0.5, PSR: 0.5495)
 - ✅ Now implemented in `model.predict(assay_type='ELISA'|'PSR')`
-- ✅ Results documented in `docs/ASSAY_SPECIFIC_THRESHOLDS.md`
+- ✅ Results documented in `docs/research/assay-thresholds.md`
 - ✅ Uses OLD file paths (VH_only_jain_test_QC_REMOVED.csv - 91 antibodies)
 - ✅ Has wrong confusion matrices (Jain numbers are backwards)
 - ✅ One-off analysis from Nov 3, 2025 discovery phase

@@ -139,7 +139,7 @@ fragments_dir = Path("test_datasets/shehata/fragments")
 ```python
 # This script was deleted as experimental (Nov 2025 cleanup)
 # Purpose fulfilled: PSR threshold (0.549) already discovered and implemented
-# Results documented in docs/ASSAY_SPECIFIC_THRESHOLDS.md
+# Results documented in docs/research/assay-thresholds.md
 ```
 
 **5. scripts/testing/demo_assay_specific_thresholds.py**
@@ -233,7 +233,7 @@ rm scripts/validate_fragments.py               # Use scripts/validation/ version
 **Test file:** `test_datasets/shehata/fragments/VH_only_shehata.csv`
 ```
 
-**File:** `docs/ASSAY_SPECIFIC_THRESHOLDS.md`
+**File:** `docs/research/assay-thresholds.md`
 
 **Line 143:**
 ```python
@@ -479,7 +479,7 @@ grep -rn "scripts/validate_fragments" docs/ --include="*.md" | grep -v "validati
 - [ ] `README.md` (2 lines)
 - [ ] `docs/COMPLETE_VALIDATION_RESULTS.md` (1 line)
 - [ ] `docs/BENCHMARK_TEST_RESULTS.md` (1 line)
-- [ ] `docs/ASSAY_SPECIFIC_THRESHOLDS.md` (1 line)
+- [ ] `docs/research/assay-thresholds.md` (1 line)
 - [ ] `docs/shehata/shehata_preprocessing_implementation_plan.md`
 - [ ] `docs/shehata/shehata_data_sources.md`
 - [ ] `docs/shehata/shehata_phase2_completion_report.md`

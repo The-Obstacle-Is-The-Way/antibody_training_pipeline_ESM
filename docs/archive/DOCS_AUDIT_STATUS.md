@@ -30,13 +30,11 @@ The ONLY correct docs are in `experiments/novo_parity/`:
 
 ### ⚠️ OUTDATED (Archive - Superseded)
 
-**NOVO_PARITY_ANALYSIS.md** (11K)
-- **Status**: ⚠️ OUTDATED
-- **Date**: 2025-11-02
-- **Claims**: "66.28% accuracy, cell-for-cell confusion matrix match"
-- **Reality**: This was WRONG - we were at 67.03% on 91 antibodies
-- **Problem**: Based on removing 5 antibodies by model confidence
-- **Superseded by**: P5e-S2 exact match (experiments/novo_parity/)
+**docs/research/novo-parity.md** (current canonical)
+- **Status**: ✅ CURRENT
+- **Date**: 2025-11-10
+- **Content**: Exact parity analysis (66.28%, [[40,19],[10,17]]), P5e-S2 subset
+- **Note**: Supersedes old NOVO_PARITY_ANALYSIS.md (which was based on 91-ab approach)
 - **Action**: Archive to `docs/archive/failed_attempts/`
 
 **JAIN_NOVO_PARITY_VALIDATION_REPORT.md** (8.6K)
@@ -108,9 +106,9 @@ The ONLY correct docs are in `experiments/novo_parity/`:
 - **Status**: 🔧 NEEDS REVIEW
 - **Action**: Check if methodology is still accurate
 
-**ASSAY_SPECIFIC_THRESHOLDS.md** (10K)
-- **Status**: 🔧 NEEDS REVIEW
-- **Action**: Check if thresholds are still correct
+**docs/research/assay-thresholds.md** (current canonical)
+- **Status**: ✅ CURRENT
+- **Content**: ELISA=0.5, PSR=0.5495 (Novo exact parity)
 
 **COMPLETE_VALIDATION_RESULTS.md** (13K)
 - **Status**: 🔧 NEEDS REVIEW
@@ -164,7 +162,7 @@ docs/
 └── archive/
     ├── README.md (explains what's here)
     ├── failed_attempts/
-    │   ├── NOVO_PARITY_ANALYSIS.md (91-ab approach)
+    │   ├── [ARCHIVED: old NOVO_PARITY_ANALYSIS.md - 91-ab approach]
     │   └── ...
     ├── p5_results/
     │   ├── JAIN_NOVO_PARITY_VALIDATION_REPORT.md (P5 2-cells-off)
@@ -177,9 +175,9 @@ docs/
     │   ├── JAIN_QC_REMOVALS_COMPLETE.md
     │   └── ...
     └── to_review/
-        ├── METHODOLOGY_AND_DIVERGENCES.md
-        ├── ASSAY_SPECIFIC_THRESHOLDS.md
-        ├── COMPLETE_VALIDATION_RESULTS.md
+        ├── [NOW: docs/research/methodology.md]
+        ├── [NOW: docs/research/assay-thresholds.md]
+        ├── [NOW: docs/research/benchmark-results.md]
         └── ...
 ```
 
