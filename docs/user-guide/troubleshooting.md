@@ -363,6 +363,187 @@ ls -lh embeddings_cache/
 
 ---
 
+## Data Validation Errors
+
+### Invalid Sequence Characters
+
+**Error:**
+```
+ValueError: Found 3 invalid sequence(s) in batch 5:
+  Index 42: 'ACDEF-GHIKL...' (invalid characters: {'-'})
+  Index 43: 'ACDEFXGHIKL...' (invalid characters: {'X'})
+```
+
+**Cause:** Sequences contain invalid amino acids, gaps, or special characters.
+
+**Solution:**
+1. Check your preprocessing output - sequences should only contain valid amino acids
+2. Remove gaps (`-`) and special characters from sequences
+3. If using "X" for ambiguous residues: This is supported in v0.3.0+ (21 amino acids)
+
+**Note:** Prior to v0.3.0, invalid sequences were silently replaced with "M" (methionine), causing silent data corruption. Now validation prevents this.
+
+---
+
+### Corrupted Embedding Cache
+
+**Error:**
+```
+ValueError: Embeddings from cache contain 15 NaN values
+```
+or
+```
+ValueError: Embeddings from cache contain 3 all-zero rows
+```
+
+**Cause:** Embedding cache corrupted from:
+- Training interrupted during cache write
+- Old cache from pre-v0.3.0 (had bugs that created zero embeddings)
+- Disk corruption
+
+**Solution:**
+```bash
+rm -rf embeddings_cache/
+uv run antibody-train
+```
+
+**Note:** Cache validation added in v0.3.0. Corruption now detected immediately instead of silently training on garbage data.
+
+---
+
+### Wrong Embedding Shape
+
+**Error:**
+```
+ValueError: Embeddings from cache have wrong shape: expected 914 sequences, got 900
+```
+
+**Cause:** Cache was created for different dataset or is corrupted.
+
+**Solution:**
+```bash
+rm -rf embeddings_cache/
+uv run antibody-train
+```
+
+---
+
+## Configuration Validation Errors
+
+### Missing Config Sections or Keys
+
+**Error:**
+```
+ValueError: Config validation failed:
+  - Missing config sections: experiment
+  - Missing config keys: data.test_file, training.n_splits
+```
+
+**Cause:** Config YAML is incomplete or using old format.
+
+**Solution:**
+1. Check your config file against the production config (`configs/config.yaml`)
+2. Add missing sections/keys
+3. Required keys as of v0.3.0:
+   - `data`: train_file, test_file, embeddings_cache_dir
+   - `model`: name, device
+   - `training`: log_level, metrics, n_splits
+   - `experiment`: name
+
+**Note:** Config validation added in v0.3.0. Validates BEFORE GPU allocation to prevent expensive failures.
+
+---
+
+### Invalid Log Level
+
+**Error:**
+```
+ValueError: Invalid log_level 'DEBG' in config. Must be one of: {'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'}
+```
+
+**Cause:** Typo in log level or invalid value.
+
+**Solution:** Use one of the valid log levels: DEBUG, INFO, WARNING, ERROR, CRITICAL (case-insensitive)
+
+---
+
+### Missing CSV Columns
+
+**Error:**
+```
+ValueError: Sequence column 'sequences' not found in train_datasets/boughter/VH_only.csv.
+Available columns: ['id', 'sequence', 'label', 'VH_sequence']
+```
+
+**Cause:** Config specifies wrong column name or CSV is malformed.
+
+**Solution:**
+1. Check the "Available columns" in error message
+2. Update `data.sequence_column` in config to match actual column name
+3. Or regenerate CSV with correct column names
+
+**Note:** Error message now shows available columns (v0.3.0+) to help debugging.
+
+---
+
+## Cache & Persistence Errors
+
+### Cache Preserved on Training Failure
+
+**Note:** Prior to v0.3.0, embedding cache was deleted even if training failed. This meant hours of GPU compute were lost on any failure.
+
+**As of v0.3.0:**
+- Cache only deleted after SUCCESSFUL training completion
+- If training fails, cache is preserved for next attempt
+- Saves expensive re-computation on config errors or data issues
+
+---
+
+### Corrupted Cache from Old Version
+
+**Symptoms:**
+- NaN embeddings
+- All-zero embeddings
+- Wrong embedding shapes
+- Silent training failures (pre-v0.3.0)
+
+**Cause:** Cache created with pre-v0.3.0 code that had bugs:
+- P0-6: Batch failures filled zero vectors
+- P0-5: Invalid sequences replaced with "M"
+- P1-1/P1-2: Division by zero created NaN embeddings
+
+**Solution:**
+```bash
+# Delete old cache
+rm -rf embeddings_cache/
+
+# Retrain with v0.3.0+ (has validation)
+uv run antibody-train
+```
+
+**Prevention:** v0.3.0+ validates cache integrity on load. Corrupted cache now detected immediately.
+
+---
+
+### Empty Dataset Loaded
+
+**Error:**
+```
+ValueError: Loaded dataset is empty: test_datasets/jain/P5e_S2.csv
+The CSV file may be corrupted or truncated. Please check the file or re-run preprocessing.
+```
+
+**Cause:** CSV file is empty, truncated, or preprocessing failed.
+
+**Solution:**
+1. Check file exists and has content: `wc -l test_datasets/jain/P5e_S2.csv`
+2. Re-run preprocessing for that dataset
+3. Check preprocessing logs for errors
+
+**Note:** Dataset validation added in v0.3.0. Empty datasets now fail immediately instead of causing mysterious crashes later.
+
+---
+
 ## Testing Issues
 
 ### Model Fails to Load

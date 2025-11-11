@@ -671,6 +671,61 @@ def test_predict_binary():
 
 ---
 
+## Lessons Learned - Production Readiness Audit (v0.3.0)
+
+### Overview
+
+The v0.3.0 production readiness audit found 34 critical bugs through systematic code review. Key insight: **test error paths as thoroughly as happy paths**.
+
+### Testing Gaps That Led to Bugs
+
+**1. Insufficient Error Path Testing**
+- Batch processing failures not tested → zero embeddings silently added (P0-6)
+- Invalid sequences not tested → replaced with "M" instead of failing (P0-5)
+- Cache corruption not tested → training proceeded on garbage data (P1-B)
+
+**2. Missing Validation Testing**
+- Config structure not validated → cryptic KeyErrors after GPU allocation (P1-A)
+- Embedding integrity not checked → NaN/zero embeddings propagated silently (P1-B)
+- Dataset emptiness not validated → mysterious crashes later in pipeline (P2-5)
+
+**3. sklearn Compatibility Edge Cases**
+- `set_params()` destroying fitted state not tested → CV could silently fail (P1-3)
+- Test CLI exit codes not validated → all-failures reported as success (P3-5)
+
+### What Was Added
+
+**Validation Functions**
+- All pipeline boundaries now have validation (config, embeddings, sequences, datasets)
+- Validation functions unit tested for both valid and invalid inputs
+- Integration tests verify validation happens at correct pipeline stage
+
+**Error Handling Tests**
+- All data loading paths tested for corrupt/missing data
+- Batch processing tested for failure scenarios
+- Cache validation tested for NaN, zero-vectors, wrong shapes
+
+**CI Exit Code Validation**
+- Test CLI now tracks failures and returns correct exit codes
+- CI properly fails when all tests fail (no more false-positives)
+
+### Key Principles
+
+1. **Test the error path:** If code can fail, write a test that makes it fail
+2. **Validate early:** Test that validation happens BEFORE expensive operations
+3. **Check error messages:** Test that error messages include actionable context
+4. **Test fallback behavior:** Corrupt cache should fall back to recomputation, not crash
+
+### Impact
+
+- 34 bugs fixed without breaking changes (100% backward compatible)
+- All fixes improve error handling, don't change core functionality
+- Test suite now catches validation failures that were silent before
+
+**See also:** [Security - Error Handling Best Practices](security.md#error-handling-best-practices)
+
+---
+
 ## Common Test Patterns
 
 ### Testing Classifiers

@@ -115,6 +115,107 @@ model = load_model_from_npz(
 - ✅ Cross-platform compatible (any language can load)
 - ✅ HuggingFace deployment ready
 - ✅ Production API safe
+- ✅ **Data validation:** Input validation at all pipeline entry points (sequences, embeddings, configs)
+- ✅ **Cache integrity:** Embedding cache validation prevents training on corrupted data
+
+---
+
+## Data Validation & Corruption Prevention
+
+### Overview
+
+As of v0.3.0, the pipeline enforces strict validation at all data entry points to prevent silent data corruption. The principle is: **fail fast with clear error messages instead of silent corruption**.
+
+### Validation Layers
+
+**1. Sequence Validation** (`src/antibody_training_esm/core/embeddings.py`)
+- Invalid sequences (non-amino-acid characters, gaps, empty strings) now raise `ValueError`
+- Error message shows specific invalid characters and sequence preview
+- **Before v0.3.0:** Invalid sequences replaced with single "M" (methionine) → silent corruption
+- **After v0.3.0:** Training halts immediately with actionable error message
+
+**2. Embedding Validation** (`src/antibody_training_esm/core/trainer.py`)
+- Cached and computed embeddings validated for:
+  - Correct shape (must match number of sequences)
+  - NaN values (indicates failed computation)
+  - All-zero rows (indicates failed batch processing)
+- **Before v0.3.0:** Corrupted embeddings loaded silently → model trains on garbage
+- **After v0.3.0:** Corruption detected immediately, cache deleted, user instructed to recompute
+
+**3. Config Validation** (`src/antibody_training_esm/core/trainer.py`)
+- Required config keys validated before any expensive operations (GPU allocation, model downloads)
+- Missing sections or keys reported with full list of what's missing
+- **Before v0.3.0:** Cryptic `KeyError` after GPU already allocated
+- **After v0.3.0:** Clear error message showing exactly what's missing, fails before resource allocation
+
+**4. Dataset Validation** (`src/antibody_training_esm/datasets/*.py`)
+- CSV/Excel files validated for:
+  - Non-empty (at least 1 row)
+  - Required columns present (with helpful error showing available columns)
+- **Before v0.3.0:** Empty datasets or missing columns cause mysterious crashes later
+- **After v0.3.0:** Immediate failure with clear guidance
+
+**5. Column Validation** (`src/antibody_training_esm/data/loaders.py`)
+- CSV column existence checked before access
+- Error message shows available columns when expected column missing
+- Prevents cryptic `KeyError` exceptions
+
+### Validation Function Pattern
+
+**Example: Config Validation (v0.3.0+)**
+```python
+def validate_config(config: dict[str, Any]) -> None:
+    """Validate that config dictionary contains all required keys."""
+    required_keys = {
+        "data": ["train_file", "test_file", "embeddings_cache_dir"],
+        "model": ["name", "device"],
+        "classifier": [],
+        "training": ["log_level", "metrics", "n_splits"],
+        "experiment": ["name"],
+    }
+
+    missing_sections = []
+    missing_keys = []
+
+    for section in required_keys:
+        if section not in config:
+            missing_sections.append(section)
+            continue
+
+        for key in required_keys[section]:
+            if key not in config[section]:
+                missing_keys.append(f"{section}.{key}")
+
+    if missing_sections or missing_keys:
+        error_parts = []
+        if missing_sections:
+            error_parts.append(f"Missing config sections: {', '.join(missing_sections)}")
+        if missing_keys:
+            error_parts.append(f"Missing config keys: {', '.join(missing_keys)}")
+        raise ValueError("Config validation failed:\n  - " + "\n  - ".join(error_parts))
+```
+
+**Key Principles:**
+1. **Validate early:** Check inputs before expensive operations
+2. **Fail fast:** Raise errors immediately, don't continue with invalid data
+3. **Clear messages:** Show what was expected, what was found, how to fix
+4. **Actionable errors:** Include sequence previews, available columns, missing keys
+
+### Impact
+
+**Research Integrity:**
+- No more training on corrupted embeddings
+- No more silent replacement of invalid sequences
+- Invalid test sets rejected (prevents reporting wrong metrics)
+
+**Developer Experience:**
+- Error messages show exactly what's wrong and where
+- No more cryptic KeyErrors or AttributeErrors
+- Validation failures include context (sequence preview, available columns)
+
+**Resource Efficiency:**
+- Config validation before GPU allocation saves expensive failures
+- Cache validation prevents wasting hours training on garbage data
 
 ---
 
@@ -495,5 +596,120 @@ if value is not None:
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
+## Error Handling Best Practices
+
+### Overview
+
+As of v0.3.0, the codebase follows consistent error handling patterns to prevent silent failures and provide actionable error messages.
+
+### Pattern 1: Validate Config Before Expensive Operations
+
+**Why:** GPU allocation and model downloads are expensive. Validate config structure before starting.
+
+**Example:**
+```python
+def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
+    config = load_config(config_path)
+    validate_config(config)  # ← Validate BEFORE GPU allocation
+    logger = setup_logging(config)
+
+    # Now safe to do expensive operations
+    X_train, y_train = load_data(config)
+    classifier = BinaryClassifier(...)
+```
+
+**Impact:** Catches config errors immediately instead of after minutes of setup.
+
+### Pattern 2: Validate Data Structures After Loading
+
+**Why:** Pickle and CSV can return corrupted or unexpected data.
+
+**Example:**
+```python
+# Loading pickle cache
+with open(cache_file, "rb") as f:
+    cached_data_raw = pickle.load(f)
+
+# Validate type before accessing
+if not isinstance(cached_data_raw, dict):
+    logger.warning(f"Invalid cache format (got {type(cached_data_raw).__name__}), recomputing...")
+    # Fall back to recomputation
+elif "embeddings" not in cached_data_raw:
+    logger.warning("Corrupt cache (missing keys), recomputing...")
+else:
+    # Safe to use
+    cached_data = cached_data_raw
+    validate_embeddings(cached_data["embeddings"], ...)
+```
+
+**Impact:** Graceful fallback instead of cryptic errors.
+
+### Pattern 3: Provide Context in Error Messages
+
+**Why:** When processing thousands of sequences, knowing WHICH one failed is critical.
+
+**Example:**
+```python
+try:
+    embedding = model(sequence)
+except Exception as e:
+    seq_preview = sequence[:50] + "..." if len(sequence) > 50 else sequence
+    raise RuntimeError(
+        f"Failed to extract embedding for sequence of length {len(sequence)}: {seq_preview}"
+    ) from e
+```
+
+**Impact:** Developers can immediately identify and fix the problematic sequence.
+
+### Pattern 4: Use Type Validation on Untrusted Loads
+
+**Why:** Pickle returns `Any`, CSV returns mixed types. Must validate before use.
+
+**Example:**
+```python
+# BAD: Trust the type hint
+cached_data: dict[str, Any] = pickle.load(f)  # Could be anything!
+
+# GOOD: Validate runtime type
+cached_data_raw = pickle.load(f)
+if not isinstance(cached_data_raw, dict):
+    raise ValueError(f"Expected dict, got {type(cached_data_raw)}")
+cached_data: dict[str, Any] = cached_data_raw  # Now safe
+```
+
+**Impact:** Prevents type confusion attacks and corrupt data propagation.
+
+### When to Add Validation
+
+Add validation when:
+1. **Loading external data:** CSV, pickle, user input
+2. **Before expensive operations:** GPU allocation, model downloads, training loops
+3. **Accessing dict keys:** Config dicts, cached data
+4. **Processing batches:** Show which batch/sequence failed
+
+Don't add validation for:
+1. **Internal function calls** (trust your own typed code)
+2. **After validation already done** (don't double-validate)
+3. **Performance-critical loops** (validate before loop, not inside)
+
+### Testing Error Paths
+
+Every validation function should have tests for:
+```python
+def test_validate_config_missing_section():
+    config = {"data": {}}  # Missing "model" section
+    with pytest.raises(ValueError, match="Missing config sections: model"):
+        validate_config(config)
+
+def test_validate_config_missing_keys():
+    config = {"data": {}, "model": {}}  # Missing "data.train_file"
+    with pytest.raises(ValueError, match="Missing config keys: data.train_file"):
+        validate_config(config)
+```
+
+**See also:** [Testing Strategy - Error Handling](testing-strategy.md#testing-error-handling)
+
+---
+
+**Last Updated:** 2025-11-11
+**Branch:** `leroy-jenkins/full-send`
