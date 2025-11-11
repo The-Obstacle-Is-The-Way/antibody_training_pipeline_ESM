@@ -9,7 +9,7 @@
 ## Quick Start
 
 ### For Implementation
-**→ See [`preprocessing/jain/README.md`](../../preprocessing/jain/README.md)** - SINGLE SOURCE OF TRUTH for pipeline implementation, scripts, and usage
+**→ See [`preprocessing/jain/README.md`](../../../preprocessing/jain/README.md)** - SINGLE SOURCE OF TRUTH for pipeline implementation, scripts, and usage
 
 ### For Understanding the Dataset
 Start here with this directory's documentation ↓

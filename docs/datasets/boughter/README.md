@@ -9,7 +9,7 @@
 ## Quick Start
 
 ### For Implementation
-**→ See [`preprocessing/boughter/README.md`](../../preprocessing/boughter/README.md)** - SINGLE SOURCE OF TRUTH for pipeline implementation, scripts, and usage
+**→ See [`preprocessing/boughter/README.md`](../../../preprocessing/boughter/README.md)** - SINGLE SOURCE OF TRUTH for pipeline implementation, scripts, and usage
 
 ### For Understanding the Dataset
 Start here with this directory's documentation ↓

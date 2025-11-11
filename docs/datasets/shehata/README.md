@@ -9,7 +9,7 @@
 
 **For the complete Shehata dataset pipeline, see the authoritative documentation:**
 
-👉 **[`test_datasets/shehata/README.md`](../../test_datasets/shehata/README.md)** ← **SSOT**
+👉 **[`test_datasets/shehata/README.md`](../../../test_datasets/shehata/README.md)** ← **SSOT**
 
 That README contains:
 - Complete 2-step pipeline (Excel → CSV → fragments)

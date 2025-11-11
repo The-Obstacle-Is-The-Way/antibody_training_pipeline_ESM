@@ -4,7 +4,7 @@
 **Status:** ✅ Complete - Novo methodology replicated, strict QC implemented and tested
 **Purpose:** Comprehensive reference for Boughter dataset structure, QC levels, and file selection
 
-> **💡 Note:** For current preprocessing pipeline implementation, see [`preprocessing/boughter/README.md`](../../preprocessing/boughter/README.md) (SINGLE SOURCE OF TRUTH).
+> **💡 Note:** For current preprocessing pipeline implementation, see [`preprocessing/boughter/README.md`](../../../preprocessing/boughter/README.md) (SINGLE SOURCE OF TRUTH).
 > This document provides historical context, QC level comparisons, and decision rationale.
 
 ---
@@ -16,8 +16,8 @@
 3. [The 118 Position Issue (RESOLVED)](#the-118-position-issue-resolved)
 4. [Two QC Levels Explained](#two-qc-levels-explained)
 5. [The 62 Sequences with X](#the-62-sequences-with-x)
-6. [Available Training Files](#available-training-files)
-7. [Training Results Comparison](#training-results-comparison)
+6. [Production Training Files](#production-training-files)
+7. [Production Model Performance](#production-model-performance)
 8. [Recommendations for Training](#recommendations-for-training)
 
 ---

@@ -9,7 +9,7 @@
 
 **For the complete Harvey dataset pipeline, see the authoritative documentation:**
 
-👉 **[`test_datasets/harvey/README.md`](../../test_datasets/harvey/README.md)** ← **SSOT**
+👉 **[`test_datasets/harvey/README.md`](../../../test_datasets/harvey/README.md)** ← **SSOT**
 
 That README contains:
 - Complete 2-step pipeline (convert raw CSVs → extract fragments)
