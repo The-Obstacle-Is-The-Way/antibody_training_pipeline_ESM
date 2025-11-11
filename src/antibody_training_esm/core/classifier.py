@@ -311,11 +311,12 @@ class BinaryClassifier:
 
         if warnings_issued:
             import warnings
+
             warnings.warn(
                 f"Loading old model missing attributes: {', '.join(warnings_issued)}. "
                 "Predictions may differ from original model. Consider retraining with current version.",
                 UserWarning,
-                stacklevel=2
+                stacklevel=2,
             )
 
         # Recreate embedding extractor with fixed configuration

@@ -46,6 +46,7 @@ def nested_config(tmp_path: Path) -> dict[str, Any]:
             "model_save_dir": str(tmp_path / "models"),
             "batch_size": 8,
             "metrics": ["accuracy", "precision", "recall", "f1", "roc_auc"],
+            "n_splits": 3,
         },
         "classifier": {
             "C": 1.0,
@@ -65,8 +66,12 @@ def nested_config(tmp_path: Path) -> dict[str, Any]:
             "embeddings_cache_dir": str(tmp_path / "cache"),
             "train_data_path": str(tmp_path / "train.csv"),
             "train_file": str(tmp_path / "train.csv"),
+            "test_file": str(tmp_path / "test.csv"),
             "sequence_column": "VH_sequence",
             "label_column": "label",
+        },
+        "experiment": {
+            "name": "test_experiment",
         },
     }
     return config

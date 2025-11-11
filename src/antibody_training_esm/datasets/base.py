@@ -400,12 +400,38 @@ class AntibodyDataset(ABC):
 
         # Validate that required columns exist for requested fragments
         required_cols = set()
-        if any(ft in fragment_types for ft in ["VH_only", "VH+VL", "H-CDR1", "H-CDR2", "H-CDR3", "H-CDRs", "H-FWRs"]):
-            if "VH_sequence" not in row:
-                required_cols.add("VH_sequence")
-        if any(ft in fragment_types for ft in ["VL_only", "VH+VL", "L-CDR1", "L-CDR2", "L-CDR3", "L-CDRs", "L-FWRs"]):
-            if "VL_sequence" not in row:
-                required_cols.add("VL_sequence")
+        if (
+            any(
+                ft in fragment_types
+                for ft in [
+                    "VH_only",
+                    "VH+VL",
+                    "H-CDR1",
+                    "H-CDR2",
+                    "H-CDR3",
+                    "H-CDRs",
+                    "H-FWRs",
+                ]
+            )
+            and "VH_sequence" not in row
+        ):
+            required_cols.add("VH_sequence")
+        if (
+            any(
+                ft in fragment_types
+                for ft in [
+                    "VL_only",
+                    "VH+VL",
+                    "L-CDR1",
+                    "L-CDR2",
+                    "L-CDR3",
+                    "L-CDRs",
+                    "L-FWRs",
+                ]
+            )
+            and "VL_sequence" not in row
+        ):
+            required_cols.add("VL_sequence")
 
         if required_cols:
             raise ValueError(

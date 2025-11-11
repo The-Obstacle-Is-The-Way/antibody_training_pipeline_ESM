@@ -26,6 +26,10 @@ class EmbeddingExtractor(Protocol):
         """Extract embeddings for a batch of sequences"""
         ...
 
+    def embed_sequence(self, sequence: str) -> np.ndarray:
+        """Extract embedding for a single sequence"""
+        ...
+
 
 def preprocess_raw_data(
     X: Sequence[str],

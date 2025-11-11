@@ -474,9 +474,13 @@ class ModelTester:
             if not all_results:
                 error_msg = "All tests failed:\n"
                 if failed_datasets:
-                    error_msg += f"  Failed datasets: {[name for name, _ in failed_datasets]}\n"
+                    error_msg += (
+                        f"  Failed datasets: {[name for name, _ in failed_datasets]}\n"
+                    )
                 if failed_models:
-                    error_msg += f"  Failed models: {[name for name, _ in failed_models]}\n"
+                    error_msg += (
+                        f"  Failed models: {[name for name, _ in failed_models]}\n"
+                    )
                 raise RuntimeError(error_msg + "No successful test results to report.")
 
             # Warn about partial failures

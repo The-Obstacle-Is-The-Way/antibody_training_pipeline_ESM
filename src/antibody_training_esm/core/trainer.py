@@ -78,12 +78,8 @@ def validate_config(config: dict[str, Any]) -> None:
                 f"Missing config sections: {', '.join(missing_sections)}"
             )
         if missing_keys:
-            error_parts.append(
-                f"Missing config keys: {', '.join(missing_keys)}"
-            )
-        raise ValueError(
-            "Config validation failed:\n  - " + "\n  - ".join(error_parts)
-        )
+            error_parts.append(f"Missing config keys: {', '.join(missing_keys)}")
+        raise ValueError("Config validation failed:\n  - " + "\n  - ".join(error_parts))
 
 
 def setup_logging(config: dict[str, Any]) -> logging.Logger:
@@ -199,8 +195,7 @@ def validate_embeddings(
         )
 
     logger.debug(
-        f"Embeddings validation passed: shape={embeddings.shape}, "
-        f"no NaN, no zero rows"
+        f"Embeddings validation passed: shape={embeddings.shape}, no NaN, no zero rows"
     )
 
 
@@ -272,7 +267,9 @@ def get_or_create_embeddings(
                 embeddings_result: np.ndarray = cached_data["embeddings"]
 
                 # Validate cached embeddings before using them
-                validate_embeddings(embeddings_result, len(sequences), logger, source="cache")
+                validate_embeddings(
+                    embeddings_result, len(sequences), logger, source="cache"
+                )
 
                 return embeddings_result
             else:
