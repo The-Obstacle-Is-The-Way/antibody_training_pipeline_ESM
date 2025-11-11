@@ -5,103 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.0] - 2025-11-10
-
-### 🎉 Production Model Serialization + Documentation Overhaul
-
-Major feature release enabling production-ready model deployment with secure serialization format and comprehensive documentation reorganization.
-
-### ✨ Features
-
-**Production Model Serialization**
-- Dual-format model saving: pickle (research) + NPZ+JSON (production)
-- New `load_model_from_npz()` function for secure cross-platform loading
-- NPZ+JSON format eliminates code execution risk (unlike pickle)
-- Cross-language compatibility (Rust/C++/JavaScript can load models)
-- HuggingFace deployment ready
-- All trained models automatically saved in both formats
-- Public API export via `antibody_training_esm.core`
-
-**Documentation Reorganization (Phases 0-8 Complete)**
-- Complete user guide: installation, training, testing, preprocessing, troubleshooting
-- Complete developer guide: architecture, workflow, testing, CI/CD, type checking, security, Docker, preprocessing internals
-- Research documentation: methodology, Novo parity, assay thresholds, benchmark results
-- Dataset-specific guides: Boughter, Jain, Harvey, Shehata
-- Archive structure for historical investigations and migration docs
-- Canonical structure with clear navigation and cross-linking
-
-### 🐛 Bug Fixes
-
-**Model Serialization**
-- Fixed class_weight dict serialization (JSON converts int keys to strings, now converted back on load)
-- Added proper type conversion for sklearn compatibility
-
-**Documentation**
-- Fixed multiple doc inaccuracies across user and developer guides
-- Removed orphaned spec documents
-- Updated all references to production serialization
-
-### 🔧 Improvements
-
-**API Design**
-- Exported `load_model_from_npz()` in core public API
-- Clean imports: `from antibody_training_esm.core import load_model_from_npz`
-- 100% backward compatible (pickle still supported)
-
-**Testing**
-- Added `test_load_model_from_npz_with_dict_class_weight()` (TDD RED→GREEN)
-- Added `test_train_model_saves_all_formats()` integration test
-- 28/28 tests passing (was 26 before)
-- Coverage maintained at 99.48% for trainer.py
-
-**Security**
-- Enhanced production deployment security (NPZ+JSON cannot execute code)
-- Updated security documentation to reflect implemented state
-- Maintained 0 Bandit findings
-
-### 📦 Deliverables
-
-- Docker images: `ghcr.io/the-obstacle-is-the-way/antibody-training:0.2.0`
-- Three new tests for production serialization
-- Complete documentation overhaul (user-guide + developer-guide + research + datasets)
-- Dual-format model artifacts for all training runs
-
-### 📊 Stats
-
-- 79 commits since v0.1.0
-- 28/28 tests passing
-- 99.48% coverage on trainer.py
-- 0 security findings (Bandit clean)
-- 100% backward compatible
-
-### 🔄 Migration Notes
-
-**For Existing Users:**
-- No breaking changes - all existing pickle-based workflows still work
-- New NPZ+JSON format added alongside pickle (not replacing)
-- Update imports to use: `from antibody_training_esm.core import load_model_from_npz`
-
-**For Production Deployments:**
-- Use NPZ+JSON format for secure cross-platform loading:
-  ```python
-  from antibody_training_esm.core import load_model_from_npz
-
-  model = load_model_from_npz(
-      npz_path="models/model.npz",
-      json_path="models/model_config.json"
-  )
-  ```
-
-### 📚 Documentation
-
-Complete documentation reorganization:
-- User guides: `docs/user-guide/` (installation, training, testing, preprocessing, troubleshooting)
-- Developer guides: `docs/developer-guide/` (architecture, workflow, testing, CI/CD, security, Docker)
-- Research: `docs/research/` (methodology, Novo parity, benchmarks, thresholds)
-- Datasets: `docs/datasets/{boughter,jain,harvey,shehata}/`
-
----
-
 ## [0.3.0] - 2025-11-11
 
 ### 🛡️ Production Readiness - 34 Critical Bug Fixes
@@ -202,6 +105,103 @@ Comprehensive security and reliability audit of core ML pipeline. Fixed 34 criti
 rm -rf embeddings_cache/
 uv run antibody-train
 ```
+
+---
+
+## [0.2.0] - 2025-11-10
+
+### 🎉 Production Model Serialization + Documentation Overhaul
+
+Major feature release enabling production-ready model deployment with secure serialization format and comprehensive documentation reorganization.
+
+### ✨ Features
+
+**Production Model Serialization**
+- Dual-format model saving: pickle (research) + NPZ+JSON (production)
+- New `load_model_from_npz()` function for secure cross-platform loading
+- NPZ+JSON format eliminates code execution risk (unlike pickle)
+- Cross-language compatibility (Rust/C++/JavaScript can load models)
+- HuggingFace deployment ready
+- All trained models automatically saved in both formats
+- Public API export via `antibody_training_esm.core`
+
+**Documentation Reorganization (Phases 0-8 Complete)**
+- Complete user guide: installation, training, testing, preprocessing, troubleshooting
+- Complete developer guide: architecture, workflow, testing, CI/CD, type checking, security, Docker, preprocessing internals
+- Research documentation: methodology, Novo parity, assay thresholds, benchmark results
+- Dataset-specific guides: Boughter, Jain, Harvey, Shehata
+- Archive structure for historical investigations and migration docs
+- Canonical structure with clear navigation and cross-linking
+
+### 🐛 Bug Fixes
+
+**Model Serialization**
+- Fixed class_weight dict serialization (JSON converts int keys to strings, now converted back on load)
+- Added proper type conversion for sklearn compatibility
+
+**Documentation**
+- Fixed multiple doc inaccuracies across user and developer guides
+- Removed orphaned spec documents
+- Updated all references to production serialization
+
+### 🔧 Improvements
+
+**API Design**
+- Exported `load_model_from_npz()` in core public API
+- Clean imports: `from antibody_training_esm.core import load_model_from_npz`
+- 100% backward compatible (pickle still supported)
+
+**Testing**
+- Added `test_load_model_from_npz_with_dict_class_weight()` (TDD RED→GREEN)
+- Added `test_train_model_saves_all_formats()` integration test
+- 28/28 tests passing (was 26 before)
+- Coverage maintained at 99.48% for trainer.py
+
+**Security**
+- Enhanced production deployment security (NPZ+JSON cannot execute code)
+- Updated security documentation to reflect implemented state
+- Maintained 0 Bandit findings
+
+### 📦 Deliverables
+
+- Docker images: `ghcr.io/the-obstacle-is-the-way/antibody-training:0.2.0`
+- Three new tests for production serialization
+- Complete documentation overhaul (user-guide + developer-guide + research + datasets)
+- Dual-format model artifacts for all training runs
+
+### 📊 Stats
+
+- 79 commits since v0.1.0
+- 28/28 tests passing
+- 99.48% coverage on trainer.py
+- 0 security findings (Bandit clean)
+- 100% backward compatible
+
+### 🔄 Migration Notes
+
+**For Existing Users:**
+- No breaking changes - all existing pickle-based workflows still work
+- New NPZ+JSON format added alongside pickle (not replacing)
+- Update imports to use: `from antibody_training_esm.core import load_model_from_npz`
+
+**For Production Deployments:**
+- Use NPZ+JSON format for secure cross-platform loading:
+  ```python
+  from antibody_training_esm.core import load_model_from_npz
+
+  model = load_model_from_npz(
+      npz_path="models/model.npz",
+      json_path="models/model_config.json"
+  )
+  ```
+
+### 📚 Documentation
+
+Complete documentation reorganization:
+- User guides: `docs/user-guide/` (installation, training, testing, preprocessing, troubleshooting)
+- Developer guides: `docs/developer-guide/` (architecture, workflow, testing, CI/CD, security, Docker)
+- Research: `docs/research/` (methodology, Novo parity, benchmarks, thresholds)
+- Datasets: `docs/datasets/{boughter,jain,harvey,shehata}/`
 
 ---
 
