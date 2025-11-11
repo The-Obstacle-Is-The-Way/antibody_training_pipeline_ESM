@@ -6,6 +6,7 @@ Includes cross-validation, embedding caching, and comprehensive evaluation.
 """
 
 import hashlib
+import json
 import logging
 import os
 import pickle  # nosec B403 - Used only for local trusted data (models, caches)
@@ -13,6 +14,7 @@ import shutil
 from typing import Any
 
 import numpy as np
+import sklearn  # For sklearn.__version__
 import yaml
 from sklearn.metrics import (
     accuracy_score,
@@ -261,9 +263,9 @@ def perform_cross_validation(
 
 def save_model(
     classifier: BinaryClassifier, config: dict[str, Any], logger: logging.Logger
-) -> str | None:
+) -> dict[str, str]:
     """
-    Save trained model
+    Save trained model in dual format (pickle + NPZ+JSON)
 
     Args:
         classifier: Trained classifier
@@ -271,26 +273,67 @@ def save_model(
         logger: Logger instance
 
     Returns:
-        Path to the saved model, or None if saving is disabled
+        Dictionary with paths to saved files:
+        {
+            "pickle": "models/model.pkl",
+            "npz": "models/model.npz",
+            "config": "models/model_config.json"
+        }
+        Empty dict if saving is disabled.
     """
     if not config["training"]["save_model"]:
-        return None
+        return {}
 
-    # Build model path from model_name and model_save_dir
     model_name = config["training"]["model_name"]
     model_save_dir = config["training"]["model_save_dir"]
-    model_path = os.path.join(model_save_dir, f"{model_name}.pkl")
-
     os.makedirs(model_save_dir, exist_ok=True)
 
-    logger.info(f"Saving model to {model_path}")
+    base_path = os.path.join(model_save_dir, model_name)
 
-    # Save the entire classifier (including scaler and fitted model)
-    with open(model_path, "wb") as f:
+    # Format 1: Pickle checkpoint (research/debugging)
+    pickle_path = f"{base_path}.pkl"
+    with open(pickle_path, "wb") as f:
         pickle.dump(classifier, f)
+    logger.info(f"Saved pickle checkpoint: {pickle_path}")
 
-    logger.info("Model saved successfully")
-    return model_path
+    # Format 2: NPZ (production arrays - all sklearn LogisticRegression fitted attributes)
+    npz_path = f"{base_path}.npz"
+    np.savez(
+        npz_path,
+        coef=classifier.classifier.coef_,
+        intercept=classifier.classifier.intercept_,
+        classes=classifier.classifier.classes_,
+        n_features_in=np.array([classifier.classifier.n_features_in_]),
+        n_iter=classifier.classifier.n_iter_,
+    )
+    logger.info(f"Saved NPZ arrays: {npz_path}")
+
+    # Format 3: JSON (production metadata - all BinaryClassifier params)
+    json_path = f"{base_path}_config.json"
+    metadata = {
+        # Model architecture
+        "model_type": "LogisticRegression",
+        "sklearn_version": sklearn.__version__,
+        # LogisticRegression hyperparameters
+        "C": classifier.C,
+        "penalty": classifier.penalty,
+        "solver": classifier.solver,
+        "class_weight": classifier.class_weight,  # JSON handles None, str, dict natively
+        "max_iter": classifier.max_iter,
+        "random_state": classifier.random_state,
+        # ESM embedding extractor params
+        "esm_model": classifier.model_name,
+        "esm_revision": classifier.revision,
+        "batch_size": classifier.batch_size,
+        "device": classifier.device,
+    }
+
+    with open(json_path, "w") as f:
+        json.dump(metadata, f, indent=2)
+    logger.info(f"Saved JSON config: {json_path}")
+
+    logger.info("Model saved successfully (dual-format: pickle + NPZ+JSON)")
+    return {"pickle": pickle_path, "npz": npz_path, "config": json_path}
 
 
 def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
@@ -358,7 +401,7 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
         )
 
         # Save model
-        model_path = save_model(classifier, config, logger)
+        model_paths = save_model(classifier, config, logger)
 
         # Delete cached embeddings
         shutil.rmtree(cache_dir)
@@ -368,7 +411,7 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
             "train_metrics": train_results,
             "cv_metrics": cv_results,
             "config": config,
-            "model_path": model_path,
+            "model_paths": model_paths,
         }
 
         logger.info("Training pipeline completed successfully")
