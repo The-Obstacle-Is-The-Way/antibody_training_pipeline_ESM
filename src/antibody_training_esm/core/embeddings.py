@@ -112,6 +112,15 @@ class ESMEmbeddingExtractor:
                 masked_embeddings = embeddings * attention_mask
                 sum_embeddings = masked_embeddings.sum(dim=1)  # Sum over sequence
                 sum_mask = attention_mask.sum(dim=1)  # Count valid tokens
+
+                # Prevent division by zero (NaN embeddings)
+                if sum_mask.item() == 0:
+                    raise ValueError(
+                        f"Attention mask is all zeros for sequence (length: {len(sequence)}). "
+                        f"Sequence preview: '{sequence[:50]}...'. "
+                        "This typically indicates an empty or invalid sequence after masking."
+                    )
+
                 mean_embeddings = sum_embeddings / sum_mask  # Average
 
                 result: np.ndarray = mean_embeddings.squeeze(0).cpu().numpy()
@@ -149,17 +158,45 @@ class ESMEmbeddingExtractor:
                 # Validate and clean sequences
                 valid_aas = set("ACDEFGHIKLMNPQRSTVWYX")
                 cleaned_sequences: list[str] = []
-                for seq in batch_sequences:
+                invalid_sequences: list[
+                    tuple[int, str, str]
+                ] = []  # (index, sequence, reason)
+
+                for seq_idx, seq in enumerate(batch_sequences):
                     seq = seq.upper().strip()
-                    if not all(aa in valid_aas for aa in seq) or len(seq) < 1:
-                        logger.warning(
-                            f"Invalid sequence at index {start_idx + len(cleaned_sequences)}, using zeros"
+                    global_idx = start_idx + seq_idx
+
+                    # Check for empty/short sequences
+                    if len(seq) < 1:
+                        invalid_sequences.append(
+                            (global_idx, seq, "empty or too short")
                         )
-                        cleaned_sequences.append(
-                            "M"
-                        )  # Placeholder for invalid sequences
-                    else:
-                        cleaned_sequences.append(seq)
+                        continue
+
+                    # Check for invalid amino acids
+                    invalid_chars = [aa for aa in seq if aa not in valid_aas]
+                    if invalid_chars:
+                        reason = f"invalid characters: {set(invalid_chars)}"
+                        invalid_sequences.append((global_idx, seq[:50], reason))
+                        continue
+
+                    cleaned_sequences.append(seq)
+
+                # If any sequences are invalid, fail immediately
+                if invalid_sequences:
+                    error_details = "\n".join(
+                        f"  Index {idx}: '{seq}...' ({reason})"
+                        for idx, seq, reason in invalid_sequences[:10]
+                    )
+                    total_invalid = len(invalid_sequences)
+                    raise ValueError(
+                        f"Found {total_invalid} invalid sequence(s) in batch {batch_idx}:\n{error_details}"
+                        + (
+                            f"\n  ... and {total_invalid - 10} more"
+                            if total_invalid > 10
+                            else ""
+                        )
+                    )
 
                 # Tokenize the batch with padding
                 inputs = self.tokenizer(
@@ -191,7 +228,25 @@ class ESMEmbeddingExtractor:
                     masked_embeddings = embeddings * attention_mask
                     sum_embeddings = masked_embeddings.sum(dim=1)  # Sum over sequence
                     sum_mask = attention_mask.sum(dim=1)  # Count valid tokens
-                    mean_embeddings = sum_embeddings / sum_mask  # Average
+
+                    # Prevent division by zero (NaN embeddings)
+                    # Use clamp to avoid zero divisors (min valid tokens = 1)
+                    sum_mask_safe = sum_mask.clamp(min=1e-9)
+                    mean_embeddings = sum_embeddings / sum_mask_safe  # Average
+
+                    # Check if any sequences had zero mask (would produce near-zero or invalid embeddings)
+                    zero_mask_indices = (
+                        (sum_mask == 0).any(dim=1).nonzero(as_tuple=True)[0]
+                    )
+                    if len(zero_mask_indices) > 0:
+                        bad_seqs = [
+                            cleaned_sequences[i.item()][:50]
+                            for i in zero_mask_indices[:3]
+                        ]
+                        raise ValueError(
+                            f"Found {len(zero_mask_indices)} sequence(s) with zero attention mask in batch {batch_idx}. "
+                            f"Sample sequences: {bad_seqs}. This indicates empty/invalid sequences after masking."
+                        )
 
                     # Convert to numpy and add to list
                     batch_embeddings = mean_embeddings.cpu().numpy()
@@ -203,10 +258,16 @@ class ESMEmbeddingExtractor:
                     self._clear_gpu_cache()
 
             except Exception as e:
-                logger.error(f"Failed to process batch {batch_idx}: {e}")
-                # Add zero embeddings for failed batch
-                for _ in range(len(batch_sequences)):
-                    embeddings_list.append(np.zeros(1280))  # ESM-1V embedding dimension
+                logger.error(
+                    f"CRITICAL: Failed to process batch {batch_idx} (sequences {start_idx}-{end_idx}): {e}"
+                )
+                logger.error(
+                    f"First sequence in failed batch: {batch_sequences[0][:100]}..."
+                )
+                raise RuntimeError(
+                    f"Batch processing failed at batch {batch_idx}. Cannot continue with corrupted embeddings. "
+                    f"Original error: {e}"
+                ) from e
 
         # Final cache clear
         self._clear_gpu_cache()

@@ -10,7 +10,6 @@ import json
 import logging
 import os
 import pickle  # nosec B403 - Used only for local trusted data (models, caches)
-import shutil
 from typing import Any
 
 import numpy as np
@@ -41,8 +40,19 @@ def setup_logging(config: dict[str, Any]) -> logging.Logger:
 
     Returns:
         Configured logger
+
+    Raises:
+        ValueError: If log_level is invalid
     """
-    log_level = getattr(logging, config["training"]["log_level"].upper())
+    # Validate log level
+    VALID_LEVELS = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
+    level_str = config["training"]["log_level"].upper()
+    if level_str not in VALID_LEVELS:
+        raise ValueError(
+            f"Invalid log_level '{level_str}' in config. Must be one of: {VALID_LEVELS}"
+        )
+
+    log_level = getattr(logging, level_str)
     log_file = config["training"]["log_file"]
 
     # Create log directory if it doesn't exist
@@ -67,10 +77,22 @@ def load_config(config_path: str) -> dict[str, Any]:
 
     Returns:
         Configuration dictionary
+
+    Raises:
+        FileNotFoundError: If config file doesn't exist
+        ValueError: If YAML is invalid
     """
-    with open(config_path) as f:
-        config: dict[str, Any] = yaml.safe_load(f)
-    return config
+    try:
+        with open(config_path) as f:
+            config: dict[str, Any] = yaml.safe_load(f)
+        return config
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"Config file not found: {config_path}\n"
+            "Please create it or specify a valid path with --config"
+        ) from None
+    except yaml.YAMLError as e:
+        raise ValueError(f"Invalid YAML in config file {config_path}: {e}") from e
 
 
 def get_or_create_embeddings(
@@ -105,20 +127,40 @@ def get_or_create_embeddings(
     if os.path.exists(cache_file):
         logger.info(f"Loading cached embeddings from {cache_file}")
         with open(cache_file, "rb") as f:
-            cached_data: dict[str, Any] = pickle.load(f)  # nosec B301 - Hash-validated local cache (sequences_hash verified on line 111)
+            cached_data_raw = pickle.load(f)  # nosec B301 - Hash-validated local cache
 
-        # Verify the cached sequences match exactly
-        if (
-            len(cached_data["embeddings"]) == len(sequences)
-            and cached_data["sequences_hash"] == sequences_hash
-        ):
-            logger.info(
-                f"Using cached embeddings for {len(sequences)} sequences (hash: {sequences_hash})"
+        # Validate loaded data type and structure
+        if not isinstance(cached_data_raw, dict):
+            logger.warning(
+                f"Invalid cache file format (expected dict, got {type(cached_data_raw).__name__}). "
+                "Recomputing embeddings..."
             )
-            embeddings_result: np.ndarray = cached_data["embeddings"]
-            return embeddings_result
+        elif (
+            "embeddings" not in cached_data_raw
+            or "sequences_hash" not in cached_data_raw
+        ):
+            missing_keys = {"embeddings", "sequences_hash"} - set(
+                cached_data_raw.keys()
+            )
+            logger.warning(
+                f"Corrupt cache file (missing keys: {missing_keys}). "
+                "Recomputing embeddings..."
+            )
         else:
-            logger.warning("Cached embeddings hash mismatch, recomputing...")
+            cached_data: dict[str, Any] = cached_data_raw
+
+            # Verify the cached sequences match exactly
+            if (
+                len(cached_data["embeddings"]) == len(sequences)
+                and cached_data["sequences_hash"] == sequences_hash
+            ):
+                logger.info(
+                    f"Using cached embeddings for {len(sequences)} sequences (hash: {sequences_hash})"
+                )
+                embeddings_result: np.ndarray = cached_data["embeddings"]
+                return embeddings_result
+            else:
+                logger.warning("Cached embeddings hash mismatch, recomputing...")
 
     logger.info(f"Computing embeddings for {len(sequences)} sequences...")
     embeddings = embedding_extractor.extract_batch_embeddings(sequences)
@@ -466,9 +508,6 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
         # Save model
         model_paths = save_model(classifier, config, logger)
 
-        # Delete cached embeddings
-        shutil.rmtree(cache_dir)
-
         # Compile results
         results = {
             "train_metrics": train_results,
@@ -478,6 +517,14 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
         }
 
         logger.info("Training pipeline completed successfully")
+
+        # Cache preserved for reuse in hyperparameter sweeps
+        # Embeddings are content-addressed (SHA-256 hash), safe to keep indefinitely
+        # To manually clear cache: rm -rf ./embeddings_cache/
+        logger.info(
+            f"Embedding cache preserved at {cache_dir} for future training runs"
+        )
+
         return results
 
     except Exception as e:

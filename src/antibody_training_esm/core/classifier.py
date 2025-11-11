@@ -41,6 +41,15 @@ class BinaryClassifier:
         if params is None:
             params = kwargs
 
+        # Validate required parameters
+        REQUIRED_PARAMS = ["random_state", "model_name", "device", "max_iter"]
+        missing = [p for p in REQUIRED_PARAMS if p not in params]
+        if missing:
+            raise ValueError(
+                f"Missing required parameters: {missing}. "
+                f"BinaryClassifier requires: {REQUIRED_PARAMS}"
+            )
+
         random_state = params["random_state"]
         batch_size = params.get(
             "batch_size", DEFAULT_BATCH_SIZE
@@ -131,10 +140,60 @@ class BinaryClassifier:
 
         Returns:
             self
+
+        Notes:
+            This method updates parameters without destroying fitted state.
+            If model_name or device changes, the embedding extractor is recreated.
+            LogisticRegression parameters are updated on the classifier instance.
         """
-        self._params.update(params)
-        # Reinitialize with new parameters (sklearn compatibility pattern)
-        self.__init__(self._params)  # type: ignore[misc]
+        # Track if we need to recreate embedding extractor
+        needs_extractor_reload = False
+
+        for key, value in params.items():
+            self._params[key] = value
+
+            # Update instance attributes
+            if key == "random_state":
+                self.random_state = value
+                self.classifier.random_state = value
+            elif key == "max_iter":
+                self.max_iter = value
+                self.classifier.max_iter = value
+            elif key == "C":
+                self.C = value
+                self.classifier.C = value
+            elif key == "penalty":
+                self.penalty = value
+                self.classifier.penalty = value
+            elif key == "solver":
+                self.solver = value
+                self.classifier.solver = value
+            elif key == "class_weight":
+                self.class_weight = value
+                self.classifier.class_weight = value
+            elif key == "batch_size":
+                self.batch_size = value
+                needs_extractor_reload = True
+            elif key == "model_name":
+                self.model_name = value
+                needs_extractor_reload = True
+            elif key == "device":
+                self.device = value
+                needs_extractor_reload = True
+            elif key == "revision":
+                self.revision = value
+                needs_extractor_reload = True
+
+        # Recreate embedding extractor only if necessary
+        if needs_extractor_reload:
+            logger.info(
+                f"Recreating embedding extractor with updated params: "
+                f"model_name={self.model_name}, device={self.device}, batch_size={self.batch_size}"
+            )
+            self.embedding_extractor = ESMEmbeddingExtractor(
+                self.model_name, self.device, self.batch_size, revision=self.revision
+            )
+
         return self
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> None:
