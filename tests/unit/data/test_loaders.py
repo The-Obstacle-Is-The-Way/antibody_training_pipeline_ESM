@@ -118,13 +118,16 @@ def test_load_local_data_raises_on_missing_file() -> None:
 def test_load_local_data_raises_on_missing_column(
     tmp_path: Path, sample_csv_data: pd.DataFrame
 ) -> None:
-    """Verify load_local_data raises error for missing column"""
+    """Verify load_local_data raises helpful error for missing column"""
     # Arrange
     csv_path = tmp_path / "test.csv"
     sample_csv_data.to_csv(csv_path, index=False)
 
-    # Act & Assert
-    with pytest.raises(KeyError):
+    # Act & Assert - now raises ValueError with available columns listed
+    with pytest.raises(
+        ValueError,
+        match=r"Sequence column 'nonexistent_column' not found.*Available columns",
+    ):
         load_local_data(csv_path, "nonexistent_column", "label")
 
 

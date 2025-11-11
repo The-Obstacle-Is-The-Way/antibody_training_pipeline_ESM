@@ -10,7 +10,6 @@ import json
 import logging
 import os
 import pickle  # nosec B403 - Used only for local trusted data (models, caches)
-import shutil
 from typing import Any
 
 import numpy as np
@@ -136,9 +135,15 @@ def get_or_create_embeddings(
                 f"Invalid cache file format (expected dict, got {type(cached_data_raw).__name__}). "
                 "Recomputing embeddings..."
             )
-        elif "embeddings" not in cached_data_raw or "sequences_hash" not in cached_data_raw:
+        elif (
+            "embeddings" not in cached_data_raw
+            or "sequences_hash" not in cached_data_raw
+        ):
+            missing_keys = {"embeddings", "sequences_hash"} - set(
+                cached_data_raw.keys()
+            )
             logger.warning(
-                f"Corrupt cache file (missing keys: {set(['embeddings', 'sequences_hash']) - set(cached_data_raw.keys())}). "
+                f"Corrupt cache file (missing keys: {missing_keys}). "
                 "Recomputing embeddings..."
             )
         else:
@@ -513,14 +518,12 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
 
         logger.info("Training pipeline completed successfully")
 
-        # Delete cached embeddings ONLY after full success
-        # (moved to end to prevent cache loss on late-stage failures)
-        try:
-            logger.info(f"Cleaning up embedding cache: {cache_dir}")
-            shutil.rmtree(cache_dir)
-            logger.info("Embedding cache deleted successfully")
-        except Exception as e:
-            logger.warning(f"Failed to delete embedding cache {cache_dir}: {e} (non-fatal)")
+        # Cache preserved for reuse in hyperparameter sweeps
+        # Embeddings are content-addressed (SHA-256 hash), safe to keep indefinitely
+        # To manually clear cache: rm -rf ./embeddings_cache/
+        logger.info(
+            f"Embedding cache preserved at {cache_dir} for future training runs"
+        )
 
         return results
 

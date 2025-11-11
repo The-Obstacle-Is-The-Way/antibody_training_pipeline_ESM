@@ -155,13 +155,13 @@ def test_load_config_raises_on_missing_file() -> None:
 
 
 def test_load_config_raises_on_invalid_yaml(tmp_path: Path) -> None:
-    """Verify load_config raises error for invalid YAML"""
+    """Verify load_config raises helpful error for invalid YAML"""
     # Arrange
     invalid_yaml = tmp_path / "invalid.yaml"
     invalid_yaml.write_text("invalid: yaml: content: [unclosed")
 
-    # Act & Assert
-    with pytest.raises(yaml.YAMLError):
+    # Act & Assert - now raises ValueError with helpful context
+    with pytest.raises(ValueError, match=r"Invalid YAML in config file"):
         load_config(str(invalid_yaml))
 
 
@@ -987,7 +987,7 @@ def test_train_model_deletes_cache_after_training(
     tmp_path: Path,
     mock_transformers_model: tuple[Any, Any],
 ) -> None:
-    """Verify train_model deletes embeddings cache after training"""
+    """Verify train_model preserves embeddings cache for reuse in hyperparameter sweeps"""
     # Arrange
     import pandas as pd
 
@@ -1017,5 +1017,7 @@ def test_train_model_deletes_cache_after_training(
         )
         train_model(config_yaml_path)
 
-    # Assert: Cache directory should be deleted
-    assert not (tmp_path / "cache").exists()
+    # Assert: Cache directory should be PRESERVED for reuse
+    assert (tmp_path / "cache").exists(), (
+        "Cache should be preserved for hyperparameter sweeps"
+    )

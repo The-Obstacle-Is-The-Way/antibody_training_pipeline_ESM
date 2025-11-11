@@ -352,7 +352,7 @@ def test_extract_batch_embeddings_batch_size_larger_than_input(
 def test_extract_batch_embeddings_handles_invalid_sequences_gracefully(
     embedding_extractor: ESMEmbeddingExtractor,
 ) -> None:
-    """Verify batch extractor uses placeholder for invalid sequences"""
+    """Verify batch extractor fails loudly on invalid sequences (no silent corruption)"""
     # Arrange - mixed valid and invalid
     sequences = [
         "QVQLVQSGAEVKKPGA",  # Valid
@@ -361,12 +361,12 @@ def test_extract_batch_embeddings_handles_invalid_sequences_gracefully(
         "QVQLVQ123SGAEVKKPGA",  # Numbers (invalid)
     ]
 
-    # Act - should not raise, uses placeholder "M" for invalid
-    embeddings = embedding_extractor.extract_batch_embeddings(sequences)
-
-    # Assert
-    assert embeddings.shape == (4, 1280)
-    assert not np.isnan(embeddings).any()
+    # Act & Assert - should raise RuntimeError with details about invalid sequences
+    with pytest.raises(
+        RuntimeError,
+        match=r"Batch processing failed.*Cannot continue with corrupted embeddings",
+    ):
+        embedding_extractor.extract_batch_embeddings(sequences)
 
 
 @pytest.mark.unit
