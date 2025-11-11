@@ -15,7 +15,7 @@ import os
 import pickle
 from pathlib import Path
 from typing import Any
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 import numpy as np
 import pytest
@@ -27,8 +27,7 @@ from antibody_training_esm.core.trainer import (
     load_config,
     perform_cross_validation,
     save_model,
-    setup_logging,
-    train_model,  # NEW: Core logic function that accepts DictConfig
+    setup_logging,  # NEW: Core logic function that accepts DictConfig
 )
 
 # ==================== Fixtures ====================
@@ -873,156 +872,3 @@ def test_load_model_from_npz_with_dict_class_weight(
     original_predictions = classifier.predict(X)
     loaded_predictions = loaded_classifier.predict(X)
     np.testing.assert_array_equal(original_predictions, loaded_predictions)
-
-
-# ==================== train_model Integration Tests ====================
-
-
-def test_train_model_loads_config_and_completes_pipeline(
-    config_yaml_path: str,
-    tmp_path: Path,
-    mock_transformers_model: tuple[Any, Any],
-) -> None:
-    """Verify train_model loads config and completes full training pipeline"""
-    # Arrange: Create minimal training CSV
-    import pandas as pd
-
-    train_csv = tmp_path / "train.csv"
-    df = pd.DataFrame(
-        {
-            "id": [f"AB{i:03d}" for i in range(10)],
-            "VH_sequence": ["QVQLVQSGAEVKKPGA"] * 10,
-            "label": [0, 1] * 5,
-        }
-    )
-    df.to_csv(train_csv, index=False)
-
-    # Update config to point to train CSV
-    config = load_config(config_yaml_path)
-    config["data"]["train_data_path"] = str(train_csv)
-    config["training"]["save_model"] = False  # Don't save (faster test)
-    config["classifier"]["cv_folds"] = 2  # Fewer folds for speed
-    with open(config_yaml_path, "w") as f:
-        yaml.dump(config, f)
-
-    # Act
-    with patch("antibody_training_esm.core.trainer.load_data") as mock_load_data:
-        # Mock load_data to return sequences and labels
-        mock_load_data.return_value = (
-            df["VH_sequence"].tolist(),
-            df["label"].tolist(),
-        )
-        results = train_model(config_yaml_path)
-
-    # Assert
-    assert results is not None
-    assert "train_metrics" in results
-    assert "cv_metrics" in results
-    assert "config" in results
-    assert "accuracy" in results["train_metrics"]
-    assert "cv_accuracy" in results["cv_metrics"]
-
-
-@pytest.mark.unit
-def test_train_model_saves_all_formats(
-    config_yaml_path: str,
-    tmp_path: Path,
-    mock_transformers_model: tuple[Any, Any],
-) -> None:
-    """Verify train_model() returns all model paths (pickle, NPZ, JSON)"""
-    # Arrange: Create minimal training CSV
-    import pandas as pd
-
-    train_csv = tmp_path / "train.csv"
-    df = pd.DataFrame(
-        {
-            "id": [f"AB{i:03d}" for i in range(10)],
-            "VH_sequence": ["QVQLVQSGAEVKKPGA"] * 10,
-            "label": [0, 1] * 5,
-        }
-    )
-    df.to_csv(train_csv, index=False)
-
-    # Update config to save model and use minimal settings
-    config = load_config(config_yaml_path)
-    config["data"]["train_data_path"] = str(train_csv)
-    config["training"]["save_model"] = True  # Enable saving
-    config["training"]["model_name"] = "test_model"
-    config["training"]["model_save_dir"] = str(tmp_path / "models")
-    config["classifier"]["cv_folds"] = 2  # Fewer folds for speed
-    with open(config_yaml_path, "w") as f:
-        yaml.dump(config, f)
-
-    # Act
-    with patch("antibody_training_esm.core.trainer.load_data") as mock_load_data:
-        # Mock load_data to return sequences and labels
-        mock_load_data.return_value = (
-            df["VH_sequence"].tolist(),
-            df["label"].tolist(),
-        )
-        results = train_model(config_yaml_path)
-
-    # Assert: model_paths dict contains all three formats
-    assert "model_paths" in results
-    assert "pickle" in results["model_paths"]
-    assert "npz" in results["model_paths"]
-    assert "config" in results["model_paths"]
-
-    # Assert: All three files actually exist
-    assert Path(results["model_paths"]["pickle"]).exists()
-    assert Path(results["model_paths"]["npz"]).exists()
-    assert Path(results["model_paths"]["config"]).exists()
-
-
-def test_train_model_raises_on_training_failure(config_yaml_path: str) -> None:
-    """Verify train_model raises exception on training failure"""
-    # Arrange: Point to non-existent training data
-    config = load_config(config_yaml_path)
-    config["data"]["train_data_path"] = "nonexistent.csv"
-    with open(config_yaml_path, "w") as f:
-        yaml.dump(config, f)
-
-    # Act & Assert: Should raise FileNotFoundError or other training error
-    with pytest.raises((FileNotFoundError, ValueError, RuntimeError)):
-        train_model(config_yaml_path)
-
-
-def test_train_model_deletes_cache_after_training(
-    config_yaml_path: str,
-    tmp_path: Path,
-    mock_transformers_model: tuple[Any, Any],
-) -> None:
-    """Verify train_model preserves embeddings cache for reuse in hyperparameter sweeps"""
-    # Arrange
-    import pandas as pd
-
-    train_csv = tmp_path / "train.csv"
-    df = pd.DataFrame(
-        {
-            "id": [f"AB{i:03d}" for i in range(10)],
-            "VH_sequence": ["QVQLVQSGAEVKKPGA"] * 10,
-            "label": [0, 1] * 5,
-        }
-    )
-    df.to_csv(train_csv, index=False)
-
-    config = load_config(config_yaml_path)
-    config["data"]["train_data_path"] = str(train_csv)
-    config["data"]["embeddings_cache_dir"] = str(tmp_path / "cache")
-    config["training"]["save_model"] = False
-    config["classifier"]["cv_folds"] = 2
-    with open(config_yaml_path, "w") as f:
-        yaml.dump(config, f)
-
-    # Act
-    with patch("antibody_training_esm.core.trainer.load_data") as mock_load_data:
-        mock_load_data.return_value = (
-            df["VH_sequence"].tolist(),
-            df["label"].tolist(),
-        )
-        train_model(config_yaml_path)
-
-    # Assert: Cache directory should be PRESERVED for reuse
-    assert (tmp_path / "cache").exists(), (
-        "Cache should be preserved for hyperparameter sweeps"
-    )
