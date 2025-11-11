@@ -17,6 +17,7 @@ data:
   source: "local"
   dataset_name: "boughter_vh"
   train_file: ./train_datasets/boughter/canonical/VH_only_boughter_training.csv  # Boughter VH training data (filtered)
+  test_file: ./test_datasets/jain/canonical/VH_only_jain_P5e_S2.csv  # Jain VH test data (Novo Nordisk parity)
   # NOTE: Testing is controlled via antibody-test CLI with --data or --config
   # Training code does not use val_file or test_file entries
 
@@ -49,6 +50,9 @@ classifier:
 
 # Training configuration
 training:
+  # Cross-validation
+  n_splits: 10  # Number of CV folds (matches classifier.cv_folds for Novo methodology)
+
   # Evaluation metrics
   metrics: ["accuracy", "precision", "recall", "f1", "roc_auc"]
 
