@@ -146,8 +146,25 @@ def load_local_data(
     Returns:
         X: List of input sequences
         y: List of labels
+
+    Raises:
+        ValueError: If required columns are missing from CSV
     """
     train_df = pd.read_csv(file_path, comment="#")  # Handle comment lines in CSV
+
+    # Validate required columns exist
+    available_columns = list(train_df.columns)
+    if text_column not in train_df.columns:
+        raise ValueError(
+            f"Sequence column '{text_column}' not found in {file_path}. "
+            f"Available columns: {available_columns}"
+        )
+    if label_column not in train_df.columns:
+        raise ValueError(
+            f"Label column '{label_column}' not found in {file_path}. "
+            f"Available columns: {available_columns}"
+        )
+
     X_train = train_df[text_column].tolist()
     y_train = cast(list[Label], train_df[label_column].tolist())
 
