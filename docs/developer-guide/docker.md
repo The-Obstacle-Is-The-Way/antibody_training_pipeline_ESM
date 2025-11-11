@@ -170,8 +170,12 @@ docker-compose run dev bash
 ### Train Model
 
 ```bash
+# Use default Hydra config
+docker-compose run dev antibody-train
+
+# OR override parameters
 docker-compose run dev antibody-train \
-    --config /app/configs/config.yaml
+    hardware.device=cpu training.batch_size=16
 ```
 
 ### Test Trained Model
@@ -253,9 +257,12 @@ docker build -f Dockerfile.prod -t antibody-training-prod:1.0 .
 ### Run Production Container
 
 ```bash
-# Run training pipeline
+# Run training pipeline (uses default Hydra config)
+docker run -v $(pwd)/data:/app/data antibody-training-prod:1.0
+
+# OR with parameter overrides
 docker run -v $(pwd)/data:/app/data antibody-training-prod:1.0 \
-    --config /app/configs/config.yaml
+    hardware.device=cpu
 
 # Test model
 docker run -v $(pwd)/data:/app/data antibody-training-prod:1.0 \

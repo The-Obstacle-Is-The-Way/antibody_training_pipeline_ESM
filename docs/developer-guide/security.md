@@ -232,7 +232,7 @@ def validate_config(config: dict[str, Any]) -> None:
 
 **Configuration:**
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"
   revision: "main"  # Pinned revision for reproducibility
@@ -608,7 +608,7 @@ As of v0.3.0, the codebase follows consistent error handling patterns to prevent
 
 **Example:**
 ```python
-def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
+def train_model(config_path: str = "conf/config.yaml") -> dict[str, Any]:
     config = load_config(config_path)
     validate_config(config)  # ← Validate BEFORE GPU allocation
     logger = setup_logging(config)

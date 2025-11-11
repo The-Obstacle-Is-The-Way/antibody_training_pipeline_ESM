@@ -136,10 +136,10 @@ make all
 
 ## Training with Hydra
 
-The pipeline uses [Hydra](https://hydra.cc) for flexible configuration management:
+The pipeline uses [Hydra](https://hydra.cc) for flexible configuration management. Default config is in `conf/config.yaml`:
 
 ```bash
-# Train with default config
+# Train with default Hydra config (conf/config.yaml)
 make train
 # OR
 uv run antibody-train

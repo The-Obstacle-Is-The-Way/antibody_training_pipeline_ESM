@@ -16,13 +16,13 @@ This guide explains how to use the antibody classification pipeline with ESM-1V 
   ```
 
 2. **Update configuration**:
-  Edit `config.yaml` to point to your data file:
+  Edit `conf/config.yaml` to point to your data file:
   ```yaml
   data:
     train_file: "path/to/your/training_data.csv"
   ```
 3. **update source**
-  Edit `config.yaml` with the desired source:
+  Edit `conf/config.yaml` with the desired source:
   ```yaml
   data:
     source: "local"
@@ -31,22 +31,26 @@ This guide explains how to use the antibody classification pipeline with ESM-1V 
 ## Option 2: HuggingFace dataset
 
 1. **Update configuration**:
-  Edit `config.yaml` with dataset name:
+  Edit `conf/config.yaml` with dataset name:
   ```yaml
   data:
     dataset_name: "VH_dataset"
   ```
 
 2. **update source**
-  Edit `config.yaml` with the desired source:
+  Edit `conf/config.yaml` with the desired source:
   ```yaml
   data:
     source: "hf"
   ```
 
-# Run training pipeline
+# Run training pipeline with Hydra
    ```bash
-   antibody-train --config configs/config.yaml
+   # Use default config (conf/config.yaml)
+   antibody-train
+
+   # OR override parameters from CLI
+   antibody-train hardware.device=cuda training.batch_size=32
    ```
 
 ## Configuration Options
@@ -95,17 +99,23 @@ training:
 
 ### Basic Usage
 ```bash
-# Use default config.yaml
-antibody-train --config configs/config.yaml
+# Use default Hydra config (conf/config.yaml)
+antibody-train
 
-# Use custom config file
-antibody-train --config my_config.yaml
+# Override parameters from CLI
+antibody-train hardware.device=cuda classifier.C=0.5
+
+# Run hyperparameter sweeps
+antibody-train --multirun classifier.C=0.1,1.0,10.0
 ```
 
 ### Additional Options
 ```bash
 # Get help with all CLI options
 antibody-train --help
+
+# See current config
+antibody-train --cfg job
 ```
 
 ## Data Format
