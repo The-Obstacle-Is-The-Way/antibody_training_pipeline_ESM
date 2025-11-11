@@ -2,6 +2,24 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.hatch.build.targets.wheel]
+packages = ["src/antibody_training_esm"]
+include = [
+    "src/antibody_training_esm/conf/**/*.yaml",
+    "src/antibody_training_esm/conf/**/*.py",
+]
+
+[tool.hatch.build.targets.sdist]
+# Source distribution must include all source files + configs
+include = [
+    "src/antibody_training_esm/**/*.py",
+    "src/antibody_training_esm/conf/**/*.yaml",
+    "tests/**/*.py",
+    "README.md",
+    "pyproject.toml",
+    "LICENSE",
+]
+
 [project]
 name = "antibody-training-esm"
 version = "0.3.0"
@@ -14,6 +32,7 @@ dependencies = [
     "brotli>=1.2.0",
     "datasets>=4.2.0",
     "h2>=4.3.0",
+    "hydra-core>=1.3.2",
     "jupyterlab>=4.4.9",
     "matplotlib>=3.7.0",
     "more-itertools",
@@ -114,6 +133,7 @@ markers = [
     "slow: Slow tests (>30s, run on schedule)",
     "unit: Fast unit tests (run on every PR)",
     "integration: Integration tests (run on every PR)",
+    "legacy: Legacy tests for backward compatibility (optional in CI)",
 ]
 filterwarnings = [
     "ignore::DeprecationWarning",

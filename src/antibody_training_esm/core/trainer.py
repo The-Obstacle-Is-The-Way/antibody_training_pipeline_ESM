@@ -110,10 +110,12 @@ def setup_logging(config: dict[str, Any]) -> logging.Logger:
     os.makedirs(os.path.dirname(log_file), exist_ok=True)
 
     # Configure logging
+    # force=True prevents duplicate log lines when Hydra has already configured logging
     logging.basicConfig(
         level=log_level,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
+        force=True,  # Python 3.8+ - replaces existing handlers
     )
 
     return logging.getLogger(__name__)

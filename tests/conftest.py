@@ -23,6 +23,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
+# CRITICAL: Import conf package to trigger ConfigStore registration
+# This MUST happen before any Hydra tests call initialize()
+import antibody_training_esm.conf  # noqa: F401
+
 # NOTE: sys.path injection removed - uv handles package installation
 # If running tests without uv, use: uv run pytest
 # sys.path.insert(0, str(Path(__file__).parent.parent / "src"))

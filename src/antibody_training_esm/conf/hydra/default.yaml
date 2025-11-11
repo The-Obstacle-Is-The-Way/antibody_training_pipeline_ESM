@@ -1,0 +1,10 @@
+# Hydra output directory management
+run:
+  dir: outputs/${experiment.name}/${now:%Y-%m-%d_%H-%M-%S}
+
+sweep:
+  dir: outputs/sweeps/${experiment.name}
+  subdir: ${hydra.job.num}
+
+job:
+  chdir: false  # Don't change working directory
