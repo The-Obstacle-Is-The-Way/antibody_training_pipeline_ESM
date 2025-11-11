@@ -336,6 +336,65 @@ def save_model(
     return {"pickle": pickle_path, "npz": npz_path, "config": json_path}
 
 
+def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
+    """
+    Load model from NPZ+JSON format (production deployment)
+
+    Args:
+        npz_path: Path to .npz file with arrays
+        json_path: Path to .json file with metadata
+
+    Returns:
+        Reconstructed BinaryClassifier instance
+
+    Notes:
+        This function enables production deployment without pickle files.
+        It reconstructs a fully functional BinaryClassifier from NPZ+JSON format.
+    """
+    # Load arrays
+    arrays = np.load(npz_path)
+    coef = arrays["coef"]
+    intercept = arrays["intercept"]
+    classes = arrays["classes"]
+    n_features_in = int(arrays["n_features_in"][0])
+    n_iter = arrays["n_iter"]
+
+    # Load metadata
+    with open(json_path) as f:
+        metadata = json.load(f)
+
+    # Reconstruct BinaryClassifier with ALL required params
+    params = {
+        # ESM params
+        "model_name": metadata["esm_model"],
+        "device": metadata.get("device", "cpu"),  # Use saved device or default to CPU
+        "batch_size": metadata["batch_size"],
+        "revision": metadata["esm_revision"],
+        # LogisticRegression hyperparameters
+        "C": metadata["C"],
+        "penalty": metadata["penalty"],
+        "solver": metadata["solver"],
+        "max_iter": metadata["max_iter"],
+        "random_state": metadata["random_state"],
+        "class_weight": metadata[
+            "class_weight"
+        ],  # JSON restores None, str, or dict correctly
+    }
+
+    # Create classifier (initializes with unfitted LogisticRegression)
+    classifier = BinaryClassifier(params)
+
+    # Restore fitted LogisticRegression state
+    classifier.classifier.coef_ = coef
+    classifier.classifier.intercept_ = intercept
+    classifier.classifier.classes_ = classes
+    classifier.classifier.n_features_in_ = n_features_in
+    classifier.classifier.n_iter_ = n_iter
+    classifier.is_fitted = True
+
+    return classifier
+
+
 def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
     """
     Main training function

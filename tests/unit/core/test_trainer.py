@@ -729,6 +729,104 @@ def test_save_model_returns_empty_dict_when_disabled(
     assert model_paths == {}
 
 
+def test_load_model_from_npz_reconstructs_classifier(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
+    """Verify load_model_from_npz() reconstructs a working BinaryClassifier (TDD)"""
+    # Arrange
+    from antibody_training_esm.core.classifier import BinaryClassifier
+    from antibody_training_esm.core.trainer import load_model_from_npz
+
+    # Train and save original model
+    classifier = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=42,
+        max_iter=100,
+        batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight="balanced",
+        revision="main",
+    )
+    X = np.random.rand(20, 1280)
+    y = np.array([0, 1] * 10)
+    classifier.fit(X, y)
+
+    nested_config["training"]["save_model"] = True
+    nested_config["training"]["model_name"] = "test_model"
+    nested_config["training"]["model_save_dir"] = str(tmp_path / "models")
+    mock_logger = Mock()
+
+    # Save model
+    model_paths = save_model(classifier, nested_config, mock_logger)
+
+    # Act: Load model from NPZ+JSON
+    loaded_classifier = load_model_from_npz(model_paths["npz"], model_paths["config"])
+
+    # Assert: Loaded classifier is functional
+    assert loaded_classifier.is_fitted is True
+    assert hasattr(loaded_classifier, "predict")
+    assert hasattr(loaded_classifier, "predict_proba")
+
+    # Assert: Predictions match original
+    original_predictions = classifier.predict(X)
+    loaded_predictions = loaded_classifier.predict(X)
+    np.testing.assert_array_equal(original_predictions, loaded_predictions)
+
+    # Assert: Probabilities match original
+    original_proba = classifier.predict_proba(X)
+    loaded_proba = loaded_classifier.predict_proba(X)
+    np.testing.assert_array_almost_equal(original_proba, loaded_proba, decimal=10)
+
+    # Assert: All hyperparameters preserved
+    assert loaded_classifier.C == classifier.C
+    assert loaded_classifier.penalty == classifier.penalty
+    assert loaded_classifier.solver == classifier.solver
+    assert loaded_classifier.max_iter == classifier.max_iter
+    assert loaded_classifier.random_state == classifier.random_state
+    assert loaded_classifier.class_weight == classifier.class_weight
+    assert loaded_classifier.model_name == classifier.model_name
+    assert loaded_classifier.revision == classifier.revision
+    assert loaded_classifier.batch_size == classifier.batch_size
+
+
+def test_load_model_from_npz_with_none_class_weight(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
+    """Verify load_model_from_npz() handles None class_weight correctly (TDD)"""
+    # Arrange
+    from antibody_training_esm.core.classifier import BinaryClassifier
+    from antibody_training_esm.core.trainer import load_model_from_npz
+
+    # Train model with class_weight=None
+    classifier = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=42,
+        max_iter=10,
+        batch_size=8,
+        class_weight=None,  # Explicitly None
+    )
+    X = np.random.rand(10, 1280)
+    y = np.array([0, 1] * 5)
+    classifier.fit(X, y)
+
+    nested_config["training"]["save_model"] = True
+    nested_config["training"]["model_name"] = "test_model"
+    nested_config["training"]["model_save_dir"] = str(tmp_path / "models")
+    mock_logger = Mock()
+
+    model_paths = save_model(classifier, nested_config, mock_logger)
+
+    # Act
+    loaded_classifier = load_model_from_npz(model_paths["npz"], model_paths["config"])
+
+    # Assert
+    assert loaded_classifier.class_weight is None
+
+
 # ==================== train_model Integration Tests ====================
 
 
