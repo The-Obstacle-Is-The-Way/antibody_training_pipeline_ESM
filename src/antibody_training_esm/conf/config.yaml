@@ -1,0 +1,41 @@
+defaults:
+  - model: esm1v
+  - classifier: logreg
+  - data: boughter_jain
+  - hydra: default
+  - _self_
+
+# Training settings (matches current trainer.py requirements)
+training:
+  # Cross-validation
+  n_splits: 10
+  random_state: 42
+  stratify: true
+
+  # Evaluation metrics (list of metrics to compute)
+  metrics: [accuracy, precision, recall, f1, roc_auc]
+
+  # Model saving
+  save_model: true
+  model_name: boughter_vh_esm1v_logreg
+  model_save_dir: ./models
+
+  # Logging (Hydra-aware: relative to Hydra output dir, or logs/ in legacy mode)
+  log_level: INFO
+  log_file: logs/training.log
+
+  # Performance optimization
+  batch_size: 8
+  num_workers: 4
+
+# Hardware
+hardware:
+  device: mps  # auto-detect in code
+  gpu_memory_fraction: 0.8
+  clear_cache_frequency: 100
+
+# Experiment metadata (Hydra manages output dirs)
+experiment:
+  name: novo_replication
+  description: "Train ESM-1v VH-based LogisticReg on Boughter, test on Jain"
+  tags: [baseline, esm1v, logreg]

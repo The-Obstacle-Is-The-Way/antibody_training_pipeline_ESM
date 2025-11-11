@@ -91,7 +91,7 @@ RuntimeError: MPS backend out of memory
 **Solution 1: Reduce Batch Size**
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 hardware:
   batch_size: 4  # Reduce from default (16)
 ```
@@ -106,7 +106,7 @@ torch.mps.empty_cache()
 **Solution 3: Use CPU Instead**
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 hardware:
   device: "cpu"
 ```
@@ -128,7 +128,7 @@ RuntimeError: CUDA out of memory. Tried to allocate XX.XX MiB
 **Solution 1: Reduce Batch Size**
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 hardware:
   batch_size: 8  # Reduce from default (16)
 ```
@@ -143,7 +143,7 @@ torch.cuda.empty_cache()
 **Solution 3: Use Smaller Model**
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"  # 650M parameters
   # Instead of:
@@ -153,7 +153,7 @@ model:
 **Solution 4: Use CPU**
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 hardware:
   device: "cpu"
 ```
@@ -214,7 +214,7 @@ export HF_HOME=/path/with/space
 export HF_ENDPOINT=https://hf-mirror.com
 
 # Retry download
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 ---
@@ -262,7 +262,7 @@ Clear embeddings cache and retrain:
 
 ```bash
 rm -rf embeddings_cache/
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 Cache is SHA-256 hashed by:
@@ -337,7 +337,7 @@ ls ~/.cache/huggingface/hub/models--facebook--esm1v_t33_650M_UR90S_1/
 **Solution 1: Use GPU**
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 hardware:
   device: "cuda"  # or "mps" for Apple Silicon
 ```
@@ -442,7 +442,7 @@ ValueError: Config validation failed:
 **Cause:** Config YAML is incomplete or using old format.
 
 **Solution:**
-1. Check your config file against the production config (`configs/config.yaml`)
+1. Check your config against the default Hydra config (`conf/config.yaml`)
 2. Add missing sections/keys
 3. Required keys as of v0.3.0:
    - `data`: train_file, test_file, embeddings_cache_dir
@@ -846,7 +846,7 @@ data:
 Validate YAML:
 
 ```bash
-python -c "import yaml; yaml.safe_load(open('configs/config.yaml'))"
+python -c "import yaml; yaml.safe_load(open('conf/config.yaml'))"
 ```
 
 ---
@@ -865,7 +865,7 @@ Use absolute path or ensure working directory is correct:
 
 ```bash
 # From repository root
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 
 # Or use absolute path
 uv run antibody-train --config /full/path/to/config.yaml
@@ -995,7 +995,7 @@ Retrain model:
 
 ```bash
 rm models/corrupted_model.pkl
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 ---

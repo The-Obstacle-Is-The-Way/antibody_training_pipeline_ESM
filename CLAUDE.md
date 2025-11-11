@@ -38,10 +38,26 @@ make all         # Run format → lint → typecheck → test
 **Critical:** This repo maintains 100% type safety. All functions must have complete type annotations. Mypy runs with `disallow_untyped_defs=true`.
 
 ### Training & Testing
+
+**Basic Training:**
 ```bash
-make train                                                    # Train with default config
-uv run antibody-train --config configs/config.yaml           # Train with specific config
-uv run antibody-test --model models/model.pkl --dataset jain # Test trained model
+make train                 # Train with default config
+uv run antibody-train      # Same as above (Hydra-based)
+```
+
+**Hydra Overrides:**
+```bash
+# Override any config parameter
+uv run antibody-train hardware.device=cuda training.batch_size=32
+uv run antibody-train classifier.C=0.5 classifier.penalty=l1
+
+# Run hyperparameter sweeps
+uv run antibody-train --multirun classifier.C=0.1,1.0,10.0
+```
+
+**Model Testing:**
+```bash
+uv run antibody-test --model models/model.pkl --dataset jain  # Test trained model
 ```
 
 ### Preprocessing
@@ -134,8 +150,8 @@ preprocessing/                # Dataset preprocessing pipelines
 ├── harvey/                  # 2-step: Combine CSVs → fragments
 └── shehata/                 # 2-step: Excel → CSV → fragments
 
-configs/                      # YAML configuration files
-├── config.yaml              # Default production config (Boughter train, Jain test)
+conf/                         # Hydra configuration directory (inside package)
+├── config.yaml              # Default Hydra config (Boughter train, Jain test)
 
 models/                       # Trained model checkpoints (.pkl)
 embeddings_cache/            # Cached ESM embeddings
@@ -150,8 +166,9 @@ tests/                       # Test suite
 ## Important Patterns & Conventions
 
 ### Configuration System
-- All training controlled via YAML configs in `configs/`
-- Production config: `configs/config.yaml` (Boughter → Jain)
+- All training controlled via Hydra configs in `conf/` (inside package)
+- Default config: `conf/config.yaml` (Boughter → Jain)
+- Override any parameter from CLI without editing files: `antibody-train hardware.device=cuda`
 - Config structure: `model`, `data`, `classifier`, `training`, `experiment`, `hardware`
 - HuggingFace model revisions pinned for reproducibility
 
@@ -237,11 +254,11 @@ Standard fragments across all datasets:
 5. Update `preprocessing/README.md`
 
 ### Training a New Model
-1. Create config YAML in `configs/{experiment}.yaml`
-2. Set `data.train_file`, `data.test_file`, `classifier` params
-3. Run: `uv run antibody-train --config configs/{experiment}.yaml`
-4. Model saved to `models/{model_name}.pkl`
-5. Logs in `logs/{experiment}.log`
+1. Use default config `conf/config.yaml` or create custom config in `conf/`
+2. Override parameters from CLI: `data.train_file`, `data.test_file`, `classifier.*`
+3. Run: `uv run antibody-train experiment.name=my_experiment training.model_name=my_model`
+4. Model saved to `outputs/{experiment.name}/{timestamp}/{model_name}.pkl`
+5. Logs in `outputs/{experiment.name}/{timestamp}/training.log`
 
 ### Running Hyperparameter Sweeps
 1. See `preprocessing/boughter/train_hyperparameter_sweep.py` for reference

@@ -1,0 +1,22 @@
+# Data source (matches current loaders.py requirements)
+source: local
+dataset_name: boughter_vh
+
+# File paths
+train_file: train_datasets/boughter/canonical/VH_only_boughter_training.csv
+test_file: test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+
+# Data format options (required by loaders.py)
+sequence_column: sequence
+label_column: label
+max_sequence_length: 1024
+
+# Embedding caching (required by trainer.py)
+save_embeddings: true
+embeddings_cache_dir: ./embeddings_cache
+
+# Fragment metadata (for testing only)
+train_fragment: VH
+test_fragment: VH
+test_assay: ELISA
+test_threshold: 0.5

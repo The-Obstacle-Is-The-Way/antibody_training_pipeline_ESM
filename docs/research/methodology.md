@@ -375,7 +375,7 @@ ASSAY_THRESHOLDS = {
 
 **Train on Boughter:**
 ```bash
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train  # Uses conf/config.yaml by default
 ```
 
 **Test on Jain:**

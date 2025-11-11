@@ -217,7 +217,7 @@ assert (df_parity['label'] == 1).sum() == 27  # Non-specific
 from antibody_training_esm.core.trainer import train_model
 
 # Train with VH-only configuration
-config_path = 'configs/config.yaml'
+config_path = 'conf/config.yaml'
 model, results = train_model(config_path)
 
 # Verify performance

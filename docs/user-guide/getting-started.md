@@ -39,10 +39,10 @@ You should see help messages for both commands.
 
 ### Step 2: Review Default Configuration
 
-The pipeline includes a default configuration file for Novo Nordisk parity validation:
+The pipeline includes a default Hydra configuration for Novo Nordisk parity validation:
 
 ```bash
-cat configs/config.yaml
+cat conf/config.yaml
 ```
 
 **Key settings:**
@@ -54,12 +54,12 @@ cat configs/config.yaml
 
 ### Step 3: Train the Model
 
-Run training with the default configuration:
+Run training with the default Hydra configuration:
 
 ```bash
 make train
 # OR
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 **What happens:**
@@ -214,17 +214,24 @@ See [Troubleshooting Guide](troubleshooting.md) if you encounter:
 export HF_HOME=/path/to/cache
 
 # Retry download
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 ### Issue: Out of memory during embedding extraction
 
 **Symptoms:** `RuntimeError: CUDA out of memory` or `MPS out of memory`
 
-**Solution:** Reduce batch size in config:
+**Solution:** Reduce batch size via CLI override:
+
+```bash
+# Override batch size from CLI
+uv run antibody-train hardware.batch_size=8
+```
+
+Or edit `conf/config.yaml`:
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 hardware:
   batch_size: 8  # Reduce from default (16)
 ```

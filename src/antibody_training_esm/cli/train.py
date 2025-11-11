@@ -1,44 +1,42 @@
 """
-Training CLI
+Training CLI - Hydra Entry Point
 
 Professional command-line interface for antibody model training.
+Uses Hydra for configuration management and supports dynamic overrides.
+
+Usage:
+    # Default config
+    antibody-train
+
+    # With overrides
+    antibody-train hardware.device=cuda training.batch_size=16
+
+    # Multi-run sweep
+    antibody-train --multirun classifier.C=0.1,1.0,10.0
+
+    # Help
+    antibody-train --help
 """
 
-import argparse
-import sys
-
-from antibody_training_esm.core.trainer import train_model
+from antibody_training_esm.core.trainer import main as hydra_main
 
 
-def main() -> int:
-    """Main entry point for training CLI"""
-    parser = argparse.ArgumentParser(
-        description="Train antibody classification model using ESM-1V embeddings",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
+def main() -> None:
+    """
+    Main entry point for training CLI
 
-    parser.add_argument(
-        "--config",
-        "-c",
-        type=str,
-        default="configs/config.yaml",
-        help="Path to configuration YAML file (default: configs/config.yaml)",
-    )
+    Delegates to Hydra-decorated main() in core.trainer.
+    This provides automatic config composition, override support,
+    and multi-run sweeps.
 
-    args = parser.parse_args()
-
-    try:
-        print(f"Starting training with config: {args.config}")
-        train_model(args.config)
-        print("\n✅ Training completed successfully!")
-        return 0
-    except KeyboardInterrupt:
-        print("\n❌ Training failed: Interrupted by user", file=sys.stderr)
-        return 1
-    except Exception as e:
-        print(f"\n❌ Training failed: {e}", file=sys.stderr)
-        return 1
+    Note:
+        This function does not return an exit code (Hydra handles that).
+        Use try/except at a higher level if you need custom error handling.
+    """
+    # Delegate to Hydra entry point
+    # Hydra automatically parses sys.argv and handles all CLI logic
+    hydra_main()
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

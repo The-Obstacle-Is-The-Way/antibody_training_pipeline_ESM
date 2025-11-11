@@ -24,23 +24,25 @@ Training involves:
 ```bash
 make train
 # OR
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
-### Train with Custom Config
+### Train with Hydra Overrides
 
 ```bash
-uv run antibody-train --config configs/my_experiment.yaml
+# Override specific parameters
+uv run antibody-train hardware.device=cuda training.batch_size=32
+uv run antibody-train classifier.C=0.5 classifier.penalty=l1
 ```
 
 ---
 
-## Configuration File Structure
+## Configuration with Hydra
 
-Training is controlled via YAML configuration files in `configs/`. Here's the default config structure:
+Training is controlled via Hydra configuration in `conf/`. The default config structure:
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"  # ESM-1v model from HuggingFace
@@ -73,6 +75,12 @@ hardware:
   batch_size: 16              # Embedding extraction batch size
 ```
 
+**Note:** With Hydra, you can override any parameter from CLI without editing files:
+
+```bash
+uv run antibody-train hardware.device=cuda classifier.C=0.5
+```
+
 ---
 
 ## Training on Different Datasets
@@ -91,7 +99,7 @@ data:
 
 **Training:**
 ```bash
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 **Testing** (after training):
@@ -119,7 +127,7 @@ data:
 
 **Training:**
 ```bash
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 **Testing** (after training):
@@ -147,7 +155,7 @@ data:
 
 **Training:**
 ```bash
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 **Testing** (after training):
@@ -169,15 +177,9 @@ The pipeline supports training on various antibody sequence fragments by using d
 
 ### Example: Train on Heavy CDRs Only
 
-```yaml
-data:
-  train_file: "train_datasets/boughter/annotated/H-CDRs_boughter.csv"
-  sequence_column: "sequence"
-  label_column: "label"
-```
-
 ```bash
-uv run antibody-train --config configs/h_cdrs_config.yaml
+# Override data file from CLI
+uv run antibody-train data.train_file="train_datasets/boughter/annotated/H-CDRs_boughter.csv"
 ```
 
 ### Available Fragments
@@ -499,7 +501,7 @@ QVQLQESGPGLV...,1
 
 ```bash
 rm -rf embeddings_cache/
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 ---

@@ -1,14 +1,14 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-Core pipeline code resides in `src/antibody_training_esm` (`core/`, `data/`, `datasets/`, `evaluation/`, `utils/`, `cli/`). Configs live in `configs/`, preprocessing assets in `preprocessing/`, and automation or research artifacts in `scripts/` and `experiments/`. Tests sit under `tests/{unit,integration,e2e}` with shared fixtures in `tests/fixtures`. Checkpoints and logs belong in `models/`, `logs/`, `outputs/`, curated datasets in `train_datasets/` or `test_datasets/`, and references in `docs/` and `assets/`.
+Core pipeline code resides in `src/antibody_training_esm` (`core/`, `data/`, `datasets/`, `evaluation/`, `utils/`, `cli/`). Hydra configs live in `conf/` (inside package), preprocessing assets in `preprocessing/`, and automation or research artifacts in `scripts/` and `experiments/`. Tests sit under `tests/{unit,integration,e2e}` with shared fixtures in `tests/fixtures`. Checkpoints and logs belong in `models/`, `logs/`, `outputs/`, curated datasets in `train_datasets/` or `test_datasets/`, and references in `docs/` and `assets/`.
 
 ## Build, Test, and Development Commands
 - `make install`: sync deps with uv.
 - `make format` / `make lint` / `make typecheck`: Ruff format, Ruff lint, mypy.
 - `make test` / `make coverage`: pytest (strict markers) with ≥70% coverage + `htmlcov/`.
 - `make hooks`: run the CI pre-commit stack; `make all` chains format → lint → typecheck → test pre-push.
-- `make train`: wraps `uv run antibody-train --config configs/config.yaml`; pass other configs as needed.
+- `make train`: wraps `uv run antibody-train` (uses Hydra config from `conf/config.yaml` by default).
 
 ## Coding Style & Naming Conventions
 Ruff enforces 4-space indentation, 88-character lines, double quotes, and sorted imports. Mypy (`disallow_untyped_defs=true`) requires every public callable be annotated with precise types. Stick with `snake_case` for modules, functions, configs, and dataset files (timestamps optional), `PascalCase` for classes, `SCREAMING_SNAKE_CASE` for constants, and `test_*.py` for suites with colocated fixtures.

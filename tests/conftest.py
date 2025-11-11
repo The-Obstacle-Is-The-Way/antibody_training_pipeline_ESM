@@ -23,6 +23,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
+# CRITICAL: Import conf package to trigger ConfigStore registration
+# This MUST happen before any Hydra tests call initialize()
+import antibody_training_esm.conf  # noqa: F401
+
 # NOTE: sys.path injection removed - uv handles package installation
 # If running tests without uv, use: uv run pytest
 # sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -397,6 +401,7 @@ def pytest_configure(config: pytest.Config) -> None:
         - e2e: End-to-end tests (slow, full pipeline)
         - slow: Tests that take >1s to run
         - gpu: Tests that require GPU (skip in CI)
+        - legacy: Legacy tests (deprecated, auto-skipped)
     """
     config.addinivalue_line("markers", "unit: Unit tests (fast, no I/O)")
     config.addinivalue_line(
@@ -405,3 +410,37 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line("markers", "e2e: End-to-end tests (slow, full pipeline)")
     config.addinivalue_line("markers", "slow: Tests that take >1s to run")
     config.addinivalue_line("markers", "gpu: Tests that require GPU (skip in CI)")
+    config.addinivalue_line(
+        "markers", "legacy: Legacy tests (deprecated, auto-skipped)"
+    )
+
+
+def pytest_collection_modifyitems(
+    config: pytest.Config, items: list[pytest.Item]
+) -> None:
+    """
+    Auto-skip legacy tests unless explicitly requested with -m legacy.
+
+    Legacy tests are deprecated and will be removed in v0.4.0.
+    They test the old argparse CLI which has been replaced by Hydra.
+
+    To run legacy tests:
+        pytest -m legacy
+
+    To skip legacy tests (default):
+        pytest  # or pytest -m "not legacy"
+    """
+    # Check if user explicitly requested legacy tests
+    markexpr = config.getoption("-m", default="")
+    if "legacy" in markexpr:
+        # User wants to run legacy tests - don't skip
+        return
+
+    # Auto-skip all legacy tests
+    skip_legacy = pytest.mark.skip(
+        reason="Legacy test auto-skipped (old argparse CLI deprecated). "
+        "Run with 'pytest -m legacy' to test backward compatibility."
+    )
+    for item in items:
+        if "legacy" in item.keywords:
+            item.add_marker(skip_legacy)

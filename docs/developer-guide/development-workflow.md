@@ -157,12 +157,12 @@ make all         # Format → Lint → Typecheck → Test
 **Train with default config:**
 ```bash
 make train
-# Uses: configs/config.yaml (Boughter train, Jain test)
+# Uses: conf/config.yaml (Boughter train, Jain test)
 ```
 
-**Train with custom config:**
+**Override parameters from CLI:**
 ```bash
-uv run antibody-train --config configs/my_experiment.yaml
+uv run antibody-train experiment.name=my_experiment hardware.device=cuda
 ```
 
 **Test trained model:**
@@ -173,6 +173,7 @@ uv run antibody-test --model models/model.pkl --data test_datasets/jain/fragment
 **All CLI options:**
 ```bash
 uv run antibody-train --help
+uv run antibody-train --cfg job  # Show resolved config
 uv run antibody-test --help
 ```
 
@@ -241,33 +242,22 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 
 ### Training a New Model
 
-1. **Create config YAML:**
+1. **Override parameters from CLI (no need to create new config files):**
    ```bash
-   cp configs/config.yaml configs/{experiment}.yaml
-   # Edit: data.train_file, data.test_file, classifier params
+   uv run antibody-train \
+     experiment.name=my_experiment \
+     training.model_name=my_model \
+     data.train_file="train_datasets/{dataset}/canonical/VH_only.csv" \
+     data.test_file="test_datasets/{dataset}/canonical/VH_only.csv" \
+     classifier.C=1.0 \
+     classifier.penalty=l2
    ```
 
-2. **Set required config fields:**
-   ```yaml
-   data:
-     train_file: "train_datasets/{dataset}/canonical/VH_only.csv"
-     test_file: "test_datasets/{dataset}/canonical/VH_only.csv"
-
-   classifier:
-     C: 1.0                    # Regularization strength
-     penalty: "l2"             # l1, l2, elasticnet, none
-     solver: "lbfgs"          # Optimizer
+2. **Model saved to:**
    ```
-
-3. **Run training:**
-   ```bash
-   uv run antibody-train --config configs/{experiment}.yaml
-   ```
-
-4. **Model saved to:**
-   ```
-   models/{model_name}.pkl
-   logs/{experiment}.log
+   outputs/{experiment.name}/{timestamp}/{model_name}.pkl
+   outputs/{experiment.name}/{timestamp}/training.log
+   outputs/{experiment.name}/{timestamp}/.hydra/config.yaml
    ```
 
 ---

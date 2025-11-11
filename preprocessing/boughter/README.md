@@ -219,7 +219,7 @@ All fragment files contain **1,065 rows** with the following columns:
 The training pipeline uses:
 
 ```yaml
-# configs/config.yaml
+# conf/config.yaml
 data:
   train_file: ./train_datasets/boughter/canonical/VH_only_boughter_training.csv
 ```

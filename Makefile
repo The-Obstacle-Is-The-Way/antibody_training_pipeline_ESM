@@ -37,7 +37,7 @@ hooks:
 all: format lint typecheck test
 
 train:
-	uv run antibody-train --config configs/config.yaml
+	uv run antibody-train
 
 clean:
 	rm -rf .pytest_cache .mypy_cache .ruff_cache htmlcov .coverage

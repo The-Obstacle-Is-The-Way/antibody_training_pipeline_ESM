@@ -113,8 +113,8 @@ preprocessing/                # Dataset preprocessing pipelines
 ├── harvey/                  # 2-step: Combine CSVs → fragments
 └── shehata/                 # 2-step: Excel → CSV → fragments
 
-configs/                      # YAML configuration files
-├── config.yaml              # Default production config (Boughter train, Jain test)
+conf/                         # Hydra configuration directory (inside package)
+├── config.yaml              # Default Hydra config (Boughter train, Jain test)
 
 models/                       # Trained model checkpoints (.pkl)
 embeddings_cache/            # Cached ESM embeddings
@@ -132,8 +132,9 @@ tests/                       # Test suite
 
 ### Configuration System
 
-- All training controlled via YAML configs in `configs/`
-- Production config: `configs/config.yaml` (Boughter → Jain)
+- All training controlled via Hydra configs in `conf/` (inside package)
+- Default config: `conf/config.yaml` (Boughter → Jain)
+- Override any parameter from CLI without editing files: `antibody-train hardware.device=cuda`
 - Config structure: `model`, `data`, `classifier`, `training`, `experiment`, `hardware`
 - HuggingFace model revisions pinned for reproducibility
 
