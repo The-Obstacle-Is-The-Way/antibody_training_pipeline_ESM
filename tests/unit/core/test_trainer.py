@@ -455,7 +455,7 @@ def test_perform_cross_validation_uses_regular_kfold_when_stratify_false(
 def test_save_model_saves_classifier_to_file(
     nested_config: dict[str, Any], tmp_path: Path
 ) -> None:
-    """Verify save_model saves classifier to pickle file"""
+    """Verify save_model saves classifier to pickle file (updated for dict return)"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
 
@@ -477,14 +477,16 @@ def test_save_model_saves_classifier_to_file(
     mock_logger = Mock()
 
     # Act
-    model_path = save_model(classifier, nested_config, mock_logger)
+    model_paths = save_model(classifier, nested_config, mock_logger)
 
     # Assert
-    assert model_path is not None
-    assert Path(model_path).exists()
-    assert model_path == str(tmp_path / "models" / "test_model.pkl")
+    assert model_paths is not None
+    assert isinstance(model_paths, dict)
+    assert "pickle" in model_paths
+    assert Path(model_paths["pickle"]).exists()
+    assert model_paths["pickle"] == str(tmp_path / "models" / "test_model.pkl")
     # Verify model can be loaded
-    with open(model_path, "rb") as f:
+    with open(model_paths["pickle"], "rb") as f:
         loaded_classifier = pickle.load(f)
     assert hasattr(loaded_classifier, "predict")
 
@@ -492,7 +494,7 @@ def test_save_model_saves_classifier_to_file(
 def test_save_model_returns_none_when_save_disabled(
     nested_config: dict[str, Any],
 ) -> None:
-    """Verify save_model returns None when save_model=False"""
+    """Verify save_model returns empty dict when save_model=False (updated for dict return)"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
 
@@ -508,16 +510,16 @@ def test_save_model_returns_none_when_save_disabled(
     mock_logger = Mock()
 
     # Act
-    model_path = save_model(classifier, nested_config, mock_logger)
+    model_paths = save_model(classifier, nested_config, mock_logger)
 
     # Assert
-    assert model_path is None
+    assert model_paths == {}
 
 
 def test_save_model_creates_save_directory_if_missing(
     nested_config: dict[str, Any], tmp_path: Path
 ) -> None:
-    """Verify save_model creates model_save_dir if it doesn't exist"""
+    """Verify save_model creates model_save_dir if it doesn't exist (updated for dict return)"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
 
@@ -540,12 +542,191 @@ def test_save_model_creates_save_directory_if_missing(
     mock_logger = Mock()
 
     # Act
-    model_path = save_model(classifier, nested_config, mock_logger)
+    model_paths = save_model(classifier, nested_config, mock_logger)
 
     # Assert
-    assert model_path is not None
-    assert Path(model_path).exists()
+    assert model_paths is not None
+    assert isinstance(model_paths, dict)
+    assert "pickle" in model_paths
+    assert Path(model_paths["pickle"]).exists()
     assert nested_dir.exists()
+
+
+# ==================== save_model Dual-Format Tests (TDD) ====================
+
+
+def test_save_model_creates_dual_format_files(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
+    """Verify save_model creates both pickle and NPZ+JSON files (TDD)"""
+    # Arrange
+    from antibody_training_esm.core.classifier import BinaryClassifier
+
+    classifier = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=42,
+        max_iter=10,
+        batch_size=8,
+    )
+    X = np.random.rand(10, 1280)
+    y = np.array([0, 1] * 5)
+    classifier.fit(X, y)
+
+    nested_config["training"]["save_model"] = True
+    nested_config["training"]["model_name"] = "test_model"
+    nested_config["training"]["model_save_dir"] = str(tmp_path / "models")
+    mock_logger = Mock()
+
+    # Act
+    model_paths = save_model(classifier, nested_config, mock_logger)
+
+    # Assert
+    assert isinstance(model_paths, dict)
+    assert "pickle" in model_paths
+    assert "npz" in model_paths
+    assert "config" in model_paths
+
+    # Verify all files exist
+    assert Path(model_paths["pickle"]).exists()
+    assert Path(model_paths["npz"]).exists()
+    assert Path(model_paths["config"]).exists()
+
+    # Verify file names
+    assert model_paths["pickle"] == str(tmp_path / "models" / "test_model.pkl")
+    assert model_paths["npz"] == str(tmp_path / "models" / "test_model.npz")
+    assert model_paths["config"] == str(tmp_path / "models" / "test_model_config.json")
+
+
+def test_save_model_npz_arrays_match_pickle(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
+    """Verify NPZ arrays match pickle model coefficients (TDD)"""
+    # Arrange
+    from antibody_training_esm.core.classifier import BinaryClassifier
+
+    classifier = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=42,
+        max_iter=10,
+        batch_size=8,
+        class_weight="balanced",
+    )
+    X = np.random.rand(10, 1280)
+    y = np.array([0, 1] * 5)
+    classifier.fit(X, y)
+
+    nested_config["training"]["save_model"] = True
+    nested_config["training"]["model_name"] = "test_model"
+    nested_config["training"]["model_save_dir"] = str(tmp_path / "models")
+    mock_logger = Mock()
+
+    # Act
+    model_paths = save_model(classifier, nested_config, mock_logger)
+
+    # Load pickle
+    with open(model_paths["pickle"], "rb") as f:
+        pkl_classifier = pickle.load(f)
+
+    # Load NPZ
+    npz_arrays = np.load(model_paths["npz"])
+
+    # Assert: NPZ arrays match pickle model
+    np.testing.assert_array_equal(pkl_classifier.classifier.coef_, npz_arrays["coef"])
+    np.testing.assert_array_equal(
+        pkl_classifier.classifier.intercept_, npz_arrays["intercept"]
+    )
+    np.testing.assert_array_equal(
+        pkl_classifier.classifier.classes_, npz_arrays["classes"]
+    )
+    assert pkl_classifier.classifier.n_features_in_ == int(
+        npz_arrays["n_features_in"][0]
+    )
+    np.testing.assert_array_equal(
+        pkl_classifier.classifier.n_iter_, npz_arrays["n_iter"]
+    )
+
+
+def test_save_model_json_metadata_complete(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
+    """Verify JSON metadata contains all required fields (TDD)"""
+    # Arrange
+    import json
+
+    from antibody_training_esm.core.classifier import BinaryClassifier
+
+    classifier = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=42,
+        max_iter=100,
+        batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight="balanced",
+        revision="main",
+    )
+    X = np.random.rand(10, 1280)
+    y = np.array([0, 1] * 5)
+    classifier.fit(X, y)
+
+    nested_config["training"]["save_model"] = True
+    nested_config["training"]["model_name"] = "test_model"
+    nested_config["training"]["model_save_dir"] = str(tmp_path / "models")
+    mock_logger = Mock()
+
+    # Act
+    model_paths = save_model(classifier, nested_config, mock_logger)
+
+    # Load JSON
+    with open(model_paths["config"]) as f:
+        metadata = json.load(f)
+
+    # Assert: All required fields present
+    assert metadata["model_type"] == "LogisticRegression"
+    assert "sklearn_version" in metadata
+
+    # LogisticRegression params
+    assert metadata["C"] == 1.0
+    assert metadata["penalty"] == "l2"
+    assert metadata["solver"] == "lbfgs"
+    assert metadata["class_weight"] == "balanced"
+    assert metadata["max_iter"] == 100
+    assert metadata["random_state"] == 42
+
+    # ESM params
+    assert metadata["esm_model"] == "facebook/esm1v_t33_650M_UR90S_1"
+    assert metadata["esm_revision"] == "main"
+    assert metadata["batch_size"] == 8
+    assert metadata["device"] == "cpu"
+
+
+def test_save_model_returns_empty_dict_when_disabled(
+    nested_config: dict[str, Any],
+) -> None:
+    """Verify save_model returns empty dict when save_model=False (TDD)"""
+    # Arrange
+    from antibody_training_esm.core.classifier import BinaryClassifier
+
+    classifier = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=42,
+        max_iter=10,
+        batch_size=8,
+    )
+
+    nested_config["training"]["save_model"] = False
+    mock_logger = Mock()
+
+    # Act
+    model_paths = save_model(classifier, nested_config, mock_logger)
+
+    # Assert
+    assert model_paths == {}
 
 
 # ==================== train_model Integration Tests ====================
