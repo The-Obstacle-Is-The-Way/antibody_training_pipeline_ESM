@@ -10,6 +10,13 @@ RUN apt-get update && apt-get install -y \
 # Install uv package manager
 RUN pip install uv
 
+# OCI metadata for container registry (GHCR/Docker Hub)
+LABEL org.opencontainers.image.title="Antibody Training Pipeline (Development)"
+LABEL org.opencontainers.image.description="Development image for ESM-1v antibody non-specificity prediction pipeline with dual-format serialization (NPZ+JSON + pickle). Includes all dev tools, test suite, and editable installs."
+LABEL org.opencontainers.image.source="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM"
+LABEL org.opencontainers.image.vendor="The-Obstacle-Is-The-Way"
+LABEL org.opencontainers.image.documentation="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/blob/main/README.md"
+
 # Set working directory
 WORKDIR /app
 

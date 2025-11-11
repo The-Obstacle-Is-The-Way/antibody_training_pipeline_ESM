@@ -113,6 +113,8 @@ jobs:
         context: .
         file: ./Dockerfile.prod
         push: true
+        build-args: |
+          VERSION=${{ steps.version.outputs.version }}
         tags: |
           ghcr.io/${{ env.OWNER_LC }}/antibody-training:latest
           ghcr.io/${{ env.OWNER_LC }}/antibody-training:${{ steps.version.outputs.version }}
