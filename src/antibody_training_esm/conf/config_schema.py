@@ -82,9 +82,9 @@ class TrainingConfig:
     model_name: str = "boughter_vh_esm1v_logreg"
     model_save_dir: str = "./models"
 
-    # Logging (managed by Hydra after migration)
+    # Logging (Hydra-aware: relative to Hydra output dir, or logs/ in legacy mode)
     log_level: str = "INFO"
-    log_file: str = "training.log"  # Relative to Hydra output dir
+    log_file: str = "logs/training.log"  # Routes to logs/ dir in legacy mode, Hydra output dir in Hydra mode
 
     # Performance optimization
     batch_size: int = 8

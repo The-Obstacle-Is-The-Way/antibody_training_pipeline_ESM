@@ -132,8 +132,8 @@ def setup_logging(config: dict[str, Any] | DictConfig) -> logging.Logger:
         # Fall back to absolute path from config
         log_file = Path(log_file_str)
         if not log_file.is_absolute():
-            # If relative path, make it absolute from cwd
-            log_file = Path.cwd() / log_file
+            # If relative path, route to logs/ directory (not repo root!)
+            log_file = Path.cwd() / "logs" / log_file_str
         # Create log directory if it doesn't exist
         log_file.parent.mkdir(parents=True, exist_ok=True)
 

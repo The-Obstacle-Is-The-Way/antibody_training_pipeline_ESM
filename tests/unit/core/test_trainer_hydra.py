@@ -128,7 +128,7 @@ def test_train_pipeline_uses_hydra_output_dir_for_logging(
                 f"data.embeddings_cache_dir={tmp_path / 'cache'}",
                 f"hydra.run.dir={hydra_output_dir}",  # Hydra output dir
                 "hardware.device=cpu",  # Use CPU for tests
-                "training.log_file=training.log",  # Relative path
+                f"training.log_file={tmp_path / 'training.log'}",  # Absolute path to avoid stray files
                 "training.save_model=false",
                 "classifier.cv_folds=2",
                 "training.batch_size=4",
