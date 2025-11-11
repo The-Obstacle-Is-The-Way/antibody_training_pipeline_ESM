@@ -301,6 +301,24 @@ class BinaryClassifier:
     def __setstate__(self, state: dict[str, Any]) -> None:
         """Custom unpickle method - recreate ESM model with correct config"""
         self.__dict__.update(state)
+
+        # Check for missing attributes from old model versions
+        warnings_issued = []
+        if not hasattr(self, "batch_size"):
+            warnings_issued.append(f"batch_size (using default: {DEFAULT_BATCH_SIZE})")
+        if not hasattr(self, "revision"):
+            warnings_issued.append("revision (using default: 'main')")
+
+        if warnings_issued:
+            import warnings
+
+            warnings.warn(
+                f"Loading old model missing attributes: {', '.join(warnings_issued)}. "
+                "Predictions may differ from original model. Consider retraining with current version.",
+                UserWarning,
+                stacklevel=2,
+            )
+
         # Recreate embedding extractor with fixed configuration
         batch_size = getattr(
             self, "batch_size", DEFAULT_BATCH_SIZE

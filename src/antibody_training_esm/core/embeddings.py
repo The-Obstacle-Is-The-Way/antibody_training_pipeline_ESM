@@ -75,7 +75,8 @@ class ESMEmbeddingExtractor:
             ValueError: If sequence contains invalid amino acids or is too short
         """
         try:
-            # Validate sequence
+            # Validate sequence (20 standard amino acids + X for unknown/ambiguous)
+            # X is supported by ESM tokenizer for ambiguous residues
             valid_aas = set("ACDEFGHIKLMNPQRSTVWYX")
             sequence = sequence.upper().strip()
 
@@ -127,8 +128,14 @@ class ESMEmbeddingExtractor:
                 return result
 
         except Exception as e:
-            logger.error(f"Error getting embeddings for sequence: {e}")
-            raise
+            # Add sequence context to error message (truncate for readability)
+            seq_preview = sequence[:50] + "..." if len(sequence) > 50 else sequence
+            logger.error(
+                f"Error getting embeddings for sequence (length={len(sequence)}): {seq_preview}"
+            )
+            raise RuntimeError(
+                f"Failed to extract embedding for sequence of length {len(sequence)}: {seq_preview}"
+            ) from e
 
     def extract_batch_embeddings(self, sequences: list[str]) -> np.ndarray:
         """

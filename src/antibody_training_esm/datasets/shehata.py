@@ -147,6 +147,15 @@ class ShehataDataset(AntibodyDataset):
         # Load Excel
         self.logger.info(f"Reading Excel file: {excel_file}")
         df = pd.read_excel(excel_file)
+
+        # Validate dataset is not empty
+        if len(df) == 0:
+            raise ValueError(
+                f"Loaded dataset is empty: {excel_file}\n"
+                "The Excel file may be corrupted or truncated. "
+                "Please check the file or re-run preprocessing."
+            )
+
         self.logger.info(f"  Loaded {len(df)} rows, {len(df.columns)} columns")
 
         # Sanitize sequences (remove IMGT gap characters)
