@@ -827,6 +827,49 @@ def test_load_model_from_npz_with_none_class_weight(
     assert loaded_classifier.class_weight is None
 
 
+@pytest.mark.unit
+def test_load_model_from_npz_with_dict_class_weight(
+    nested_config: dict[str, Any], tmp_path: Path
+) -> None:
+    """Verify load_model_from_npz() handles dict-based class_weight with int keys (TDD)"""
+    from antibody_training_esm.core.classifier import BinaryClassifier
+    from antibody_training_esm.core.trainer import load_model_from_npz
+
+    # Train model with class_weight as dict with int keys
+    class_weight_dict = {0: 1.0, 1: 2.5}  # int keys (sklearn format)
+    classifier = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=42,
+        max_iter=10,
+        batch_size=8,
+        class_weight=class_weight_dict,  # Dict with int keys
+    )
+    X = np.random.rand(10, 1280)
+    y = np.array([0, 1] * 5)
+    classifier.fit(X, y)
+
+    nested_config["training"]["save_model"] = True
+    nested_config["training"]["model_name"] = "test_model"
+    nested_config["training"]["model_save_dir"] = str(tmp_path / "models")
+    mock_logger = Mock()
+
+    model_paths = save_model(classifier, nested_config, mock_logger)
+
+    # Act
+    loaded_classifier = load_model_from_npz(model_paths["npz"], model_paths["config"])
+
+    # Assert: class_weight dict preserved with int keys (NOT string keys)
+    assert loaded_classifier.class_weight == class_weight_dict
+    assert isinstance(loaded_classifier.class_weight, dict)
+    assert all(isinstance(k, int) for k in loaded_classifier.class_weight)
+
+    # Assert: Predictions still match (functional verification)
+    original_predictions = classifier.predict(X)
+    loaded_predictions = loaded_classifier.predict(X)
+    np.testing.assert_array_equal(original_predictions, loaded_predictions)
+
+
 # ==================== train_model Integration Tests ====================
 
 
@@ -873,6 +916,57 @@ def test_train_model_loads_config_and_completes_pipeline(
     assert "config" in results
     assert "accuracy" in results["train_metrics"]
     assert "cv_accuracy" in results["cv_metrics"]
+
+
+@pytest.mark.unit
+def test_train_model_saves_all_formats(
+    config_yaml_path: str,
+    tmp_path: Path,
+    mock_transformers_model: tuple[Any, Any],
+) -> None:
+    """Verify train_model() returns all model paths (pickle, NPZ, JSON)"""
+    # Arrange: Create minimal training CSV
+    import pandas as pd
+
+    train_csv = tmp_path / "train.csv"
+    df = pd.DataFrame(
+        {
+            "id": [f"AB{i:03d}" for i in range(10)],
+            "VH_sequence": ["QVQLVQSGAEVKKPGA"] * 10,
+            "label": [0, 1] * 5,
+        }
+    )
+    df.to_csv(train_csv, index=False)
+
+    # Update config to save model and use minimal settings
+    config = load_config(config_yaml_path)
+    config["data"]["train_data_path"] = str(train_csv)
+    config["training"]["save_model"] = True  # Enable saving
+    config["training"]["model_name"] = "test_model"
+    config["training"]["model_save_dir"] = str(tmp_path / "models")
+    config["classifier"]["cv_folds"] = 2  # Fewer folds for speed
+    with open(config_yaml_path, "w") as f:
+        yaml.dump(config, f)
+
+    # Act
+    with patch("antibody_training_esm.core.trainer.load_data") as mock_load_data:
+        # Mock load_data to return sequences and labels
+        mock_load_data.return_value = (
+            df["VH_sequence"].tolist(),
+            df["label"].tolist(),
+        )
+        results = train_model(config_yaml_path)
+
+    # Assert: model_paths dict contains all three formats
+    assert "model_paths" in results
+    assert "pickle" in results["model_paths"]
+    assert "npz" in results["model_paths"]
+    assert "config" in results["model_paths"]
+
+    # Assert: All three files actually exist
+    assert Path(results["model_paths"]["pickle"]).exists()
+    assert Path(results["model_paths"]["npz"]).exists()
+    assert Path(results["model_paths"]["config"]).exists()
 
 
 def test_train_model_raises_on_training_failure(config_yaml_path: str) -> None:

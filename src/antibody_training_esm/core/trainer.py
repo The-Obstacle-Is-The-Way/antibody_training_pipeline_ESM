@@ -363,6 +363,12 @@ def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
     with open(json_path) as f:
         metadata = json.load(f)
 
+    # Handle class_weight: JSON converts int keys to strings, convert back
+    class_weight = metadata["class_weight"]
+    if isinstance(class_weight, dict):
+        # Convert string keys back to int keys (JSON forces keys to strings)
+        class_weight = {int(k): v for k, v in class_weight.items()}
+
     # Reconstruct BinaryClassifier with ALL required params
     params = {
         # ESM params
@@ -376,9 +382,7 @@ def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
         "solver": metadata["solver"],
         "max_iter": metadata["max_iter"],
         "random_state": metadata["random_state"],
-        "class_weight": metadata[
-            "class_weight"
-        ],  # JSON restores None, str, or dict correctly
+        "class_weight": class_weight,  # Restored with int keys (if dict)
     }
 
     # Create classifier (initializes with unfitted LogisticRegression)
