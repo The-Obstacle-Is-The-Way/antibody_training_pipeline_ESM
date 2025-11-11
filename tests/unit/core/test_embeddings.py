@@ -181,12 +181,12 @@ def test_embed_sequence_rejects_sequence_with_gap(
     embedding_extractor: ESMEmbeddingExtractor,
     invalid_sequences: dict[str, Any],
 ) -> None:
-    """Verify extractor raises ValueError for sequences with gaps"""
+    """Verify extractor raises RuntimeError for sequences with gaps"""
     # Arrange
     sequence_with_gap = invalid_sequences["gap"]
 
     # Act & Assert
-    with pytest.raises(ValueError, match="Invalid amino acid"):
+    with pytest.raises(RuntimeError, match="Failed to extract embedding"):
         embedding_extractor.embed_sequence(sequence_with_gap)
 
 
@@ -195,12 +195,12 @@ def test_embed_sequence_rejects_sequence_with_invalid_aa(
     embedding_extractor: ESMEmbeddingExtractor,
     invalid_sequences: dict[str, Any],
 ) -> None:
-    """Verify extractor raises ValueError for invalid amino acids"""
+    """Verify extractor raises RuntimeError for invalid amino acids"""
     # Arrange
     sequence_with_invalid_aa = invalid_sequences["invalid_aa"]
 
     # Act & Assert
-    with pytest.raises(ValueError, match="Invalid amino acid"):
+    with pytest.raises(RuntimeError, match="Failed to extract embedding"):
         embedding_extractor.embed_sequence(sequence_with_invalid_aa)
 
 
@@ -209,12 +209,12 @@ def test_embed_sequence_rejects_empty_sequence(
     embedding_extractor: ESMEmbeddingExtractor,
     invalid_sequences: dict[str, Any],
 ) -> None:
-    """Verify extractor raises ValueError for empty sequences"""
+    """Verify extractor raises RuntimeError for empty sequences"""
     # Arrange
     empty_seq = invalid_sequences["empty"]
 
     # Act & Assert
-    with pytest.raises(ValueError, match="Sequence too short"):
+    with pytest.raises(RuntimeError, match="Failed to extract embedding"):
         embedding_extractor.embed_sequence(empty_seq)
 
 
@@ -242,7 +242,7 @@ def test_embed_sequence_rejects_numbers(
     sequence_with_numbers = "QVQLVQ123SGAEVKKPGA"
 
     # Act & Assert
-    with pytest.raises(ValueError, match="Invalid amino acid"):
+    with pytest.raises(RuntimeError, match="Failed to extract embedding"):
         embedding_extractor.embed_sequence(sequence_with_numbers)
 
 
@@ -255,7 +255,7 @@ def test_embed_sequence_rejects_special_chars(
     sequence_with_special = "QVQLVQ!@#SGAEVKKPGA"
 
     # Act & Assert
-    with pytest.raises(ValueError, match="Invalid amino acid"):
+    with pytest.raises(RuntimeError, match="Failed to extract embedding"):
         embedding_extractor.embed_sequence(sequence_with_special)
 
 

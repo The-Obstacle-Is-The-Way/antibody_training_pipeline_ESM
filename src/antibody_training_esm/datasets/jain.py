@@ -129,6 +129,15 @@ class JainDataset(AntibodyDataset):
         # Load main dataset
         self.logger.info(f"Reading Jain FULL dataset from {full_csv}...")
         df = pd.read_csv(full_csv)
+
+        # Validate dataset is not empty
+        if len(df) == 0:
+            raise ValueError(
+                f"Loaded dataset is empty: {full_csv}\n"
+                "The CSV file may be corrupted or truncated. "
+                "Please check the file or re-run preprocessing."
+            )
+
         self.logger.info(f"  Loaded {len(df)} antibodies")
         self.logger.info(f"    Specific: {(df['label'] == 0).sum()}")
         self.logger.info(f"    Non-specific: {(df['label'] == 1).sum()}")

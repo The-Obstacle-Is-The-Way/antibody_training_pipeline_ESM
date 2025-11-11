@@ -210,10 +210,10 @@ class ModelTester:
         if "jain" in data_path.lower() and "test" in data_path.lower():
             expected_sizes = {94, 86}
             if len(df) not in expected_sizes:
-                self.logger.warning(
-                    f"WARNING: Jain test set has {len(df)} antibodies. "
-                    f"Expected one of {sorted(expected_sizes)}. "
-                    f"Ensure you're using the correct curated file (preferred: "
+                raise ValueError(
+                    f"Jain test set has {len(df)} antibodies but expected one of {sorted(expected_sizes)}. "
+                    f"Using the wrong test set will produce invalid metrics. "
+                    f"Please use the correct curated file (preferred: "
                     f"test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv)."
                 )
 
@@ -415,6 +415,8 @@ class ModelTester:
         self.logger.info(f"Datasets to test: {self.config.data_paths}")
 
         all_results = {}
+        failed_datasets = []
+        failed_models = []
 
         try:
             # Test each dataset
@@ -430,6 +432,7 @@ class ModelTester:
                     labels: np.ndarray = np.array(labels_list)
                 except Exception as e:
                     self.logger.error(f"Failed to load dataset {data_path}: {e}")
+                    failed_datasets.append((dataset_name, str(e)))
                     continue
 
                 dataset_results = {}
@@ -456,6 +459,7 @@ class ModelTester:
 
                     except Exception as e:
                         self.logger.error(f"Failed to test model {model_path}: {e}")
+                        failed_models.append((f"{dataset_name}_{model_name}", str(e)))
                         continue
 
                 # Create visualizations
@@ -465,6 +469,26 @@ class ModelTester:
                 self.save_detailed_results(dataset_results, dataset_name)
 
                 all_results[dataset_name] = dataset_results
+
+            # Check if all tests failed
+            if not all_results:
+                error_msg = "All tests failed:\n"
+                if failed_datasets:
+                    error_msg += (
+                        f"  Failed datasets: {[name for name, _ in failed_datasets]}\n"
+                    )
+                if failed_models:
+                    error_msg += (
+                        f"  Failed models: {[name for name, _ in failed_models]}\n"
+                    )
+                raise RuntimeError(error_msg + "No successful test results to report.")
+
+            # Warn about partial failures
+            if failed_datasets or failed_models:
+                self.logger.warning(
+                    f"\nSome tests failed (datasets: {len(failed_datasets)}, "
+                    f"models: {len(failed_models)}). Check logs for details."
+                )
 
             self.results = all_results
             self.logger.info(

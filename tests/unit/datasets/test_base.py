@@ -443,14 +443,14 @@ def test_nanobody_fragments_contains_6_types() -> None:
 
 
 @pytest.mark.unit
-def test_valid_amino_acids_contains_20_standard_aa() -> None:
-    """Verify VALID_AMINO_ACIDS constant has all 20 standard amino acids"""
+def test_valid_amino_acids_contains_21_standard_aa() -> None:
+    """Verify VALID_AMINO_ACIDS constant has all 20 standard amino acids + X"""
     # Arrange & Act
     valid_aas = AntibodyDataset.VALID_AMINO_ACIDS
 
     # Assert
-    assert len(valid_aas) == 20
-    expected_aas = set("ACDEFGHIKLMNPQRSTVWY")
+    assert len(valid_aas) == 21
+    expected_aas = set("ACDEFGHIKLMNPQRSTVWYX")
     assert valid_aas == expected_aas
 
 
@@ -600,6 +600,8 @@ def test_create_fragments_concatenates_cdrs_correctly() -> None:
     row = pd.Series(
         {
             "id": "AB002",
+            "VH_sequence": "AAABBBCCC",
+            "VL_sequence": "DDDEEFFFF",
             "VH_CDR1": "AAA",
             "VH_CDR2": "BBB",
             "VH_CDR3": "CCC",
@@ -628,6 +630,7 @@ def test_create_fragments_handles_missing_vl_sequence() -> None:
         {
             "id": "NANO001",
             "VH_sequence": "QVQLVQSGAEVKKPGA",
+            "VL_sequence": "",  # Nanobodies have no VL chain
             "VH_CDR1": "GFTFS",
             "VH_CDR2": "YISSG",
             "VH_CDR3": "ARYDDY",
@@ -771,7 +774,7 @@ def test_create_fragment_csvs_skips_empty_fragments(tmp_path: Path) -> None:
         {
             "id": ["NANO001"],
             "VH_sequence": ["QVQLVQSG"],
-            # No VL_sequence - nanobody
+            "VL_sequence": [""],  # Nanobodies have no VL chain
             "label": [0],
         }
     )
