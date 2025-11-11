@@ -38,10 +38,26 @@ make all         # Run format → lint → typecheck → test
 **Critical:** This repo maintains 100% type safety. All functions must have complete type annotations. Mypy runs with `disallow_untyped_defs=true`.
 
 ### Training & Testing
+
+**Basic Training:**
 ```bash
-make train                                                    # Train with default config
-uv run antibody-train --config configs/config.yaml           # Train with specific config
-uv run antibody-test --model models/model.pkl --dataset jain # Test trained model
+make train                 # Train with default config
+uv run antibody-train      # Same as above (Hydra-based)
+```
+
+**Hydra Overrides:**
+```bash
+# Override any config parameter
+uv run antibody-train hardware.device=cuda training.batch_size=32
+uv run antibody-train classifier.C=0.5 classifier.penalty=l1
+
+# Run hyperparameter sweeps
+uv run antibody-train --multirun classifier.C=0.1,1.0,10.0
+```
+
+**Model Testing:**
+```bash
+uv run antibody-test --model models/model.pkl --dataset jain  # Test trained model
 ```
 
 ### Preprocessing

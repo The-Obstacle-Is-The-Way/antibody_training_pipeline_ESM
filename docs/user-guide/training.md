@@ -24,13 +24,15 @@ Training involves:
 ```bash
 make train
 # OR
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
-### Train with Custom Config
+### Train with Hydra Overrides
 
 ```bash
-uv run antibody-train --config configs/my_experiment.yaml
+# Override specific parameters
+uv run antibody-train hardware.device=cuda training.batch_size=32
+uv run antibody-train classifier.C=0.5 classifier.penalty=l1
 ```
 
 ---
@@ -91,7 +93,7 @@ data:
 
 **Training:**
 ```bash
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 **Testing** (after training):
@@ -119,7 +121,7 @@ data:
 
 **Training:**
 ```bash
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 **Testing** (after training):
@@ -147,7 +149,7 @@ data:
 
 **Training:**
 ```bash
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 **Testing** (after training):
@@ -499,7 +501,7 @@ QVQLQESGPGLV...,1
 
 ```bash
 rm -rf embeddings_cache/
-uv run antibody-train --config configs/config.yaml
+uv run antibody-train
 ```
 
 ---

@@ -134,6 +134,49 @@ make all
 | `make clean` | Remove cache directories and temporary files |
 | `make help` | Show all available commands |
 
+## Training with Hydra
+
+The pipeline uses [Hydra](https://hydra.cc) for flexible configuration management:
+
+```bash
+# Train with default config
+make train
+# OR
+uv run antibody-train
+
+# Override any parameter from CLI
+uv run antibody-train hardware.device=cuda training.batch_size=32
+uv run antibody-train classifier.C=0.5 classifier.penalty=l1
+
+# Run hyperparameter sweeps (multi-run mode)
+uv run antibody-train --multirun classifier.C=0.1,1.0,10.0
+# Creates 3 separate runs with different C values
+
+# Sweep multiple parameters (Cartesian product)
+uv run antibody-train --multirun classifier.C=0.1,1.0 classifier.penalty=l1,l2
+# Creates 4 runs: (0.1,l1), (0.1,l2), (1.0,l1), (1.0,l2)
+```
+
+**Output structure:**
+```
+outputs/
+└── {experiment.name}/
+    └── {timestamp}/
+        ├── .hydra/config.yaml   # Full resolved config
+        ├── logs/training.log    # Training logs
+        └── {model}.pkl          # Trained model
+```
+
+**Why Hydra?**
+- **No file editing:** Override any config value from CLI
+- **Experiment tracking:** Every run saves its full configuration automatically
+- **Hyperparameter sweeps:** Multi-run mode for systematic parameter exploration
+- **Reproducibility:** Complete config provenance for every experiment
+
+See [Training Guide](docs/user-guide/training.md) for comprehensive Hydra usage.
+
+---
+
 ## Code Quality Standards
 
 This repository maintains **100% type safety** and enforces quality through pre-commit hooks:

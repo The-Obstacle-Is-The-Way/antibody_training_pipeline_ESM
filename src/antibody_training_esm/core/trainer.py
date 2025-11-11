@@ -35,16 +35,27 @@ from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.data.loaders import load_data
 
 
-def validate_config(config: dict[str, Any]) -> None:
+def validate_config(config: dict[str, Any] | DictConfig) -> None:
     """
-    Validate that config dictionary contains all required keys.
+    Validate config structure and semantics (Hydra-aware).
+
+    Performs two levels of validation:
+    1. Schema validation: Required keys exist (structural)
+    2. Semantic validation: Files exist, metrics/devices valid (semantic)
 
     Args:
-        config: Configuration dictionary to validate
+        config: Configuration dictionary or DictConfig to validate
 
     Raises:
         ValueError: If any required keys are missing or invalid
+        FileNotFoundError: If required files don't exist
     """
+    # Convert DictConfig to dict for uniform access
+    if isinstance(config, DictConfig):
+        config_dict = cast(dict[str, Any], OmegaConf.to_container(config, resolve=True))
+    else:
+        config_dict = config
+
     # Define required config structure
     required_keys = {
         "data": ["train_file", "test_file", "embeddings_cache_dir"],
@@ -59,22 +70,22 @@ def validate_config(config: dict[str, Any]) -> None:
 
     # Check top-level sections exist
     for section in required_keys:
-        if section not in config:
+        if section not in config_dict:
             missing_sections.append(section)
             continue
 
         # Check keys within each section
-        if not isinstance(config[section], dict):
+        if not isinstance(config_dict[section], dict):
             raise ValueError(
                 f"Config section '{section}' must be a dictionary, "
-                f"got {type(config[section]).__name__}"
+                f"got {type(config_dict[section]).__name__}"
             )
 
         for key in required_keys[section]:
-            if key not in config[section]:
+            if key not in config_dict[section]:
                 missing_keys.append(f"{section}.{key}")
 
-    # Construct helpful error message
+    # Construct helpful error message for structural errors
     if missing_sections or missing_keys:
         error_parts = []
         if missing_sections:
@@ -84,6 +95,39 @@ def validate_config(config: dict[str, Any]) -> None:
         if missing_keys:
             error_parts.append(f"Missing config keys: {', '.join(missing_keys)}")
         raise ValueError("Config validation failed:\n  - " + "\n  - ".join(error_parts))
+
+    # Semantic validation (beyond structure)
+    errors = []
+
+    # Validate files exist
+    train_file = Path(config_dict["data"]["train_file"])
+    if not train_file.exists():
+        errors.append(f"Training file not found: {train_file}")
+
+    test_file = Path(config_dict["data"]["test_file"])
+    if not test_file.exists():
+        errors.append(f"Test file not found: {test_file}")
+
+    # Validate metrics are valid
+    VALID_METRICS = {"accuracy", "precision", "recall", "f1", "roc_auc"}
+    metrics = set(config_dict["training"]["metrics"])
+    invalid_metrics = metrics - VALID_METRICS
+    if invalid_metrics:
+        errors.append(
+            f"Invalid metrics: {invalid_metrics}. Valid metrics: {VALID_METRICS}"
+        )
+
+    # Validate device is valid
+    VALID_DEVICES = {"cpu", "cuda", "mps", "auto"}
+    device = config_dict["model"]["device"]
+    if device not in VALID_DEVICES:
+        errors.append(f"Invalid device: {device}. Valid devices: {VALID_DEVICES}")
+
+    # Raise if any semantic validation failed
+    if errors:
+        raise ValueError(
+            "Config semantic validation failed:\n  - " + "\n  - ".join(errors)
+        )
 
 
 def setup_logging(config: dict[str, Any] | DictConfig) -> logging.Logger:
@@ -617,17 +661,17 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
     # Resolve all interpolations (e.g., ${hardware.device})
     OmegaConf.resolve(cfg)
 
-    # Convert to dict for legacy code compatibility
-    # Cast to dict[str, Any] since OmegaConf.to_container can return various types
+    # Validate config structure (accepts DictConfig)
+    validate_config(cfg)
+
+    # Setup logging (Hydra-aware, accepts DictConfig)
+    logger = setup_logging(cfg)
+
+    # Convert to dict for legacy code that requires dict access
+    # Keep DictConfig as long as possible to preserve type safety and validation
     config: dict[str, Any] = cast(
         dict[str, Any], OmegaConf.to_container(cfg, resolve=True)
     )
-
-    # Validate config structure
-    validate_config(config)
-
-    # Setup logging (Hydra-aware)
-    logger = setup_logging(cfg)
     logger.info("Starting antibody classification training (Hydra pipeline)")
     logger.info(f"Experiment: {config['experiment']['name']}")
 
