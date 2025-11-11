@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "antibody-training-esm"
-version = "0.2.0"
+version = "0.3.0"
 description = "Professional antibody training pipeline using ESM protein language models"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.12"
