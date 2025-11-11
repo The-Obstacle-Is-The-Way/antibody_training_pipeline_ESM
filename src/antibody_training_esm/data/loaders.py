@@ -24,11 +24,11 @@ class EmbeddingExtractor(Protocol):
 
     def extract_batch_embeddings(self, sequences: Sequence[str]) -> np.ndarray:
         """Extract embeddings for a batch of sequences"""
-        ...
+        ...  # lgtm[py/ineffectual-statement]
 
     def embed_sequence(self, sequence: str) -> np.ndarray:
         """Extract embedding for a single sequence"""
-        ...
+        ...  # lgtm[py/ineffectual-statement]
 
 
 def preprocess_raw_data(
