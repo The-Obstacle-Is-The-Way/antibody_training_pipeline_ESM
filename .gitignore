@@ -57,9 +57,12 @@ logs/*
 !logs/.gitkeep
 *_test_*.log
 
-# Models
+# Models (allow baseline weights for benchmark)
 models/*
 !models/.gitkeep
+!models/boughter_vh_esm1v_logreg.pkl
+!models/boughter_vh_esm1v_logreg.npz
+!models/boughter_vh_esm1v_logreg_config.json
 
 # Data (root level only)
 /data/*
