@@ -20,9 +20,9 @@ training:
   model_name: boughter_vh_esm1v_logreg
   model_save_dir: ./models
 
-  # Logging (Hydra will manage this - relative to Hydra output dir)
+  # Logging (Hydra-aware: relative to Hydra output dir, or logs/ in legacy mode)
   log_level: INFO
-  log_file: training.log
+  log_file: logs/training.log
 
   # Performance optimization
   batch_size: 8
