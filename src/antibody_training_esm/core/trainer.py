@@ -31,6 +31,61 @@ from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.data.loaders import load_data
 
 
+def validate_config(config: dict[str, Any]) -> None:
+    """
+    Validate that config dictionary contains all required keys.
+
+    Args:
+        config: Configuration dictionary to validate
+
+    Raises:
+        ValueError: If any required keys are missing or invalid
+    """
+    # Define required config structure
+    required_keys = {
+        "data": ["train_file", "test_file", "embeddings_cache_dir"],
+        "model": ["name", "device"],
+        "classifier": [],  # Nested validation happens in BinaryClassifier
+        "training": ["log_level", "metrics", "n_splits"],
+        "experiment": ["name"],
+    }
+
+    missing_sections = []
+    missing_keys = []
+
+    # Check top-level sections exist
+    for section in required_keys:
+        if section not in config:
+            missing_sections.append(section)
+            continue
+
+        # Check keys within each section
+        if not isinstance(config[section], dict):
+            raise ValueError(
+                f"Config section '{section}' must be a dictionary, "
+                f"got {type(config[section]).__name__}"
+            )
+
+        for key in required_keys[section]:
+            if key not in config[section]:
+                missing_keys.append(f"{section}.{key}")
+
+    # Construct helpful error message
+    if missing_sections or missing_keys:
+        error_parts = []
+        if missing_sections:
+            error_parts.append(
+                f"Missing config sections: {', '.join(missing_sections)}"
+            )
+        if missing_keys:
+            error_parts.append(
+                f"Missing config keys: {', '.join(missing_keys)}"
+            )
+        raise ValueError(
+            "Config validation failed:\n  - " + "\n  - ".join(error_parts)
+        )
+
+
 def setup_logging(config: dict[str, Any]) -> logging.Logger:
     """
     Setup logging configuration
@@ -95,6 +150,60 @@ def load_config(config_path: str) -> dict[str, Any]:
         raise ValueError(f"Invalid YAML in config file {config_path}: {e}") from e
 
 
+def validate_embeddings(
+    embeddings: np.ndarray,
+    num_sequences: int,
+    logger: logging.Logger,
+    source: str = "cache",
+) -> None:
+    """
+    Validate embeddings are not corrupted.
+
+    Args:
+        embeddings: Embedding array to validate
+        num_sequences: Expected number of sequences
+        logger: Logger instance
+        source: Where embeddings came from (for error messages)
+
+    Raises:
+        ValueError: If embeddings are invalid (wrong shape, NaN, all zeros)
+    """
+    # Check shape
+    if embeddings.shape[0] != num_sequences:
+        raise ValueError(
+            f"Embeddings from {source} have wrong shape: expected {num_sequences} sequences, "
+            f"got {embeddings.shape[0]}"
+        )
+
+    if len(embeddings.shape) != 2:
+        raise ValueError(
+            f"Embeddings from {source} must be 2D array, got shape {embeddings.shape}"
+        )
+
+    # Check for NaN values
+    if np.isnan(embeddings).any():
+        nan_count = np.isnan(embeddings).sum()
+        raise ValueError(
+            f"Embeddings from {source} contain {nan_count} NaN values. "
+            "This indicates corrupted embeddings - cannot train on invalid data."
+        )
+
+    # Check for all-zero rows (corrupted/failed embeddings)
+    zero_rows = np.all(embeddings == 0, axis=1)
+    if zero_rows.any():
+        zero_count = zero_rows.sum()
+        raise ValueError(
+            f"Embeddings from {source} contain {zero_count} all-zero rows. "
+            "This indicates corrupted embeddings from failed batch processing. "
+            "Delete the cache file and recompute."
+        )
+
+    logger.debug(
+        f"Embeddings validation passed: shape={embeddings.shape}, "
+        f"no NaN, no zero rows"
+    )
+
+
 def get_or_create_embeddings(
     sequences: list[str],
     embedding_extractor: ESMEmbeddingExtractor,
@@ -114,6 +223,9 @@ def get_or_create_embeddings(
 
     Returns:
         Array of embeddings
+
+    Raises:
+        ValueError: If cached or computed embeddings are invalid
     """
     # Create a hash of the sequences to ensure cache validity
     sequences_str = "|".join(sequences)
@@ -158,12 +270,19 @@ def get_or_create_embeddings(
                     f"Using cached embeddings for {len(sequences)} sequences (hash: {sequences_hash})"
                 )
                 embeddings_result: np.ndarray = cached_data["embeddings"]
+
+                # Validate cached embeddings before using them
+                validate_embeddings(embeddings_result, len(sequences), logger, source="cache")
+
                 return embeddings_result
             else:
                 logger.warning("Cached embeddings hash mismatch, recomputing...")
 
     logger.info(f"Computing embeddings for {len(sequences)} sequences...")
     embeddings = embedding_extractor.extract_batch_embeddings(sequences)
+
+    # Validate newly computed embeddings before caching
+    validate_embeddings(embeddings, len(sequences), logger, source="computed")
 
     # Cache the embeddings with metadata for verification
     os.makedirs(cache_path, exist_ok=True)
@@ -456,6 +575,9 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
     """
     # Load configuration
     config = load_config(config_path)
+
+    # Validate config structure before proceeding
+    validate_config(config)
 
     # Setup logging
     logger = setup_logging(config)

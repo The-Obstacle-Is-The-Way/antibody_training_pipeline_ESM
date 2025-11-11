@@ -141,10 +141,22 @@ class HarveyDataset(AntibodyDataset):
         # Load datasets
         self.logger.info(f"Reading high polyreactivity data from {high_csv}...")
         df_high = pd.read_csv(high_csv)
+        if len(df_high) == 0:
+            raise ValueError(
+                f"Loaded dataset is empty: {high_csv}\n"
+                "The CSV file may be corrupted or truncated. "
+                "Please check the file or re-run preprocessing."
+            )
         self.logger.info(f"  Loaded {len(df_high)} high polyreactivity sequences")
 
         self.logger.info(f"Reading low polyreactivity data from {low_csv}...")
         df_low = pd.read_csv(low_csv)
+        if len(df_low) == 0:
+            raise ValueError(
+                f"Loaded dataset is empty: {low_csv}\n"
+                "The CSV file may be corrupted or truncated. "
+                "Please check the file or re-run preprocessing."
+            )
         self.logger.info(f"  Loaded {len(df_low)} low polyreactivity sequences")
 
         # IMGT position columns (1-128)

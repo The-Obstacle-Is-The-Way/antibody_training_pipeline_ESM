@@ -9,7 +9,7 @@ import logging
 import pickle  # nosec B403 - Used only for local trusted data (preprocessed datasets)
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Protocol, cast
 
 import numpy as np
 import pandas as pd
@@ -19,10 +19,18 @@ logger = logging.getLogger(__name__)
 type Label = int | float | bool | str
 
 
+class EmbeddingExtractor(Protocol):
+    """Protocol for embedding extractors"""
+
+    def extract_batch_embeddings(self, sequences: Sequence[str]) -> np.ndarray:
+        """Extract embeddings for a batch of sequences"""
+        ...
+
+
 def preprocess_raw_data(
     X: Sequence[str],
     y: Sequence[Label],
-    embedding_extractor: Any,
+    embedding_extractor: EmbeddingExtractor,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
     Embed sequences using ESM model

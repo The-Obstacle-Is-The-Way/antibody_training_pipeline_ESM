@@ -57,8 +57,9 @@ class AntibodyDataset(ABC):
         "H-FWRs",
     ]
 
-    # Valid amino acid characters
-    VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWY")
+    # Valid amino acid characters (20 standard + X for unknown/ambiguous)
+    # X is included for compatibility with ESM models which support ambiguous residues
+    VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWYX")
 
     def __init__(
         self,
@@ -387,12 +388,31 @@ class AntibodyDataset(ABC):
 
         Returns:
             Dictionary mapping fragment_type -> (sequence, label, source)
+
+        Raises:
+            ValueError: If required annotation columns are missing
         """
         fragments = {}
         sequence_id = row.get("id", f"seq_{row.name}")
         label = row.get("label", 0)
 
         fragment_types = self.get_fragment_types()
+
+        # Validate that required columns exist for requested fragments
+        required_cols = set()
+        if any(ft in fragment_types for ft in ["VH_only", "VH+VL", "H-CDR1", "H-CDR2", "H-CDR3", "H-CDRs", "H-FWRs"]):
+            if "VH_sequence" not in row:
+                required_cols.add("VH_sequence")
+        if any(ft in fragment_types for ft in ["VL_only", "VH+VL", "L-CDR1", "L-CDR2", "L-CDR3", "L-CDRs", "L-FWRs"]):
+            if "VL_sequence" not in row:
+                required_cols.add("VL_sequence")
+
+        if required_cols:
+            raise ValueError(
+                f"Missing required columns for fragment extraction: {sorted(required_cols)}. "
+                f"Available columns: {sorted(row.index.tolist())}. "
+                "Did annotation fail?"
+            )
 
         # Helper to concatenate regions
         def concat(*regions: Any) -> str:
