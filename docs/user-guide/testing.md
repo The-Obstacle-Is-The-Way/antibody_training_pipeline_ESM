@@ -8,7 +8,7 @@ This guide covers how to evaluate trained antibody non-specificity prediction mo
 
 Testing involves:
 
-1. **Load Trained Model** - Load a previously trained `.pkl` model
+1. **Load Trained Model** - Load model (pickle for research, NPZ+JSON for production)
 2. **Load Test Data** - Load test dataset (CSV format)
 3. **Extract Embeddings** - Generate ESM-1v embeddings for test sequences
 4. **Predict** - Classify sequences as specific (0) or non-specific (1)
@@ -387,13 +387,20 @@ uv run antibody-test --config test_config_psr.yaml
 Load model and adjust threshold manually:
 
 ```python
-import pickle
 import numpy as np
+from antibody_training_esm.core import load_model_from_npz
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
-# Load model
+# Option A: Load from pickle (research)
+import pickle
 with open("models/boughter_vh_esm1v_logreg.pkl", "rb") as f:
     classifier = pickle.load(f)
+
+# Option B: Load from NPZ+JSON (production)
+classifier = load_model_from_npz(
+    npz_path="models/boughter_vh_esm1v_logreg.npz",
+    json_path="models/boughter_vh_esm1v_logreg_config.json"
+)
 
 # Extract embeddings for test data
 extractor = ESMEmbeddingExtractor(

@@ -84,18 +84,37 @@ Use this guide if you're:
 - ❌ Production API deployments (use JSON + NPZ format)
 - ❌ Cross-language data exchange (use standard formats)
 
-### Future Migration
+### Production Deployment (Implemented)
 
-**For production deployment:**
-Migrate to JSON (metadata) + NPZ (arrays) format:
+**✅ Dual-format serialization is now live:**
+
+All trained models are automatically saved in **both formats**:
+
 ```python
-# Current (research)
-pickle.dump(model, f)
+# Research path (pickle) - still works
+with open("models/model.pkl", "rb") as f:
+    model = pickle.load(f)
 
-# Production alternative
-np.savez("model.npz", weights=model.coef_, intercept=model.intercept_)
-json.dump({"C": 1.0, "penalty": "l2"}, f)
+# Production path (NPZ+JSON) - NEW
+from antibody_training_esm.core import load_model_from_npz
+
+model = load_model_from_npz(
+    npz_path="models/model.npz",
+    json_path="models/model_config.json"
+)
 ```
+
+**Implementation details:**
+- `save_model()` in `core/trainer.py` writes all three files automatically
+- `load_model_from_npz()` reconstructs BinaryClassifier from NPZ+JSON
+- No breaking changes - pickle still supported for research workflows
+- See [Training Guide](../user-guide/training.md#model-loading) for usage examples
+
+**Security improvements:**
+- ✅ NPZ+JSON cannot execute code (unlike pickle)
+- ✅ Cross-platform compatible (any language can load)
+- ✅ HuggingFace deployment ready
+- ✅ Production API safe
 
 ---
 

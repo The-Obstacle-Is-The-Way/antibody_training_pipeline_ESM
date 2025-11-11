@@ -13,7 +13,7 @@ Training involves:
 3. **Cross-Validation** - Evaluate model performance via 10-fold stratified CV
 4. **Final Training** - Train on full training set
 5. **Test Evaluation** - Evaluate on hold-out test set
-6. **Model Persistence** - Save trained model to `.pkl` file
+6. **Model Persistence** - Save trained model in dual format (pickle + NPZ+JSON)
 
 ---
 
@@ -366,17 +366,58 @@ Always enable model saving:
 ```yaml
 training:
   save_model: true
+  model_name: "descriptive_experiment_name"  # Use meaningful names
+  model_save_dir: "models/"
 
 experiment:
-  name: "descriptive_experiment_name"  # Use meaningful names
-  output_dir: "models/"
+  name: "descriptive_experiment_name"
 ```
 
-Models are saved as:
+**Dual-format model saving** (automatic):
 
 ```
-models/{experiment_name}_{fragment}.pkl
+models/
+├── {model_name}.pkl          # Pickle (research/debugging)
+├── {model_name}.npz          # NumPy arrays (production weights)
+└── {model_name}_config.json  # Metadata (production config)
 ```
+
+**Why dual-format?**
+- **Pickle (`.pkl`)**: Fast iteration, debugging, hyperparameter sweeps
+- **NPZ+JSON (`.npz` + `_config.json`)**: Production deployment, cross-platform, secure (no code execution)
+
+---
+
+## Model Loading
+
+### Loading Models for Testing
+
+**Option 1: Pickle (research/debugging)**
+
+```bash
+uv run antibody-test \
+  --model models/boughter_vh_esm1v_logreg.pkl \
+  --data test_datasets/jain/fragments/VH_only_jain.csv
+```
+
+**Option 2: NPZ+JSON (production deployment)**
+
+```python
+from antibody_training_esm.core import load_model_from_npz
+
+# Load model from production format
+model = load_model_from_npz(
+    npz_path="models/boughter_vh_esm1v_logreg.npz",
+    json_path="models/boughter_vh_esm1v_logreg_config.json"
+)
+
+# Use model for predictions
+predictions = model.predict(X_test_embeddings)
+```
+
+**When to use each format:**
+- **Pickle**: Research workflows, local experiments, fast iteration
+- **NPZ+JSON**: Production APIs, HuggingFace deployment, cross-language loading
 
 ---
 
