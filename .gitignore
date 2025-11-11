@@ -96,6 +96,9 @@ literature/
 # Reference repositories (for development reference only)
 reference_repos/
 
+# Scratch documentation (brainstorming, temporary notes)
+docs_burner/
+
 # Raw training datasets (large files, not for version control)
 train_datasets/boughter_raw/
 
