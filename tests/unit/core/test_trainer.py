@@ -28,7 +28,7 @@ from antibody_training_esm.core.trainer import (
     perform_cross_validation,
     save_model,
     setup_logging,
-    train_model,
+    train_model,  # NEW: Core logic function that accepts DictConfig
 )
 
 # ==================== Fixtures ====================
