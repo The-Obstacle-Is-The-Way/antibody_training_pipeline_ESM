@@ -116,6 +116,7 @@ ignore_missing_imports = true
 exclude = [
     "experiments/",
     "reference_repos/",
+    "tests/unit/cli/test_train.py",  # Legacy CLI tests (deprecated)
 ]
 
 [tool.pytest.ini_options]

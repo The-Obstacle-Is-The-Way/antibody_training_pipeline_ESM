@@ -8,6 +8,8 @@ Tests cover:
 - Exit codes (success/failure)
 - Error handling and reporting
 
+LEGACY TESTS - Testing old argparse-based CLI (deprecated)
+
 Testing philosophy:
 - Test behaviors, not implementation
 - Mock train_model() (testing CLI, not trainer)
@@ -44,6 +46,7 @@ def mock_train_model() -> Generator[MagicMock, None, None]:
 # ==================== CLI Argument Parsing Tests ====================
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_uses_default_config_path(mock_train_model: MagicMock) -> None:
     """Verify CLI uses default config path when not specified"""
@@ -57,6 +60,7 @@ def test_train_cli_uses_default_config_path(mock_train_model: MagicMock) -> None
         mock_train_model.assert_called_once_with("configs/config.yaml")
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_accepts_custom_config_path(mock_train_model: MagicMock) -> None:
     """Verify CLI accepts custom config path via --config"""
@@ -71,6 +75,7 @@ def test_train_cli_accepts_custom_config_path(mock_train_model: MagicMock) -> No
         mock_train_model.assert_called_once_with(custom_config)
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_accepts_short_flag(mock_train_model: MagicMock) -> None:
     """Verify CLI accepts -c short flag"""
@@ -88,6 +93,7 @@ def test_train_cli_accepts_short_flag(mock_train_model: MagicMock) -> None:
 # ==================== Success Path Tests ====================
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_returns_zero_on_success(mock_train_model: MagicMock) -> None:
     """Verify CLI returns 0 exit code when training succeeds"""
@@ -101,6 +107,7 @@ def test_train_cli_returns_zero_on_success(mock_train_model: MagicMock) -> None:
         assert exit_code == 0
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_prints_success_message(mock_train_model: MagicMock) -> None:
     """Verify CLI prints success message after training"""
@@ -120,6 +127,7 @@ def test_train_cli_prints_success_message(mock_train_model: MagicMock) -> None:
         assert "✅" in output
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_prints_config_path_on_start(mock_train_model: MagicMock) -> None:
     """Verify CLI prints config path when starting"""
@@ -143,6 +151,7 @@ def test_train_cli_prints_config_path_on_start(mock_train_model: MagicMock) -> N
 # ==================== Error Handling Tests ====================
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_returns_one_on_failure(mock_train_model: MagicMock) -> None:
     """Verify CLI returns 1 exit code when training fails"""
@@ -156,6 +165,7 @@ def test_train_cli_returns_one_on_failure(mock_train_model: MagicMock) -> None:
         assert exit_code == 1
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_prints_error_message_on_failure(mock_train_model: MagicMock) -> None:
     """Verify CLI prints error message to stderr when training fails"""
@@ -177,6 +187,7 @@ def test_train_cli_prints_error_message_on_failure(mock_train_model: MagicMock) 
         assert "❌" in error
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_handles_value_error(mock_train_model: MagicMock) -> None:
     """Verify CLI handles ValueError from train_model"""
@@ -190,6 +201,7 @@ def test_train_cli_handles_value_error(mock_train_model: MagicMock) -> None:
         assert exit_code == 1
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_handles_file_not_found_error(mock_train_model: MagicMock) -> None:
     """Verify CLI handles FileNotFoundError from train_model"""
@@ -203,6 +215,7 @@ def test_train_cli_handles_file_not_found_error(mock_train_model: MagicMock) -> 
         assert exit_code == 1
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_handles_runtime_error(mock_train_model: MagicMock) -> None:
     """Verify CLI handles RuntimeError from train_model"""
@@ -216,6 +229,7 @@ def test_train_cli_handles_runtime_error(mock_train_model: MagicMock) -> None:
         assert exit_code == 1
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_handles_keyboard_interrupt(mock_train_model: MagicMock) -> None:
     """Verify CLI handles KeyboardInterrupt gracefully"""
@@ -238,6 +252,7 @@ def test_train_cli_handles_keyboard_interrupt(mock_train_model: MagicMock) -> No
 # ==================== Help Message Tests ====================
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_shows_help_message() -> None:
     """Verify CLI shows help message with --help"""
@@ -251,6 +266,7 @@ def test_train_cli_shows_help_message() -> None:
         assert exc_info.value.code == 0
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_help_describes_config_option() -> None:
     """Verify CLI help describes --config option"""
@@ -274,6 +290,7 @@ def test_train_cli_help_describes_config_option() -> None:
 # ==================== Integration Tests ====================
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_invokes_train_model_exactly_once(
     mock_train_model: MagicMock,
@@ -288,6 +305,7 @@ def test_train_cli_invokes_train_model_exactly_once(
         assert mock_train_model.call_count == 1
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_passes_config_path_to_train_model(
     mock_train_model: MagicMock,
@@ -313,6 +331,7 @@ def test_train_cli_passes_config_path_to_train_model(
 # ==================== Edge Case Tests ====================
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_handles_empty_string_config() -> None:
     """Verify CLI handles empty string config path"""
@@ -327,6 +346,7 @@ def test_train_cli_handles_empty_string_config() -> None:
             assert exit_code == 1
 
 
+@pytest.mark.legacy
 @pytest.mark.unit
 def test_train_cli_handles_exception_with_no_message(
     mock_train_model: MagicMock,

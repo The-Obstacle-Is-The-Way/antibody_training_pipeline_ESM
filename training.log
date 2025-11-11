@@ -266,3 +266,137 @@ weighted avg       1.00      1.00      1.00        20
 
 2025-11-11 14:57:46,756 - antibody_training_esm.core.trainer - INFO - Training pipeline completed successfully
 2025-11-11 14:57:46,756 - antibody_training_esm.core.trainer - INFO - Embedding cache preserved at /private/var/folders/3p/t86zsht91l3gsdpddkqg_kfh0000gn/T/pytest-of-ray/pytest-257/test_train_pipeline_uses_hydra0/cache for future training runs
+2025-11-11 15:28:39,046 - antibody_training_esm.core.trainer - INFO - Starting antibody classification training (Hydra pipeline)
+2025-11-11 15:28:39,046 - antibody_training_esm.core.trainer - INFO - Experiment: novo_replication
+2025-11-11 15:28:39,046 - antibody_training_esm.core.trainer - INFO - Loaded 20 training samples
+2025-11-11 15:28:39,046 - antibody_training_esm.core.trainer - INFO - Initializing ESM embedding extractor and classifier
+2025-11-11 15:28:39,046 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:28:39,046 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:28:39,046 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:28:39,046 - antibody_training_esm.core.trainer - INFO - Computing embeddings for 20 sequences...
+2025-11-11 15:28:39,046 - antibody_training_esm.core.embeddings - INFO - Extracting embeddings for 20 sequences with batch_size=4...
+2025-11-11 15:28:39,052 - antibody_training_esm.core.trainer - INFO - Cached embeddings to /private/var/folders/3p/t86zsht91l3gsdpddkqg_kfh0000gn/T/pytest-of-ray/pytest-258/test_train_pipeline_uses_hydra0/cache/train_ea800b53c7d2_embeddings.pkl (hash: ea800b53c7d2)
+2025-11-11 15:28:39,052 - antibody_training_esm.core.trainer - INFO - Performing cross-validation on training data...
+2025-11-11 15:28:39,052 - antibody_training_esm.core.trainer - INFO - Performing 2-fold cross-validation
+2025-11-11 15:28:39,052 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:28:39,052 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:28:39,052 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:28:39,054 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:28:39,054 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:28:39,054 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:28:39,059 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:28:39,060 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:28:39,060 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:28:39,060 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:28:39,064 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:28:39,066 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:28:39,066 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:28:39,067 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:28:39,072 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:28:39,075 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:28:39,075 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:28:39,075 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:28:39,079 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:28:39,083 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:28:39,083 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:28:39,083 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:28:39,089 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:28:39,089 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:28:39,089 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:28:39,089 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:28:39,093 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:28:39,093 - antibody_training_esm.core.trainer - INFO - Cross-validation Results:
+2025-11-11 15:28:39,093 - antibody_training_esm.core.trainer - INFO -   cv_accuracy: 0.5500 (+/- 0.1000)
+2025-11-11 15:28:39,093 - antibody_training_esm.core.trainer - INFO -   cv_f1: 0.5227 (+/- 0.0455)
+2025-11-11 15:28:39,093 - antibody_training_esm.core.trainer - INFO -   cv_roc_auc: nan (+/- nan)
+2025-11-11 15:28:39,093 - antibody_training_esm.core.trainer - INFO - Training final model on full training set...
+2025-11-11 15:28:39,098 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 20 samples
+2025-11-11 15:28:39,098 - antibody_training_esm.core.trainer - INFO - Training completed
+2025-11-11 15:28:39,098 - antibody_training_esm.core.trainer - INFO - Evaluating model on Training set
+2025-11-11 15:28:39,109 - antibody_training_esm.core.trainer - INFO - Training Results:
+2025-11-11 15:28:39,109 - antibody_training_esm.core.trainer - INFO -   accuracy: 1.0000
+2025-11-11 15:28:39,109 - antibody_training_esm.core.trainer - INFO -   precision: 1.0000
+2025-11-11 15:28:39,109 - antibody_training_esm.core.trainer - INFO -   recall: 1.0000
+2025-11-11 15:28:39,109 - antibody_training_esm.core.trainer - INFO -   f1: 1.0000
+2025-11-11 15:28:39,109 - antibody_training_esm.core.trainer - INFO -   roc_auc: 1.0000
+2025-11-11 15:28:39,109 - antibody_training_esm.core.trainer - INFO - 
+Training Classification Report:
+2025-11-11 15:28:39,119 - antibody_training_esm.core.trainer - INFO - 
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        10
+           1       1.00      1.00      1.00        10
+
+    accuracy                           1.00        20
+   macro avg       1.00      1.00      1.00        20
+weighted avg       1.00      1.00      1.00        20
+
+2025-11-11 15:28:39,119 - antibody_training_esm.core.trainer - INFO - Training pipeline completed successfully
+2025-11-11 15:28:39,119 - antibody_training_esm.core.trainer - INFO - Embedding cache preserved at /private/var/folders/3p/t86zsht91l3gsdpddkqg_kfh0000gn/T/pytest-of-ray/pytest-258/test_train_pipeline_uses_hydra0/cache for future training runs
+2025-11-11 15:32:48,240 - antibody_training_esm.core.trainer - INFO - Starting antibody classification training (Hydra pipeline)
+2025-11-11 15:32:48,240 - antibody_training_esm.core.trainer - INFO - Experiment: novo_replication
+2025-11-11 15:32:48,241 - antibody_training_esm.core.trainer - INFO - Loaded 20 training samples
+2025-11-11 15:32:48,241 - antibody_training_esm.core.trainer - INFO - Initializing ESM embedding extractor and classifier
+2025-11-11 15:32:48,241 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:32:48,241 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:32:48,241 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:32:48,241 - antibody_training_esm.core.trainer - INFO - Computing embeddings for 20 sequences...
+2025-11-11 15:32:48,241 - antibody_training_esm.core.embeddings - INFO - Extracting embeddings for 20 sequences with batch_size=4...
+2025-11-11 15:32:48,246 - antibody_training_esm.core.trainer - INFO - Cached embeddings to /private/var/folders/3p/t86zsht91l3gsdpddkqg_kfh0000gn/T/pytest-of-ray/pytest-259/test_train_pipeline_uses_hydra0/cache/train_ea800b53c7d2_embeddings.pkl (hash: ea800b53c7d2)
+2025-11-11 15:32:48,246 - antibody_training_esm.core.trainer - INFO - Performing cross-validation on training data...
+2025-11-11 15:32:48,246 - antibody_training_esm.core.trainer - INFO - Performing 2-fold cross-validation
+2025-11-11 15:32:48,246 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:32:48,246 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:32:48,246 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:32:48,248 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:32:48,248 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:32:48,248 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:32:48,253 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:32:48,255 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:32:48,255 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:32:48,255 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:32:48,260 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:32:48,262 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:32:48,262 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:32:48,262 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:32:48,267 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:32:48,270 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:32:48,270 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:32:48,270 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:32:48,275 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:32:48,279 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:32:48,279 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:32:48,279 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:32:48,284 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:32:48,285 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=4 and max_length=1024
+2025-11-11 15:32:48,285 - antibody_training_esm.core.classifier - INFO - Classifier initialized: C=1.0, penalty=l2, solver=lbfgs, random_state=42, class_weight=None
+2025-11-11 15:32:48,285 - antibody_training_esm.core.classifier - INFO - VERIFICATION: LogisticRegression config = C=1.0, penalty=l2, solver=lbfgs, class_weight=None
+2025-11-11 15:32:48,290 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 10 samples
+2025-11-11 15:32:48,291 - antibody_training_esm.core.trainer - INFO - Cross-validation Results:
+2025-11-11 15:32:48,291 - antibody_training_esm.core.trainer - INFO -   cv_accuracy: 0.5000 (+/- 0.0000)
+2025-11-11 15:32:48,291 - antibody_training_esm.core.trainer - INFO -   cv_f1: 0.5455 (+/- 0.0000)
+2025-11-11 15:32:48,291 - antibody_training_esm.core.trainer - INFO -   cv_roc_auc: nan (+/- nan)
+2025-11-11 15:32:48,291 - antibody_training_esm.core.trainer - INFO - Training final model on full training set...
+2025-11-11 15:32:48,298 - antibody_training_esm.core.classifier - INFO - Classifier fitted on 20 samples
+2025-11-11 15:32:48,298 - antibody_training_esm.core.trainer - INFO - Training completed
+2025-11-11 15:32:48,298 - antibody_training_esm.core.trainer - INFO - Evaluating model on Training set
+2025-11-11 15:32:48,308 - antibody_training_esm.core.trainer - INFO - Training Results:
+2025-11-11 15:32:48,309 - antibody_training_esm.core.trainer - INFO -   accuracy: 1.0000
+2025-11-11 15:32:48,309 - antibody_training_esm.core.trainer - INFO -   precision: 1.0000
+2025-11-11 15:32:48,309 - antibody_training_esm.core.trainer - INFO -   recall: 1.0000
+2025-11-11 15:32:48,309 - antibody_training_esm.core.trainer - INFO -   f1: 1.0000
+2025-11-11 15:32:48,309 - antibody_training_esm.core.trainer - INFO -   roc_auc: 1.0000
+2025-11-11 15:32:48,309 - antibody_training_esm.core.trainer - INFO - 
+Training Classification Report:
+2025-11-11 15:32:48,319 - antibody_training_esm.core.trainer - INFO - 
+              precision    recall  f1-score   support
+
+           0       1.00      1.00      1.00        10
+           1       1.00      1.00      1.00        10
+
+    accuracy                           1.00        20
+   macro avg       1.00      1.00      1.00        20
+weighted avg       1.00      1.00      1.00        20
+
+2025-11-11 15:32:48,319 - antibody_training_esm.core.trainer - INFO - Training pipeline completed successfully
+2025-11-11 15:32:48,319 - antibody_training_esm.core.trainer - INFO - Embedding cache preserved at /private/var/folders/3p/t86zsht91l3gsdpddkqg_kfh0000gn/T/pytest-of-ray/pytest-259/test_train_pipeline_uses_hydra0/cache for future training runs

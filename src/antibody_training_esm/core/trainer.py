@@ -12,7 +12,7 @@ import os
 import pickle  # nosec B403 - Used only for local trusted data (models, caches)
 import warnings
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import hydra
 import numpy as np
@@ -106,7 +106,7 @@ def setup_logging(config: dict[str, Any] | DictConfig) -> logging.Logger:
 
     # Convert DictConfig to dict if needed for uniform access
     if isinstance(config, DictConfig):
-        config_dict = OmegaConf.to_container(config, resolve=True)
+        config_dict = cast(dict[str, Any], OmegaConf.to_container(config, resolve=True))
     else:
         config_dict = config
 
@@ -618,7 +618,10 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
     OmegaConf.resolve(cfg)
 
     # Convert to dict for legacy code compatibility
-    config = OmegaConf.to_container(cfg, resolve=True)
+    # Cast to dict[str, Any] since OmegaConf.to_container can return various types
+    config: dict[str, Any] = cast(
+        dict[str, Any], OmegaConf.to_container(cfg, resolve=True)
+    )
 
     # Validate config structure
     validate_config(config)
