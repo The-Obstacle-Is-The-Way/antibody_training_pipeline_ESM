@@ -171,6 +171,8 @@ def setup_logging(config: dict[str, Any] | DictConfig) -> logging.Logger:
         hydra_cfg = HydraConfig.get()
         output_dir = Path(hydra_cfg.runtime.output_dir)
         log_file = output_dir / log_file_str  # log_file is relative to Hydra output dir
+        # Create log directory if it doesn't exist (even in Hydra mode)
+        log_file.parent.mkdir(parents=True, exist_ok=True)
     except Exception:
         # Running in legacy mode (no Hydra decorator)
         # Fall back to absolute path from config
