@@ -241,12 +241,17 @@ class ModelTester:
         return sequences, labels
 
     def embed_sequences(
-        self, sequences: list[str], model: BinaryClassifier, dataset_name: str
+        self,
+        sequences: list[str],
+        model: BinaryClassifier,
+        dataset_name: str,
+        output_dir: str,
     ) -> np.ndarray:
         """Extract embeddings for sequences using the model's embedding extractor"""
-        cache_file = os.path.join(
-            self.config.output_dir, f"{dataset_name}_test_embeddings.pkl"
-        )
+        # Ensure output directory exists before file I/O
+        os.makedirs(output_dir, exist_ok=True)
+
+        cache_file = os.path.join(output_dir, f"{dataset_name}_test_embeddings.pkl")
 
         # Track this file for cleanup
         if cache_file not in self.cached_embedding_files:
@@ -551,13 +556,21 @@ class ModelTester:
                     model_name = Path(model_path).stem
                     self.logger.info(f"\nTesting model: {model_name}")
 
+                    # Determine output directory (hierarchical or flat)
+                    output_dir_for_dataset = self._compute_output_directory(
+                        model_path, dataset_name
+                    )
+
                     try:
                         # Load model
                         model = self.load_model(model_path)
 
                         # Extract embeddings
                         X_embedded = self.embed_sequences(
-                            sequences, model, f"{dataset_name}_{model_name}"
+                            sequences,
+                            model,
+                            f"{dataset_name}_{model_name}",
+                            output_dir_for_dataset,
                         )
 
                         # Direct evaluation on test set using pretrained model
@@ -566,26 +579,43 @@ class ModelTester:
                         )
                         dataset_results[model_name] = test_results
 
+                        # Save this model's results to its hierarchical directory
+                        single_model_results = {model_name: test_results}
+                        self.plot_confusion_matrix(
+                            single_model_results,
+                            dataset_name,
+                            output_dir=output_dir_for_dataset,
+                        )
+                        self.save_detailed_results(
+                            single_model_results,
+                            dataset_name,
+                            output_dir=output_dir_for_dataset,
+                        )
+
                     except Exception as e:
                         self.logger.error(f"Failed to test model {model_path}: {e}")
                         failed_models.append((f"{dataset_name}_{model_name}", str(e)))
                         continue
 
-                # Determine output directory (hierarchical or flat)
-                output_dir_for_dataset = self._compute_output_directory(
-                    self.config.model_paths[0] if self.config.model_paths else None,
-                    dataset_name,
-                )
+                # Generate aggregated multi-model report (after all models tested)
+                if dataset_results:  # Only if we have successful results
+                    # Use flat output_dir for aggregated reports (dataset root)
+                    aggregated_output_dir = self.config.output_dir
+                    self.logger.info(
+                        f"Generating aggregated multi-model report for {dataset_name} "
+                        f"in {aggregated_output_dir}"
+                    )
 
-                # Create visualizations
-                self.plot_confusion_matrix(
-                    dataset_results, dataset_name, output_dir=output_dir_for_dataset
-                )
-
-                # Save detailed results
-                self.save_detailed_results(
-                    dataset_results, dataset_name, output_dir=output_dir_for_dataset
-                )
+                    self.plot_confusion_matrix(
+                        dataset_results,  # All models
+                        dataset_name,
+                        output_dir=aggregated_output_dir,
+                    )
+                    self.save_detailed_results(
+                        dataset_results,  # All models
+                        dataset_name,
+                        output_dir=aggregated_output_dir,
+                    )
 
                 all_results[dataset_name] = dataset_results
 
