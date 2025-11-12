@@ -315,6 +315,373 @@ def test_get_or_create_embeddings_recomputes_on_hash_mismatch(
     )
 
 
+@pytest.mark.unit
+def test_get_or_create_embeddings_recomputes_on_invalid_cache_format(
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
+    """
+    Test that invalid cache format (list instead of dict) is detected
+    and embeddings are recomputed.
+
+    Lines tested: 324-328 in trainer.py
+    Expected behavior:
+    1. Log warning: "Invalid cache file format (expected dict, got list)"
+    2. Recompute embeddings by calling extract_batch_embeddings()
+    """
+    # Arrange
+    sequences = ["QVQLVQSG"] * 20
+    cache_path = str(tmp_path / "cache")
+    os.makedirs(cache_path)
+
+    # Set up model metadata
+    model_name = "facebook/esm1v_t33_650M_UR90S_1"
+    revision = "main"
+    max_length = 1024
+
+    # Create cache file with INVALID format (list instead of dict)
+    sequences_str = "|".join(sequences)
+    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
+
+    # Create INVALID cache: list instead of dict
+    invalid_cache_data = [1, 2, 3]
+    with open(cache_file, "wb") as f:
+        pickle.dump(invalid_cache_data, f)
+
+    mock_extractor = Mock()
+    mock_extractor.extract_batch_embeddings.return_value = mock_embeddings
+    mock_extractor.model_name = model_name
+    mock_extractor.revision = revision
+    mock_extractor.max_length = max_length
+    mock_logger = Mock()
+
+    # Act
+    embeddings = get_or_create_embeddings(
+        sequences, mock_extractor, cache_path, "test_dataset", mock_logger
+    )
+
+    # Assert
+    assert np.array_equal(embeddings, mock_embeddings)
+    # Extractor SHOULD be called (cache format invalid)
+    mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
+    # Verify warning message
+    mock_logger.warning.assert_called_once_with(
+        "Invalid cache file format (expected dict, got list). Recomputing embeddings..."
+    )
+
+
+@pytest.mark.unit
+def test_get_or_create_embeddings_recomputes_on_missing_embeddings_key(
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
+    """
+    Test that cache missing "embeddings" key is detected as corrupt
+    and embeddings are recomputed.
+
+    Lines tested: 329-339 in trainer.py
+    Expected behavior:
+    1. Log warning: "Corrupt cache file (missing keys: {'embeddings'})"
+    2. Recompute embeddings
+    """
+    # Arrange
+    sequences = ["QVQLVQSG"] * 20
+    cache_path = str(tmp_path / "cache")
+    os.makedirs(cache_path)
+
+    model_name = "facebook/esm1v_t33_650M_UR90S_1"
+    revision = "main"
+    max_length = 1024
+
+    # Create cache file
+    sequences_str = "|".join(sequences)
+    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
+
+    # Create CORRUPT cache: missing "embeddings" key
+    corrupt_cache_data = {
+        "sequences_hash": sequences_hash,
+        "model_name": model_name,
+        "revision": revision,
+        "max_length": max_length,
+        # Missing "embeddings" key!
+    }
+    with open(cache_file, "wb") as f:
+        pickle.dump(corrupt_cache_data, f)
+
+    mock_extractor = Mock()
+    mock_extractor.extract_batch_embeddings.return_value = mock_embeddings
+    mock_extractor.model_name = model_name
+    mock_extractor.revision = revision
+    mock_extractor.max_length = max_length
+    mock_logger = Mock()
+
+    # Act
+    embeddings = get_or_create_embeddings(
+        sequences, mock_extractor, cache_path, "test_dataset", mock_logger
+    )
+
+    # Assert
+    assert np.array_equal(embeddings, mock_embeddings)
+    mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
+    # Verify warning message mentions missing key
+    warning_call = mock_logger.warning.call_args[0][0]
+    assert "Corrupt cache file" in warning_call
+    assert "missing keys" in warning_call
+    assert "embeddings" in warning_call
+
+
+@pytest.mark.unit
+def test_get_or_create_embeddings_recomputes_on_missing_sequences_hash_key(
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
+    """
+    Test that cache missing "sequences_hash" key is detected as corrupt
+    and embeddings are recomputed.
+
+    Lines tested: 329-339 in trainer.py
+    Expected behavior:
+    1. Log warning: "Corrupt cache file (missing keys: {'sequences_hash'})"
+    2. Recompute embeddings
+    """
+    # Arrange
+    sequences = ["QVQLVQSG"] * 20
+    cache_path = str(tmp_path / "cache")
+    os.makedirs(cache_path)
+
+    model_name = "facebook/esm1v_t33_650M_UR90S_1"
+    revision = "main"
+    max_length = 1024
+
+    sequences_str = "|".join(sequences)
+    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
+
+    # Create CORRUPT cache: missing "sequences_hash" key
+    corrupt_cache_data = {
+        "embeddings": mock_embeddings,
+        "model_name": model_name,
+        "revision": revision,
+        "max_length": max_length,
+        # Missing "sequences_hash" key!
+    }
+    with open(cache_file, "wb") as f:
+        pickle.dump(corrupt_cache_data, f)
+
+    mock_extractor = Mock()
+    mock_extractor.extract_batch_embeddings.return_value = mock_embeddings
+    mock_extractor.model_name = model_name
+    mock_extractor.revision = revision
+    mock_extractor.max_length = max_length
+    mock_logger = Mock()
+
+    # Act
+    embeddings = get_or_create_embeddings(
+        sequences, mock_extractor, cache_path, "test_dataset", mock_logger
+    )
+
+    # Assert
+    assert np.array_equal(embeddings, mock_embeddings)
+    mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
+    # Verify warning message mentions missing key
+    warning_call = mock_logger.warning.call_args[0][0]
+    assert "Corrupt cache file" in warning_call
+    assert "missing keys" in warning_call
+    assert "sequences_hash" in warning_call
+
+
+@pytest.mark.unit
+def test_get_or_create_embeddings_recomputes_on_model_name_mismatch(
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
+    """
+    Test that model mismatch is detected and embeddings are recomputed.
+
+    This prevents ESM2 from reusing ESM-1v cached embeddings (critical bug!).
+
+    Lines tested: 345-374 in trainer.py
+    Expected behavior:
+    1. Log warning: "Cached embeddings model mismatch (cached: esm1v, current: esm2)"
+    2. Recompute embeddings
+    """
+    # Arrange
+    sequences = ["QVQLVQSG"] * 20
+    cache_path = str(tmp_path / "cache")
+    os.makedirs(cache_path)
+
+    # Cached model metadata (ESM-1v)
+    cached_model_name = "facebook/esm1v_t33_650M_UR90S_1"
+    revision = "main"
+    max_length = 1024
+
+    # Current model metadata (ESM2 - DIFFERENT!)
+    current_model_name = "facebook/esm2_t33_650M_UR50D"
+
+    # Create cache file using cached model name
+    sequences_str = "|".join(sequences)
+    cache_key_components = (
+        f"{cached_model_name}|{revision}|{max_length}|{sequences_str}"
+    )
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
+
+    # Create valid cache with DIFFERENT model_name
+    cache_data = {
+        "embeddings": mock_embeddings,
+        "sequences_hash": sequences_hash,
+        "model_name": cached_model_name,  # ESM-1v
+        "revision": revision,
+        "max_length": max_length,
+    }
+    with open(cache_file, "wb") as f:
+        pickle.dump(cache_data, f)
+
+    mock_extractor = Mock()
+    mock_extractor.extract_batch_embeddings.return_value = mock_embeddings
+    mock_extractor.model_name = current_model_name  # ESM2 - DIFFERENT!
+    mock_extractor.revision = revision
+    mock_extractor.max_length = max_length
+    mock_logger = Mock()
+
+    # Act
+    embeddings = get_or_create_embeddings(
+        sequences, mock_extractor, cache_path, "test_dataset", mock_logger
+    )
+
+    # Assert
+    assert np.array_equal(embeddings, mock_embeddings)
+    mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
+    # Verify warning message about model mismatch
+    warning_call = mock_logger.warning.call_args[0][0]
+    assert "Cached embeddings model mismatch" in warning_call
+    assert cached_model_name in warning_call
+    assert current_model_name in warning_call
+
+
+@pytest.mark.unit
+def test_get_or_create_embeddings_recomputes_on_revision_mismatch(
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
+    """
+    Test that model revision mismatch is detected and embeddings are recomputed.
+
+    Lines tested: 345-374 in trainer.py
+    Expected behavior:
+    1. Log warning: "Cached embeddings model mismatch"
+    2. Recompute embeddings
+    """
+    # Arrange
+    sequences = ["QVQLVQSG"] * 20
+    cache_path = str(tmp_path / "cache")
+    os.makedirs(cache_path)
+
+    model_name = "facebook/esm1v_t33_650M_UR90S_1"
+    cached_revision = "main"  # Cached revision
+    current_revision = "commit-abc123"  # Current revision - DIFFERENT!
+    max_length = 1024
+
+    # Create cache file using cached revision
+    sequences_str = "|".join(sequences)
+    cache_key_components = (
+        f"{model_name}|{cached_revision}|{max_length}|{sequences_str}"
+    )
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
+
+    # Create valid cache with DIFFERENT revision
+    cache_data = {
+        "embeddings": mock_embeddings,
+        "sequences_hash": sequences_hash,
+        "model_name": model_name,
+        "revision": cached_revision,  # "main"
+        "max_length": max_length,
+    }
+    with open(cache_file, "wb") as f:
+        pickle.dump(cache_data, f)
+
+    mock_extractor = Mock()
+    mock_extractor.extract_batch_embeddings.return_value = mock_embeddings
+    mock_extractor.model_name = model_name
+    mock_extractor.revision = current_revision  # "commit-abc123" - DIFFERENT!
+    mock_extractor.max_length = max_length
+    mock_logger = Mock()
+
+    # Act
+    embeddings = get_or_create_embeddings(
+        sequences, mock_extractor, cache_path, "test_dataset", mock_logger
+    )
+
+    # Assert
+    assert np.array_equal(embeddings, mock_embeddings)
+    mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
+    # Verify warning message about model mismatch
+    warning_call = mock_logger.warning.call_args[0][0]
+    assert "Cached embeddings model mismatch" in warning_call
+
+
+@pytest.mark.unit
+def test_get_or_create_embeddings_recomputes_on_max_length_mismatch(
+    tmp_path: Path, mock_embeddings: np.ndarray
+) -> None:
+    """
+    Test that max_length mismatch is detected and embeddings are recomputed.
+
+    Lines tested: 345-374 in trainer.py
+    Expected behavior:
+    1. Log warning: "Cached embeddings model mismatch"
+    2. Recompute embeddings
+    """
+    # Arrange
+    sequences = ["QVQLVQSG"] * 20
+    cache_path = str(tmp_path / "cache")
+    os.makedirs(cache_path)
+
+    model_name = "facebook/esm1v_t33_650M_UR90S_1"
+    revision = "main"
+    cached_max_length = 1024  # Cached max_length
+    current_max_length = 512  # Current max_length - DIFFERENT!
+
+    # Create cache file using cached max_length
+    sequences_str = "|".join(sequences)
+    cache_key_components = (
+        f"{model_name}|{revision}|{cached_max_length}|{sequences_str}"
+    )
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
+
+    # Create valid cache with DIFFERENT max_length
+    cache_data = {
+        "embeddings": mock_embeddings,
+        "sequences_hash": sequences_hash,
+        "model_name": model_name,
+        "revision": revision,
+        "max_length": cached_max_length,  # 1024
+    }
+    with open(cache_file, "wb") as f:
+        pickle.dump(cache_data, f)
+
+    mock_extractor = Mock()
+    mock_extractor.extract_batch_embeddings.return_value = mock_embeddings
+    mock_extractor.model_name = model_name
+    mock_extractor.revision = revision
+    mock_extractor.max_length = current_max_length  # 512 - DIFFERENT!
+    mock_logger = Mock()
+
+    # Act
+    embeddings = get_or_create_embeddings(
+        sequences, mock_extractor, cache_path, "test_dataset", mock_logger
+    )
+
+    # Assert
+    assert np.array_equal(embeddings, mock_embeddings)
+    mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
+    # Verify warning message about model mismatch
+    warning_call = mock_logger.warning.call_args[0][0]
+    assert "Cached embeddings model mismatch" in warning_call
+
+
 # ==================== evaluate_model Tests ====================
 
 
