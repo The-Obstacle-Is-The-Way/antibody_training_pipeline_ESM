@@ -25,7 +25,7 @@ import pytest
 
 # CRITICAL: Import conf package to trigger ConfigStore registration
 # This MUST happen before any Hydra tests call initialize()
-import antibody_training_esm.conf  # noqa: F401
+import antibody_training_esm.conf  # noqa: F401  # lgtm[py/unused-import]
 
 # NOTE: sys.path injection removed - uv handles package installation
 # If running tests without uv, use: uv run pytest
