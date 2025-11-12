@@ -15,10 +15,8 @@ import argparse
 import shutil
 from pathlib import Path
 
-from antibody_training_esm.core.directory_utils import (
-    extract_classifier_shortname,
-    extract_model_shortname,
-)
+# Migration script uses custom parsing logic for filenames
+# to avoid circular dependencies and handle edge cases
 
 
 def parse_model_filename(filename: str) -> dict[str, str] | None:
@@ -151,7 +149,7 @@ def migrate_models(models_dir: Path, dry_run: bool = False) -> None:
 
     print("=" * 70)
     print(f"✅ Migration complete! Migrated {len(migrations)} files")
-    print(f"   Models organized in hierarchical structure:")
+    print("   Models organized in hierarchical structure:")
     print(f"   {models_dir}/{{model}}/{{classifier}}/{{filename}}")
 
 

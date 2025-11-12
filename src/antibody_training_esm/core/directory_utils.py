@@ -30,15 +30,15 @@ def extract_model_shortname(model_name: str) -> str:
     if "esm1v" in model_name.lower():
         return "esm1v"
     elif "esm2" in model_name.lower():
-        # Extract size info (e.g., 650M)
-        match = re.search(r"esm2.*?(\d+M)", model_name, re.IGNORECASE)
+        # Extract size info (e.g., 650M, 3B)
+        match = re.search(r"esm2.*?(\d+[MB])", model_name, re.IGNORECASE)
         if match:
             size = match.group(1).lower()
             return f"esm2_{size}"
         return "esm2"
     elif "antiberta" in model_name.lower():
         return "antiberta"
-    elif "protbert" in model_name.lower():
+    elif "protbert" in model_name.lower() or "prot_bert" in model_name.lower():
         return "protbert"
     elif "ablang" in model_name.lower():
         return "ablang"
@@ -73,7 +73,7 @@ def extract_classifier_shortname(classifier_config: dict[str, Any]) -> str:
         "random_forest": "rf",
     }
 
-    return shortname_map.get(classifier_type, classifier_type)
+    return str(shortname_map.get(classifier_type, classifier_type))
 
 
 def get_hierarchical_model_dir(

@@ -520,7 +520,10 @@ def test_save_model_saves_classifier_to_file(
     assert isinstance(model_paths, dict)
     assert "pickle" in model_paths
     assert Path(model_paths["pickle"]).exists()
-    assert model_paths["pickle"] == str(tmp_path / "models" / "test_model.pkl")
+    # Verify hierarchical structure: models/esm1v/unknown/test_model.pkl
+    assert model_paths["pickle"] == str(
+        tmp_path / "models" / "esm1v" / "unknown" / "test_model.pkl"
+    )
     # Verify model can be loaded
     with open(model_paths["pickle"], "rb") as f:
         loaded_classifier = pickle.load(f)
@@ -628,10 +631,16 @@ def test_save_model_creates_dual_format_files(
     assert Path(model_paths["npz"]).exists()
     assert Path(model_paths["config"]).exists()
 
-    # Verify file names
-    assert model_paths["pickle"] == str(tmp_path / "models" / "test_model.pkl")
-    assert model_paths["npz"] == str(tmp_path / "models" / "test_model.npz")
-    assert model_paths["config"] == str(tmp_path / "models" / "test_model_config.json")
+    # Verify file names with hierarchical structure
+    assert model_paths["pickle"] == str(
+        tmp_path / "models" / "esm1v" / "unknown" / "test_model.pkl"
+    )
+    assert model_paths["npz"] == str(
+        tmp_path / "models" / "esm1v" / "unknown" / "test_model.npz"
+    )
+    assert model_paths["config"] == str(
+        tmp_path / "models" / "esm1v" / "unknown" / "test_model_config.json"
+    )
 
 
 def test_save_model_npz_arrays_match_pickle(
