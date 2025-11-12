@@ -616,6 +616,10 @@ def test_run_comprehensive_test_generates_aggregated_reports(
     with open(model2_path, "wb") as f:
         pickle.dump(classifier2, f)
 
+    # Create model configs to force hierarchical directories for per-model outputs
+    _create_model_config(trained_classifier, "esm1v", "logistic_regression")
+    _create_model_config(model2_path, "esm2_650m", "logistic_regression")
+
     config = TestConfig(
         model_paths=[str(trained_classifier), str(model2_path)],
         data_paths=[str(test_dataset_csv)],
