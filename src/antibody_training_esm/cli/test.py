@@ -248,6 +248,9 @@ class ModelTester:
         output_dir: str,
     ) -> np.ndarray:
         """Extract embeddings for sequences using the model's embedding extractor"""
+        # Ensure output directory exists before file I/O
+        os.makedirs(output_dir, exist_ok=True)
+
         cache_file = os.path.join(output_dir, f"{dataset_name}_test_embeddings.pkl")
 
         # Track this file for cleanup
@@ -593,6 +596,26 @@ class ModelTester:
                         self.logger.error(f"Failed to test model {model_path}: {e}")
                         failed_models.append((f"{dataset_name}_{model_name}", str(e)))
                         continue
+
+                # Generate aggregated multi-model report (after all models tested)
+                if dataset_results:  # Only if we have successful results
+                    # Use flat output_dir for aggregated reports (dataset root)
+                    aggregated_output_dir = self.config.output_dir
+                    self.logger.info(
+                        f"Generating aggregated multi-model report for {dataset_name} "
+                        f"in {aggregated_output_dir}"
+                    )
+
+                    self.plot_confusion_matrix(
+                        dataset_results,  # All models
+                        dataset_name,
+                        output_dir=aggregated_output_dir,
+                    )
+                    self.save_detailed_results(
+                        dataset_results,  # All models
+                        dataset_name,
+                        output_dir=aggregated_output_dir,
+                    )
 
                 all_results[dataset_name] = dataset_results
 

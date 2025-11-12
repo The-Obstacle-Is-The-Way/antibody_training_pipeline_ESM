@@ -23,6 +23,7 @@ Phase: 5 (Coverage Gap Closure)
 
 from __future__ import annotations
 
+import json
 import pickle
 from pathlib import Path
 from typing import Any
@@ -471,3 +472,181 @@ def test_model_tester_custom_metrics(
             if "test_scores" in model_results:
                 assert "accuracy" in model_results["test_scores"]
                 assert "f1" in model_results["test_scores"]
+
+
+# ==================== Helper Functions ====================
+
+
+def _create_model_config(
+    model_path: Path, model_name: str, classifier_type: str
+) -> None:
+    """Create model config JSON for testing hierarchical path detection"""
+    config_path = model_path.with_name(model_path.stem + "_config.json")
+    config = {
+        "model_name": f"facebook/{model_name}_t33_650M_UR90S_1",
+        "classifier": {"type": classifier_type},
+    }
+    with open(config_path, "w") as f:
+        json.dump(config, f)
+
+
+# ==================== Bug Fix Regression Tests (Issue #10) ====================
+
+
+@pytest.mark.integration
+def test_embed_sequences_uses_hierarchical_cache(
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: Path,
+    test_dataset_csv: Path,
+    tmp_path: Path,
+) -> None:
+    """Verify embed_sequences caches to hierarchical output_dir (Bug #1 regression test)"""
+    # Arrange
+    hierarchical_dir = tmp_path / "esm1v" / "logreg" / "jain"
+    config = TestConfig(
+        model_paths=[str(trained_classifier)],
+        data_paths=[str(test_dataset_csv)],
+        output_dir=str(tmp_path),
+        device="cpu",
+    )
+    tester = ModelTester(config)
+    model = tester.load_model(str(trained_classifier))
+    sequences = ["QVQLVQSGAEVKKPGASVKVSCKASGYTFT"] * 5
+
+    # Act
+    embeddings = tester.embed_sequences(
+        sequences, model, "test_data", str(hierarchical_dir)
+    )
+
+    # Assert
+    assert hierarchical_dir.exists(), "Hierarchical directory not created"
+    cache_file = hierarchical_dir / "test_data_test_embeddings.pkl"
+    assert cache_file.exists(), f"Cache file not found at {cache_file}"
+    assert embeddings.shape == (5, 1280)
+
+
+@pytest.mark.integration
+def test_run_comprehensive_test_no_model_collision(
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: Path,
+    test_dataset_csv: Path,
+    tmp_path: Path,
+) -> None:
+    """Verify multiple models don't overwrite each other's results (Bug #2 regression test)"""
+    # Arrange: Create second model
+    np.random.seed(99)
+    X_train = np.random.rand(50, 1280).astype(np.float32)
+    y_train = np.array([0, 1] * 25)
+
+    classifier2 = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=99,
+        max_iter=10,
+        batch_size=8,
+    )
+    classifier2.fit(X_train, y_train)
+
+    model2_path = tmp_path / "model2.pkl"
+    with open(model2_path, "wb") as f:
+        pickle.dump(classifier2, f)
+
+    # Add config JSONs for hierarchical path detection
+    # Use different model types to ensure separate hierarchical paths
+    _create_model_config(trained_classifier, "esm1v", "logistic_regression")
+    _create_model_config(model2_path, "esm2_650m", "logistic_regression")
+
+    # Arrange: Config with 2 models
+    config = TestConfig(
+        model_paths=[str(trained_classifier), str(model2_path)],
+        data_paths=[str(test_dataset_csv)],
+        output_dir=str(tmp_path / "test_results"),
+        device="cpu",
+    )
+
+    tester = ModelTester(config)
+
+    # Act
+    results = tester.run_comprehensive_test()
+
+    # Assert: Verify embedding caches were created (they're cleaned up after test)
+    # Check the cached_embedding_files list to see what was cached
+    cached_files = tester.cached_embedding_files
+    assert len(cached_files) >= 2, (
+        f"Expected >=2 cache files to have been created, found {len(cached_files)}. "
+        f"Cached files: {cached_files}"
+    )
+
+    # Verify cache files are in hierarchical directories (not all in same dir)
+    cache_dirs = {str(Path(f).parent) for f in cached_files}
+    assert len(cache_dirs) >= 2, (
+        f"Expected cache files in >=2 different directories (hierarchical), "
+        f"found {len(cache_dirs)} unique directories: {cache_dirs}"
+    )
+
+    # Verify results for both models
+    assert len(results) > 0
+    dataset_name = list(results.keys())[0]
+    assert len(results[dataset_name]) == 2, "Should have results for both models"
+
+
+@pytest.mark.integration
+def test_run_comprehensive_test_generates_aggregated_reports(
+    mock_transformers_model: tuple[Any, Any],
+    trained_classifier: Path,
+    test_dataset_csv: Path,
+    tmp_path: Path,
+) -> None:
+    """Verify aggregated multi-model reports are generated (Bug #2 regression test)"""
+    # Arrange: Create second model
+    np.random.seed(100)
+    X_train = np.random.rand(50, 1280).astype(np.float32)
+    y_train = np.array([0, 1] * 25)
+
+    classifier2 = BinaryClassifier(
+        model_name="facebook/esm1v_t33_650M_UR90S_1",
+        device="cpu",
+        random_state=100,
+        max_iter=10,
+        batch_size=8,
+    )
+    classifier2.fit(X_train, y_train)
+
+    model2_path = tmp_path / "model2.pkl"
+    with open(model2_path, "wb") as f:
+        pickle.dump(classifier2, f)
+
+    config = TestConfig(
+        model_paths=[str(trained_classifier), str(model2_path)],
+        data_paths=[str(test_dataset_csv)],
+        output_dir=str(tmp_path / "test_results"),
+        device="cpu",
+    )
+
+    tester = ModelTester(config)
+
+    # Act
+    results = tester.run_comprehensive_test()
+
+    # Assert: Aggregated reports exist in root output_dir
+    output_root = tmp_path / "test_results"
+
+    # Look for aggregated confusion matrix and results in root (not in subdirs)
+    root_files = list(output_root.glob("*"))
+    root_files_only = [f for f in root_files if f.is_file()]
+    aggregated_yamls = [f for f in root_files_only if f.suffix == ".yaml"]
+    aggregated_pngs = [f for f in root_files_only if f.suffix == ".png"]
+
+    assert len(aggregated_yamls) > 0, (
+        f"No aggregated YAML report found in root. "
+        f"Root files: {[f.name for f in root_files_only]}"
+    )
+    assert len(aggregated_pngs) > 0, (
+        f"No aggregated confusion matrix PNG found in root. "
+        f"Root files: {[f.name for f in root_files_only]}"
+    )
+
+    # Verify we have results for both models
+    assert len(results) > 0
+    dataset_name = list(results.keys())[0]
+    assert len(results[dataset_name]) == 2, "Should have results for both models"
