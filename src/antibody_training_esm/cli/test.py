@@ -75,9 +75,10 @@ def extract_backbone_from_config(config: dict[str, Any]) -> str:
         facebook/esm2_t33_650M_UR50D → esm2_650m
         allenai/biomed_roberta_base → antiberta
     """
-    model_name = config.get("model_name", "")
+    # Try 'model_name' first (preferred), fallback to 'esm_model' (legacy)
+    model_name = config.get("model_name") or config.get("esm_model", "")
     if not model_name:
-        raise ValueError("Model config missing 'model_name' field")
+        raise ValueError("Model config missing 'model_name' or 'esm_model' field")
 
     model_name_lower = model_name.lower()
 
