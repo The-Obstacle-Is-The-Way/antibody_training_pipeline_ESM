@@ -372,7 +372,7 @@ comparison = model.compare_models(
 
 ### We Need Your Input!
 
-**Join the discussion:** [GitHub Discussions - Roadmap 2025](../../discussions)
+**Join the discussion:** [GitHub Discussions - Roadmap 2025](https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/discussions/9)
 
 **Help us prioritize:**
 1. Should we finish XGBoost first, or publish current models to HF Hub?
@@ -522,7 +522,7 @@ model = train_custom_model(
 
 **Start here:**
 - ⭐ Star the repo: [antibody_training_pipeline_ESM](https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM)
-- 💬 Join the discussion: [Roadmap 2025](../../discussions)
+- 💬 Join the discussion: [Roadmap 2025](https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/discussions/9)
 - 🐛 Report issues: [GitHub Issues](../../issues)
 - 📚 Read the docs: `docs/`
 
