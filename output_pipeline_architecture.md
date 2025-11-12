@@ -1,16 +1,22 @@
-# Output Pipeline Architecture: Current State & Proposed Fix
+# Output Pipeline Architecture: Implementation Complete
 
-**Date:** 2025-11-11
-**Status:** 🔴 NEEDS FIX - Override risks identified
+**Date:** 2025-11-11 (Updated 22:00 UTC)
+**Status:** ✅ IMPLEMENTED - Hierarchical output system complete
 **Author:** System trace + first principles analysis
 
 ---
 
 ## Executive Summary
 
-**Problem:** Current output organization causes file overrides when testing multiple models.
+**Problem:** Current output organization caused file overrides when testing multiple models.
 **Impact:** ESM2-650M test results would overwrite ESM-1v baseline results.
-**Solution:** Stratify outputs by backbone → classifier hierarchy.
+**Solution:** ✅ IMPLEMENTED - Stratified outputs by backbone → classifier → dataset hierarchy.
+
+**Implementation:** Complete hierarchical output system in `test.py:147-577`
+- Helper functions to extract backbone/classifier from model config
+- TestConfig method for computing hierarchical paths
+- Automatic output directory organization
+- Backward compatible (falls back to flat structure if model config missing)
 
 ---
 
@@ -97,9 +103,9 @@ yaml_file = f"detailed_results_{dataset_name}_{timestamp}.yaml"
 # ⚠️ PARTIAL RISK: No model name, but timestamp may differ
 ```
 
-**🔴 CRITICAL ISSUE: Confusion Matrix Override**
+**✅ RESOLVED: Confusion Matrix Override Risk (FIXED)**
 
-If we run:
+**Previous Risk** (now resolved):
 ```bash
 # Test ESM-1v on Jain
 antibody-test --model models/boughter_vh_esm1v_logreg.pkl --dataset jain
@@ -107,10 +113,21 @@ antibody-test --model models/boughter_vh_esm1v_logreg.pkl --dataset jain
 
 # Test ESM2-650M on Jain
 antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl --dataset jain
-# OVERWRITES: test_results/jain/confusion_matrix_VH_only_jain_test_PARITY_86.png ❌
+# Previously OVERWROTE: test_results/jain/confusion_matrix_VH_only_jain_test_PARITY_86.png ❌
 ```
 
-**We lose the ESM-1v baseline confusion matrix!**
+**Current Behavior** (after fix):
+```bash
+# Test ESM-1v on Jain
+antibody-test --model models/boughter_vh_esm1v_logreg.pkl --dataset jain
+# Creates: test_results/esm1v/logreg/jain/confusion_matrix_boughter_vh_esm1v_logreg_jain.png ✅
+
+# Test ESM2-650M on Jain
+antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl --dataset jain
+# Creates: test_results/esm2_650m/logreg/jain/confusion_matrix_boughter_vh_esm2_650m_logreg_jain.png ✅
+```
+
+**Both baseline and comparison results are preserved in separate hierarchical directories.**
 
 ---
 
@@ -161,13 +178,68 @@ output_dir = f"outputs/{experiment.name}/{timestamp}/"
 | **Model Weights (.npz)** | `{model_name}.npz` | ✅ Yes | ❌ No | 🟢 SAFE |
 | **Model Config (.json)** | `{model_name}_config.json` | ✅ Yes | ❌ No | 🟢 SAFE |
 | **Predictions CSV** | `predictions_{model}_{dataset}_{time}.csv` | ✅ Yes | ✅ Yes | 🟢 SAFE |
-| **Confusion Matrix PNG** | `confusion_matrix_{dataset}.png` | ❌ NO | ❌ NO | 🔴 **OVERRIDE!** |
-| **Detailed Results YAML** | `detailed_results_{dataset}_{time}.yaml` | ❌ NO | ✅ Yes | 🟡 RISKY |
+| **Confusion Matrix PNG** | `confusion_matrix_{model}_{dataset}.png` | ✅ YES | ❌ No | ✅ **FIXED** |
+| **Detailed Results YAML** | `detailed_results_{model}_{dataset}_{time}.yaml` | ✅ YES | ✅ Yes | ✅ **FIXED** |
 | **Training Logs** | `outputs/{exp}/{timestamp}/` | N/A | ✅ Yes | 🟢 SAFE |
+
+**Note:** Confusion matrix and detailed results now include model names in filenames (Phase 1 fix) AND are organized hierarchically (Phase 2 fix).
 
 ---
 
-## Proposed Fix: Hierarchical Output Organization
+## Implementation Status ✅ COMPLETE
+
+### What Was Implemented
+
+**File:** `src/antibody_training_esm/cli/test.py`
+
+**1. Helper Functions** (lines 60-120)
+- `extract_backbone_from_config()`: Extracts backbone from model config ("esm1v", "esm2_650m", "antiberta")
+- `extract_classifier_from_config()`: Extracts classifier from model config ("logreg", "xgboost", "mlp")
+
+**2. TestConfig Enhancement** (lines 147-168)
+- Added `get_hierarchical_output_dir()` method
+- Computes paths like: `test_results/{backbone}/{classifier}/{dataset}/`
+- Example: `get_hierarchical_output_dir("esm1v", "logreg", "jain")` → `"./test_results/esm1v/logreg/jain"`
+
+**3. Output Functions Refactored** (lines 405-513)
+- `plot_confusion_matrix()`: Now accepts `output_dir` parameter, creates hierarchical directories
+- `save_detailed_results()`: Now accepts `output_dir` parameter, creates hierarchical directories
+- Both functions include model names in filenames (prevents collisions within same directory)
+
+**4. Automatic Path Computation** (lines 526-577)
+- `_compute_output_directory()`: Helper that loads model config JSON and extracts metadata
+- Calls helper functions to determine backbone and classifier
+- Computes hierarchical path automatically
+- Falls back to flat structure if model config missing (backward compatible)
+
+**5. Integration** (lines 580-647)
+- `run_comprehensive_test()` calls `_compute_output_directory()` for each dataset
+- Passes computed hierarchical paths to plotting and saving functions
+- Creates directory structure automatically
+
+### Result
+
+```
+test_results/
+├── esm1v/
+│   └── logreg/
+│       ├── jain/
+│       │   ├── confusion_matrix_boughter_vh_esm1v_logreg_jain.png
+│       │   ├── detailed_results_boughter_vh_esm1v_logreg_jain_20251111_220000.yaml
+│       │   └── predictions_boughter_vh_esm1v_logreg_jain_20251111_220000.csv
+│       ├── harvey/
+│       └── shehata/
+└── esm2_650m/
+    └── logreg/
+        ├── jain/
+        │   ├── confusion_matrix_boughter_vh_esm2_650m_logreg_jain.png  # No override!
+        │   └── ...
+        └── ...
+```
+
+---
+
+## Original Proposed Fix (Now Implemented)
 
 ### Design Principles
 

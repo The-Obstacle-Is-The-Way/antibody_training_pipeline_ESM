@@ -181,6 +181,10 @@ def test_get_or_create_embeddings_creates_new_embeddings(
     cache_path = str(tmp_path / "cache")
     mock_extractor = Mock()
     mock_extractor.extract_batch_embeddings.return_value = mock_embeddings
+    # NEW: Add model metadata attributes required by updated cache format
+    mock_extractor.model_name = "facebook/esm1v_t33_650M_UR50S_1"
+    mock_extractor.revision = "main"
+    mock_extractor.max_length = 1024
     mock_logger = Mock()
 
     # Act
@@ -191,11 +195,15 @@ def test_get_or_create_embeddings_creates_new_embeddings(
     # Assert
     assert np.array_equal(embeddings, mock_embeddings)
     mock_extractor.extract_batch_embeddings.assert_called_once_with(sequences)
-    # Cache file should be created
+    # Cache file should be created with NEW hash format (includes model metadata)
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
-        :12
-    ]  # Changed to SHA-256 (12 chars)
+    cache_key_components = (
+        f"{mock_extractor.model_name}|"
+        f"{mock_extractor.revision}|"
+        f"{mock_extractor.max_length}|"
+        f"{sequences_str}"
+    )
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
     assert cache_file.exists()
 
@@ -209,23 +217,35 @@ def test_get_or_create_embeddings_loads_from_cache(
     cache_path = str(tmp_path / "cache")
     os.makedirs(cache_path)
 
-    # Create cached embeddings
+    # Set up model metadata
+    model_name = "facebook/esm1v_t33_650M_UR50S_1"
+    revision = "main"
+    max_length = 1024
+
+    # Create cached embeddings with NEW format (includes model metadata)
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
-        :12
-    ]  # Changed to SHA-256 (12 chars)
+    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
+    # NEW: Cache data now includes model metadata
     cache_data = {
         "embeddings": mock_embeddings,
         "sequences_hash": sequences_hash,
         "num_sequences": len(sequences),
         "dataset_name": "test_dataset",
+        "model_name": model_name,
+        "revision": revision,
+        "max_length": max_length,
     }
     with open(cache_file, "wb") as f:
         pickle.dump(cache_data, f)
 
     mock_extractor = Mock()
+    # NEW: Configure mock with matching model metadata
+    mock_extractor.model_name = model_name
+    mock_extractor.revision = revision
+    mock_extractor.max_length = max_length
     mock_logger = Mock()
 
     # Act
@@ -249,24 +269,36 @@ def test_get_or_create_embeddings_recomputes_on_hash_mismatch(
     cache_path = str(tmp_path / "cache")
     os.makedirs(cache_path)
 
-    # Create cached embeddings with WRONG hash
+    # Set up model metadata
+    model_name = "facebook/esm1v_t33_650M_UR50S_1"
+    revision = "main"
+    max_length = 1024
+
+    # Create cached embeddings with WRONG hash (NEW format includes model metadata)
     sequences_str = "|".join(sequences)
-    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[
-        :12
-    ]  # Changed to SHA-256 (12 chars)
+    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
+    # NEW: Cache data with correct model metadata but WRONG hash
     wrong_cache_data = {
         "embeddings": mock_embeddings,
         "sequences_hash": "WRONGHASH",  # Intentionally wrong
         "num_sequences": len(sequences),
         "dataset_name": "test_dataset",
+        "model_name": model_name,
+        "revision": revision,
+        "max_length": max_length,
     }
     with open(cache_file, "wb") as f:
         pickle.dump(wrong_cache_data, f)
 
     mock_extractor = Mock()
     mock_extractor.extract_batch_embeddings.return_value = mock_embeddings
+    # NEW: Configure mock with matching model metadata
+    mock_extractor.model_name = model_name
+    mock_extractor.revision = revision
+    mock_extractor.max_length = max_length
     mock_logger = Mock()
 
     # Act

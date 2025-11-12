@@ -14,6 +14,7 @@ Usage:
 """
 
 import argparse
+import json
 import logging
 import os
 import pickle  # nosec B403 - Used only for local trusted data (models, caches)
@@ -143,6 +144,29 @@ class TestConfig:
                 "roc_auc",
                 "pr_auc",
             ]
+
+    def get_hierarchical_output_dir(
+        self, backbone: str, classifier: str, dataset: str
+    ) -> str:
+        """Compute hierarchical output directory path.
+
+        Creates structured output directories to organize results by model architecture:
+        {output_dir}/{backbone}/{classifier}/{dataset}/
+
+        Args:
+            backbone: Model backbone identifier (e.g., "esm1v", "esm2_650m", "antiberta")
+            classifier: Classifier type (e.g., "logreg", "xgboost", "mlp")
+            dataset: Dataset name (e.g., "jain", "harvey", "shehata")
+
+        Returns:
+            Hierarchical path string
+
+        Example:
+            >>> config = TestConfig(model_paths=["..."], data_paths=["..."])
+            >>> config.get_hierarchical_output_dir("esm1v", "logreg", "jain")
+            './test_results/esm1v/logreg/jain'
+        """
+        return os.path.join(self.output_dir, backbone, classifier, dataset)
 
 
 class ModelTester:
@@ -380,10 +404,25 @@ class ModelTester:
         return results
 
     def plot_confusion_matrix(
-        self, results: dict[str, dict[str, Any]], dataset_name: str
+        self,
+        results: dict[str, dict[str, Any]],
+        dataset_name: str,
+        output_dir: str | None = None,
     ) -> None:
-        """Create confusion matrix visualization (individual files per model)"""
-        self.logger.info(f"Creating confusion matrices for {dataset_name}")
+        """Create confusion matrix visualization (individual files per model).
+
+        Args:
+            results: Dictionary mapping model names to result dictionaries
+            dataset_name: Name of the dataset
+            output_dir: Directory to save plots (defaults to self.config.output_dir)
+        """
+        # Use provided output_dir or fall back to config default
+        target_dir = output_dir if output_dir is not None else self.config.output_dir
+        os.makedirs(target_dir, exist_ok=True)
+
+        self.logger.info(
+            f"Creating confusion matrices for {dataset_name} in {target_dir}"
+        )
 
         # Create individual confusion matrix for each model to prevent overrides
         for model_name, model_results in results.items():
@@ -412,7 +451,7 @@ class ModelTester:
 
             # Save plot with model name to prevent overrides when testing multiple backbones
             plot_file = os.path.join(
-                self.config.output_dir,
+                target_dir,
                 f"confusion_matrix_{model_name}_{dataset_name}.png",
             )
             plt.savefig(plot_file, dpi=300, bbox_inches="tight")
@@ -421,15 +460,28 @@ class ModelTester:
             self.logger.info(f"Confusion matrix saved to {plot_file}")
 
     def save_detailed_results(
-        self, results: dict[str, dict[str, Any]], dataset_name: str
+        self,
+        results: dict[str, dict[str, Any]],
+        dataset_name: str,
+        output_dir: str | None = None,
     ) -> None:
-        """Save detailed results to files (individual files per model)"""
+        """Save detailed results to files (individual files per model).
+
+        Args:
+            results: Dictionary mapping model names to result dictionaries
+            dataset_name: Name of the dataset
+            output_dir: Directory to save results (defaults to self.config.output_dir)
+        """
+        # Use provided output_dir or fall back to config default
+        target_dir = output_dir if output_dir is not None else self.config.output_dir
+        os.makedirs(target_dir, exist_ok=True)
+
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
         # Save individual YAML for each model to prevent overrides
         for model_name, model_results in results.items():
             results_file = os.path.join(
-                self.config.output_dir,
+                target_dir,
                 f"detailed_results_{model_name}_{dataset_name}_{timestamp}.yaml",
             )
             with open(results_file, "w") as f:
@@ -450,7 +502,7 @@ class ModelTester:
             for model_name, model_results in results.items():
                 if "predictions" in model_results:
                     pred_file = os.path.join(
-                        self.config.output_dir,
+                        target_dir,
                         f"predictions_{model_name}_{dataset_name}_{timestamp}.csv",
                     )
                     pred_df = pd.DataFrame(
@@ -473,6 +525,61 @@ class ModelTester:
                     self.logger.info(f"Deleted cached embeddings: {cache_file}")
                 except Exception as e:
                     self.logger.warning(f"Failed to delete {cache_file}: {e}")
+
+    def _compute_output_directory(
+        self, model_path: str | None, dataset_name: str
+    ) -> str:
+        """Compute output directory (hierarchical if model config available, else flat).
+
+        Args:
+            model_path: Path to the model file
+            dataset_name: Name of the dataset
+
+        Returns:
+            Output directory path (hierarchical or flat)
+        """
+        if model_path is None:
+            self.logger.warning("No model path provided, using flat output structure")
+            return self.config.output_dir
+
+        # Try to load model config JSON to determine hierarchical path
+        model_config_path = (
+            Path(model_path)
+            .with_suffix("")
+            .with_name(Path(model_path).stem + "_config.json")
+        )
+
+        if not model_config_path.exists():
+            self.logger.info(
+                f"Model config not found at {model_config_path}, using flat output structure"
+            )
+            return self.config.output_dir
+
+        try:
+            with open(model_config_path) as f:
+                model_config = json.load(f)
+
+            # Extract backbone and classifier from config
+            backbone = extract_backbone_from_config(model_config)
+            classifier = extract_classifier_from_config(model_config)
+
+            # Compute hierarchical path
+            hierarchical_dir = self.config.get_hierarchical_output_dir(
+                backbone, classifier, dataset_name
+            )
+
+            self.logger.info(
+                f"Using hierarchical output: {hierarchical_dir} "
+                f"(backbone={backbone}, classifier={classifier})"
+            )
+            return hierarchical_dir
+
+        except (json.JSONDecodeError, KeyError, ValueError) as e:
+            self.logger.warning(
+                f"Could not determine hierarchical path from model config: {e}. "
+                "Using flat structure."
+            )
+            return self.config.output_dir
 
     def run_comprehensive_test(self) -> dict[str, dict[str, Any]]:
         """Run testing pipeline"""
@@ -528,11 +635,21 @@ class ModelTester:
                         failed_models.append((f"{dataset_name}_{model_name}", str(e)))
                         continue
 
+                # Determine output directory (hierarchical or flat)
+                output_dir_for_dataset = self._compute_output_directory(
+                    self.config.model_paths[0] if self.config.model_paths else None,
+                    dataset_name,
+                )
+
                 # Create visualizations
-                self.plot_confusion_matrix(dataset_results, dataset_name)
+                self.plot_confusion_matrix(
+                    dataset_results, dataset_name, output_dir=output_dir_for_dataset
+                )
 
                 # Save detailed results
-                self.save_detailed_results(dataset_results, dataset_name)
+                self.save_detailed_results(
+                    dataset_results, dataset_name, output_dir=output_dir_for_dataset
+                )
 
                 all_results[dataset_name] = dataset_results
 
