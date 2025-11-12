@@ -512,16 +512,16 @@ def test_get_or_create_embeddings_recomputes_on_model_name_mismatch(
     os.makedirs(cache_path)
 
     # Define both model names
-    cached_model_name = "facebook/esm1v_t33_650M_UR90S_1"  # Old model (inside cache data)
+    cached_model_name = (
+        "facebook/esm1v_t33_650M_UR90S_1"  # Old model (inside cache data)
+    )
     current_model_name = "facebook/esm2_t33_650M_UR50D"  # New model (current extractor)
     revision = "main"
     max_length = 1024
 
     # CRITICAL FIX: Calculate hash using CURRENT model (what get_or_create_embeddings will use)
     sequences_str = "|".join(sequences)
-    cache_key_components = (
-        f"{current_model_name}|{revision}|{max_length}|{sequences_str}"  # ← CURRENT model!
-    )
+    cache_key_components = f"{current_model_name}|{revision}|{max_length}|{sequences_str}"  # ← CURRENT model!
     sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
@@ -582,9 +582,7 @@ def test_get_or_create_embeddings_recomputes_on_revision_mismatch(
 
     # CRITICAL FIX: Calculate hash using CURRENT revision
     sequences_str = "|".join(sequences)
-    cache_key_components = (
-        f"{model_name}|{current_revision}|{max_length}|{sequences_str}"  # ← CURRENT revision!
-    )
+    cache_key_components = f"{model_name}|{current_revision}|{max_length}|{sequences_str}"  # ← CURRENT revision!
     sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
@@ -643,9 +641,7 @@ def test_get_or_create_embeddings_recomputes_on_max_length_mismatch(
 
     # CRITICAL FIX: Calculate hash using CURRENT max_length
     sequences_str = "|".join(sequences)
-    cache_key_components = (
-        f"{model_name}|{revision}|{current_max_length}|{sequences_str}"  # ← CURRENT max_length!
-    )
+    cache_key_components = f"{model_name}|{revision}|{current_max_length}|{sequences_str}"  # ← CURRENT max_length!
     sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
