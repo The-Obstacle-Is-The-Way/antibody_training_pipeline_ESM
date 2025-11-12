@@ -237,7 +237,9 @@ def test_embed_sequences(
     sequences = ["QVQLVQSGAEVKKPGASVKVSCKASGYTFT"] * 5
 
     # Act
-    embeddings = tester.embed_sequences(sequences, model, "test_data")
+    embeddings = tester.embed_sequences(
+        sequences, model, "test_data", test_config.output_dir
+    )
 
     # Assert
     assert embeddings.shape == (5, 1280)
@@ -259,7 +261,9 @@ def test_evaluate_pretrained(
     tester = ModelTester(test_config)
     model = tester.load_model(str(trained_classifier))
     sequences, labels = tester.load_dataset(str(test_dataset_csv))
-    embeddings = tester.embed_sequences(sequences, model, "test_data")
+    embeddings = tester.embed_sequences(
+        sequences, model, "test_data", test_config.output_dir
+    )
 
     # Act
     results = tester.evaluate_pretrained(
