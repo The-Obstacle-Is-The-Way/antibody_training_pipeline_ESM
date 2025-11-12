@@ -52,6 +52,73 @@ plt.style.use("seaborn-v0_8" if "seaborn-v0_8" in plt.style.available else "defa
 sns.set_palette("husl")
 
 
+# ============================================================================
+# Helper Functions for Hierarchical Organization
+# ============================================================================
+
+
+def extract_backbone_from_config(config: dict[str, Any]) -> str:
+    """Extract backbone identifier from model config.
+
+    Args:
+        config: Model configuration dictionary loaded from {model}_config.json
+
+    Returns:
+        Backbone identifier (e.g., "esm1v", "esm2_650m", "antiberta")
+
+    Raises:
+        ValueError: If backbone cannot be determined from model name
+
+    Examples:
+        facebook/esm1v_t33_650M_UR90S_1 → esm1v
+        facebook/esm2_t33_650M_UR50D → esm2_650m
+        allenai/biomed_roberta_base → antiberta
+    """
+    model_name = config.get("model_name", "")
+    if not model_name:
+        raise ValueError("Model config missing 'model_name' field")
+
+    model_name_lower = model_name.lower()
+
+    if "esm1v" in model_name_lower:
+        return "esm1v"
+    elif "esm2" in model_name_lower and "650" in model_name:
+        return "esm2_650m"
+    elif "antiberta" in model_name_lower or "biomed_roberta" in model_name_lower:
+        return "antiberta"
+    else:
+        raise ValueError(f"Unknown backbone in model name: {model_name}")
+
+
+def extract_classifier_from_config(config: dict[str, Any]) -> str:
+    """Extract classifier identifier from model config.
+
+    Args:
+        config: Model configuration dictionary loaded from {model}_config.json
+
+    Returns:
+        Classifier identifier (e.g., "logreg", "xgboost", "mlp")
+
+    Examples:
+        {"classifier": {"type": "LogisticRegression", ...}} → logreg
+        {"classifier": {"type": "XGBClassifier", ...}} → xgboost
+    """
+    classifier_info = config.get("classifier", {})
+
+    # Handle different possible formats
+    classifier_type = classifier_info.get("type", "").lower()
+
+    if "logistic" in classifier_type or "logreg" in classifier_type:
+        return "logreg"
+    elif "xgb" in classifier_type or "xgboost" in classifier_type:
+        return "xgboost"
+    elif "mlp" in classifier_type or "neural" in classifier_type:
+        return "mlp"
+    else:
+        # Default to logreg for backward compatibility
+        return "logreg"
+
+
 @dataclass
 class TestConfig:
     """Configuration for testing pipeline"""
@@ -315,24 +382,19 @@ class ModelTester:
     def plot_confusion_matrix(
         self, results: dict[str, dict[str, Any]], dataset_name: str
     ) -> None:
-        """Create confusion matrix visualization"""
-        self.logger.info(f"Creating confusion matrix for {dataset_name}")
+        """Create confusion matrix visualization (individual files per model)"""
+        self.logger.info(f"Creating confusion matrices for {dataset_name}")
 
-        model_names = list(results.keys())
-        n_models = len(model_names)
+        # Create individual confusion matrix for each model to prevent overrides
+        for model_name, model_results in results.items():
+            if "confusion_matrix" not in model_results:
+                self.logger.warning(
+                    f"No confusion matrix found for {model_name}, skipping plot"
+                )
+                continue
 
-        # Create figure with subplots for confusion matrices
-        fig_width = min(5 * n_models, 20)
-        fig_height = 5
-        fig, axes = plt.subplots(1, n_models, figsize=(fig_width, fig_height))
-
-        # Handle single model case
-        if n_models == 1:
-            axes = [axes]
-
-        # Plot confusion matrix for each model
-        for idx, model_name in enumerate(model_names):
-            cm = results[model_name]["confusion_matrix"]
+            fig, ax = plt.subplots(1, 1, figsize=(8, 6))
+            cm = model_results["confusion_matrix"]
             sns.heatmap(
                 cm,
                 annot=True,
@@ -340,43 +402,48 @@ class ModelTester:
                 cmap="Blues",
                 xticklabels=["Negative", "Positive"],
                 yticklabels=["Negative", "Positive"],
-                ax=axes[idx],
+                ax=ax,
             )
-            axes[idx].set_title(f"Confusion Matrix - {model_name}")
-            axes[idx].set_ylabel("True Label")
-            axes[idx].set_xlabel("Predicted Label")
+            ax.set_title(f"Confusion Matrix - {model_name} on {dataset_name}")
+            ax.set_ylabel("True Label")
+            ax.set_xlabel("Predicted Label")
 
-        plt.tight_layout()
+            plt.tight_layout()
 
-        # Save plot
-        plot_file = os.path.join(
-            self.config.output_dir, f"confusion_matrix_{dataset_name}.png"
-        )
-        plt.savefig(plot_file, dpi=300, bbox_inches="tight")
-        plt.close()
+            # Save plot with model name to prevent overrides when testing multiple backbones
+            plot_file = os.path.join(
+                self.config.output_dir,
+                f"confusion_matrix_{model_name}_{dataset_name}.png",
+            )
+            plt.savefig(plot_file, dpi=300, bbox_inches="tight")
+            plt.close()
 
-        self.logger.info(f"Confusion matrix saved to {plot_file}")
+            self.logger.info(f"Confusion matrix saved to {plot_file}")
 
     def save_detailed_results(
         self, results: dict[str, dict[str, Any]], dataset_name: str
     ) -> None:
-        """Save detailed results to files"""
+        """Save detailed results to files (individual files per model)"""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
-        # Save main results
-        results_file = os.path.join(
-            self.config.output_dir, f"detailed_results_{dataset_name}_{timestamp}.yaml"
-        )
-        with open(results_file, "w") as f:
-            yaml.dump(
-                {
-                    "dataset": dataset_name,
-                    "config": self.config.__dict__,
-                    "results": results,
-                },
-                f,
-                default_flow_style=False,
+        # Save individual YAML for each model to prevent overrides
+        for model_name, model_results in results.items():
+            results_file = os.path.join(
+                self.config.output_dir,
+                f"detailed_results_{model_name}_{dataset_name}_{timestamp}.yaml",
             )
+            with open(results_file, "w") as f:
+                yaml.dump(
+                    {
+                        "dataset": dataset_name,
+                        "model": model_name,
+                        "config": self.config.__dict__,
+                        "results": model_results,
+                    },
+                    f,
+                    default_flow_style=False,
+                )
+            self.logger.info(f"Detailed results saved to {results_file}")
 
         # Save predictions if requested
         if self.config.save_predictions:
@@ -394,8 +461,7 @@ class ModelTester:
                         }
                     )
                     pred_df.to_csv(pred_file, index=False)
-
-        self.logger.info(f"Detailed results saved to {results_file}")
+                    self.logger.info(f"Predictions saved to {pred_file}")
 
     def cleanup_cached_embeddings(self) -> None:
         """Delete cached embedding files"""

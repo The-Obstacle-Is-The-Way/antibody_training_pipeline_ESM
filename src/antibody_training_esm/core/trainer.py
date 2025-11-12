@@ -298,11 +298,18 @@ def get_or_create_embeddings(
     Raises:
         ValueError: If cached or computed embeddings are invalid
     """
-    # Create a hash of the sequences to ensure cache validity
+    # Create a hash that includes model metadata to prevent cache collisions
+    # between different backbones (ESM-1v, ESM2, AntiBERTa, etc.)
     sequences_str = "|".join(sequences)
+    cache_key_components = (
+        f"{embedding_extractor.model_name}|"
+        f"{embedding_extractor.revision}|"
+        f"{embedding_extractor.max_length}|"
+        f"{sequences_str}"
+    )
     # Use SHA-256 (non-cryptographic usage) to satisfy security scanners and
     # prevent weak-hash findings while keeping deterministic cache keys.
-    sequences_hash = hashlib.sha256(sequences_str.encode()).hexdigest()[:12]
+    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = os.path.join(
         cache_path, f"{dataset_name}_{sequences_hash}_embeddings.pkl"
     )
@@ -332,13 +339,22 @@ def get_or_create_embeddings(
         else:
             cached_data: dict[str, Any] = cached_data_raw
 
-            # Verify the cached sequences match exactly
+            # Verify the cached sequences and model metadata match exactly
+            # This prevents ESM2 from reusing ESM-1v embeddings, etc.
+            model_metadata_matches = (
+                cached_data.get("model_name") == embedding_extractor.model_name
+                and cached_data.get("revision") == embedding_extractor.revision
+                and cached_data.get("max_length") == embedding_extractor.max_length
+            )
+
             if (
                 len(cached_data["embeddings"]) == len(sequences)
                 and cached_data["sequences_hash"] == sequences_hash
+                and model_metadata_matches
             ):
                 logger.info(
-                    f"Using cached embeddings for {len(sequences)} sequences (hash: {sequences_hash})"
+                    f"Using cached embeddings for {len(sequences)} sequences "
+                    f"(model: {embedding_extractor.model_name}, hash: {sequences_hash})"
                 )
                 embeddings_result: np.ndarray = cached_data["embeddings"]
 
@@ -348,6 +364,13 @@ def get_or_create_embeddings(
                 )
 
                 return embeddings_result
+            elif not model_metadata_matches:
+                logger.warning(
+                    f"Cached embeddings model mismatch "
+                    f"(cached: {cached_data.get('model_name')}, "
+                    f"current: {embedding_extractor.model_name}). "
+                    "Recomputing..."
+                )
             else:
                 logger.warning("Cached embeddings hash mismatch, recomputing...")
 
@@ -358,16 +381,23 @@ def get_or_create_embeddings(
     validate_embeddings(embeddings, len(sequences), logger, source="computed")
 
     # Cache the embeddings with metadata for verification
+    # Include model metadata to prevent cache collisions between different backbones
     os.makedirs(cache_path, exist_ok=True)
     cache_data = {
         "embeddings": embeddings,
         "sequences_hash": sequences_hash,
         "num_sequences": len(sequences),
         "dataset_name": dataset_name,
+        "model_name": embedding_extractor.model_name,
+        "revision": embedding_extractor.revision,
+        "max_length": embedding_extractor.max_length,
     }
     with open(cache_file, "wb") as f:
         pickle.dump(cache_data, f)
-    logger.info(f"Cached embeddings to {cache_file} (hash: {sequences_hash})")
+    logger.info(
+        f"Cached embeddings to {cache_file} "
+        f"(model: {embedding_extractor.model_name}, hash: {sequences_hash})"
+    )
 
     return embeddings
 
