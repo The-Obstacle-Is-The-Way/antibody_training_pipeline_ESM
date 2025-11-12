@@ -164,7 +164,7 @@ jobs:
   security:
     name: Dependency Security Audit
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10  # Increased from 5 to handle cold-cache CUDA package downloads (~3GB total)
 
     steps:
     - name: Checkout code
