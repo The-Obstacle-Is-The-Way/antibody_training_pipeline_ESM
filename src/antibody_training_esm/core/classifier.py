@@ -20,6 +20,10 @@ logger = logging.getLogger(__name__)
 class BinaryClassifier:
     """Binary classifier for protein sequences using ESM-1V embeddings"""
 
+    # sklearn 1.7+ requires explicit estimator type for cross_val_score
+    # This tells sklearn's validation logic that we're a classifier, not a regressor
+    _estimator_type = "classifier"
+
     # Assay-specific thresholds (Novo Nordisk methodology)
     ASSAY_THRESHOLDS = {
         "ELISA": 0.5,  # Training data type (Boughter, Jain)
@@ -207,6 +211,10 @@ class BinaryClassifier:
         # Fit the classifier directly on embeddings (no scaling per Novo methodology)
         self.classifier.fit(X, y)
         self.is_fitted = True
+
+        # sklearn 1.7+ requires classes_ attribute for cross_val_score compatibility
+        self.classes_ = self.classifier.classes_
+
         logger.info(f"Classifier fitted on {len(X)} samples")
 
     def predict(
