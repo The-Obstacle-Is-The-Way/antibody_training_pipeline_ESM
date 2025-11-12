@@ -8,6 +8,9 @@
 
 ---
 
-![Ego Distribution](assets/ego.jpg)
-
-*"Forking is a feature, not a bug."*
+<div align="center">
+  <em>"Forking is a feature, not a bug."</em>
+  <br>
+  <br>
+  <img src="assets/ego.jpg" alt="Ego Distribution" width="400"/>
+</div>
