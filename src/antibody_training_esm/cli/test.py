@@ -46,6 +46,11 @@ from sklearn.metrics import (
 # Package imports (using professional package paths)
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
+from antibody_training_esm.core.directory_utils import (
+    extract_classifier_shortname,
+    extract_model_shortname,
+    get_hierarchical_test_results_dir,
+)
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
 # Configure matplotlib for better plots
@@ -54,71 +59,9 @@ sns.set_palette("husl")
 
 
 # ============================================================================
-# Helper Functions for Hierarchical Organization
+# NOTE: Hierarchical organization uses shared utilities from directory_utils
+# See: src/antibody_training_esm/core/directory_utils.py
 # ============================================================================
-
-
-def extract_backbone_from_config(config: dict[str, Any]) -> str:
-    """Extract backbone identifier from model config.
-
-    Args:
-        config: Model configuration dictionary loaded from {model}_config.json
-
-    Returns:
-        Backbone identifier (e.g., "esm1v", "esm2_650m", "antiberta")
-
-    Raises:
-        ValueError: If backbone cannot be determined from model name
-
-    Examples:
-        facebook/esm1v_t33_650M_UR90S_1 → esm1v
-        facebook/esm2_t33_650M_UR50D → esm2_650m
-        allenai/biomed_roberta_base → antiberta
-    """
-    # Try 'model_name' first (preferred), fallback to 'esm_model' (legacy)
-    model_name = config.get("model_name") or config.get("esm_model", "")
-    if not model_name:
-        raise ValueError("Model config missing 'model_name' or 'esm_model' field")
-
-    model_name_lower = model_name.lower()
-
-    if "esm1v" in model_name_lower:
-        return "esm1v"
-    elif "esm2" in model_name_lower and "650" in model_name:
-        return "esm2_650m"
-    elif "antiberta" in model_name_lower or "biomed_roberta" in model_name_lower:
-        return "antiberta"
-    else:
-        raise ValueError(f"Unknown backbone in model name: {model_name}")
-
-
-def extract_classifier_from_config(config: dict[str, Any]) -> str:
-    """Extract classifier identifier from model config.
-
-    Args:
-        config: Model configuration dictionary loaded from {model}_config.json
-
-    Returns:
-        Classifier identifier (e.g., "logreg", "xgboost", "mlp")
-
-    Examples:
-        {"classifier": {"type": "LogisticRegression", ...}} → logreg
-        {"classifier": {"type": "XGBClassifier", ...}} → xgboost
-    """
-    classifier_info = config.get("classifier", {})
-
-    # Handle different possible formats
-    classifier_type = classifier_info.get("type", "").lower()
-
-    if "logistic" in classifier_type or "logreg" in classifier_type:
-        return "logreg"
-    elif "xgb" in classifier_type or "xgboost" in classifier_type:
-        return "xgboost"
-    elif "mlp" in classifier_type or "neural" in classifier_type:
-        return "mlp"
-    else:
-        # Default to logreg for backward compatibility
-        return "logreg"
 
 
 @dataclass
@@ -145,29 +88,6 @@ class TestConfig:
                 "roc_auc",
                 "pr_auc",
             ]
-
-    def get_hierarchical_output_dir(
-        self, backbone: str, classifier: str, dataset: str
-    ) -> str:
-        """Compute hierarchical output directory path.
-
-        Creates structured output directories to organize results by model architecture:
-        {output_dir}/{backbone}/{classifier}/{dataset}/
-
-        Args:
-            backbone: Model backbone identifier (e.g., "esm1v", "esm2_650m", "antiberta")
-            classifier: Classifier type (e.g., "logreg", "xgboost", "mlp")
-            dataset: Dataset name (e.g., "jain", "harvey", "shehata")
-
-        Returns:
-            Hierarchical path string
-
-        Example:
-            >>> config = TestConfig(model_paths=["..."], data_paths=["..."])
-            >>> config.get_hierarchical_output_dir("esm1v", "logreg", "jain")
-            './test_results/esm1v/logreg/jain'
-        """
-        return os.path.join(self.output_dir, backbone, classifier, dataset)
 
 
 class ModelTester:
@@ -532,6 +452,8 @@ class ModelTester:
     ) -> str:
         """Compute output directory (hierarchical if model config available, else flat).
 
+        Uses shared directory_utils.get_hierarchical_test_results_dir for consistency.
+
         Args:
             model_path: Path to the model file
             dataset_name: Name of the dataset
@@ -560,20 +482,33 @@ class ModelTester:
             with open(model_config_path) as f:
                 model_config = json.load(f)
 
-            # Extract backbone and classifier from config
-            backbone = extract_backbone_from_config(model_config)
-            classifier = extract_classifier_from_config(model_config)
-
-            # Compute hierarchical path
-            hierarchical_dir = self.config.get_hierarchical_output_dir(
-                backbone, classifier, dataset_name
+            # Extract model name and classifier config from JSON
+            # Try 'model_name' first (preferred), fallback to 'esm_model' (legacy)
+            model_name = model_config.get("model_name") or model_config.get(
+                "esm_model", ""
             )
+            if not model_name:
+                raise ValueError("Model config missing 'model_name' or 'esm_model'")
+
+            classifier_config = model_config.get("classifier", {})
+
+            # Use shared utility for hierarchical path generation
+            hierarchical_path = get_hierarchical_test_results_dir(
+                base_dir=self.config.output_dir,
+                model_name=model_name,
+                classifier_config=classifier_config,
+                dataset_name=dataset_name,
+            )
+
+            # Extract shortnames for logging
+            model_short = extract_model_shortname(model_name)
+            classifier_short = extract_classifier_shortname(classifier_config)
 
             self.logger.info(
-                f"Using hierarchical output: {hierarchical_dir} "
-                f"(backbone={backbone}, classifier={classifier})"
+                f"Using hierarchical output: {hierarchical_path} "
+                f"(model={model_short}, classifier={classifier_short})"
             )
-            return hierarchical_dir
+            return str(hierarchical_path)
 
         except (json.JSONDecodeError, KeyError, ValueError) as e:
             self.logger.warning(
