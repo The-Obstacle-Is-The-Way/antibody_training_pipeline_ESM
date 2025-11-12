@@ -750,7 +750,7 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
     Legacy training function (DEPRECATED)
 
     DEPRECATED: Use train_pipeline(cfg) with Hydra instead.
-    This function will be removed in v0.4.0.
+    This function will be removed in v0.5.0.
 
     Args:
         config_path: Path to configuration YAML file
@@ -763,7 +763,7 @@ def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
     """
     # Emit deprecation warning
     warnings.warn(
-        "train_model(config_path) is deprecated and will be removed in v0.4.0. "
+        "train_model(config_path) is deprecated and will be removed in v0.5.0. "
         "Use train_pipeline(cfg) with Hydra instead. "
         "See docs for migration guide: https://docs.hydra.cc",
         DeprecationWarning,

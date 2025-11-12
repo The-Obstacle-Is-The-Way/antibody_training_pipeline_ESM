@@ -12,7 +12,12 @@ import torch
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
 
-from .config import DEFAULT_BATCH_SIZE, DEFAULT_MAX_SEQ_LENGTH
+from .config import (
+    DEFAULT_BATCH_SIZE,
+    DEFAULT_MAX_SEQ_LENGTH,
+    ERROR_PREVIEW_LIMIT,
+    GPU_CACHE_CLEAR_INTERVAL,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -193,14 +198,14 @@ class ESMEmbeddingExtractor:
                 if invalid_sequences:
                     error_details = "\n".join(
                         f"  Index {idx}: '{seq}...' ({reason})"
-                        for idx, seq, reason in invalid_sequences[:10]
+                        for idx, seq, reason in invalid_sequences[:ERROR_PREVIEW_LIMIT]
                     )
                     total_invalid = len(invalid_sequences)
                     raise ValueError(
                         f"Found {total_invalid} invalid sequence(s) in batch {batch_idx}:\n{error_details}"
                         + (
-                            f"\n  ... and {total_invalid - 10} more"
-                            if total_invalid > 10
+                            f"\n  ... and {total_invalid - ERROR_PREVIEW_LIMIT} more"
+                            if total_invalid > ERROR_PREVIEW_LIMIT
                             else ""
                         )
                     )
@@ -261,7 +266,7 @@ class ESMEmbeddingExtractor:
                         embeddings_list.append(emb)
 
                 # Clear GPU cache periodically to prevent OOM
-                if (batch_idx + 1) % 10 == 0:
+                if (batch_idx + 1) % GPU_CACHE_CLEAR_INTERVAL == 0:
                     self._clear_gpu_cache()
 
             except Exception as e:
