@@ -172,6 +172,7 @@ def test_load_config_raises_on_invalid_yaml(tmp_path: Path) -> None:
 # ==================== get_or_create_embeddings Tests ====================
 
 
+@pytest.mark.unit
 def test_get_or_create_embeddings_creates_new_embeddings(
     tmp_path: Path, mock_embeddings: np.ndarray
 ) -> None:
@@ -208,6 +209,7 @@ def test_get_or_create_embeddings_creates_new_embeddings(
     assert cache_file.exists()
 
 
+@pytest.mark.unit
 def test_get_or_create_embeddings_loads_from_cache(
     tmp_path: Path, mock_embeddings: np.ndarray
 ) -> None:
@@ -260,6 +262,7 @@ def test_get_or_create_embeddings_loads_from_cache(
     mock_logger.info.assert_any_call(f"Loading cached embeddings from {cache_file}")
 
 
+@pytest.mark.unit
 def test_get_or_create_embeddings_recomputes_on_hash_mismatch(
     tmp_path: Path, mock_embeddings: np.ndarray
 ) -> None:
