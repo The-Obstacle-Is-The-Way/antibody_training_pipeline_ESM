@@ -7,7 +7,8 @@ validated against current trainer.py requirements.
 
 from dataclasses import dataclass, field
 
-from hydra.core.config_store import ConfigStore
+# ConfigStore import removed - no longer needed since registrations are commented out
+# from hydra.core.config_store import ConfigStore
 from omegaconf import MISSING
 
 
@@ -121,15 +122,21 @@ class Config:
     experiment: ExperimentConfig = field(default_factory=ExperimentConfig)
 
 
-# Register schemas with ConfigStore
-# Schema names MUST match YAML filenames for automatic validation
-# Hydra validates group YAML against same-named schemas
-cs = ConfigStore.instance()
-cs.store(name="config", node=Config)  # Matches conf/config.yaml
-cs.store(group="model", name="esm1v", node=ModelConfig)  # Matches conf/model/esm1v.yaml
-cs.store(
-    group="classifier", name="logreg", node=ClassifierConfig
-)  # Matches conf/classifier/logreg.yaml
-cs.store(
-    group="data", name="boughter_jain", node=DataConfig
-)  # Matches conf/data/boughter_jain.yaml
+# ConfigStore registrations REMOVED to fix CLI override bug
+#
+# Root cause: Registering structured configs with the same names as YAML files
+# causes Hydra to prefer ConfigStore over YAML when using package-based config
+# loading (which the console script does). This breaks config group overrides.
+#
+# See: CLI_OVERRIDE_BUG_ROOT_CAUSE.md for full analysis
+# See: https://hydra.cc/docs/1.2/upgrades/1.0_to_1.1/automatic_schema_matching
+#
+# The dataclasses above are kept for type hints and validation in code, but are
+# no longer registered with ConfigStore. This allows YAML files to be the single
+# source of truth for configuration.
+#
+# cs = ConfigStore.instance()
+# cs.store(name="config", node=Config)
+# cs.store(group="model", name="esm1v", node=ModelConfig)
+# cs.store(group="classifier", name="logreg", node=ClassifierConfig)
+# cs.store(group="data", name="boughter_jain", node=DataConfig)

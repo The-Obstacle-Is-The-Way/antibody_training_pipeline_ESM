@@ -57,12 +57,9 @@ logs/*
 !logs/.gitkeep
 *_test_*.log
 
-# Models (allow baseline weights for benchmark)
-models/*
-!models/.gitkeep
-!models/boughter_vh_esm1v_logreg.pkl
-!models/boughter_vh_esm1v_logreg.npz
-!models/boughter_vh_esm1v_logreg_config.json
+# Models (commit benchmark weights - they're research deliverables)
+# Only ignore scratch/experimental models
+models/scratch/
 
 # Data (root level only)
 /data/*
@@ -89,7 +86,6 @@ Thumbs.db
 
 # Project specific (root level only)
 /data/
-/models/
 /logs/
 /outputs/
 
