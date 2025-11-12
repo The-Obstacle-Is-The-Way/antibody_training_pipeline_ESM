@@ -1,0 +1,18 @@
+2025-11-11 23:55:35,825 - antibody_training_esm.cli.test - INFO - Starting model testing
+2025-11-11 23:55:35,826 - antibody_training_esm.cli.test - INFO - Models to test: ['models/boughter_vh_esm2_650m_logreg.pkl']
+2025-11-11 23:55:35,826 - antibody_training_esm.cli.test - INFO - Datasets to test: ['test_datasets/harvey/fragments/VHH_only_harvey.csv']
+2025-11-11 23:55:35,826 - antibody_training_esm.cli.test - INFO - 
+============================================================
+2025-11-11 23:55:35,826 - antibody_training_esm.cli.test - INFO - Testing on dataset: VHH_only_harvey
+2025-11-11 23:55:35,826 - antibody_training_esm.cli.test - INFO - ============================================================
+2025-11-11 23:55:35,826 - antibody_training_esm.cli.test - INFO - Loading dataset from test_datasets/harvey/fragments/VHH_only_harvey.csv
+2025-11-11 23:55:36,047 - antibody_training_esm.cli.test - INFO - Loaded 141021 samples from test_datasets/harvey/fragments/VHH_only_harvey.csv (sequence_col='sequence', label_col='label')
+2025-11-11 23:55:36,069 - antibody_training_esm.cli.test - INFO -   Label distribution: {1: 71759, 0: 69262}
+2025-11-11 23:55:36,076 - antibody_training_esm.cli.test - INFO - 
+Testing model: boughter_vh_esm2_650m_logreg
+2025-11-11 23:55:36,076 - antibody_training_esm.cli.test - INFO - Loading model from models/boughter_vh_esm2_650m_logreg.pkl
+2025-11-11 23:55:37,314 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm2_t33_650M_UR50D (revision=main) loaded on mps with batch_size=8 and max_length=1024
+2025-11-11 23:55:37,314 - antibody_training_esm.cli.test - INFO - Updating batch_size from 8 to 32
+2025-11-11 23:55:37,314 - antibody_training_esm.cli.test - INFO - Model loaded successfully: models/boughter_vh_esm2_650m_logreg.pkl on device: mps
+2025-11-11 23:55:37,314 - antibody_training_esm.cli.test - INFO - Extracting embeddings for 141021 sequences...
+2025-11-11 23:55:37,314 - antibody_training_esm.core.embeddings - INFO - Extracting embeddings for 141021 sequences with batch_size=32...

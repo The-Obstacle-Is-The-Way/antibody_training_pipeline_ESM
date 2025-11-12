@@ -1,0 +1,54 @@
+2025-11-11 23:55:14,859 - antibody_training_esm.cli.test - INFO - Starting model testing
+2025-11-11 23:55:14,859 - antibody_training_esm.cli.test - INFO - Models to test: ['models/boughter_vh_esm2_650m_logreg.pkl']
+2025-11-11 23:55:14,859 - antibody_training_esm.cli.test - INFO - Datasets to test: ['test_datasets/shehata/fragments/VH_only_shehata.csv']
+2025-11-11 23:55:14,859 - antibody_training_esm.cli.test - INFO - 
+============================================================
+2025-11-11 23:55:14,859 - antibody_training_esm.cli.test - INFO - Testing on dataset: VH_only_shehata
+2025-11-11 23:55:14,860 - antibody_training_esm.cli.test - INFO - ============================================================
+2025-11-11 23:55:14,860 - antibody_training_esm.cli.test - INFO - Loading dataset from test_datasets/shehata/fragments/VH_only_shehata.csv
+2025-11-11 23:55:14,862 - antibody_training_esm.cli.test - INFO - Loaded 398 samples from test_datasets/shehata/fragments/VH_only_shehata.csv (sequence_col='sequence', label_col='label')
+2025-11-11 23:55:14,862 - antibody_training_esm.cli.test - INFO -   Label distribution: {0: 391, 1: 7}
+2025-11-11 23:55:14,862 - antibody_training_esm.cli.test - INFO - 
+Testing model: boughter_vh_esm2_650m_logreg
+2025-11-11 23:55:14,863 - antibody_training_esm.cli.test - INFO - Loading model from models/boughter_vh_esm2_650m_logreg.pkl
+Some weights of EsmModel were not initialized from the model checkpoint at facebook/esm2_t33_650M_UR50D and are newly initialized: ['pooler.dense.bias', 'pooler.dense.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+2025-11-11 23:55:16,156 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm2_t33_650M_UR50D (revision=main) loaded on mps with batch_size=8 and max_length=1024
+2025-11-11 23:55:16,156 - antibody_training_esm.cli.test - INFO - Updating batch_size from 8 to 32
+2025-11-11 23:55:16,156 - antibody_training_esm.cli.test - INFO - Model loaded successfully: models/boughter_vh_esm2_650m_logreg.pkl on device: mps
+2025-11-11 23:55:16,157 - antibody_training_esm.cli.test - INFO - Extracting embeddings for 398 sequences...
+2025-11-11 23:55:16,157 - antibody_training_esm.core.embeddings - INFO - Extracting embeddings for 398 sequences with batch_size=32...
+Processing batches:   0%|          | 0/13 [00:00<?, ?it/s]Processing batches:   8%|▊         | 1/13 [00:01<00:15,  1.29s/it]Processing batches:  15%|█▌        | 2/13 [00:02<00:13,  1.22s/it]Processing batches:  23%|██▎       | 3/13 [00:03<00:12,  1.23s/it]Processing batches:  31%|███       | 4/13 [00:04<00:11,  1.24s/it]Processing batches:  38%|███▊      | 5/13 [00:06<00:09,  1.24s/it]Processing batches:  46%|████▌     | 6/13 [00:07<00:08,  1.20s/it]Processing batches:  54%|█████▍    | 7/13 [00:08<00:07,  1.18s/it]Processing batches:  62%|██████▏   | 8/13 [00:09<00:05,  1.19s/it]Processing batches:  69%|██████▉   | 9/13 [00:10<00:04,  1.22s/it]Processing batches:  77%|███████▋  | 10/13 [00:12<00:03,  1.24s/it]Processing batches:  85%|████████▍ | 11/13 [00:13<00:02,  1.21s/it]Processing batches:  92%|█████████▏| 12/13 [00:14<00:01,  1.19s/it]Processing batches: 100%|██████████| 13/13 [00:15<00:00,  1.01it/s]Processing batches: 100%|██████████| 13/13 [00:15<00:00,  1.16s/it]
+2025-11-11 23:55:31,272 - antibody_training_esm.cli.test - INFO - Embeddings cached to ./test_results/VH_only_shehata_boughter_vh_esm2_650m_logreg_test_embeddings.pkl
+2025-11-11 23:55:31,272 - antibody_training_esm.cli.test - INFO - Evaluating pretrained model boughter_vh_esm2_650m_logreg on VH_only_shehata
+2025-11-11 23:55:31,281 - antibody_training_esm.cli.test - INFO - Test results for boughter_vh_esm2_650m_logreg on VH_only_shehata:
+2025-11-11 23:55:31,281 - antibody_training_esm.cli.test - INFO -   accuracy: 0.4196
+2025-11-11 23:55:31,281 - antibody_training_esm.cli.test - INFO -   precision: 0.0172
+2025-11-11 23:55:31,281 - antibody_training_esm.cli.test - INFO -   recall: 0.5714
+2025-11-11 23:55:31,281 - antibody_training_esm.cli.test - INFO -   f1: 0.0335
+2025-11-11 23:55:31,281 - antibody_training_esm.cli.test - INFO -   roc_auc: 0.5601
+2025-11-11 23:55:31,281 - antibody_training_esm.cli.test - INFO -   pr_auc: 0.0376
+2025-11-11 23:55:31,281 - antibody_training_esm.cli.test - INFO - Using hierarchical output: ./test_results/esm2_650m/logreg/VH_only_shehata (backbone=esm2_650m, classifier=logreg)
+2025-11-11 23:55:31,282 - antibody_training_esm.cli.test - INFO - Creating confusion matrices for VH_only_shehata in ./test_results/esm2_650m/logreg/VH_only_shehata
+2025-11-11 23:55:31,510 - antibody_training_esm.cli.test - INFO - Confusion matrix saved to ./test_results/esm2_650m/logreg/VH_only_shehata/confusion_matrix_boughter_vh_esm2_650m_logreg_VH_only_shehata.png
+2025-11-11 23:55:31,517 - antibody_training_esm.cli.test - INFO - Detailed results saved to ./test_results/esm2_650m/logreg/VH_only_shehata/detailed_results_boughter_vh_esm2_650m_logreg_VH_only_shehata_20251111_235531.yaml
+2025-11-11 23:55:31,518 - antibody_training_esm.cli.test - INFO - Predictions saved to ./test_results/esm2_650m/logreg/VH_only_shehata/predictions_boughter_vh_esm2_650m_logreg_VH_only_shehata_20251111_235531.csv
+2025-11-11 23:55:31,518 - antibody_training_esm.cli.test - INFO - 
+Testing completed. Results saved to: ./test_results
+2025-11-11 23:55:31,518 - antibody_training_esm.cli.test - INFO - Cleaning up cached embedding files...
+2025-11-11 23:55:31,519 - antibody_training_esm.cli.test - INFO - Deleted cached embeddings: ./test_results/VH_only_shehata_boughter_vh_esm2_650m_logreg_test_embeddings.pkl
+
+============================================================
+TESTING COMPLETED SUCCESSFULLY!
+============================================================
+Results saved to: ./test_results
+
+Dataset: VH_only_shehata
+----------------------------------------
+Model: boughter_vh_esm2_650m_logreg
+  accuracy: 0.4196
+  precision: 0.0172
+  recall: 0.5714
+  f1: 0.0335
+  roc_auc: 0.5601
+  pr_auc: 0.0376
