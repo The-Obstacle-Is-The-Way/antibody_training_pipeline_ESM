@@ -9,22 +9,26 @@
 ## Current State: What We Have (v0.4.0)
 
 ✅ **Research Foundation**
+
 - Novo Nordisk paper reproduced (66.28% accuracy on Jain benchmark)
 - 4 preprocessed datasets: Boughter (train), Jain/Harvey/Shehata (test)
 - Working training pipeline (ESM-1v + Logistic Regression)
 
 ✅ **Production Infrastructure**
+
 - Dual-format model serialization (NPZ+JSON + pickle)
 - Professional CI/CD, Docker images, comprehensive tests
 - Public GitHub repo with full documentation
 
 ✅ **Experiment Infrastructure**
+
 - Hydra configuration system with structured configs
 - CLI overrides for rapid iteration: `antibody-train model=esm2_650m classifier.C=0.5`
 - Multirun sweeps for hyperparameter search
 - Automatic experiment tracking and provenance
 
 ✅ **ESM2 Support** (v0.4.1-dev)
+
 - ESM2-650M backbone config ready
 - Ready to benchmark against ESM-1v baseline
 
@@ -35,12 +39,14 @@
 **Core Insight:** Researchers need pretrained models, not training infrastructure.
 
 **The AlphaFold Model:**
+
 - AlphaFold team trained models on public datasets
 - Published weights and benchmark results
 - Users use pretrained weights for structure prediction
 - **Users DON'T retrain AlphaFold themselves**
 
 **Our Approach:**
+
 - We train on Boughter (public training set)
 - Publish weights and benchmark results
 - Users use OUR weights for polyreactivity prediction
@@ -54,19 +60,20 @@
 
 **Goal:** Train every reasonable PLM×classifier combination
 
-**Backbones:**
+**Backbones (3 total):**
+
 - ✅ ESM-1v (baseline - 66.28% Jain accuracy)
 - 🔄 ESM2-650M (config shipped, ready to benchmark)
 - ⏳ AntiBERTa (antibody-specific)
-- ⏳ ESM2-3B (optional - if compute available)
 
-**Classifiers:**
+**Classifiers (3 total):**
+
 - ✅ LogisticRegression (baseline)
 - ⏳ XGBoost (likely beats LogReg)
 - ⏳ MLP (2-layer neural network)
-- ⏳ SVM (optional)
 
 **Training Strategy:**
+
 ```bash
 # Train all combinations with Hydra multirun
 antibody-train --multirun \
@@ -77,12 +84,26 @@ antibody-train --multirun \
 ```
 
 **Deliverables:**
-- 9-12 trained model weights
+
+- 9 trained model weights (3 backbones × 3 classifiers)
 - Comprehensive benchmark comparison table
 - Model cards with metrics
 - Publishable comparison: "Which PLM is Best for Antibody Polyreactivity?"
 
 **Timeline:** Week 1-4 (ESM2 → XGBoost → AntiBERTa → Benchmark)
+
+**Dependencies & Risks:**
+
+- **XGBoost**: Add to `pyproject.toml` dependencies
+- **AntiBERTa**: HuggingFace model `alchemab/antiberta2` (verify exists)
+- **GPU Hours**: ~24-48 hours total for 9 models (estimate based on ESM-1v baseline)
+- **Disk Space**: ~10GB for embeddings cache + model weights
+
+**Future Expansion:**
+
+- ESM2-3B (requires high-memory GPU: A100 40GB+)
+- SVM classifier (4th classifier → 12 models total)
+- AbLang, ProtBERT (additional backbones)
 
 ---
 
@@ -91,15 +112,17 @@ antibody-train --multirun \
 **Goal:** Make trained weights publicly accessible
 
 **Create HF Organization:**
-```
+
+```text
 huggingface.co/antibody-esm/
 ├── esm1v-logreg-boughter/       # Novo baseline
 ├── esm2-xgboost-boughter/       # Best overall (predicted)
 ├── antiberta-xgboost-boughter/  # Fast + accurate
-└── ... (all other combinations)
+└── ... (all 9 model combinations)
 ```
 
 **Each Model Includes:**
+
 - Model weights (NPZ + JSON, no pickle!)
 - Config file
 - README with:
@@ -109,7 +132,8 @@ huggingface.co/antibody-esm/
   - Citation info
 
 **Deliverables:**
-- All models on HuggingFace Hub
+
+- All 9 models on HuggingFace Hub
 - Model cards with comprehensive metrics
 - Public model zoo accessible via `from_pretrained()`
 
@@ -124,11 +148,13 @@ huggingface.co/antibody-esm/
 **Create Package:** `antibody-predictor`
 
 **Installation:**
+
 ```bash
 pip install antibody-predictor
 ```
 
 **Usage:**
+
 ```python
 from antibody_predictor import AntibodyClassifier
 
@@ -145,6 +171,7 @@ results = model.predict_csv("my_antibodies.csv", output="predictions.csv")
 ```
 
 **Features:**
+
 - ✅ Load pretrained models from HF Hub
 - ✅ Predict on single sequences or batches
 - ✅ Handle VH-only, VL-only, or VH+VL pairs
@@ -153,6 +180,7 @@ results = model.predict_csv("my_antibodies.csv", output="predictions.csv")
 - ❌ NOT training on custom data (Phase 2)
 
 **Deliverables:**
+
 - `pip install antibody-predictor` working
 - PyPI package published
 - API documentation
@@ -169,6 +197,7 @@ results = model.predict_csv("my_antibodies.csv", output="predictions.csv")
 **Build:** Streamlit/Gradio app on HuggingFace Spaces
 
 **Features:**
+
 1. **Single Sequence Prediction**
    - Text box: Paste VH sequence
    - Dropdown: Select model (ESM2-XGBoost, ESM-1v-LogReg, etc.)
@@ -186,6 +215,7 @@ results = model.predict_csv("my_antibodies.csv", output="predictions.csv")
    - Model selection guide
 
 **Deliverables:**
+
 - Public demo at `huggingface.co/spaces/username/antibody-predictor`
 - Easy-to-share link for non-technical users
 - Viral potential (Twitter, Reddit)
@@ -201,18 +231,21 @@ results = model.predict_csv("my_antibodies.csv", output="predictions.csv")
 **Goal:** Compare ESM2 vs ESM-1v
 
 **Tasks:**
+
 1. ✅ ESM2 config already exists (`conf/model/esm2_650m.yaml`)
 2. Train ESM2-650M + LogReg on Boughter
 3. Test on Jain/Harvey/Shehata
 4. Compare to ESM-1v baseline
 
 **Commands:**
+
 ```bash
 # Compare both backbones
 antibody-train --multirun model=esm1v,esm2_650m classifier=logreg
 ```
 
 **Expected Result:**
+
 - ESM-1v: 66.3% Jain accuracy (Novo baseline)
 - ESM2-650M: 64-68% predicted (literature suggests ESM-1v wins on antibodies)
 
@@ -225,11 +258,14 @@ antibody-train --multirun model=esm1v,esm2_650m classifier=logreg
 **Goal:** Test if XGBoost beats LogReg
 
 **Tasks:**
-1. Add XGBoost classifier wrapper (sklearn API)
-2. Add Hydra config for XGBoost
-3. Train on both backbones
+
+1. Add `xgboost` to `pyproject.toml` dependencies
+2. Add XGBoost classifier wrapper (sklearn API)
+3. Add Hydra config for XGBoost (`conf/classifier/xgboost.yaml`)
+4. Train on both backbones
 
 **Commands:**
+
 ```bash
 # Train all combinations
 antibody-train --multirun \
@@ -238,6 +274,7 @@ antibody-train --multirun \
 ```
 
 **Expected Result:**
+
 | Backbone | Classifier | Jain Acc | Hypothesis |
 |----------|-----------|----------|------------|
 | ESM-1v | LogReg | 66.3% | Novo baseline |
@@ -251,14 +288,18 @@ antibody-train --multirun \
 
 ### Week 3: AntiBERTa + MLP
 
-**Goal:** Complete the model zoo
+**Goal:** Complete the model zoo (9 models total)
 
 **Tasks:**
-1. Add AntiBERTa backbone config
-2. Add MLP classifier (2-layer neural network)
-3. Train all combinations
+
+1. Add AntiBERTa backbone config (`conf/model/antiberta.yaml`)
+2. Verify HuggingFace model exists: `alchemab/antiberta2`
+3. Add MLP classifier (2-layer neural network)
+4. Add Hydra config for MLP (`conf/classifier/mlp.yaml`)
+5. Train all combinations
 
 **Commands:**
+
 ```bash
 # Train everything
 antibody-train --multirun \
@@ -266,7 +307,7 @@ antibody-train --multirun \
   classifier=logreg,xgboost,mlp
 ```
 
-**Deliverable:** 12 trained models (3 backbones × 4 classifiers)
+**Deliverable:** 9 trained models (3 backbones × 3 classifiers)
 
 ---
 
@@ -275,6 +316,7 @@ antibody-train --multirun \
 **Goal:** Publish comprehensive comparison
 
 **Tasks:**
+
 1. Create comparison table (all models × all datasets)
 2. Generate visualizations (bar charts, ROC curves)
 3. Write `BENCHMARK_RESULTS.md`
@@ -286,18 +328,21 @@ antibody-train --multirun \
 
 ## Success Metrics
 
-### After Week 4 (Model Zoo Complete):
-- ✅ 12+ trained models
+### After Week 4 (Model Zoo Complete)
+
+- ✅ 9 trained models (3 backbones × 3 classifiers)
 - ✅ Comprehensive benchmark comparison
 - ✅ Clear winner identified (e.g., "ESM2-XGBoost is best")
 
-### After Week 8 (Full Release):
-- ✅ Models on HuggingFace Hub
+### After Week 8 (Full Release)
+
+- ✅ All 9 models on HuggingFace Hub
 - ✅ PyPI package published
 - ✅ Web demo live
 - ✅ Documentation complete
 
-### After 3 Months (Adoption):
+### After 3 Months (Adoption)
+
 - 🎯 100+ PyPI downloads
 - 🎯 500+ HF Space users
 - 🎯 10+ GitHub stars
@@ -312,12 +357,14 @@ antibody-train --multirun \
 **When:** After Model Zoo is established and users request it
 
 **What it is:**
+
 - Public leaderboard (like Papers with Code)
 - Users submit Docker images with their models
 - Automatic evaluation on standardized test sets
 - Public rankings and model comparisons
 
 **Why defer to Phase 2:**
+
 - Need to establish baseline first (your Model Zoo)
 - Leaderboard is empty without your models
 - Infrastructure is complex (evaluation compute, submissions)
@@ -332,6 +379,7 @@ antibody-train --multirun \
 **When:** After 50+ users of inference tool
 
 **What it is:**
+
 ```python
 # Phase 2 feature (not building yet)
 from antibody_predictor import train_custom_model
@@ -344,6 +392,7 @@ model = train_custom_model(
 ```
 
 **Why defer:**
+
 - User CSVs are messy (inconsistent formats)
 - Need robust preprocessing (ANARCI might fail)
 - Complex error handling
@@ -356,16 +405,19 @@ model = train_custom_model(
 ### Option C: Advanced Features (6-12 months)
 
 **Drug Discovery Integration:**
+
 - Multi-chain scoring (VH+VL pairs)
 - Mutagenesis suggestions
 - Multi-criteria ranking (polyreactivity + stability + expressibility)
 
 **Structure-Aware Models:**
+
 - AlphaFold/ESMFold integration
 - Graph Neural Networks (GNNs)
 - 3D structure predictions
 
 **Interpretability Suite:**
+
 - Per-residue contribution heatmaps
 - Cross-dataset diagnostics
 - Interactive antibody inspector
@@ -374,18 +426,21 @@ model = train_custom_model(
 
 ## Why This Path?
 
-### Model Zoo First Because:
+### Model Zoo First Because
+
 1. **Immediate Value**: Users get predictions on their sequences TODAY
 2. **Clear Scope**: You control everything (training data, models, benchmarks)
 3. **Proven Model**: AlphaFold, ESMFold, BioBERT all follow this pattern
 4. **Foundation**: Everything else (leaderboard, custom training) builds on this
 
-### NOT Building (Yet):
+### NOT Building (Yet)
+
 - ❌ Benchmark submission platform (wait for demand)
 - ❌ Custom training on user data (too complex for Phase 1)
 - ❌ Advanced features (after core is stable)
 
-### The Key Insight:
+### The Key Insight
+
 Small labs need **predictions**, not **training infrastructure**. Give them pretrained models that work, then expand based on feedback.
 
 ---
@@ -393,17 +448,20 @@ Small labs need **predictions**, not **training infrastructure**. Give them pret
 ## Technical Foundation (Already Shipped)
 
 ### Hydra Configuration System ✅ v0.4.0
+
 - CLI overrides: `antibody-train model.batch_size=16 classifier.C=0.5`
 - Multirun sweeps: `antibody-train --multirun classifier.C=0.1,1.0,10.0`
 - Automatic experiment tracking
 - Config composition
 
 ### Production Serialization
+
 - NPZ+JSON format (pickle-free for production)
 - Model cards with provenance
 - HuggingFace-ready format
 
 ### Professional Infrastructure
+
 - 100% type safety (mypy strict mode)
 - CI/CD with GitHub Actions
 - Docker images (dev + prod)
@@ -411,13 +469,67 @@ Small labs need **predictions**, not **training infrastructure**. Give them pret
 
 ---
 
+## Dependencies & Resource Requirements
+
+### Software Dependencies (Phase 1)
+
+**Required:**
+
+- Python 3.12
+- PyTorch 2.x
+- transformers (HuggingFace)
+- scikit-learn
+- **xgboost** (add to pyproject.toml in Week 2)
+- hydra-core (already installed)
+
+**Optional:**
+
+- CUDA 11.8+ (for GPU acceleration)
+- wandb (experiment tracking - Phase 2)
+
+### Compute Resources
+
+**Minimum (CPU-only):**
+
+- 16GB RAM
+- 50GB disk space
+- ~72 hours total training time for 9 models
+
+**Recommended (GPU):**
+
+- NVIDIA GPU with 16GB+ VRAM (T4, V100, A10)
+- 32GB RAM
+- 50GB disk space
+- ~24 hours total training time for 9 models
+
+**For ESM2-3B (optional):**
+
+- NVIDIA A100 40GB+ VRAM
+- 64GB RAM
+- Additional ~24 hours per model
+
+### HuggingFace Model Availability
+
+**Verified:**
+
+- `facebook/esm1v_t33_650M_UR90S_1` ✅
+- `facebook/esm2_t33_650M_UR50D` ✅
+
+**To Verify (Week 2-3):**
+
+- `alchemab/antiberta2` (or correct AntiBERTa model path)
+- Alternative: `Exscientia/antiberta` or `AntibodyLM/AntiBERTa`
+
+---
+
 ## Open Questions
 
 1. **ESM2 Performance:** Will ESM2 beat ESM-1v? (Benchmark in Week 1)
 2. **XGBoost vs LogReg:** How much improvement? (Week 2)
-3. **HF Hub Organization:** Create `antibody-esm` or use personal account?
-4. **PyPI Package Name:** `antibody-predictor` or `antibody-esm`?
-5. **Compute Resources:** Do we have GPU access for ESM2-3B?
+3. **AntiBERTa Model Path:** Which exact HF model to use? (Week 3)
+4. **HF Hub Organization:** Create `antibody-esm` or use personal account?
+5. **PyPI Package Name:** `antibody-predictor` or `antibody-esm`?
+6. **Compute Budget:** Do we have GPU access? Cloud credits?
 
 ---
 
@@ -426,12 +538,15 @@ Small labs need **predictions**, not **training infrastructure**. Give them pret
 **Start Week 1: ESM2-650M Benchmark**
 
 **Steps:**
+
 1. Verify ESM2 config works:
+
    ```bash
    antibody-train model=esm2_650m training.n_splits=2
    ```
 
 2. Run full benchmark:
+
    ```bash
    antibody-train --multirun model=esm1v,esm2_650m classifier=logreg
    ```
@@ -445,13 +560,15 @@ Small labs need **predictions**, not **training infrastructure**. Give them pret
 ## The Bottom Line
 
 **Simple Plan:**
-1. **Model Zoo:** Train ESM-1v/ESM2/AntiBERTa × LogReg/XGBoost/MLP (4 weeks)
+
+1. **Model Zoo:** Train ESM-1v/ESM2/AntiBERTa × LogReg/XGBoost/MLP = **9 models** (4 weeks)
 2. **Publish:** Upload weights to HuggingFace Hub (1 week)
 3. **Inference:** Let users predict on their sequences (2 weeks)
 4. **Demo:** Web UI for non-coders (1 week)
 5. **Done:** That's it. 8 weeks to full platform.
 
 **NOT building (yet):**
+
 - Benchmark submission platform (defer until demand proven)
 - Custom data training (defer until inference API validated)
 - Advanced features (defer until core is stable)

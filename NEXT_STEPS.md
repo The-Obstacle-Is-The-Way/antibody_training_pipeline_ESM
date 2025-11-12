@@ -368,7 +368,7 @@ antibody-train --multirun \
 3. Train all combinations (Hydra multirun)
 4. Collect all benchmark results
 
-**Deliverable:** 12 models trained (3 backbones × 4 classifiers)
+**Deliverable:** 9 models trained (3 backbones × 3 classifiers)
 
 **Commands:**
 ```bash
