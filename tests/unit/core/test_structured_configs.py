@@ -10,7 +10,6 @@ import pytest
 from hydra import compose, initialize
 from hydra.core.global_hydra import GlobalHydra
 from hydra.errors import ConfigCompositionException
-from omegaconf import OmegaConf
 
 # Note: We import config_schema types inside tests to avoid import-time failures
 # Hydra loads configs automatically when we initialize with config_path
@@ -23,53 +22,10 @@ def cleanup_hydra() -> Generator[None, None, None]:
     GlobalHydra.instance().clear()
 
 
-@pytest.mark.unit
-def test_structured_config_loads() -> None:
-    """Test that structured configs load correctly with struct mode enabled"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
-    ):
-        cfg = compose(config_name="config")
-
-        # Verify struct mode is enabled (prevents unknown keys)
-        assert OmegaConf.is_struct(cfg), "Struct mode must be enabled"
-
-        # Verify dataclass types are active (not plain dicts)
-        from antibody_training_esm.conf.config_schema import (
-            ClassifierConfig,
-            Config,
-            DataConfig,
-            ModelConfig,
-            TrainingConfig,
-        )
-
-        assert OmegaConf.get_type(cfg) is Config, (
-            "Root config should be Config dataclass"
-        )
-        assert OmegaConf.get_type(cfg, "model") is ModelConfig, (
-            "model should be ModelConfig dataclass"
-        )
-        assert OmegaConf.get_type(cfg, "classifier") is ClassifierConfig, (
-            "classifier should be ClassifierConfig dataclass"
-        )
-        assert OmegaConf.get_type(cfg, "data") is DataConfig, (
-            "data should be DataConfig dataclass"
-        )
-        assert OmegaConf.get_type(cfg, "training") is TrainingConfig, (
-            "training should be TrainingConfig dataclass"
-        )
-
-        # Verify ConfigStore is available (schemas registered)
-        from hydra.core.config_store import ConfigStore
-
-        cs = ConfigStore.instance()
-        assert cs is not None, "ConfigStore should be initialized"
-
-        # Type-safe access works correctly
-        assert cfg.model.name == "facebook/esm1v_t33_650M_UR90S_1"
-        assert cfg.classifier.C == 1.0
-        assert cfg.training.batch_size == 8
-        assert cfg.training.n_splits == 10
+# Test removed: test_structured_config_loads
+# Reason: ConfigStore registrations removed to fix CLI override bug.
+# We now use pure YAML configs without structured config validation.
+# See: CLI_OVERRIDE_BUG_ROOT_CAUSE.md for details.
 
 
 @pytest.mark.unit
@@ -226,17 +182,7 @@ def test_structured_config_rejects_unknown_keys() -> None:
         )
 
 
-@pytest.mark.unit
-def test_structured_config_rejects_invalid_types() -> None:
-    """Test that type validation rejects invalid values (NEGATIVE TEST)"""
-    with (
-        initialize(
-            version_base=None, config_path="../../../src/antibody_training_esm/conf"
-        ),
-        pytest.raises(ConfigCompositionException),
-    ):
-        # Invalid type for batch_size (should be int) should raise
-        compose(
-            config_name="config",
-            overrides=["training.batch_size=not_a_number"],
-        )
+# Test removed: test_structured_config_rejects_invalid_types
+# Reason: ConfigStore registrations removed to fix CLI override bug.
+# Without structured configs, Hydra doesn't enforce strict type validation.
+# See: CLI_OVERRIDE_BUG_ROOT_CAUSE.md for details.
