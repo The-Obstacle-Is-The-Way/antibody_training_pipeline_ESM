@@ -20,7 +20,7 @@ test:
 	uv run pytest
 
 coverage:
-	uv run pytest --cov=. --cov-report=html --cov-report=term-missing --cov-fail-under=70
+	uv run pytest -m "unit or integration" --cov=src --cov-report=html --cov-report=term-missing --cov-fail-under=70
 
 lint:
 	uv run ruff check .

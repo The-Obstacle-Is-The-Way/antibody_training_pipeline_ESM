@@ -12,15 +12,23 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 ### Coverage Philosophy
 
 **What We Measure**:
-- `make coverage` runs: `pytest -m "unit or integration" --cov=src --cov-fail-under=70`
+- `make coverage` runs: `uv run pytest -m "unit or integration" --cov=src --cov-report=html --cov-report=term-missing --cov-fail-under=70`
 - Focuses on unit + integration tests (fast, deterministic, no external dependencies)
-- E2E tests exist but are excluded from coverage (marked with `@pytest.mark.e2e` and `@pytest.mark.skipif`)
+- Covers only `src/` directory (excludes preprocessing/, experiments/, test files)
+- E2E tests exist but are excluded from coverage (marked with `@pytest.mark.e2e` and deselected by marker filter)
 
 **Why E2E Tests Are Excluded**:
+- Excluded via marker filtering (`-m "unit or integration"`)
 - Require full curated datasets (not available in CI)
 - Expensive (GPU-bound, 30-120 seconds per test)
 - Run on schedule, not every PR
 - Focus: validation of scientific results, not coverage metrics
+
+**Why preprocessing/ and experiments/ Are Excluded**:
+- `--cov=src` only measures coverage of production code in `src/` directory
+- preprocessing/ scripts are one-off data transformations (validated manually)
+- experiments/ are exploratory notebooks (not production code)
+- This keeps coverage metrics focused on the core pipeline
 
 **No Coverage Inflation**:
 - No placeholder tests
@@ -48,12 +56,10 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 
 ---
 
-#### ⚠️ Good Coverage (70-89%)
+#### ✅ Good Coverage (80-89%)
 
 | Module | Coverage | Missing Lines | Priority |
 |--------|----------|---------------|----------|
-| `cli/test.py` | 79.08% | 57 lines | Medium |
-| `cli/preprocess.py` | 78.12% | 6 lines | Low |
 | `datasets/base.py` | 83.58% | 25 lines | Medium |
 | `datasets/harvey.py` | 82.50% | 9 lines | Low |
 | `datasets/shehata.py` | 86.87% | 9 lines | Low |
@@ -66,10 +72,21 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 
 | Module | Coverage | Missing Lines | Priority | Issue |
 |--------|----------|---------------|----------|-------|
-| `core/classifier.py` | 72.12% | 27 lines | **HIGH** | Missing `set_params()` tests |
 | `core/trainer.py` | 67.50% | 78 lines | **CRITICAL** | Missing cache validation tests |
 
 **Action**: Immediate remediation required to prevent CI regression.
+
+---
+
+#### ⚠️ Needs Improvement (70-80%)
+
+| Module | Coverage | Missing Lines | Priority |
+|--------|----------|---------------|----------|
+| `core/classifier.py` | 72.12% | 27 lines | **HIGH** |
+| `cli/preprocess.py` | 78.12% | 6 lines | Low |
+| `cli/test.py` | 79.08% | 57 lines | Medium |
+
+**Action**: High-priority improvements to reach ≥80% target.
 
 ---
 
@@ -117,7 +134,7 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 
 ---
 
-#### Error Handling (Lines 213-223, 493-495, 788-790) - **20 lines**
+#### Error Handling (Lines 213-223, 493-495, 788-790, 810-824) - **20 lines remaining**
 **Impact**: HIGH - Unhandled errors could cause silent failures
 **Priority**: P1
 
@@ -135,6 +152,10 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 - Test: Config missing "model" key
 - Test: Config missing "classifier" key
 - Expected: Raise ValueError with missing key name
+
+# Lines 810-824: Hydra integration edge cases
+- Test: Output directory creation failures
+- Expected: Graceful error handling
 ```
 
 **Estimated LOC**: 80 lines (3 new test functions)
@@ -266,7 +287,7 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 
 - [ ] **Issue #11 Part 2**: Trainer error handling tests (P1)
   - 3 test functions, 80 LOC
-  - Covers lines 213-223, 493-495, 788-790
+  - Covers lines 213-223, 493-495, 788-790, 810-824
   - **Dependency**: None, can run parallel with Part 1
 
 ### Phase 2: High-Priority Gaps (Week 2)
@@ -278,7 +299,7 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
   - **Dependency**: None
 
 ### Phase 3: Medium-Priority Improvements (Week 3-4)
-**Goal**: Achieve ≥85% overall coverage
+**Goal**: Achieve ≥85% on cli/test.py, ≥88% on datasets/base.py
 
 - [ ] **Issue #13**: CLI test.py error handling (P2)
   - 4 test functions, 100 LOC
@@ -291,11 +312,11 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
   - **Dependency**: None
 
 ### Phase 4: Stretch Goals (Future)
-**Goal**: Achieve 90% overall coverage
+**Goal**: Achieve 90% overall coverage (aspirational)
 
 - [ ] **Issue #15**: Dataset edge cases (harvey, shehata)
   - Target remaining missing lines in dataset loaders
-  - Low priority (already >82% coverage)
+  - Low priority (already >82% coverage on these modules)
 
 ---
 
@@ -304,7 +325,7 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 ### CI Requirements
 ```bash
 # Coverage check (must pass on every PR)
-pytest -m "unit or integration" --cov=src --cov-fail-under=70
+make coverage  # Runs: pytest -m "unit or integration" --cov=src --cov-fail-under=70
 
 # Quality check (must pass on every PR)
 make all  # format → lint → typecheck → test
@@ -416,18 +437,19 @@ Add unit tests to improve coverage of `<module>` from X% to Y%.
 ## FAQ
 
 ### Q: Why is trainer.py only 67.50% covered?
-**A**: The missing coverage is in cache validation logic (lines 319-376) which handles corrupt/mismatched cache files. These edge cases aren't exercised in the current unit tests but are critical for correctness.
+**A**: The missing coverage is in cache validation logic (lines 319-376) which handles corrupt/mismatched cache files. These edge cases aren't exercised in the current unit tests but are critical for correctness. This is a P0 blocker that must be fixed before any PR merges.
 
 ### Q: Why don't we include e2e tests in coverage?
-**A**: E2E tests require full curated datasets (not available in CI) and are expensive to run. They validate scientific correctness, not code coverage. We exclude them to keep coverage metrics focused on unit/integration tests that run on every PR.
+**A**: E2E tests are excluded via marker filtering (`-m "unit or integration"`). They require full curated datasets (not available in CI) and are expensive to run. They validate scientific correctness, not code coverage. We exclude them to keep coverage metrics focused on unit/integration tests that run on every PR.
 
 ### Q: How do I run coverage locally?
 **A**: Run `make coverage` to execute unit + integration tests with coverage reporting. This matches what CI runs.
 
-### Q: What's the difference between 82% and 67% coverage reports?
+### Q: What's the difference between 82% and 48% coverage reports?
 **A**:
 - **82.06%**: Running `pytest -m "unit or integration" --cov=src` (correct, what we enforce)
-- **67%**: Running `pytest --cov=.` without marker filtering (includes all test files, but e2e tests are skipped, inflating missed lines)
+- **48.56%**: Running `pytest --cov=.` without marker filtering (includes preprocessing/, experiments/, test files with 0% coverage)
+- The difference is `--cov=src` (only production code) vs `--cov=.` (everything)
 
 ### Q: Should I test private methods?
 **A**: No. Test the public API. Private methods are implementation details. If a private method is complex enough to need dedicated tests, it should probably be a public function in a utility module.
@@ -486,10 +508,12 @@ pytest -m e2e -v
 ## Document Maintenance
 
 **Version History**:
-- **v1.0.0** (2025-11-12): Initial test coverage plan
+- **v1.0.1** (2025-11-12): Updated with accurate coverage data
   - Baseline: 82.06% coverage (unit + integration)
-  - Identified 4 critical gaps (trainer.py, classifier.py, test.py, base.py)
-  - Created implementation plan with 5 GitHub issues
+  - Fixed trainer.py classification: 67.50% (CRITICAL, below 70%)
+  - Restored cache validation tests as P0 blocker
+  - Created implementation plan with 5 GitHub issues (Issues #11-15)
+- **v1.0.0** (2025-11-12): Initial test coverage plan (contained stale data)
 
 **Next Review**: 2025-11-19 (after Phase 1 completion)
 **Owner**: @The-Obstacle-Is-The-Way
