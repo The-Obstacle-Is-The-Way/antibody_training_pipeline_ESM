@@ -73,7 +73,9 @@ dev = [
 ]
 
 [project.scripts]
-antibody-train = "antibody_training_esm.cli.train:main"
+# Point directly to Hydra-decorated function to enable config group overrides
+# (antibody-train model=esm2_650m classifier=xgboost now works correctly)
+antibody-train = "antibody_training_esm.core.trainer:main"
 antibody-test = "antibody_training_esm.cli.test:main"
 antibody-preprocess = "antibody_training_esm.cli.preprocess:main"
 
