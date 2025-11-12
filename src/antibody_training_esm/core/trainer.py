@@ -31,6 +31,7 @@ from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
+from antibody_training_esm.core.directory_utils import get_hierarchical_model_dir
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.data.loaders import load_data
 
@@ -531,6 +532,12 @@ def save_model(
     """
     Save trained model in dual format (pickle + NPZ+JSON)
 
+    Models are saved in hierarchical directory structure:
+        {model_save_dir}/{model_shortname}/{classifier_type}/{model_name}.*
+
+    Example:
+        models/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+
     Args:
         classifier: Trained classifier
         config: Configuration dictionary
@@ -539,9 +546,9 @@ def save_model(
     Returns:
         Dictionary with paths to saved files:
         {
-            "pickle": "models/model.pkl",
-            "npz": "models/model.npz",
-            "config": "models/model_config.json"
+            "pickle": "models/esm1v/logreg/model.pkl",
+            "npz": "models/esm1v/logreg/model.npz",
+            "config": "models/esm1v/logreg/model_config.json"
         }
         Empty dict if saving is disabled.
     """
@@ -549,10 +556,18 @@ def save_model(
         return {}
 
     model_name = config["training"]["model_name"]
-    model_save_dir = config["training"]["model_save_dir"]
-    os.makedirs(model_save_dir, exist_ok=True)
+    base_save_dir = config["training"]["model_save_dir"]
 
-    base_path = os.path.join(model_save_dir, model_name)
+    # Generate hierarchical directory path
+    hierarchical_dir = get_hierarchical_model_dir(
+        base_save_dir,
+        config["model"]["name"],
+        config["classifier"],
+    )
+    hierarchical_dir.mkdir(parents=True, exist_ok=True)
+    logger.info(f"Using hierarchical model directory: {hierarchical_dir}")
+
+    base_path = hierarchical_dir / model_name
 
     # Format 1: Pickle checkpoint (research/debugging)
     pickle_path = f"{base_path}.pkl"
@@ -597,7 +612,7 @@ def save_model(
     logger.info(f"Saved JSON config: {json_path}")
 
     logger.info("Model saved successfully (dual-format: pickle + NPZ+JSON)")
-    return {"pickle": pickle_path, "npz": npz_path, "config": json_path}
+    return {"pickle": str(pickle_path), "npz": str(npz_path), "config": str(json_path)}
 
 
 def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:

@@ -129,6 +129,7 @@ src/antibody_training_esm/    # Main package
 │   ├── embeddings.py        # ESM-1v embedding extraction
 │   ├── classifier.py        # Binary classifier (LogReg + ESM)
 │   ├── trainer.py           # Training orchestration
+│   ├── directory_utils.py   # Hierarchical directory path generation
 │   └── config.py            # Config constants
 ├── data/                     # Data loading utilities
 │   └── loaders.py           # CSV loading
@@ -153,8 +154,13 @@ preprocessing/                # Dataset preprocessing pipelines
 conf/                         # Hydra configuration directory (inside package)
 ├── config.yaml              # Default Hydra config (Boughter train, Jain test)
 
-models/                       # Trained model checkpoints (.pkl)
+models/                       # Trained model checkpoints (hierarchical organization)
+├── esm1v/logreg/            # ESM-1v + Logistic Regression models
+├── esm2_650m/logreg/        # ESM2-650M + Logistic Regression models
+└── {model}/{classifier}/    # Organized by backbone and classifier type
 embeddings_cache/            # Cached ESM embeddings
+scripts/                     # Utility scripts
+├── migrate_model_directories.py  # Migrate models to hierarchical structure
 train_datasets/              # Training data CSVs
 test_datasets/               # Test data CSVs
 tests/                       # Test suite
