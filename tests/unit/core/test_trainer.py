@@ -511,29 +511,27 @@ def test_get_or_create_embeddings_recomputes_on_model_name_mismatch(
     cache_path = str(tmp_path / "cache")
     os.makedirs(cache_path)
 
-    # Cached model metadata (ESM-1v)
-    cached_model_name = "facebook/esm1v_t33_650M_UR90S_1"
+    # Define both model names
+    cached_model_name = "facebook/esm1v_t33_650M_UR90S_1"  # Old model (inside cache data)
+    current_model_name = "facebook/esm2_t33_650M_UR50D"  # New model (current extractor)
     revision = "main"
     max_length = 1024
 
-    # Current model metadata (ESM2 - DIFFERENT!)
-    current_model_name = "facebook/esm2_t33_650M_UR50D"
-
-    # Create cache file using cached model name
+    # CRITICAL FIX: Calculate hash using CURRENT model (what get_or_create_embeddings will use)
     sequences_str = "|".join(sequences)
     cache_key_components = (
-        f"{cached_model_name}|{revision}|{max_length}|{sequences_str}"
+        f"{current_model_name}|{revision}|{max_length}|{sequences_str}"  # ← CURRENT model!
     )
     sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
-    # Create valid cache with DIFFERENT model_name
+    # Cache data has MISMATCHED model_name (old model inside)
     cache_data = {
         "embeddings": mock_embeddings,
-        "sequences_hash": sequences_hash,
-        "model_name": cached_model_name,  # ESM-1v
-        "revision": revision,
-        "max_length": max_length,
+        "sequences_hash": sequences_hash,  # ← MUST MATCH (correct hash)
+        "model_name": cached_model_name,  # ← DIFFERENT model (creates mismatch)
+        "revision": revision,  # ← Same
+        "max_length": max_length,  # ← Same
     }
     with open(cache_file, "wb") as f:
         pickle.dump(cache_data, f)
@@ -578,25 +576,25 @@ def test_get_or_create_embeddings_recomputes_on_revision_mismatch(
     os.makedirs(cache_path)
 
     model_name = "facebook/esm1v_t33_650M_UR90S_1"
-    cached_revision = "main"  # Cached revision
-    current_revision = "commit-abc123"  # Current revision - DIFFERENT!
+    cached_revision = "main"  # Old revision (inside cache data)
+    current_revision = "commit-abc123"  # New revision (current extractor)
     max_length = 1024
 
-    # Create cache file using cached revision
+    # CRITICAL FIX: Calculate hash using CURRENT revision
     sequences_str = "|".join(sequences)
     cache_key_components = (
-        f"{model_name}|{cached_revision}|{max_length}|{sequences_str}"
+        f"{model_name}|{current_revision}|{max_length}|{sequences_str}"  # ← CURRENT revision!
     )
     sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
-    # Create valid cache with DIFFERENT revision
+    # Cache data has MISMATCHED revision
     cache_data = {
         "embeddings": mock_embeddings,
-        "sequences_hash": sequences_hash,
-        "model_name": model_name,
-        "revision": cached_revision,  # "main"
-        "max_length": max_length,
+        "sequences_hash": sequences_hash,  # ← MUST MATCH
+        "model_name": model_name,  # ← Same
+        "revision": cached_revision,  # ← DIFFERENT revision (creates mismatch)
+        "max_length": max_length,  # ← Same
     }
     with open(cache_file, "wb") as f:
         pickle.dump(cache_data, f)
@@ -640,24 +638,24 @@ def test_get_or_create_embeddings_recomputes_on_max_length_mismatch(
 
     model_name = "facebook/esm1v_t33_650M_UR90S_1"
     revision = "main"
-    cached_max_length = 1024  # Cached max_length
-    current_max_length = 512  # Current max_length - DIFFERENT!
+    cached_max_length = 1024  # Old max_length (inside cache data)
+    current_max_length = 512  # New max_length (current extractor)
 
-    # Create cache file using cached max_length
+    # CRITICAL FIX: Calculate hash using CURRENT max_length
     sequences_str = "|".join(sequences)
     cache_key_components = (
-        f"{model_name}|{revision}|{cached_max_length}|{sequences_str}"
+        f"{model_name}|{revision}|{current_max_length}|{sequences_str}"  # ← CURRENT max_length!
     )
     sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
-    # Create valid cache with DIFFERENT max_length
+    # Cache data has MISMATCHED max_length
     cache_data = {
         "embeddings": mock_embeddings,
-        "sequences_hash": sequences_hash,
-        "model_name": model_name,
-        "revision": revision,
-        "max_length": cached_max_length,  # 1024
+        "sequences_hash": sequences_hash,  # ← MUST MATCH
+        "model_name": model_name,  # ← Same
+        "revision": revision,  # ← Same
+        "max_length": cached_max_length,  # ← DIFFERENT max_length (creates mismatch)
     }
     with open(cache_file, "wb") as f:
         pickle.dump(cache_data, f)
