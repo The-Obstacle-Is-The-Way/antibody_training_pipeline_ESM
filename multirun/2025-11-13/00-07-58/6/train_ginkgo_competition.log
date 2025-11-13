@@ -38,3 +38,63 @@
 [2025-11-13 00:09:55,903][antibody_training_esm.core.trainer][INFO] - Training fold 2/4
 [2025-11-13 00:09:55,903][antibody_training_esm.core.trainer][INFO] -   Train samples: 161
 [2025-11-13 00:09:55,903][antibody_training_esm.core.trainer][INFO] -   Val samples: 36
+[2025-11-13 00:09:56,704][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:09:56,709][antibody_training_esm.core.trainer][INFO] -   Fold 2 Spearman: 0.6928
+[2025-11-13 00:09:56,709][antibody_training_esm.core.trainer][INFO] - Training fold 3/4
+[2025-11-13 00:09:56,710][antibody_training_esm.core.trainer][INFO] -   Train samples: 162
+[2025-11-13 00:09:56,710][antibody_training_esm.core.trainer][INFO] -   Val samples: 35
+[2025-11-13 00:09:57,585][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:09:57,588][antibody_training_esm.core.trainer][INFO] -   Fold 3 Spearman: 0.1383
+[2025-11-13 00:09:57,588][antibody_training_esm.core.trainer][INFO] - Training fold 4/4
+[2025-11-13 00:09:57,589][antibody_training_esm.core.trainer][INFO] -   Train samples: 156
+[2025-11-13 00:09:57,589][antibody_training_esm.core.trainer][INFO] -   Val samples: 41
+[2025-11-13 00:09:58,236][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] -   Fold 4 Spearman: 0.4684
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] - CROSS-VALIDATION RESULTS
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] - Overall Spearman: 0.4700 (p-value: 3.2015e-12)
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] - Mean CV Spearman: 0.4304 ± 0.1805
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] -   Fold 0: 0.3660 (n=45)
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] -   Fold 1: 0.4863 (n=40)
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] -   Fold 2: 0.6928 (n=36)
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] -   Fold 3: 0.1383 (n=35)
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] -   Fold 4: 0.4684 (n=41)
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] - TRAINING FINAL MODEL ON FULL DATASET
+[2025-11-13 00:09:58,241][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:58,964][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:09:58,966][antibody_training_esm.core.trainer][INFO] - Model saved to: models/ginkgo_2025/ginkgo_regressor.pkl
+[2025-11-13 00:09:58,966][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:58,970][__main__][INFO] - ================================================================================
+[2025-11-13 00:09:58,970][__main__][INFO] - 📊 CROSS-VALIDATION RESULTS
+[2025-11-13 00:09:58,970][__main__][INFO] - ================================================================================
+[2025-11-13 00:09:58,970][__main__][INFO] - Overall Spearman: 0.4700 (p-value: 3.2015e-12)
+[2025-11-13 00:09:58,970][__main__][INFO] - Mean CV Spearman: 0.4304 ± 0.1805
+[2025-11-13 00:09:58,970][__main__][INFO] -   Fold 0: 0.3660 (n=45)
+[2025-11-13 00:09:58,970][__main__][INFO] -   Fold 1: 0.4863 (n=40)
+[2025-11-13 00:09:58,970][__main__][INFO] -   Fold 2: 0.6928 (n=36)
+[2025-11-13 00:09:58,970][__main__][INFO] -   Fold 3: 0.1383 (n=35)
+[2025-11-13 00:09:58,970][__main__][INFO] -   Fold 4: 0.4684 (n=41)
+[2025-11-13 00:09:58,970][__main__][INFO] - ================================================================================
+[2025-11-13 00:09:58,970][__main__][INFO] - 📄 GENERATING SUBMISSION CSVs
+[2025-11-13 00:09:58,970][__main__][INFO] - ================================================================================
+[2025-11-13 00:09:58,987][__main__][INFO] - ✅ Saved CV predictions to: ginkgo_submissions/ginkgo_cv_predictions_PR_CHO.csv
+[2025-11-13 00:09:59,639][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:09:59,640][antibody_training_esm.core.embeddings][INFO] - Extracting embeddings for 80 sequences with batch_size=8...
+[2025-11-13 00:10:12,469][__main__][INFO] - ✅ Saved test predictions to: ginkgo_submissions/ginkgo_test_predictions_PR_CHO.csv
+[2025-11-13 00:10:12,470][__main__][INFO] - ================================================================================
+[2025-11-13 00:10:12,470][__main__][INFO] - 🎯 SUBMISSION FILES READY
+[2025-11-13 00:10:12,470][__main__][INFO] - ================================================================================
+[2025-11-13 00:10:12,470][__main__][INFO] - ✅ CV predictions: ginkgo_submissions/ginkgo_cv_predictions_PR_CHO.csv
+[2025-11-13 00:10:12,470][__main__][INFO] - ✅ Test predictions: ginkgo_submissions/ginkgo_test_predictions_PR_CHO.csv
+[2025-11-13 00:10:12,470][__main__][INFO] - 
+[2025-11-13 00:10:12,470][__main__][INFO] - 📤 Next steps:
+[2025-11-13 00:10:12,470][__main__][INFO] - 1. Go to: https://huggingface.co/spaces/ginkgo-datapoints/abdev-benchmark
+[2025-11-13 00:10:12,470][__main__][INFO] - 2. Click 'Submit' tab
+[2025-11-13 00:10:12,470][__main__][INFO] - 3. Upload both CSV files
+[2025-11-13 00:10:12,470][__main__][INFO] - 4. Check leaderboard for CV Spearman correlation
+[2025-11-13 00:10:12,470][__main__][INFO] - 
+[2025-11-13 00:10:12,470][__main__][INFO] - 🎯 Target to beat: 0.892 Spearman (current leader)
+[2025-11-13 00:10:12,470][__main__][INFO] - 📊 Your CV score: 0.4700
+[2025-11-13 00:10:12,470][__main__][INFO] - ================================================================================
