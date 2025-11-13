@@ -28,6 +28,9 @@ data:
   # Target property to predict
   target_property: PR_CHO  # Options: PR_CHO, HIC, AC-SINS_pH7.4, Tm2, Titer
 
+  # Embedding cache directory (for faster re-runs)
+  embeddings_cache_dir: ./embeddings_cache
+
 regressor:
   # Ridge regularization strength (alpha)
   # Higher alpha = more regularization (simpler model)

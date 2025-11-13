@@ -51,32 +51,43 @@ class TestPredefinedFoldCV:
             "hardware": {
                 "device": "cpu",
             },
+            "data": {
+                "embeddings_cache_dir": "./embeddings_cache",
+            },
         }
 
+    @patch("antibody_training_esm.core.trainer.get_or_create_embeddings")
     @patch("antibody_training_esm.core.trainer.AntibodyRegressor")
     def test_function_exists(
         self,
         mock_regressor_class: Mock,
+        mock_get_embeddings: Mock,
     ) -> None:
         """Test that train_model_with_predefined_folds function exists."""
         assert callable(train_model_with_predefined_folds)
 
+    @patch("antibody_training_esm.core.trainer.get_or_create_embeddings")
     @patch("antibody_training_esm.core.trainer.AntibodyRegressor")
     def test_returns_tuple_of_three_elements(
         self,
         mock_regressor_class: Mock,
+        mock_get_embeddings: Mock,
         mock_sequences: list[str],
         mock_labels: np.ndarray,
         mock_folds: np.ndarray,
         mock_config: dict,
     ) -> None:
         """Test that function returns (model, cv_results, oof_predictions)."""
+        # Mock embedding extraction
+        mock_embeddings = np.random.randn(len(mock_sequences), 1280)
+        mock_get_embeddings.return_value = mock_embeddings
+
         # Mock regressor behavior
         mock_regressor = MagicMock()
         mock_regressor.fit.return_value = mock_regressor
-        # Return predictions matching input size
-        mock_regressor.predict.side_effect = lambda seqs, **kwargs: np.random.randn(
-            len(seqs)
+        # Return predictions matching input size (now embeddings, not sequences)
+        mock_regressor.predict.side_effect = lambda emb, **kwargs: np.random.randn(
+            len(emb)
         )
         mock_regressor_class.return_value = mock_regressor
 
@@ -99,20 +110,26 @@ class TestPredefinedFoldCV:
             assert isinstance(cv_results, dict)
             assert isinstance(oof_predictions, np.ndarray)
 
+    @patch("antibody_training_esm.core.trainer.get_or_create_embeddings")
     @patch("antibody_training_esm.core.trainer.AntibodyRegressor")
     def test_cv_results_contains_spearman_metrics(
         self,
         mock_regressor_class: Mock,
+        mock_get_embeddings: Mock,
         mock_sequences: list[str],
         mock_labels: np.ndarray,
         mock_folds: np.ndarray,
         mock_config: dict,
     ) -> None:
         """Test that cv_results contains Spearman correlation metrics."""
+        # Mock embedding extraction
+        mock_embeddings = np.random.randn(len(mock_sequences), 1280)
+        mock_get_embeddings.return_value = mock_embeddings
+
         mock_regressor = MagicMock()
         mock_regressor.fit.return_value = mock_regressor
-        mock_regressor.predict.side_effect = lambda seqs, **kwargs: np.random.randn(
-            len(seqs)
+        mock_regressor.predict.side_effect = lambda emb, **kwargs: np.random.randn(
+            len(emb)
         )
         mock_regressor_class.return_value = mock_regressor
 
@@ -134,20 +151,26 @@ class TestPredefinedFoldCV:
             assert "overall_spearman_pval" in cv_results
             assert "fold_metrics" in cv_results
 
+    @patch("antibody_training_esm.core.trainer.get_or_create_embeddings")
     @patch("antibody_training_esm.core.trainer.AntibodyRegressor")
     def test_fold_metrics_list_has_correct_length(
         self,
         mock_regressor_class: Mock,
+        mock_get_embeddings: Mock,
         mock_sequences: list[str],
         mock_labels: np.ndarray,
         mock_folds: np.ndarray,
         mock_config: dict,
     ) -> None:
         """Test that fold_metrics has one entry per unique fold."""
+        # Mock embedding extraction
+        mock_embeddings = np.random.randn(len(mock_sequences), 1280)
+        mock_get_embeddings.return_value = mock_embeddings
+
         mock_regressor = MagicMock()
         mock_regressor.fit.return_value = mock_regressor
-        mock_regressor.predict.side_effect = lambda seqs, **kwargs: np.random.randn(
-            len(seqs)
+        mock_regressor.predict.side_effect = lambda emb, **kwargs: np.random.randn(
+            len(emb)
         )
         mock_regressor_class.return_value = mock_regressor
 
@@ -174,20 +197,26 @@ class TestPredefinedFoldCV:
                 assert "spearman_pval" in fold_metric
                 assert "n_samples" in fold_metric
 
+    @patch("antibody_training_esm.core.trainer.get_or_create_embeddings")
     @patch("antibody_training_esm.core.trainer.AntibodyRegressor")
     def test_oof_predictions_same_length_as_input(
         self,
         mock_regressor_class: Mock,
+        mock_get_embeddings: Mock,
         mock_sequences: list[str],
         mock_labels: np.ndarray,
         mock_folds: np.ndarray,
         mock_config: dict,
     ) -> None:
         """Test that out-of-fold predictions have same length as input."""
+        # Mock embedding extraction
+        mock_embeddings = np.random.randn(len(mock_sequences), 1280)
+        mock_get_embeddings.return_value = mock_embeddings
+
         mock_regressor = MagicMock()
         mock_regressor.fit.return_value = mock_regressor
-        mock_regressor.predict.side_effect = lambda seqs, **kwargs: np.random.randn(
-            len(seqs)
+        mock_regressor.predict.side_effect = lambda emb, **kwargs: np.random.randn(
+            len(emb)
         )
         mock_regressor_class.return_value = mock_regressor
 
@@ -206,20 +235,26 @@ class TestPredefinedFoldCV:
             assert len(oof_predictions) == len(mock_sequences)
             assert oof_predictions.dtype in [np.float64, np.float32]
 
+    @patch("antibody_training_esm.core.trainer.get_or_create_embeddings")
     @patch("antibody_training_esm.core.trainer.AntibodyRegressor")
     def test_final_model_trained_on_full_data(
         self,
         mock_regressor_class: Mock,
+        mock_get_embeddings: Mock,
         mock_sequences: list[str],
         mock_labels: np.ndarray,
         mock_folds: np.ndarray,
         mock_config: dict,
     ) -> None:
         """Test that final model is trained on full dataset."""
+        # Mock embedding extraction
+        mock_embeddings = np.random.randn(len(mock_sequences), 1280)
+        mock_get_embeddings.return_value = mock_embeddings
+
         mock_regressor = MagicMock()
         mock_regressor.fit.return_value = mock_regressor
-        mock_regressor.predict.side_effect = lambda seqs, **kwargs: np.random.randn(
-            len(seqs)
+        mock_regressor.predict.side_effect = lambda emb, **kwargs: np.random.randn(
+            len(emb)
         )
         mock_regressor_class.return_value = mock_regressor
 
@@ -238,25 +273,31 @@ class TestPredefinedFoldCV:
             # 3 folds + 1 final = 4 total calls
             assert mock_regressor.fit.call_count == 4
 
-            # Check that final fit was on all sequences
+            # Check that final fit was on all embeddings (not sequences)
             final_fit_call = mock_regressor.fit.call_args_list[-1]
-            final_sequences = final_fit_call[0][0]  # First positional arg
-            assert len(final_sequences) == len(mock_sequences)
+            final_embeddings = final_fit_call[0][0]  # First positional arg
+            assert len(final_embeddings) == len(mock_sequences)
 
+    @patch("antibody_training_esm.core.trainer.get_or_create_embeddings")
     @patch("antibody_training_esm.core.trainer.AntibodyRegressor")
     def test_model_saved_to_output_dir(
         self,
         mock_regressor_class: Mock,
+        mock_get_embeddings: Mock,
         mock_sequences: list[str],
         mock_labels: np.ndarray,
         mock_folds: np.ndarray,
         mock_config: dict,
     ) -> None:
         """Test that trained model is saved to output directory."""
+        # Mock embedding extraction
+        mock_embeddings = np.random.randn(len(mock_sequences), 1280)
+        mock_get_embeddings.return_value = mock_embeddings
+
         mock_regressor = MagicMock()
         mock_regressor.fit.return_value = mock_regressor
-        mock_regressor.predict.side_effect = lambda seqs, **kwargs: np.random.randn(
-            len(seqs)
+        mock_regressor.predict.side_effect = lambda emb, **kwargs: np.random.randn(
+            len(emb)
         )
         mock_regressor_class.return_value = mock_regressor
 

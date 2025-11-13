@@ -942,6 +942,27 @@ def train_model_with_predefined_folds(
     logger.info(f"Unique folds: {sorted(set(fold_assignments))}")
     logger.info("=" * 80)
 
+    # Pre-compute embeddings for entire dataset (cache-aware)
+    data_config = config.get("data", {})
+    cache_dir = data_config.get("embeddings_cache_dir", "./embeddings_cache")
+
+    embedding_extractor = ESMEmbeddingExtractor(
+        model_name=model_name,
+        device=device,
+        batch_size=batch_size,
+    )
+
+    logger.info("Extracting embeddings for full dataset...")
+    all_embeddings = get_or_create_embeddings(
+        sequences=sequences,
+        embedding_extractor=embedding_extractor,
+        cache_path=cache_dir,
+        dataset_name="ginkgo_full",
+        logger=logger,
+    )
+    logger.info(f"✅ Embeddings extracted: shape={all_embeddings.shape}")
+    logger.info("=" * 80)
+
     # Setup predefined fold cross-validation
     cv = PredefinedSplit(test_fold=fold_assignments)
 
@@ -954,16 +975,16 @@ def train_model_with_predefined_folds(
     for fold_idx, (train_idx, val_idx) in enumerate(cv.split()):
         logger.info(f"Training fold {fold_idx}/{n_folds - 1}")
 
-        # Split data
-        train_sequences = [sequences[i] for i in train_idx]
+        # Split PRE-COMPUTED embeddings (not sequences)
+        train_embeddings = all_embeddings[train_idx]
         train_labels = labels[train_idx]
-        val_sequences = [sequences[i] for i in val_idx]
+        val_embeddings = all_embeddings[val_idx]
         val_labels = labels[val_idx]
 
-        logger.info(f"  Train samples: {len(train_sequences)}")
-        logger.info(f"  Val samples: {len(val_sequences)}")
+        logger.info(f"  Train samples: {len(train_embeddings)}")
+        logger.info(f"  Val samples: {len(val_embeddings)}")
 
-        # Train on this fold
+        # Train on this fold (using pre-computed embeddings)
         fold_regressor = AntibodyRegressor(
             model_name=model_name,
             device=device,
@@ -971,12 +992,11 @@ def train_model_with_predefined_folds(
             alpha=alpha,
         )
 
-        # NOTE: cache_path parameter exists but is currently unused
-        # Caching should be implemented using get_or_compute_embeddings() helper
-        fold_regressor.fit(train_sequences, train_labels)
+        # Pass pre-computed embeddings (no extraction needed)
+        fold_regressor.fit(train_embeddings, train_labels)
 
-        # Predict on validation fold
-        val_preds = fold_regressor.predict(val_sequences)
+        # Predict on validation fold (using pre-computed embeddings)
+        val_preds = fold_regressor.predict(val_embeddings)
 
         # Store out-of-fold predictions
         oof_predictions[val_idx] = val_preds
@@ -1035,8 +1055,8 @@ def train_model_with_predefined_folds(
         alpha=alpha,
     )
 
-    # NOTE: Caching not implemented yet for regression pipeline
-    final_regressor.fit(sequences, labels)
+    # Train using pre-computed embeddings (cached from earlier)
+    final_regressor.fit(all_embeddings, labels)
 
     # Save model
     output_dir.mkdir(parents=True, exist_ok=True)

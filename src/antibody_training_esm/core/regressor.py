@@ -102,15 +102,15 @@ class AntibodyRegressor:
 
     def fit(
         self,
-        sequences: list[str],
+        sequences: list[str] | np.ndarray,
         labels: np.ndarray,
         _cache_path: str | None = None,
     ) -> "AntibodyRegressor":
         """
-        Train regressor on sequences and continuous labels.
+        Train regressor on sequences OR pre-computed embeddings.
 
         Args:
-            sequences: List of VH protein sequences
+            sequences: List of VH protein sequences OR pre-computed embeddings (np.ndarray)
             labels: Continuous target values (e.g., polyreactivity scores)
             _cache_path: UNUSED - Kept for API compatibility. Caching handled by trainer.
 
@@ -121,15 +121,21 @@ class AntibodyRegressor:
             ValueError: If labels are not continuous floats
 
         Example:
+            >>> # From sequences
             >>> regressor = AntibodyRegressor(alpha=1.0)
             >>> regressor.fit(
             ...     sequences=['QVQLQQ...', 'EVQLVE...'],
             ...     labels=np.array([0.337, 0.205])
             ... )
-            >>> assert regressor._is_fitted
+            >>> # From pre-computed embeddings
+            >>> embeddings = np.random.randn(2, 1280)
+            >>> regressor.fit(embeddings, labels)
         """
-        # Extract embeddings (caching handled by trainer via get_or_compute_embeddings)
-        embeddings = self.embedding_extractor.extract_batch_embeddings(sequences)
+        # Check if input is pre-computed embeddings or sequences
+        if isinstance(sequences, np.ndarray):
+            embeddings = sequences
+        else:
+            embeddings = self.embedding_extractor.extract_batch_embeddings(sequences)
 
         # Train Ridge regressor
         self.regressor.fit(embeddings, labels)
@@ -139,14 +145,14 @@ class AntibodyRegressor:
 
     def predict(
         self,
-        sequences: list[str],
+        sequences: list[str] | np.ndarray,
         _cache_path: str | None = None,
     ) -> np.ndarray:
         """
-        Predict continuous values for sequences.
+        Predict continuous values from sequences OR pre-computed embeddings.
 
         Args:
-            sequences: List of VH protein sequences
+            sequences: List of VH protein sequences OR pre-computed embeddings (np.ndarray)
             _cache_path: UNUSED - Kept for API compatibility. Caching handled by trainer.
 
         Returns:
@@ -156,16 +162,21 @@ class AntibodyRegressor:
             ValueError: If model not fitted
 
         Example:
+            >>> # From sequences
             >>> regressor = AntibodyRegressor.load('model.pkl')
             >>> predictions = regressor.predict(['QVKLQE...'])
-            >>> print(f"Predicted value: {predictions[0]:.3f}")
-            Predicted value: 0.45
+            >>> # From pre-computed embeddings
+            >>> embeddings = np.random.randn(1, 1280)
+            >>> predictions = regressor.predict(embeddings)
         """
         if not self._is_fitted:
             raise ValueError("Model must be fitted before predict()")
 
-        # Extract embeddings (caching handled by trainer via get_or_compute_embeddings)
-        embeddings = self.embedding_extractor.extract_batch_embeddings(sequences)
+        # Check if input is pre-computed embeddings or sequences
+        if isinstance(sequences, np.ndarray):
+            embeddings = sequences
+        else:
+            embeddings = self.embedding_extractor.extract_batch_embeddings(sequences)
 
         # Predict continuous values
         predictions: np.ndarray = self.regressor.predict(embeddings)
