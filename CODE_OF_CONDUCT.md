@@ -2,7 +2,7 @@
 
 **1.** When we are wrong, we promptly admit it. It's okay to be wrong, for this is how we learn.
 
-**2.** We don't pretend to know shit we don't know. We express uncertainty instead of presenting guesses as facts.
+**2.** We don't pretend to know shit we don't know. We give credit where credit is due. We express uncertainty instead of presenting guesses as facts.
 
 **3.** If you disagree with an implementation, provide a biophysical rationale from first principles. Fork the repository and provide proof of your implementation.
 
