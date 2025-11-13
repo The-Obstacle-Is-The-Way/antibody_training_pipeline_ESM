@@ -19,3 +19,12 @@
 **9.** When conflicts arise, we remember that it is not one individual versus another. It's the team versus the problem. We are on the same side, united against our common goal.
 
 **10.** We embody the spirit of personal agency and responsibility. You can just do things.
+
+---
+
+<div align="center">
+  <em>"Fascinating behavior"</em>
+  <br>
+  <br>
+  <img src="assets/fascinating.jpg" alt="Fascinating Behavior" width="400"/>
+</div>
