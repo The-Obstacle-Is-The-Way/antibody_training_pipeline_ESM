@@ -199,7 +199,8 @@ def objective(weights):
     weights = weights / weights.sum()  # Normalize
 
     ensemble = sum(
-        w * oof_preds[name] for w, name in zip(weights, embeddings_dict.keys(), strict=False)
+        w * oof_preds[name]
+        for w, name in zip(weights, embeddings_dict.keys(), strict=False)
     )
     return -spearmanr(labels, ensemble)[0]
 
@@ -215,7 +216,9 @@ optimal_weights = np.abs(result.x)
 optimal_weights = optimal_weights / optimal_weights.sum()
 optimal_score = -result.fun
 
-logger.info(f"Optimal weights: {dict(zip(embeddings_dict.keys(), optimal_weights, strict=False))}")
+logger.info(
+    f"Optimal weights: {dict(zip(embeddings_dict.keys(), optimal_weights, strict=False))}"
+)
 logger.info(f"🏆 OPTIMIZED ENSEMBLE: {optimal_score:.5f}")
 
 
