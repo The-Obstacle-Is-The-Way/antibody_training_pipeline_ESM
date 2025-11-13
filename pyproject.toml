@@ -135,6 +135,11 @@ exclude = [
     "scripts/generate_lightgbm_submission.py",
     "scripts/generate_elasticnet_submission.py",
     "scripts/regenerate_piggen_cache.py",
+    # New experimental scripts (Batch 1+)
+    "scripts/tessier_gdpa1_transfer_learning.py",
+    "scripts/generate_xgboost_submission.py",
+    "scripts/generate_lightgbm_aggressive.py",
+    "scripts/generate_catboost_submission.py",
 ]
 
 [tool.pytest.ini_options]
