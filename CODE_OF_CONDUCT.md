@@ -23,8 +23,5 @@
 ---
 
 <div align="center">
-  <em>"Fascinating behavior"</em>
-  <br>
-  <br>
   <img src="assets/fascinating.jpg" alt="Fascinating Behavior" width="400"/>
 </div>
