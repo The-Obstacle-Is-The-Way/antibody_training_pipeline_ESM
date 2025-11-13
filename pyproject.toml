@@ -129,6 +129,7 @@ exclude = [
     "scripts/alpha_sweep_vh_vl.py",
     "scripts/verify_spearman_calculation.py",
     "scripts/ginkgo_boughter_transfer.py",
+    "scripts/ginkgo_boughter_transfer_learning.py",
     "scripts/ginkgo_top3_experiments.py",
     "scripts/generate_optimal_submission.py",
     "scripts/generate_lightgbm_submission.py",
