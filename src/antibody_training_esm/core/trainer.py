@@ -19,6 +19,7 @@ import numpy as np
 import sklearn  # For sklearn.__version__
 import yaml
 from omegaconf import DictConfig, OmegaConf
+from scipy.stats import spearmanr
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
@@ -27,12 +28,13 @@ from sklearn.metrics import (
     recall_score,
     roc_auc_score,
 )
-from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.model_selection import PredefinedSplit, StratifiedKFold, cross_val_score
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.directory_utils import get_hierarchical_model_dir
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
+from antibody_training_esm.core.regressor import AntibodyRegressor
 from antibody_training_esm.data.loaders import load_data
 
 
@@ -874,6 +876,176 @@ def main(cfg: DictConfig) -> None:
     except Exception as e:
         logger.error(f"Training failed: {str(e)}")
         raise
+
+
+def train_model_with_predefined_folds(
+    sequences: list[str],
+    labels: np.ndarray,
+    fold_assignments: np.ndarray,
+    config: dict[str, Any],
+    output_dir: Path,
+) -> tuple[Any, dict[str, Any], np.ndarray]:
+    """
+    Train regression model using predefined cross-validation folds.
+
+    This function is designed for the Ginkgo 2025 competition where fold assignments
+    are predetermined to prevent data leakage from similar antibodies.
+
+    Args:
+        sequences: List of VH protein sequences
+        labels: Continuous target values (e.g., PR_CHO scores)
+        fold_assignments: Array of fold indices (e.g., 0, 1, 2, 3, 4)
+        config: Hydra config dict with model, regressor, training, hardware sections
+        output_dir: Directory to save trained model and results
+
+    Returns:
+        Tuple of (model, cv_results, oof_predictions):
+            - model: Trained AntibodyRegressor on full dataset
+            - cv_results: Dict with Spearman correlations and fold metrics
+            - oof_predictions: Out-of-fold predictions for all samples
+
+    Example:
+        >>> from antibody_training_esm.datasets.ginkgo import GinkgoDataset
+        >>> dataset = GinkgoDataset(target_property='PR_CHO')
+        >>> sequences, labels, folds = dataset.get_sequences_and_labels()
+        >>>
+        >>> model, cv_results, oof_preds = train_model_with_predefined_folds(
+        ...     sequences=sequences,
+        ...     labels=labels,
+        ...     fold_assignments=folds,
+        ...     config=config,
+        ...     output_dir=Path('outputs/ginkgo_2025/')
+        ... )
+        >>> print(f"CV Spearman: {cv_results['overall_spearman']:.4f}")
+    """
+    logger = logging.getLogger(__name__)
+
+    # Extract config parameters
+    model_config = config.get("model", {})
+    regressor_config = config.get("regressor", {})
+    training_config = config.get("training", {})
+    hardware_config = config.get("hardware", {})
+
+    model_name = model_config.get("name", "facebook/esm2_t33_650M_UR50D")
+    device = hardware_config.get("device", "cpu")
+    batch_size = training_config.get("batch_size", 8)
+    alpha = regressor_config.get("alpha", 1.0)
+
+    logger.info("=" * 80)
+    logger.info("GINKGO COMPETITION: PREDEFINED FOLD CROSS-VALIDATION")
+    logger.info("=" * 80)
+    logger.info(f"Model: {model_name}")
+    logger.info(f"Device: {device}")
+    logger.info(f"Batch size: {batch_size}")
+    logger.info(f"Alpha (Ridge regularization): {alpha}")
+    logger.info(f"Samples: {len(sequences)}")
+    logger.info(f"Unique folds: {sorted(set(fold_assignments))}")
+    logger.info("=" * 80)
+
+    # Setup predefined fold cross-validation
+    cv = PredefinedSplit(test_fold=fold_assignments)
+
+    # Storage for out-of-fold predictions
+    oof_predictions = np.zeros(len(sequences))
+    fold_metrics = []
+
+    # Perform cross-validation
+    n_folds = len(set(fold_assignments))
+    for fold_idx, (train_idx, val_idx) in enumerate(cv.split()):
+        logger.info(f"Training fold {fold_idx}/{n_folds - 1}")
+
+        # Split data
+        train_sequences = [sequences[i] for i in train_idx]
+        train_labels = labels[train_idx]
+        val_sequences = [sequences[i] for i in val_idx]
+        val_labels = labels[val_idx]
+
+        logger.info(f"  Train samples: {len(train_sequences)}")
+        logger.info(f"  Val samples: {len(val_sequences)}")
+
+        # Train on this fold
+        fold_regressor = AntibodyRegressor(
+            model_name=model_name,
+            device=device,
+            batch_size=batch_size,
+            alpha=alpha,
+        )
+
+        # NOTE: cache_path parameter exists but is currently unused
+        # Caching should be implemented using get_or_compute_embeddings() helper
+        fold_regressor.fit(train_sequences, train_labels)
+
+        # Predict on validation fold
+        val_preds = fold_regressor.predict(val_sequences)
+
+        # Store out-of-fold predictions
+        oof_predictions[val_idx] = val_preds
+
+        # Calculate metrics for this fold
+        spearman_corr, spearman_pval = spearmanr(val_labels, val_preds)
+
+        fold_metrics.append(
+            {
+                "fold": fold_idx,
+                "spearman": spearman_corr,
+                "spearman_pval": spearman_pval,
+                "n_samples": len(val_labels),
+            }
+        )
+
+        logger.info(f"  Fold {fold_idx} Spearman: {spearman_corr:.4f}")
+
+    # Calculate overall CV metrics
+    overall_spearman, overall_pval = spearmanr(labels, oof_predictions)
+
+    cv_results = {
+        "cv_spearman_mean": float(np.mean([m["spearman"] for m in fold_metrics])),
+        "cv_spearman_std": float(np.std([m["spearman"] for m in fold_metrics])),
+        "overall_spearman": float(overall_spearman),
+        "overall_spearman_pval": float(overall_pval),
+        "fold_metrics": fold_metrics,
+    }
+
+    logger.info("=" * 80)
+    logger.info("CROSS-VALIDATION RESULTS")
+    logger.info("=" * 80)
+    logger.info(
+        f"Overall Spearman: {overall_spearman:.4f} (p-value: {overall_pval:.4e})"
+    )
+    logger.info(
+        f"Mean CV Spearman: {cv_results['cv_spearman_mean']:.4f} "
+        f"± {cv_results['cv_spearman_std']:.4f}"
+    )
+
+    for fold_metric in fold_metrics:
+        logger.info(
+            f"  Fold {fold_metric['fold']}: {fold_metric['spearman']:.4f} "
+            f"(n={fold_metric['n_samples']})"
+        )
+
+    # Train final model on ALL data
+    logger.info("=" * 80)
+    logger.info("TRAINING FINAL MODEL ON FULL DATASET")
+    logger.info("=" * 80)
+
+    final_regressor = AntibodyRegressor(
+        model_name=model_name,
+        device=device,
+        batch_size=batch_size,
+        alpha=alpha,
+    )
+
+    # NOTE: Caching not implemented yet for regression pipeline
+    final_regressor.fit(sequences, labels)
+
+    # Save model
+    output_dir.mkdir(parents=True, exist_ok=True)
+    model_path = output_dir / "ginkgo_regressor.pkl"
+    final_regressor.save(str(model_path))
+    logger.info(f"Model saved to: {model_path}")
+    logger.info("=" * 80)
+
+    return final_regressor, cv_results, oof_predictions
 
 
 if __name__ == "__main__":

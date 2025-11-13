@@ -1,0 +1,53 @@
+# Ginkgo 2025 Antibody Developability Competition Configuration
+#
+# This config is for training models on the GDPa1 dataset to predict
+# polyreactivity (PR_CHO) using predefined cross-validation folds.
+#
+# Usage:
+#   uv run python scripts/train_ginkgo_competition.py
+#
+# Override from CLI:
+#   uv run python scripts/train_ginkgo_competition.py regressor.alpha=0.5
+
+experiment:
+  name: ginkgo_2025_polyreactivity
+  description: "ESM2-650M + Ridge regression for PR_CHO prediction"
+
+model:
+  name: facebook/esm2_t33_650M_UR50D
+  revision: main  # Use 'main' for latest, or pin specific commit
+
+data:
+  # Training data
+  train_assay_file: train_datasets/ginkgo/GDPa1_v1.2_20250814.csv
+  train_fold_file: train_datasets/ginkgo/GDPa1_v1.2_sequences.csv
+
+  # Test data (private, no labels)
+  test_file: test_datasets/gingko/heldout-set-sequences.csv
+
+  # Target property to predict
+  target_property: PR_CHO  # Options: PR_CHO, HIC, AC-SINS_pH7.4, Tm2, Titer
+
+regressor:
+  # Ridge regularization strength (alpha)
+  # Higher alpha = more regularization (simpler model)
+  # Common values to try: 0.1, 0.5, 1.0, 5.0, 10.0
+  alpha: 1.0
+
+training:
+  batch_size: 8  # Embeddings extraction batch size
+  use_predefined_folds: true  # Must be true for competition
+  cache_embeddings: true
+
+hardware:
+  device: cpu  # Options: cpu, cuda, mps
+
+output:
+  model_dir: models/ginkgo_2025/
+  submission_dir: ginkgo_submissions/
+
+# Notes:
+# - The competition requires using predefined folds from the dataset
+# - Submissions need two CSVs: CV predictions + test predictions
+# - Evaluation metric: Spearman rank correlation
+# - Deadline: Monday 17 November 2025 AOE
