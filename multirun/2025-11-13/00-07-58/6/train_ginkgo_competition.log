@@ -1,0 +1,40 @@
+[2025-11-13 00:09:53,768][__main__][INFO] - ================================================================================
+[2025-11-13 00:09:53,768][__main__][INFO] - GINKGO 2025 ANTIBODY DEVELOPABILITY COMPETITION
+[2025-11-13 00:09:53,768][__main__][INFO] - ================================================================================
+[2025-11-13 00:09:53,768][__main__][INFO] - Loading GDPa1 training dataset...
+[2025-11-13 00:09:53,781][__main__][INFO] - ✅ Loaded 197 antibodies
+[2025-11-13 00:09:53,781][__main__][INFO] -    Target property: PR_CHO
+[2025-11-13 00:09:53,781][__main__][INFO] -    Label range: [0.0000, 0.5470]
+[2025-11-13 00:09:53,781][__main__][INFO] -    Folds: [np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]
+[2025-11-13 00:09:53,781][__main__][INFO] - ================================================================================
+[2025-11-13 00:09:53,781][__main__][INFO] - TRAINING MODEL WITH 5-FOLD CROSS-VALIDATION
+[2025-11-13 00:09:53,781][__main__][INFO] - ================================================================================
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - GINKGO COMPETITION: PREDEFINED FOLD CROSS-VALIDATION
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - Model: facebook/esm1v_t33_650M_UR90S_1
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - Device: cpu
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - Batch size: 8
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - Alpha (Ridge regularization): 10.0
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - Samples: 197
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - Unique folds: [np.int64(0), np.int64(1), np.int64(2), np.int64(3), np.int64(4)]
+[2025-11-13 00:09:53,781][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:54,463][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:09:54,463][antibody_training_esm.core.trainer][INFO] - Extracting embeddings for full dataset...
+[2025-11-13 00:09:54,463][antibody_training_esm.core.trainer][INFO] - Loading cached embeddings from ./embeddings_cache/ginkgo_full_ff60a6bed696_embeddings.pkl
+[2025-11-13 00:09:54,463][antibody_training_esm.core.trainer][INFO] - Using cached embeddings for 197 sequences (model: facebook/esm1v_t33_650M_UR90S_1, hash: ff60a6bed696)
+[2025-11-13 00:09:54,463][antibody_training_esm.core.trainer][INFO] - ✅ Embeddings extracted: shape=(197, 1280)
+[2025-11-13 00:09:54,464][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:09:54,464][antibody_training_esm.core.trainer][INFO] - Training fold 0/4
+[2025-11-13 00:09:54,464][antibody_training_esm.core.trainer][INFO] -   Train samples: 152
+[2025-11-13 00:09:54,464][antibody_training_esm.core.trainer][INFO] -   Val samples: 45
+[2025-11-13 00:09:55,235][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:09:55,238][antibody_training_esm.core.trainer][INFO] -   Fold 0 Spearman: 0.3660
+[2025-11-13 00:09:55,238][antibody_training_esm.core.trainer][INFO] - Training fold 1/4
+[2025-11-13 00:09:55,238][antibody_training_esm.core.trainer][INFO] -   Train samples: 157
+[2025-11-13 00:09:55,238][antibody_training_esm.core.trainer][INFO] -   Val samples: 40
+[2025-11-13 00:09:55,899][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:09:55,903][antibody_training_esm.core.trainer][INFO] -   Fold 1 Spearman: 0.4863
+[2025-11-13 00:09:55,903][antibody_training_esm.core.trainer][INFO] - Training fold 2/4
+[2025-11-13 00:09:55,903][antibody_training_esm.core.trainer][INFO] -   Train samples: 161
+[2025-11-13 00:09:55,903][antibody_training_esm.core.trainer][INFO] -   Val samples: 36

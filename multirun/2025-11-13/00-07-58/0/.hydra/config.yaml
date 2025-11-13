@@ -1,0 +1,23 @@
+experiment:
+  name: ginkgo_2025_polyreactivity
+  description: ESM2-650M + Ridge regression for PR_CHO prediction
+model:
+  name: facebook/esm1v_t33_650M_UR90S_1
+  revision: main
+data:
+  train_assay_file: train_datasets/ginkgo/GDPa1_v1.2_20250814.csv
+  train_fold_file: train_datasets/ginkgo/GDPa1_v1.2_sequences.csv
+  test_file: test_datasets/gingko/heldout-set-sequences.csv
+  target_property: PR_CHO
+  embeddings_cache_dir: ./embeddings_cache
+regressor:
+  alpha: 0.001
+training:
+  batch_size: 8
+  use_predefined_folds: true
+  cache_embeddings: true
+hardware:
+  device: cpu
+output:
+  model_dir: models/ginkgo_2025/
+  submission_dir: ginkgo_submissions/
