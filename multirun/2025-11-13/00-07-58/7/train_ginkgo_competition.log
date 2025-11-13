@@ -48,3 +48,37 @@
 [2025-11-13 00:10:16,344][antibody_training_esm.core.trainer][INFO] - Training fold 4/4
 [2025-11-13 00:10:16,345][antibody_training_esm.core.trainer][INFO] -   Train samples: 156
 [2025-11-13 00:10:16,345][antibody_training_esm.core.trainer][INFO] -   Val samples: 41
+[2025-11-13 00:10:17,062][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] -   Fold 4 Spearman: 0.3657
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] - CROSS-VALIDATION RESULTS
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] - Overall Spearman: 0.3881 (p-value: 1.7505e-08)
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] - Mean CV Spearman: 0.3745 ± 0.1727
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] -   Fold 0: 0.3808 (n=45)
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] -   Fold 1: 0.4013 (n=40)
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] -   Fold 2: 0.6343 (n=36)
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] -   Fold 3: 0.0901 (n=35)
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] -   Fold 4: 0.3657 (n=41)
+[2025-11-13 00:10:17,064][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:10:17,065][antibody_training_esm.core.trainer][INFO] - TRAINING FINAL MODEL ON FULL DATASET
+[2025-11-13 00:10:17,065][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:10:17,868][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:10:17,872][antibody_training_esm.core.trainer][INFO] - Model saved to: models/ginkgo_2025/ginkgo_regressor.pkl
+[2025-11-13 00:10:17,872][antibody_training_esm.core.trainer][INFO] - ================================================================================
+[2025-11-13 00:10:17,875][__main__][INFO] - ================================================================================
+[2025-11-13 00:10:17,875][__main__][INFO] - 📊 CROSS-VALIDATION RESULTS
+[2025-11-13 00:10:17,875][__main__][INFO] - ================================================================================
+[2025-11-13 00:10:17,875][__main__][INFO] - Overall Spearman: 0.3881 (p-value: 1.7505e-08)
+[2025-11-13 00:10:17,875][__main__][INFO] - Mean CV Spearman: 0.3745 ± 0.1727
+[2025-11-13 00:10:17,875][__main__][INFO] -   Fold 0: 0.3808 (n=45)
+[2025-11-13 00:10:17,875][__main__][INFO] -   Fold 1: 0.4013 (n=40)
+[2025-11-13 00:10:17,875][__main__][INFO] -   Fold 2: 0.6343 (n=36)
+[2025-11-13 00:10:17,875][__main__][INFO] -   Fold 3: 0.0901 (n=35)
+[2025-11-13 00:10:17,875][__main__][INFO] -   Fold 4: 0.3657 (n=41)
+[2025-11-13 00:10:17,875][__main__][INFO] - ================================================================================
+[2025-11-13 00:10:17,875][__main__][INFO] - 📄 GENERATING SUBMISSION CSVs
+[2025-11-13 00:10:17,875][__main__][INFO] - ================================================================================
+[2025-11-13 00:10:17,892][__main__][INFO] - ✅ Saved CV predictions to: ginkgo_submissions/ginkgo_cv_predictions_PR_CHO.csv
+[2025-11-13 00:10:18,593][antibody_training_esm.core.embeddings][INFO] - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+[2025-11-13 00:10:18,594][antibody_training_esm.core.embeddings][INFO] - Extracting embeddings for 80 sequences with batch_size=8...
