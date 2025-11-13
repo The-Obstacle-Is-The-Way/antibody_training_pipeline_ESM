@@ -28,6 +28,7 @@ from antibody_training_esm.core.trainer import (
     perform_cross_validation,
     save_model,
     setup_logging,  # NEW: Core logic function that accepts DictConfig
+    validate_config,
 )
 
 # ==================== Fixtures ====================
@@ -1277,3 +1278,297 @@ def test_load_model_from_npz_with_dict_class_weight(
     original_predictions = classifier.predict(X)
     loaded_predictions = loaded_classifier.predict(X)
     np.testing.assert_array_equal(original_predictions, loaded_predictions)
+
+
+# ==================== Error Handling Tests (Issue #12) ====================
+
+
+@pytest.mark.unit
+def test_train_pipeline_catches_and_logs_exceptions(tmp_path: Path) -> None:
+    """
+    Test that train_pipeline catches exceptions and logs them before re-raising.
+
+    Lines tested: 788-790 in trainer.py (exception handling)
+    Expected: Exception is caught, logged, and re-raised
+    """
+    # Arrange: Create invalid config that will cause an error
+    from omegaconf import OmegaConf
+
+    from antibody_training_esm.core.trainer import train_pipeline
+
+    train_file = tmp_path / "train.csv"
+    test_file = tmp_path / "test.csv"
+    train_file.write_text("VH_sequence,label\nINVALID,0\n")
+    test_file.write_text("VH_sequence,label\nINVALID,1\n")
+
+    config = {
+        "model": {"name": "facebook/esm1v_t33_650M_UR90S_1", "device": "cpu"},
+        "data": {
+            "train_file": str(train_file),
+            "test_file": str(test_file),
+            "embeddings_cache_dir": str(tmp_path / "cache"),
+            "source": "local",  # Required
+        },
+        "classifier": {
+            "C": 1.0,
+            "penalty": "l2",
+            "solver": "lbfgs",
+            "max_iter": 10,
+            "random_state": 42,
+            "cv_folds": 2,
+            "stratify": False,
+        },
+        "training": {
+            "log_level": "INFO",
+            "log_file": str(tmp_path / "train.log"),
+            "metrics": ["accuracy"],
+            "n_splits": 2,
+            "batch_size": 8,
+            "save_model": False,
+            "model_name": "test",
+            "model_save_dir": str(tmp_path / "models"),
+        },
+        "experiment": {"name": "test"},
+    }
+
+    cfg = OmegaConf.create(config)
+
+    # Act & Assert: Exception should be raised (data loading or processing will fail)
+    # Using base Exception here because we're testing the catch-all error handler
+    with pytest.raises((ValueError, KeyError, AttributeError)):  # noqa: B017
+        train_pipeline(cfg)
+
+
+@pytest.mark.unit
+def test_train_model_deprecated_function_calls_train_pipeline(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """
+    Test that deprecated train_model function emits warning and delegates to train_pipeline.
+
+    Lines tested: 810-824 in trainer.py (deprecated function)
+    Expected: DeprecationWarning is emitted
+    """
+    # Arrange: Create valid config file
+    import warnings
+
+    from antibody_training_esm.core.trainer import train_model
+
+    train_file = tmp_path / "train.csv"
+    test_file = tmp_path / "test.csv"
+    train_file.write_text("VH_sequence,label\nQVQLVQSG,0\nEVQLVQSG,1\n")
+    test_file.write_text("VH_sequence,label\nDVQLVQSG,0\nAVQLVQSG,1\n")
+
+    config_file = tmp_path / "config.yaml"
+    config_content = f"""
+model:
+  name: facebook/esm1v_t33_650M_UR90S_1
+  device: cpu
+data:
+  train_file: {train_file}
+  test_file: {test_file}
+  embeddings_cache_dir: {tmp_path}/cache
+  source: local
+classifier:
+  C: 1.0
+  penalty: l2
+  solver: lbfgs
+  max_iter: 10
+  random_state: 42
+  cv_folds: 2
+  stratify: False
+training:
+  log_level: INFO
+  log_file: {tmp_path}/train.log
+  metrics: [accuracy]
+  n_splits: 2
+  batch_size: 8
+  save_model: False
+  model_name: test
+  model_save_dir: {tmp_path}/models
+experiment:
+  name: test
+"""
+    config_file.write_text(config_content)
+
+    # Act & Assert: Function should emit DeprecationWarning
+    import contextlib
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        with contextlib.suppress(Exception):
+            # Training may fail, but we're testing the warning
+            train_model(str(config_file))
+        # Verify deprecation warning was emitted
+        assert len(w) > 0
+        assert any(issubclass(warning.category, DeprecationWarning) for warning in w)
+        assert any(
+            "train_model(config_path) is deprecated" in str(warning.message)
+            for warning in w
+        )
+
+
+@pytest.mark.unit
+def test_validate_config_fails_with_missing_model_key() -> None:
+    """
+    Test that missing 'model' key in config raises clear error.
+
+    Lines tested: Config validation in validate_config
+    Expected: Raise ValueError mentioning missing 'model' section
+    """
+    # Arrange: Config missing "model" key
+    config = {
+        "data": {
+            "train_file": "data.csv",
+            "test_file": "test.csv",
+            "embeddings_cache_dir": "/tmp/cache",
+        },
+        "classifier": {},
+        "training": {"log_level": "INFO", "metrics": ["accuracy"], "n_splits": 5},
+        "experiment": {"name": "test"},
+        # Missing "model" key!
+    }
+
+    # Act & Assert
+    with pytest.raises(ValueError, match=r"(Missing config sections|model)"):
+        validate_config(config)
+
+
+@pytest.mark.unit
+def test_validate_config_fails_with_missing_classifier_key() -> None:
+    """
+    Test that missing 'classifier' key in config raises clear error.
+
+    Lines tested: Config validation in validate_config
+    Expected: Raise ValueError mentioning missing 'classifier' section
+    """
+    # Arrange: Config missing "classifier" key
+    config = {
+        "model": {"name": "facebook/esm1v_t33_650M_UR90S_1", "device": "cpu"},
+        "data": {
+            "train_file": "data.csv",
+            "test_file": "test.csv",
+            "embeddings_cache_dir": "/tmp/cache",
+        },
+        "training": {"log_level": "INFO", "metrics": ["accuracy"], "n_splits": 5},
+        "experiment": {"name": "test"},
+        # Missing "classifier" key!
+    }
+
+    # Act & Assert
+    with pytest.raises(ValueError, match=r"(Missing config sections|classifier)"):
+        validate_config(config)
+
+
+@pytest.mark.unit
+def test_validate_config_fails_with_invalid_metrics(tmp_path: Path) -> None:
+    """
+    Test that invalid metrics in config raises clear error.
+
+    Lines tested: Semantic validation in validate_config
+    Expected: Raise ValueError mentioning invalid metrics
+    """
+    # Arrange: Config with invalid metrics
+    # Create dummy files so file validation passes
+    train_file = tmp_path / "train.csv"
+    test_file = tmp_path / "test.csv"
+    train_file.write_text("VH_sequence,label\nQVQLVQSG,0\n")
+    test_file.write_text("VH_sequence,label\nQVQLVQSG,1\n")
+
+    config = {
+        "model": {"name": "facebook/esm1v_t33_650M_UR90S_1", "device": "cpu"},
+        "data": {
+            "train_file": str(train_file),
+            "test_file": str(test_file),
+            "embeddings_cache_dir": str(tmp_path / "cache"),
+        },
+        "classifier": {},
+        "training": {
+            "log_level": "INFO",
+            "metrics": ["accuracy", "invalid_metric"],  # Invalid metric!
+            "n_splits": 5,
+        },
+        "experiment": {"name": "test"},
+    }
+
+    # Act & Assert
+    with pytest.raises(ValueError, match=r"(Invalid metrics|invalid_metric)"):
+        validate_config(config)
+
+
+@pytest.mark.unit
+def test_load_config_fails_with_missing_file(tmp_path: Path) -> None:
+    """
+    Test that load_config raises FileNotFoundError with helpful message.
+
+    Lines tested: 217-221 in trainer.py (FileNotFoundError handling)
+    Expected: Raise FileNotFoundError with helpful message about missing file
+    """
+    # Arrange
+    from antibody_training_esm.core.trainer import load_config
+
+    missing_file = tmp_path / "nonexistent_config.yaml"
+
+    # Act & Assert
+    with pytest.raises(
+        FileNotFoundError,
+        match=r"(Config file not found|nonexistent_config\.yaml|specify a valid path)",
+    ):
+        load_config(str(missing_file))
+
+
+@pytest.mark.unit
+def test_load_config_fails_with_invalid_yaml(tmp_path: Path) -> None:
+    """
+    Test that load_config raises ValueError for invalid YAML.
+
+    Lines tested: 222-223 in trainer.py (yaml.YAMLError handling)
+    Expected: Raise ValueError with helpful message about invalid YAML
+    """
+    # Arrange
+    from antibody_training_esm.core.trainer import load_config
+
+    invalid_yaml_file = tmp_path / "invalid.yaml"
+    # Create truly invalid YAML with unclosed bracket
+    invalid_yaml_file.write_text("model:\n  name: [unclosed\ndata: test\n")
+
+    # Act & Assert
+    with pytest.raises(ValueError, match=r"(Invalid YAML|invalid\.yaml)"):
+        load_config(str(invalid_yaml_file))
+
+
+@pytest.mark.unit
+def test_perform_cross_validation_with_non_stratified_kfold(
+    mock_embeddings: np.ndarray,
+    mock_labels: np.ndarray,
+    nested_config: dict[str, Any],
+) -> None:
+    """
+    Test that perform_cross_validation uses KFold when stratify=False.
+
+    Lines tested: 493-495 in trainer.py (KFold import and setup)
+    Expected: Cross-validation completes successfully with non-stratified KFold
+    """
+    # Arrange
+    from antibody_training_esm.core.trainer import perform_cross_validation
+
+    # Use subset of data for faster test
+    X = mock_embeddings[:20]
+    y = mock_labels[:20]
+
+    # Configure for non-stratified cross-validation
+    nested_config["classifier"]["stratify"] = False  # This triggers lines 493-495
+    nested_config["classifier"]["cv_folds"] = 3
+    nested_config["classifier"]["random_state"] = 42
+
+    mock_logger = Mock()
+
+    # Act
+    cv_results = perform_cross_validation(X, y, nested_config, mock_logger)
+
+    # Assert
+    assert "cv_accuracy" in cv_results
+    assert cv_results["cv_accuracy"]["mean"] >= 0.0
+    assert cv_results["cv_accuracy"]["mean"] <= 1.0
+    assert "std" in cv_results["cv_accuracy"]
+    mock_logger.info.assert_called()  # Verify logging occurred
