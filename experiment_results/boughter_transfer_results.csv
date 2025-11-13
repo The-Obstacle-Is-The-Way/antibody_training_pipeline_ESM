@@ -1,0 +1,4 @@
+experiment,mean_spearman,improvement_pct
+Baseline,0.50043,0.0
+Transfer Learning,0.4907555343908017,-1.9332305435721926
+Combined Training,0.4609896727280064,-7.881287547108216

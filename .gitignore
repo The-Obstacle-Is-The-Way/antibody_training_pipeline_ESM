@@ -102,8 +102,8 @@ docs_burner/
 train_datasets/boughter_raw/
 train_datasets/ginkgo/
 
-# Ginkgo competition private test set (not for version control)
-test_datasets/gingko/
+# Ginkgo competition data (DO NOT COMMIT - competition terms)
+test_datasets/ginkgo/
 
 # Ginkgo competition submissions (regenerated every run)
 ginkgo_submissions/
@@ -111,6 +111,19 @@ ginkgo_submissions_*/
 
 # Ginkgo experimental models (iterative development)
 models/ginkgo_*/
+
+# Ginkgo experiment logs and large CSVs (regenerate from scripts)
+experiments/ginkgo_2025/logs/*.txt
+experiments/ginkgo_2025/logs/*.log
+experiment_results/*.txt
+experiment_results/*.log
+experiment_results/*_oof_predictions.csv
+
+# Tmux logs
+*.tmux.log
+
+# External datasets (too large, download from source)
+external_datasets/
 
 # Raw data files (download from paper supplementary materials)
 test_datasets/*.xlsx
