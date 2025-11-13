@@ -105,6 +105,13 @@ train_datasets/ginkgo/
 # Ginkgo competition private test set (not for version control)
 test_datasets/gingko/
 
+# Ginkgo competition submissions (regenerated every run)
+ginkgo_submissions/
+ginkgo_submissions_*/
+
+# Ginkgo experimental models (iterative development)
+models/ginkgo_*/
+
 # Raw data files (download from paper supplementary materials)
 test_datasets/*.xlsx
 test_datasets/*.xls
