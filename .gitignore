@@ -113,3 +113,18 @@ coverage.xml
 
 # Ruff cache
 .ruff_cache/
+
+# Experimental results and submissions (Ginkgo competition)
+experiment_results/
+ginkgo_submissions*/
+external_datasets/
+
+# Experimental models (Ginkgo competition)
+models/ginkgo_*/
+
+# Ginkgo competition datasets (large, local only)
+test_datasets/ginkgo/
+train_datasets/ginkgo/
+
+# Tessier dataset (large, local only)
+train_datasets/tessier/
