@@ -100,47 +100,68 @@ logger.info(f"Task weight α: {TASK_WEIGHT_ALPHA:.2f} (Tessier vs GDPa1)")
 logger.info(f"Epochs: {NUM_EPOCHS}")
 logger.info(f"Batch sizes: Tessier={BATCH_SIZE_TESSIER}, GDPa1={BATCH_SIZE_GDPA1}")
 
-# ===== STEP 1: LOAD TESSIER DATA (PRE-TRAINING) =====
+# ===== STEP 1: LOAD TESSIER DATA (SEPARATE VH/VL) =====
 logger.info("=" * 80)
-logger.info("STEP 1: LOADING TESSIER DATA (298K SEQUENCES)")
+logger.info("STEP 1: LOADING TESSIER DATA (298K SEQUENCES - VH+VL SEPARATE)")
 logger.info("=" * 80)
 
-tessier_file = Path("train_datasets/tessier/annotated/VH+VL_tessier.csv")
-tessier_df = pd.read_csv(tessier_file)
+# Load VH and VL separately (like GDPa1) to ensure dimension compatibility
+tessier_vh_file = Path("train_datasets/tessier/annotated/VH_only_tessier.csv")
+tessier_vl_file = Path("train_datasets/tessier/annotated/VL_only_tessier.csv")
+
+tessier_vh_df = pd.read_csv(tessier_vh_file)
+tessier_vl_df = pd.read_csv(tessier_vl_file)
 
 # Filter to training set only
-tessier_train = tessier_df[tessier_df["split"] == "train"].copy()
-logger.info(f"Tessier training set: {len(tessier_train)} sequences")
+tessier_train_vh = tessier_vh_df[tessier_vh_df["split"] == "train"].copy()
+tessier_train_vl = tessier_vl_df[tessier_vl_df["split"] == "train"].copy()
+
+logger.info(f"Tessier training set: {len(tessier_train_vh)} sequences")
 logger.info(
-    f"  Polyreactive: {(tessier_train['label'] == 1).sum()}, "
-    f"Specific: {(tessier_train['label'] == 0).sum()}"
+    f"  Polyreactive: {(tessier_train_vh['label'] == 1).sum()}, "
+    f"Specific: {(tessier_train_vh['label'] == 0).sum()}"
 )
 
-# Parse VH+VL sequences (they're concatenated in the CSV)
-tessier_sequences = tessier_train["sequence"].tolist()
-tessier_labels = tessier_train["label"].values
+# Extract VH and VL sequences separately
+vh_sequences_tessier = tessier_train_vh["sequence"].tolist()
+vl_sequences_tessier = tessier_train_vl["sequence"].tolist()
+tessier_labels = tessier_train_vh["label"].values  # Labels are identical in both files
 
-# ===== STEP 2: EXTRACT TESSIER EMBEDDINGS =====
+# ===== STEP 2: EXTRACT TESSIER EMBEDDINGS (SEPARATE VH/VL) =====
 logger.info("=" * 80)
-logger.info("STEP 2: EXTRACTING TESSIER EMBEDDINGS")
+logger.info("STEP 2: EXTRACTING TESSIER EMBEDDINGS (VH+VL SEPARATE)")
 logger.info("=" * 80)
-
-# Note: Tessier sequences are VH+VL concatenated, so we need to split them
-# But for now, let's treat them as full sequences and extract embeddings
-# TODO: Split VH/VL if needed for consistency with GDPa1
 
 esm1v_extractor = ESMEmbeddingExtractor(
     model_name="facebook/esm1v_t33_650M_UR90S_1", device="mps", batch_size=16
 )
 
-logger.info("Extracting ESM-1v embeddings for Tessier (this will take ~30-60 min)...")
-tessier_esm1v = get_or_create_embeddings(
-    tessier_sequences,
+# Extract VH and VL embeddings separately (like GDPa1) to get 3328D total
+logger.info(
+    "Extracting ESM-1v embeddings for Tessier VH (this will take ~30-45 min)..."
+)
+tessier_esm1v_vh = get_or_create_embeddings(
+    vh_sequences_tessier,
     esm1v_extractor,
     "./embeddings_cache",
-    "tessier_vhvl_train",
+    "tessier_train_vh",
     logger,
 )
+
+logger.info(
+    "Extracting ESM-1v embeddings for Tessier VL (this will take ~30-45 min)..."
+)
+tessier_esm1v_vl = get_or_create_embeddings(
+    vl_sequences_tessier,
+    esm1v_extractor,
+    "./embeddings_cache",
+    "tessier_train_vl",
+    logger,
+)
+
+# Concatenate VH and VL embeddings: 1280D + 1280D = 2560D (matching GDPa1)
+tessier_esm1v = np.concatenate([tessier_esm1v_vh, tessier_esm1v_vl], axis=1)
+logger.info(f"Concatenated Tessier ESM-1v embeddings: {tessier_esm1v.shape}")
 
 # Load p-IgGen model for embedding extraction
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
@@ -151,10 +172,18 @@ piggen_model = AutoModelForCausalLM.from_pretrained(piggen_model_name).to(device
 piggen_model.eval()
 
 
-def encode_piggen_embeddings(sequences: list[str], batch_size: int = 8) -> np.ndarray:
-    """Encode sequences with p-IgGen model."""
-    # Format: "1 V H S E Q 2" (space-separated amino acids with sentinels)
-    formatted_seqs = [f"1 {' '.join(seq)} 2" for seq in sequences]
+def encode_piggen_embeddings_paired(
+    vh_sequences: list[str], vl_sequences: list[str], batch_size: int = 8
+) -> np.ndarray:
+    """Encode VH+VL sequence pairs with p-IgGen model.
+
+    Format matches GDPa1: "1 V H S E Q V L S E Q 2" (space-separated amino acids)
+    """
+    # Format: "1 {VH} {VL} 2" with space-separated amino acids
+    formatted_seqs = [
+        f"1 {' '.join(vh)} {' '.join(vl)} 2"
+        for vh, vl in zip(vh_sequences, vl_sequences, strict=True)
+    ]
 
     embeddings: list[np.ndarray] = []
     for i in range(0, len(formatted_seqs), batch_size):
@@ -178,13 +207,15 @@ def encode_piggen_embeddings(sequences: list[str], batch_size: int = 8) -> np.nd
     return np.vstack(embeddings)
 
 
-logger.info("Extracting p-IgGen embeddings for Tessier...")
-tessier_piggen_cache = Path("./embeddings_cache/tessier_vhvl_train_piggen.npy")
+logger.info("Extracting p-IgGen embeddings for Tessier (VH+VL pairs)...")
+tessier_piggen_cache = Path("./embeddings_cache/tessier_piggen_embeddings.npy")
 if tessier_piggen_cache.exists():
     tessier_piggen = np.load(tessier_piggen_cache)
     logger.info(f"Loaded cached p-IgGen embeddings: {tessier_piggen.shape}")
 else:
-    tessier_piggen = encode_piggen_embeddings(tessier_sequences)
+    tessier_piggen = encode_piggen_embeddings_paired(
+        vh_sequences_tessier, vl_sequences_tessier
+    )
     np.save(tessier_piggen_cache, tessier_piggen)
     logger.info(f"Cached p-IgGen embeddings: {tessier_piggen.shape}")
 
