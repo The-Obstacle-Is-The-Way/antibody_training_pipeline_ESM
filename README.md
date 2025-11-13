@@ -90,17 +90,17 @@ pip install uv
 
 - *On Linux/macOS*
 ```bash
-uv venv 
-source .venv/bin/activate 
+uv venv
+source .venv/bin/activate
 
-uv sync
+uv sync --all-extras
 ```
 - *On Windows*
 ```bash
-uv venv 
+uv venv
 venv\Scripts\activate
 
-uv sync
+uv sync --all-extras
 ```
 
 ---

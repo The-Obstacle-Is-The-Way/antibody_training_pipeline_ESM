@@ -43,7 +43,6 @@ jobs:
 
     - name: Security scan with bandit
       run: |
-        uv pip install bandit
         uv run bandit -r src/ -f json -o bandit-report.json
         uv run bandit -r src/
       continue-on-error: false  # ✅ ENFORCED: Bandit must remain clean (0 findings)
