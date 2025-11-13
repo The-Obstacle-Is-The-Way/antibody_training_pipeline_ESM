@@ -67,7 +67,7 @@ logger.info("=" * 80)
 # TODO: Split VH/VL if needed for consistency with GDPa1
 
 esm1v_extractor = ESMEmbeddingExtractor(
-    model_name="facebook/esm1v_t33_650M_UR90S_1", device="cpu", batch_size=8
+    model_name="facebook/esm1v_t33_650M_UR90S_1", device="mps", batch_size=16
 )
 
 logger.info("Extracting ESM-1v embeddings for Tessier (this will take ~30-60 min)...")
@@ -80,7 +80,7 @@ tessier_esm1v = get_or_create_embeddings(
 )
 
 # Load p-IgGen model for embedding extraction
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 piggen_model_name = "ollieturnbull/p-IgGen"
 logger.info(f"Loading p-IgGen model: {piggen_model_name}")
 piggen_tokenizer = AutoTokenizer.from_pretrained(piggen_model_name)
@@ -254,7 +254,9 @@ logger.info("FINAL RESULTS")
 logger.info("=" * 80)
 logger.info(f"🎯 Transfer Learning: {mean_transfer:.5f} Spearman")
 logger.info(f"📊 Baseline (no transfer): {mean_baseline:.5f} Spearman")
-logger.info(f"📈 Improvement: {mean_transfer - mean_baseline:+.5f} ({(mean_transfer / mean_baseline - 1) * 100:+.2f}%)")
+logger.info(
+    f"📈 Improvement: {mean_transfer - mean_baseline:+.5f} ({(mean_transfer / mean_baseline - 1) * 100:+.2f}%)"
+)
 logger.info(f"🏆 vs Leader (0.89): {mean_transfer - 0.89:+.3f}")
 
 if mean_transfer > mean_baseline:
@@ -263,7 +265,9 @@ else:
     logger.info("❌ Transfer learning did not help (might need different approach)")
 
 logger.info("=" * 80)
-logger.info("NOTE: This implementation uses Ridge.fit() which doesn't support warm start.")
+logger.info(
+    "NOTE: This implementation uses Ridge.fit() which doesn't support warm start."
+)
 logger.info("For true transfer learning, need to implement custom warm start or use")
 logger.info("SGDRegressor with partial_fit() or neural network with fine-tuning.")
 logger.info("=" * 80)
