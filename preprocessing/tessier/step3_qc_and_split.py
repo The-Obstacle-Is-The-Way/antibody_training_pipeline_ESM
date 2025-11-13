@@ -263,7 +263,7 @@ def main() -> None:
     logger.info(f"Training set: {n_train}")
     logger.info(f"Validation set: {n_val}")
     logger.info(
-        f"Fragment CSVs: {len(FRAGMENT_DEFINITIONS)} types × 2 splits = {len(FRAGMENT_DEFINITIONS) * 2} files"
+        f"Fragment CSVs: {len(FRAGMENT_DEFINITIONS)} fragment types (1 CSV per type with split column)"
     )
     logger.info(f"Output directory: {OUTPUT_DIR}")
     logger.info("Next: Implement transfer learning script")

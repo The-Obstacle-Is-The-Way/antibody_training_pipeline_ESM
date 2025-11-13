@@ -1,0 +1,46 @@
+   Building antibody-training-esm @ file:///Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
+      Built antibody-training-esm @ file:///Users/ray/Desktop/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM
+Uninstalled 1 package in 1ms
+Installed 1 package in 2ms
+2025-11-13 09:47:07,435 - INFO - ================================================================================
+2025-11-13 09:47:07,435 - INFO - TESSIER PREPROCESSING - STAGE 3: QC and Train/Val Split
+2025-11-13 09:47:07,435 - INFO - ================================================================================
+2025-11-13 09:47:07,435 - INFO - Loading input: train_datasets/tessier/annotated/tessier_annotated.csv
+2025-11-13 09:47:11,117 - INFO -   Loaded 373457 annotated sequences
+2025-11-13 09:47:11,117 - INFO - Applying quality control filters...
+2025-11-13 09:47:13,477 - INFO -   Filter 1 (X in CDRs): Removed 0 sequences
+2025-11-13 09:47:15,844 - INFO -   Filter 2 (empty CDRs): Removed 0 sequences
+2025-11-13 09:47:15,975 - INFO -   Filter 3 (CDR3 length > 30): Removed 0 sequences
+2025-11-13 09:47:15,975 - INFO -   Total filtered: 0 (0.0%)
+2025-11-13 09:47:15,975 - INFO -   Retention rate: 100.0%
+2025-11-13 09:47:15,976 - INFO - Creating train/val split...
+2025-11-13 09:47:16,234 - INFO -   Train: 298765 sequences (166493 poly, 132272 spec)
+2025-11-13 09:47:16,235 - INFO -   Val:   74692 sequences (41624 poly, 33068 spec)
+2025-11-13 09:47:16,301 - INFO - Creating 16 fragment CSV files...
+2025-11-13 09:47:17,065 - INFO -   VH_only: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:17,711 - INFO -   VL_only: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:17,999 - INFO -   H-CDR1: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:18,293 - INFO -   H-CDR2: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:18,604 - INFO -   H-CDR3: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:18,884 - INFO -   L-CDR1: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:19,144 - INFO -   L-CDR2: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:19,445 - INFO -   L-CDR3: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:20,010 - INFO -   H-FWRs: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:20,579 - INFO -   L-FWRs: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:21,638 - INFO -   VH+VL: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:22,025 - INFO -   H-CDRs: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:22,390 - INFO -   L-CDRs: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:22,851 - INFO -   All-CDRs: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:23,711 - INFO -   All-FWRs: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:24,757 - INFO -   Full: 373457 total (298765 train, 74692 val)
+2025-11-13 09:47:24,781 - INFO - ================================================================================
+2025-11-13 09:47:24,781 - INFO - STAGE 3 COMPLETE
+2025-11-13 09:47:24,781 - INFO - ================================================================================
+2025-11-13 09:47:24,781 - INFO - Input (annotated): 373457
+2025-11-13 09:47:24,781 - INFO - After QC: 373457
+2025-11-13 09:47:24,781 - INFO - Training set: 298765
+2025-11-13 09:47:24,781 - INFO - Validation set: 74692
+2025-11-13 09:47:24,781 - INFO - Fragment CSVs: 16 types × 2 splits = 32 files
+2025-11-13 09:47:24,781 - INFO - Output directory: train_datasets/tessier/annotated
+2025-11-13 09:47:24,781 - INFO - Next: Implement transfer learning script
+2025-11-13 09:47:24,781 - INFO - ================================================================================
