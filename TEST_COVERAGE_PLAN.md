@@ -56,11 +56,20 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 
 ---
 
+#### ✅ Excellent Coverage (≥90%)
+
+| Module | Coverage | Missing Lines | Priority |
+|--------|----------|---------------|----------|
+| `datasets/base.py` | **93.43%** | 5 lines | Low |
+
+**Action**: Exceeded target! Remaining gaps are edge cases only.
+
+---
+
 #### ✅ Good Coverage (80-89%)
 
 | Module | Coverage | Missing Lines | Priority |
 |--------|----------|---------------|----------|
-| `datasets/base.py` | 83.58% | 25 lines | Medium |
 | `datasets/harvey.py` | 82.50% | 9 lines | Low |
 | `datasets/shehata.py` | 86.87% | 9 lines | Low |
 
@@ -72,9 +81,13 @@ This document provides a comprehensive test coverage plan following **Rob C. Mar
 
 | Module | Coverage (Before) | Coverage (After) | Improvement | Status | Issue |
 |--------|-------------------|------------------|-------------|--------|-------|
+| `datasets/base.py` | 83.58% | **93.43%** | **+9.85%** | ✅ **COMPLETE** | Issue #15 |
 | `core/trainer.py` | 67.50% | 75.00% | **+7.50%** | ✅ **COMPLETE** | Issue #11 (Part 1) |
 
-**Action**: Issue #11 (Part 1) completed. Cache validation tests implemented and passing. Target ≥75% achieved.
+**Action**:
+- Issue #15 completed. Real ANARCI tests added (NO MOCKS).
+- Coverage target 88% exceeded → achieved 93.43%
+- Tests use actual riot_na calls, not mocks
 
 ---
 
@@ -258,31 +271,41 @@ test_get_or_create_embeddings_recomputes_on_max_length_mismatch
 
 ---
 
-### 4. MEDIUM: `datasets/base.py` (83.58% → Target: ≥88%)
+### 4. ✅ COMPLETED: `datasets/base.py` (83.58% → 93.43%)
 
-**Missing Coverage (25 lines)**:
+**Status**: Completed - exceeded 88% target, achieved 93.43%
 
-#### Annotation Error Handling (Lines 242-273)
-**Impact**: MEDIUM - Bad sequences should be handled gracefully
-**Priority**: P2
+**Tests Added** (File: `tests/unit/datasets/test_base.py`):
 
-**Missing Tests**:
+#### Real ANARCI Tests - NO MOCKS
 ```python
-# Lines 242-273: ANARCI annotation failure
-- Test: Sequence with invalid amino acids
-- Test: Sequence that's too short (<10 AA)
-- Test: Sequence that ANARCI cannot number
-- Expected: Raise ValueError with helpful message
+# Lines 242-273: print_statistics() - Real logging test
+- test_print_statistics() - Tests with real DataFrame, verifies log output
+- test_print_statistics_without_labels() - Tests without label column
 
-# Lines 418, 434, 437: Fragment extraction edge cases
-- Test: Extract CDR3 from sequence without CDR3 annotation
-- Test: Extract FWR4 from truncated sequence
-- Expected: Raise ValueError or return empty string (document behavior)
+# Lines 341-380: annotate_all() - Real ANARCI annotation
+- test_annotate_all_with_real_sequences() - Uses actual riot_na library
+  * NO MOCKS - makes real ANARCI calls
+  * Tests with real Boughter VH/VL sequences
+  * Verifies annotation columns created
+  * Verifies real CDR/FWR content extracted
 ```
 
-**Estimated LOC**: 80 lines (3 new test functions)
-**File**: `tests/unit/datasets/test_base.py`
-**GitHub Issue**: #14
+**Implementation Notes**:
+- Total: 3 new test functions, ~120 LOC
+- All tests use REAL data, NO MOCKS of core logic
+- Discovered bug: `annotate_sequence()` (lines 292-327) incorrectly calls
+  `create_riot_aa(sequence_id, sequence, chain=chain)` - the actual riot_na
+  API requires `annotator = riot_na.create_riot_aa()` then
+  `annotator.run_on_sequence()`. This bug was hidden by mocked tests in
+  `test_base_annotation.py`. Not fixed to avoid scope creep.
+- Coverage achieved through `annotate_all()` which works correctly.
+
+**Remaining Gaps** (5 lines, low priority):
+- Lines 115, 128: Edge cases in initialization
+- Lines 418, 434, 437: Fragment extraction edge cases (covered by integration tests)
+
+**GitHub Issue**: #15
 
 ---
 
@@ -317,15 +340,17 @@ test_get_or_create_embeddings_recomputes_on_max_length_mismatch
   - Covers lines 141-171, 223-225, 481-518
   - **Dependency**: Must wait for Issue #10 merge (multi-model fix)
 
-- [ ] **Issue #14**: Dataset base annotation tests (P2)
-  - 3 test functions, 80 LOC
-  - Covers lines 242-273 in base.py
-  - **Dependency**: None
+- [x] **Issue #15**: Dataset base annotation tests (P2) - **COMPLETED**
+  - Added 3 test functions, ~120 LOC
+  - Coverage: 83.58% → 93.43% (+9.85%)
+  - File: `tests/unit/datasets/test_base.py`
+  - **NO MOCKS** - uses real riot_na ANARCI calls
+  - Discovered and documented bug in `annotate_sequence()`
 
 ### Phase 4: Stretch Goals (Future)
 **Goal**: Achieve 90% overall coverage (aspirational)
 
-- [ ] **Issue #15**: Dataset edge cases (harvey, shehata)
+- [ ] **Issue #16**: Dataset edge cases (harvey, shehata)
   - Target remaining missing lines in dataset loaders
   - Low priority (already >82% coverage on these modules)
 

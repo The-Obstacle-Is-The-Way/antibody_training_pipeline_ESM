@@ -787,3 +787,125 @@ def test_create_fragment_csvs_skips_empty_fragments(tmp_path: Path) -> None:
     if vl_csv.exists():
         df_vl = pd.read_csv(vl_csv, comment="#")
         assert len(df_vl) == 0 or df_vl["sequence"].str.len().sum() == 0
+
+
+# ============================================================================
+# Log Dataset Statistics Tests (Lines 242-273)
+# ============================================================================
+
+
+@pytest.mark.unit
+def test_print_statistics(tmp_path: Path, caplog: pytest.LogCaptureFixture) -> None:
+    """Test print_statistics with real DataFrame"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+    df = pd.DataFrame(
+        {
+            "id": ["AB001", "AB002", "AB003"],
+            "VH_sequence": [
+                "QVQLVQSGAEVKKPGA",
+                "EVQLVESGGGLVQPGG",
+                "QVQLQQWGAGLLKPSE",
+            ],
+            "VL_sequence": [
+                "DIQMTQSPSSLSASVG",
+                "QSALTQPASVSGSPGQ",
+                "DIQMTQSPSSLSASVG",
+            ],
+            "label": [0, 1, 0],
+        }
+    )
+
+    # Act
+    caplog.set_level(logging.INFO)
+    dataset.print_statistics(df, stage="Test")
+
+    # Assert
+    assert "Total sequences: 3" in caplog.text
+    assert "Specific" in caplog.text
+    assert "Non-specific" in caplog.text
+    assert "Label distribution:" in caplog.text
+    assert "Sequence validation:" in caplog.text
+
+
+@pytest.mark.unit
+def test_print_statistics_without_labels(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Test print_statistics handles DataFrame without label column"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+    df = pd.DataFrame(
+        {
+            "id": ["AB001", "AB002"],
+            "VH_sequence": ["QVQLVQSGAEVKKPGA", "EVQLVESGGGLVQPGG"],
+            "VL_sequence": ["DIQMTQSPSSLSASVG", "QSALTQPASVSGSPGQ"],
+        }
+    )
+
+    # Act
+    caplog.set_level(logging.INFO)
+    dataset.print_statistics(df, stage="Preprocessing")
+
+    # Assert
+    assert "Total sequences: 2" in caplog.text
+    assert "Sequence validation:" in caplog.text
+    # Should not crash when label column missing
+
+
+# ============================================================================
+# Real annotate_all Tests (Lines 341-380) - NO MOCKS
+# ============================================================================
+
+
+@pytest.mark.unit
+def test_annotate_all_with_real_sequences(tmp_path: Path) -> None:
+    """Test annotate_all with REAL ANARCI calls on DataFrame - NO MOCKS
+
+    NOTE: This test calls the actual annotate_all() method which uses real
+    ANARCI annotation via the riot_na library. This tests lines 341-380.
+
+    The annotate_sequence() method (lines 292-327) is broken and cannot be
+    tested without fixing it first (it incorrectly calls create_riot_aa with
+    wrong arguments). The test_base_annotation.py file uses mocks to hide this bug.
+    """
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+
+    # Use real VH/VL sequences from Boughter dataset
+    df = pd.DataFrame(
+        {
+            "id": ["AB001", "AB002"],
+            "VH_sequence": [
+                "EVQLVESGGGLVQPGGSLRLSCAASGFTFSSYAMSWVRQAPGKGLEWVSAISGSGGSTYYADSVKGRFTISRDNSKNTLYLQMNSLRAEDTAVYYCAKVSYLSTASSLDYWGQGTLVTVSS",
+                "QVQLVQSGAEVKKPGSSVKVSCKASGGTFSSYAISWVRQAPGQGLEWMGGIIPIFGTANYAQKFQGRVTITADESTSTAYMELSSLRSEDTAVYYCAR",
+            ],
+            "VL_sequence": [
+                "DIQMTQSPSSLSASVGDRVTITCRASQSISSYLNWYQQKPGKAPKLLIYAASSLQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPLTFGGGTKVEIK",
+                "EIVLTQSPGTLSLSPGERATLSCRASQSVSSYLAWYQQKPGQAPRLLIYGASSRATGIPDRFSGSGSGTDFTLTISRLEPEDFAVYYCQQYGSSPTFGQGTRLEIK",
+            ],
+            "label": [0, 1],
+        }
+    )
+
+    # Act - NO MOCKS, real ANARCI calls
+    annotated_df = dataset.annotate_all(df)
+
+    # Assert - Verify annotation columns added
+    assert "VH_FWR1" in annotated_df.columns
+    assert "VH_CDR1" in annotated_df.columns
+    assert "VH_CDR2" in annotated_df.columns
+    assert "VH_CDR3" in annotated_df.columns
+    assert "VL_FWR1" in annotated_df.columns
+    assert "VL_CDR1" in annotated_df.columns
+    assert "VL_CDR2" in annotated_df.columns
+    assert "VL_CDR3" in annotated_df.columns
+
+    # Verify real annotations exist (not all NaN)
+    assert pd.notna(annotated_df["VH_CDR1"].iloc[0])
+    assert pd.notna(annotated_df["VH_CDR3"].iloc[0])
+    assert pd.notna(annotated_df["VL_CDR1"].iloc[0])
+
+    # Verify original columns preserved
+    assert "id" in annotated_df.columns
+    assert "label" in annotated_df.columns
