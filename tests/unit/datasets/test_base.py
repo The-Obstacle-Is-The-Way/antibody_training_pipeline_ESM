@@ -787,3 +787,142 @@ def test_create_fragment_csvs_skips_empty_fragments(tmp_path: Path) -> None:
     if vl_csv.exists():
         df_vl = pd.read_csv(vl_csv, comment="#")
         assert len(df_vl) == 0 or df_vl["sequence"].str.len().sum() == 0
+
+
+# ============================================================================
+# Annotation Error Handling Tests
+# ============================================================================
+
+
+@pytest.mark.unit
+def test_annotate_sequence_handles_unannotatable_sequence(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Verify annotate_sequence returns None when ANARCI cannot annotate sequence"""
+    # Arrange
+    from unittest.mock import patch
+
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+
+    # Act & Assert
+    with patch("riot_na.create_riot_aa") as mock_riot:
+        mock_riot.return_value = None  # ANARCI annotation failed
+        caplog.set_level(logging.WARNING)
+
+        result = dataset.annotate_sequence("AB001", "EVQLVESGGGLVQPGG", "H")
+
+        # Verify returns None
+        assert result is None
+
+        # Verify warning logged
+        assert "ANARCI annotation failed" in caplog.text
+        assert "AB001" in caplog.text
+
+
+@pytest.mark.unit
+def test_annotate_sequence_handles_empty_annotations(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Verify annotate_sequence returns None when all annotations are empty strings"""
+    # Arrange
+    from unittest.mock import patch
+
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+
+    # Act & Assert
+    with patch("riot_na.create_riot_aa") as mock_riot:
+        # Mock riot_na to return all empty annotations
+        mock_riot.return_value = {
+            "FWR1": "",
+            "CDR1": "",
+            "FWR2": "",
+            "CDR2": "",
+            "FWR3": "",
+            "CDR3": "",
+            "FWR4": "",
+        }
+        caplog.set_level(logging.WARNING)
+
+        result = dataset.annotate_sequence("AB002", "SHORTSEQ", "H")
+
+        # Verify returns None
+        assert result is None
+
+        # Verify warning logged
+        assert "All annotations empty" in caplog.text
+        assert "AB002" in caplog.text
+
+
+@pytest.mark.unit
+def test_annotate_sequence_handles_riot_na_exception(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Verify annotate_sequence handles exceptions from riot_na gracefully"""
+    # Arrange
+    from unittest.mock import patch
+
+    dataset = ConcreteDataset(dataset_name="test_dataset", output_dir=tmp_path)
+
+    # Act & Assert - Exceptions are caught and logged, method returns None
+    with patch("riot_na.create_riot_aa") as mock_riot:
+        mock_riot.side_effect = RuntimeError("ANARCI internal error")
+        caplog.set_level(logging.ERROR)
+
+        # Should return None without raising
+        result = dataset.annotate_sequence("AB003", "EVQLVESGGGLVQPGG", "H")
+
+        # Verify returns None
+        assert result is None
+
+        # Verify error logged
+        assert "Error annotating AB003" in caplog.text
+        assert "ANARCI internal error" in caplog.text
+
+
+# ============================================================================
+# Fragment Extraction Error Handling Tests
+# ============================================================================
+
+
+@pytest.mark.unit
+def test_create_fragments_raises_on_missing_vh_sequence() -> None:
+    """Verify create_fragments raises ValueError when VH_sequence is missing"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset")
+    row = pd.Series(
+        {
+            "id": "AB001",
+            # Missing VH_sequence but we'll request VH fragments
+            "VL_sequence": "DIQMTQSPSSLSASVG",
+            "label": 0,
+        }
+    )
+
+    # Act & Assert
+    with pytest.raises(
+        ValueError,
+        match="Missing required columns for fragment extraction.*VH_sequence",
+    ):
+        dataset.create_fragments(row)
+
+
+@pytest.mark.unit
+def test_create_fragments_raises_on_missing_vl_sequence() -> None:
+    """Verify create_fragments raises ValueError when VL_sequence is missing"""
+    # Arrange
+    dataset = ConcreteDataset(dataset_name="test_dataset")
+    row = pd.Series(
+        {
+            "id": "AB002",
+            "VH_sequence": "QVQLVQSGAEVKKPGA",
+            # Missing VL_sequence but VL fragments are in get_fragment_types()
+            "label": 0,
+        }
+    )
+
+    # Act & Assert
+    with pytest.raises(
+        ValueError,
+        match="Missing required columns for fragment extraction.*VL_sequence",
+    ):
+        dataset.create_fragments(row)
