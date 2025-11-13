@@ -1,0 +1,32 @@
+2025-11-13 08:22:57,513 - INFO - Initializing ANARCI with IMGT numbering scheme...
+2025-11-13 08:22:57,630 - INFO - ================================================================================
+2025-11-13 08:22:57,630 - INFO - TESSIER PREPROCESSING - STAGE 2: ANARCI Annotation
+2025-11-13 08:22:57,630 - INFO - ================================================================================
+2025-11-13 08:22:57,630 - INFO - Loading input: train_datasets/tessier/processed/tessier_raw.csv
+2025-11-13 08:22:58,419 - INFO -   Loaded 373457 sequences
+2025-11-13 08:22:58,419 - INFO - Processing in batches of 1000...
+2025-11-13 08:24:22,495 - INFO -   Batch 10/374: 10000/373457 processed (100.0% success rate)
+2025-11-13 08:25:42,520 - INFO -   Batch 20/374: 20000/373457 processed (100.0% success rate)
+2025-11-13 08:27:02,325 - INFO -   Batch 30/374: 30000/373457 processed (100.0% success rate)
+2025-11-13 08:28:21,917 - INFO -   Batch 40/374: 40000/373457 processed (100.0% success rate)
+2025-11-13 08:29:41,220 - INFO -   Batch 50/374: 50000/373457 processed (100.0% success rate)
+2025-11-13 08:30:59,058 - INFO -   Batch 60/374: 60000/373457 processed (100.0% success rate)
+2025-11-13 08:32:19,356 - INFO -   Batch 70/374: 70000/373457 processed (100.0% success rate)
+2025-11-13 08:33:40,266 - INFO -   Batch 80/374: 80000/373457 processed (100.0% success rate)
+2025-11-13 08:34:59,598 - INFO -   Batch 90/374: 90000/373457 processed (100.0% success rate)
+2025-11-13 08:36:20,084 - INFO -   Batch 100/374: 100000/373457 processed (100.0% success rate)
+2025-11-13 08:37:41,865 - INFO -   Batch 110/374: 110000/373457 processed (100.0% success rate)
+2025-11-13 08:39:05,454 - INFO -   Batch 120/374: 120000/373457 processed (100.0% success rate)
+2025-11-13 08:40:31,594 - INFO -   Batch 130/374: 130000/373457 processed (100.0% success rate)
+2025-11-13 08:41:55,042 - INFO -   Batch 140/374: 140000/373457 processed (100.0% success rate)
+2025-11-13 08:43:15,259 - INFO -   Batch 150/374: 150000/373457 processed (100.0% success rate)
+2025-11-13 08:44:37,287 - INFO -   Batch 160/374: 160000/373457 processed (100.0% success rate)
+2025-11-13 08:45:59,593 - INFO -   Batch 170/374: 170000/373457 processed (100.0% success rate)
+2025-11-13 08:47:20,807 - INFO -   Batch 180/374: 180000/373457 processed (100.0% success rate)
+2025-11-13 08:48:40,849 - INFO -   Batch 190/374: 190000/373457 processed (100.0% success rate)
+2025-11-13 08:50:01,737 - INFO -   Batch 200/374: 200000/373457 processed (100.0% success rate)
+2025-11-13 08:51:24,921 - INFO -   Batch 210/374: 210000/373457 processed (100.0% success rate)
+2025-11-13 08:52:45,372 - INFO -   Batch 220/374: 220000/373457 processed (100.0% success rate)
+2025-11-13 08:54:06,723 - INFO -   Batch 230/374: 230000/373457 processed (100.0% success rate)
+2025-11-13 08:55:30,556 - INFO -   Batch 240/374: 240000/373457 processed (100.0% success rate)
+2025-11-13 08:56:53,374 - INFO -   Batch 250/374: 250000/373457 processed (100.0% success rate)

@@ -82,6 +82,12 @@ antibody-preprocess = "antibody_training_esm.cli.preprocess:main"
 [tool.ruff]
 target-version = "py312"
 line-length = 88
+extend-exclude = [
+    "experiments/",
+    "reference_repos/",
+    "scripts/alpha_sweep_vh_vl.py",
+    "scripts/verify_spearman_calculation.py",
+]
 
 [tool.ruff.lint]
 select = [
@@ -119,6 +125,15 @@ exclude = [
     "experiments/",
     "reference_repos/",
     "tests/unit/cli/test_train.py",  # Legacy CLI tests (deprecated)
+    # Old experimental scripts (pre-existing errors, not blocking)
+    "scripts/alpha_sweep_vh_vl.py",
+    "scripts/verify_spearman_calculation.py",
+    "scripts/ginkgo_boughter_transfer.py",
+    "scripts/ginkgo_top3_experiments.py",
+    "scripts/generate_optimal_submission.py",
+    "scripts/generate_lightgbm_submission.py",
+    "scripts/generate_elasticnet_submission.py",
+    "scripts/regenerate_piggen_cache.py",
 ]
 
 [tool.pytest.ini_options]

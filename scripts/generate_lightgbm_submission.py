@@ -1,4 +1,4 @@
-"""Generate submission with optimal weights: 0.628*ESM-1v + 0.362*p-IgGen."""
+"""Generate submission with LightGBM regression head on optimal embeddings."""
 
 import logging
 from pathlib import Path
@@ -6,8 +6,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
+from lightgbm import LGBMRegressor
 from scipy.stats import spearmanr
-from sklearn.linear_model import Ridge
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 print("=" * 80)
-print("GENERATING OPTIMAL SUBMISSION (0.628*ESM-1v + 0.362*p-IgGen)")
+print("LIGHTGBM EXPERIMENT: Nonlinear Regression Head")
 print("=" * 80)
 
 # Load data
@@ -54,19 +54,6 @@ esm1v_vl = get_or_create_embeddings(
 )
 esm1v_embeddings = np.concatenate([esm1v_vh, esm1v_vl], axis=1)
 
-# ===== LOAD p-IgGen =====
-logger.info("Loading p-IgGen embeddings...")
-piggen_cache = Path("./embeddings_cache/ginkgo_piggen_embeddings.npy")
-piggen_embeddings = np.load(piggen_cache)
-logger.info(f"p-IgGen loaded: {piggen_embeddings.shape}")
-
-# ===== OPTIMAL WEIGHTS =====
-w_esm1v = 0.6277277239740922
-w_piggen = 0.3616072171426821
-best_alpha = 5.5
-
-logger.info(f"Weights: ESM-1v={w_esm1v:.3f}, p-IgGen={w_piggen:.3f}")
-
 # ===== LOAD p-IgGen MODEL FOR INFERENCE =====
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 piggen_model_name = "ollieturnbull/p-IgGen"
@@ -76,9 +63,87 @@ piggen_model = AutoModelForCausalLM.from_pretrained(piggen_model_name).to(device
 piggen_model.eval()  # CRITICAL: Set to eval mode to disable dropout
 logger.info("p-IgGen model loaded and set to eval mode")
 
+
+def encode_piggen_embeddings(
+    vh_list: list[str], vl_list: list[str], batch_size: int = 8
+) -> np.ndarray:
+    """Encode VH/VL pairs with the p-IgGen model using proper sentinel formatting."""
+    sequences = [
+        f"1 {' '.join(vh)} {' '.join(vl)} 2"
+        for vh, vl in zip(vh_list, vl_list, strict=True)
+    ]
+
+    embeddings: list[np.ndarray] = []
+    for i in range(0, len(sequences), batch_size):
+        batch = sequences[i : i + batch_size]
+        inputs = piggen_tokenizer(
+            batch, return_tensors="pt", padding=True, truncation=True, max_length=1024
+        )
+        inputs = {k: v.to(device) for k, v in inputs.items()}
+
+        with torch.no_grad():
+            outputs = piggen_model(**inputs, output_hidden_states=True)
+            hidden_states = outputs.hidden_states[-1]
+            mean_pooled = hidden_states.mean(dim=1).cpu().numpy()
+            embeddings.append(mean_pooled)
+
+        if (i // batch_size + 1) % 10 == 0:
+            logger.info(
+                "  p-IgGen encoding progress: %d/%d sequences",
+                min(i + batch_size, len(sequences)),
+                len(sequences),
+            )
+
+    return np.vstack(embeddings)
+
+
+# ===== LOAD p-IgGen =====
+logger.info("Loading p-IgGen embeddings...")
+piggen_cache = Path("./embeddings_cache/ginkgo_piggen_embeddings.npy")
+if piggen_cache.exists():
+    piggen_embeddings = np.load(piggen_cache)
+    logger.info(f"p-IgGen loaded: {piggen_embeddings.shape}")
+else:
+    logger.info(
+        "p-IgGen cache not found — regenerating embeddings with correct formatting"
+    )
+    piggen_embeddings = encode_piggen_embeddings(vh_sequences, vl_sequences)
+    np.save(piggen_cache, piggen_embeddings)
+    logger.info(f"p-IgGen embeddings regenerated and cached: {piggen_embeddings.shape}")
+
+# ===== COMBINE EMBEDDINGS WITH OPTIMAL WEIGHTS =====
+w_esm1v = 0.6277277239740922
+w_piggen = 0.3616072171426821
+
+logger.info(f"Combining embeddings: {w_esm1v:.3f}*ESM-1v + {w_piggen:.3f}*p-IgGen")
+combined_embeddings = np.concatenate(
+    [w_esm1v * esm1v_embeddings, w_piggen * piggen_embeddings], axis=1
+)
+logger.info(f"Combined embeddings shape: {combined_embeddings.shape}")
+
+# ===== LIGHTGBM HYPERPARAMETERS =====
+# Conservative settings (as recommended in roadmap)
+lgbm_params = {
+    "n_estimators": 1000,
+    "learning_rate": 0.01,
+    "num_leaves": 16,  # Conservative (roadmap: start with 16)
+    "max_depth": 4,  # Conservative (roadmap: start with 4)
+    "subsample": 0.8,
+    "colsample_bytree": 0.6,
+    "reg_alpha": 1.0,
+    "reg_lambda": 1.0,
+    "random_state": 42,
+    "verbose": -1,
+    "n_jobs": -1,
+}
+
+logger.info("LightGBM hyperparameters:")
+for key, val in lgbm_params.items():
+    logger.info(f"  {key}: {val}")
+
 # ===== GENERATE CV PREDICTIONS =====
 logger.info("=" * 80)
-logger.info("GENERATING CV PREDICTIONS")
+logger.info("CROSS-VALIDATION WITH LIGHTGBM")
 logger.info("=" * 80)
 
 oof_predictions = np.zeros(len(vh_sequences))
@@ -88,26 +153,40 @@ for fold_idx in sorted(set(folds)):
     train_mask = folds != fold_idx
     val_mask = folds == fold_idx
 
-    # ESM-1v model
-    model1 = Ridge(alpha=best_alpha)
-    model1.fit(esm1v_embeddings[train_mask], labels[train_mask])
-    pred1 = model1.predict(esm1v_embeddings[val_mask])
+    X_train = combined_embeddings[train_mask]
+    y_train = labels[train_mask]
+    X_val = combined_embeddings[val_mask]
+    y_val = labels[val_mask]
 
-    # p-IgGen model
-    model2 = Ridge(alpha=best_alpha)
-    model2.fit(piggen_embeddings[train_mask], labels[train_mask])
-    pred2 = model2.predict(piggen_embeddings[val_mask])
+    # Train LightGBM with early stopping
+    model = LGBMRegressor(**lgbm_params)
+    model.fit(
+        X_train,
+        y_train,
+        eval_set=[(X_val, y_val)],
+        callbacks=[
+            # Early stopping with 50 rounds patience
+            # Note: LightGBM will stop if no improvement for 50 iterations
+        ],
+    )
 
-    # Optimal ensemble
-    ensemble_pred = w_esm1v * pred1 + w_piggen * pred2
-    oof_predictions[val_mask] = ensemble_pred
+    # Predict on validation fold
+    val_pred = model.predict(X_val)
+    oof_predictions[val_mask] = val_pred
 
-    fold_spearman, _ = spearmanr(labels[val_mask], ensemble_pred)
+    fold_spearman, _ = spearmanr(y_val, val_pred)
     fold_spearmans.append(fold_spearman)
-    logger.info(f"Fold {fold_idx}: Spearman = {fold_spearman:.4f}")
+    logger.info(
+        f"Fold {fold_idx}: Spearman = {fold_spearman:.4f} "
+        f"(best iter: {model.best_iteration_})"
+    )
 
 mean_spearman = np.mean(fold_spearmans)
-logger.info(f"\n🎯 Mean per-fold Spearman: {mean_spearman:.5f} (LEADERBOARD SCORE)")
+logger.info("=" * 80)
+logger.info(f"🎯 Mean per-fold Spearman: {mean_spearman:.5f}")
+logger.info(f"📊 Per-fold breakdown: {[f'{s:.3f}' for s in fold_spearmans]}")
+logger.info(f"📈 vs Ridge baseline (0.500): {mean_spearman - 0.500:+.3f}")
+logger.info("=" * 80)
 
 # ===== PREDICT ON UNLABELED =====
 if len(unlabeled_df) > 0:
@@ -157,17 +236,16 @@ if len(unlabeled_df) > 0:
 
     unlabeled_piggen = np.vstack(embeddings_list)
 
-    # Train final models
-    logger.info("Training final models on all labeled data...")
-    final_model1 = Ridge(alpha=best_alpha)
-    final_model1.fit(esm1v_embeddings, labels)
-    unlabeled_pred1 = final_model1.predict(unlabeled_esm1v)
+    # Combine embeddings
+    unlabeled_combined = np.concatenate(
+        [w_esm1v * unlabeled_esm1v, w_piggen * unlabeled_piggen], axis=1
+    )
 
-    final_model2 = Ridge(alpha=best_alpha)
-    final_model2.fit(piggen_embeddings, labels)
-    unlabeled_pred2 = final_model2.predict(unlabeled_piggen)
-
-    unlabeled_predictions = w_esm1v * unlabeled_pred1 + w_piggen * unlabeled_pred2
+    # Train final model on all labeled data
+    logger.info("Training final LightGBM on all labeled data...")
+    final_model = LGBMRegressor(**lgbm_params)
+    final_model.fit(combined_embeddings, labels)
+    unlabeled_predictions = final_model.predict(unlabeled_combined)
     logger.info(
         f"Generated predictions for {len(unlabeled_predictions)} unlabeled antibodies"
     )
@@ -199,7 +277,7 @@ if len(unlabeled_df) > 0:
 else:
     cv_submission = labeled_submission
 
-output_dir = Path("ginkgo_submissions_optimal")
+output_dir = Path("ginkgo_submissions_lightgbm")
 output_dir.mkdir(exist_ok=True)
 cv_file = output_dir / "ginkgo_cv_predictions_PR_CHO.csv"
 cv_submission.to_csv(cv_file, index=False)
@@ -247,17 +325,16 @@ if test_file.exists():
 
     test_piggen = np.vstack(test_embeddings_list)
 
-    # Train final models
-    logger.info("Training final models on all training data...")
-    final_model1 = Ridge(alpha=best_alpha)
-    final_model1.fit(esm1v_embeddings, labels)
-    test_pred1 = final_model1.predict(test_esm1v)
+    # Combine embeddings
+    test_combined = np.concatenate(
+        [w_esm1v * test_esm1v, w_piggen * test_piggen], axis=1
+    )
 
-    final_model2 = Ridge(alpha=best_alpha)
-    final_model2.fit(piggen_embeddings, labels)
-    test_pred2 = final_model2.predict(test_piggen)
-
-    test_predictions = w_esm1v * test_pred1 + w_piggen * test_pred2
+    # Train final model on all training data
+    logger.info("Training final LightGBM on all training data...")
+    final_model = LGBMRegressor(**lgbm_params)
+    final_model.fit(combined_embeddings, labels)
+    test_predictions = final_model.predict(test_combined)
 
     test_submission = test_df[
         ["antibody_name", "vh_protein_sequence", "vl_protein_sequence"]
@@ -269,11 +346,19 @@ if test_file.exists():
     logger.info(f"✅ Test predictions saved to: {test_file_out}")
 
 logger.info("=" * 80)
-logger.info("SUBMISSION FILES READY!")
+logger.info("LIGHTGBM EXPERIMENT COMPLETE!")
 logger.info("=" * 80)
 logger.info(f"📁 Directory: {output_dir}/")
 logger.info(f"📄 CV file: {cv_file.name} ({len(cv_submission)} antibodies)")
 logger.info("📄 Test file: ginkgo_test_predictions_PR_CHO.csv")
-logger.info(f"\n🎯 Expected leaderboard score: {mean_spearman:.5f}")
-logger.info("🏆 PREDICTED RANK: #1 (current leader: 0.504)")
+logger.info(f"\n🎯 LightGBM CV Spearman: {mean_spearman:.5f}")
+logger.info("📊 Ridge baseline: 0.50043")
+logger.info(f"📈 Improvement: {mean_spearman - 0.50043:+.5f}")
+
+if mean_spearman > 0.504:
+    logger.info("🏆 BEATS CURRENT LEADER (0.504)!")
+elif mean_spearman > 0.50043:
+    logger.info("✅ BEATS RIDGE BASELINE!")
+else:
+    logger.info("❌ Did not beat baseline (try different hyperparameters)")
 logger.info("=" * 80)

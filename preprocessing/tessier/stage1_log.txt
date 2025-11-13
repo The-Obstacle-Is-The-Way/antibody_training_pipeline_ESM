@@ -1,0 +1,38 @@
+2025-11-13 08:22:22,565 - INFO - ================================================================================
+2025-11-13 08:22:22,565 - INFO - TESSIER PREPROCESSING - STAGE 1: Extract Sequences
+2025-11-13 08:22:22,565 - INFO - ================================================================================
+2025-11-13 08:22:22,565 - INFO - Loading S1: external_datasets/tessier_2024_polyreactivity/Supplemental Datasets/Human Ab Poly Dataset S1_v2.xlsx
+2025-11-13 08:22:29,099 - INFO -   Loaded 246293 rows
+2025-11-13 08:22:29,099 - INFO -   Columns: ['Name', 'VL', 'VH']
+2025-11-13 08:22:29,154 - INFO -   Labels: 115038 polyreactive, 131255 specific
+2025-11-13 08:22:29,223 - INFO - Loading S2: external_datasets/tessier_2024_polyreactivity/Supplemental Datasets/Human Ab Poly Dataset S2_v2.xlsx
+2025-11-13 08:22:34,544 - INFO -   Loaded 127217 rows
+2025-11-13 08:22:34,544 - INFO -   Columns: ['Name', 'VL', 'VH']
+2025-11-13 08:22:34,571 - INFO -   Labels: 93080 polyreactive, 34137 specific
+2025-11-13 08:22:34,605 - INFO - Merging datasets...
+2025-11-13 08:22:34,614 - INFO -   Total after merge: 373510 sequences
+2025-11-13 08:22:34,614 - INFO - Deduplicating by (VH, VL) pair...
+2025-11-13 08:22:34,826 - INFO -   Removed 53 duplicates (0.0%)
+2025-11-13 08:22:34,826 - INFO -   Unique sequences: 373457
+2025-11-13 08:22:34,904 - INFO - Final label distribution:
+2025-11-13 08:22:34,904 - INFO -   Polyreactive (label=1): 208117
+2025-11-13 08:22:34,904 - INFO -   Specific (label=0): 165340
+2025-11-13 08:22:34,904 - INFO -   Total: 373457
+2025-11-13 08:22:34,904 - WARNING - ⚠️  Total count differs from expected by 51.6%
+2025-11-13 08:22:34,904 - INFO - Validating sequences...
+2025-11-13 08:22:35,123 - INFO - VH sequence lengths: min=112, max=131, mean=122.0
+2025-11-13 08:22:35,123 - INFO - VL sequence lengths: min=103, max=114, mean=108.4
+2025-11-13 08:22:35,124 - WARNING -   9426 VH sequences outside typical range (110-130 aa)
+2025-11-13 08:22:35,124 - WARNING -   320 VL sequences outside typical range (105-115 aa)
+2025-11-13 08:22:35,124 - INFO - ✅ Sequence validation passed
+2025-11-13 08:22:35,124 - INFO - Saving to train_datasets/tessier/processed/tessier_raw.csv...
+2025-11-13 08:22:36,172 - INFO - ✅ Saved 373457 sequences to train_datasets/tessier/processed/tessier_raw.csv
+2025-11-13 08:22:36,172 - INFO - ================================================================================
+2025-11-13 08:22:36,172 - INFO - STAGE 1 COMPLETE
+2025-11-13 08:22:36,172 - INFO - ================================================================================
+2025-11-13 08:22:36,172 - INFO - Output: train_datasets/tessier/processed/tessier_raw.csv
+2025-11-13 08:22:36,172 - INFO - Sequences: 373457
+2025-11-13 08:22:36,172 - INFO - Polyreactive: 208117
+2025-11-13 08:22:36,172 - INFO - Specific: 165340
+2025-11-13 08:22:36,172 - INFO - Next: Run stage 2 (ANARCI annotation)
+2025-11-13 08:22:36,172 - INFO - ================================================================================

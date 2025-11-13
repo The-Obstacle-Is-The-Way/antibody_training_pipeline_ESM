@@ -1,0 +1,17 @@
+# Ignore large Tessier dataset files (373k sequences, ~200MB total)
+# These are generated from public data via preprocessing scripts
+
+# Processed data (96MB)
+processed/tessier_raw.csv
+
+# Annotated data (will be ~150MB when complete)
+annotated/tessier_annotated.csv
+annotated/annotation_failures.log
+annotated/qc_filtered_sequences.txt
+
+# Canonical fragment CSVs (will be ~300MB total)
+canonical/*.csv
+
+# Keep directory structure
+!.gitignore
+!README.md
