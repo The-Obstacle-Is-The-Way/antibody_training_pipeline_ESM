@@ -1,0 +1,55 @@
+2025-11-13 09:56:14,615 - INFO - ================================================================================
+2025-11-13 09:56:14,615 - INFO - TESSIER PREPROCESSING VALIDATION
+2025-11-13 09:56:14,615 - INFO - ================================================================================
+2025-11-13 09:56:14,615 - INFO - ================================================================================
+2025-11-13 09:56:14,615 - INFO - VALIDATING STAGE 1: Sequence Extraction
+2025-11-13 09:56:14,615 - INFO - ================================================================================
+2025-11-13 09:56:15,405 - INFO - Loaded 373457 sequences from train_datasets/tessier/processed/tessier_raw.csv
+2025-11-13 09:56:15,405 - INFO - ✅ All required columns present: ['antibody_id', 'vh_sequence', 'vl_sequence', 'label_binary']
+2025-11-13 09:56:15,405 - INFO - ✅ Sequence count matches expected: 373457
+2025-11-13 09:56:15,596 - INFO - ✅ No duplicate sequences found
+2025-11-13 09:56:15,597 - INFO - Label distribution: 208117 polyreactive, 165340 specific
+2025-11-13 09:56:15,613 - INFO - ✅ No NaN sequences found
+2025-11-13 09:56:15,613 - INFO - ✅ STAGE 1 VALIDATION PASSED
+2025-11-13 09:56:15,624 - INFO - ================================================================================
+2025-11-13 09:56:15,624 - INFO - VALIDATING STAGE 2: ANARCI Annotation
+2025-11-13 09:56:15,624 - INFO - ================================================================================
+2025-11-13 09:56:19,296 - INFO - Loaded 373457 annotated sequences from train_datasets/tessier/annotated/tessier_annotated.csv
+2025-11-13 09:56:19,296 - INFO - ✅ Sequence count matches expected: 373457
+2025-11-13 09:56:19,296 - INFO - ✅ All 16 fragment columns present
+2025-11-13 09:56:20,815 - INFO - ✅ No sequences with empty CDRs
+2025-11-13 09:56:20,815 - INFO - ✅ STAGE 2 VALIDATION PASSED
+2025-11-13 09:56:20,869 - INFO - ================================================================================
+2025-11-13 09:56:20,869 - INFO - VALIDATING STAGE 3: QC Filters and Train/Val Split
+2025-11-13 09:56:20,869 - INFO - ================================================================================
+2025-11-13 09:56:20,869 - INFO - ✅ All 16 fragment CSVs found
+2025-11-13 09:56:21,332 - INFO -   VH_only: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:21,782 - INFO -   VL_only: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:21,964 - INFO -   H-CDR1: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:22,143 - INFO -   H-CDR2: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:22,343 - INFO -   H-CDR3: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:22,546 - INFO -   L-CDR1: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:22,710 - INFO -   L-CDR2: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:22,895 - INFO -   L-CDR3: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:23,262 - INFO -   H-FWRs: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:23,648 - INFO -   L-FWRs: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:24,566 - INFO -   VH+VL: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:24,822 - INFO -   H-CDRs: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:25,063 - INFO -   L-CDRs: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:25,421 - INFO -   All-CDRs: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:26,115 - INFO -   All-FWRs: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:26,953 - INFO -   Full: 373457 total (298765 train, 74692 val) ✅
+2025-11-13 09:56:26,953 - INFO - ✅ Training count matches expected: 298765
+2025-11-13 09:56:26,953 - INFO - ✅ Validation count matches expected: 74692
+2025-11-13 09:56:26,953 - INFO - ✅ Train ratio matches expected: 0.8 (0.800)
+2025-11-13 09:56:27,366 - INFO - ✅ Stratification looks good: train=0.557, val=0.557
+2025-11-13 09:56:27,366 - INFO - ✅ STAGE 3 VALIDATION PASSED
+2025-11-13 09:56:27,389 - INFO - ================================================================================
+2025-11-13 09:56:27,389 - INFO - VALIDATION SUMMARY
+2025-11-13 09:56:27,389 - INFO - ================================================================================
+2025-11-13 09:56:27,389 - INFO - Stage 1 (Extraction):     ✅ PASS
+2025-11-13 09:56:27,389 - INFO - Stage 2 (Annotation):     ✅ PASS
+2025-11-13 09:56:27,389 - INFO - Stage 3 (QC + Split):     ✅ PASS
+2025-11-13 09:56:27,389 - INFO - ================================================================================
+2025-11-13 09:56:27,389 - INFO - 🎉 ALL VALIDATIONS PASSED - PREPROCESSING COMPLETE 🎉
+2025-11-13 09:56:27,389 - INFO - ================================================================================
