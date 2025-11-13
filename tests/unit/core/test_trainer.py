@@ -1494,3 +1494,81 @@ def test_validate_config_fails_with_invalid_metrics(tmp_path: Path) -> None:
     # Act & Assert
     with pytest.raises(ValueError, match=r"(Invalid metrics|invalid_metric)"):
         validate_config(config)
+
+
+@pytest.mark.unit
+def test_load_config_fails_with_missing_file(tmp_path: Path) -> None:
+    """
+    Test that load_config raises FileNotFoundError with helpful message.
+
+    Lines tested: 217-221 in trainer.py (FileNotFoundError handling)
+    Expected: Raise FileNotFoundError with helpful message about missing file
+    """
+    # Arrange
+    from antibody_training_esm.core.trainer import load_config
+
+    missing_file = tmp_path / "nonexistent_config.yaml"
+
+    # Act & Assert
+    with pytest.raises(
+        FileNotFoundError,
+        match=r"(Config file not found|nonexistent_config\.yaml|specify a valid path)",
+    ):
+        load_config(str(missing_file))
+
+
+@pytest.mark.unit
+def test_load_config_fails_with_invalid_yaml(tmp_path: Path) -> None:
+    """
+    Test that load_config raises ValueError for invalid YAML.
+
+    Lines tested: 222-223 in trainer.py (yaml.YAMLError handling)
+    Expected: Raise ValueError with helpful message about invalid YAML
+    """
+    # Arrange
+    from antibody_training_esm.core.trainer import load_config
+
+    invalid_yaml_file = tmp_path / "invalid.yaml"
+    # Create truly invalid YAML with unclosed bracket
+    invalid_yaml_file.write_text("model:\n  name: [unclosed\ndata: test\n")
+
+    # Act & Assert
+    with pytest.raises(ValueError, match=r"(Invalid YAML|invalid\.yaml)"):
+        load_config(str(invalid_yaml_file))
+
+
+@pytest.mark.unit
+def test_perform_cross_validation_with_non_stratified_kfold(
+    mock_embeddings: np.ndarray,
+    mock_labels: np.ndarray,
+    nested_config: dict[str, Any],
+) -> None:
+    """
+    Test that perform_cross_validation uses KFold when stratify=False.
+
+    Lines tested: 493-495 in trainer.py (KFold import and setup)
+    Expected: Cross-validation completes successfully with non-stratified KFold
+    """
+    # Arrange
+    from antibody_training_esm.core.trainer import perform_cross_validation
+
+    # Use subset of data for faster test
+    X = mock_embeddings[:20]
+    y = mock_labels[:20]
+
+    # Configure for non-stratified cross-validation
+    nested_config["classifier"]["stratify"] = False  # This triggers lines 493-495
+    nested_config["classifier"]["cv_folds"] = 3
+    nested_config["classifier"]["random_state"] = 42
+
+    mock_logger = Mock()
+
+    # Act
+    cv_results = perform_cross_validation(X, y, nested_config, mock_logger)
+
+    # Assert
+    assert "cv_accuracy" in cv_results
+    assert cv_results["cv_accuracy"]["mean"] >= 0.0
+    assert cv_results["cv_accuracy"]["mean"] <= 1.0
+    assert "std" in cv_results["cv_accuracy"]
+    mock_logger.info.assert_called()  # Verify logging occurred
