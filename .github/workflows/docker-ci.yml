@@ -17,13 +17,40 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Free up disk space
+    - name: Maximum disk space cleanup
       run: |
+        echo "=== Before cleanup ==="
+        df -h
+
+        # Remove .NET (~2-3 GB)
         sudo rm -rf /usr/share/dotnet
+
+        # Remove Android SDK (~9-14 GB)
+        sudo rm -rf /usr/local/lib/android
+
+        # Remove GHC/Haskell (~5 GB)
         sudo rm -rf /opt/ghc
-        sudo rm -rf /usr/local/share/boost
+        sudo rm -rf /usr/local/.ghcup
+
+        # Remove tool cache (~8 GB)
         sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-        docker system prune -af
+
+        # Remove CodeQL (~5 GB)
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+
+        # Remove Swift (~2 GB)
+        sudo rm -rf /usr/share/swift
+
+        # Remove Julia (~1 GB)
+        sudo rm -rf /usr/local/julia*
+
+        # Remove Boost
+        sudo rm -rf /usr/local/share/boost
+
+        # Aggressive Docker cleanup
+        docker system prune -af --volumes
+
+        echo "=== After cleanup ==="
         df -h
 
     - name: Set up Docker Buildx
@@ -49,13 +76,40 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Free up disk space
+    - name: Maximum disk space cleanup
       run: |
+        echo "=== Before cleanup ==="
+        df -h
+
+        # Remove .NET (~2-3 GB)
         sudo rm -rf /usr/share/dotnet
+
+        # Remove Android SDK (~9-14 GB)
+        sudo rm -rf /usr/local/lib/android
+
+        # Remove GHC/Haskell (~5 GB)
         sudo rm -rf /opt/ghc
-        sudo rm -rf /usr/local/share/boost
+        sudo rm -rf /usr/local/.ghcup
+
+        # Remove tool cache (~8 GB)
         sudo rm -rf "$AGENT_TOOLSDIRECTORY"
-        docker system prune -af
+
+        # Remove CodeQL (~5 GB)
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+
+        # Remove Swift (~2 GB)
+        sudo rm -rf /usr/share/swift
+
+        # Remove Julia (~1 GB)
+        sudo rm -rf /usr/local/julia*
+
+        # Remove Boost
+        sudo rm -rf /usr/local/share/boost
+
+        # Aggressive Docker cleanup
+        docker system prune -af --volumes
+
+        echo "=== After cleanup ==="
         df -h
 
     - name: Set up Docker Buildx
@@ -85,6 +139,42 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Maximum disk space cleanup
+      run: |
+        echo "=== Before cleanup ==="
+        df -h
+
+        # Remove .NET (~2-3 GB)
+        sudo rm -rf /usr/share/dotnet
+
+        # Remove Android SDK (~9-14 GB)
+        sudo rm -rf /usr/local/lib/android
+
+        # Remove GHC/Haskell (~5 GB)
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /usr/local/.ghcup
+
+        # Remove tool cache (~8 GB)
+        sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+        # Remove CodeQL (~5 GB)
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+
+        # Remove Swift (~2 GB)
+        sudo rm -rf /usr/share/swift
+
+        # Remove Julia (~1 GB)
+        sudo rm -rf /usr/local/julia*
+
+        # Remove Boost
+        sudo rm -rf /usr/local/share/boost
+
+        # Aggressive Docker cleanup
+        docker system prune -af --volumes
+
+        echo "=== After cleanup ==="
+        df -h
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
