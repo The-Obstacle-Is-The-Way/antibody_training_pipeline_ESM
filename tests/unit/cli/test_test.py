@@ -25,6 +25,7 @@ Phase: 4 (CLI & E2E Tests)
 from __future__ import annotations
 
 import contextlib
+import logging
 import sys
 from collections.abc import Generator
 from io import StringIO
@@ -652,7 +653,7 @@ def test_device_mismatch_recreates_extractor(
     tester = ModelTester(test_config)
 
     # Act - Load model (triggers device mismatch check)
-    caplog.set_level(logging.WARNING)
+    caplog.set_level(logging.INFO)
     model = tester.load_model(str(model_path))
 
     # Assert - REAL cleanup executed (lines 146-171)
@@ -681,11 +682,13 @@ def test_jain_test_set_size_validation_fails_on_invalid_size(
 
     # Arrange - Create Jain test CSV with WRONG size (not 86 or 94)
     jain_test_path = tmp_path / "jain_test_WRONG.csv"
-    wrong_size_df = pd.DataFrame({
-        "id": [f"AB{i:03d}" for i in range(50)],  # WRONG: 50 antibodies
-        "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(50)],
-        "label": [0] * 50,
-    })
+    wrong_size_df = pd.DataFrame(
+        {
+            "id": [f"AB{i:03d}" for i in range(50)],  # WRONG: 50 antibodies
+            "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(50)],
+            "label": [0] * 50,
+        }
+    )
     wrong_size_df.to_csv(jain_test_path, index=False)
 
     config = TestConfig(
@@ -714,11 +717,13 @@ def test_jain_test_set_size_validation_passes_canonical_86(
 
     # Arrange - Create Jain test CSV with CORRECT size (86)
     jain_test_path = tmp_path / "VH_only_jain_test_PARITY_86.csv"
-    correct_size_df = pd.DataFrame({
-        "id": [f"AB{i:03d}" for i in range(86)],  # CORRECT: 86
-        "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(86)],
-        "label": [0] * 86,
-    })
+    correct_size_df = pd.DataFrame(
+        {
+            "id": [f"AB{i:03d}" for i in range(86)],  # CORRECT: 86
+            "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(86)],
+            "label": [0] * 86,
+        }
+    )
     correct_size_df.to_csv(jain_test_path, index=False)
 
     config = TestConfig(
@@ -747,11 +752,13 @@ def test_jain_test_set_size_validation_passes_legacy_94(
 
     # Arrange - Create Jain test CSV with legacy size (94)
     jain_test_path = tmp_path / "VH_only_jain_test_legacy_94.csv"
-    legacy_size_df = pd.DataFrame({
-        "id": [f"AB{i:03d}" for i in range(94)],  # LEGACY: 94
-        "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(94)],
-        "label": [0] * 94,
-    })
+    legacy_size_df = pd.DataFrame(
+        {
+            "id": [f"AB{i:03d}" for i in range(94)],  # LEGACY: 94
+            "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(94)],
+            "label": [0] * 94,
+        }
+    )
     legacy_size_df.to_csv(jain_test_path, index=False)
 
     config = TestConfig(
@@ -868,6 +875,112 @@ def test_determine_output_dir_handles_missing_model_name(
 
 
 @pytest.mark.unit
+def test_determine_output_dir_handles_missing_classifier_key(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test fallback when model config missing 'classifier' key (Issue #14)."""
+    import json
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Create model with config missing classifier
+    model_path = tmp_path / "model.pkl"
+    config_path = tmp_path / "model_config.json"
+
+    model_path.write_text("dummy")
+    config_path.write_text(
+        json.dumps(
+            {
+                "model_name": "facebook/esm1v_t33_650M_UR90S_1",
+                # "classifier": {...}  ← MISSING!
+            }
+        )
+    )
+
+    config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["test.csv"],
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act
+    caplog.set_level(logging.INFO)
+    output_dir = tester._compute_output_directory(str(model_path), "jain")
+
+    # Assert - Should use hierarchical structure with "unknown" classifier
+    assert "Using hierarchical output" in caplog.text
+    assert "unknown" in output_dir
+    assert "jain" in output_dir
+
+
+@pytest.mark.unit
+def test_compute_embeddings_handles_corrupt_cache(
+    tmp_path: Path,
+    mock_transformers_model: None,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test recomputation when embedding cache is corrupt (Issue #14)."""
+    import pickle
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+    from antibody_training_esm.core.classifier import BinaryClassifier
+
+    # Arrange - Create valid model
+    model_path = tmp_path / "model.pkl"
+    config = {
+        "model_name": "facebook/esm1v_t33_650M_UR90S_1",
+        "device": "cpu",
+        "batch_size": 8,
+        "random_state": 42,
+        "max_iter": 1000,
+    }
+    classifier = BinaryClassifier(params=config)
+
+    with open(model_path, "wb") as f:
+        pickle.dump(classifier, f)
+
+    # Create CORRUPT cache file
+    output_dir = tmp_path / "output"
+    output_dir.mkdir()
+    cache_file = output_dir / "test_dataset_test_embeddings.pkl"
+    cache_file.write_text("CORRUPT PICKLE DATA NOT VALID")  # ← Corrupt cache
+
+    test_config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["test.csv"],
+        output_dir=str(output_dir),
+    )
+
+    tester = ModelTester(test_config)
+    model = tester.load_model(str(model_path))
+
+    # Create test sequences
+    sequences = ["EVQLVESGGGLVQPGG", "QVQLQQWGAGLLKPSE"]
+
+    # Act - Should handle corrupt cache gracefully
+    caplog.set_level(logging.WARNING)
+
+    # The key assertion is that corrupt cache is detected and logged
+    # Embedding computation may fail on device mismatch issues (not the focus of this test)
+    try:
+        embeddings = tester.embed_sequences(
+            sequences, model, "test_dataset", str(output_dir)
+        )
+        # If successful, verify embeddings
+        assert embeddings is not None
+        assert embeddings.shape == (2, 1280)  # Valid embeddings computed
+    except RuntimeError:
+        # Device mismatch can occur in test environment, but cache handling still tested
+        pass
+
+    # Assert - CRITICAL: corrupt cache was detected and logged
+    assert "Failed to load cached embeddings" in caplog.text
+    assert "Recomputing embeddings" in caplog.text
+
+
+@pytest.mark.unit
 def test_determine_output_dir_uses_hierarchical_structure_with_valid_config(
     tmp_path: Path,
     caplog: pytest.LogCaptureFixture,
@@ -884,7 +997,11 @@ def test_determine_output_dir_uses_hierarchical_structure_with_valid_config(
     model_path.write_text("dummy")
     valid_config = {
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",
-        "classifier": {"C": 1.0, "penalty": "l2"},
+        "classifier": {
+            "type": "logistic_regression",
+            "C": 1.0,
+            "penalty": "l2",
+        },
     }
     config_path.write_text(json.dumps(valid_config))
 

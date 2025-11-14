@@ -259,14 +259,31 @@ class ModelTester:
 
         # Try to load from cache
         if os.path.exists(cache_file):
-            self.logger.info(f"Loading cached embeddings from {cache_file}")
-            with open(cache_file, "rb") as f:
-                embeddings: np.ndarray = pickle.load(f)  # nosec B301 - Loading our own cached embeddings for performance
+            try:
+                self.logger.info(f"Loading cached embeddings from {cache_file}")
+                with open(cache_file, "rb") as f:
+                    embeddings: np.ndarray = pickle.load(f)  # nosec B301 - Loading our own cached embeddings for performance
 
-            if len(embeddings) == len(sequences):
-                return embeddings
-            else:
-                self.logger.warning("Cached embeddings size mismatch, recomputing...")
+                # Validate shape and type
+                if not isinstance(embeddings, np.ndarray):
+                    raise ValueError(f"Invalid cache data type: {type(embeddings)}")
+                if embeddings.ndim != 2:
+                    raise ValueError(f"Invalid embedding shape: {embeddings.shape}")
+
+                if len(embeddings) == len(sequences):
+                    self.logger.info(f"Loaded {len(embeddings)} cached embeddings")
+                    return embeddings
+                else:
+                    self.logger.warning(
+                        "Cached embeddings size mismatch, recomputing..."
+                    )
+
+            except (pickle.UnpicklingError, EOFError, ValueError, AttributeError) as e:
+                self.logger.warning(
+                    f"Failed to load cached embeddings from {cache_file}: {e}. "
+                    "Recomputing embeddings..."
+                )
+                # Fall through to recomputation below
 
         # Extract embeddings
         self.logger.info(f"Extracting embeddings for {len(sequences)} sequences...")
