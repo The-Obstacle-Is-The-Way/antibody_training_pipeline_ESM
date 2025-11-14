@@ -1,0 +1,817 @@
+.
+├── .benchmarks
+├── .claude
+│   └── settings.local.json
+├── .github
+│   └── workflows
+│       ├── benchmark.yml
+│       ├── ci.yml
+│       ├── codeql.yml
+│       ├── dependencies.yml
+│       └── docker-ci.yml
+├── .mypy_cache
+│   ├── 3.12
+│   │   ├── Bio
+│   │   ├── BioSQL
+│   │   ├── IPython
+│   │   ├── PIL
+│   │   ├── _pytest
+│   │   ├── _typeshed
+│   │   ├── aiohappyeyeballs
+│   │   ├── aiohttp
+│   │   ├── aiosignal
+│   │   ├── antibody_training_esm
+│   │   ├── asttokens
+│   │   ├── asyncio
+│   │   ├── attr
+│   │   ├── attrs
+│   │   ├── bs4
+│   │   ├── charset_normalizer
+│   │   ├── collections
+│   │   ├── concurrent
+│   │   ├── ctypes
+│   │   ├── cycler
+│   │   ├── email
+│   │   ├── encodings
+│   │   ├── executing
+│   │   ├── filelock
+│   │   ├── frozenlist
+│   │   ├── html
+│   │   ├── http
+│   │   ├── huggingface_hub
+│   │   ├── hydra
+│   │   ├── idna
+│   │   ├── importlib
+│   │   ├── iniconfig
+│   │   ├── jinja2
+│   │   ├── json
+│   │   ├── jupyter_core
+│   │   ├── lightgbm
+│   │   ├── logging
+│   │   ├── markupsafe
+│   │   ├── matplotlib
+│   │   ├── matplotlib_inline
+│   │   ├── multidict
+│   │   ├── multiprocessing
+│   │   ├── nbformat
+│   │   ├── numpy
+│   │   ├── omegaconf
+│   │   ├── os
+│   │   ├── packaging
+│   │   ├── pandas
+│   │   ├── pathlib
+│   │   ├── pkg_resources
+│   │   ├── platformdirs
+│   │   ├── pluggy
+│   │   ├── preprocessing
+│   │   ├── prompt_toolkit
+│   │   ├── propcache
+│   │   ├── pure_eval
+│   │   ├── pyexpat
+│   │   ├── pyparsing
+│   │   ├── pytest
+│   │   ├── safetensors
+│   │   ├── soupsieve
+│   │   ├── sqlite3
+│   │   ├── stack_data
+│   │   ├── string
+│   │   ├── sys
+│   │   ├── tests
+│   │   ├── torch
+│   │   ├── traitlets
+│   │   ├── transformers
+│   │   ├── unittest
+│   │   ├── urllib
+│   │   ├── xgboost
+│   │   ├── xml
+│   │   ├── yaml
+│   │   ├── yarl
+│   │   ├── zipfile
+│   │   ├── @plugins_snapshot.json
+│   │   ├── __future__.data.json
+│   │   ├── __future__.meta.json
+│   │   ├── __main__.data.json
+│   │   ├── __main__.meta.json
+│   │   ├── _ast.data.json
+│   │   ├── _ast.meta.json
+│   │   ├── _asyncio.data.json
+│   │   ├── _asyncio.meta.json
+│   │   ├── _bisect.data.json
+│   │   ├── _bisect.meta.json
+│   │   ├── _blake2.data.json
+│   │   ├── _blake2.meta.json
+│   │   ├── _bz2.data.json
+│   │   ├── _bz2.meta.json
+│   │   ├── _codecs.data.json
+│   │   ├── _codecs.meta.json
+│   │   ├── _collections_abc.data.json
+│   │   ├── _collections_abc.meta.json
+│   │   ├── _compat_pickle.data.json
+│   │   ├── _compat_pickle.meta.json
+│   │   ├── _compression.data.json
+│   │   ├── _compression.meta.json
+│   │   ├── _contextvars.data.json
+│   │   ├── _contextvars.meta.json
+│   │   ├── _csv.data.json
+│   │   ├── _csv.meta.json
+│   │   ├── _ctypes.data.json
+│   │   ├── _ctypes.meta.json
+│   │   ├── _decimal.data.json
+│   │   ├── _decimal.meta.json
+│   │   ├── _frozen_importlib.data.json
+│   │   ├── _frozen_importlib.meta.json
+│   │   ├── _frozen_importlib_external.data.json
+│   │   ├── _frozen_importlib_external.meta.json
+│   │   ├── _hashlib.data.json
+│   │   ├── _hashlib.meta.json
+│   │   ├── _heapq.data.json
+│   │   ├── _heapq.meta.json
+│   │   ├── _imp.data.json
+│   │   ├── _imp.meta.json
+│   │   ├── _io.data.json
+│   │   ├── _io.meta.json
+│   │   ├── _locale.data.json
+│   │   ├── _locale.meta.json
+│   │   ├── _lsprof.data.json
+│   │   ├── _lsprof.meta.json
+│   │   ├── _markupbase.data.json
+│   │   ├── _markupbase.meta.json
+│   │   ├── _multibytecodec.data.json
+│   │   ├── _multibytecodec.meta.json
+│   │   ├── _operator.data.json
+│   │   ├── _operator.meta.json
+│   │   ├── _pickle.data.json
+│   │   ├── _pickle.meta.json
+│   │   ├── _queue.data.json
+│   │   ├── _queue.meta.json
+│   │   ├── _random.data.json
+│   │   ├── _random.meta.json
+│   │   ├── _sitebuiltins.data.json
+│   │   ├── _sitebuiltins.meta.json
+│   │   ├── _socket.data.json
+│   │   ├── _socket.meta.json
+│   │   ├── _sqlite3.data.json
+│   │   ├── _sqlite3.meta.json
+│   │   ├── _ssl.data.json
+│   │   ├── _ssl.meta.json
+│   │   ├── _stat.data.json
+│   │   ├── _stat.meta.json
+│   │   ├── _struct.data.json
+│   │   ├── _struct.meta.json
+│   │   ├── _thread.data.json
+│   │   ├── _thread.meta.json
+│   │   ├── _warnings.data.json
+│   │   ├── _warnings.meta.json
+│   │   ├── _weakref.data.json
+│   │   ├── _weakref.meta.json
+│   │   ├── _weakrefset.data.json
+│   │   ├── _weakrefset.meta.json
+│   │   ├── abc.data.json
+│   │   ├── abc.meta.json
+│   │   ├── argparse.data.json
+│   │   ├── argparse.meta.json
+│   │   ├── array.data.json
+│   │   ├── array.meta.json
+│   │   ├── ast.data.json
+│   │   ├── ast.meta.json
+│   │   ├── atexit.data.json
+│   │   ├── atexit.meta.json
+│   │   ├── base64.data.json
+│   │   ├── base64.meta.json
+│   │   ├── bdb.data.json
+│   │   ├── bdb.meta.json
+│   │   ├── binascii.data.json
+│   │   ├── binascii.meta.json
+│   │   ├── bisect.data.json
+│   │   ├── bisect.meta.json
+│   │   ├── builtins.data.json
+│   │   ├── builtins.meta.json
+│   │   ├── bz2.data.json
+│   │   ├── bz2.meta.json
+│   │   ├── cProfile.data.json
+│   │   ├── cProfile.meta.json
+│   │   ├── calendar.data.json
+│   │   ├── calendar.meta.json
+│   │   ├── cmath.data.json
+│   │   ├── cmath.meta.json
+│   │   ├── cmd.data.json
+│   │   ├── cmd.meta.json
+│   │   ├── codecs.data.json
+│   │   ├── codecs.meta.json
+│   │   ├── codeop.data.json
+│   │   ├── codeop.meta.json
+│   │   ├── colorsys.data.json
+│   │   ├── colorsys.meta.json
+│   │   ├── configparser.data.json
+│   │   ├── configparser.meta.json
+│   │   ├── contextlib.data.json
+│   │   ├── contextlib.meta.json
+│   │   ├── contextvars.data.json
+│   │   ├── contextvars.meta.json
+│   │   ├── copy.data.json
+│   │   ├── copy.meta.json
+│   │   ├── copyreg.data.json
+│   │   ├── copyreg.meta.json
+│   │   ├── csv.data.json
+│   │   ├── csv.meta.json
+│   │   ├── dataclasses.data.json
+│   │   ├── dataclasses.meta.json
+│   │   ├── datetime.data.json
+│   │   ├── datetime.meta.json
+│   │   ├── decimal.data.json
+│   │   ├── decimal.meta.json
+│   │   ├── demo_assay_specific_thresholds.data.json
+│   │   ├── demo_assay_specific_thresholds.meta.json
+│   │   ├── difflib.data.json
+│   │   ├── difflib.meta.json
+│   │   ├── dis.data.json
+│   │   ├── dis.meta.json
+│   │   ├── doctest.data.json
+│   │   ├── doctest.meta.json
+│   │   ├── enum.data.json
+│   │   ├── enum.meta.json
+│   │   ├── errno.data.json
+│   │   ├── errno.meta.json
+│   │   ├── faulthandler.data.json
+│   │   ├── faulthandler.meta.json
+│   │   ├── fcntl.data.json
+│   │   ├── fcntl.meta.json
+│   │   ├── filecmp.data.json
+│   │   ├── filecmp.meta.json
+│   │   ├── fnmatch.data.json
+│   │   ├── fnmatch.meta.json
+│   │   ├── fractions.data.json
+│   │   ├── fractions.meta.json
+│   │   ├── functools.data.json
+│   │   ├── functools.meta.json
+│   │   ├── gc.data.json
+│   │   ├── gc.meta.json
+│   │   ├── generate_ensemble_submission.data.json
+│   │   ├── generate_ensemble_submission.meta.json
+│   │   ├── genericpath.data.json
+│   │   ├── genericpath.meta.json
+│   │   ├── getopt.data.json
+│   │   ├── getopt.meta.json
+│   │   ├── getpass.data.json
+│   │   ├── getpass.meta.json
+│   │   ├── gettext.data.json
+│   │   ├── gettext.meta.json
+│   │   ├── ginkgo_rapid_experiments.data.json
+│   │   ├── ginkgo_rapid_experiments.meta.json
+│   │   ├── glob.data.json
+│   │   ├── glob.meta.json
+│   │   ├── gzip.data.json
+│   │   ├── gzip.meta.json
+│   │   ├── hashlib.data.json
+│   │   ├── hashlib.meta.json
+│   │   ├── heapq.data.json
+│   │   ├── heapq.meta.json
+│   │   ├── hmac.data.json
+│   │   ├── hmac.meta.json
+│   │   ├── inspect.data.json
+│   │   ├── inspect.meta.json
+│   │   ├── io.data.json
+│   │   ├── io.meta.json
+│   │   ├── ipaddress.data.json
+│   │   ├── ipaddress.meta.json
+│   │   ├── itertools.data.json
+│   │   ├── itertools.meta.json
+│   │   ├── keyword.data.json
+│   │   ├── keyword.meta.json
+│   │   ├── linecache.data.json
+│   │   ├── linecache.meta.json
+│   │   ├── locale.data.json
+│   │   ├── locale.meta.json
+│   │   ├── marshal.data.json
+│   │   ├── marshal.meta.json
+│   │   ├── math.data.json
+│   │   ├── math.meta.json
+│   │   ├── migrate_model_directories.data.json
+│   │   ├── migrate_model_directories.meta.json
+│   │   ├── mimetypes.data.json
+│   │   ├── mimetypes.meta.json
+│   │   ├── mmap.data.json
+│   │   ├── mmap.meta.json
+│   │   ├── msvcrt.data.json
+│   │   ├── msvcrt.meta.json
+│   │   ├── netrc.data.json
+│   │   ├── netrc.meta.json
+│   │   ├── ntpath.data.json
+│   │   ├── ntpath.meta.json
+│   │   ├── numbers.data.json
+│   │   ├── numbers.meta.json
+│   │   ├── opcode.data.json
+│   │   ├── opcode.meta.json
+│   │   ├── operator.data.json
+│   │   ├── operator.meta.json
+│   │   ├── parse_alpha_sweep.data.json
+│   │   ├── parse_alpha_sweep.meta.json
+│   │   ├── pathlib.data.json
+│   │   ├── pathlib.meta.json
+│   │   ├── pdb.data.json
+│   │   ├── pdb.meta.json
+│   │   ├── pickle.data.json
+│   │   ├── pickle.meta.json
+│   │   ├── pickletools.data.json
+│   │   ├── pickletools.meta.json
+│   │   ├── pkgutil.data.json
+│   │   ├── pkgutil.meta.json
+│   │   ├── platform.data.json
+│   │   ├── platform.meta.json
+│   │   ├── plistlib.data.json
+│   │   ├── plistlib.meta.json
+│   │   ├── posixpath.data.json
+│   │   ├── posixpath.meta.json
+│   │   ├── pprint.data.json
+│   │   ├── pprint.meta.json
+│   │   ├── prepare_combined_datasets.data.json
+│   │   ├── prepare_combined_datasets.meta.json
+│   │   ├── profile.data.json
+│   │   ├── profile.meta.json
+│   │   ├── pstats.data.json
+│   │   ├── pstats.meta.json
+│   │   ├── pydoc.data.json
+│   │   ├── pydoc.meta.json
+│   │   ├── queue.data.json
+│   │   ├── queue.meta.json
+│   │   ├── random.data.json
+│   │   ├── random.meta.json
+│   │   ├── re.data.json
+│   │   ├── re.meta.json
+│   │   ├── reprlib.data.json
+│   │   ├── reprlib.meta.json
+│   │   ├── resource.data.json
+│   │   ├── resource.meta.json
+│   │   ├── runpy.data.json
+│   │   ├── runpy.meta.json
+│   │   ├── select.data.json
+│   │   ├── select.meta.json
+│   │   ├── selectors.data.json
+│   │   ├── selectors.meta.json
+│   │   ├── shlex.data.json
+│   │   ├── shlex.meta.json
+│   │   ├── shutil.data.json
+│   │   ├── shutil.meta.json
+│   │   ├── signal.data.json
+│   │   ├── signal.meta.json
+│   │   ├── site.data.json
+│   │   ├── site.meta.json
+│   │   ├── socket.data.json
+│   │   ├── socket.meta.json
+│   │   ├── sre_compile.data.json
+│   │   ├── sre_compile.meta.json
+│   │   ├── sre_constants.data.json
+│   │   ├── sre_constants.meta.json
+│   │   ├── sre_parse.data.json
+│   │   ├── sre_parse.meta.json
+│   │   ├── ssl.data.json
+│   │   ├── ssl.meta.json
+│   │   ├── stat.data.json
+│   │   ├── stat.meta.json
+│   │   ├── statistics.data.json
+│   │   ├── statistics.meta.json
+│   │   ├── string.data.json
+│   │   ├── string.meta.json
+│   │   ├── struct.data.json
+│   │   ├── struct.meta.json
+│   │   ├── subprocess.data.json
+│   │   ├── subprocess.meta.json
+│   │   ├── sysconfig.data.json
+│   │   ├── sysconfig.meta.json
+│   │   ├── tarfile.data.json
+│   │   ├── tarfile.meta.json
+│   │   ├── tempfile.data.json
+│   │   ├── tempfile.meta.json
+│   │   ├── tessier_gdpa1_transfer_learning.data.json
+│   │   ├── tessier_gdpa1_transfer_learning.meta.json
+│   │   ├── textwrap.data.json
+│   │   ├── textwrap.meta.json
+│   │   ├── threading.data.json
+│   │   ├── threading.meta.json
+│   │   ├── time.data.json
+│   │   ├── time.meta.json
+│   │   ├── timeit.data.json
+│   │   ├── timeit.meta.json
+│   │   ├── token.data.json
+│   │   ├── token.meta.json
+│   │   ├── tokenize.data.json
+│   │   ├── tokenize.meta.json
+│   │   ├── traceback.data.json
+│   │   ├── traceback.meta.json
+│   │   ├── types.data.json
+│   │   ├── types.meta.json
+│   │   ├── typing.data.json
+│   │   ├── typing.meta.json
+│   │   ├── typing_extensions.data.json
+│   │   ├── typing_extensions.meta.json
+│   │   ├── unicodedata.data.json
+│   │   ├── unicodedata.meta.json
+│   │   ├── uuid.data.json
+│   │   ├── uuid.meta.json
+│   │   ├── validate_fragments.data.json
+│   │   ├── validate_fragments.meta.json
+│   │   ├── validate_jain_csvs.data.json
+│   │   ├── validate_jain_csvs.meta.json
+│   │   ├── warnings.data.json
+│   │   ├── warnings.meta.json
+│   │   ├── wave.data.json
+│   │   ├── wave.meta.json
+│   │   ├── weakref.data.json
+│   │   ├── weakref.meta.json
+│   │   ├── zipimport.data.json
+│   │   ├── zipimport.meta.json
+│   │   ├── zlib.data.json
+│   │   └── zlib.meta.json
+│   ├── .gitignore
+│   └── CACHEDIR.TAG
+├── .uv_cache
+│   ├── interpreter-v4
+│   │   └── 7e11d242fb84b9e8
+│   ├── sdists-v9
+│   │   └── .gitignore
+│   ├── .gitignore
+│   └── CACHEDIR.TAG
+├── assets
+│   ├── ego.jpg
+│   ├── fascinating.jpg
+│   ├── leeroy_jenkins.png
+│   └── leeroy_jenkins.webp
+├── configs
+│   └── config.yaml
+├── dist
+│   ├── .gitignore
+│   ├── antibody_training_esm-0.3.0-py3-none-any.whl
+│   └── antibody_training_esm-0.3.0.tar.gz
+├── docs
+│   ├── archive
+│   │   ├── investigations
+│   │   ├── migrations
+│   │   ├── plans
+│   │   ├── summaries
+│   │   ├── 2025-11-11-production-readiness-audit.md
+│   │   ├── CLEANUP_COMPLETE_SUMMARY.md
+│   │   ├── CLEANUP_PLAN.md
+│   │   ├── CODEBASE_REORGANIZATION_PLAN.md
+│   │   ├── DOCS_AUDIT_STATUS.md
+│   │   ├── FIXES_APPLIED.md
+│   │   ├── MPS_MEMORY_LEAK_FIX.md
+│   │   ├── P0_SEMAPHORE_LEAK.md
+│   │   ├── PHASE1_TEST_RESULTS.md
+│   │   ├── README.md
+│   │   ├── REPOSITORY_MODERNIZATION_PLAN.md
+│   │   ├── RESIDUAL_TYPE_ERRORS.md
+│   │   ├── SCRIPTS_AUDIT.md
+│   │   ├── STRICT_QC_CLEANUP_PLAN.md
+│   │   ├── TEST_DATASETS_REORGANIZATION_PLAN.md
+│   │   └── TRAINING_SETUP_STATUS.md
+│   ├── datasets
+│   │   ├── boughter
+│   │   ├── harvey
+│   │   ├── jain
+│   │   └── shehata
+│   ├── developer-guide
+│   │   ├── architecture.md
+│   │   ├── ci-cd.md
+│   │   ├── development-workflow.md
+│   │   ├── directory-organization.md
+│   │   ├── docker.md
+│   │   ├── preprocessing-internals.md
+│   │   ├── security.md
+│   │   ├── testing-strategy.md
+│   │   └── type-checking.md
+│   ├── research
+│   │   ├── assay-thresholds.md
+│   │   ├── benchmark-results.md
+│   │   ├── methodology.md
+│   │   └── novo-parity.md
+│   ├── to-be-integrated
+│   │   ├── CLI_OVERRIDE_BUG_ROOT_CAUSE.md
+│   │   ├── ESM2_FEATURE.md
+│   │   ├── output_pipeline_architecture.md
+│   │   └── training_pipeline_investigation.md
+│   ├── user-guide
+│   │   ├── getting-started.md
+│   │   ├── installation.md
+│   │   ├── preprocessing.md
+│   │   ├── testing.md
+│   │   ├── training.md
+│   │   └── troubleshooting.md
+│   ├── ESM1V_ENSEMBLING_INVESTIGATION.md
+│   ├── README.md
+│   └── overview.md
+├── docs_burner
+│   ├── implementation
+│   │   ├── DOCKER_CI_FAILURE_ANALYSIS.md
+│   │   └── GITHUB_ACTIONS_DISK_SPACE.md
+│   └── TEST_COVERAGE_PLAN.md
+├── experiments
+│   ├── novo_parity
+│   │   ├── archive
+│   │   ├── datasets
+│   │   ├── results
+│   │   ├── scripts
+│   │   ├── ELISA_THRESHOLD_HYPOTHESIS_TEST.md
+│   │   ├── EXACT_MATCH_FOUND.md
+│   │   ├── EXPERIMENTS_LOG.md
+│   │   ├── FINAL_PERMUTATION_HUNT.md
+│   │   ├── MISSION_ACCOMPLISHED.md
+│   │   └── PERMUTATION_TESTING.md
+│   ├── strict_qc_2025-11-04
+│   │   ├── configs
+│   │   ├── data
+│   │   ├── docs
+│   │   ├── preprocessing
+│   │   └── EXPERIMENT_README.md
+│   └── README.md
+├── external_datasets
+│   └── README.md
+├── hyperparameter_sweep_results
+│   ├── best_config_20251102_170516.yaml
+│   ├── best_config_20251102_182542.yaml
+│   ├── final_sweep_results_20251102_170516.csv
+│   ├── final_sweep_results_20251102_182542.csv
+│   ├── sweep_results_20251102_170457.csv
+│   ├── sweep_results_20251102_170458.csv
+│   ├── sweep_results_20251102_170459.csv
+│   ├── sweep_results_20251102_170501.csv
+│   ├── sweep_results_20251102_170502.csv
+│   ├── sweep_results_20251102_170503.csv
+│   ├── sweep_results_20251102_170504.csv
+│   ├── sweep_results_20251102_170505.csv
+│   ├── sweep_results_20251102_170510.csv
+│   ├── sweep_results_20251102_170516.csv
+│   ├── sweep_results_20251102_182523.csv
+│   ├── sweep_results_20251102_182524.csv
+│   ├── sweep_results_20251102_182526.csv
+│   ├── sweep_results_20251102_182528.csv
+│   ├── sweep_results_20251102_182529.csv
+│   ├── sweep_results_20251102_182534.csv
+│   ├── sweep_results_20251102_182535.csv
+│   └── sweep_results_20251102_182542.csv
+├── literature
+│   ├── markdown
+│   │   ├── boltzmann_2024_main
+│   │   ├── boughter_2020_main
+│   │   ├── esm_model
+│   │   ├── harvey_2022_main
+│   │   ├── harvey_2022_supplementary
+│   │   ├── jain_2017_main
+│   │   ├── jain_2017_supplementary
+│   │   ├── novo_2025_main
+│   │   ├── novo_2025_supplementary
+│   │   └── shehata_2019_main
+│   └── pdf
+│       ├── boltzmann.pdf
+│       ├── boughter_2020_main.pdf
+│       ├── esm_model.pdf
+│       ├── harvey_2022_main.pdf
+│       ├── harvey_2022_supplementary.pdf
+│       ├── jain_2017_main.pdf
+│       ├── jain_2017_supplementary.pdf
+│       ├── novo_2025_main.pdf
+│       ├── novo_2025_supplementary.pdf
+│       └── shehata_2019_main.pdf
+├── logs
+│   ├── boughter_retrain_20251106_211513.log
+│   ├── boughter_training.log
+│   ├── build.log
+│   ├── full_test_suite_20251106_211755.log
+│   ├── prod-build.log
+│   ├── test_harvey_20251106_212635.log
+│   └── test_shehata_20251106_212354.log
+├── models
+│   ├── esm1v
+│   │   └── logreg
+│   └── esm2_650m
+│       └── logreg
+├── outputs
+│   ├── novo_replication
+│   │   ├── 2025-11-11_18-00-50
+│   │   ├── 2025-11-11_18-01-14
+│   │   ├── 2025-11-11_18-01-38
+│   │   ├── 2025-11-11_21-48-22
+│   │   ├── 2025-11-11_21-50-06
+│   │   ├── 2025-11-11_21-51-11
+│   │   ├── 2025-11-11_21-52-43
+│   │   ├── 2025-11-11_23-22-41
+│   │   └── 2025-11-11_23-22-49
+│   └── test_dataset
+├── preprocessing
+│   ├── boughter
+│   │   ├── README.md
+│   │   ├── audit_training_qc.py
+│   │   ├── stage1_dna_translation.py
+│   │   ├── stage2_stage3_annotation_qc.py
+│   │   ├── train_hyperparameter_sweep.py
+│   │   ├── validate_stage1.py
+│   │   └── validate_stages2_3.py
+│   ├── harvey
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   ├── step1_convert_raw_csvs.py
+│   │   ├── step2_extract_fragments.py
+│   │   └── test_psr_threshold.py
+│   ├── jain
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   ├── step1_convert_excel_to_csv.py
+│   │   ├── step2_preprocess_p5e_s2.py
+│   │   ├── step3_extract_fragments.py
+│   │   ├── test_novo_parity.py
+│   │   └── validate_conversion.py
+│   ├── shehata
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   ├── step1_convert_excel_to_csv.py
+│   │   ├── step2_extract_fragments.py
+│   │   └── validate_conversion.py
+│   ├── .gitkeep
+│   ├── README.md
+│   └── __init__.py
+├── reference_repos
+│   ├── AIMS
+│   │   ├── aims_immune
+│   │   ├── docs
+│   │   ├── .readthedocs.yaml
+│   │   ├── LICENSE
+│   │   ├── MANIFEST.in
+│   │   ├── README.md
+│   │   └── pyproject.toml
+│   ├── AIMS_manuscripts
+│   │   ├── app_data
+│   │   ├── bootstrap_scripts
+│   │   ├── cluster_datasets
+│   │   ├── germline_data
+│   │   ├── notebooks
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── aims_analysis.py
+│   │   ├── aims_classification.py
+│   │   ├── aims_loader.py
+│   │   └── seq_loader.py
+│   ├── abdev-benchmark
+│   │   ├── configs
+│   │   ├── data
+│   │   ├── libs
+│   │   ├── models
+│   │   ├── notebooks
+│   │   ├── outputs
+│   │   ├── tests
+│   │   ├── .gitattributes
+│   │   ├── .gitignore
+│   │   ├── CONTRIBUTING.md
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── pixi.lock
+│   │   ├── pixi.toml
+│   │   ├── pytest.ini
+│   │   └── run_all_models.py
+│   ├── esm
+│   │   ├── .github
+│   │   ├── esm
+│   │   ├── examples
+│   │   ├── scripts
+│   │   ├── tests
+│   │   ├── .flake8
+│   │   ├── .git-blame-ignore-revs
+│   │   ├── .gitignore
+│   │   ├── CODE_OF_CONDUCT.rst
+│   │   ├── CONTRIBUTING.md
+│   │   ├── LICENSE
+│   │   ├── README.md
+│   │   ├── environment.yml
+│   │   ├── hubconf.py
+│   │   ├── pyproject.toml
+│   │   └── setup.py
+│   ├── harvey_official_repo
+│   │   ├── backend
+│   │   ├── external_datasets
+│   │   ├── frontend
+│   │   ├── .dockerignore
+│   │   ├── .gitignore
+│   │   ├── Dockerfile
+│   │   ├── LICENSE.md
+│   │   ├── README.md
+│   │   └── docker-compose.yml
+│   └── ludocomito_original
+│       ├── preprocessing
+│       ├── src
+│       ├── test_datasets
+│       ├── train_datasets
+│       ├── .gitattributes
+│       ├── .gitignore
+│       ├── README.md
+│       ├── USAGE.md
+│       ├── classifier.py
+│       ├── config.yaml
+│       ├── data.py
+│       ├── main.py
+│       ├── model.py
+│       ├── pyproject.toml
+│       ├── test.py
+│       └── train.py
+├── scripts
+│   ├── testing
+│   │   ├── README.md
+│   │   └── demo_assay_specific_thresholds.py
+│   ├── validation
+│   │   ├── README.md
+│   │   ├── validate_fragments.py
+│   │   └── validate_jain_csvs.py
+│   └── migrate_model_directories.py
+├── src
+│   └── antibody_training_esm
+│       ├── cli
+│       ├── conf
+│       ├── core
+│       ├── data
+│       ├── datasets
+│       ├── evaluation
+│       ├── utils
+│       └── __init__.py
+├── test_datasets
+│   ├── harvey
+│   │   ├── canonical
+│   │   ├── fragments
+│   │   ├── processed
+│   │   ├── raw
+│   │   └── README.md
+│   ├── jain
+│   │   ├── canonical
+│   │   ├── fragments
+│   │   ├── processed
+│   │   ├── raw
+│   │   └── README.md
+│   └── shehata
+│       ├── canonical
+│       ├── fragments
+│       ├── processed
+│       ├── raw
+│       └── README.md
+├── test_results
+│   ├── esm1v
+│   │   └── logreg
+│   └── esm2_650m
+│       └── logreg
+├── tests
+│   ├── e2e
+│   │   ├── __init__.py
+│   │   ├── test_reproduce_novo.py
+│   │   └── test_train_pipeline.py
+│   ├── fixtures
+│   │   ├── mock_datasets
+│   │   ├── __init__.py
+│   │   ├── mock_models.py
+│   │   └── mock_sequences.py
+│   ├── integration
+│   │   ├── __init__.py
+│   │   ├── test_boughter_embedding_compatibility.py
+│   │   ├── test_cross_validation.py
+│   │   ├── test_dataset_pipeline.py
+│   │   ├── test_harvey_embedding_compatibility.py
+│   │   ├── test_jain_embedding_compatibility.py
+│   │   ├── test_model_persistence.py
+│   │   ├── test_model_tester.py
+│   │   └── test_shehata_embedding_compatibility.py
+│   ├── unit
+│   │   ├── cli
+│   │   ├── core
+│   │   ├── data
+│   │   ├── datasets
+│   │   └── __init__.py
+│   ├── __init__.py
+│   └── conftest.py
+├── train_datasets
+│   ├── boughter
+│   │   ├── annotated
+│   │   ├── canonical
+│   │   ├── processed
+│   │   ├── raw
+│   │   └── README.md
+│   ├── BOUGHTER_DATA_PROVENANCE.md
+│   └── README.md
+├── .coverage
+├── .dockerignore
+├── .gitattributes
+├── .gitignore
+├── .pre-commit-config.yaml
+├── .python-version
+├── AGENTS.md
+├── CHANGELOG.md
+├── CITATIONS.md
+├── CLAUDE.md
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── Dockerfile.dev
+├── Dockerfile.prod
+├── LICENSE
+├── Makefile
+├── README.md
+├── ROADMAP.md
+├── USAGE.md
+├── docker-compose.yml
+├── pyproject.toml
+├── pytest.ini
+└── uv.lock
+
+238 directories, 577 files
