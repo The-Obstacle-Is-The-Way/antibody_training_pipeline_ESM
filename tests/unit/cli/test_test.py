@@ -25,6 +25,7 @@ Phase: 4 (CLI & E2E Tests)
 from __future__ import annotations
 
 import contextlib
+import logging
 import sys
 from collections.abc import Generator
 from io import StringIO
@@ -589,3 +590,430 @@ def test_test_cli_accepts_custom_output_dir(mock_model_tester: MagicMock) -> Non
         # Assert
         call_args = mock_model_tester.call_args[0][0]
         assert call_args.output_dir == "./custom_results"
+
+
+# ==================== ModelTester Error Handling Tests ====================
+# Tests for uncovered error handling paths (Issue #14)
+# Target lines: 141-171 (device mismatch), 223-225 (Jain validation), 481-520 (config errors)
+
+
+@pytest.fixture
+def mock_transformers_model(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Mock transformers model loading to avoid HuggingFace downloads"""
+    from tests.fixtures.mock_models import MockESMModel, MockTokenizer
+
+    monkeypatch.setattr(
+        "antibody_training_esm.core.embeddings.AutoModel.from_pretrained",
+        MockESMModel,
+    )
+    monkeypatch.setattr(
+        "antibody_training_esm.core.embeddings.AutoTokenizer.from_pretrained",
+        MockTokenizer,
+    )
+
+
+@pytest.mark.unit
+def test_device_mismatch_recreates_extractor(
+    tmp_path: Path,
+    mock_transformers_model: None,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test device mismatch triggers extractor recreation with proper cleanup (lines 141-171).
+
+    CRITICAL: This tests the P0 semaphore leak fix.
+    DO NOT mock the device mismatch logic - let it execute REAL cleanup code.
+    """
+    import pickle
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+    from antibody_training_esm.core.classifier import BinaryClassifier
+
+    # Arrange - Create model trained on CPU
+    model_path = tmp_path / "model.pkl"
+    config = {
+        "model_name": "facebook/esm1v_t33_650M_UR90S_1",
+        "device": "cpu",
+        "batch_size": 8,
+        "random_state": 42,
+        "max_iter": 1000,
+    }
+    classifier = BinaryClassifier(params=config)
+
+    with open(model_path, "wb") as f:
+        pickle.dump(classifier, f)
+
+    # Create test config specifying CUDA device
+    test_config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["path/to/test.csv"],
+        output_dir=str(tmp_path / "output"),
+        device="cuda",  # Different from model's CPU
+    )
+
+    tester = ModelTester(test_config)
+
+    # Act - Load model (triggers device mismatch check)
+    caplog.set_level(logging.INFO)
+    model = tester.load_model(str(model_path))
+
+    # Assert - REAL cleanup executed (lines 146-171)
+    assert "Device mismatch" in caplog.text
+    assert "Recreating extractor" in caplog.text
+    assert "Cleaned up old extractor on cpu" in caplog.text
+    assert "Created new extractor on cuda" in caplog.text
+
+    # Assert - Extractor actually recreated on new device
+    assert model.device == "cuda"
+    assert model.embedding_extractor.device == "cuda"
+
+
+@pytest.mark.unit
+def test_jain_test_set_size_validation_fails_on_invalid_size(
+    tmp_path: Path,
+) -> None:
+    """Test Jain test set validation raises ValueError for wrong sizes (lines 223-225).
+
+    DO NOT mock the validation logic - create REAL CSV with wrong size
+    and verify REAL exception is raised.
+    """
+    import pandas as pd
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Create Jain test CSV with WRONG size (not 86 or 94)
+    jain_test_path = tmp_path / "jain_test_WRONG.csv"
+    wrong_size_df = pd.DataFrame(
+        {
+            "id": [f"AB{i:03d}" for i in range(50)],  # WRONG: 50 antibodies
+            "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(50)],
+            "label": [0] * 50,
+        }
+    )
+    wrong_size_df.to_csv(jain_test_path, index=False)
+
+    config = TestConfig(
+        model_paths=["dummy.pkl"],
+        data_paths=[str(jain_test_path)],  # Contains "jain" and "test"
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act & Assert - REAL validation executes (lines 223-225)
+    with pytest.raises(
+        ValueError,
+        match=r"Jain test set has 50 antibodies but expected one of",
+    ):
+        tester.load_dataset(str(jain_test_path))
+
+
+@pytest.mark.unit
+def test_jain_test_set_size_validation_passes_canonical_86(
+    tmp_path: Path,
+) -> None:
+    """Test Jain validation accepts canonical 86-antibody set (lines 223-225)."""
+    import pandas as pd
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Create Jain test CSV with CORRECT size (86)
+    jain_test_path = tmp_path / "VH_only_jain_test_PARITY_86.csv"
+    correct_size_df = pd.DataFrame(
+        {
+            "id": [f"AB{i:03d}" for i in range(86)],  # CORRECT: 86
+            "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(86)],
+            "label": [0] * 86,
+        }
+    )
+    correct_size_df.to_csv(jain_test_path, index=False)
+
+    config = TestConfig(
+        model_paths=["dummy.pkl"],
+        data_paths=[str(jain_test_path)],
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act - NO exception raised
+    sequences, labels = tester.load_dataset(str(jain_test_path))
+
+    # Assert
+    assert len(sequences) == 86
+    assert len(labels) == 86
+
+
+@pytest.mark.unit
+def test_jain_test_set_size_validation_passes_legacy_94(
+    tmp_path: Path,
+) -> None:
+    """Test Jain validation accepts legacy 94-antibody set (lines 223-225)."""
+    import pandas as pd
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Create Jain test CSV with legacy size (94)
+    jain_test_path = tmp_path / "VH_only_jain_test_legacy_94.csv"
+    legacy_size_df = pd.DataFrame(
+        {
+            "id": [f"AB{i:03d}" for i in range(94)],  # LEGACY: 94
+            "sequence": ["EVQLVESGGGLVQPGGSLRLSCAASGFTFS" for _ in range(94)],
+            "label": [0] * 94,
+        }
+    )
+    legacy_size_df.to_csv(jain_test_path, index=False)
+
+    config = TestConfig(
+        model_paths=["dummy.pkl"],
+        data_paths=[str(jain_test_path)],
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act - NO exception raised
+    sequences, labels = tester.load_dataset(str(jain_test_path))
+
+    # Assert
+    assert len(sequences) == 94
+    assert len(labels) == 94
+
+
+@pytest.mark.unit
+def test_determine_output_dir_falls_back_when_config_missing(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test fallback to flat structure when model config file missing (lines 481-484).
+
+    DO NOT mock the file existence check - use REAL tmp_path without config.
+    """
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Model path without config file
+    model_path = tmp_path / "model.pkl"
+    model_path.write_text("dummy")  # Create model file
+    # NOTE: model_config.json does NOT exist
+
+    config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["test.csv"],
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act
+    caplog.set_level(logging.INFO)
+    output_dir = tester._compute_output_directory(str(model_path), "jain")
+
+    # Assert - REAL fallback logic executed (lines 481-484)
+    assert "Model config not found" in caplog.text
+    assert "using flat output structure" in caplog.text
+    assert output_dir == str(tmp_path / "output")  # Flat structure
+
+
+@pytest.mark.unit
+def test_determine_output_dir_handles_corrupt_json(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test fallback when model config has corrupt JSON (lines 518-520)."""
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Create model with CORRUPT config
+    model_path = tmp_path / "model.pkl"
+    config_path = tmp_path / "model_config.json"
+
+    model_path.write_text("dummy")
+    config_path.write_text("{bad json syntax")  # CORRUPT
+
+    config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["test.csv"],
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act
+    caplog.set_level(logging.WARNING)
+    output_dir = tester._compute_output_directory(str(model_path), "jain")
+
+    # Assert - REAL exception handling executed (line 518)
+    assert "Could not determine hierarchical path" in caplog.text
+    assert "Using flat structure" in caplog.text
+    assert output_dir == str(tmp_path / "output")
+
+
+@pytest.mark.unit
+def test_determine_output_dir_handles_missing_model_name(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test fallback when model config missing 'model_name' key (lines 495-496, 518-520)."""
+    import json
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Create model with config missing model_name
+    model_path = tmp_path / "model.pkl"
+    config_path = tmp_path / "model_config.json"
+
+    model_path.write_text("dummy")
+    config_path.write_text(json.dumps({"classifier": {"C": 1.0}}))  # Missing model_name
+
+    config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["test.csv"],
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act
+    caplog.set_level(logging.WARNING)
+    output_dir = tester._compute_output_directory(str(model_path), "jain")
+
+    # Assert - REAL ValueError caught (line 496, 518)
+    assert "Could not determine hierarchical path" in caplog.text
+    assert output_dir == str(tmp_path / "output")
+
+
+@pytest.mark.unit
+def test_determine_output_dir_handles_missing_classifier_key(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test fallback when model config missing 'classifier' key (Issue #14)."""
+    import json
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Create model with config missing classifier
+    model_path = tmp_path / "model.pkl"
+    config_path = tmp_path / "model_config.json"
+
+    model_path.write_text("dummy")
+    config_path.write_text(
+        json.dumps(
+            {
+                "model_name": "facebook/esm1v_t33_650M_UR90S_1",
+                # "classifier": {...}  ← MISSING!
+            }
+        )
+    )
+
+    config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["test.csv"],
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act
+    caplog.set_level(logging.INFO)
+    output_dir = tester._compute_output_directory(str(model_path), "jain")
+
+    # Assert - Should use hierarchical structure with "unknown" classifier
+    assert "Using hierarchical output" in caplog.text
+    assert "unknown" in output_dir
+    assert "jain" in output_dir
+
+
+@pytest.mark.unit
+def test_compute_embeddings_handles_corrupt_cache(
+    tmp_path: Path,
+    mock_transformers_model: None,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test recomputation when embedding cache is corrupt (Issue #14)."""
+    import pickle
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+    from antibody_training_esm.core.classifier import BinaryClassifier
+
+    # Arrange - Create valid model
+    model_path = tmp_path / "model.pkl"
+    config = {
+        "model_name": "facebook/esm1v_t33_650M_UR90S_1",
+        "device": "cpu",
+        "batch_size": 8,
+        "random_state": 42,
+        "max_iter": 1000,
+    }
+    classifier = BinaryClassifier(params=config)
+
+    with open(model_path, "wb") as f:
+        pickle.dump(classifier, f)
+
+    # Create CORRUPT cache file
+    output_dir = tmp_path / "output"
+    output_dir.mkdir()
+    cache_file = output_dir / "test_dataset_test_embeddings.pkl"
+    cache_file.write_text("CORRUPT PICKLE DATA NOT VALID")  # ← Corrupt cache
+
+    test_config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["test.csv"],
+        output_dir=str(output_dir),
+        device="cpu",  # Avoid MPS/CUDA device mismatch in test environment
+    )
+
+    tester = ModelTester(test_config)
+    model = tester.load_model(str(model_path))
+
+    # Create test sequences
+    sequences = ["EVQLVESGGGLVQPGG", "QVQLQQWGAGLLKPSE"]
+
+    # Act - Should handle corrupt cache gracefully
+    caplog.set_level(logging.WARNING)
+
+    embeddings = tester.embed_sequences(
+        sequences, model, "test_dataset", str(output_dir)
+    )
+
+    # Assert - CRITICAL: corrupt cache was detected and logged
+    assert "Failed to load cached embeddings" in caplog.text
+    assert "Recomputing embeddings" in caplog.text
+
+    # Assert - Embeddings were successfully recomputed
+    assert embeddings is not None
+    assert embeddings.shape == (2, 1280)  # Valid embeddings computed
+
+
+@pytest.mark.unit
+def test_determine_output_dir_uses_hierarchical_structure_with_valid_config(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Test hierarchical path generation with valid config (lines 487-516)."""
+    import json
+
+    from antibody_training_esm.cli.test import ModelTester, TestConfig
+
+    # Arrange - Create model with VALID config
+    model_path = tmp_path / "model.pkl"
+    config_path = tmp_path / "model_config.json"
+
+    model_path.write_text("dummy")
+    valid_config = {
+        "model_name": "facebook/esm1v_t33_650M_UR90S_1",
+        "classifier": {
+            "type": "logistic_regression",
+            "C": 1.0,
+            "penalty": "l2",
+        },
+    }
+    config_path.write_text(json.dumps(valid_config))
+
+    config = TestConfig(
+        model_paths=[str(model_path)],
+        data_paths=["test.csv"],
+        output_dir=str(tmp_path / "output"),
+    )
+    tester = ModelTester(config)
+
+    # Act
+    caplog.set_level(logging.INFO)
+    output_dir = tester._compute_output_directory(str(model_path), "jain")
+
+    # Assert - REAL hierarchical path logic (lines 501-516)
+    assert "Using hierarchical output" in caplog.text
+    assert "esm1v" in output_dir  # Model shortname
+    assert "logreg" in output_dir  # Classifier shortname
+    assert "jain" in output_dir  # Dataset name
