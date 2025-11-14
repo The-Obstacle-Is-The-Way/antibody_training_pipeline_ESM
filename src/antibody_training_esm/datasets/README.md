@@ -92,7 +92,7 @@ print(f"Loaded {len(df)} sequences")
 
 ### HarveyDataset
 - **Source**: `test_datasets/harvey/raw/`
-- **Fragments**: `train_datasets/harvey/fragments/`
+- **Fragments**: `test_datasets/harvey/fragments/`
 - **Preprocessing**: `preprocessing/harvey/step2_extract_fragments.py`
 - **Characteristics**:
   - 141,474 nanobody sequences (VHH only)

@@ -57,7 +57,7 @@ def test_harvey_dataset_initializes_with_default_output_dir() -> None:
 
     # Assert
     assert dataset.dataset_name == "harvey"
-    assert dataset.output_dir == Path("train_datasets/harvey/fragments")
+    assert dataset.output_dir == Path("test_datasets/harvey/fragments")
 
 
 @pytest.mark.unit
