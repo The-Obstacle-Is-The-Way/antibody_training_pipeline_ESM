@@ -165,7 +165,7 @@ class HyperparameterSweep:
             }
 
     def run_sweep(
-        self, output_dir: str = "hyperparameter_sweep_results"
+        self, output_dir: str = "experiments/hyperparameter_sweeps"
     ) -> pd.DataFrame:
         """Run full hyperparameter sweep"""
         os.makedirs(output_dir, exist_ok=True)
