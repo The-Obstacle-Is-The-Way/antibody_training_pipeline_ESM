@@ -43,6 +43,7 @@ venv.bak/
 htmlcov/
 .tox/
 .nox/
+*.cover  # Coverage annotation files
 
 # Test results (TRACKED - convenience for research repo)
 # test_results/*

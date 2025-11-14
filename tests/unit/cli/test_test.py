@@ -951,6 +951,7 @@ def test_compute_embeddings_handles_corrupt_cache(
         model_paths=[str(model_path)],
         data_paths=["test.csv"],
         output_dir=str(output_dir),
+        device="cpu",  # Avoid MPS/CUDA device mismatch in test environment
     )
 
     tester = ModelTester(test_config)
@@ -962,22 +963,17 @@ def test_compute_embeddings_handles_corrupt_cache(
     # Act - Should handle corrupt cache gracefully
     caplog.set_level(logging.WARNING)
 
-    # The key assertion is that corrupt cache is detected and logged
-    # Embedding computation may fail on device mismatch issues (not the focus of this test)
-    try:
-        embeddings = tester.embed_sequences(
-            sequences, model, "test_dataset", str(output_dir)
-        )
-        # If successful, verify embeddings
-        assert embeddings is not None
-        assert embeddings.shape == (2, 1280)  # Valid embeddings computed
-    except RuntimeError:
-        # Device mismatch can occur in test environment, but cache handling still tested
-        pass
+    embeddings = tester.embed_sequences(
+        sequences, model, "test_dataset", str(output_dir)
+    )
 
     # Assert - CRITICAL: corrupt cache was detected and logged
     assert "Failed to load cached embeddings" in caplog.text
     assert "Recomputing embeddings" in caplog.text
+
+    # Assert - Embeddings were successfully recomputed
+    assert embeddings is not None
+    assert embeddings.shape == (2, 1280)  # Valid embeddings computed
 
 
 @pytest.mark.unit
