@@ -113,16 +113,16 @@ Raw DNA FASTA (6 subsets, 1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,117 sequences)
+   ↓ Output: data/train/boughter/processed/boughter.csv (1,117 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
    ↓ QC: X in CDRs only, empty CDRs
-   ↓ Outputs: train_datasets/boughter/annotated/*_boughter.csv
+   ↓ Outputs: data/train/boughter/annotated/*_boughter.csv
    ↓    16 fragment CSVs (1,065 sequences each, all flags)
    ↓
 Filter to training subset (include_in_training == True)
-   ↓ Export: train_datasets/boughter/canonical/VH_only_boughter_training.csv
+   ↓ Export: data/train/boughter/canonical/VH_only_boughter_training.csv
    ↓    914 sequences (0 and 4+ ELISA flags only)
    ↓
 ✅ PRODUCTION MODEL: models/boughter_vh_esm1v_logreg.pkl
@@ -146,7 +146,7 @@ Filter to training subset (include_in_training == True)
 import pandas as pd
 
 # Use pre-exported training file (914 sequences, validated)
-df_train = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv')
+df_train = pd.read_csv('data/train/boughter/canonical/VH_only_boughter_training.csv')
 # Columns: sequence, label (flattened for ML)
 # Used for: models/boughter_vh_esm1v_logreg.pkl (validated on Jain/Shehata)
 ```
@@ -156,7 +156,7 @@ df_train = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_train
 import pandas as pd
 
 # Use annotated files with full provenance
-df = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
+df = pd.read_csv('data/train/boughter/annotated/VH_only_boughter.csv', comment='#')
 
 # Filter to training subset
 df_train = df[df['include_in_training'] == True]  # 914 sequences
@@ -168,9 +168,9 @@ df_train = df[df['include_in_training'] == True]  # 914 sequences
 import pandas as pd
 
 # Load multiple fragments with consistent IDs
-vh = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
-vl = pd.read_csv('train_datasets/boughter/annotated/VL_only_boughter.csv', comment='#')
-cdr3 = pd.read_csv('train_datasets/boughter/annotated/H-CDR3_boughter.csv', comment='#')
+vh = pd.read_csv('data/train/boughter/annotated/VH_only_boughter.csv', comment='#')
+vl = pd.read_csv('data/train/boughter/annotated/VL_only_boughter.csv', comment='#')
+cdr3 = pd.read_csv('data/train/boughter/annotated/H-CDR3_boughter.csv', comment='#')
 
 # Filter to training subset
 vh_train = vh[vh['include_in_training'] == True]  # 914 sequences
@@ -238,7 +238,7 @@ merged = vh_train.merge(vl_train, on='id', suffixes=('_vh', '_vl'))
 - `docs/boughter/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md` - Replication strategy
 - `docs/boughter/boughter_data_sources.md` - Data source specification
 - `docs/boughter/cdr_boundary_first_principles_audit.md` - CDR boundary validation
-- `train_datasets/BOUGHTER_DATA_PROVENANCE.md` - Full pipeline documentation
+- `data/train/BOUGHTER_DATA_PROVENANCE.md` - Full pipeline documentation
 
 ---
 

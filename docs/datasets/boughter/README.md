@@ -143,8 +143,8 @@ docs/boughter/
 8. Full (alias for VH+VL)
 
 ### Training Files
-- **Production:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences)
-- **Fragment files:** `train_datasets/boughter/annotated/*_boughter.csv` (1,065 sequences each, 16 files)
+- **Production:** `data/train/boughter/canonical/VH_only_boughter_training.csv` (914 sequences)
+- **Fragment files:** `data/train/boughter/annotated/*_boughter.csv` (1,065 sequences each, 16 files)
 
 ---
 

@@ -200,15 +200,15 @@ uv run antibody-test \
 # Test on training set fragments (for cross-validation)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data train_datasets/boughter/annotated/VH_only_boughter.csv
+  --data data/train/boughter/annotated/VH_only_boughter.csv
 ```
 
 **Available Boughter Fragments:**
 
-- `train_datasets/boughter/annotated/VH_only_boughter.csv` - VH domain (914 sequences)
-- `train_datasets/boughter/annotated/H-CDRs_boughter.csv` - Heavy CDRs
-- `train_datasets/boughter/annotated/All-CDRs_boughter.csv` - All CDRs
-- (See `train_datasets/boughter/annotated/` for all 16 fragments)
+- `data/train/boughter/annotated/VH_only_boughter.csv` - VH domain (914 sequences)
+- `data/train/boughter/annotated/H-CDRs_boughter.csv` - Heavy CDRs
+- `data/train/boughter/annotated/All-CDRs_boughter.csv` - All CDRs
+- (See `data/train/boughter/annotated/` for all 16 fragments)
 
 ---
 

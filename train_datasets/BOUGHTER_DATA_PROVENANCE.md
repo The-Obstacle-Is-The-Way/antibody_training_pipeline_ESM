@@ -40,11 +40,11 @@ DOI: [10.7554/eLife.61393](https://doi.org/10.7554/eLife.61393)
 
 ### Data Verification
 
-✅ **Confirmed:** All files in `train_datasets/boughter/raw/` are **byte-for-byte identical** to the original source at `reference_repos/AIMS_manuscripts/app_data/full_sequences/`
+✅ **Confirmed:** All files in `data/train/boughter/raw/` are **byte-for-byte identical** to the original source at `reference_repos/AIMS_manuscripts/app_data/full_sequences/`
 
 **Verification Command:**
 ```bash
-diff -r train_datasets/boughter/raw/ \
+diff -r data/train/boughter/raw/ \
         reference_repos/AIMS_manuscripts/app_data/full_sequences/ \
         --brief | grep -v "README.md\|translation_failures.log"
 # Result: No differences (only local processing artifacts differ)
@@ -55,7 +55,7 @@ diff -r train_datasets/boughter/raw/ \
 ## Directory Structure Overview
 
 ```
-train_datasets/
+data/train/
 ├── README.md                             ← Overview of training datasets
 ├── BOUGHTER_DATA_PROVENANCE.md           ← This document
 │
@@ -125,17 +125,17 @@ train_datasets/
 ### Overview
 
 ```
-train_datasets/boughter/raw/           (Stage 0: Raw DNA FASTA)
+data/train/boughter/raw/           (Stage 0: Raw DNA FASTA)
     ↓
 [Stage 1: DNA Translation & Novo Flagging]
     ↓
-train_datasets/boughter/processed/boughter.csv   (1,117 protein sequences)
+data/train/boughter/processed/boughter.csv   (1,117 protein sequences)
     ↓
 [Stages 2+3: ANARCI Annotation + QC Filtering]
     ↓
-train_datasets/boughter/annotated/*_boughter.csv (16 fragment types × 1,065 sequences)
+data/train/boughter/annotated/*_boughter.csv (16 fragment types × 1,065 sequences)
     ↓
-train_datasets/boughter/canonical/VH_only_boughter_training.csv (914 sequences for training)
+data/train/boughter/canonical/VH_only_boughter_training.csv (914 sequences for training)
 ```
 
 ### Stage 1: DNA Translation & Novo Nordisk Flagging
@@ -143,7 +143,7 @@ train_datasets/boughter/canonical/VH_only_boughter_training.csv (914 sequences f
 **Script:** `preprocessing/boughter/stage1_dna_translation.py`
 
 **Input:**
-- `train_datasets/boughter/raw/*.txt` - 6 subsets, 1,171 antibody sequences
+- `data/train/boughter/raw/*.txt` - 6 subsets, 1,171 antibody sequences
   - flu (379), hiv_nat (134), hiv_cntrl (50), hiv_plos (52), gut_hiv (75), mouse_iga (481)
 
 **Processing:**
@@ -158,8 +158,8 @@ train_datasets/boughter/canonical/VH_only_boughter_training.csv (914 sequences f
    - 4+ flags → Non-specific (label=1, include in training)
 
 **Output:**
-- `train_datasets/boughter/processed/boughter.csv` - 1,117 sequences (95.4% success rate)
-- `train_datasets/boughter/raw/translation_failures.log` - 54 failures (4.6%)
+- `data/train/boughter/processed/boughter.csv` - 1,117 sequences (95.4% success rate)
+- `data/train/boughter/raw/translation_failures.log` - 54 failures (4.6%)
 
 **Columns:**
 ```
@@ -191,7 +191,7 @@ Excluded:     169 sequences (mild polyreactivity)
 #### Stage 2: ANARCI Annotation
 
 **Input:**
-- `train_datasets/boughter/processed/boughter.csv` - 1,117 sequences
+- `data/train/boughter/processed/boughter.csv` - 1,117 sequences
 
 **Processing:**
 1. **ANARCI Annotation** (IMGT numbering scheme)
@@ -201,7 +201,7 @@ Excluded:     169 sequences (mild polyreactivity)
 
 **Output:**
 - 1,110 successfully annotated sequences (99.4% success)
-- `train_datasets/boughter/annotated/annotation_failures.log` - 7 failures (0.6%)
+- `data/train/boughter/annotated/annotation_failures.log` - 7 failures (0.6%)
 
 **Failure Breakdown:**
 ```
@@ -222,8 +222,8 @@ hiv_plos: 1 failure (2.3%)
 
 **Output:**
 - 1,065 clean sequences (95.9% retention from Stage 2)
-- `train_datasets/boughter/annotated/qc_filtered_sequences.txt` - 45 filtered sequences
-- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` - 914 training sequences (sequence + label)
+- `data/train/boughter/annotated/qc_filtered_sequences.txt` - 45 filtered sequences
+- `data/train/boughter/canonical/VH_only_boughter_training.csv` - 914 training sequences (sequence + label)
 
 **QC Statistics:**
 ```
@@ -251,7 +251,7 @@ Output:    1,065 sequences (95.9% retention)
    - sequence_length
 
 **Output:**
-- 16 fragment CSV files in `train_datasets/boughter/`
+- 16 fragment CSV files in `data/train/boughter/`
 - Each file: 1,065 rows (all sequences represented)
 - Training subset: `VH_only_boughter_training.csv` (914 rows)
 
@@ -387,11 +387,11 @@ All processing stages have corresponding validation scripts:
 **File Counts:**
 ```bash
 # Raw files
-ls train_datasets/boughter/raw/*.txt | wc -l
+ls data/train/boughter/raw/*.txt | wc -l
 # Expected: 18 files (6 subsets × 3 files each)
 
 # Fragment files
-ls train_datasets/boughter/annotated/*_boughter.csv | wc -l
+ls data/train/boughter/annotated/*_boughter.csv | wc -l
 # Expected: 17 files (16 fragments + 1 training subset)
 ```
 
@@ -400,15 +400,15 @@ ls train_datasets/boughter/annotated/*_boughter.csv | wc -l
 import pandas as pd
 
 # Stage 1 output
-df_stage1 = pd.read_csv('train_datasets/boughter/processed/boughter.csv')
+df_stage1 = pd.read_csv('data/train/boughter/processed/boughter.csv')
 assert len(df_stage1) == 1117, "Stage 1 count mismatch"
 
 # Fragment files (each should have 1,065)
-df_vh = pd.read_csv('train_datasets/boughter/annotated/VH_only_boughter.csv', comment='#')
+df_vh = pd.read_csv('data/train/boughter/annotated/VH_only_boughter.csv', comment='#')
 assert len(df_vh) == 1065, "Fragment count mismatch"
 
 # Training subset
-df_train = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv', comment='#')
+df_train = pd.read_csv('data/train/boughter/canonical/VH_only_boughter_training.csv', comment='#')
 assert len(df_train) == 914, "Training count mismatch"
 ```
 
@@ -420,13 +420,13 @@ assert len(df_train) == 914, "Training count mismatch"
 ```
 AIMS_manuscripts/app_data/full_sequences/  (GitHub: ctboughter/AIMS_manuscripts)
     ↓ [Copied to]
-train_datasets/boughter/raw/  (19 files, DNA sequences)
+data/train/boughter/raw/  (19 files, DNA sequences)
     ↓ [Stage 1: preprocessing/boughter/stage1_dna_translation.py]
-train_datasets/boughter/processed/boughter.csv  (1,117 protein sequences)
+data/train/boughter/processed/boughter.csv  (1,117 protein sequences)
     ↓ [Stages 2+3: preprocessing/boughter/stage2_stage3_annotation_qc.py]
-train_datasets/boughter/*.csv  (16 fragments × 1,065 sequences)
+data/train/boughter/*.csv  (16 fragments × 1,065 sequences)
     ↓ [Novo filtering: include_in_training flag]
-train_datasets/boughter/canonical/VH_only_boughter_training.csv  (914 sequences)
+data/train/boughter/canonical/VH_only_boughter_training.csv  (914 sequences)
 ```
 
 **Key Points:**

@@ -34,7 +34,7 @@ RUN uv sync --frozen --all-extras
 
 # Copy tests and fixture datasets for validation
 COPY tests/ ./tests/
-COPY train_datasets/ ./train_datasets/
+COPY data/train/ ./data/train/
 COPY data/test/ ./data/test/
 
 # Export .venv/bin to PATH so installed commands are available

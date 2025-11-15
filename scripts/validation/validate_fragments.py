@@ -204,7 +204,7 @@ def main() -> int:
         ("harvey", Path("data/test/harvey/fragments"), 6),  # Nanobodies (VHH only)
         (
             "boughter",
-            Path("train_datasets/boughter/annotated"),
+            Path("data/train/boughter/annotated"),
             16,
         ),  # Full antibodies (VH+VL)
     ]

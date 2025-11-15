@@ -44,7 +44,7 @@ def test_gap_characters() -> None:
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    boughter_dir = Path("train_datasets/boughter/annotated")
+    boughter_dir = Path("data/train/boughter/annotated")
     fragment_files = [
         "VH_only_boughter.csv",
         "VL_only_boughter.csv",
@@ -107,7 +107,7 @@ def test_amino_acid_validation() -> None:
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    boughter_dir = Path("train_datasets/boughter/annotated")
+    boughter_dir = Path("data/train/boughter/annotated")
 
     # Check critical files for full antibody model
     test_files = [
@@ -170,13 +170,13 @@ def test_previously_affected_sequences() -> None:
     print("=" * 70)
 
     # Check VH_only
-    vh_file = Path("train_datasets/boughter/annotated/VH_only_boughter.csv")
+    vh_file = Path("data/train/boughter/annotated/VH_only_boughter.csv")
     assert vh_file.exists(), f"{vh_file} not found"
 
     vh_df = pd.read_csv(vh_file, comment="#")
 
     # Check VL_only
-    vl_file = Path("train_datasets/boughter/annotated/VL_only_boughter.csv")
+    vl_file = Path("data/train/boughter/annotated/VL_only_boughter.csv")
     assert vl_file.exists(), f"{vl_file} not found"
 
     vl_df = pd.read_csv(vl_file, comment="#")
@@ -248,7 +248,7 @@ def test_model_validation_logic() -> None:
     total_validated = 0
 
     for file_name in test_files:
-        file_path = Path(f"train_datasets/boughter/annotated/{file_name}")
+        file_path = Path(f"data/train/boughter/annotated/{file_name}")
 
         if not file_path.exists():
             print(f"  ✗ FAIL: {file_path} not found")
@@ -294,7 +294,7 @@ def test_data_integrity() -> None:
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    boughter_dir = Path("train_datasets/boughter/annotated")
+    boughter_dir = Path("data/train/boughter/annotated")
     expected_files = [
         "VH_only_boughter.csv",
         "VL_only_boughter.csv",

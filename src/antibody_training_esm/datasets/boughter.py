@@ -21,7 +21,7 @@ Processing Pipeline:
   Stage 3: Post-annotation QC (filter X in CDRs, empty CDRs)
 
 Source:
-- train_datasets/boughter/raw/ (multiple subsets)
+- data/train/boughter/raw/ (multiple subsets)
 - Sequences in DNA format requiring translation
 
 Reference:

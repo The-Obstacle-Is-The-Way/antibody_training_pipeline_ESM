@@ -35,7 +35,7 @@ You need to preprocess data if:
 
 You DON'T need to preprocess if:
 
-- ❌ **Using pre-processed canonical files** - Already in `train_datasets/` or `data/test/canonical/`
+- ❌ **Using pre-processed canonical files** - Already in `data/train/` or `data/test/canonical/`
 - ❌ **Using provided fragment files** - Already in `data/test/fragments/`
 
 ---
@@ -53,8 +53,8 @@ python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 ```
 
 **Outputs:**
-- `train_datasets/boughter/annotated/VH_only_boughter.csv` - VH sequences (1,065 rows)
-- `train_datasets/boughter/annotated/*_boughter.csv` - 16 fragment CSVs (H-CDRs, L-CDRs, etc.)
+- `data/train/boughter/annotated/VH_only_boughter.csv` - VH sequences (1,065 rows)
+- `data/train/boughter/annotated/*_boughter.csv` - 16 fragment CSVs (H-CDRs, L-CDRs, etc.)
 
 **Note:** Training subset (914 sequences) selected from VH_only_boughter.csv based on polyreactivity labels.
 
@@ -184,8 +184,8 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 
 **Output Files:**
 
-- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences, final training set)
-- `train_datasets/boughter/annotated/` (intermediate fragment files)
+- `data/train/boughter/canonical/VH_only_boughter_training.csv` (914 sequences, final training set)
+- `data/train/boughter/annotated/` (intermediate fragment files)
 
 ---
 

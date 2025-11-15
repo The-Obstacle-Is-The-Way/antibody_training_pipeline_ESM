@@ -60,7 +60,7 @@ python preprocessing/boughter/stage2_stage3_annotation_qc.py
 
 These scripts create fragment CSV files in:
 - `data/test/<dataset>/fragments/`
-- `train_datasets/<dataset>/fragments/`
+- `data/train/<dataset>/fragments/`
 
 ### Loading (TRAINING, use dataset classes)
 
@@ -109,8 +109,8 @@ print(f"Loaded {len(df)} sequences")
   - 16 fragment types (VH + VL)
 
 ### BoughterDataset
-- **Source**: `train_datasets/boughter/raw/` (DNA FASTA files)
-- **Fragments**: `train_datasets/boughter/annotated/`
+- **Source**: `data/train/boughter/raw/` (DNA FASTA files)
+- **Fragments**: `data/train/boughter/annotated/`
 - **Preprocessing**: `preprocessing/boughter/stage2_stage3_annotation_qc.py`
 - **Characteristics**:
   - Mouse antibodies (6 subsets)

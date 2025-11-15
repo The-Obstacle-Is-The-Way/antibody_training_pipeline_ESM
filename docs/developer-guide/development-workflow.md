@@ -247,7 +247,7 @@ python3 preprocessing/shehata/step2_extract_fragments.py
    uv run antibody-train \
      experiment.name=my_experiment \
      training.model_name=my_model \
-     data.train_file="train_datasets/{dataset}/canonical/VH_only.csv" \
+     data.train_file="data/train/{dataset}/canonical/VH_only.csv" \
      data.test_file="data/test/{dataset}/canonical/VH_only.csv" \
      classifier.C=1.0 \
      classifier.penalty=l2

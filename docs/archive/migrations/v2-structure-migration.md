@@ -64,7 +64,7 @@ antibody_training_pipeline_ESM/
 ├── configs/                          # Configuration files
 ├── scripts/                          # Development scripts
 ├── data/test/                    # Test data (small, version-controlled)
-├── train_datasets/                   # Training data (large, gitignored)
+├── data/train/                   # Training data (large, gitignored)
 │
 ├── pyproject.toml                    # Modern Python project config (PEP 517/518)
 ├── README.md                         # Project overview

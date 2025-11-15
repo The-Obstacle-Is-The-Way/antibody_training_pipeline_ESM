@@ -18,7 +18,7 @@ This repository uses data and methodologies from multiple published papers. Plea
 - **Production training set** (validated: 66.28% accuracy on Jain test)
 
 **Datasets:**
-- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` - Training data (914 sequences)
+- `data/train/boughter/canonical/VH_only_boughter_training.csv` - Training data (914 sequences)
 - `data/test/boughter/` - Independent Boughter validation sets
 
 ---

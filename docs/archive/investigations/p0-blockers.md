@@ -119,9 +119,9 @@ $ rg "typing.Any" src/antibody_training_esm/data/
 **Implementation (commit 7ea9674):**
 - **Created** `src/antibody_training_esm/datasets/default_paths.py` with 11 centralized `Path` constants:
   ```python
-  BOUGHTER_ANNOTATED_DIR = Path("train_datasets/boughter/annotated")
-  BOUGHTER_PROCESSED_CSV = Path("train_datasets/boughter/boughter_translated.csv")
-  HARVEY_OUTPUT_DIR = Path("train_datasets/harvey/fragments")
+  BOUGHTER_ANNOTATED_DIR = Path("data/train/boughter/annotated")
+  BOUGHTER_PROCESSED_CSV = Path("data/train/boughter/boughter_translated.csv")
+  HARVEY_OUTPUT_DIR = Path("data/train/harvey/fragments")
   HARVEY_HIGH_POLY_CSV = Path("data/test/harvey/raw/high_polyreactivity_high_throughput.csv")
   HARVEY_LOW_POLY_CSV = Path("data/test/harvey/raw/low_polyreactivity_high_throughput.csv")
   JAIN_OUTPUT_DIR = Path("data/test/jain/fragments")
@@ -145,7 +145,7 @@ $ rg "typing.Any" src/antibody_training_esm/data/
 
 **Verification:**
 ```bash
-$ rg '"train_datasets/' src/antibody_training_esm/datasets/*.py
+$ rg '"data/train/' src/antibody_training_esm/datasets/*.py
 # Only found in default_paths.py ✅
 ```
 

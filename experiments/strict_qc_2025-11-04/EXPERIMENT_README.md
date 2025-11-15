@@ -211,7 +211,7 @@ experiments/strict_qc_2025-11-04/
 
 **Use this instead:**
 ```
-train_datasets/boughter/canonical/VH_only_boughter_training.csv  # 914 sequences
+data/train/boughter/canonical/VH_only_boughter_training.csv  # 914 sequences
 configs/config.yaml                                               # Production config
 models/boughter_vh_esm1v_logreg.pkl                              # Validated model
 ```

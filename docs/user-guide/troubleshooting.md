@@ -471,7 +471,7 @@ ValueError: Invalid log_level 'DEBG' in config. Must be one of: {'DEBUG', 'INFO'
 
 **Error:**
 ```
-ValueError: Sequence column 'sequences' not found in train_datasets/boughter/VH_only.csv.
+ValueError: Sequence column 'sequences' not found in data/train/boughter/VH_only.csv.
 Available columns: ['id', 'sequence', 'label', 'VH_sequence']
 ```
 
@@ -1047,7 +1047,7 @@ python -c "import torch; print(f'MPS: {torch.backends.mps.is_available()}')"
 uv pip list
 
 # Check repository structure
-ls -lh configs/ models/ train_datasets/ data/test/
+ls -lh configs/ models/ data/train/ data/test/
 
 # Check embeddings cache
 ls -lh embeddings_cache/

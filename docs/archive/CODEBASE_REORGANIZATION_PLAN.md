@@ -135,7 +135,7 @@ antibody_training_pipeline_esm/          # Root (renamed from ESM)
 │
 ├── models/                              # Trained model artifacts (NO CHANGE)
 │
-├── train_datasets/                      # Training data (NO CHANGE)
+├── data/train/                      # Training data (NO CHANGE)
 ├── data/test/                       # Test data (NO CHANGE)
 ├── reference_repos/                     # External repos (NO CHANGE)
 ├── literature/                          # Papers (NO CHANGE)

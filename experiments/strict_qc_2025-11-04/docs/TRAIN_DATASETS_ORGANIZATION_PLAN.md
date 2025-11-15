@@ -2,7 +2,7 @@
 
 **Date:** November 5, 2025
 **Status:** 📋 PLANNING - Awaiting Senior Approval (✅ AUDITED & CORRECTED)
-**Purpose:** Reorganize `train_datasets/` to match the clean dataset-centric structure we established for `data/test/`
+**Purpose:** Reorganize `data/train/` to match the clean dataset-centric structure we established for `data/test/`
 
 **⚠️ AUDIT STATUS:** This plan was comprehensively audited on Nov 5, 2025 by exploration agent. **All 6 critical errors have been identified and corrected.** See "CRITICAL CORRECTIONS" section below for details.
 
@@ -13,7 +13,7 @@
 ### Current Structure (Messy 😵)
 
 ```
-train_datasets/
+data/train/
 ├── BOUGHTER_DATA_PROVENANCE.md          ← Good! Keep this
 ├── boughter.csv                          ← Stage 1 output (1,117 sequences)
 ├── boughter_raw/                         ← Raw DNA files (19 files)
@@ -51,7 +51,7 @@ train_datasets/
 **Philosophy:** Make every processing stage explicit in the directory structure
 
 ```
-train_datasets/
+data/train/
 ├── README.md                             ← Overview of ALL training datasets
 ├── BOUGHTER_DATA_PROVENANCE.md          ← Keep at root (references all subdirs)
 │
@@ -104,7 +104,7 @@ train_datasets/
 **Philosophy:** Keep it simple, just organize the key outputs
 
 ```
-train_datasets/
+data/train/
 ├── README.md
 ├── BOUGHTER_DATA_PROVENANCE.md
 │
@@ -158,35 +158,35 @@ train_datasets/
 
 ```bash
 # 1. Create new subdirectories
-mkdir -p train_datasets/boughter/processed
-mkdir -p train_datasets/boughter/annotated
-mkdir -p train_datasets/boughter/canonical
-mkdir -p train_datasets/boughter/strict_qc
+mkdir -p data/train/boughter/processed
+mkdir -p data/train/boughter/annotated
+mkdir -p data/train/boughter/canonical
+mkdir -p data/train/boughter/strict_qc
 
 # 2. Move raw files (keep current location as boughter/raw/)
-git mv train_datasets/boughter_raw train_datasets/boughter/raw
+git mv data/train/boughter_raw data/train/boughter/raw
 
 # 3. Move Stage 1 output
-git mv train_datasets/boughter.csv train_datasets/boughter/processed/boughter.csv
+git mv data/train/boughter.csv data/train/boughter/processed/boughter.csv
 
 # 4. Move Stage 2+3 fragment files (16 standard files)
-git mv train_datasets/boughter/VH_only_boughter.csv train_datasets/boughter/annotated/
-git mv train_datasets/boughter/VL_only_boughter.csv train_datasets/boughter/annotated/
+git mv data/train/boughter/VH_only_boughter.csv data/train/boughter/annotated/
+git mv data/train/boughter/VL_only_boughter.csv data/train/boughter/annotated/
 # ... (repeat for all 16 fragment files)
 
 # 5. Move training subset to canonical
-git mv train_datasets/boughter/VH_only_boughter_training.csv train_datasets/boughter/canonical/
+git mv data/train/boughter/VH_only_boughter_training.csv data/train/boughter/canonical/
 
 # 6. Move strict QC files (16 files)
-git mv train_datasets/boughter/*_strict_qc.csv train_datasets/boughter/strict_qc/
+git mv data/train/boughter/*_strict_qc.csv data/train/boughter/strict_qc/
 
 # 7. Move log files
-git mv train_datasets/boughter/annotation_failures.log train_datasets/boughter/annotated/
-git mv train_datasets/boughter/qc_filtered_sequences.txt train_datasets/boughter/annotated/
-git mv train_datasets/boughter/validation_report.txt train_datasets/boughter/annotated/
+git mv data/train/boughter/annotation_failures.log data/train/boughter/annotated/
+git mv data/train/boughter/qc_filtered_sequences.txt data/train/boughter/annotated/
+git mv data/train/boughter/validation_report.txt data/train/boughter/annotated/
 
 # 8. Keep existing README in boughter/
-# (Already at train_datasets/boughter/README.md)
+# (Already at data/train/boughter/README.md)
 ```
 
 ---
@@ -198,56 +198,56 @@ git mv train_datasets/boughter/validation_report.txt train_datasets/boughter/ann
 **`preprocessing/boughter/stage1_dna_translation.py`:**
 ```python
 # BEFORE:
-input_dir = "train_datasets/boughter_raw"
-output_file = "train_datasets/boughter.csv"
-log_file = "train_datasets/boughter_raw/translation_failures.log"
+input_dir = "data/train/boughter_raw"
+output_file = "data/train/boughter.csv"
+log_file = "data/train/boughter_raw/translation_failures.log"
 
 # AFTER:
-input_dir = "train_datasets/boughter/raw"
-output_file = "train_datasets/boughter/processed/boughter.csv"
-log_file = "train_datasets/boughter/raw/translation_failures.log"
+input_dir = "data/train/boughter/raw"
+output_file = "data/train/boughter/processed/boughter.csv"
+log_file = "data/train/boughter/raw/translation_failures.log"
 ```
 
 **`preprocessing/boughter/stage2_stage3_annotation_qc.py`:**
 ```python
 # BEFORE:
-input_file = "train_datasets/boughter.csv"
-output_dir = "train_datasets/boughter"
-training_output = "train_datasets/boughter/VH_only_boughter_training.csv"
+input_file = "data/train/boughter.csv"
+output_dir = "data/train/boughter"
+training_output = "data/train/boughter/VH_only_boughter_training.csv"
 # Lines 237, 387: Log file paths
-failure_log = Path("train_datasets/boughter/annotation_failures.log")
-qc_log = Path("train_datasets/boughter/qc_filtered_sequences.txt")
+failure_log = Path("data/train/boughter/annotation_failures.log")
+qc_log = Path("data/train/boughter/qc_filtered_sequences.txt")
 
 # AFTER:
-input_file = "train_datasets/boughter/processed/boughter.csv"
-output_dir = "train_datasets/boughter/annotated"
-training_output = "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+input_file = "data/train/boughter/processed/boughter.csv"
+output_dir = "data/train/boughter/annotated"
+training_output = "data/train/boughter/canonical/VH_only_boughter_training.csv"
 # Lines 237, 387: Log file paths MUST BE UPDATED
-failure_log = Path("train_datasets/boughter/annotated/annotation_failures.log")
-qc_log = Path("train_datasets/boughter/annotated/qc_filtered_sequences.txt")
+failure_log = Path("data/train/boughter/annotated/annotation_failures.log")
+qc_log = Path("data/train/boughter/annotated/qc_filtered_sequences.txt")
 ```
 
 **`preprocessing/boughter/stage4_additional_qc.py`:**
 ```python
 # BEFORE:
-input_dir = "train_datasets/boughter"
+input_dir = "data/train/boughter"
 output_suffix = "_strict_qc.csv"
 
 # AFTER:
-input_dir = "train_datasets/boughter/annotated"
-output_dir = "train_datasets/boughter/strict_qc"
+input_dir = "data/train/boughter/annotated"
+output_dir = "data/train/boughter/strict_qc"
 output_suffix = "_strict_qc.csv"
 ```
 
 **`preprocessing/boughter/audit_training_qc.py`:**
 ```python
 # BEFORE:
-BOUGHTER_DIR = Path("train_datasets/boughter")
+BOUGHTER_DIR = Path("data/train/boughter")
 TRAINING_FILE = BOUGHTER_DIR / "VH_only_boughter_training.csv"
 FULL_FILE = BOUGHTER_DIR / "VH_only_boughter.csv"
 
 # AFTER:
-BOUGHTER_DIR = Path("train_datasets/boughter")
+BOUGHTER_DIR = Path("data/train/boughter")
 TRAINING_FILE = BOUGHTER_DIR / "canonical" / "VH_only_boughter_training.csv"
 FULL_FILE = BOUGHTER_DIR / "annotated" / "VH_only_boughter.csv"
 ```
@@ -259,39 +259,39 @@ FULL_FILE = BOUGHTER_DIR / "annotated" / "VH_only_boughter.csv"
 **`preprocessing/boughter/validate_stage1.py`:**
 ```python
 # BEFORE:
-csv_file = "train_datasets/boughter.csv"
+csv_file = "data/train/boughter.csv"
 # Lines 153, 176, 357: Log file paths
 failure_log_path = output_dir / "annotation_failures.log"
 qc_log_path = output_dir / "qc_filtered_sequences.txt"
-report_path = Path("train_datasets/boughter/validation_report.txt")
+report_path = Path("data/train/boughter/validation_report.txt")
 
 # AFTER:
-csv_file = "train_datasets/boughter/processed/boughter.csv"
+csv_file = "data/train/boughter/processed/boughter.csv"
 # Lines 153, 176, 357: Log file paths MUST BE UPDATED
 failure_log_path = output_dir / "annotated" / "annotation_failures.log"
 qc_log_path = output_dir / "annotated" / "qc_filtered_sequences.txt"
-report_path = Path("train_datasets/boughter/annotated/validation_report.txt")
+report_path = Path("data/train/boughter/annotated/validation_report.txt")
 ```
 
 **`preprocessing/boughter/validate_stages2_3.py`:**
 ```python
 # BEFORE:
-fragment_dir = "train_datasets/boughter"
-training_file = "train_datasets/boughter/VH_only_boughter_training.csv"
+fragment_dir = "data/train/boughter"
+training_file = "data/train/boughter/VH_only_boughter_training.csv"
 
 # AFTER:
-fragment_dir = "train_datasets/boughter/annotated"
-training_file = "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+fragment_dir = "data/train/boughter/annotated"
+training_file = "data/train/boughter/canonical/VH_only_boughter_training.csv"
 ```
 
 **`preprocessing/boughter/validate_stage4.py`:**
 ```python
 # BEFORE:
-strict_qc_dir = "train_datasets/boughter"
+strict_qc_dir = "data/train/boughter"
 pattern = "*_strict_qc.csv"
 
 # AFTER:
-strict_qc_dir = "train_datasets/boughter/strict_qc"
+strict_qc_dir = "data/train/boughter/strict_qc"
 pattern = "*_strict_qc.csv"
 ```
 
@@ -308,22 +308,22 @@ pattern = "*_strict_qc.csv"
 ```yaml
 # BEFORE:
 data:
-  train_file: ./train_datasets/boughter/VH_only_boughter_training.csv
+  train_file: ./data/train/boughter/VH_only_boughter_training.csv
 
 # AFTER:
 data:
-  train_file: ./train_datasets/boughter/canonical/VH_only_boughter_training.csv
+  train_file: ./data/train/boughter/canonical/VH_only_boughter_training.csv
 ```
 
 **`configs/config_strict_qc.yaml`:**
 ```yaml
 # BEFORE:
 data:
-  train_file: ./train_datasets/boughter/VH_only_boughter_strict_qc.csv
+  train_file: ./data/train/boughter/VH_only_boughter_strict_qc.csv
 
 # AFTER:
 data:
-  train_file: ./train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv
+  train_file: ./data/train/boughter/strict_qc/VH_only_boughter_strict_qc.csv
 ```
 
 ---
@@ -332,12 +332,12 @@ data:
 
 ### Primary Documents
 
-1. **`train_datasets/BOUGHTER_DATA_PROVENANCE.md`** (18 path references)
+1. **`data/train/BOUGHTER_DATA_PROVENANCE.md`** (18 path references)
    - Update all directory structure diagrams
    - Update pipeline flow diagrams
    - Update file path examples
 
-2. **`train_datasets/boughter/README.md`** (12 path references)
+2. **`data/train/boughter/README.md`** (12 path references)
    - Update inputs/outputs for each stage
    - Update directory structure overview
 
@@ -367,7 +367,7 @@ data:
 
 ## New READMEs to Create
 
-### `train_datasets/README.md` (NEW)
+### `data/train/README.md` (NEW)
 
 ```markdown
 # Training Datasets
@@ -398,7 +398,7 @@ This directory contains all training datasets for the antibody non-specificity c
 
 ## Directory Structure
 
-train_datasets/
+data/train/
 ├── README.md (this file)
 ├── BOUGHTER_DATA_PROVENANCE.md
 └── boughter/
@@ -414,7 +414,7 @@ train_datasets/
 
 When adding new training datasets (e.g., from other publications):
 
-1. Create a new subdirectory: `train_datasets/<dataset_name>/`
+1. Create a new subdirectory: `data/train/<dataset_name>/`
 2. Use the same structure: `raw/`, `processed/`, `annotated/`, `canonical/`
 3. Create `<dataset_name>/README.md` documenting the preprocessing pipeline
 4. Update this README with the new dataset information
@@ -427,7 +427,7 @@ When adding new training datasets (e.g., from other publications):
 
 ---
 
-### `train_datasets/boughter/canonical/README.md` (NEW)
+### `data/train/boughter/canonical/README.md` (NEW)
 
 ```markdown
 # Boughter Training Data - Canonical Files
@@ -457,7 +457,7 @@ The `label` column is derived from the Novo Nordisk flagging strategy:
 - `sequence` - VH domain amino acid sequence (ANARCI-annotated)
 - `label` - Binary classification label (0.0=specific, 1.0=non-specific)
 
-**NOTE:** The training CSV is intentionally minimal (sequence + label only) for model training. The full annotated data with metadata (id, subset, num_flags, etc.) is in `train_datasets/boughter/annotated/VH_only_boughter.csv`.
+**NOTE:** The training CSV is intentionally minimal (sequence + label only) for model training. The full annotated data with metadata (id, subset, num_flags, etc.) is in `data/train/boughter/annotated/VH_only_boughter.csv`.
 
 ### Statistics
 
@@ -474,13 +474,13 @@ Label Balance:         1.06:1 (well-balanced)
 ## Provenance
 
 **Generated by:** `preprocessing/boughter/stage2_stage3_annotation_qc.py`
-**Source:** `train_datasets/boughter/processed/boughter.csv` (1,117 sequences)
+**Source:** `data/train/boughter/processed/boughter.csv` (1,117 sequences)
 **Processing:**
 1. ANARCI annotation (IMGT numbering) → 1,110 sequences
 2. QC filtering (no X in CDRs, no empty CDRs) → 1,065 sequences
 3. Novo flagging filter (exclude 1-3 flags) → 914 sequences
 
-**Documentation:** See `train_datasets/BOUGHTER_DATA_PROVENANCE.md` for complete lineage
+**Documentation:** See `data/train/BOUGHTER_DATA_PROVENANCE.md` for complete lineage
 
 ---
 
@@ -490,7 +490,7 @@ Label Balance:         1.06:1 (well-balanced)
 import pandas as pd
 
 # Load training data
-df = pd.read_csv('train_datasets/boughter/canonical/VH_only_boughter_training.csv', comment='#')
+df = pd.read_csv('data/train/boughter/canonical/VH_only_boughter_training.csv', comment='#')
 
 # NOTE: Columns are 'sequence' and 'label' (not 'vh_sequence')
 sequences = df['sequence'].tolist()  # NOT 'vh_sequence'!
@@ -507,7 +507,7 @@ print(f"Label distribution: {pd.Series(labels).value_counts().to_dict()}")
 
 ---
 
-### `train_datasets/boughter/strict_qc/README.md` (NEW)
+### `data/train/boughter/strict_qc/README.md` (NEW)
 
 ```markdown
 # Boughter Strict QC Files (Experimental)

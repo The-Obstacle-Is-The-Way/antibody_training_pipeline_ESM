@@ -2,7 +2,7 @@
 
 **⚠️ WARNING: These files are EXPERIMENTAL and have NOT been validated.**
 
-**USE PRODUCTION DATA INSTEAD:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences)
+**USE PRODUCTION DATA INSTEAD:** `data/train/boughter/canonical/VH_only_boughter_training.csv` (914 sequences)
 
 This directory contains experimental fragment files with additional strict quality control filters applied (Stage 4), reducing from 914 to 852 sequences for VH.
 

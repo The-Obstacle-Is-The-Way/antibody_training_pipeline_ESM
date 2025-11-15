@@ -36,7 +36,7 @@ Build the definitive model zoo for antibody polyreactivity prediction—comprehe
 - **Harvey** (test): 141,021 nanobodies, PSR assay
 - **Shehata** (test): 398 antibodies, PSR assay cross-validation
 
-All datasets in `train_datasets/` and `data/test/` with canonical formats.
+All datasets in `data/train/` and `data/test/` with canonical formats.
 
 ### Production Infrastructure
 

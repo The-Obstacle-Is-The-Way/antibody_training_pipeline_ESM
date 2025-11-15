@@ -49,7 +49,7 @@ model:
   revision: "main"                         # Model revision (for reproducibility)
 
 data:
-  train_file: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  train_file: "data/train/boughter/canonical/VH_only_boughter_training.csv"
   sequence_column: "sequence"  # Column containing antibody sequences
   label_column: "label"        # Column containing binary labels (0=specific, 1=non-specific)
 
@@ -92,7 +92,7 @@ Train on Boughter (914 VH, ELISA), test on Jain (86 clinical, ELISA):
 **Training config:**
 ```yaml
 data:
-  train_file: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  train_file: "data/train/boughter/canonical/VH_only_boughter_training.csv"
   sequence_column: "sequence"
   label_column: "label"
 ```
@@ -120,7 +120,7 @@ Train on Boughter (914 VH, ELISA), test on Harvey (141k nanobodies, PSR):
 **Training config:**
 ```yaml
 data:
-  train_file: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  train_file: "data/train/boughter/canonical/VH_only_boughter_training.csv"
   sequence_column: "sequence"
   label_column: "label"
 ```
@@ -148,7 +148,7 @@ Train on Boughter (914 VH, ELISA), test on Shehata (398, PSR):
 **Training config:**
 ```yaml
 data:
-  train_file: "train_datasets/boughter/canonical/VH_only_boughter_training.csv"
+  train_file: "data/train/boughter/canonical/VH_only_boughter_training.csv"
   sequence_column: "sequence"
   label_column: "label"
 ```
@@ -173,13 +173,13 @@ uv run antibody-test \
 
 The pipeline supports training on various antibody sequence fragments by using different fragment CSV files.
 
-**How it works:** Fragment files are pre-generated during preprocessing and stored in `train_datasets/{dataset}/annotated/` or `train_datasets/{dataset}/fragments/`.
+**How it works:** Fragment files are pre-generated during preprocessing and stored in `data/train/{dataset}/annotated/` or `data/train/{dataset}/fragments/`.
 
 ### Example: Train on Heavy CDRs Only
 
 ```bash
 # Override data file from CLI
-uv run antibody-train data.train_file="train_datasets/boughter/annotated/H-CDRs_boughter.csv"
+uv run antibody-train data.train_file="data/train/boughter/annotated/H-CDRs_boughter.csv"
 ```
 
 ### Available Fragments
@@ -189,13 +189,13 @@ uv run antibody-train data.train_file="train_datasets/boughter/annotated/H-CDRs_
 - `H-CDR1_boughter.csv`, `H-CDR2_boughter.csv`, `H-CDR3_boughter.csv` - Individual Heavy CDRs
 - `H-CDRs_boughter.csv` - All Heavy CDRs concatenated
 - `H-FWRs_boughter.csv` - Heavy Framework Regions
-- (See `train_datasets/boughter/annotated/` for all 16 fragments)
+- (See `data/train/boughter/annotated/` for all 16 fragments)
 
 **Fragment Naming Pattern:**
 - Format: `{fragmentName}_{dataset}.csv`
 - Examples: `VH_only_boughter.csv`, `All-CDRs_jain.csv`, `VHH_only_harvey.csv`
 
-**Note:** Fragment availability depends on dataset. See `docs/datasets/{dataset}/` for preprocessing details and `train_datasets/{dataset}/annotated/` for available files.
+**Note:** Fragment availability depends on dataset. See `docs/datasets/{dataset}/` for preprocessing details and `data/train/{dataset}/annotated/` for available files.
 
 ---
 

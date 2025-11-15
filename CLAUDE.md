@@ -161,7 +161,7 @@ models/                       # Trained model checkpoints (hierarchical organiza
 embeddings_cache/            # Cached ESM embeddings
 scripts/                     # Utility scripts
 ├── migrate_model_directories.py  # Migrate models to hierarchical structure
-train_datasets/              # Training data CSVs
+data/train/              # Training data CSVs
 data/test/               # Test data CSVs
 tests/                       # Test suite
 ├── unit/                    # Fast unit tests (< 1s each)
@@ -179,7 +179,7 @@ tests/                       # Test suite
 - HuggingFace model revisions pinned for reproducibility
 
 ### Dataset Organization
-- **Training data**: `train_datasets/{dataset}/canonical/*.csv`
+- **Training data**: `data/train/{dataset}/canonical/*.csv`
 - **Test data**: `data/test/{dataset}/canonical/*.csv` or `fragments/*.csv`
 - **Raw data**: Never committed to Git - stored in `data/test/` and preprocessed locally
 - Each dataset has dedicated preprocessing pipeline in `preprocessing/{dataset}/`

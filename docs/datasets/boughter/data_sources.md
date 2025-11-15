@@ -222,7 +222,7 @@ After processing, total counts should match:
 ## 8. Output Format Requirements
 
 ### 8.1 CSV Structure (Fragment Files)
-**Actual fragment file schema** (16 files in `train_datasets/boughter/annotated/`):
+**Actual fragment file schema** (16 files in `data/train/boughter/annotated/`):
 ```
 id,sequence,label,subset,num_flags,flag_category,include_in_training,source,sequence_length
 ```

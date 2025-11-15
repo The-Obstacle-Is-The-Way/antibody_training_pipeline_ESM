@@ -14,7 +14,7 @@ Usage:
     python3 preprocessing/boughter/validate_stages2_3.py
 
 Validation Checks:
-    1. All 16 fragment CSV files exist in train_datasets/boughter/annotated/
+    1. All 16 fragment CSV files exist in data/train/boughter/annotated/
     2. Each fragment has 1,065 rows (95.9% retention from Stage 1)
     3. All rows have include_in_training flag (True/False)
     4. Training subset has 914 rows (443 specific + 471 non-specific)
@@ -223,8 +223,8 @@ def print_validation_report(
 
 def main() -> int:
     """Validate Boughter dataset Stages 2+3 output."""
-    boughter_annotated_dir = Path("train_datasets/boughter/annotated")
-    boughter_canonical_dir = Path("train_datasets/boughter/canonical")
+    boughter_annotated_dir = Path("data/train/boughter/annotated")
+    boughter_canonical_dir = Path("data/train/boughter/canonical")
 
     if not boughter_annotated_dir.exists():
         print(

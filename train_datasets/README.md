@@ -27,7 +27,7 @@ This directory contains all training datasets for the antibody non-specificity c
 ## Directory Structure
 
 ```
-train_datasets/
+data/train/
 ├── README.md (this file)
 ├── BOUGHTER_DATA_PROVENANCE.md
 └── boughter/
@@ -44,7 +44,7 @@ train_datasets/
 
 When adding new training datasets (e.g., from other publications):
 
-1. Create a new subdirectory: `train_datasets/<dataset_name>/`
+1. Create a new subdirectory: `data/train/<dataset_name>/`
 2. Use the same structure: `raw/`, `processed/`, `annotated/`, `canonical/`
 3. Create `<dataset_name>/README.md` documenting the preprocessing pipeline
 4. Update this README with the new dataset information

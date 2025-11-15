@@ -83,7 +83,7 @@ We need to determine this threshold from the paper or their methods.
 - Standard format: `sequence, label` columns
 
 **3. Existing Datasets:**
-- `train_datasets/VH_only_training_ready.csv` → Boughter training data
+- `data/train/VH_only_training_ready.csv` → Boughter training data
 - `data/test/jain.csv` → Jain test data (already processed)
 
 **4. Expected Output Format (from `jain.csv`):**
