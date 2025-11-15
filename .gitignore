@@ -101,7 +101,11 @@ docs_burner/
 
 # Raw training datasets (large files, not for version control)
 train_datasets/boughter_raw/
+train_datasets/boughter/raw/
 train_datasets/ginkgo/
+
+# Raw data in consolidated data/ directory (Phase 2+)
+data/train/*/raw/
 
 # Raw data files (download from paper supplementary materials)
 data/test/*.xlsx

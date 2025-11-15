@@ -8,7 +8,7 @@ string literals scattered across modules.
 from pathlib import Path
 
 BOUGHTER_ANNOTATED_DIR = Path("train_datasets/boughter/annotated")
-BOUGHTER_PROCESSED_CSV = Path("train_datasets/boughter/boughter_translated.csv")
+BOUGHTER_PROCESSED_CSV = Path("train_datasets/boughter/processed/boughter.csv")
 
 HARVEY_OUTPUT_DIR = Path("data/test/harvey/fragments")
 HARVEY_HIGH_POLY_CSV = Path(

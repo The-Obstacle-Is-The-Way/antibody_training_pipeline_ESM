@@ -62,6 +62,10 @@ data/**/*.pkl
 data/**/*.pt
 data/**/*.pth
 
+# EXCEPTIONS: Include test and training datasets for CI/CD
+!data/test/**/*.csv
+!data/train/**/*.csv
+
 # Documentation
 docs/
 README.md
