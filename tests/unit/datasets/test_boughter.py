@@ -49,7 +49,7 @@ def test_boughter_dataset_initializes_with_default_output_dir() -> None:
 
     # Assert
     assert dataset.dataset_name == "boughter"
-    assert dataset.output_dir == Path("train_datasets/boughter/annotated")
+    assert dataset.output_dir == Path("data/train/boughter/annotated")
 
 
 @pytest.mark.unit

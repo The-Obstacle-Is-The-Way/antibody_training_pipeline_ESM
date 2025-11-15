@@ -19,7 +19,7 @@
 
 **Evidence:**
 ```bash
-$ head -n 1 train_datasets/boughter/VH_only_boughter_training.csv
+$ head -n 1 data/train/boughter/VH_only_boughter_training.csv
 sequence,label
 ```
 
@@ -52,10 +52,10 @@ TRAINING_FILE = BOUGHTER_DIR / "VH_only_boughter_training.csv"
 **Evidence:**
 ```yaml
 # configs/config.yaml line 13:
-train_file: ./train_datasets/boughter/VH_only_boughter_training.csv
+train_file: ./data/train/boughter/VH_only_boughter_training.csv
 
 # configs/config_strict_qc.yaml line 18:
-train_file: ./train_datasets/boughter/VH_only_boughter_strict_qc.csv
+train_file: ./data/train/boughter/VH_only_boughter_strict_qc.csv
 ```
 
 **Fix:** Updated all config examples to use `train_file` instead of `train_path`.
@@ -71,13 +71,13 @@ train_file: ./train_datasets/boughter/VH_only_boughter_strict_qc.csv
 **Evidence:**
 ```python
 # stage2_stage3_annotation_qc.py lines 237, 387:
-failure_log = Path("train_datasets/boughter/annotation_failures.log")
-qc_log = Path("train_datasets/boughter/qc_filtered_sequences.txt")
+failure_log = Path("data/train/boughter/annotation_failures.log")
+qc_log = Path("data/train/boughter/qc_filtered_sequences.txt")
 
 # validate_stage1.py lines 153, 176, 357:
 failure_log_path = output_dir / "annotation_failures.log"
 qc_log_path = output_dir / "qc_filtered_sequences.txt"
-report_path = Path("train_datasets/boughter/validation_report.txt")
+report_path = Path("data/train/boughter/validation_report.txt")
 ```
 
 **Fix:** Added explicit code change requirements for both scripts to update log paths to `annotated/` subdirectory.

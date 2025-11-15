@@ -282,8 +282,8 @@ def compare_with_original(csv_df: pd.DataFrame, excel_path: str) -> None:
 
 def main() -> int:
     """Main entry point for command-line execution."""
-    excel_path = Path("test_datasets/shehata/raw/shehata-mmc2.xlsx")
-    output_path = Path("test_datasets/shehata/processed/shehata.csv")
+    excel_path = Path("data/test/shehata/raw/shehata-mmc2.xlsx")
+    output_path = Path("data/test/shehata/processed/shehata.csv")
 
     if not excel_path.exists():
         print(f"Error: {excel_path} not found!")
@@ -312,7 +312,7 @@ def main() -> int:
     print("=" * 60)
     print("\nNext steps:")
     print(f"  1. Review {output_path}")
-    print("  2. Compare with test_datasets/jain.csv format")
+    print("  2. Compare with data/test/jain.csv format")
     print("  3. Test loading with data.load_local_data()")
     return 0
 

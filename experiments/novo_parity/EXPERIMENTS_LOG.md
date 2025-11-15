@@ -276,7 +276,7 @@ Diff:     0    0    0    0  ✅ EXACT MATCH
 **Alternative Match**: P5e-S4 (same reclassification, Tm tiebreaker instead of AC-SINS) also gives exact match
 
 **Files**:
-- **Canonical Dataset**: `test_datasets/jain/canonical/jain_86_novo_parity.csv`
+- **Canonical Dataset**: `data/test/jain/canonical/jain_86_novo_parity.csv`
 - **Experiment Dataset**: `experiments/novo_parity/datasets/jain_86_p5e_s2.csv`
 - **Audit**: `experiments/novo_parity/results/permutations/P5e_S2_final_audit.json`
 - **Documentation**: `EXACT_MATCH_FOUND.md` and `MISSION_ACCOMPLISHED.md`

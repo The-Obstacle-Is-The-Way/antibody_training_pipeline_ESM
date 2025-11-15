@@ -58,7 +58,7 @@ def test_shehata_dataset_initializes_with_default_output_dir() -> None:
 
     # Assert
     assert dataset.dataset_name == "shehata"
-    assert dataset.output_dir == Path("test_datasets/shehata/fragments")
+    assert dataset.output_dir == Path("data/test/shehata/fragments")
 
 
 @pytest.mark.unit

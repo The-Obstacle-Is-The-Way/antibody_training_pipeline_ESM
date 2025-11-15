@@ -19,7 +19,7 @@
 
 **IMPORTANT:** We do **NOT** use the HuggingFace `ZYMScott/polyreaction` dataset, which is a Harvey + GP-nano combined dataset created by the NbBench team.
 
-**For current SSOT and pipeline details, see:** `test_datasets/harvey/README.md`
+**For current SSOT and pipeline details, see:** `data/test/harvey/README.md`
 
 ---
 
@@ -156,7 +156,7 @@ From Harvey et al. 2022 (line 220):
 - Expected to fail during preprocessing (~0.27% failure rate)
 - **Actual preprocessing result (2025-11-01):**
   - 141,021 successfully annotated sequences (99.68%)
-  - 453 failures logged (`test_datasets/harvey/fragments/failed_sequences.txt`)
+  - 453 failures logged (`data/test/harvey/fragments/failed_sequences.txt`)
   - Post-processing label distribution: 69,262 low (49.1%), 71,759 high (50.9%)
 
 ---
@@ -165,7 +165,7 @@ From Harvey et al. 2022 (line 220):
 
 ### ❌ WRONG: 48-Nanobody Validation Set
 
-**File:** `test_datasets/harvey.xlsx` (deleted)
+**File:** `data/test/harvey.xlsx` (deleted)
 **Source:** Harvey et al. 2022 Supplementary Data
 **Size:** 48 nanobodies with quantitative PSR scores
 **Use Case:** Regression validation in original paper
@@ -176,7 +176,7 @@ From Harvey et al. 2022 (line 220):
 
 ### ✅ CORRECT: ~141K Deep Sequencing Dataset
 
-**File:** `test_datasets/harvey/processed/harvey.csv` (downloaded from HuggingFace)
+**File:** `data/test/harvey/processed/harvey.csv` (downloaded from HuggingFace)
 **Source:** HuggingFace `ZYMScott/polyreaction`
 **Size:** 141,474 nanobodies with binary labels
 **Use Case:** Testing ESM-1v models (Novo Nordisk methodology)
@@ -221,9 +221,9 @@ Initial Dataset: ~134K sequences (65K low + 69K high)
     ↓ Published to GitHub (debbiemarkslab/nanobody-polyreactivity)
 Raw CSVs: 141,474 sequences (71,772 high + 69,702 low)
     ↓ Step 1: Convert raw CSVs (step1_convert_raw_csvs.py)
-test_datasets/harvey/processed/harvey.csv (141,474 sequences)
+data/test/harvey/processed/harvey.csv (141,474 sequences)
     ↓ Step 2: ANARCI annotation + fragment extraction (step2_extract_fragments.py)
-test_datasets/harvey/fragments/*.csv (141,021 sequences, 6 fragment types)
+data/test/harvey/fragments/*.csv (141,021 sequences, 6 fragment types)
 ```
 
 ---

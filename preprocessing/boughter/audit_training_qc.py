@@ -27,7 +27,7 @@ from typing import Any
 import pandas as pd
 
 # Paths
-BOUGHTER_DIR = Path("train_datasets/boughter")
+BOUGHTER_DIR = Path("data/train/boughter")
 TRAINING_FILE = BOUGHTER_DIR / "canonical" / "VH_only_boughter_training.csv"
 FULL_FILE = BOUGHTER_DIR / "annotated" / "VH_only_boughter.csv"
 

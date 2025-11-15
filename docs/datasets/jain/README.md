@@ -87,22 +87,22 @@ See [`archive/README.md`](archive/README.md) for:
 
 ```
 Step 1: Excel → CSV Conversion (ELISA-only)
-  Raw: test_datasets/jain/raw/*.xlsx
+  Raw: data/test/jain/raw/*.xlsx
   ↓ preprocessing/jain/step1_convert_excel_to_csv.py
-  Output: test_datasets/jain/processed/jain_with_private_elisa_FULL.csv (137 antibodies)
-          test_datasets/jain/processed/jain_ELISA_ONLY_116.csv (116 antibodies)
+  Output: data/test/jain/processed/jain_with_private_elisa_FULL.csv (137 antibodies)
+          data/test/jain/processed/jain_ELISA_ONLY_116.csv (116 antibodies)
 
 Step 2: P5e-S2 Novo Parity Method
   Input: jain_ELISA_ONLY_116.csv (116)
   ↓ preprocessing/jain/step2_preprocess_p5e_s2.py
     - Reclassify 5 specific→non-specific (PSR/Tm/clinical)
     - Remove 30 specific by PSR/AC-SINS sorting
-  Output: test_datasets/jain/canonical/jain_86_novo_parity.csv (86 antibodies)
+  Output: data/test/jain/canonical/jain_86_novo_parity.csv (86 antibodies)
 
 Step 3: Fragment Extraction (ANARCI/IMGT)
   Input: jain_with_private_elisa_FULL.csv (137)
   ↓ preprocessing/jain/step3_extract_fragments.py
-  Output: test_datasets/jain/fragments/*.csv (16 fragment types)
+  Output: data/test/jain/fragments/*.csv (16 fragment types)
 ```
 
 ---

@@ -27,7 +27,7 @@ preprocessing/boughter/
 ├── validate_stage1.py                 ✅ Keep as-is
 └── validate_stages2_3.py              ✅ Keep as-is
 
-train_datasets/boughter/
+data/train/boughter/
 ├── raw/                               ✅ Stage 0: Raw DNA FASTA files (source data)
 │   ├── flu_fastaH.txt
 │   ├── flu_fastaL.txt
@@ -58,21 +58,21 @@ train_datasets/boughter/
 ### Current Pipeline Flow (VERIFIED)
 
 ```
-train_datasets/boughter/raw/ - Raw DNA FASTA files (1,171 sequences)
+data/train/boughter/raw/ - Raw DNA FASTA files (1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,117 sequences)
+   ↓ Output: data/train/boughter/processed/boughter.csv (1,117 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
    ↓ QC: X in CDRs only, empty CDRs
    ↓ Outputs (1,065 sequences each):
-   ↓   • train_datasets/boughter/annotated/*_boughter.csv (16 fragment files)
+   ↓   • data/train/boughter/annotated/*_boughter.csv (16 fragment files)
    ↓     (with id, sequence, label, subset, num_flags, flag_category,
    ↓      include_in_training, source, sequence_length)
    ↓
-   ↓   • train_datasets/boughter/canonical/VH_only_boughter_training.csv
+   ↓   • data/train/boughter/canonical/VH_only_boughter_training.csv
    ↓     (914 sequences where include_in_training==True)
    ↓     (columns: sequence, label ONLY - no id, no fragments)
 ```
@@ -175,7 +175,7 @@ df_clean.to_csv('H-CDR3_boughter_strict_qc.csv', index=False)
 
 **Purpose:** Apply industry-standard QC filters beyond Boughter's CDR-only checks
 
-**Input:** All 16 fragment CSVs (`train_datasets/boughter/annotated/*_boughter.csv`)
+**Input:** All 16 fragment CSVs (`data/train/boughter/annotated/*_boughter.csv`)
 
 **Filters to Apply:**
 1. ✅ Filter sequences where `include_in_training == False` (reduces 1,065 → 914)
@@ -210,20 +210,20 @@ Where:
 
 **Current files (keep as-is):**
 ```
-train_datasets/boughter/annotated/VH_only_boughter.csv                # 1,065 sequences (all flags)
-train_datasets/boughter/canonical/VH_only_boughter_training.csv       # 914 sequences (export, no metadata)
-train_datasets/boughter/annotated/H-CDR3_boughter.csv                 # 1,065 sequences (all flags)
-train_datasets/boughter/annotated/All-CDRs_boughter.csv               # 1,065 sequences (all flags)
-train_datasets/boughter/annotated/Full_boughter.csv                   # 1,065 sequences (all flags)
+data/train/boughter/annotated/VH_only_boughter.csv                # 1,065 sequences (all flags)
+data/train/boughter/canonical/VH_only_boughter_training.csv       # 914 sequences (export, no metadata)
+data/train/boughter/annotated/H-CDR3_boughter.csv                 # 1,065 sequences (all flags)
+data/train/boughter/annotated/All-CDRs_boughter.csv               # 1,065 sequences (all flags)
+data/train/boughter/annotated/Full_boughter.csv                   # 1,065 sequences (all flags)
 ... (13 more fragment CSVs)
 ```
 
 **NEW files (to be created):**
 ```
-train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv      # ~852 sequences (X filtered)
-train_datasets/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv       # ~852 sequences
-train_datasets/boughter/strict_qc/All-CDRs_boughter_strict_qc.csv     # ~852 sequences
-train_datasets/boughter/strict_qc/Full_boughter_strict_qc.csv         # ~852 sequences
+data/train/boughter/strict_qc/VH_only_boughter_strict_qc.csv      # ~852 sequences (X filtered)
+data/train/boughter/strict_qc/H-CDR3_boughter_strict_qc.csv       # ~852 sequences
+data/train/boughter/strict_qc/All-CDRs_boughter_strict_qc.csv     # ~852 sequences
+data/train/boughter/strict_qc/Full_boughter_strict_qc.csv         # ~852 sequences
 ... (13 more fragment CSVs with strict QC)
 ```
 
@@ -237,14 +237,14 @@ train_datasets/boughter/strict_qc/Full_boughter_strict_qc.csv         # ~852 seq
 
 **Purpose:** Apply industry-standard full-sequence QC filters to all fragment CSVs
 
-**Inputs:** `train_datasets/boughter/annotated/*_boughter.csv` (16 files, 1,065 sequences each)
+**Inputs:** `data/train/boughter/annotated/*_boughter.csv` (16 files, 1,065 sequences each)
 
 **Filters:**
 1. Select `include_in_training == True` (reduces to 914)
 2. Remove X anywhere in VH sequence
 3. Remove non-standard amino acids (B, Z, J, U, O) if present
 
-**Outputs:** `train_datasets/boughter/*_boughter_strict_qc.csv` (16 files, ~852 sequences each)
+**Outputs:** `data/train/boughter/*_boughter_strict_qc.csv` (16 files, ~852 sequences each)
 
 **Complete Implementation:**
 ```python
@@ -255,8 +255,8 @@ Stage 4: Additional QC Filtering for Boughter Dataset
 
 Purpose: Apply industry-standard full-sequence QC beyond Boughter's CDR-only checks
 
-Inputs: train_datasets/boughter/annotated/*_boughter.csv (16 fragment files, 1,065 sequences each)
-Outputs: train_datasets/boughter/*_boughter_strict_qc.csv (16 files, ~852 sequences each)
+Inputs: data/train/boughter/annotated/*_boughter.csv (16 fragment files, 1,065 sequences each)
+Outputs: data/train/boughter/*_boughter_strict_qc.csv (16 files, ~852 sequences each)
 
 Filters:
 1. Select include_in_training == True (reduces 1,065 → 914)
@@ -271,7 +271,7 @@ from pathlib import Path
 import sys
 
 # Paths
-BOUGHTER_DIR = Path("train_datasets/boughter")
+BOUGHTER_DIR = Path("data/train/boughter")
 INPUT_PATTERN = "*_boughter.csv"
 OUTPUT_SUFFIX = "_strict_qc"
 
@@ -487,7 +487,7 @@ Date: 2025-11-04
 import pandas as pd
 from pathlib import Path
 
-BOUGHTER_DIR = Path("train_datasets/boughter")
+BOUGHTER_DIR = Path("data/train/boughter")
 STRICT_QC_PATTERN = "*_strict_qc.csv"
 STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")
 
@@ -598,12 +598,12 @@ if __name__ == "__main__":
 
 **Files to update:**
 
-1. **train_datasets/boughter/README.md**
+1. **data/train/boughter/README.md**
    - Document two QC levels: Boughter QC (1,065) vs Strict QC (~852)
    - Explain file naming convention
    - List all available variants
 
-2. **train_datasets/BOUGHTER_DATA_PROVENANCE.md**
+2. **data/train/BOUGHTER_DATA_PROVENANCE.md**
    - Add Stage 4 to pipeline documentation
    - Explain additional QC rationale
    - Update sequence count tables
@@ -698,8 +698,8 @@ Total reduction (raw → strict QC)                  -319 (27.2%)
 5. 🔧 Create and run `preprocessing/boughter/validate_stage4.py`
 
 ### Phase 2: Documentation (Priority 2)
-6. 🔧 Update `train_datasets/boughter/README.md`
-7. 🔧 Update `train_datasets/BOUGHTER_DATA_PROVENANCE.md`
+6. 🔧 Update `data/train/boughter/README.md`
+7. 🔧 Update `data/train/BOUGHTER_DATA_PROVENANCE.md`
 8. 🔧 Update `preprocessing/boughter/README.md`
 
 ### Phase 3: Model Training (Priority 3)

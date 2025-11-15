@@ -5,8 +5,8 @@ Stage 4: Additional QC Filtering for Boughter Dataset
 
 Purpose: Apply industry-standard full-sequence QC beyond Boughter's CDR-only checks
 
-Inputs: train_datasets/boughter/annotated/*_boughter.csv (16 fragment files, 1,065 sequences each)
-Outputs: train_datasets/boughter/strict_qc/*_boughter_strict_qc.csv (16 files, ~852 sequences each)
+Inputs: data/train/boughter/annotated/*_boughter.csv (16 fragment files, 1,065 sequences each)
+Outputs: data/train/boughter/strict_qc/*_boughter_strict_qc.csv (16 files, ~852 sequences each)
 
 Filters:
 1. Select include_in_training == True (reduces 1,065 → 914)
@@ -21,8 +21,8 @@ from pathlib import Path
 import sys
 
 # Paths
-INPUT_DIR = Path("train_datasets/boughter/annotated")
-OUTPUT_DIR = Path("train_datasets/boughter/strict_qc")
+INPUT_DIR = Path("data/train/boughter/annotated")
+OUTPUT_DIR = Path("data/train/boughter/strict_qc")
 INPUT_PATTERN = "*_boughter.csv"
 OUTPUT_SUFFIX = "_strict_qc"
 

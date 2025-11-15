@@ -17,7 +17,7 @@ Date: 2025-11-04
 import pandas as pd
 from pathlib import Path
 
-STRICT_QC_DIR = Path("train_datasets/boughter/strict_qc")
+STRICT_QC_DIR = Path("data/train/boughter/strict_qc")
 STRICT_QC_PATTERN = "*_strict_qc.csv"
 STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")
 

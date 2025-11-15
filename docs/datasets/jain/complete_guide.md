@@ -25,7 +25,7 @@ cat > configs/test_jain_parity.yaml <<EOF
 model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
 label_column: "label"
 EOF
@@ -41,7 +41,7 @@ Expected: [[40, 19], [10, 17]], 66.28% accuracy (EXACT Novo parity)
 # Full dataset test (different from Novo parity benchmark)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 
 Expected: Different results (137 antibodies vs 86 parity subset)
 ```
@@ -56,16 +56,16 @@ Expected: Different results (137 antibodies vs 86 parity subset)
 
 | File | Location | Description |
 |------|----------|-------------|
-| `Full_jain.csv` | `test_datasets/jain/` | Base Jain 2017 PNAS dataset |
-| `jain.csv` | `test_datasets/` | Same as Full_jain.csv (root copy) |
-| `jain_with_private_elisa_FULL.csv` | `test_datasets/` | With private ELISA data |
-| `jain_sd01.csv` | `test_datasets/` | Biophysical data (sequences) |
-| `jain_sd02.csv` | `test_datasets/` | Biophysical data (assays) |
-| `jain_sd03.csv` | `test_datasets/` | Biophysical data (comprehensive) |
+| `Full_jain.csv` | `data/test/jain/` | Base Jain 2017 PNAS dataset |
+| `jain.csv` | `data/test/` | Same as Full_jain.csv (root copy) |
+| `jain_with_private_elisa_FULL.csv` | `data/test/` | With private ELISA data |
+| `jain_sd01.csv` | `data/test/` | Biophysical data (sequences) |
+| `jain_sd02.csv` | `data/test/` | Biophysical data (assays) |
+| `jain_sd03.csv` | `data/test/` | Biophysical data (comprehensive) |
 
 ### Feature Engineering Variants (137 antibodies)
 
-All located in `test_datasets/jain/`:
+All located in `data/test/jain/`:
 
 **Sequence variants:**
 - `VH_only_jain.csv` - VH heavy chain only
@@ -151,8 +151,8 @@ Remove 5 borderline antibodies
 86 antibodies (59 specific / 27 non-specific)
 ```
 
-**File (FOR NOVO PARITY):** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, needs config)
-**File (FOR GENERAL TESTING):** `test_datasets/jain/fragments/VH_only_jain.csv` (137 antibodies, standardized columns)
+**File (FOR NOVO PARITY):** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, needs config)
+**File (FOR GENERAL TESTING):** `data/test/jain/fragments/VH_only_jain.csv` (137 antibodies, standardized columns)
 **OBSOLETE:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (removed)
 
 **Result (86-antibody parity):** [[40, 19], [10, 17]] ✅ **EXACT Novo match**
@@ -188,7 +188,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 59 specific / 27 non-specific = 86 antibodies
 ```
 
-**File:** `test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv`
+**File:** `data/test/jain/fragments/VH_only_jain_86_p5e_s2.csv`
 
 **Result:** [[40, 19], [10, 17]] ✅ **Also achieves parity**
 
@@ -252,7 +252,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
    # Works with default CLI (sequence column)
    uv run antibody-test \
      --model models/boughter_vh_esm1v_logreg.pkl \
-     --data test_datasets/jain/fragments/VH_only_jain.csv
+     --data data/test/jain/fragments/VH_only_jain.csv
    ```
 
 4. **Document the variance** in your results
@@ -274,8 +274,8 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 - Hyperparameters: C=1.0, L2 penalty, LBFGS solver
 
 **Use with:**
-- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` → [[40, 19], [10, 17]] ✅ (86-antibody parity, requires config)
-- `test_datasets/jain/fragments/VH_only_jain.csv` → Different results (137 antibodies, not parity subset)
+- `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` → [[40, 19], [10, 17]] ✅ (86-antibody parity, requires config)
+- `data/test/jain/fragments/VH_only_jain.csv` → Different results (137 antibodies, not parity subset)
 
 ### Production Model (VALIDATED)
 
@@ -299,10 +299,10 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 
 ## File Organization
 
-### Production Files (test_datasets/)
+### Production Files (data/test/)
 
 ```
-test_datasets/
+data/test/
 ├── jain.csv, jain_*.csv (7 files in root)
 │
 └── jain/
@@ -348,7 +348,7 @@ cat > configs/test_jain_parity.yaml <<EOF
 model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
 label_column: "label"
 EOF
@@ -369,7 +369,7 @@ uv run antibody-test --config configs/test_jain_parity.yaml
 # Test 2: Full dataset (137 antibodies) - use fragment file directly
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 # Expected: Different results (different antibody set)
 ```
 
@@ -379,7 +379,7 @@ uv run antibody-test \
 import pandas as pd
 
 # Load P5e-S2 with full metadata
-df = pd.read_csv('test_datasets/jain/jain_86_novo_parity.csv')
+df = pd.read_csv('data/test/jain/jain_86_novo_parity.csv')
 
 # Available columns:
 # - PSR (polyreactivity score)
@@ -424,15 +424,15 @@ If using these datasets, please cite:
 ## FAQ
 
 **Q: Which dataset should I use for Novo parity benchmarking?**
-A: `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, MUST use config with `sequence_column: "vh_sequence"`).
+A: `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, MUST use config with `sequence_column: "vh_sequence"`).
 Fragment file `VH_only_jain.csv` has 137 antibodies (not the 86-antibody parity subset).
 OBSOLETE: ~~`VH_only_jain_test_PARITY_86.csv`~~ (removed)
 
 **Q: Does P5e-S2 achieve Novo parity or not?**
 A: Yes! But one antibody (nimotuzumab) has probability ≈0.5 and can flip. Use stored predictions for exact reproducibility.
 
-**Q: What's the difference between experiments/ and test_datasets/?**
-A: experiments/ = full research workspace with rich metadata. test_datasets/ = clean production files for benchmarking.
+**Q: What's the difference between experiments/ and data/test/?**
+A: experiments/ = full research workspace with rich metadata. data/test/ = clean production files for benchmarking.
 
 **Q: Why are there so many Jain files?**
 A: Different feature engineering approaches (VH-only, CDRs, FWRs, etc.) and different QC methodologies. See cleanup plan.

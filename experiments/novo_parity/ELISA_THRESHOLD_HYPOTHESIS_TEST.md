@@ -128,7 +128,7 @@ P5e-S2:
 
 - **Experiment script**: `experiments/novo_parity/scripts/test_elisa_threshold_hypothesis.py`
 - **Log output**: `experiments/novo_parity/results/elisa_threshold_test.log`
-- **P5e-S2 dataset**: `test_datasets/jain/jain_86_novo_parity.csv`
+- **P5e-S2 dataset**: `data/test/jain/jain_86_novo_parity.csv`
 
 ---
 

@@ -131,7 +131,7 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
         print(f"  Failed IDs (first 10): {failures[:10]}")
 
         # Write all failed IDs to log file
-        failure_log = Path("test_datasets/harvey/fragments/failed_sequences.txt")
+        failure_log = Path("data/test/harvey/fragments/failed_sequences.txt")
         failure_log.parent.mkdir(parents=True, exist_ok=True)
         with open(failure_log, "w") as f:
             f.write("\n".join(failures))
@@ -200,15 +200,15 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
 def main() -> int:
     """Main processing pipeline."""
     # Paths
-    csv_path = Path("test_datasets/harvey/processed/harvey.csv")
-    output_dir = Path("test_datasets/harvey/fragments")
+    csv_path = Path("data/test/harvey/processed/harvey.csv")
+    output_dir = Path("data/test/harvey/fragments")
 
     if not csv_path.exists():
         print(f"Error: {csv_path} not found!")
         print(
             "Please run preprocessing/harvey/step1_convert_raw_csvs.py to generate from raw Harvey CSVs."
         )
-        print("Raw CSVs should be in: test_datasets/harvey/raw/")
+        print("Raw CSVs should be in: data/test/harvey/raw/")
         return 1
 
     print("=" * 70)

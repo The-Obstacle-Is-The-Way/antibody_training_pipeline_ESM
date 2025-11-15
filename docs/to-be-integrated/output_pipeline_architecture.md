@@ -782,7 +782,7 @@ After implementing Phase 1A + 1B + 2, we should be able to:
 ```bash
 # Test ESM-1v on Jain
 antibody-test --model models/boughter_vh_esm1v_logreg.pkl \
-              --dataset test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+              --dataset data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
 # Output: test_results/esm1v/logreg/jain/
 #   ├── confusion_matrix_jain.png
@@ -791,7 +791,7 @@ antibody-test --model models/boughter_vh_esm1v_logreg.pkl \
 
 # Test ESM2-650M on Jain
 antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl \
-              --dataset test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+              --dataset data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
 # Output: test_results/esm2_650m/logreg/jain/  ✅ NO OVERRIDE!
 #   ├── confusion_matrix_jain.png

@@ -102,7 +102,7 @@ def main() -> int:
     print("=" * 60)
     jain_cm, jain_acc = test_with_assay_type(
         model,
-        "test_datasets/jain/canonical/jain_86_novo_parity.csv",
+        "data/test/jain/canonical/jain_86_novo_parity.csv",
         "Jain",
         "ELISA",
         novo_jain,
@@ -114,7 +114,7 @@ def main() -> int:
     print("=" * 60)
     shehata_cm, shehata_acc = test_with_assay_type(
         model,
-        "test_datasets/shehata/fragments/VH_only_shehata.csv",
+        "data/test/shehata/fragments/VH_only_shehata.csv",
         "Shehata",
         "PSR",
         novo_shehata,

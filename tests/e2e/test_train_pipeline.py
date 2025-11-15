@@ -49,7 +49,7 @@ def mock_training_config(tmp_path: Path) -> Path:
         "solver": "lbfgs",
         "batch_size": 8,
         "output_model_path": str(tmp_path / "trained_model.pkl"),
-        "train_data_path": "test_datasets/boughter/boughter_translated.csv",
+        "train_data_path": "data/test/boughter/boughter_translated.csv",
     }
 
     config_path = tmp_path / "train_config.yaml"

@@ -84,7 +84,7 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 
 ### 2. Fragment CSV Files
 
-**Location:** `test_datasets/shehata/`
+**Location:** `data/test/shehata/`
 
 **Files Created:** 16 fragment-specific CSVs
 
@@ -211,7 +211,7 @@ ADI-38502,EVQLLESGGGLVKPGG...,0,0.0,IgG memory,shehata2019
 from data import load_local_data
 
 df = load_local_data(
-    'test_datasets/shehata/fragments/VH_only_shehata.csv',
+    'data/test/shehata/fragments/VH_only_shehata.csv',
     sequence_column='sequence',
     label_column='label'
 )
@@ -265,7 +265,7 @@ Follows `preprocessing/process_boughter.py` pattern:
    - ANARCI annotation + fragment extraction
    - Comprehensive validation reporting
 
-2. **`test_datasets/shehata/fragments/*.csv`** (16 files)
+2. **`data/test/shehata/fragments/*.csv`** (16 files)
    - All fragment-specific CSVs
    - Standardized format
    - Ready for model inference
@@ -303,7 +303,7 @@ Follows `preprocessing/process_boughter.py` pattern:
 
 1. 🔲 Create comprehensive PR for Issue #3
 2. 🔲 Update main README with Shehata dataset info
-3. 🔲 Add test_datasets/shehata/ to .gitignore if needed
+3. 🔲 Add data/test/shehata/ to .gitignore if needed
 4. 🔲 Document dependencies (riot_na) in requirements.txt
 
 ---

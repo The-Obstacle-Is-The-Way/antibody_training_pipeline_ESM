@@ -124,7 +124,7 @@ with open("models/boughter_vh_esm1v_logreg.pkl", 'rb') as f:
     model = pickle.load(f)
 
 # Load Jain test data
-df = pd.read_csv("test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv")
+df = pd.read_csv("data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv")
 sequences = df['sequence'].tolist()
 
 # Extract embeddings
@@ -140,7 +140,7 @@ predictions = model.predict(X_embeddings, assay_type='ELISA')
 
 ```python
 # Load Shehata test data
-df = pd.read_csv("test_datasets/shehata/fragments/VH_only_shehata.csv")
+df = pd.read_csv("data/test/shehata/fragments/VH_only_shehata.csv")
 sequences = df['sequence'].tolist()
 
 # Extract embeddings

@@ -21,11 +21,11 @@ raw/*.csv → processed/harvey.csv → fragments/*.csv
 **Purpose:** Combines high/low polyreactivity CSVs into single processed file.
 
 **Input:**
-- `test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv` (71,772 sequences)
-- `test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv` (69,702 sequences)
+- `data/test/harvey/raw/high_polyreactivity_high_throughput.csv` (71,772 sequences)
+- `data/test/harvey/raw/low_polyreactivity_high_throughput.csv` (69,702 sequences)
 
 **Output:**
-- `test_datasets/harvey/processed/harvey.csv` (141,474 sequences)
+- `data/test/harvey/processed/harvey.csv` (141,474 sequences)
 
 **Run:**
 ```bash
@@ -47,10 +47,10 @@ python3 preprocessing/harvey/step1_convert_raw_csvs.py
 **Purpose:** Annotate with ANARCI and extract VHH fragments (nanobody-specific).
 
 **Input:**
-- `test_datasets/harvey/processed/harvey.csv` (141,474 sequences)
+- `data/test/harvey/processed/harvey.csv` (141,474 sequences)
 
 **Output:**
-- `test_datasets/harvey/fragments/*.csv` (6 fragment files)
+- `data/test/harvey/fragments/*.csv` (6 fragment files)
   - VHH_only_harvey.csv
   - H-CDR1_harvey.csv
   - H-CDR2_harvey.csv

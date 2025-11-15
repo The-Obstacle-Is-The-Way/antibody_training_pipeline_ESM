@@ -3,8 +3,8 @@ source: local
 dataset_name: boughter_vh
 
 # File paths
-train_file: train_datasets/boughter/canonical/VH_only_boughter_training.csv
-test_file: test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+train_file: data/train/boughter/canonical/VH_only_boughter_training.csv
+test_file: data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
 # Data format options (required by loaders.py)
 sequence_column: sequence

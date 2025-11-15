@@ -44,7 +44,7 @@ def test_gap_characters() -> None:
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    harvey_dir = Path("test_datasets/harvey/fragments")
+    harvey_dir = Path("data/test/harvey/fragments")
     fragment_files = [
         "VHH_only_harvey.csv",
         "H-CDR1_harvey.csv",
@@ -96,7 +96,7 @@ def test_amino_acid_validation() -> None:
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    harvey_dir = Path("test_datasets/harvey/fragments")
+    harvey_dir = Path("data/test/harvey/fragments")
 
     # Check critical files for VHH-based model
     test_files = [
@@ -154,7 +154,7 @@ def test_previously_affected_sequences() -> None:
     print("TEST 3: Previously Affected Sequences (Spot Check)")
     print("=" * 70)
 
-    vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
+    vhh_file = Path("data/test/harvey/fragments/VHH_only_harvey.csv")
     assert vhh_file.exists(), f"{vhh_file} not found"
 
     df = pd.read_csv(vhh_file)
@@ -202,7 +202,7 @@ def test_model_validation_logic() -> None:
     print("=" * 70)
     print("  Simulating model.py:86-90 validation logic...")
 
-    vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
+    vhh_file = Path("data/test/harvey/fragments/VHH_only_harvey.csv")
     assert vhh_file.exists(), f"{vhh_file} not found"
 
     df = pd.read_csv(vhh_file)
@@ -239,7 +239,7 @@ def test_data_integrity() -> None:
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    harvey_dir = Path("test_datasets/harvey/fragments")
+    harvey_dir = Path("data/test/harvey/fragments")
     expected_files = [
         "VHH_only_harvey.csv",
         "H-CDR1_harvey.csv",

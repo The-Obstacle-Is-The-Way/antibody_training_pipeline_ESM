@@ -1,7 +1,7 @@
 config:
   batch_size: 32
   data_paths:
-  - test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+  - data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
   device: mps
   label_column: label
   metrics:

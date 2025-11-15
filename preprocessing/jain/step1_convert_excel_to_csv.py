@@ -42,16 +42,16 @@ def load_data() -> pd.DataFrame:
 
     # Private ELISA (6 individual antigens)
     private = pd.read_excel(
-        "test_datasets/jain/raw/Private_Jain2017_ELISA_indiv.xlsx",
+        "data/test/jain/raw/Private_Jain2017_ELISA_indiv.xlsx",
         sheet_name="Individual-ELISA",
     )
     print(f"  Private ELISA: {len(private)} antibodies")
 
     # Public SD files
-    sd01 = pd.read_excel("test_datasets/jain/raw/jain-pnas.1616408114.sd01.xlsx")
-    sd02 = pd.read_excel("test_datasets/jain/raw/jain-pnas.1616408114.sd02.xlsx")
+    sd01 = pd.read_excel("data/test/jain/raw/jain-pnas.1616408114.sd01.xlsx")
+    sd02 = pd.read_excel("data/test/jain/raw/jain-pnas.1616408114.sd02.xlsx")
     sd03 = pd.read_excel(
-        "test_datasets/jain/raw/jain-pnas.1616408114.sd03.xlsx",
+        "data/test/jain/raw/jain-pnas.1616408114.sd03.xlsx",
         sheet_name="Results-12-assays",
     )
 
@@ -195,7 +195,7 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
 
 def save_outputs(df: pd.DataFrame) -> None:
     """Save conversion outputs."""
-    output_dir = Path("test_datasets/jain/processed")
+    output_dir = Path("data/test/jain/processed")
     output_dir.mkdir(parents=True, exist_ok=True)
 
     print("\nSaving outputs...")

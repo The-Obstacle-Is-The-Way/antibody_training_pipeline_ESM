@@ -33,7 +33,7 @@ preprocessing/boughter/
 
 #### 2. Training Data (16 CSV files)
 ```
-train_datasets/boughter/strict_qc/
+data/train/boughter/strict_qc/
 ├── VH_only_boughter_strict_qc.csv     # 852 sequences (-62 from 914)
 ├── VL_only_boughter_strict_qc.csv     # 900 sequences (-14 from 914)
 ├── H-FWRs_boughter_strict_qc.csv      # 852 sequences (-62 from 914)
@@ -61,7 +61,7 @@ docs/
 ├── jain/JAIN_DATASET_COMPLETE_HISTORY.md              # References strict_qc
 └── other/TRAINING_READINESS_CHECK.md                  # References 852
 
-train_datasets/boughter/
+data/train/boughter/
 ├── README.md                                          # Documents full pipeline
 └── strict_qc/README.md                                # ⚠️ NOW MARKED EXPERIMENTAL
 ```
@@ -77,7 +77,7 @@ train_datasets/boughter/
 
 **What People See:**
 ```
-train_datasets/boughter/
+data/train/boughter/
 ├── canonical/VH_only_boughter_training.csv    # 914 sequences
 └── strict_qc/VH_only_boughter_strict_qc.csv   # 852 sequences
 ```
@@ -97,7 +97,7 @@ train_datasets/boughter/
 
 ### Option 1: Delete Everything (Nuclear)
 **What to Delete:**
-- `train_datasets/boughter/strict_qc/` directory (16 CSVs)
+- `data/train/boughter/strict_qc/` directory (16 CSVs)
 - `configs/config_strict_qc.yaml`
 - `preprocessing/boughter/stage4_additional_qc.py`
 - `preprocessing/boughter/validate_stage4.py`
@@ -158,7 +158,7 @@ experiments/
 **What's Already Done:**
 - ✅ `configs/config_strict_qc.yaml`: Marked EXPERIMENTAL - UNVALIDATED
 - ✅ `configs/config.yaml`: Marked PRODUCTION - VALIDATED
-- ✅ `train_datasets/boughter/strict_qc/README.md`: Warning added
+- ✅ `data/train/boughter/strict_qc/README.md`: Warning added
 
 **What Still Needs Fixing:**
 - Update all 7+ doc files to clarify strict_qc status
@@ -204,7 +204,7 @@ mv preprocessing/boughter/stage4_additional_qc.py experiments/strict_qc_2025-11-
 mv preprocessing/boughter/validate_stage4.py experiments/strict_qc_2025-11-04/preprocessing/
 
 # Move data
-mv train_datasets/boughter/strict_qc experiments/strict_qc_2025-11-04/data/
+mv data/train/boughter/strict_qc experiments/strict_qc_2025-11-04/data/
 
 # Move config
 mv configs/config_strict_qc.yaml experiments/strict_qc_2025-11-04/configs/
@@ -224,7 +224,7 @@ Create `experiments/strict_qc_2025-11-04/EXPERIMENT_README.md` with:
 
 ### Phase 4: Update Documentation
 Update these files to remove/archive Stage 4 references:
-- `train_datasets/boughter/README.md` - Remove Stage 4 from pipeline
+- `data/train/boughter/README.md` - Remove Stage 4 from pipeline
 - `docs/CODEBASE_AUDIT_VS_NOVO.md` - Note strict_qc archived
 - `docs/BOUGHTER_DATASET_COMPLETE_HISTORY.md` - Update pipeline diagram
 - `docs/boughter/*.md` - Update 7 files with archived status
@@ -232,7 +232,7 @@ Update these files to remove/archive Stage 4 references:
 - `docs/other/TRAINING_READINESS_CHECK.md` - Remove 852 refs
 
 ### Phase 5: Simplify Pipeline Documentation
-Update `train_datasets/boughter/README.md` to show clean pipeline:
+Update `data/train/boughter/README.md` to show clean pipeline:
 ```
 Pipeline (Production):
 1,171 raw DNA
@@ -272,7 +272,7 @@ adopted for the production pipeline.
 - [ ] No strict_qc references in main docs (except "see experiments/")
 - [ ] Pipeline diagram shows 914 as final validated step
 - [ ] Config.yaml is only training config
-- [ ] train_datasets/boughter/ has no strict_qc subdirectory
+- [ ] data/train/boughter/ has no strict_qc subdirectory
 - [ ] preprocessing/boughter/ has no stage4 scripts
 - [ ] All 178 strict_qc references accounted for (archived or updated)
 
@@ -296,7 +296,7 @@ If we need to restore strict_qc:
 # All artifacts are in experiments/strict_qc_2025-11-04/
 # Just move them back:
 mv experiments/strict_qc_2025-11-04/preprocessing/* preprocessing/boughter/
-mv experiments/strict_qc_2025-11-04/data/strict_qc train_datasets/boughter/
+mv experiments/strict_qc_2025-11-04/data/strict_qc data/train/boughter/
 mv experiments/strict_qc_2025-11-04/configs/* configs/
 mv experiments/strict_qc_2025-11-04/docs/* docs/boughter/
 ```

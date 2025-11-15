@@ -44,7 +44,7 @@ def test_gap_characters() -> None:
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    jain_dir = Path("test_datasets/jain/fragments")
+    jain_dir = Path("data/test/jain/fragments")
     fragment_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",
@@ -111,7 +111,7 @@ def test_amino_acid_validation() -> None:
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    jain_dir = Path("test_datasets/jain/fragments")
+    jain_dir = Path("data/test/jain/fragments")
 
     # Check critical files for full antibody model
     test_files = [
@@ -173,7 +173,7 @@ def test_stop_codons() -> None:
     print("TEST 3: Stop Codon Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    jain_dir = Path("test_datasets/jain/fragments")
+    jain_dir = Path("data/test/jain/fragments")
     fragment_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",
@@ -239,7 +239,7 @@ def test_model_validation_logic() -> None:
     total_validated = 0
 
     for file_name in test_files:
-        file_path = Path(f"test_datasets/jain/fragments/{file_name}")
+        file_path = Path(f"data/test/jain/fragments/{file_name}")
 
         if not file_path.exists():
             print(f"  ✗ FAIL: {file_path} not found")
@@ -285,7 +285,7 @@ def test_data_integrity() -> None:
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    jain_dir = Path("test_datasets/jain/fragments")
+    jain_dir = Path("data/test/jain/fragments")
     expected_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",

@@ -126,11 +126,11 @@ preprocessing/
 
 ### Stage 1: Format Conversion
 - **Purpose:** Convert raw data (Excel, FASTA, CSV) to standardized CSV
-- **Output:** `test_datasets/{dataset}/processed/*.csv`
+- **Output:** `data/test/{dataset}/processed/*.csv`
 
 ### Stage 2: Fragment Extraction
 - **Purpose:** Annotate with ANARCI, extract CDRs/FWRs
-- **Output:** `test_datasets/{dataset}/fragments/*.csv` or `canonical/*.csv`
+- **Output:** `data/test/{dataset}/fragments/*.csv` or `canonical/*.csv`
 
 ### Stage 3: Quality Control (Boughter only)
 - **Purpose:** Filter sequences, apply Novo Nordisk flagging

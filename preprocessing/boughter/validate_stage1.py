@@ -13,7 +13,7 @@ Usage:
     python3 preprocessing/boughter/validate_stage1.py
 
 Validation Checks:
-    1. train_datasets/boughter/processed/boughter.csv exists and is readable
+    1. data/train/boughter/processed/boughter.csv exists and is readable
     2. Sequence count: 1,117 (95.4% translation success from 1,171 raw)
     3. All sequences contain valid protein characters (ACDEFGHIKLMNPQRSTVWY)
     4. Required columns present: id, subset, heavy, light, label, num_flags, flag_category
@@ -22,7 +22,7 @@ Validation Checks:
 
 Outputs:
     - Console report with validation results
-    - train_datasets/boughter/annotated/validation_report.txt
+    - data/train/boughter/annotated/validation_report.txt
 
 Reference: See docs/boughter/boughter_data_sources.md for Stage 1 methodology
 """
@@ -41,7 +41,7 @@ def validate_stage1_output() -> dict[str, Any]:
     print("Stage 1 Validation: DNA Translation & Novo Flagging")
     print("=" * 70)
 
-    csv_path = Path("train_datasets/boughter/processed/boughter.csv")
+    csv_path = Path("data/train/boughter/processed/boughter.csv")
 
     if not csv_path.exists():
         return {
@@ -137,7 +137,7 @@ def validate_stage2_output() -> dict[str, Any]:
     print("=" * 70)
 
     # Check if Stage 2 has been run
-    output_dir = Path("train_datasets/boughter/annotated")
+    output_dir = Path("data/train/boughter/annotated")
     vh_file = output_dir / "VH_only_boughter.csv"
 
     if not vh_file.exists():
@@ -147,7 +147,7 @@ def validate_stage2_output() -> dict[str, Any]:
         }
 
     # Load Stage 1 input
-    df_stage1 = pd.read_csv("train_datasets/boughter/processed/boughter.csv")
+    df_stage1 = pd.read_csv("data/train/boughter/processed/boughter.csv")
 
     stage1_count = len(df_stage1)
     # Stage 2 failures from log (if present)
@@ -357,7 +357,7 @@ def generate_report(
     print(report_text)
 
     # Save report
-    report_path = Path("train_datasets/boughter/annotated/validation_report.txt")
+    report_path = Path("data/train/boughter/annotated/validation_report.txt")
     report_path.write_text(report_text)
     print(f"\n✓ Validation report saved to: {report_path}")
 

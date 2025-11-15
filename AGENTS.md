@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-Core pipeline code resides in `src/antibody_training_esm` (`core/`, `data/`, `datasets/`, `evaluation/`, `utils/`, `cli/`). Hydra configs live in `conf/` (inside package), preprocessing assets in `preprocessing/`, and automation or research artifacts in `scripts/` and `experiments/`. Tests sit under `tests/{unit,integration,e2e}` with shared fixtures in `tests/fixtures`. Checkpoints and logs belong in `models/`, `logs/`, `outputs/`, curated datasets in `train_datasets/` or `test_datasets/`, and references in `docs/` and `assets/`.
+Core pipeline code resides in `src/antibody_training_esm` (`core/`, `data/`, `datasets/`, `evaluation/`, `utils/`, `cli/`). Hydra configs live in `conf/` (inside package), preprocessing assets in `preprocessing/`, and automation or research artifacts in `scripts/` and `experiments/`. Tests sit under `tests/{unit,integration,e2e}` with shared fixtures in `tests/fixtures`. Checkpoints and logs belong in `models/`, `logs/`, `outputs/`, curated datasets in `data/train/` or `data/test/`, and references in `docs/` and `assets/`.
 
 ## Build, Test, and Development Commands
 - `make install`: sync deps with uv.

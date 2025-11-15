@@ -37,7 +37,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--csv",
         type=Path,
-        default=Path("test_datasets/jain/processed/jain_with_private_elisa_FULL.csv"),
+        default=Path("data/test/jain/processed/jain_with_private_elisa_FULL.csv"),
         help="Path to the converted CSV file (ELISA SSOT).",
     )
     return parser.parse_args()

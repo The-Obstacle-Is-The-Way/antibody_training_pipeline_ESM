@@ -201,9 +201,9 @@ Non-specific       0.47      0.63      0.54        27
 import pandas as pd
 
 # Current parity set (completed)
-df_parity = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv')
+df_parity = pd.read_csv('data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv')
 # Also available with full metadata:
-df_full = pd.read_csv('test_datasets/jain/canonical/jain_86_novo_parity.csv')
+df_full = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
 
 # Verification:
 assert len(df_parity) == 86
@@ -227,9 +227,9 @@ assert results['test_accuracy'] >= 0.66  # Should match Novo
 ### Files Generated
 
 **Current Files (2025-11-09):**
-- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH-only parity set (86 antibodies)
-- `test_datasets/jain/canonical/jain_86_novo_parity.csv` - Full metadata version
-- `test_datasets/jain/fragments/VH_only_jain.csv` - Fragment file (standardized `sequence` column)
+- `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH-only parity set (86 antibodies)
+- `data/test/jain/canonical/jain_86_novo_parity.csv` - Full metadata version
+- `data/test/jain/fragments/VH_only_jain.csv` - Fragment file (standardized `sequence` column)
 
 **Historical Files (cleaned up 2025-11-05):**
 - `VH_only_jain_test_QC_REMOVED.csv` - Replaced

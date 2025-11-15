@@ -37,7 +37,7 @@ make hooks       # Run pre-commit checks manually
 **Training/Testing:**
 ```bash
 make train       # Train with default config
-uv run antibody-test --model models/model.pkl --data test_datasets/jain/fragments/VH_only_jain.csv  # Test model
+uv run antibody-test --model models/model.pkl --data data/test/jain/fragments/VH_only_jain.csv  # Test model
 ```
 
 ---
@@ -167,7 +167,7 @@ uv run antibody-train experiment.name=my_experiment hardware.device=cuda
 
 **Test trained model:**
 ```bash
-uv run antibody-test --model models/model.pkl --data test_datasets/jain/fragments/VH_only_jain.csv
+uv run antibody-test --model models/model.pkl --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **All CLI options:**
@@ -247,8 +247,8 @@ python3 preprocessing/shehata/step2_extract_fragments.py
    uv run antibody-train \
      experiment.name=my_experiment \
      training.model_name=my_model \
-     data.train_file="train_datasets/{dataset}/canonical/VH_only.csv" \
-     data.test_file="test_datasets/{dataset}/canonical/VH_only.csv" \
+     data.train_file="data/train/{dataset}/canonical/VH_only.csv" \
+     data.test_file="data/test/{dataset}/canonical/VH_only.csv" \
      classifier.C=1.0 \
      classifier.penalty=l2
    ```

@@ -2,7 +2,7 @@
 >
 > This document describes the Phase 1 verification from 2025-10-31 and Phase 2 blocker discovery.
 >
-> **For current pipeline documentation, see:** `test_datasets/shehata/README.md`
+> **For current pipeline documentation, see:** `data/test/shehata/README.md`
 >
 > Both Phase 1 and Phase 2 are now complete. The P0 blocker mentioned below has been resolved.
 
@@ -122,11 +122,11 @@ def convert_excel_to_csv(..., interactive: bool = True):
 
 ## Conversion Results
 
-### Input: `test_datasets/shehata/raw/shehata-mmc2.xlsx`
+### Input: `data/test/shehata/raw/shehata-mmc2.xlsx`
 - **Rows:** 402 (398 antibodies + 4 metadata/legend rows)
 - **Columns:** 25 (sequences, biophysical data, annotations)
 
-### Output: `test_datasets/shehata/processed/shehata.csv`
+### Output: `data/test/shehata/processed/shehata.csv`
 - **Rows:** 402
 - **Columns:** 7 (`id, heavy_seq, light_seq, label, psr_score, b_cell_subset, source`)
 - **Format:** Compatible with `jain.csv` (shares 5 core columns)
@@ -238,7 +238,7 @@ All agents confirmed:
 4. `docs/shehata_preprocessing_implementation_plan.md` (existing)
 
 ### Data:
-1. `test_datasets/shehata/processed/shehata.csv` (NEW - 402 rows, 7 columns)
+1. `data/test/shehata/processed/shehata.csv` (NEW - 402 rows, 7 columns)
 
 ---
 

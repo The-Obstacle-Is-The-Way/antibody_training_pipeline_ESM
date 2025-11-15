@@ -21,10 +21,10 @@ raw/*.xlsx → processed/shehata.csv → fragments/*.csv
 **Purpose:** Convert Shehata Excel file to standardized CSV format.
 
 **Input:**
-- `test_datasets/shehata/raw/shehata-mmc2.xlsx`
+- `data/test/shehata/raw/shehata-mmc2.xlsx`
 
 **Output:**
-- `test_datasets/shehata/processed/shehata.csv` (398 antibodies)
+- `data/test/shehata/processed/shehata.csv` (398 antibodies)
 
 **Run:**
 ```bash
@@ -47,10 +47,10 @@ python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 **Purpose:** Annotate with ANARCI and extract paired antibody fragments.
 
 **Input:**
-- `test_datasets/shehata/processed/shehata.csv` (398 antibodies)
+- `data/test/shehata/processed/shehata.csv` (398 antibodies)
 
 **Output:**
-- `test_datasets/shehata/fragments/*.csv` (16 fragment files)
+- `data/test/shehata/fragments/*.csv` (16 fragment files)
 
 **Fragment types:**
 1. VH_only, VL_only (full variable domains)

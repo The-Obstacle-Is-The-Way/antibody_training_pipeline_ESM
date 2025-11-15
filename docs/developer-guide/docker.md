@@ -183,7 +183,7 @@ docker-compose run dev antibody-train \
 ```bash
 docker-compose run dev antibody-test \
     --model models/model.pkl \
-    --data test_datasets/jain/fragments/VH_only_jain.csv
+    --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 ### Run Preprocessing
@@ -267,7 +267,7 @@ docker run -v $(pwd)/data:/app/data antibody-training-prod:1.0 \
 # Test model
 docker run -v $(pwd)/data:/app/data antibody-training-prod:1.0 \
     antibody-test --model /app/data/model.pkl \
-    --data /app/test_datasets/jain/fragments/VH_only_jain.csv
+    --data /app/data/test/jain/fragments/VH_only_jain.csv
 ```
 
 ### Deploy to HuggingFace Spaces

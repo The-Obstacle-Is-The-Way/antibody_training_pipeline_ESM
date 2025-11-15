@@ -9,7 +9,7 @@
 This directory contains the complete preprocessing pipeline for the Boughter et al. 2020 antibody polyreactivity dataset, following the Novo Nordisk methodology (Sakhnini et al. 2025).
 
 **📋 For complete data provenance and source citations, see:**
-[`train_datasets/BOUGHTER_DATA_PROVENANCE.md`](../../train_datasets/BOUGHTER_DATA_PROVENANCE.md)
+[`data/train/BOUGHTER_DATA_PROVENANCE.md`](../../data/train/BOUGHTER_DATA_PROVENANCE.md)
 
 ### Pipeline Flow
 
@@ -18,11 +18,11 @@ Raw FASTA (1,171 DNA sequences)
     ↓
 [Stage 1: DNA Translation & Novo Flagging]
     ↓
-train_datasets/boughter/processed/boughter.csv (1,117 protein sequences)
+data/train/boughter/processed/boughter.csv (1,117 protein sequences)
     ↓
 [Stages 2+3: ANARCI Annotation + QC Filtering]
     ↓
-train_datasets/boughter/*.csv (16 fragments × 1,065 sequences)
+data/train/boughter/*.csv (16 fragments × 1,065 sequences)
     ↓
 Training Subset: VH_only_boughter_training.csv (914 sequences)
 ```
@@ -42,11 +42,11 @@ python3 preprocessing/boughter/stage1_dna_translation.py
 ```
 
 **Inputs:**
-- `train_datasets/boughter/raw/*.txt` (1,171 DNA sequences)
+- `data/train/boughter/raw/*.txt` (1,171 DNA sequences)
 
 **Outputs:**
-- `train_datasets/boughter/processed/boughter.csv` (1,117 protein sequences, 95.4% success)
-- `train_datasets/boughter/raw/translation_failures.log` (54 failures)
+- `data/train/boughter/processed/boughter.csv` (1,117 protein sequences, 95.4% success)
+- `data/train/boughter/raw/translation_failures.log` (54 failures)
 
 **Flagging Strategy:**
 - **0 flags** → Specific (label=0, include in training)
@@ -66,13 +66,13 @@ python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 ```
 
 **Inputs:**
-- `train_datasets/boughter/processed/boughter.csv` (1,117 sequences from Stage 1)
+- `data/train/boughter/processed/boughter.csv` (1,117 sequences from Stage 1)
 
 **Outputs:**
-- `train_datasets/boughter/annotated/*_boughter.csv` (16 fragment files, 1,065 rows each)
-- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 training sequences)
-- `train_datasets/boughter/annotated/annotation_failures.log` (7 ANARCI failures)
-- `train_datasets/boughter/annotated/qc_filtered_sequences.txt` (45 QC-filtered sequences)
+- `data/train/boughter/annotated/*_boughter.csv` (16 fragment files, 1,065 rows each)
+- `data/train/boughter/canonical/VH_only_boughter_training.csv` (914 training sequences)
+- `data/train/boughter/annotated/annotation_failures.log` (7 ANARCI failures)
+- `data/train/boughter/annotated/qc_filtered_sequences.txt` (45 QC-filtered sequences)
 
 **16 Fragment Types:**
 1. VH_only, VL_only (full variable domains)
@@ -186,7 +186,7 @@ python3 preprocessing/boughter/validate_stages2_3.py
 
 ### Intermediate Files
 
-- `train_datasets/boughter/processed/boughter.csv` (Stage 1 output, 1,117 rows)
+- `data/train/boughter/processed/boughter.csv` (Stage 1 output, 1,117 rows)
 
 ### Fragment Files (16 total)
 
@@ -203,14 +203,14 @@ All fragment files contain **1,065 rows** with the following columns:
 
 ### Training File
 
-- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 rows, training subset only)
+- `data/train/boughter/canonical/VH_only_boughter_training.csv` (914 rows, training subset only)
 
 ### Log Files
 
-- `train_datasets/boughter/annotated/annotation_failures.log` - ANARCI annotation failures
-- `train_datasets/boughter/annotated/qc_filtered_sequences.txt` - QC-filtered sequence IDs
-- `train_datasets/boughter/annotated/validation_report.txt` - Validation summary
-- `train_datasets/boughter/raw/translation_failures.log` - DNA translation failures
+- `data/train/boughter/annotated/annotation_failures.log` - ANARCI annotation failures
+- `data/train/boughter/annotated/qc_filtered_sequences.txt` - QC-filtered sequence IDs
+- `data/train/boughter/annotated/validation_report.txt` - Validation summary
+- `data/train/boughter/raw/translation_failures.log` - DNA translation failures
 
 ---
 
@@ -221,7 +221,7 @@ The training pipeline uses:
 ```yaml
 # conf/config.yaml
 data:
-  train_file: ./train_datasets/boughter/canonical/VH_only_boughter_training.csv
+  train_file: ./data/train/boughter/canonical/VH_only_boughter_training.csv
 ```
 
 **Important:** Training uses the filtered 914-sequence subset, NOT the full 1,065-sequence fragment files.
@@ -232,7 +232,7 @@ data:
 
 ### Data Provenance & Sources
 
-**📋 [`train_datasets/BOUGHTER_DATA_PROVENANCE.md`](../../train_datasets/BOUGHTER_DATA_PROVENANCE.md)**
+**📋 [`data/train/BOUGHTER_DATA_PROVENANCE.md`](../../data/train/BOUGHTER_DATA_PROVENANCE.md)**
 - Complete data lineage from AIMS_manuscripts repository
 - All source citations (Boughter 2020, Guthmiller 2020, etc.)
 - Directory structure and file mapping
@@ -275,7 +275,7 @@ python3 preprocessing/boughter/stage1_dna_translation.py
 python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 
 # Verify outputs are identical
-diff train_datasets/boughter/processed/boughter.csv train_datasets/boughter_BACKUP.csv
+diff data/train/boughter/processed/boughter.csv data/train/boughter_BACKUP.csv
 # Result: No differences (if input unchanged)
 ```
 

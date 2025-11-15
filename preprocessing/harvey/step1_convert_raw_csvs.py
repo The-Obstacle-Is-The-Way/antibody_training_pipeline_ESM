@@ -5,11 +5,11 @@ Harvey Dataset CSV Conversion Script
 Combines high and low polyreactivity CSVs from raw sources
 into a single unified dataset for preprocessing.
 
-Source: test_datasets/harvey/raw/
+Source: data/test/harvey/raw/
 - high_polyreactivity_high_throughput.csv (71,772 sequences)
 - low_polyreactivity_high_throughput.csv (69,702 sequences)
 
-Output: test_datasets/harvey/processed/harvey.csv (141,474 sequences)
+Output: data/test/harvey/processed/harvey.csv (141,474 sequences)
 
 The official Harvey CSVs contain IMGT-numbered positions (columns 1-128) and
 pre-extracted CDR sequences. This script:
@@ -118,19 +118,19 @@ def convert_harvey_csvs(
 def main() -> int:
     """Main conversion pipeline."""
     # Paths
-    high_csv = Path("test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv")
-    low_csv = Path("test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv")
-    output_csv = Path("test_datasets/harvey/processed/harvey.csv")
+    high_csv = Path("data/test/harvey/raw/high_polyreactivity_high_throughput.csv")
+    low_csv = Path("data/test/harvey/raw/low_polyreactivity_high_throughput.csv")
+    output_csv = Path("data/test/harvey/processed/harvey.csv")
 
     # Validate inputs
     if not high_csv.exists():
         print(f"Error: {high_csv} not found!")
-        print("Please ensure raw files are in test_datasets/harvey/raw/")
+        print("Please ensure raw files are in data/test/harvey/raw/")
         return 1
 
     if not low_csv.exists():
         print(f"Error: {low_csv} not found!")
-        print("Please ensure raw files are in test_datasets/harvey/raw/")
+        print("Please ensure raw files are in data/test/harvey/raw/")
         return 1
 
     print("=" * 70)

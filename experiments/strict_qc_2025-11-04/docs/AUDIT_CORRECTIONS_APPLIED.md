@@ -24,7 +24,7 @@ Validated all reviewer feedback from first principles against source materials. 
 - ✅ Directory listing confirms exactly 16 fragment files exist:
 
 ```bash
-$ ls -1 train_datasets/boughter/strict_qc/*.csv | wc -l
+$ ls -1 data/train/boughter/strict_qc/*.csv | wc -l
 16
 ```
 

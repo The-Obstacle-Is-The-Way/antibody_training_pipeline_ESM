@@ -150,7 +150,7 @@ Raw DNA FASTA (6 subsets, 1,171 sequences)
    ↓
 Stage 1: DNA → Protein translation
    ↓ preprocessing/boughter/stage1_dna_translation.py
-   ↓ Output: train_datasets/boughter/processed/boughter.csv (1,171 sequences)
+   ↓ Output: data/train/boughter/processed/boughter.csv (1,171 sequences)
    ↓
 Stage 2+3: ANARCI annotation + Boughter QC
    ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
@@ -168,8 +168,8 @@ Stage 2+3: ANARCI annotation + Boughter QC
 - Training subset (0 and 4+ flags): 914 sequences (-151 more, -14.2% of 1,065)
 
 **Files:**
-- `train_datasets/boughter/annotated/VH_only_boughter.csv` (1,065 sequences, all flags)
-- `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 sequences, training only)
+- `data/train/boughter/annotated/VH_only_boughter.csv` (1,065 sequences, all flags)
+- `data/train/boughter/canonical/VH_only_boughter_training.csv` (914 sequences, training only)
 
 **Use case:** Exact replication of Boughter's published methodology
 
@@ -236,7 +236,7 @@ total_abs = total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 ### File Inventory
 
 ```
-train_datasets/boughter/
+data/train/boughter/
 ├── canonical/
 │   └── VH_only_boughter_training.csv         # 914 sequences (PRODUCTION)
 ├── annotated/
@@ -250,7 +250,7 @@ train_datasets/boughter/
 
 ### Production Training File
 
-**File:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv`
+**File:** `data/train/boughter/canonical/VH_only_boughter_training.csv`
 
 **Sequences:** 914 (training subset: 0 and 4+ ELISA flags only)
 
@@ -278,7 +278,7 @@ train_datasets/boughter/
 
 ### Fragment Files (Multi-Fragment Analysis)
 
-**Files:** `train_datasets/boughter/annotated/*_boughter.csv` (16 files)
+**Files:** `data/train/boughter/annotated/*_boughter.csv` (16 files)
 
 **Fragments available:**
 - Variable domains: VH_only, VL_only, VH+VL, Full
@@ -315,7 +315,7 @@ An experimental strict QC filtering (852-914 sequences) was tested but archived 
 
 **Training time:** ~1.5 minutes (embeddings cached)
 
-**File used:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv`
+**File used:** `data/train/boughter/canonical/VH_only_boughter_training.csv`
 
 **Status:** ✅ Baseline model, matches Boughter methodology
 
@@ -379,7 +379,7 @@ Boughter:      [58.6% =========== 67.5% ============ 76.4%]
 
 ### Primary Recommendation: Use Boughter QC (914 sequences)
 
-**File:** `train_datasets/boughter/canonical/VH_only_boughter_training.csv`
+**File:** `data/train/boughter/canonical/VH_only_boughter_training.csv`
 
 **Why?**
 1. ✅ **Better CV accuracy** (67.5% vs 66.55%, though not statistically significant)
@@ -412,8 +412,8 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 - CDR boundary audit: `docs/boughter/cdr_boundary_first_principles_audit.md`
 
 **Training Data (Production):**
-- Production: `train_datasets/boughter/canonical/VH_only_boughter_training.csv` (914 seqs) ⭐ **VALIDATED**
-- Fragment CSVs: `train_datasets/boughter/annotated/*_boughter.csv` (16 files, 1,065 seqs each)
+- Production: `data/train/boughter/canonical/VH_only_boughter_training.csv` (914 seqs) ⭐ **VALIDATED**
+- Fragment CSVs: `data/train/boughter/annotated/*_boughter.csv` (16 files, 1,065 seqs each)
 
 **Trained Models:**
 - Production: `models/boughter_vh_esm1v_logreg.pkl` ⭐ **VALIDATED** (Jain 66.28%, Shehata 52.26%)

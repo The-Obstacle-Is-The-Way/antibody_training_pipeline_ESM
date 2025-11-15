@@ -65,7 +65,7 @@ We successfully replicated the Novo Nordisk methodology (Sakhnini et al. 2025) a
 
 ### Results
 
-**Test file:** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv`
+**Test file:** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv`
 
 ```
 Confusion Matrix: [[40, 19], [10, 17]]
@@ -109,7 +109,7 @@ True    Spec      40      19      (59 specific)
 
 ### Results
 
-**Test file:** `test_datasets/shehata/fragments/VH_only_shehata.csv`
+**Test file:** `data/test/shehata/fragments/VH_only_shehata.csv`
 
 ```
 Confusion Matrix: [[204, 187], [2, 5]]
@@ -158,7 +158,7 @@ True    Spec     204     187      (391 specific)
 
 ### Results
 
-**Test file:** `test_datasets/harvey/fragments/VHH_only_harvey.csv`
+**Test file:** `data/test/harvey/fragments/VHH_only_harvey.csv`
 **Test Date:** 2025-11-03 08:09-09:38
 
 ```

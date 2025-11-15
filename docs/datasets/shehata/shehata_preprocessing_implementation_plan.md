@@ -83,8 +83,8 @@ We need to determine this threshold from the paper or their methods.
 - Standard format: `sequence, label` columns
 
 **3. Existing Datasets:**
-- `train_datasets/VH_only_training_ready.csv` → Boughter training data
-- `test_datasets/jain.csv` → Jain test data (already processed)
+- `data/train/VH_only_training_ready.csv` → Boughter training data
+- `data/test/jain.csv` → Jain test data (already processed)
 
 **4. Expected Output Format (from `jain.csv`):**
 ```csv
@@ -119,7 +119,7 @@ abituzumab,QVQLQQSGGE...,DIQMTQSPSS...,0,jain2017,0.125938041,0.044483421
 ### Phase 1: Basic Preprocessing Script (Minimal Viable Product)
 **Goal:** Create test-ready CSV matching existing format
 **Effort:** ~2-3 hours
-**Deliverable:** `test_datasets/shehata/processed/shehata.csv`
+**Deliverable:** `data/test/shehata/processed/shehata.csv`
 
 **Tasks:**
 1. ✅ Read mmc2.xlsx
@@ -165,7 +165,7 @@ ADI-38501,EVQLLESGGGLVQPGG...,DIVMTQSPATLSLSPG...,0,0.023184,IgG memory,shehata2
 
 **Output Structure:**
 ```
-test_datasets/
+data/test/
 ├── shehata/
 │   ├── VH_only_shehata.csv
 │   ├── VL_only_shehata.csv
@@ -240,7 +240,7 @@ antibody_training_pipeline_ESM/
 ├── scripts/ (NEW directory for utilities)
 │   └── prepare_shehata_basic.py (NEW - Phase 1)
 │
-├── test_datasets/
+├── data/test/
 │   ├── mmc2.xlsx (raw data - gitignored)
 │   ├── mmc3.xlsx (clinical subset - gitignored)
 │   ├── mmc4.xlsx (gitignored)
@@ -265,7 +265,7 @@ antibody_training_pipeline_ESM/
 
 ✅ **Data format:** CSV with `sequence, label` columns
 ✅ **Loading:** Works with `data.load_local_data(file_path, sequence_column, label_column)`
-✅ **Testing:** Compatible with `test.py --data test_datasets/shehata/processed/shehata.csv`
+✅ **Testing:** Compatible with `test.py --data data/test/shehata/processed/shehata.csv`
 ✅ **Embedding:** Sequences ready for ESM-1v processing
 ✅ **Naming:** Follows `{fragment}_{dataset}.csv` pattern
 
@@ -352,7 +352,7 @@ anarci or riot_na      # CDR annotation (Phase 2 only)
 ## Success Criteria
 
 ### Phase 1 Complete When:
-- [x] `test_datasets/shehata/processed/shehata.csv` exists
+- [x] `data/test/shehata/processed/shehata.csv` exists
 - [x] 398 rows (one per antibody)
 - [x] Columns: `id, heavy_seq, light_seq, label, psr_score, b_cell_subset, source`
 - [x] Binary labels defined with documented threshold (0.31002 = 98.24%ile)
@@ -362,7 +362,7 @@ anarci or riot_na      # CDR annotation (Phase 2 only)
 
 ### Phase 2 Complete When:
 - [x] `preprocessing/shehata/step2_extract_fragments.py` script exists
-- [x] 16 fragment-specific CSV files generated in test_datasets/shehata/
+- [x] 16 fragment-specific CSV files generated in data/test/shehata/
 - [x] ANARCI re-annotation using IMGT scheme (riot_na v4.0.5)
 - [x] All fragments validated for sequence quality (lengths match expected ranges)
 - [x] Fragment CSVs have standardized format (id, sequence, label, psr_score, b_cell_subset, source)
@@ -404,7 +404,7 @@ anarci or riot_na      # CDR annotation (Phase 2 only)
 3. ✅ **P0 Blocker Resolved** - Gap characters eliminated from all fragments
 4. ✅ **PSR Threshold Calibrated** - Dataset-specific threshold: 0.5495 (implemented in classifier.py:167)
 5. ✅ **Validation Complete** - All fragments verified gap-free, label distribution preserved
-6. ✅ **Documentation Updated** - See `test_datasets/shehata/README.md` for SSOT
+6. ✅ **Documentation Updated** - See `data/test/shehata/README.md` for SSOT
 
 ### Historical Checklists (Archived):
 

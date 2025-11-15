@@ -60,7 +60,7 @@ The Jain dataset preprocessing requires the following Excel files from the paper
    - `pnas.1616408114.sd01.xlsx`
    - `pnas.1616408114.sd02.xlsx`
    - `pnas.1616408114.sd03.xlsx`
-4. Place them in `test_datasets/` directory
+4. Place them in `data/test/` directory
 
 **Note:** These Excel files are NOT committed to git (see `.gitignore`). They must be downloaded manually from the paper's supplementary materials.
 
@@ -140,12 +140,12 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 
 This will generate:
-- `test_datasets/jain.csv` (Phase 1 output - properly converted from PNAS files)
-- `test_datasets/jain/*.csv` (16 fragment-specific files from Phase 2)
+- `data/test/jain.csv` (Phase 1 output - properly converted from PNAS files)
+- `data/test/jain/*.csv` (16 fragment-specific files from Phase 2)
 
 ## Data Provenance Issue (Discovered 2025-11-01)
 
-**Problem:** The existing `test_datasets/jain.csv` in the repository contains only 80 antibodies (not 137), and values don't match the PNAS supplementary files.
+**Problem:** The existing `data/test/jain.csv` in the repository contains only 80 antibodies (not 137), and values don't match the PNAS supplementary files.
 
 **Example discrepancy:**
 - `jain.csv` abituzumab `smp`: 0.126
@@ -178,7 +178,7 @@ The public PNAS SD03 supplementary file contains:
 
 Confirmed by inspection:
 ```bash
-python3 -c "import pandas as pd; df = pd.read_excel('test_datasets/jain-pnas.1616408114.sd03.xlsx'); print(df.columns.tolist())"
+python3 -c "import pandas as pd; df = pd.read_excel('data/test/jain-pnas.1616408114.sd03.xlsx'); print(df.columns.tolist())"
 # Output: ['Name', 'HEK Titer (mg/L)', 'Fab Tm by DSF (°C)', ..., 'ELISA', 'BVP ELISA']
 # No individual antigen columns present
 ```

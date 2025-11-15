@@ -46,7 +46,7 @@
 
 | Stage | Script | Purpose | Key Outputs |
 |-------|--------|---------|-------------|
-| 1 | `preprocessing/boughter/stage1_dna_translation.py` | Translate paired DNA FASTA + flags, apply Novo label rules | `train_datasets/boughter/processed/boughter.csv`, `translation_failures.log` |
+| 1 | `preprocessing/boughter/stage1_dna_translation.py` | Translate paired DNA FASTA + flags, apply Novo label rules | `data/train/boughter/processed/boughter.csv`, `translation_failures.log` |
 | 2+3 | `preprocessing/boughter/stage2_stage3_annotation_qc.py` | ANARCI IMGT numbering, QC filtering, fragment extraction | 16 fragment CSVs, `annotation_failures.log` |
 | 3 | `process_boughter.py` (Stage 3) | Post-annotation QC (X/empty CDR filters) | Clean fragment CSVs, pipeline summary |
 | Validation | `preprocessing/boughter/validate_stage1.py`, `preprocessing/boughter/validate_stages2_3.py` | Stage-specific pipeline validation | `validation_report.txt` |
@@ -192,12 +192,12 @@ Observations:
 
 ## 7. File Locations
 
-- Stage 1 output: `train_datasets/boughter/processed/boughter.csv`
-- Stage 2/3 fragments: `train_datasets/boughter/` (`VH_only_boughter.csv`, etc.)
-- Translation failures: `train_datasets/boughter/raw/translation_failures.log`
-- ANARCI failures: `train_datasets/boughter/annotated/annotation_failures.log`
-- QC filtered IDs: `train_datasets/boughter/annotated/qc_filtered_sequences.txt`
-- Validation summary: `train_datasets/boughter/annotated/validation_report.txt`
+- Stage 1 output: `data/train/boughter/processed/boughter.csv`
+- Stage 2/3 fragments: `data/train/boughter/` (`VH_only_boughter.csv`, etc.)
+- Translation failures: `data/train/boughter/raw/translation_failures.log`
+- ANARCI failures: `data/train/boughter/annotated/annotation_failures.log`
+- QC filtered IDs: `data/train/boughter/annotated/qc_filtered_sequences.txt`
+- Validation summary: `data/train/boughter/annotated/validation_report.txt`
 
 ---
 

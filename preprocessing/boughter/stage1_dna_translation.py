@@ -13,11 +13,11 @@ Usage:
     python3 preprocessing/boughter/stage1_dna_translation.py
 
 Inputs:
-    train_datasets/boughter/raw/*.txt - Raw DNA FASTA files (1,171 sequences)
+    data/train/boughter/raw/*.txt - Raw DNA FASTA files (1,171 sequences)
 
 Outputs:
-    train_datasets/boughter/processed/boughter.csv - Combined dataset (1,117 sequences, 95.4% translation success)
-    train_datasets/boughter/raw/translation_failures.log - Failed sequences (54 failures)
+    data/train/boughter/processed/boughter.csv - Combined dataset (1,117 sequences, 95.4% translation success)
+    data/train/boughter/raw/translation_failures.log - Failed sequences (54 failures)
 
 Novo Nordisk Flagging Strategy:
     - 0 flags: Specific (label=0, include in training)
@@ -507,7 +507,7 @@ def main() -> int:
     """Main processing pipeline."""
     # Define dataset structure
     # Raw data is in boughter_raw/ (not committed to git)
-    base_dir = Path("train_datasets/boughter/raw")
+    base_dir = Path("data/train/boughter/raw")
 
     subsets: dict[str, SubsetPaths] = {
         "flu": {
@@ -570,13 +570,13 @@ def main() -> int:
     print_dataset_stats(df)
 
     # Save output
-    output_path = Path("train_datasets/boughter/processed/boughter.csv")
+    output_path = Path("data/train/boughter/processed/boughter.csv")
     df.to_csv(output_path, index=False)
     print(f"\n✓ Output saved to: {output_path}")
 
     # Save failure log if any
     if all_failures:
-        failure_log = Path("train_datasets/boughter/raw/translation_failures.log")
+        failure_log = Path("data/train/boughter/raw/translation_failures.log")
         failure_log.write_text("\n".join(all_failures))
         print(f"✓ Failure log saved to: {failure_log}")
 

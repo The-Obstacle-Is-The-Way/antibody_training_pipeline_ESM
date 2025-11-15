@@ -15,7 +15,7 @@ Dataset characteristics:
 - 16 fragment types (full antibody)
 
 Source:
-- test_datasets/shehata/raw/shehata-mmc2.xlsx
+- data/test/shehata/raw/shehata-mmc2.xlsx
 
 Reference:
 - Shehata et al. (2019), "Affinity Maturation Enhances Antibody Specificity but Compromises Conformational Stability"
@@ -141,7 +141,7 @@ class ShehataDataset(AntibodyDataset):
         if not excel_file.exists():
             raise FileNotFoundError(
                 f"Shehata Excel file not found: {excel_file}\n"
-                f"Please ensure mmc2.xlsx is in test_datasets/shehata/raw/"
+                f"Please ensure mmc2.xlsx is in data/test/shehata/raw/"
             )
 
         # Load Excel

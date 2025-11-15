@@ -26,7 +26,7 @@ This folder contains **outdated or superseded documentation** from the Novo pari
 
 **Current source of truth:**
 - Documentation: `EXACT_MATCH_FOUND.md` and `MISSION_ACCOMPLISHED.md`
-- Canonical dataset: `test_datasets/jain/canonical/jain_86_novo_parity.csv` (based on P5e-S2)
+- Canonical dataset: `data/test/jain/canonical/jain_86_novo_parity.csv` (based on P5e-S2)
 - Audit trail: `results/permutations/P5e_S2_final_audit.json`
 
 ---

@@ -169,7 +169,7 @@ predictions = model.predict(X_embeddings, threshold=0.6)
 ### Shehata with Threshold 0.5495
 
 ```
-Test file: test_datasets/shehata/fragments/VH_only_shehata.csv
+Test file: data/test/shehata/fragments/VH_only_shehata.csv
 Dataset size: 398 antibodies
 Assay type: PSR
 

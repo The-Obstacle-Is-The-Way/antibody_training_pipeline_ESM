@@ -1,7 +1,7 @@
 # Harvey Dataset Documentation
 
 **Status:** ✅ Complete and validated
-**Pipeline:** `test_datasets/harvey/` → `preprocessing/harvey/`
+**Pipeline:** `data/test/harvey/` → `preprocessing/harvey/`
 
 ---
 
@@ -9,7 +9,7 @@
 
 **For the complete Harvey dataset pipeline, see the authoritative documentation:**
 
-👉 **[`test_datasets/harvey/README.md`](../../../test_datasets/harvey/README.md)** ← **SSOT**
+👉 **[`data/test/harvey/README.md`](../../../data/test/harvey/README.md)** ← **SSOT**
 
 That README contains:
 - Complete 2-step pipeline (convert raw CSVs → extract fragments)
@@ -77,9 +77,9 @@ That README contains:
 ## Quick Links
 
 **Data:**
-- Raw CSVs: `test_datasets/harvey/raw/`
-- Processed: `test_datasets/harvey/processed/harvey.csv`
-- Fragments: `test_datasets/harvey/fragments/*.csv` (6 fragment types)
+- Raw CSVs: `data/test/harvey/raw/`
+- Processed: `data/test/harvey/processed/harvey.csv`
+- Fragments: `data/test/harvey/fragments/*.csv` (6 fragment types)
 
 **Scripts:**
 - Step 1: `preprocessing/harvey/step1_convert_raw_csvs.py`
