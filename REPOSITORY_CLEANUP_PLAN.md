@@ -8,7 +8,7 @@
 
 ## Goals
 
-1. **Data Consolidation**: `train_datasets/` + `data/test/` → `data/train/` + `data/test/`
+1. **Data Consolidation**: `train_datasets/` + `test_datasets/` → `data/train/` + `data/test/` (Phase 1 ✅ complete)
 2. **Config Cleanup**: Remove redundant root `configs/` directory (defer to v0.5.0)
 3. **Archive Legacy**: Move `hyperparameter_sweep_results/` → `experiments/archive/`
 
@@ -19,7 +19,8 @@
 **Reference**: See `CURRENT_STRUCTURE.txt` for full tree (238 dirs, 577 files)
 
 **Key findings**:
-- 125 hardcoded references to `train_datasets/` and `data/test/`
+- ~~125 hardcoded references to `train_datasets/` and `test_datasets/`~~ (✅ Phase 1 complete: `test_datasets/` → `data/test/`)
+- ~85 remaining references to `train_datasets/` (Phase 2 pending)
 - 2 active dependencies on `configs/config.yaml`
 - 1 reference to `hyperparameter_sweep_results/`
 - All cache directories (`.mypy_cache/`, `.uv_cache/`, `.benchmarks/`) already correctly git-ignored
@@ -28,7 +29,7 @@
 
 ## Problem 1: Data Directory Consolidation
 
-### Current State
+### Pre-Migration State (Before Phase 1)
 ```
 train_datasets/
 ├── boughter/
@@ -37,7 +38,32 @@ train_datasets/
     ├── annotated/
     └── canonical/
 
-data/test/
+test_datasets/           # ✅ Migrated to data/test/ (Phase 1 complete)
+├── harvey/
+│   ├── raw/
+│   ├── processed/
+│   ├── canonical/
+│   └── fragments/
+├── jain/
+│   ├── raw/
+│   ├── processed/
+│   └── canonical/
+└── shehata/
+    ├── raw/
+    ├── processed/
+    └── canonical/
+```
+
+### Current State (After Phase 1)
+```
+train_datasets/          # Phase 2 pending
+├── boughter/
+    ├── raw/
+    ├── processed/
+    ├── annotated/
+    └── canonical/
+
+data/test/               # ✅ Phase 1 complete (commit 288905c)
 ├── harvey/
 │   ├── raw/
 │   ├── processed/
@@ -182,13 +208,21 @@ python scripts/migrate_data_directories.py            # Execute
 ```
 
 **Step 4: Move directories with git mv**
+
+Phase 1 (✅ complete - commit 288905c):
 ```bash
-mkdir -p data/train data/test
+mkdir -p data/test
+git mv test_datasets/harvey data/test/
+git mv test_datasets/jain data/test/
+git mv test_datasets/shehata data/test/
+rmdir test_datasets/
+```
+
+Phase 2 (pending):
+```bash
+mkdir -p data/train
 git mv train_datasets/boughter data/train/
-git mv data/test/harvey data/test/
-git mv data/test/jain data/test/
-git mv data/test/shehata data/test/
-rmdir train_datasets test_datasets
+rmdir train_datasets/
 ```
 
 **Step 5: Update .gitignore**
@@ -492,12 +526,12 @@ full historical context of November 2025 sweep experiments."
 - [ ] No breaking changes
 
 ### For Data Consolidation Sprint
-- [ ] All 125 path references updated
-- [ ] Migration script created and tested
-- [ ] Full test suite passes
-- [ ] Docker builds work
-- [ ] Training pipeline verified end-to-end
-- [ ] Documentation updated
+- [x] Phase 1 complete: `test_datasets/` → `data/test/` (135 files, commit 288905c)
+- [ ] Phase 2 pending: `train_datasets/` → `data/train/` (~85 files)
+- [x] Migration script created and tested (`/tmp/migrate_test_datasets.sh`)
+- [x] Full test suite passes (133 tests, mypy, ruff)
+- [x] Git history preserved (verified via `git log --follow`)
+- [x] Documentation updated (TEST_DATASETS_CONSOLIDATION_PLAN.md)
 
 ### For Config Removal (v0.5.0)
 - [ ] All dependencies migrated to Hydra
@@ -522,7 +556,7 @@ git revert <commit-hash>
 # Restore moved files
 git mv experiments/archive/hyperparameter_sweeps_2025-11-02/* hyperparameter_sweep_results/
 git mv data/train/boughter train_datasets/
-git mv data/test/* data/test/
+git mv data/test/* test_datasets/
 ```
 
 ---

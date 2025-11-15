@@ -1,12 +1,12 @@
 2025-11-06 21:36:50,458 - __main__ - INFO - Starting model testing
 2025-11-06 21:36:50,459 - __main__ - INFO - Models to test: ['models/boughter_vh_esm1v_logreg.pkl']
-2025-11-06 21:36:50,459 - __main__ - INFO - Datasets to test: ['test_datasets/harvey/fragments/VHH_only_harvey.csv']
+2025-11-06 21:36:50,459 - __main__ - INFO - Datasets to test: ['data/test/harvey/fragments/VHH_only_harvey.csv']
 2025-11-06 21:36:50,459 - __main__ - INFO - 
 ============================================================
 2025-11-06 21:36:50,459 - __main__ - INFO - Testing on dataset: VHH_only_harvey
 2025-11-06 21:36:50,459 - __main__ - INFO - ============================================================
-2025-11-06 21:36:50,459 - __main__ - INFO - Loading dataset from test_datasets/harvey/fragments/VHH_only_harvey.csv
-2025-11-06 21:36:50,658 - __main__ - INFO - Loaded 141021 samples from test_datasets/harvey/fragments/VHH_only_harvey.csv (sequence_col='sequence', label_col='label')
+2025-11-06 21:36:50,459 - __main__ - INFO - Loading dataset from data/test/harvey/fragments/VHH_only_harvey.csv
+2025-11-06 21:36:50,658 - __main__ - INFO - Loaded 141021 samples from data/test/harvey/fragments/VHH_only_harvey.csv (sequence_col='sequence', label_col='label')
 2025-11-06 21:36:50,678 - __main__ - INFO -   Label distribution: {1: 71759, 0: 69262}
 2025-11-06 21:36:50,684 - __main__ - INFO - 
 Testing model: boughter_vh_esm1v_logreg

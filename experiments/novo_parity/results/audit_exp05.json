@@ -4,8 +4,8 @@
   "timestamp": "2025-11-03T22:30:45.421622",
   "script": "experiments/novo_parity/scripts/exp_05_psr_hybrid_parity.py",
   "input_files": [
-    "test_datasets/jain_ELISA_ONLY_116.csv",
-    "test_datasets/jain_sd03.csv"
+    "data/test/jain_ELISA_ONLY_116.csv",
+    "data/test/jain_sd03.csv"
   ],
   "output_file": "experiments/novo_parity/datasets/jain_86_exp05.csv",
   "method": {

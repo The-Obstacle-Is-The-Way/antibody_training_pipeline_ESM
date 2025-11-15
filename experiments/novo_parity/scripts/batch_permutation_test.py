@@ -25,8 +25,10 @@ REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 # Input files
-ELISA_116_PATH = REPO_ROOT / "test_datasets" / "jain_ELISA_ONLY_116.csv"
-SD03_PATH = REPO_ROOT / "test_datasets" / "jain_sd03.csv"
+ELISA_116_PATH = (
+    REPO_ROOT / "data" / "test" / "jain" / "processed" / "jain_ELISA_ONLY_116.csv"
+)
+SD03_PATH = REPO_ROOT / "data" / "test" / "jain" / "processed" / "jain_sd03.csv"
 MODEL_PATH = REPO_ROOT / "models" / "boughter_vh_esm1v_logreg.pkl"
 
 # Output directory

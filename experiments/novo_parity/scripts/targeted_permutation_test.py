@@ -42,9 +42,14 @@ print()
 
 # Load data
 df_116 = pd.read_csv(
-    REPO_ROOT / "test_datasets" / "jain" / "jain_ELISA_ONLY_116_with_zscores.csv"
+    REPO_ROOT
+    / "data"
+    / "test"
+    / "jain"
+    / "processed"
+    / "jain_ELISA_ONLY_116_with_zscores.csv"
 )
-bio = pd.read_csv(REPO_ROOT / "test_datasets" / "jain_sd03.csv")
+bio = pd.read_csv(REPO_ROOT / "data" / "test" / "jain" / "processed" / "jain_sd03.csv")
 
 # Merge biophysical data
 bio_clean = bio[
