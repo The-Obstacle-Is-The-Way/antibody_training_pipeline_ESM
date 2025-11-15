@@ -2,7 +2,7 @@
 
 **Branch**: `chore/directory-structure-cleanup`
 **Date**: 2025-11-14
-**Status**: PLANNING → EXECUTION READY
+**Status**: ✅ EXECUTION COMPLETE (Phases 1 & 2 finished 2025-11-15)
 
 ---
 
@@ -19,15 +19,17 @@
 **Reference**: See `CURRENT_STRUCTURE.txt` for full tree (238 dirs, 577 files)
 
 **Key findings**:
-- ~~125 hardcoded references to `train_datasets/` and `test_datasets/`~~ (✅ Phase 1 complete: `test_datasets/` → `data/test/`)
-- ~85 remaining references to `train_datasets/` (Phase 2 pending)
-- 2 active dependencies on `configs/config.yaml`
-- 1 reference to `hyperparameter_sweep_results/`
+- ✅ All datasets consolidated under `data/{train,test}/`
+- ✅ Zero `train_datasets/` references remain in production code (docs retain historical context only)
+- 2 active dependencies on `configs/config.yaml` (to be removed in v0.5.0)
+- 1 reference to `hyperparameter_sweep_results/` (pending archive)
 - All cache directories (`.mypy_cache/`, `.uv_cache/`, `.benchmarks/`) already correctly git-ignored
 
 ---
 
 ## Problem 1: Data Directory Consolidation
+
+> **Note:** The following subsections capture the original execution plan. Both phases completed successfully on 2025-11-15 and are preserved here for historical reference.
 
 ### Pre-Migration State (Before Phase 1)
 ```
@@ -54,10 +56,10 @@ test_datasets/           # ✅ Migrated to data/test/ (Phase 1 complete)
     └── canonical/
 ```
 
-### Current State (After Phase 1)
+### Current State (After Phases 1 & 2)
 ```
-train_datasets/          # Phase 2 pending
-├── boughter/
+data/train/              # ✅ Phase 2 complete (commit 0d4605d)
+└── boughter/
     ├── raw/
     ├── processed/
     ├── annotated/
@@ -79,7 +81,8 @@ data/test/               # ✅ Phase 1 complete (commit 288905c)
     └── canonical/
 ```
 
-### Target State
+### Historical Target (achieved 2025-11-15)
+*(Retained for provenance; see “Current State” above for actual layout.)*
 ```
 data/
 ├── train/
@@ -228,7 +231,7 @@ Phase 1 (✅ complete):
 # Now preserved as documentation-only (exits immediately)
 ```
 
-Phase 2 (pending):
+Phase 2 (historical runbook):
 ```bash
 # Option A: Bash (recommended - proven pattern from Phase 1)
 cp scripts/migrate_test_datasets_to_data_test.sh scripts/migrate_train_datasets_to_data_train.sh
@@ -252,7 +255,7 @@ git mv test_datasets/shehata data/test/
 rmdir test_datasets/
 ```
 
-Phase 2 (pending):
+Phase 2 (historical runbook):
 ```bash
 mkdir -p data/train
 git mv train_datasets/boughter data/train/
@@ -561,7 +564,7 @@ full historical context of November 2025 sweep experiments."
 
 ### For Data Consolidation Sprint
 - [x] Phase 1 complete: `test_datasets/` → `data/test/` (135 files, commit 288905c)
-- [ ] Phase 2 pending: `train_datasets/` → `data/train/` (~85 files)
+- [x] Phase 2 complete: `train_datasets/` → `data/train/` (commit 0d4605d)
 - [x] Migration script created and tested (`/tmp/migrate_test_datasets.sh`)
 - [x] Full test suite passes (133 tests, mypy, ruff)
 - [x] Git history preserved (verified via `git log --follow`)

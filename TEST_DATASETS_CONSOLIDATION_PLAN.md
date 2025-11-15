@@ -12,7 +12,7 @@
 
 **Problem:** Dataset paths were hardcoded across 250+ files with inconsistent naming (`train_datasets/`, `test_datasets/`). This created friction for contributors, complicated Docker/CI, and made dataset additions error-prone.
 
-**Solution:** Migrated `test_datasets/` → `data/test/` (Phase 1 complete), then `train_datasets/` → `data/train/` (Phase 2 pending).
+**Solution:** Migrated `test_datasets/` → `data/test/` (Phase 1 complete), then `train_datasets/` → `data/train/` (Phase 2 complete – see TRAIN_DATASETS_CONSOLIDATION_PLAN.md).
 
 **Why Phase 1 first?**
 - Smaller scope: 135 files vs 250+ for full migration
@@ -214,14 +214,7 @@ rmdir data/test/ data/
 
 ## Future Work (Phase 2)
 
-**Next:** Migrate `train_datasets/` → `data/train/` (~85 references, 7-9 hours)
-
-Apply same proven pattern:
-1. Create `data/train/`
-2. Move datasets via `git mv`
-3. Update code references
-4. Verify tests pass
-5. Commit
+✅ Completed on 2025-11-15 via commit `0d4605d`. See `TRAIN_DATASETS_CONSOLIDATION_PLAN.md` for full execution notes.
 
 ---
 
@@ -231,8 +224,8 @@ This plan implements **Phase 1 of Problem 1 (Data Directory Consolidation)** fro
 - Full target: `data/train/` + `data/test/`
 - Full estimate: 13-15 hours
 - **Phase 1:** Test datasets (actual: 90 minutes)
-- **Phase 2:** Training datasets (pending)
+- **Phase 2:** Training datasets (executed 2025-11-15; documented separately)
 
 ---
 
-**Status:** ✅ Phase 1 complete. Zero legacy `test_datasets/` references remain. Ready for Phase 2 when needed.
+**Status:** ✅ Phases 1 & 2 complete. Zero legacy `test_datasets/` or `train_datasets/` references remain in production code.

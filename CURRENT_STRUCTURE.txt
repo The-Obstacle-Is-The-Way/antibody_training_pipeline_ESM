@@ -46618,6 +46618,7 @@
 ├── REPOSITORY_CLEANUP_PLAN.md
 ├── ROADMAP.md
 ├── TEST_DATASETS_CONSOLIDATION_PLAN.md
+├── TRAIN_DATASETS_CONSOLIDATION_PLAN.md
 ├── USAGE.md
 ├── assets
 │   ├── ego.jpg
@@ -46627,98 +46628,148 @@
 ├── configs
 │   └── config.yaml
 ├── data
-│   └── test
-│       ├── harvey
-│       │   ├── README.md
-│       │   ├── canonical
-│       │   │   └── README.md
-│       │   ├── fragments
-│       │   │   ├── H-CDR1_harvey.csv
-│       │   │   ├── H-CDR2_harvey.csv
-│       │   │   ├── H-CDR3_harvey.csv
-│       │   │   ├── H-CDRs_harvey.csv
-│       │   │   ├── H-FWRs_harvey.csv
-│       │   │   ├── README.md
-│       │   │   ├── VHH_only_harvey.csv
-│       │   │   └── failed_sequences.txt
-│       │   ├── processed
-│       │   │   ├── README.md
-│       │   │   └── harvey.csv
-│       │   └── raw
-│       │       ├── README.md
-│       │       ├── high_polyreactivity_high_throughput.csv
-│       │       ├── low_polyreactivity_high_throughput.csv
-│       │       └── low_throughput_polyspecificity_scores_w_exp.csv
-│       ├── jain
-│       │   ├── README.md
-│       │   ├── canonical
-│       │   │   ├── README.md
-│       │   │   ├── VH_only_jain_86_p5e_s2.csv
-│       │   │   ├── VH_only_jain_test_PARITY_86.csv
-│       │   │   └── jain_86_novo_parity.csv
-│       │   ├── fragments
-│       │   │   ├── All-CDRs_jain.csv
-│       │   │   ├── All-FWRs_jain.csv
-│       │   │   ├── Full_jain.csv
-│       │   │   ├── H-CDR1_jain.csv
-│       │   │   ├── H-CDR2_jain.csv
-│       │   │   ├── H-CDR3_jain.csv
-│       │   │   ├── H-CDRs_jain.csv
-│       │   │   ├── H-FWRs_jain.csv
-│       │   │   ├── L-CDR1_jain.csv
-│       │   │   ├── L-CDR2_jain.csv
-│       │   │   ├── L-CDR3_jain.csv
-│       │   │   ├── L-CDRs_jain.csv
-│       │   │   ├── L-FWRs_jain.csv
-│       │   │   ├── README.md
-│       │   │   ├── VH+VL_jain.csv
-│       │   │   ├── VH_only_jain.csv
-│       │   │   ├── VL_only_jain.csv
-│       │   │   └── manifest.yml
-│       │   ├── processed
-│       │   │   ├── README.md
-│       │   │   ├── jain_ELISA_ONLY_116.csv
-│       │   │   ├── jain_sd01.csv
-│       │   │   ├── jain_sd02.csv
-│       │   │   ├── jain_sd03.csv
-│       │   │   └── jain_with_private_elisa_FULL.csv
-│       │   └── raw
-│       │       ├── Private_Jain2017_ELISA_indiv.xlsx
-│       │       ├── README.md
-│       │       ├── jain-pnas.1616408114.sd01.xlsx
-│       │       ├── jain-pnas.1616408114.sd02.xlsx
-│       │       └── jain-pnas.1616408114.sd03.xlsx
-│       └── shehata
+│   ├── test
+│   │   ├── harvey
+│   │   │   ├── README.md
+│   │   │   ├── canonical
+│   │   │   │   └── README.md
+│   │   │   ├── fragments
+│   │   │   │   ├── H-CDR1_harvey.csv
+│   │   │   │   ├── H-CDR2_harvey.csv
+│   │   │   │   ├── H-CDR3_harvey.csv
+│   │   │   │   ├── H-CDRs_harvey.csv
+│   │   │   │   ├── H-FWRs_harvey.csv
+│   │   │   │   ├── README.md
+│   │   │   │   ├── VHH_only_harvey.csv
+│   │   │   │   └── failed_sequences.txt
+│   │   │   ├── processed
+│   │   │   │   ├── README.md
+│   │   │   │   └── harvey.csv
+│   │   │   └── raw
+│   │   │       ├── README.md
+│   │   │       ├── high_polyreactivity_high_throughput.csv
+│   │   │       ├── low_polyreactivity_high_throughput.csv
+│   │   │       └── low_throughput_polyspecificity_scores_w_exp.csv
+│   │   ├── jain
+│   │   │   ├── README.md
+│   │   │   ├── canonical
+│   │   │   │   ├── README.md
+│   │   │   │   ├── VH_only_jain_86_p5e_s2.csv
+│   │   │   │   ├── VH_only_jain_test_PARITY_86.csv
+│   │   │   │   └── jain_86_novo_parity.csv
+│   │   │   ├── fragments
+│   │   │   │   ├── All-CDRs_jain.csv
+│   │   │   │   ├── All-FWRs_jain.csv
+│   │   │   │   ├── Full_jain.csv
+│   │   │   │   ├── H-CDR1_jain.csv
+│   │   │   │   ├── H-CDR2_jain.csv
+│   │   │   │   ├── H-CDR3_jain.csv
+│   │   │   │   ├── H-CDRs_jain.csv
+│   │   │   │   ├── H-FWRs_jain.csv
+│   │   │   │   ├── L-CDR1_jain.csv
+│   │   │   │   ├── L-CDR2_jain.csv
+│   │   │   │   ├── L-CDR3_jain.csv
+│   │   │   │   ├── L-CDRs_jain.csv
+│   │   │   │   ├── L-FWRs_jain.csv
+│   │   │   │   ├── README.md
+│   │   │   │   ├── VH+VL_jain.csv
+│   │   │   │   ├── VH_only_jain.csv
+│   │   │   │   ├── VL_only_jain.csv
+│   │   │   │   └── manifest.yml
+│   │   │   ├── processed
+│   │   │   │   ├── README.md
+│   │   │   │   ├── jain_ELISA_ONLY_116.csv
+│   │   │   │   ├── jain_sd01.csv
+│   │   │   │   ├── jain_sd02.csv
+│   │   │   │   ├── jain_sd03.csv
+│   │   │   │   └── jain_with_private_elisa_FULL.csv
+│   │   │   └── raw
+│   │   │       ├── Private_Jain2017_ELISA_indiv.xlsx
+│   │   │       ├── README.md
+│   │   │       ├── jain-pnas.1616408114.sd01.xlsx
+│   │   │       ├── jain-pnas.1616408114.sd02.xlsx
+│   │   │       └── jain-pnas.1616408114.sd03.xlsx
+│   │   └── shehata
+│   │       ├── README.md
+│   │       ├── canonical
+│   │       │   └── README.md
+│   │       ├── fragments
+│   │       │   ├── All-CDRs_shehata.csv
+│   │       │   ├── All-FWRs_shehata.csv
+│   │       │   ├── Full_shehata.csv
+│   │       │   ├── H-CDR1_shehata.csv
+│   │       │   ├── H-CDR2_shehata.csv
+│   │       │   ├── H-CDR3_shehata.csv
+│   │       │   ├── H-CDRs_shehata.csv
+│   │       │   ├── H-FWRs_shehata.csv
+│   │       │   ├── L-CDR1_shehata.csv
+│   │       │   ├── L-CDR2_shehata.csv
+│   │       │   ├── L-CDR3_shehata.csv
+│   │       │   ├── L-CDRs_shehata.csv
+│   │       │   ├── L-FWRs_shehata.csv
+│   │       │   ├── README.md
+│   │       │   ├── VH+VL_shehata.csv
+│   │       │   ├── VH_only_shehata.csv
+│   │       │   └── VL_only_shehata.csv
+│   │       ├── processed
+│   │       │   ├── README.md
+│   │       │   └── shehata.csv
+│   │       └── raw
+│   │           ├── README.md
+│   │           ├── shehata-mmc2.xlsx
+│   │           ├── shehata-mmc3.xlsx
+│   │           ├── shehata-mmc4.xlsx
+│   │           └── shehata-mmc5.xlsx
+│   └── train
+│       ├── BOUGHTER_DATA_PROVENANCE.md
+│       ├── README.md
+│       └── boughter
 │           ├── README.md
+│           ├── annotated
+│           │   ├── All-CDRs_boughter.csv
+│           │   ├── All-FWRs_boughter.csv
+│           │   ├── Full_boughter.csv
+│           │   ├── H-CDR1_boughter.csv
+│           │   ├── H-CDR2_boughter.csv
+│           │   ├── H-CDR3_boughter.csv
+│           │   ├── H-CDRs_boughter.csv
+│           │   ├── H-FWRs_boughter.csv
+│           │   ├── L-CDR1_boughter.csv
+│           │   ├── L-CDR2_boughter.csv
+│           │   ├── L-CDR3_boughter.csv
+│           │   ├── L-CDRs_boughter.csv
+│           │   ├── L-FWRs_boughter.csv
+│           │   ├── VH+VL_boughter.csv
+│           │   ├── VH_only_boughter.csv
+│           │   ├── VL_only_boughter.csv
+│           │   ├── annotation_failures.log
+│           │   ├── qc_filtered_sequences.txt
+│           │   └── validation_report.txt
 │           ├── canonical
-│           │   └── README.md
-│           ├── fragments
-│           │   ├── All-CDRs_shehata.csv
-│           │   ├── All-FWRs_shehata.csv
-│           │   ├── Full_shehata.csv
-│           │   ├── H-CDR1_shehata.csv
-│           │   ├── H-CDR2_shehata.csv
-│           │   ├── H-CDR3_shehata.csv
-│           │   ├── H-CDRs_shehata.csv
-│           │   ├── H-FWRs_shehata.csv
-│           │   ├── L-CDR1_shehata.csv
-│           │   ├── L-CDR2_shehata.csv
-│           │   ├── L-CDR3_shehata.csv
-│           │   ├── L-CDRs_shehata.csv
-│           │   ├── L-FWRs_shehata.csv
 │           │   ├── README.md
-│           │   ├── VH+VL_shehata.csv
-│           │   ├── VH_only_shehata.csv
-│           │   └── VL_only_shehata.csv
+│           │   └── VH_only_boughter_training.csv
 │           ├── processed
-│           │   ├── README.md
-│           │   └── shehata.csv
+│           │   └── boughter.csv
 │           └── raw
-│               ├── README.md
-│               ├── shehata-mmc2.xlsx
-│               ├── shehata-mmc3.xlsx
-│               ├── shehata-mmc4.xlsx
-│               └── shehata-mmc5.xlsx
+│               ├── flu_NumReact.txt
+│               ├── flu_fastaH.txt
+│               ├── flu_fastaL.txt
+│               ├── gut_hiv_NumReact.txt
+│               ├── gut_hiv_fastaH.txt
+│               ├── gut_hiv_fastaL.txt
+│               ├── mouse_YN.txt
+│               ├── mouse_fastaH.dat
+│               ├── mouse_fastaL.dat
+│               ├── nat_cntrl_NumReact.txt
+│               ├── nat_cntrl_fastaH.txt
+│               ├── nat_cntrl_fastaL.txt
+│               ├── nat_hiv_NumReact.txt
+│               ├── nat_hiv_fastaH.txt
+│               ├── nat_hiv_fastaL.txt
+│               ├── plos_hiv_YN.txt
+│               ├── plos_hiv_fastaH.txt
+│               ├── plos_hiv_fastaL.txt
+│               └── translation_failures.log
 ├── dist
 │   ├── .gitignore
 │   ├── antibody_training_esm-0.3.0-py3-none-any.whl
@@ -50501,6 +50552,8 @@
 │           └── VH_only_training_ready.csv
 ├── scripts
 │   ├── migrate_model_directories.py
+│   ├── migrate_test_datasets_to_data_test.sh
+│   ├── migrate_train_datasets_to_data_train.sh
 │   ├── testing
 │   │   ├── README.md
 │   │   └── demo_assay_specific_thresholds.py
@@ -50639,57 +50692,6 @@
 │           ├── test_harvey.py
 │           ├── test_jain.py
 │           └── test_shehata.py
-├── train_datasets
-│   ├── .DS_Store
-│   ├── BOUGHTER_DATA_PROVENANCE.md
-│   ├── README.md
-│   └── boughter
-│       ├── README.md
-│       ├── annotated
-│       │   ├── All-CDRs_boughter.csv
-│       │   ├── All-FWRs_boughter.csv
-│       │   ├── Full_boughter.csv
-│       │   ├── H-CDR1_boughter.csv
-│       │   ├── H-CDR2_boughter.csv
-│       │   ├── H-CDR3_boughter.csv
-│       │   ├── H-CDRs_boughter.csv
-│       │   ├── H-FWRs_boughter.csv
-│       │   ├── L-CDR1_boughter.csv
-│       │   ├── L-CDR2_boughter.csv
-│       │   ├── L-CDR3_boughter.csv
-│       │   ├── L-CDRs_boughter.csv
-│       │   ├── L-FWRs_boughter.csv
-│       │   ├── VH+VL_boughter.csv
-│       │   ├── VH_only_boughter.csv
-│       │   ├── VL_only_boughter.csv
-│       │   ├── annotation_failures.log
-│       │   ├── qc_filtered_sequences.txt
-│       │   └── validation_report.txt
-│       ├── canonical
-│       │   ├── README.md
-│       │   └── VH_only_boughter_training.csv
-│       ├── processed
-│       │   └── boughter.csv
-│       └── raw
-│           ├── flu_NumReact.txt
-│           ├── flu_fastaH.txt
-│           ├── flu_fastaL.txt
-│           ├── gut_hiv_NumReact.txt
-│           ├── gut_hiv_fastaH.txt
-│           ├── gut_hiv_fastaL.txt
-│           ├── mouse_YN.txt
-│           ├── mouse_fastaH.dat
-│           ├── mouse_fastaL.dat
-│           ├── nat_cntrl_NumReact.txt
-│           ├── nat_cntrl_fastaH.txt
-│           ├── nat_cntrl_fastaL.txt
-│           ├── nat_hiv_NumReact.txt
-│           ├── nat_hiv_fastaH.txt
-│           ├── nat_hiv_fastaL.txt
-│           ├── plos_hiv_YN.txt
-│           ├── plos_hiv_fastaH.txt
-│           ├── plos_hiv_fastaL.txt
-│           └── translation_failures.log
 └── uv.lock
 
-5305 directories, 45388 files
+5305 directories, 45390 files
