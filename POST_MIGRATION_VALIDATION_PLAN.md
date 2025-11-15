@@ -58,10 +58,10 @@ find data/train/boughter -type f -name "*.csv" | wc -l
 # Expected: 18 (1 processed + 1 canonical + 16 fragments)
 
 find data/test/jain -type f -name "*.csv" | wc -l
-# Expected: 26 (6 processed + 3 canonical + 17 fragments)
+# Expected: 24 (5 processed + 3 canonical + 16 fragments)
 
 find data/test/harvey -type f -name "*.csv" | wc -l
-# Expected: 8 (1 processed + 7 fragments, no canonical)
+# Expected: 10 (1 processed + 6 fragments + 3 raw)
 
 find data/test/shehata -type f -name "*.csv" | wc -l
 # Expected: 17 (1 processed + 16 fragments, no canonical)
@@ -115,29 +115,45 @@ grep -r "data/test" preprocessing/jain/ | grep -v "# " | head -5
 **Goal**: Verify training configs point to correct data paths.
 
 ```bash
-# 1. Check legacy config (to be removed in v0.5.0)
-grep "train_file:" configs/config.yaml
-# Expected: train_file: ./data/train/boughter/canonical/VH_only_boughter_training.csv
+# 1. Check Hydra config (CURRENT PRODUCTION SYSTEM - USE THIS)
+grep "train_file:" src/antibody_training_esm/conf/data/boughter_jain.yaml
+# Expected: train_file: data/train/boughter/canonical/VH_only_boughter_training.csv
 
+grep "test_file:" src/antibody_training_esm/conf/data/boughter_jain.yaml
+# Expected: test_file: data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
+
+# 2. Verify files exist at Hydra-configured paths
+test -f data/train/boughter/canonical/VH_only_boughter_training.csv && echo "✅ Training file exists"
+test -f data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv && echo "✅ Test file exists (Hydra config)"
+
+# 3. Check legacy config (DEPRECATED - ALREADY BROKEN, being removed in v0.5.0)
+echo "⚠️  Legacy config status:"
 grep "test_file:" configs/config.yaml
-# Expected: test_file: ./data/test/jain/canonical/VH_only_jain_P5e_S2.csv
+# NOTE: This references VH_only_jain_P5e_S2.csv which DOES NOT EXIST (broken since Phase 1 migration)
+# Expected: test_file: ./data/test/jain/canonical/VH_only_jain_P5e_S2.csv (BROKEN PATH)
 
-# 2. Check Hydra config (current system)
-grep "train_file:" src/antibody_training_esm/conf/config.yaml
-# Expected: data/train/boughter/canonical/VH_only_boughter_training.csv
+# Verify legacy config is indeed broken
+test -f ./data/test/jain/canonical/VH_only_jain_P5e_S2.csv && echo "✅ Legacy config works" || echo "❌ Legacy config BROKEN (expected - being deleted in v0.5.0)"
 
-grep "test_file:" src/antibody_training_esm/conf/config.yaml
-# Expected: data/test/jain/canonical/VH_only_jain_P5e_S2.csv
+# 4. Detect config mismatches (defensive check)
+HYDRA_FILE=$(grep "test_file:" src/antibody_training_esm/conf/data/boughter_jain.yaml | awk '{print $2}')
+LEGACY_FILE=$(grep "test_file:" configs/config.yaml | awk '{print $2}' | sed 's|^\./||')
 
-# 3. Verify files exist at configured paths
-test -f ./data/train/boughter/canonical/VH_only_boughter_training.csv && echo "✅ Training file exists"
-test -f ./data/test/jain/canonical/VH_only_jain_P5e_S2.csv && echo "✅ Test file exists"
+if [ "$HYDRA_FILE" != "$LEGACY_FILE" ]; then
+  echo "⚠️  CONFIG MISMATCH DETECTED:"
+  echo "   Hydra:  $HYDRA_FILE"
+  echo "   Legacy: $LEGACY_FILE"
+  echo "   → Use Hydra config for all validation (legacy is broken)"
+fi
 ```
 
 **Success Criteria**:
-- [ ] All config files reference `data/train` and `data/test` paths
-- [ ] Configured files exist and are accessible
-- [ ] No broken symlinks or missing files
+- [ ] Hydra config files reference correct paths (`data/train`, `data/test`)
+- [ ] All Hydra-configured files exist and are accessible
+- [ ] Legacy config mismatch detected and documented (expected - being deleted in v0.5.0)
+- [ ] No broken symlinks or missing files in Hydra config paths
+
+**Note**: Legacy `configs/config.yaml` is already broken (references non-existent `VH_only_jain_P5e_S2.csv`). This is acceptable as it's deprecated and being removed in v0.5.0. All validation uses Hydra config paths.
 
 ---
 
@@ -373,16 +389,24 @@ python3 preprocessing/jain/step3_extract_fragments.py
 
 # Validate outputs
 ls -1 data/test/jain/fragments/*.csv | wc -l
-# Expected: 17 fragment files
+# Expected: 16 fragment files
 
-# Check canonical parity file (CRITICAL for Novo benchmark)
-CANONICAL="data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv"
-test -f "$CANONICAL" && echo "✅ Parity canonical file exists"
+# Check canonical parity files (CRITICAL for Novo benchmark)
+echo "Canonical files:"
+ls -1 data/test/jain/canonical/*.csv
+# Expected: 3 files
+#   - VH_only_jain_86_p5e_s2.csv (Hydra config uses this)
+#   - VH_only_jain_test_PARITY_86.csv (legacy name)
+#   - jain_86_novo_parity.csv
+
+# Verify Hydra-configured file exists
+CANONICAL="data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+test -f "$CANONICAL" && echo "✅ Hydra canonical file exists"
 wc -l "$CANONICAL"
 # Expected: 87 rows (header + 86 antibodies)
 
 # MD5 comparison
-BACKUP_CANONICAL="$BACKUP_DIR/canonical/VH_only_jain_test_PARITY_86.csv"
+BACKUP_CANONICAL="$BACKUP_DIR/canonical/VH_only_jain_86_p5e_s2.csv"
 if [ -f "$BACKUP_CANONICAL" ]; then
   BACKUP_MD5=$(md5 -q "$BACKUP_CANONICAL")
   NEW_MD5=$(md5 -q "$CANONICAL")
@@ -392,8 +416,9 @@ fi
 
 **Success Criteria**:
 - [ ] All 3 steps complete without errors
-- [ ] 17 fragment files created
-- [ ] Canonical parity file has 87 rows (header + 86 antibodies)
+- [ ] 16 fragment files created
+- [ ] 3 canonical files exist (VH_only_jain_86_p5e_s2.csv, VH_only_jain_test_PARITY_86.csv, jain_86_novo_parity.csv)
+- [ ] Hydra canonical file has 87 rows (header + 86 antibodies)
 - [ ] MD5 matches backup (CRITICAL - Novo parity benchmark depends on this)
 
 ### Dataset 3: Harvey Nanobody Data (20-30 min)
@@ -417,12 +442,17 @@ wc -l data/test/harvey/processed/harvey.csv
 echo "🔄 Running Harvey Step 2..."
 python3 preprocessing/harvey/step2_extract_fragments.py
 ls -1 data/test/harvey/fragments/*.csv | wc -l
-# Expected: 7 nanobody fragment files (VHH-CDR1/2/3, VHH-CDRs, VHH-FWRs, etc.)
+# Expected: 6 nanobody fragment files (VHH_only, H-CDR1/2/3, H-CDRs, H-FWRs)
+
+# Check raw files (used in preprocessing)
+ls -1 data/test/harvey/raw/*.csv | wc -l
+# Expected: 3 raw CSV files (high/low polyreactivity, low throughput)
 ```
 
 **Success Criteria**:
 - [ ] `harvey.csv` has ~141,000 sequences
-- [ ] 7 fragment files created (nanobody-specific)
+- [ ] 6 fragment files created (nanobody-specific: VHH_only, H-CDR1/2/3, H-CDRs, H-FWRs)
+- [ ] 3 raw CSV files exist (preprocessing inputs)
 - [ ] No canonical file (intentional - full dataset used)
 
 ### Dataset 4: Shehata PSR Data (15-20 min)
@@ -671,11 +701,12 @@ EOF
 ## Success Criteria (Overall)
 
 ### Pre-Flight Checks
-- [ ] All data file counts match expected values
+- [ ] All data file counts match expected values (Jain: 24, Harvey: 10, Shehata: 17, Boughter: 18)
 - [ ] No files in old `train_datasets/` or `test_datasets/` paths
 - [ ] Raw data files accessible in new locations
 - [ ] All preprocessing scripts reference new paths only
-- [ ] Training configs point to correct data paths
+- [ ] Hydra configs point to correct data paths (use Hydra, not legacy)
+- [ ] Legacy config mismatch detected and documented (expected)
 
 ### Preprocessing Validation
 - [ ] Boughter Stage 1-3: All outputs created, MD5s match OR differences documented
