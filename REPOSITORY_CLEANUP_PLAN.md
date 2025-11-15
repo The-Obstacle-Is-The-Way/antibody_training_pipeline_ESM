@@ -162,6 +162,25 @@ grep -rn "train_datasets\|test_datasets" \
 ```
 
 #### Phase 2: Create Migration Script (3 hours)
+
+**Phase 1 Used:** `scripts/migrate_test_datasets_to_data_test.sh` (bash, grep + sed)
+- ✅ Successfully migrated 135 files (commit 288905c)
+- ✅ Preserved as documentation-only (exits immediately, no re-run risk)
+- ✅ Excludes plan documents and self-references
+
+**Phase 2 Recommendation:** Copy and adapt the shell script pattern:
+```bash
+# For Phase 2, copy the Phase 1 script:
+cp scripts/migrate_test_datasets_to_data_test.sh scripts/migrate_train_datasets_to_data_train.sh
+
+# Then modify patterns:
+# - Change test_datasets/ → train_datasets/
+# - Change data/test/ → data/train/
+# - Update exclusions for Phase 2 plan docs
+# - Add code-only file filters (*.py, *.yaml, not *.md except docs/)
+```
+
+Alternative (Python, if preferred):
 ```python
 # scripts/migrate_data_directories.py
 # Similar to scripts/migrate_model_directories.py which worked successfully
@@ -177,8 +196,7 @@ def update_file(file_path: Path, old_pattern: str, new_pattern: str) -> None:
         file_path.write_text(updated)
         print(f"Updated: {file_path}")
 
-# Pattern 1: train_datasets/boughter → data/train/boughter
-# Pattern 2: data/test/{harvey,jain,shehata} → data/test/{dataset}
+# Pattern: train_datasets/boughter → data/train/boughter
 ```
 
 #### Phase 3: Execute Migration (4 hours)
@@ -202,9 +220,25 @@ data:
 ```
 
 **Step 3: Run migration script**
+
+Phase 1 (✅ complete):
 ```bash
+# Used: scripts/migrate_test_datasets_to_data_test.sh
+# Migrated 135 files via grep + sed
+# Now preserved as documentation-only (exits immediately)
+```
+
+Phase 2 (pending):
+```bash
+# Option A: Bash (recommended - proven pattern from Phase 1)
+cp scripts/migrate_test_datasets_to_data_test.sh scripts/migrate_train_datasets_to_data_train.sh
+# Modify patterns: test_datasets → train_datasets, data/test → data/train
+chmod +x scripts/migrate_train_datasets_to_data_train.sh
+./scripts/migrate_train_datasets_to_data_train.sh
+
+# Option B: Python (if preferred)
 python scripts/migrate_data_directories.py --dry-run  # Preview changes
-python scripts/migrate_data_directories.py            # Execute
+python scripts/migrate_data_directories.py            # Execute (must create first)
 ```
 
 **Step 4: Move directories with git mv**

@@ -11,92 +11,85 @@
 # 2. Reference for Phase 2 (train_datasets/ → data/train/)
 # 3. Rollback support if needed
 #
-# Usage (historical):
-#   chmod +x scripts/migrate_test_datasets_to_data_test.sh
-#   ./scripts/migrate_test_datasets_to_data_test.sh
+# ⚠️  WARNING: DO NOT RE-RUN THIS SCRIPT ⚠️
 #
-# WARNING: This script has already been run. Re-running will have no effect
-# (all test_datasets/ references have been migrated to data/test/).
+# This script has already been executed and all test_datasets/ references
+# have been migrated to data/test/. Re-running would corrupt plan documents
+# that legitimately reference test_datasets/ for historical context.
+#
+# This file is preserved as DOCUMENTATION ONLY.
+#
+# If you need to run a similar migration for Phase 2 (train_datasets/),
+# copy this script to scripts/migrate_train_datasets_to_data_train.sh
+# and modify the patterns accordingly.
 
 set -euo pipefail
 
 echo "╔════════════════════════════════════════════════════════════════════════════╗"
-echo "║ Test Datasets Migration Script                                            ║"
-echo "║ Phase 1: test_datasets/ → data/test/                                      ║"
+echo "║                           MIGRATION COMPLETE                               ║"
 echo "╚════════════════════════════════════════════════════════════════════════════╝"
 echo ""
+echo "⚠️  This script was already executed on 2025-11-15 (commit 288905c)."
+echo ""
+echo "   Phase 1 Status: ✅ COMPLETE"
+echo "   - test_datasets/ → data/test/ (135 files migrated)"
+echo "   - Zero test_datasets/ references remain in production code"
+echo ""
+echo "   Next: Phase 2 (train_datasets/ → data/train/)"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "This file is preserved for DOCUMENTATION purposes only."
+echo "DO NOT re-run this script - it would corrupt plan documents."
+echo ""
+echo "For Phase 2, copy to migrate_train_datasets_to_data_train.sh"
+echo "and modify patterns from test_datasets/ to train_datasets/."
+echo ""
+exit 0
 
-# Check if migration is needed
-REMAINING=$(grep -rl "test_datasets/" \
-  --include="*.py" \
-  --include="*.md" \
-  --include="*.yaml" \
-  --include="*.yml" \
-  --include="*.sh" \
-  --include="Dockerfile*" \
-  . 2>/dev/null | grep -v "^./.git/" | wc -l | tr -d ' ')
-
-if [ "$REMAINING" -eq 0 ]; then
-  echo "✅ Migration already complete!"
-  echo "   No test_datasets/ references found in code."
-  echo ""
-  echo "   Status: Phase 1 ✅ (commit 288905c)"
-  echo "   Next: Phase 2 (train_datasets/ → data/train/)"
-  exit 0
-fi
-
-echo "⚠️  Found $REMAINING files with test_datasets/ references"
-echo ""
-echo "Files to update:"
-echo ""
-
-# Find all files with test_datasets/ references
-FILES=$(grep -rl "test_datasets/" \
-  --include="*.py" \
-  --include="*.md" \
-  --include="*.yaml" \
-  --include="*.yml" \
-  --include="*.sh" \
-  --include="Dockerfile*" \
-  . 2>/dev/null | grep -v "^./.git/")
-
-# Show files (first 20)
-echo "$FILES" | head -20
-if [ "$(echo "$FILES" | wc -l | tr -d ' ')" -gt 20 ]; then
-  echo "... and $(($(echo "$FILES" | wc -l | tr -d ' ') - 20)) more"
-fi
-echo ""
-
-# Confirm
-read -p "Proceed with migration? [y/N] " -n 1 -r
-echo ""
-if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-  echo "❌ Migration cancelled"
-  exit 1
-fi
-
-echo ""
-echo "🔄 Migrating files..."
-echo ""
-
-# Update each file
-COUNT=0
-for file in $FILES; do
-  # Replace test_datasets/ with data/test/
-  sed -i '' 's|test_datasets/|data/test/|g' "$file"
-  echo "  ✓ Updated: $file"
-  ((COUNT++))
-done
-
-echo ""
-echo "╔════════════════════════════════════════════════════════════════════════════╗"
-echo "║ Migration Complete!                                                        ║"
-echo "╚════════════════════════════════════════════════════════════════════════════╝"
-echo ""
-echo "  Files updated: $COUNT"
-echo ""
-echo "Next steps:"
-echo "  1. Verify: grep -r 'test_datasets/' --include='*.py' --include='*.md' ."
-echo "  2. Test: make test && make typecheck && make lint"
-echo "  3. Commit: git add -A && git commit -m 'fix: Update test_datasets/ → data/test/ references'"
-echo ""
+# ============================================================================
+# HISTORICAL CODE (NO LONGER EXECUTED)
+# ============================================================================
+#
+# The code below documents the exact migration process used for Phase 1.
+# It is NOT executed due to the exit 0 above.
+#
+# Original implementation:
+#
+# # Check if migration is needed (CODE PATHS ONLY, EXCLUDE DOCS)
+# REMAINING=$(grep -rl "test_datasets/" \
+#   --include="*.py" \
+#   --include="*.yaml" \
+#   --include="*.yml" \
+#   --include="Dockerfile*" \
+#   . 2>/dev/null | \
+#   grep -v "^./.git/" | \
+#   grep -v "TEST_DATASETS_CONSOLIDATION_PLAN.md" | \
+#   grep -v "REPOSITORY_CLEANUP_PLAN.md" | \
+#   grep -v "scripts/migrate_test_datasets_to_data_test.sh" | \
+#   wc -l | tr -d ' ')
+#
+# if [ "$REMAINING" -eq 0 ]; then
+#   echo "✅ Migration already complete!"
+#   exit 0
+# fi
+#
+# # Find files to update (EXCLUDE DOCS AND SELF)
+# FILES=$(grep -rl "test_datasets/" \
+#   --include="*.py" \
+#   --include="*.yaml" \
+#   --include="*.yml" \
+#   --include="Dockerfile*" \
+#   . 2>/dev/null | \
+#   grep -v "^./.git/" | \
+#   grep -v "TEST_DATASETS_CONSOLIDATION_PLAN.md" | \
+#   grep -v "REPOSITORY_CLEANUP_PLAN.md" | \
+#   grep -v "scripts/migrate_test_datasets_to_data_test.sh")
+#
+# # Update each file
+# for file in $FILES; do
+#   sed -i '' 's|test_datasets/|data/test/|g' "$file"
+#   echo "  ✓ Updated: $file"
+# done
+#
+# echo "Migration complete!"
