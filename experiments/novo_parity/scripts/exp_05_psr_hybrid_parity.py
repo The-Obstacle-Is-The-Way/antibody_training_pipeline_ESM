@@ -31,8 +31,8 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 BASE_DIR = (
     SCRIPT_DIR.parent.parent.parent
 )  # experiments/novo_parity/scripts -> repo root
-INPUT_116 = BASE_DIR / "test_datasets/jain_ELISA_ONLY_116.csv"
-INPUT_SD03 = BASE_DIR / "test_datasets/jain_sd03.csv"
+INPUT_116 = BASE_DIR / "data/test/jain_ELISA_ONLY_116.csv"
+INPUT_SD03 = BASE_DIR / "data/test/jain_sd03.csv"
 OUTPUT_DIR = BASE_DIR / "experiments/novo_parity"
 OUTPUT_DATASET = OUTPUT_DIR / "datasets/jain_86_exp05.csv"
 OUTPUT_AUDIT = OUTPUT_DIR / "results/audit_exp05.json"

@@ -49,8 +49,8 @@ To regenerate this file from raw sources:
 
 ```bash
 python3 preprocessing/shehata/step1_convert_excel_to_csv.py
-# Input:  test_datasets/shehata/raw/shehata-mmc2.xlsx
-# Output: test_datasets/shehata/processed/shehata.csv
+# Input:  data/test/shehata/raw/shehata-mmc2.xlsx
+# Output: data/test/shehata/processed/shehata.csv
 ```
 
 **Processing steps:**
@@ -86,7 +86,7 @@ python3 scripts/validation/validate_shehata_conversion.py
 import pandas as pd
 
 # Load full dataset
-df = pd.read_csv("test_datasets/shehata/processed/shehata.csv")
+df = pd.read_csv("data/test/shehata/processed/shehata.csv")
 
 # Check label distribution
 print(df['label'].value_counts())
@@ -111,8 +111,8 @@ To extract region-specific fragments (CDRs, FWRs, VH-only, etc.):
 
 ```bash
 python3 preprocessing/shehata/step2_extract_fragments.py
-# Input:  test_datasets/shehata/processed/shehata.csv
-# Output: test_datasets/shehata/fragments/*.csv (16 files)
+# Input:  data/test/shehata/processed/shehata.csv
+# Output: data/test/shehata/fragments/*.csv (16 files)
 ```
 
 See `../fragments/README.md` for fragment details.

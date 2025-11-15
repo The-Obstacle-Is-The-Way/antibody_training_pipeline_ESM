@@ -113,7 +113,7 @@ antibody_training_pipeline_esm/          # Root (renamed from ESM)
 │   ├── unit/                           # Unit tests (NEW)
 │   │   ├── test_core/
 │   │   ├── test_data/
-│   │   ├── test_datasets/
+│   │   ├── data/test/
 │   │   └── test_utils/
 │   └── integration/                     # Integration tests (EXISTING)
 │       └── test_*_embedding_compatibility.py
@@ -136,7 +136,7 @@ antibody_training_pipeline_esm/          # Root (renamed from ESM)
 ├── models/                              # Trained model artifacts (NO CHANGE)
 │
 ├── train_datasets/                      # Training data (NO CHANGE)
-├── test_datasets/                       # Test data (NO CHANGE)
+├── data/test/                       # Test data (NO CHANGE)
 ├── reference_repos/                     # External repos (NO CHANGE)
 ├── literature/                          # Papers (NO CHANGE)
 │

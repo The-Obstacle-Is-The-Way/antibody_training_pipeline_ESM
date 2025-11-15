@@ -215,7 +215,7 @@ class ModelTester:
                 f"CRITICAL: Dataset contains {nan_count} NaN labels! "
                 f"This will corrupt evaluation metrics. "
                 f"Please use the curated canonical test file (e.g., "
-                f"test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv with no NaNs)."
+                f"data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv with no NaNs)."
             )
 
         # For Jain test sets, validate expected size (allow legacy 94 + canonical 86)
@@ -226,7 +226,7 @@ class ModelTester:
                     f"Jain test set has {len(df)} antibodies but expected one of {sorted(expected_sizes)}. "
                     f"Using the wrong test set will produce invalid metrics. "
                     f"Please use the correct curated file (preferred: "
-                    f"test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv)."
+                    f"data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv)."
                 )
 
         sequences = df[sequence_col].tolist()

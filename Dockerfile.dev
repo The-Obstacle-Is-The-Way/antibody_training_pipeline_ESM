@@ -30,7 +30,7 @@ RUN uv sync --all-extras
 
 # Copy tests and fixture datasets (can invalidate cache independently)
 COPY tests/ ./tests/
-COPY test_datasets/ ./test_datasets/
+COPY data/test/ ./data/test/
 COPY train_datasets/ ./train_datasets/
 
 # Export .venv/bin to PATH so installed commands are available

@@ -18,7 +18,7 @@ We have a **fundamental mismatch** between:
 
 ### What Files Exist:
 ```
-test_datasets/jain/canonical/
+data/test/jain/canonical/
 └── jain_86_novo_parity.csv
     - 86 antibodies (59 specific + 27 non-specific) ✅
     - Has BOTH VH and VL sequences
@@ -28,7 +28,7 @@ test_datasets/jain/canonical/
 
 ### What Files DON'T Exist (Deleted):
 ```
-test_datasets/jain/canonical/
+data/test/jain/canonical/
 ├── VH_only_jain_test_FULL.csv (DELETED - orphan from step4)
 ├── VH_only_jain_test_QC_REMOVED.csv (DELETED - orphan from step4)
 └── VH_only_jain_test_PARITY_86.csv (DELETED - orphan from step4)
@@ -45,7 +45,7 @@ test_datasets/jain/canonical/
 ```python
 # Line 61: Define test file path
 real_dataset_paths = {
-    "jain_parity": "test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv",
+    "jain_parity": "data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv",
 }
 
 # Line 100-102: Load the file

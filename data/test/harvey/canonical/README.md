@@ -49,7 +49,7 @@ For Harvey dataset, **use the full dataset directly:**
 import pandas as pd
 
 # Load full Harvey dataset (already balanced)
-df = pd.read_csv("test_datasets/harvey/fragments/VHH_only_harvey.csv")
+df = pd.read_csv("data/test/harvey/fragments/VHH_only_harvey.csv")
 
 # Split for training/validation as needed
 from sklearn.model_selection import train_test_split
@@ -66,7 +66,7 @@ If you need specific benchmarks (e.g., balanced subsets for quick testing):
 import pandas as pd
 
 # Load full dataset
-df = pd.read_csv("test_datasets/harvey/fragments/VHH_only_harvey.csv")
+df = pd.read_csv("data/test/harvey/fragments/VHH_only_harvey.csv")
 
 # Create 10k balanced subset
 low = df[df['label'] == 0].sample(5000, random_state=42)
@@ -74,7 +74,7 @@ high = df[df['label'] == 1].sample(5000, random_state=42)
 subset = pd.concat([low, high]).sample(frac=1, random_state=42)  # shuffle
 
 # Save benchmark
-subset.to_csv("test_datasets/harvey/canonical/harvey_10k_balanced.csv", index=False)
+subset.to_csv("data/test/harvey/canonical/harvey_10k_balanced.csv", index=False)
 ```
 
 **Note:** Currently no canonical benchmarks defined. Use full dataset or create custom splits as needed.

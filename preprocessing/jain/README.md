@@ -21,16 +21,16 @@ raw/*.xlsx → processed/*.csv → canonical/*.csv
 **Purpose:** Convert Jain Excel files to standardized CSV format using ELISA-only methodology.
 
 **Input:**
-- `test_datasets/jain/raw/Private_Jain2017_ELISA_indiv.xlsx`
-- `test_datasets/jain/raw/jain-pnas.1616408114.sd01.xlsx`
-- `test_datasets/jain/raw/jain-pnas.1616408114.sd02.xlsx`
-- `test_datasets/jain/raw/jain-pnas.1616408114.sd03.xlsx`
+- `data/test/jain/raw/Private_Jain2017_ELISA_indiv.xlsx`
+- `data/test/jain/raw/jain-pnas.1616408114.sd01.xlsx`
+- `data/test/jain/raw/jain-pnas.1616408114.sd02.xlsx`
+- `data/test/jain/raw/jain-pnas.1616408114.sd03.xlsx`
 
 **Output:**
-- `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
-- `test_datasets/jain/processed/jain_sd01.csv`
-- `test_datasets/jain/processed/jain_sd02.csv`
-- `test_datasets/jain/processed/jain_sd03.csv`
+- `data/test/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
+- `data/test/jain/processed/jain_sd01.csv`
+- `data/test/jain/processed/jain_sd02.csv`
+- `data/test/jain/processed/jain_sd03.csv`
 
 **Run:**
 ```bash
@@ -57,13 +57,13 @@ python3 preprocessing/jain/step1_convert_excel_to_csv.py
 **Purpose:** Apply P5e-S2 methodology to achieve EXACT Novo Nordisk parity.
 
 **Input:**
-- `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
-- `test_datasets/jain/processed/jain_sd03.csv` (PSR/AC-SINS data)
+- `data/test/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
+- `data/test/jain/processed/jain_sd03.csv` (PSR/AC-SINS data)
 
 **Output:**
-- `test_datasets/jain/processed/jain_ELISA_ONLY_116.csv` (116 antibodies, SSOT)
-- `test_datasets/jain/canonical/jain_86_novo_parity.csv` (86 antibodies, VH+VL+metadata)
-- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, VH-only for benchmarking)
+- `data/test/jain/processed/jain_ELISA_ONLY_116.csv` (116 antibodies, SSOT)
+- `data/test/jain/canonical/jain_86_novo_parity.csv` (86 antibodies, VH+VL+metadata)
+- `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, VH-only for benchmarking)
 
 **Run:**
 ```bash

@@ -54,7 +54,7 @@ def validate_canonical_files() -> bool:
         "jain_86_novo_parity.csv": {"rows": 86, "nan_labels": 0},
     }
 
-    canonical_dir = Path("test_datasets/jain/canonical")
+    canonical_dir = Path("data/test/jain/canonical")
     all_pass = True
 
     for filename, expected in expected_canonical.items():
@@ -116,7 +116,7 @@ def validate_fragment_files() -> bool:
     print("FRAGMENT FILES (Research/Development)")
     print(f"{'=' * 70}{Colors.RESET}\n")
 
-    fragments_dir = Path("test_datasets/jain/fragments")
+    fragments_dir = Path("data/test/jain/fragments")
     fragment_files = list(fragments_dir.glob("*_jain.csv"))
 
     expected_fragments = {
@@ -174,7 +174,7 @@ def validate_manifest() -> bool:
     print("MANIFEST FILE")
     print(f"{'=' * 70}{Colors.RESET}\n")
 
-    manifest_path = Path("test_datasets/jain/fragments/manifest.yml")
+    manifest_path = Path("data/test/jain/fragments/manifest.yml")
     print(f"Testing: {manifest_path.name}")
 
     if not manifest_path.exists():

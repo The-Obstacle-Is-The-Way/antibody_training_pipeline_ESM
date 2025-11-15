@@ -30,7 +30,7 @@ We have **TWO DIFFERENT SCRIPTS** that both create `jain_86_novo_parity.csv` wit
 86 antibodies (59 specific / 27 non-specific)
 ```
 
-**Output:** `test_datasets/jain/canonical/jain_86_novo_parity.csv`
+**Output:** `data/test/jain/canonical/jain_86_novo_parity.csv`
 **Expected labels:** 59 zeros + 27 ones
 **Confusion matrix claim:** `[[40, 19], [10, 17]]` - EXACT NOVO PARITY
 
@@ -45,7 +45,7 @@ We have **TWO DIFFERENT SCRIPTS** that both create `jain_86_novo_parity.csv` wit
 86 antibodies (ALL SPECIFIC, label hardcoded to 0)
 ```
 
-**Output:** `test_datasets/jain/canonical/jain_86_novo_parity.csv` (SAME FILE!)
+**Output:** `data/test/jain/canonical/jain_86_novo_parity.csv` (SAME FILE!)
 **Actual labels:** 86 zeros
 **Logic:** Line 184 - `df_novo_parity["label"] = 0`
 
@@ -59,7 +59,7 @@ We have **TWO DIFFERENT SCRIPTS** that both create `jain_86_novo_parity.csv` wit
 **What's in the file NOW:**
 ```python
 import pandas as pd
-df = pd.read_csv('test_datasets/jain/canonical/jain_86_novo_parity.csv')
+df = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
 print(df['label'].value_counts())
 # Output:
 # 0    86
@@ -133,11 +133,11 @@ df_novo_parity["label"] = 0  # Hardcoded
 
 **BOTH scripts output to:**
 ```
-test_datasets/jain/canonical/jain_86_novo_parity.csv
+data/test/jain/canonical/jain_86_novo_parity.csv
 ```
 
 **Line references:**
-- step2: line 43 - `OUTPUT_86 = BASE_DIR / "test_datasets/jain/canonical/jain_86_novo_parity.csv"`
+- step2: line 43 - `OUTPUT_86 = BASE_DIR / "data/test/jain/canonical/jain_86_novo_parity.csv"`
 - step4: line 187 - `output_novo = output_dir / "jain_86_novo_parity.csv"`
 
 **Last run:** step4 (Nov 7 16:47) - overwrote step2 output
@@ -205,7 +205,7 @@ grep -r "jain_86_novo_parity" src/
 python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 python3 -c "
 import pandas as pd
-df = pd.read_csv('test_datasets/jain/canonical/jain_86_novo_parity.csv')
+df = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
 print(f'Total: {len(df)}')
 print(f'Specific: {(df[\"label\"] == 0).sum()}')
 print(f'Non-specific: {(df[\"label\"] == 1).sum()}')
@@ -237,7 +237,7 @@ lenzilumab, parsatuzumab, patritumab, ponezumab, robatumumab,
 simtuzumab, sirukumab
 ```
 
-**File now correct:** `test_datasets/jain/canonical/jain_86_novo_parity.csv`
+**File now correct:** `data/test/jain/canonical/jain_86_novo_parity.csv`
 
 ---
 

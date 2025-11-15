@@ -24,7 +24,7 @@ The Shehata dataset preprocessing requires the following Excel files from the or
 2. Navigate to "Supplementary Materials"
 3. Download `mmc2.xlsx` through `mmc5.xlsx`
 4. Rename them to `shehata-mmc2.xlsx`, `shehata-mmc3.xlsx`, etc.
-5. Place them in `test_datasets/shehata/raw/` directory
+5. Place them in `data/test/shehata/raw/` directory
 
 **Note:** These Excel files are NOT committed to git (see `.gitignore`). They must be downloaded manually from the paper's supplementary materials.
 
@@ -49,5 +49,5 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 ```
 
 This will generate:
-- `test_datasets/shehata/processed/shehata.csv` (Phase 1 output)
-- `test_datasets/shehata/fragments/*.csv` (16 fragment-specific files)
+- `data/test/shehata/processed/shehata.csv` (Phase 1 output)
+- `data/test/shehata/fragments/*.csv` (16 fragment-specific files)

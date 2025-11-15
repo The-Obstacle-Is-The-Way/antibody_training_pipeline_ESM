@@ -42,7 +42,7 @@ def test_jain_dataset_initializes_with_default_output_dir() -> None:
 
     # Assert
     assert dataset.dataset_name == "jain"
-    assert dataset.output_dir == Path("test_datasets/jain/fragments")
+    assert dataset.output_dir == Path("data/test/jain/fragments")
 
 
 @pytest.mark.unit

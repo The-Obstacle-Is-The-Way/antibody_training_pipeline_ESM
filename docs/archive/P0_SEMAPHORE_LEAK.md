@@ -239,7 +239,7 @@ After fix, verify on Harvey:
 tmux new-session -d -s test_harvey_clean
 uv run python -m antibody_training_esm.cli.test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/harvey/fragments/VHH_only_harvey.csv \
+  --data data/test/harvey/fragments/VHH_only_harvey.csv \
   --output-dir test_results \
   --device mps  # Explicit device override
 ```

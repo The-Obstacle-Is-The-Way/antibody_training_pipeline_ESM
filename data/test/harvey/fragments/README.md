@@ -54,8 +54,8 @@ To regenerate all fragments from processed CSV:
 
 ```bash
 python3 preprocessing/harvey/step2_extract_fragments.py
-# Input:  test_datasets/harvey/processed/harvey.csv
-# Output: test_datasets/harvey/fragments/*.csv (6 files)
+# Input:  data/test/harvey/processed/harvey.csv
+# Output: data/test/harvey/fragments/*.csv (6 files)
 ```
 
 **Processing steps:**
@@ -87,7 +87,7 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 **Verification:**
 ```bash
 # Check for gap characters (should return NOTHING)
-grep -c '\-' test_datasets/harvey/fragments/*.csv | grep -v ':0'
+grep -c '\-' data/test/harvey/fragments/*.csv | grep -v ':0'
 ```
 
 **See:** `docs/harvey/HARVEY_P0_FIX_REPORT.md` for complete history
@@ -119,11 +119,11 @@ harvey_000891
 **Verification:**
 ```bash
 # Count failures
-wc -l test_datasets/harvey/fragments/failed_sequences.txt
+wc -l data/test/harvey/fragments/failed_sequences.txt
 # Should be 453
 
 # Verify fragment row counts
-for f in test_datasets/harvey/fragments/*.csv; do
+for f in data/test/harvey/fragments/*.csv; do
   count=$(wc -l < "$f")
   echo "$f: $count lines (expected 141,022)"
 done
@@ -139,7 +139,7 @@ done
 import pandas as pd
 
 # Load VHH-only sequences
-df = pd.read_csv("test_datasets/harvey/fragments/VHH_only_harvey.csv")
+df = pd.read_csv("data/test/harvey/fragments/VHH_only_harvey.csv")
 
 # Use for testing
 from sklearn.metrics import classification_report
@@ -151,9 +151,9 @@ print(classification_report(df['label'], predictions))
 
 ```python
 # Compare H-CDR regions
-h_cdr1_df = pd.read_csv("test_datasets/harvey/fragments/H-CDR1_harvey.csv")
-h_cdr2_df = pd.read_csv("test_datasets/harvey/fragments/H-CDR2_harvey.csv")
-h_cdr3_df = pd.read_csv("test_datasets/harvey/fragments/H-CDR3_harvey.csv")
+h_cdr1_df = pd.read_csv("data/test/harvey/fragments/H-CDR1_harvey.csv")
+h_cdr2_df = pd.read_csv("data/test/harvey/fragments/H-CDR2_harvey.csv")
+h_cdr3_df = pd.read_csv("data/test/harvey/fragments/H-CDR3_harvey.csv")
 
 # Train models on each
 # ... (compare performance)
@@ -163,8 +163,8 @@ h_cdr3_df = pd.read_csv("test_datasets/harvey/fragments/H-CDR3_harvey.csv")
 
 ```python
 # Test CDR-only vs framework-only models
-cdrs_df = pd.read_csv("test_datasets/harvey/fragments/H-CDRs_harvey.csv")
-fwrs_df = pd.read_csv("test_datasets/harvey/fragments/H-FWRs_harvey.csv")
+cdrs_df = pd.read_csv("data/test/harvey/fragments/H-CDRs_harvey.csv")
+fwrs_df = pd.read_csv("data/test/harvey/fragments/H-FWRs_harvey.csv")
 ```
 
 ---

@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-The Jain dataset fragments (`test_datasets/jain/fragments/*.csv`) are using **INCORRECT labels** based on an outdated `flags_total` system instead of the correct `elisa_flags` system. This affects **53 out of 137 antibodies** (38.7% label error rate).
+The Jain dataset fragments (`data/test/jain/fragments/*.csv`) are using **INCORRECT labels** based on an outdated `flags_total` system instead of the correct `elisa_flags` system. This affects **53 out of 137 antibodies** (38.7% label error rate).
 
 **Legacy (Wrong - flags_total)**:
 - Specific (0): 67 antibodies
@@ -62,7 +62,7 @@ Jain dataset has **TWO independent flag systems**:
    - Already had incorrect 67/27/43 distribution
 
 2. **Nov 5, 2025** (Commit `9de5687`):
-   - Reorganized `test_datasets/jain/` structure
+   - Reorganized `data/test/jain/` structure
    - **Moved** fragments to `fragments/` subdirectory
    - Did NOT regenerate from correct source
    - Preserved incorrect 67/27/43 labels
@@ -114,7 +114,7 @@ Fragments should derive from → jain_with_private_elisa_FULL.csv (elisa_flags s
 - ✅ `tests/integration/test_shehata_embedding_compatibility.py` - CORRECT
 
 ### 2. Data Files Affected
-All 18 fragment files in `test_datasets/jain/fragments/`:
+All 18 fragment files in `data/test/jain/fragments/`:
 ```
 ❌ VH_only_jain.csv (137 rows) - WRONG LABELS
 ❌ VL_only_jain.csv (137 rows) - WRONG LABELS
@@ -149,7 +149,7 @@ All 18 fragment files in `test_datasets/jain/fragments/`:
 # Check current fragment labels
 python3 -c "
 import pandas as pd
-frag = pd.read_csv('test_datasets/jain/fragments/VH_only_jain.csv', comment='#')
+frag = pd.read_csv('data/test/jain/fragments/VH_only_jain.csv', comment='#')
 print(f'Fragments: {(frag[\"label\"]==0).sum()}/{(frag[\"label\"]==1).sum()}/{frag[\"label\"].isna().sum()}')
 "
 # Output: Fragments: 67/27/43 ❌
@@ -157,7 +157,7 @@ print(f'Fragments: {(frag[\"label\"]==0).sum()}/{(frag[\"label\"]==1).sum()}/{fr
 # Check correct ELISA-based labels
 python3 -c "
 import pandas as pd
-elisa = pd.read_csv('test_datasets/jain/processed/jain_with_private_elisa_FULL.csv')
+elisa = pd.read_csv('data/test/jain/processed/jain_with_private_elisa_FULL.csv')
 print(f'ELISA: {(elisa[\"label\"]==0).sum()}/{(elisa[\"label\"]==1).sum()}/{elisa[\"label\"].isna().sum()}')
 "
 # Output: ELISA: 94/22/21 ✅
@@ -165,8 +165,8 @@ print(f'ELISA: {(elisa[\"label\"]==0).sum()}/{(elisa[\"label\"]==1).sum()}/{elis
 # Find discrepancies
 python3 -c "
 import pandas as pd
-frag = pd.read_csv('test_datasets/jain/fragments/VH_only_jain.csv', comment='#')
-elisa = pd.read_csv('test_datasets/jain/processed/jain_with_private_elisa_FULL.csv')
+frag = pd.read_csv('data/test/jain/fragments/VH_only_jain.csv', comment='#')
+elisa = pd.read_csv('data/test/jain/processed/jain_with_private_elisa_FULL.csv')
 merged = pd.merge(frag[['id', 'label']], elisa[['id', 'label']], on='id', suffixes=('_frag', '_elisa'))
 diff = merged[merged['label_frag'] != merged['label_elisa']]
 print(f'Discrepancies: {len(diff)}/137 antibodies ({len(diff)/137*100:.1f}%)')
@@ -183,7 +183,7 @@ print(f'Discrepancies: {len(diff)}/137 antibodies ({len(diff)/137*100:.1f}%)')
 1. **New extraction pipeline**: `preprocessing/jain/step3_extract_fragments.py`
    - Uses ANARCI (IMGT) to rebuild all 16 fragment views from the ELISA SSOT (`jain_with_private_elisa_FULL.csv`)
    - Centralizes the ELISA labeling rule (`0 → specific`, `1-3 → mild`, `≥4 → non-specific`)
-2. **Fresh fragments generated**: `test_datasets/jain/fragments/*.csv`
+2. **Fresh fragments generated**: `data/test/jain/fragments/*.csv`
    - 137 antibodies each
    - Distribution verified: 94 specific / 22 non-specific / 21 mild
    - `manifest.yml` records source hash, script version, and expected counts
@@ -193,7 +193,7 @@ print(f'Discrepancies: {len(diff)}/137 antibodies ({len(diff)/137*100:.1f}%)')
    - Path fixes now target the regenerated fragments
    - Data integrity assertions enforce 94/22/21 distribution (with mild count 21)
 5. **Documentation refreshed**
-   - `test_datasets/jain/fragments/README.md` now references the ELISA SSOT, manifests, and legacy folder
+   - `data/test/jain/fragments/README.md` now references the ELISA SSOT, manifests, and legacy folder
    - This report captures the history, root cause, and permanent fix
 
 ---
@@ -201,12 +201,12 @@ print(f'Discrepancies: {len(diff)}/137 antibodies ({len(diff)/137*100:.1f}%)')
 ## References
 
 ### Source Files
-1. **CORRECT labeling**: `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv`
+1. **CORRECT labeling**: `data/test/jain/processed/jain_with_private_elisa_FULL.csv`
    - Uses ELISA flags (0-6 range)
    - Distribution: 94/22/21
    - Source: Private ELISA data
 
-2. **DEPRECATED labeling**: `test_datasets/jain/processed/jain.csv`
+2. **DEPRECATED labeling**: `data/test/jain/processed/jain.csv`
    - Uses flags_total (0-4 range)
    - Distribution: 67/27/43
    - Source: Jain 2017 paper data
@@ -221,9 +221,9 @@ git show 9de5687  # Nov 5, 2025
 ```
 
 ### Documentation
-- `test_datasets/jain/README.md` - Main jain dataset docs
-- `test_datasets/jain/processed/README.md` - Processing pipeline
-- `test_datasets/jain/fragments/README.md` - Fragment docs (needs update)
+- `data/test/jain/README.md` - Main jain dataset docs
+- `data/test/jain/processed/README.md` - Processing pipeline
+- `data/test/jain/fragments/README.md` - Fragment docs (needs update)
 
 ---
 

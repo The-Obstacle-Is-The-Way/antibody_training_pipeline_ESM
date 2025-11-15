@@ -52,8 +52,8 @@ To regenerate all fragments from processed CSV:
 
 ```bash
 python3 preprocessing/shehata/step2_extract_fragments.py
-# Input:  test_datasets/shehata/processed/shehata.csv
-# Output: test_datasets/shehata/fragments/*.csv (16 files)
+# Input:  data/test/shehata/processed/shehata.csv
+# Output: data/test/shehata/fragments/*.csv (16 files)
 ```
 
 **Processing steps:**
@@ -84,7 +84,7 @@ f"full_seq_{chain}": annotation.sequence_aa
 **Verification:**
 ```bash
 # Check for gap characters (should return NOTHING)
-grep -c '\-' test_datasets/shehata/fragments/*.csv | grep -v ':0'
+grep -c '\-' data/test/shehata/fragments/*.csv | grep -v ':0'
 ```
 
 **See:** `docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md` for complete history
@@ -99,7 +99,7 @@ grep -c '\-' test_datasets/shehata/fragments/*.csv | grep -v ':0'
 import pandas as pd
 
 # Load VH-only sequences
-df = pd.read_csv("test_datasets/shehata/fragments/VH_only_shehata.csv")
+df = pd.read_csv("data/test/shehata/fragments/VH_only_shehata.csv")
 
 # Use for testing
 from sklearn.metrics import classification_report
@@ -111,8 +111,8 @@ print(classification_report(df['label'], predictions))
 
 ```python
 # Compare H-CDR3 vs L-CDR3 importance
-h_cdr3_df = pd.read_csv("test_datasets/shehata/fragments/H-CDR3_shehata.csv")
-l_cdr3_df = pd.read_csv("test_datasets/shehata/fragments/L-CDR3_shehata.csv")
+h_cdr3_df = pd.read_csv("data/test/shehata/fragments/H-CDR3_shehata.csv")
+l_cdr3_df = pd.read_csv("data/test/shehata/fragments/L-CDR3_shehata.csv")
 
 # Train models on each
 # ... (compare performance)
@@ -122,7 +122,7 @@ l_cdr3_df = pd.read_csv("test_datasets/shehata/fragments/L-CDR3_shehata.csv")
 
 ```python
 # Test on paired VH+VL
-full_df = pd.read_csv("test_datasets/shehata/fragments/Full_shehata.csv")
+full_df = pd.read_csv("data/test/shehata/fragments/Full_shehata.csv")
 ```
 
 ---

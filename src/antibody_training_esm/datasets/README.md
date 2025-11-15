@@ -59,7 +59,7 @@ python preprocessing/boughter/stage2_stage3_annotation_qc.py
 ```
 
 These scripts create fragment CSV files in:
-- `test_datasets/<dataset>/fragments/`
+- `data/test/<dataset>/fragments/`
 - `train_datasets/<dataset>/fragments/`
 
 ### Loading (TRAINING, use dataset classes)
@@ -82,8 +82,8 @@ print(f"Loaded {len(df)} sequences")
 ## Available Dataset Loaders
 
 ### JainDataset
-- **Source**: `test_datasets/jain/processed/`
-- **Fragments**: `test_datasets/jain/fragments/`
+- **Source**: `data/test/jain/processed/`
+- **Fragments**: `data/test/jain/fragments/`
 - **Preprocessing**: `preprocessing/jain/step2_preprocess_p5e_s2.py`
 - **Characteristics**:
   - 137 → 116 → 86 antibodies (Novo parity)
@@ -91,8 +91,8 @@ print(f"Loaded {len(df)} sequences")
   - 16 fragment types (VH + VL)
 
 ### HarveyDataset
-- **Source**: `test_datasets/harvey/raw/`
-- **Fragments**: `test_datasets/harvey/fragments/`
+- **Source**: `data/test/harvey/raw/`
+- **Fragments**: `data/test/harvey/fragments/`
 - **Preprocessing**: `preprocessing/harvey/step2_extract_fragments.py`
 - **Characteristics**:
   - 141,474 nanobody sequences (VHH only)
@@ -100,8 +100,8 @@ print(f"Loaded {len(df)} sequences")
   - IMGT position extraction
 
 ### ShehataDataset
-- **Source**: `test_datasets/shehata/raw/shehata-mmc2.xlsx`
-- **Fragments**: `test_datasets/shehata/fragments/`
+- **Source**: `data/test/shehata/raw/shehata-mmc2.xlsx`
+- **Fragments**: `data/test/shehata/fragments/`
 - **Preprocessing**: `preprocessing/shehata/step2_extract_fragments.py`
 - **Characteristics**:
   - 398 HIV antibodies

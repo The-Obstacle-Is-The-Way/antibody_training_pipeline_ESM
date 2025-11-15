@@ -47,11 +47,11 @@ python3 preprocessing/harvey/step1_convert_raw_csvs.py
 ```
 
 **Input:**
-- `test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv`
-- `test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv`
+- `data/test/harvey/raw/high_polyreactivity_high_throughput.csv`
+- `data/test/harvey/raw/low_polyreactivity_high_throughput.csv`
 
 **Output:**
-- `test_datasets/harvey/processed/harvey.csv`
+- `data/test/harvey/processed/harvey.csv`
 
 **Processing steps:**
 1. Read high and low polyreactivity CSVs
@@ -76,12 +76,12 @@ python3 preprocessing/harvey/step1_convert_raw_csvs.py
 
 - **Source:** Novo Nordisk / Harvey et al. 2022 supplementary data
 - **Original location:** `reference_repos/harvey_official_repo/backend/app/experiments/`
-- **Copied to:** `test_datasets/harvey/raw/` (for self-contained dataset structure)
+- **Copied to:** `data/test/harvey/raw/` (for self-contained dataset structure)
 - **Date copied:** 2025-11-05
 - **Last verified:** 2025-11-05
 
 **Why copied from reference_repos:**
-- Ensures `test_datasets/` is self-contained
+- Ensures `data/test/` is self-contained
 - Consistent with Shehata/Jain 4-tier structure
 - No external dependencies for data pipeline
 

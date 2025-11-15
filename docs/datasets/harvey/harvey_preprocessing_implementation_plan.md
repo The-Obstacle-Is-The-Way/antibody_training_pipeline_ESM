@@ -10,7 +10,7 @@
 
 **UPDATE:** Implementation is complete and fully validated. Data source confirmed as the official Harvey Lab repository (`debbiemarkslab/nanobody-polyreactivity`), NOT the HuggingFace ZYMScott/polyreaction dataset.
 
-**Pipeline status:** All preprocessing scripts operational and verified. See `test_datasets/harvey/README.md` for current SSOT.
+**Pipeline status:** All preprocessing scripts operational and verified. See `data/test/harvey/README.md` for current SSOT.
 
 ---
 
@@ -89,7 +89,7 @@ Therefore, for Harvey we extract **VHH-specific fragments only**:
 ## Input Data
 
 ### Source File
-**Path:** `test_datasets/harvey/processed/harvey.csv`
+**Path:** `data/test/harvey/processed/harvey.csv`
 **Rows:** 141,474 nanobodies (141,475 with header)
 **Downloaded:** 2025-11-01 from HuggingFace `ZYMScott/polyreaction`
 
@@ -159,7 +159,7 @@ For each nanobody sequence in `harvey.csv`:
 
 ### Step 2: Fragment CSV Generation
 
-Create directory: `test_datasets/harvey/fragments/`
+Create directory: `data/test/harvey/fragments/`
 
 Generate 6 fragment CSV files:
 
@@ -255,7 +255,7 @@ python3 scripts/validate_harvey_processing.py
 ## Output Structure
 
 ```
-test_datasets/harvey/fragments/
+data/test/harvey/fragments/
 ├── VHH_only_harvey.csv       (141,474 rows)
 ├── H-CDR1_harvey.csv          (141,474 rows)
 ├── H-CDR2_harvey.csv          (141,474 rows)

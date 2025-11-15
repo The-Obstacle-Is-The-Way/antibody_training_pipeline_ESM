@@ -23,7 +23,7 @@ def validate_fragment_directory(
     Validate fragment extraction output directory.
 
     Args:
-        dataset_dir: Path to fragment directory (e.g., test_datasets/jain/)
+        dataset_dir: Path to fragment directory (e.g., data/test/jain/)
         expected_fragments: Expected number of fragment CSV files (default: 16)
 
     Returns:
@@ -195,13 +195,13 @@ def print_validation_report(
 def main() -> int:
     """Validate all processed datasets."""
     datasets = [
-        ("jain", Path("test_datasets/jain/fragments"), 16),  # Full antibodies (VH+VL)
+        ("jain", Path("data/test/jain/fragments"), 16),  # Full antibodies (VH+VL)
         (
             "shehata",
-            Path("test_datasets/shehata/fragments"),
+            Path("data/test/shehata/fragments"),
             16,
         ),  # Full antibodies (VH+VL)
-        ("harvey", Path("test_datasets/harvey/fragments"), 6),  # Nanobodies (VHH only)
+        ("harvey", Path("data/test/harvey/fragments"), 6),  # Nanobodies (VHH only)
         (
             "boughter",
             Path("train_datasets/boughter/annotated"),

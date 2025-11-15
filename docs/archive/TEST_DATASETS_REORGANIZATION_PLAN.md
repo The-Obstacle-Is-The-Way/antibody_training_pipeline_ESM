@@ -10,7 +10,7 @@
 
 **Current state:**
 ```
-test_datasets/
+data/test/
 ├── [ROOT LEVEL] Raw Excel files, base CSVs, intermediate CSVs (MESSY MIX)
 ├── jain/           [SUBDIRECTORY] Fragments + curated datasets + OLD datasets
 ├── harvey/         [SUBDIRECTORY] Fragments only
@@ -38,7 +38,7 @@ test_datasets/
 ## Proposed Structure for Jain Dataset
 
 ```
-test_datasets/jain/
+data/test/jain/
 ├── README.md                              # Master guide (already exists)
 │
 ├── raw/                                   # 📁 NEVER TOUCH - Original sources
@@ -112,20 +112,20 @@ FRAGMENTS (region-specific extracts)
 
 ```bash
 # Create new subdirectories
-mkdir -p test_datasets/jain/raw
-mkdir -p test_datasets/jain/processed
-mkdir -p test_datasets/jain/canonical
-mkdir -p test_datasets/jain/fragments
+mkdir -p data/test/jain/raw
+mkdir -p data/test/jain/processed
+mkdir -p data/test/jain/canonical
+mkdir -p data/test/jain/fragments
 ```
 
 ### Step 2: Move Raw Files (Root → jain/raw/)
 
 **Files to move:**
 ```bash
-mv test_datasets/jain-pnas.1616408114.sd01.xlsx test_datasets/jain/raw/
-mv test_datasets/jain-pnas.1616408114.sd02.xlsx test_datasets/jain/raw/
-mv test_datasets/jain-pnas.1616408114.sd03.xlsx test_datasets/jain/raw/
-mv test_datasets/Private_Jain2017_ELISA_indiv.xlsx test_datasets/jain/raw/
+mv data/test/jain-pnas.1616408114.sd01.xlsx data/test/jain/raw/
+mv data/test/jain-pnas.1616408114.sd02.xlsx data/test/jain/raw/
+mv data/test/jain-pnas.1616408114.sd03.xlsx data/test/jain/raw/
+mv data/test/Private_Jain2017_ELISA_indiv.xlsx data/test/jain/raw/
 ```
 
 **Create raw/README.md:**
@@ -156,13 +156,13 @@ python3 preprocessing/jain/step1_convert_excel_to_csv.py
 
 **Files to move:**
 ```bash
-mv test_datasets/jain_sd01.csv test_datasets/jain/processed/
-mv test_datasets/jain_sd02.csv test_datasets/jain/processed/
-mv test_datasets/jain_sd03.csv test_datasets/jain/processed/
-mv test_datasets/jain.csv test_datasets/jain/processed/
-mv test_datasets/jain_with_private_elisa_FULL.csv test_datasets/jain/processed/
-mv test_datasets/jain_ELISA_ONLY_116.csv test_datasets/jain/processed/
-mv test_datasets/jain_86_elisa_1.3.csv test_datasets/jain/processed/
+mv data/test/jain_sd01.csv data/test/jain/processed/
+mv data/test/jain_sd02.csv data/test/jain/processed/
+mv data/test/jain_sd03.csv data/test/jain/processed/
+mv data/test/jain.csv data/test/jain/processed/
+mv data/test/jain_with_private_elisa_FULL.csv data/test/jain/processed/
+mv data/test/jain_ELISA_ONLY_116.csv data/test/jain/processed/
+mv data/test/jain_86_elisa_1.3.csv data/test/jain/processed/
 ```
 
 **Create processed/README.md:**
@@ -196,10 +196,10 @@ All files derived from `raw/` using scripts in `preprocessing/jain/`.
 
 **Files to move into jain/canonical/:**
 ```bash
-mv test_datasets/jain/jain_86_novo_parity.csv test_datasets/jain/canonical/
-mv test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv test_datasets/jain/canonical/
-mv test_datasets/jain/canonical/VH_only_jain_test_FULL.csv test_datasets/jain/canonical/
-mv test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv test_datasets/jain/canonical/
+mv data/test/jain/jain_86_novo_parity.csv data/test/jain/canonical/
+mv data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv data/test/jain/canonical/
+mv data/test/jain/canonical/VH_only_jain_test_FULL.csv data/test/jain/canonical/
+mv data/test/jain/canonical/VH_only_jain_test_QC_REMOVED.csv data/test/jain/canonical/
 ```
 
 **Create canonical/README.md:**
@@ -234,10 +234,10 @@ Final curated datasets for reproducible benchmarking.
 
 ```python
 # Recommended for new benchmarks
-df = pd.read_csv('test_datasets/jain/canonical/jain_86_novo_parity.csv')
+df = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
 
 # For deterministic reproducibility
-df = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv')
+df = pd.read_csv('data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv')
 ```
 ```
 
@@ -245,24 +245,24 @@ df = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv')
 
 **Files to move into jain/fragments/:**
 ```bash
-mv test_datasets/jain/All-CDRs_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/All-FWRs_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/Full_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/H-CDR1_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/H-CDR2_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/H-CDR3_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/H-CDRs_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/H-FWRs_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/L-CDR1_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/L-CDR2_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/L-CDR3_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/L-CDRs_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/L-FWRs_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/VH+VL_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/fragments/VH_only_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/VL_only_jain.csv test_datasets/jain/fragments/
-mv test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv test_datasets/jain/fragments/
-mv test_datasets/jain/fragments/VH_only_jain_86_p5e_s4.csv test_datasets/jain/fragments/
+mv data/test/jain/All-CDRs_jain.csv data/test/jain/fragments/
+mv data/test/jain/All-FWRs_jain.csv data/test/jain/fragments/
+mv data/test/jain/Full_jain.csv data/test/jain/fragments/
+mv data/test/jain/H-CDR1_jain.csv data/test/jain/fragments/
+mv data/test/jain/H-CDR2_jain.csv data/test/jain/fragments/
+mv data/test/jain/H-CDR3_jain.csv data/test/jain/fragments/
+mv data/test/jain/H-CDRs_jain.csv data/test/jain/fragments/
+mv data/test/jain/H-FWRs_jain.csv data/test/jain/fragments/
+mv data/test/jain/L-CDR1_jain.csv data/test/jain/fragments/
+mv data/test/jain/L-CDR2_jain.csv data/test/jain/fragments/
+mv data/test/jain/L-CDR3_jain.csv data/test/jain/fragments/
+mv data/test/jain/L-CDRs_jain.csv data/test/jain/fragments/
+mv data/test/jain/L-FWRs_jain.csv data/test/jain/fragments/
+mv data/test/jain/VH+VL_jain.csv data/test/jain/fragments/
+mv data/test/jain/fragments/VH_only_jain.csv data/test/jain/fragments/
+mv data/test/jain/VL_only_jain.csv data/test/jain/fragments/
+mv data/test/jain/fragments/VH_only_jain_86_p5e_s2.csv data/test/jain/fragments/
+mv data/test/jain/fragments/VH_only_jain_86_p5e_s4.csv data/test/jain/fragments/
 ```
 
 **Create fragments/README.md:**
@@ -314,7 +314,7 @@ python3 scripts/fragmentation/extract_jain_fragments.py
 
 ### Step 6: Update Master README
 
-**Update test_datasets/jain/README.md** to reflect new structure:
+**Update data/test/jain/README.md** to reflect new structure:
 ```markdown
 # Jain Test Dataset
 
@@ -340,7 +340,7 @@ jain/
 import pandas as pd
 
 # Recommended: P5e-S2 canonical
-df = pd.read_csv('test_datasets/jain/canonical/jain_86_novo_parity.csv')
+df = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
 
 # Expected: [[40, 19], [10, 17]], 66.28%
 ```
@@ -373,7 +373,7 @@ fragments/ (region-specific)
 1. **Conversion script** can find raw files:
    ```bash
    # Check if preprocessing/jain/step1_convert_excel_to_csv.py references correct paths
-   # Update paths from test_datasets/*.xlsx → test_datasets/jain/raw/*.xlsx
+   # Update paths from data/test/*.xlsx → data/test/jain/raw/*.xlsx
    ```
 
 2. **Preprocessing scripts** can find input files:
@@ -385,7 +385,7 @@ fragments/ (region-specific)
 3. **Test scripts** can find canonical files:
    ```bash
    # Check preprocessing/jain/test_novo_parity.py
-   # Update paths to test_datasets/jain/canonical/
+   # Update paths to data/test/jain/canonical/
    ```
 
 ### Step 8: Run Tests to Confirm
@@ -393,11 +393,11 @@ fragments/ (region-specific)
 ```bash
 # Test P5e-S2 parity
 python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/jain_86_novo_parity.csv
+  --data data/test/jain/canonical/jain_86_novo_parity.csv
 
 # Test OLD parity
 python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+  --data data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
 Both should give [[40, 19], [10, 17]].
@@ -407,7 +407,7 @@ Both should give [[40, 19], [10, 17]].
 ## Final Directory Tree (After Reorganization)
 
 ```
-test_datasets/
+data/test/
 ├── harvey/
 │   └── [fragments...]
 ├── jain/
@@ -455,23 +455,23 @@ test_datasets/
 ## Scripts to Update
 
 ### 1. `preprocessing/jain/step1_convert_excel_to_csv.py`
-- **Change:** Update paths to read from `test_datasets/jain/raw/`
-- **Change:** Update paths to write to `test_datasets/jain/processed/`
+- **Change:** Update paths to read from `data/test/jain/raw/`
+- **Change:** Update paths to write to `data/test/jain/processed/`
 
 ### 2. `preprocessing/jain/step2_preprocess_p5e_s2.py`
-- **Change:** Read from `test_datasets/jain/processed/`
-- **Change:** Write to `test_datasets/jain/canonical/`
+- **Change:** Read from `data/test/jain/processed/`
+- **Change:** Write to `data/test/jain/canonical/`
 
 ### 3. Legacy `preprocessing/process_jain.py` (old method)
-- **Change:** Read from `test_datasets/jain/processed/`
-- **Change:** Write to `test_datasets/jain/canonical/`
+- **Change:** Read from `data/test/jain/processed/`
+- **Change:** Write to `data/test/jain/canonical/`
 
 ### 4. `preprocessing/jain/test_novo_parity.py`
-- **Change:** Read from `test_datasets/jain/canonical/`
+- **Change:** Read from `data/test/jain/canonical/`
 
 ### 5. `scripts/fragmentation/extract_jain_fragments.py` (if exists)
-- **Change:** Read from `test_datasets/jain/canonical/`
-- **Change:** Write to `test_datasets/jain/fragments/`
+- **Change:** Read from `data/test/jain/canonical/`
+- **Change:** Write to `data/test/jain/fragments/`
 
 ---
 
@@ -481,7 +481,7 @@ test_datasets/
 ✅ **No confusion:** Each directory has ONE purpose
 ✅ **Reproducible:** All files can be regenerated from scripts
 ✅ **Traceable:** README in each directory documents provenance
-✅ **Clean root:** test_datasets/ root only has top-level merged files
+✅ **Clean root:** data/test/ root only has top-level merged files
 ✅ **Scalable:** Same structure can be applied to Harvey and Shehata
 
 ---
@@ -492,7 +492,7 @@ test_datasets/
 2. Execute steps 1-6 to reorganize files
 3. Update scripts in step 7
 4. Test in step 8
-5. Commit with message: "Reorganize test_datasets/jain/ for clarity and reproducibility"
+5. Commit with message: "Reorganize data/test/jain/ for clarity and reproducibility"
 
 **Estimated time:** 30 minutes
 **Risk:** Low (moving files, not deleting)

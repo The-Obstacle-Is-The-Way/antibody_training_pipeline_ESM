@@ -529,14 +529,14 @@ uv run antibody-train
 
 **Error:**
 ```
-ValueError: Loaded dataset is empty: test_datasets/jain/P5e_S2.csv
+ValueError: Loaded dataset is empty: data/test/jain/P5e_S2.csv
 The CSV file may be corrupted or truncated. Please check the file or re-run preprocessing.
 ```
 
 **Cause:** CSV file is empty, truncated, or preprocessing failed.
 
 **Solution:**
-1. Check file exists and has content: `wc -l test_datasets/jain/P5e_S2.csv`
+1. Check file exists and has content: `wc -l data/test/jain/P5e_S2.csv`
 2. Re-run preprocessing for that dataset
 3. Check preprocessing logs for errors
 
@@ -563,7 +563,7 @@ ls -lh models/
 # Verify model path in command (using fragment file for compatibility)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \  # Correct path
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 ---
@@ -584,7 +584,7 @@ You're trying to test with a **canonical file** using default config:
 # THIS FAILS (canonical file has vh_sequence, not sequence)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+  --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
 **Solution 1: Use Fragment Files (Recommended)**
@@ -595,7 +595,7 @@ Fragment files have standardized `sequence` column:
 # THIS WORKS (fragment file has sequence column)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **Solution 2: Create Config for Canonical Files**
@@ -607,7 +607,7 @@ If you need to use canonical files (for metadata access):
 model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"  # Override for canonical file
 label_column: "label"
 ```
@@ -621,15 +621,15 @@ uv run antibody-test --config test_config_canonical.yaml
 
 | File Type | Location | Columns | Use Case |
 |-----------|----------|---------|----------|
-| Canonical | `test_datasets/{dataset}/canonical/` | `vh_sequence`, `vl_sequence` | Full metadata, requires config |
-| Fragment | `test_datasets/{dataset}/fragments/` | `sequence`, `label` | Standardized, works with defaults |
+| Canonical | `data/test/{dataset}/canonical/` | `vh_sequence`, `vl_sequence` | Full metadata, requires config |
+| Fragment | `data/test/{dataset}/fragments/` | `sequence`, `label` | Standardized, works with defaults |
 
 **Check CSV columns:**
 ```bash
-head -n 1 test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+head -n 1 data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 # Output: id,vh_sequence,label (needs sequence_column: "vh_sequence")
 
-head -n 1 test_datasets/jain/fragments/VH_only_jain.csv
+head -n 1 data/test/jain/fragments/VH_only_jain.csv
 # Output: id,sequence,label (works with defaults)
 ```
 
@@ -659,7 +659,7 @@ Cross-dataset generalization is **inherently challenging**:
 # Use fragment file for compatibility with default config
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **2. Tune Assay-Specific Thresholds (PSR Assays)**
@@ -672,7 +672,7 @@ model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
-  - "test_datasets/shehata/fragments/VH_only_shehata.csv"
+  - "data/test/shehata/fragments/VH_only_shehata.csv"
 
 threshold: 0.5495  # Novo Nordisk PSR threshold (default ELISA: 0.5)
 ```
@@ -701,7 +701,7 @@ Train and test on same fragment type:
 # If trained on VH, test on VH (not CDRs or FWRs)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/shehata/fragments/VH_only_shehata.csv  # VH only
+  --data data/test/shehata/fragments/VH_only_shehata.csv  # VH only
 ```
 
 **4. Accept Lower Performance**
@@ -1047,7 +1047,7 @@ python -c "import torch; print(f'MPS: {torch.backends.mps.is_available()}')"
 uv pip list
 
 # Check repository structure
-ls -lh configs/ models/ train_datasets/ test_datasets/
+ls -lh configs/ models/ train_datasets/ data/test/
 
 # Check embeddings cache
 ls -lh embeddings_cache/

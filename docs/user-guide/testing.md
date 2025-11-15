@@ -22,13 +22,13 @@ Before testing, it's important to understand the two types of CSV files in the p
 
 ### Canonical Files vs Fragment Files
 
-**Fragment Files** (`test_datasets/{dataset}/fragments/*.csv`) - **RECOMMENDED**:
+**Fragment Files** (`data/test/{dataset}/fragments/*.csv`) - **RECOMMENDED**:
 - Standardized column names: `sequence`, `label`
 - Ready for testing with default CLI (no config override needed)
 - Created by preprocessing scripts
 - **Use these for most testing workflows**
 
-**Canonical Files** (`test_datasets/{dataset}/canonical/*.csv`) - **ADVANCED**:
+**Canonical Files** (`data/test/{dataset}/canonical/*.csv`) - **ADVANCED**:
 - Original column names from source data (`vh_sequence`, `vl_sequence`)
 - Includes all metadata (flags, PSR scores, etc.)
 - Requires config override with `sequence_column: "vh_sequence"`
@@ -48,7 +48,7 @@ Before testing, it's important to understand the two types of CSV files in the p
 # Test trained model on Jain dataset (using fragment file)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **Note:** Fragment files have standardized `sequence` column - no config override needed.
@@ -70,7 +70,7 @@ model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
-  - "test_datasets/jain/fragments/VH_only_jain.csv"  # Fragment file
+  - "data/test/jain/fragments/VH_only_jain.csv"  # Fragment file
 
 output_dir: "./test_results"
 device: "auto"  # or "cpu", "cuda", "mps"
@@ -89,7 +89,7 @@ The pipeline includes three test datasets with preprocessed fragment files:
 # Using fragment file (recommended - standardized columns)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **Details:**
@@ -98,8 +98,8 @@ uv run antibody-test \
   - 86 antibodies from P5e-S2 subset (Novo parity benchmark)
 - **Assay:** ELISA (per-antigen binding)
 - **Fragment:** VH
-- **File:** `test_datasets/jain/fragments/VH_only_jain.csv` (standardized `sequence` column)
-- **Alternative:** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 only, requires config override)
+- **File:** `data/test/jain/fragments/VH_only_jain.csv` (standardized `sequence` column)
+- **Alternative:** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 only, requires config override)
 - **Expected Accuracy:** ~66% on P5e-S2 subset (Novo Nordisk parity)
 
 ---
@@ -110,7 +110,7 @@ uv run antibody-test \
 # Test on full VHH sequences
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/harvey/fragments/VHH_only_harvey.csv
+  --data data/test/harvey/fragments/VHH_only_harvey.csv
 ```
 
 **Details:**
@@ -118,7 +118,7 @@ uv run antibody-test \
 - **Size:** 141,021 nanobody sequences
 - **Assay:** PSR (polyspecific reagent)
 - **Fragment:** VHH_only (full nanobody VHH domain)
-- **File:** `test_datasets/harvey/fragments/VHH_only_harvey.csv`
+- **File:** `data/test/harvey/fragments/VHH_only_harvey.csv`
 - **Note:** Large-scale test, may take 10-30 minutes
 
 **Fragment-Level Testing:**
@@ -127,7 +127,7 @@ uv run antibody-test \
 # Test on VHH CDRs only
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/harvey/fragments/H-CDRs_harvey.csv
+  --data data/test/harvey/fragments/H-CDRs_harvey.csv
 ```
 
 **Available Harvey Fragments:**
@@ -144,7 +144,7 @@ uv run antibody-test \
 ```bash
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/shehata/fragments/VH_only_shehata.csv
+  --data data/test/shehata/fragments/VH_only_shehata.csv
 ```
 
 **Details:**
@@ -152,7 +152,7 @@ uv run antibody-test \
 - **Size:** 398 human antibodies
 - **Assay:** PSR (polyspecific reagent)
 - **Fragment:** VH
-- **File:** `test_datasets/shehata/fragments/VH_only_shehata.csv`
+- **File:** `data/test/shehata/fragments/VH_only_shehata.csv`
 - **Note:** Cross-assay validation (train ELISA, test PSR)
 
 ---
@@ -167,22 +167,22 @@ All datasets provide fragment-specific CSV files. Test on specific antibody regi
 # Test on H-CDRs (Heavy Chain CDRs)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/shehata/fragments/H-CDRs_shehata.csv
+  --data data/test/shehata/fragments/H-CDRs_shehata.csv
 
 # Test on All-CDRs (Heavy + Light)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/shehata/fragments/All-CDRs_shehata.csv
+  --data data/test/shehata/fragments/All-CDRs_shehata.csv
 
 # Test on H-FWRs (Heavy Framework Regions)
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/shehata/fragments/H-FWRs_shehata.csv
+  --data data/test/shehata/fragments/H-FWRs_shehata.csv
 
 # Test on combined VH+VL
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/shehata/fragments/VH+VL_shehata.csv
+  --data data/test/shehata/fragments/VH+VL_shehata.csv
 ```
 
 **Available Shehata Fragments:**
@@ -224,7 +224,7 @@ model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 
 sequence_column: "vh_sequence"  # Override for canonical file
 label_column: "label"
@@ -368,7 +368,7 @@ model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
-  - "test_datasets/shehata/fragments/VH_only_shehata.csv"
+  - "data/test/shehata/fragments/VH_only_shehata.csv"
 
 output_dir: "./test_results"
 device: "auto"
@@ -438,9 +438,9 @@ Test a single model on multiple datasets in one command:
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
   --data \
-    test_datasets/jain/fragments/VH_only_jain.csv \
-    test_datasets/shehata/fragments/VH_only_shehata.csv \
-    test_datasets/harvey/fragments/VHH_only_harvey.csv
+    data/test/jain/fragments/VH_only_jain.csv \
+    data/test/shehata/fragments/VH_only_shehata.csv \
+    data/test/harvey/fragments/VHH_only_harvey.csv
 ```
 
 **Method 2: Test Configuration File**
@@ -451,9 +451,9 @@ model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
-  - "test_datasets/jain/fragments/VH_only_jain.csv"
-  - "test_datasets/shehata/fragments/VH_only_shehata.csv"
-  - "test_datasets/harvey/fragments/VHH_only_harvey.csv"
+  - "data/test/jain/fragments/VH_only_jain.csv"
+  - "data/test/shehata/fragments/VH_only_shehata.csv"
+  - "data/test/harvey/fragments/VHH_only_harvey.csv"
 
 output_dir: "./test_results"
 ```
@@ -467,8 +467,8 @@ uv run antibody-test --config test_config_multi.yaml
 ```bash
 # Test on multiple datasets sequentially
 for data_file in \
-  test_datasets/jain/fragments/VH_only_jain.csv \
-  test_datasets/shehata/fragments/VH_only_shehata.csv; do
+  data/test/jain/fragments/VH_only_jain.csv \
+  data/test/shehata/fragments/VH_only_shehata.csv; do
   echo "Testing on $data_file..."
   uv run antibody-test \
     --model models/boughter_vh_esm1v_logreg.pkl \
@@ -560,7 +560,7 @@ uv run antibody-test \
   --model \
     models/boughter_vh_esm1v_logreg.pkl \
     models/boughter_vh_esm2_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **Method 2: Test Configuration**
@@ -572,7 +572,7 @@ model_paths:
   - "models/boughter_vh_esm2_logreg.pkl"
 
 data_paths:
-  - "test_datasets/jain/fragments/VH_only_jain.csv"
+  - "data/test/jain/fragments/VH_only_jain.csv"
 
 output_dir: "./test_results"
 ```
@@ -590,7 +590,7 @@ for fragment_file in \
   echo "Testing on $fragment_file..."
   uv run antibody-test \
     --model models/boughter_vh_esm1v_logreg.pkl \
-    --data test_datasets/shehata/fragments/$fragment_file
+    --data data/test/shehata/fragments/$fragment_file
 done
 ```
 
@@ -628,7 +628,7 @@ file models/boughter_vh_esm1v_logreg.pkl
 
 ```bash
 # Check CSV structure (use fragment file)
-head -n 5 test_datasets/jain/fragments/VH_only_jain.csv
+head -n 5 data/test/jain/fragments/VH_only_jain.csv
 
 # Expected format:
 # id,sequence,label,elisa_flags,source
@@ -666,7 +666,7 @@ uv run python -c "import torch; print(torch.cuda.is_available())"
 export CUDA_VISIBLE_DEVICES=0  # Use GPU 0
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/harvey/fragments/VHH_only_harvey.csv \
+  --data data/test/harvey/fragments/VHH_only_harvey.csv \
   --device cuda
 ```
 
@@ -675,7 +675,7 @@ Or reduce batch size:
 ```bash
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/harvey/fragments/VHH_only_harvey.csv \
+  --data data/test/harvey/fragments/VHH_only_harvey.csv \
   --batch-size 8  # Reduce from default (16)
 ```
 

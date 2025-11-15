@@ -16,13 +16,13 @@ Large-scale polyreactivity dataset from high-throughput nanobody screening. 141,
 
 ```bash
 # Full nanobody dataset (141,474 antibodies before ANARCI annotation)
-test_datasets/harvey/processed/harvey.csv
+data/test/harvey/processed/harvey.csv
 
 # VHH-only sequences for testing (141,021 after ANARCI)
-test_datasets/harvey/fragments/VHH_only_harvey.csv
+data/test/harvey/fragments/VHH_only_harvey.csv
 
 # Other fragments (6 total - nanobody-specific)
-test_datasets/harvey/fragments/*.csv
+data/test/harvey/fragments/*.csv
 ```
 
 ---
@@ -121,9 +121,9 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 
 ```bash
 # Check file counts
-echo "Raw files (3):" && ls -1 test_datasets/harvey/raw/*.csv | wc -l
-echo "Processed files (1):" && ls -1 test_datasets/harvey/processed/*.csv | wc -l
-echo "Fragment files (6):" && ls -1 test_datasets/harvey/fragments/*.csv | wc -l
+echo "Raw files (3):" && ls -1 data/test/harvey/raw/*.csv | wc -l
+echo "Processed files (1):" && ls -1 data/test/harvey/processed/*.csv | wc -l
+echo "Fragment files (6):" && ls -1 data/test/harvey/fragments/*.csv | wc -l
 
 # Validate fragments
 python3 scripts/validation/validate_fragments.py
@@ -132,7 +132,7 @@ python3 scripts/validation/validate_fragments.py
 python3 tests/test_harvey_embedding_compatibility.py
 
 # CRITICAL: Check for gap characters (should return NOTHING)
-grep -c '\-' test_datasets/harvey/fragments/*.csv | grep -v ':0'
+grep -c '\-' data/test/harvey/fragments/*.csv | grep -v ':0'
 # Should return NOTHING (all files should have 0 gaps)
 ```
 

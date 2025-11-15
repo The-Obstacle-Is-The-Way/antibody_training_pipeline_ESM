@@ -383,8 +383,8 @@ note: |
 def main() -> int:
     """Main processing pipeline."""
     # Paths
-    csv_path = Path("test_datasets/jain/processed/jain_with_private_elisa_FULL.csv")
-    output_dir = Path("test_datasets/jain/fragments")
+    csv_path = Path("data/test/jain/processed/jain_with_private_elisa_FULL.csv")
+    output_dir = Path("data/test/jain/fragments")
     script_path = Path(__file__)
 
     if not csv_path.exists():

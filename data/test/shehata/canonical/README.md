@@ -31,13 +31,13 @@ The Shehata dataset serves as an **external test set** for non-specificity predi
 **For testing models:**
 ```bash
 # Full paired sequences (398 antibodies)
-test_datasets/shehata/processed/shehata.csv
+data/test/shehata/processed/shehata.csv
 
 # VH-only sequences (most common use case)
-test_datasets/shehata/fragments/VH_only_shehata.csv
+data/test/shehata/fragments/VH_only_shehata.csv
 
 # Other fragments
-test_datasets/shehata/fragments/*.csv
+data/test/shehata/fragments/*.csv
 ```
 
 ---
@@ -47,7 +47,7 @@ test_datasets/shehata/fragments/*.csv
 This directory exists to maintain **consistent structure** across all datasets:
 
 ```
-test_datasets/
+data/test/
 ├── jain/
 │   ├── raw/
 │   ├── processed/
@@ -75,14 +75,14 @@ test_datasets/
 import pandas as pd
 
 # CORRECT: Use processed/ for Shehata
-shehata_df = pd.read_csv("test_datasets/shehata/processed/shehata.csv")
+shehata_df = pd.read_csv("data/test/shehata/processed/shehata.csv")
 
 # CORRECT: Use fragments/ for region-specific testing
-vh_only_df = pd.read_csv("test_datasets/shehata/fragments/VH_only_shehata.csv")
+vh_only_df = pd.read_csv("data/test/shehata/fragments/VH_only_shehata.csv")
 
 # For comparison:
 # Jain uses canonical/ for benchmark testing
-jain_df = pd.read_csv("test_datasets/jain/canonical/jain_86_novo_parity.csv")
+jain_df = pd.read_csv("data/test/jain/canonical/jain_86_novo_parity.csv")
 ```
 
 ---

@@ -24,8 +24,8 @@ Processing Pipeline:
   86 antibodies (59 spec / 27 nonspec) - NOVO PARITY
 
 Source:
-- test_datasets/jain/processed/jain_with_private_elisa_FULL.csv
-- test_datasets/jain/processed/jain_sd03.csv (biophysical data)
+- data/test/jain/processed/jain_with_private_elisa_FULL.csv
+- data/test/jain/processed/jain_sd03.csv (biophysical data)
 
 Reference:
 - Jain et al. (2017), "Biophysical properties of the clinical-stage antibody landscape"
@@ -123,7 +123,7 @@ class JainDataset(AntibodyDataset):
         if not full_csv.exists():
             raise FileNotFoundError(
                 f"Jain FULL CSV not found: {full_csv}\n"
-                f"Please ensure source data is in test_datasets/jain/processed/"
+                f"Please ensure source data is in data/test/jain/processed/"
             )
 
         # Load main dataset

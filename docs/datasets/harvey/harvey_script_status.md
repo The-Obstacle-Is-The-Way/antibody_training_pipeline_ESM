@@ -16,7 +16,7 @@
 - ✅ P0 blocker resolved (gap characters removed)
 - ✅ Benchmark parity achieved (61.5% vs Novo's 61.7%)
 
-**Pipeline fully operational.** See `test_datasets/harvey/README.md` for current SSOT.
+**Pipeline fully operational.** See `data/test/harvey/README.md` for current SSOT.
 
 ---
 
@@ -46,7 +46,7 @@ Harvey preprocessing script has been created, audited, and executed. Processing 
 2. ✅ Fixed ID generation to use sequential counter (no gaps on failures)
 
 **Recommended fixes:**
-3. ✅ Added failure log file (`test_datasets/harvey/fragments/failed_sequences.txt`)
+3. ✅ Added failure log file (`data/test/harvey/fragments/failed_sequences.txt`)
 4. ✅ Removed emojis from output (replaced with `[OK]`, `[DONE]`)
 
 ### 4. Code Quality
@@ -60,7 +60,7 @@ Harvey preprocessing script has been created, audited, and executed. Processing 
 ## Script Specifications
 
 ### Input
-- **File:** `test_datasets/harvey/processed/harvey.csv`
+- **File:** `data/test/harvey/processed/harvey.csv`
 - **Rows:** 141,474 nanobodies
 - **Columns:** seq, CDR1_nogaps, CDR2_nogaps, CDR3_nogaps, label
 
@@ -70,7 +70,7 @@ Harvey preprocessing script has been created, audited, and executed. Processing 
 - **Error handling:** Skip failures, log to file, continue processing
 
 ### Output
-**Directory:** `test_datasets/harvey/fragments/`
+**Directory:** `data/test/harvey/fragments/`
 
 **6 Fragment CSV files (each 141,021 rows × 5 columns):**
 1. `VHH_only_harvey.csv`
@@ -94,7 +94,7 @@ harvey_000001,QVQLVESGG...,1,harvey2022,127
 ## Execution Plan
 
 ### Prerequisites
-✅ `test_datasets/harvey/processed/harvey.csv` exists (141,474 rows)
+✅ `data/test/harvey/processed/harvey.csv` exists (141,474 rows)
 ✅ `riot_na` installed (ANARCI wrapper)
 ✅ Dependencies: pandas, tqdm
 ✅ Disk space: ~200 MB for output CSVs
@@ -118,7 +118,7 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 
 ### Execution Highlights
 - Successfully annotated: **141,021 / 141,474** nanobodies (99.68%)
-- Failures logged: **453** (0.32%) — IDs recorded in `test_datasets/harvey/fragments/failed_sequences.txt`
+- Failures logged: **453** (0.32%) — IDs recorded in `data/test/harvey/fragments/failed_sequences.txt`
 - Fragment files generated with consistent row counts (141,021) and 5-column schema
 - Label distribution preserved: 69,262 low (49.1%), 71,759 high (50.9%)
 - Validation: `python3 scripts/validation/validate_fragments.py` → **PASS**
@@ -130,7 +130,7 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 After execution, verify:
 
 ### File Creation
-- [x] `test_datasets/harvey/fragments/` directory exists
+- [x] `data/test/harvey/fragments/` directory exists
 - [x] All 6 fragment CSVs created
 - [x] `failed_sequences.txt` exists (if failures > 0)
 
@@ -189,7 +189,7 @@ After execution, verify:
 - **Data sources:** `docs/harvey_data_sources.md`
 - **Cleaning log:** `docs/harvey_data_cleaning_log.md`
 - **Template:** `preprocessing/shehata/step2_extract_fragments.py`
-- **Input data:** `test_datasets/harvey/processed/harvey.csv` (141,474 rows)
+- **Input data:** `data/test/harvey/processed/harvey.csv` (141,474 rows)
 
 ---
 

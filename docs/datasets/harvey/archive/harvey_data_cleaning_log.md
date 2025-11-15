@@ -2,7 +2,7 @@
 >
 > This document describes development work from 2025-11-01 during the initial Harvey dataset processing.
 >
-> **For current pipeline documentation, see:** `test_datasets/harvey/README.md`
+> **For current pipeline documentation, see:** `data/test/harvey/README.md`
 >
 > Status warnings below are historical and do not reflect the current state.
 
@@ -54,8 +54,8 @@
 - `preprocessing/harvey/step2_extract_fragments.py` - Extracted VHH fragments
 
 **Output:**
-- `test_datasets/harvey/processed/harvey.csv` - 48 nanobodies
-- `test_datasets/harvey/fragments/` - 6 fragment files (48 rows each)
+- `data/test/harvey/processed/harvey.csv` - 48 nanobodies
+- `data/test/harvey/fragments/` - 6 fragment files (48 rows each)
 
 **Problem identified:**
 - Manual sequence extraction from PDF for 4 missing nanobodies (E05', F02', F07', G09')
@@ -144,10 +144,10 @@ dataset = load_dataset('ZYMScott/polyreaction')
 ```
 
 **Files created:**
-- `test_datasets/harvey/processed/harvey.csv` - Combined (141,474 rows)
-- `test_datasets/harvey_hf/train.csv` - 101,854 rows
-- `test_datasets/harvey_hf/validation.csv` - 14,613 rows
-- `test_datasets/harvey_hf/test.csv` - 25,007 rows
+- `data/test/harvey/processed/harvey.csv` - Combined (141,474 rows)
+- `data/test/harvey_hf/train.csv` - 101,854 rows
+- `data/test/harvey_hf/validation.csv` - 14,613 rows
+- `data/test/harvey_hf/test.csv` - 25,007 rows
 
 **Download script:** `scripts/download_harvey_dataset.py` (for reproducibility)
 
@@ -358,13 +358,13 @@ bcad113 Remove Excel source files from git tracking
 - Success rate: 99.73% (377 sequences have null CDRs in HuggingFace)
 - Expected failures: ~377 sequences (0.27%) - these already failed in HuggingFace preprocessing
 - Successful sequences: 141,021 (still exceeds Novo's ">140,000" threshold)
-- Failures: Log to `test_datasets/harvey/fragments/failed_sequences.txt`
+- Failures: Log to `data/test/harvey/fragments/failed_sequences.txt`
 - Output: 6 fragment files (VHH, H-CDR1/2/3, H-CDRs, H-FWRs)
 
 **Execution (2025-11-01 13:59):**
 - Input sequences: 141,474
 - Successfully annotated: **141,021** (99.68%)
-- Failures logged: **453** (0.32%) → `test_datasets/harvey/fragments/failed_sequences.txt`
+- Failures logged: **453** (0.32%) → `data/test/harvey/fragments/failed_sequences.txt`
   - 377 sequences with null CDRs (pre-existing in HuggingFace)
   - 75 additional ANARCI rejections (non-IMGT-numberable nanobodies)
 - Output fragment CSVs (each 141,021 rows):
@@ -418,10 +418,10 @@ bcad113 Remove Excel source files from git tracking
 
 ### Data Files
 ```
-test_datasets/harvey/processed/harvey.csv                    (141,475 lines, 21 MB)
-test_datasets/harvey_hf/train.csv           (101,855 lines, 15 MB)
-test_datasets/harvey_hf/validation.csv      ( 14,614 lines, 2.2 MB)
-test_datasets/harvey_hf/test.csv            ( 25,008 lines, 3.7 MB)
+data/test/harvey/processed/harvey.csv                    (141,475 lines, 21 MB)
+data/test/harvey_hf/train.csv           (101,855 lines, 15 MB)
+data/test/harvey_hf/validation.csv      ( 14,614 lines, 2.2 MB)
+data/test/harvey_hf/test.csv            ( 25,008 lines, 3.7 MB)
 ```
 
 ### Scripts

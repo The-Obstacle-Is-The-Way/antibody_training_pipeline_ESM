@@ -45,7 +45,7 @@ def validate_fragment_directory(
     Validate fragment extraction output directory.
 
     Args:
-        dataset_dir: Path to fragment directory (e.g., test_datasets/jain/)
+        dataset_dir: Path to fragment directory (e.g., data/test/jain/)
         expected_fragments: Expected number of fragment CSV files (default: 16)
 
     Returns:

@@ -15,8 +15,8 @@ Dataset characteristics:
 - 6 fragment types (VHH-specific)
 
 Source:
-- test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv
-- test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv
+- data/test/harvey/raw/high_polyreactivity_high_throughput.csv
+- data/test/harvey/raw/low_polyreactivity_high_throughput.csv
 
 Reference:
 - Harvey et al., Engineering highly expressed antibodies for nanobody discovery platforms
@@ -129,13 +129,13 @@ class HarveyDataset(AntibodyDataset):
         if not high_csv.exists():
             raise FileNotFoundError(
                 f"High polyreactivity CSV not found: {high_csv}\n"
-                f"Please ensure raw files are in test_datasets/harvey/raw/"
+                f"Please ensure raw files are in data/test/harvey/raw/"
             )
 
         if not low_csv.exists():
             raise FileNotFoundError(
                 f"Low polyreactivity CSV not found: {low_csv}\n"
-                f"Please ensure raw files are in test_datasets/harvey/raw/"
+                f"Please ensure raw files are in data/test/harvey/raw/"
             )
 
         # Load datasets

@@ -106,7 +106,7 @@ uv run antibody-train
 ```bash
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **Expected Accuracy:** ~66.28% (Novo Nordisk exact parity)
@@ -134,7 +134,7 @@ uv run antibody-train
 ```bash
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/harvey/fragments/VHH_only_harvey.csv
+  --data data/test/harvey/fragments/VHH_only_harvey.csv
 ```
 
 **Note:** Cross-assay (ELISA → PSR) and cross-species (human antibodies → nanobodies) may reduce performance.
@@ -162,7 +162,7 @@ uv run antibody-train
 ```bash
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/shehata/fragments/VH_only_shehata.csv
+  --data data/test/shehata/fragments/VH_only_shehata.csv
 ```
 
 **Note:** Cross-assay prediction (ELISA → PSR) requires assay-specific threshold tuning.
@@ -399,7 +399,7 @@ models/
 ```bash
 uv run antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain.csv
+  --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **Option 2: NPZ+JSON (production deployment)**

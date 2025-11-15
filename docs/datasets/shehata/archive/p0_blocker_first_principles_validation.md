@@ -2,7 +2,7 @@
 >
 > This document describes the P0 blocker validation from 2025-11-02 during initial Shehata Phase 2 development.
 >
-> **For current pipeline documentation, see:** `test_datasets/shehata/README.md`
+> **For current pipeline documentation, see:** `data/test/shehata/README.md`
 >
 > The gap character issue described below has been resolved. All fragment CSVs are now gap-free.
 
@@ -131,15 +131,15 @@ all(aa in valid_aas for aa in sequence_without_gaps)
 ```python
 import pandas as pd
 
-df = pd.read_csv('test_datasets/shehata/fragments/VH_only_shehata.csv')
+df = pd.read_csv('data/test/shehata/fragments/VH_only_shehata.csv')
 gap_count = df['sequence'].str.contains('-').sum()
 >>> 13 sequences with "-" gaps
 
-df = pd.read_csv('test_datasets/shehata/VL_only_shehata.csv')
+df = pd.read_csv('data/test/shehata/VL_only_shehata.csv')
 gap_count = df['sequence'].str.contains('-').sum()
 >>> 4 sequences with "-" gaps
 
-df = pd.read_csv('test_datasets/shehata/Full_shehata.csv')
+df = pd.read_csv('data/test/shehata/Full_shehata.csv')
 gap_count = df['sequence'].str.contains('-').sum()
 >>> 17 sequences with "-" gaps
 ```
@@ -192,7 +192,7 @@ if not all(aa in valid_aas for aa in seq) or len(seq) < 1:
 **Phase 1 (Excel → CSV):** ✅ CORRECT
 - `preprocessing/shehata/step1_convert_excel_to_csv.py:21-46` has `sanitize_sequence()`
 - Removes all `-` characters from input sequences
-- `test_datasets/shehata/processed/shehata.csv` is gap-free ✓
+- `data/test/shehata/processed/shehata.csv` is gap-free ✓
 
 **Phase 2 (CSV → Fragments):** ❌ BROKEN
 - `preprocessing/shehata/step2_extract_fragments.py:63` uses `annotation.sequence_alignment_aa`
@@ -261,7 +261,7 @@ result.fwr1_aa  # Individual regions don't have gaps ✓
 import pandas as pd
 from pathlib import Path
 
-fragment_files = Path('test_datasets/shehata/').glob('*.csv')
+fragment_files = Path('data/test/shehata/').glob('*.csv')
 for file in fragment_files:
     df = pd.read_csv(file)
     gap_count = df['sequence'].str.contains('-').sum()
@@ -277,7 +277,7 @@ from model import ESMEmbeddingExtractor
 model = ESMEmbeddingExtractor('facebook/esm1v_t33_650M_UR90S_1', 'cpu')
 
 # Load Shehata VH sequences
-df = pd.read_csv('test_datasets/shehata/fragments/VH_only_shehata.csv')
+df = pd.read_csv('data/test/shehata/fragments/VH_only_shehata.csv')
 sequences = df['sequence'].tolist()
 
 # Try embedding - should NOT raise errors or warnings
@@ -350,7 +350,7 @@ assert not any(np.allclose(emb, 0) for emb in embeddings)
 
 3. Validate all gaps removed:
    ```bash
-   grep -r '\-' test_datasets/shehata/fragments/*.csv | wc -l
+   grep -r '\-' data/test/shehata/fragments/*.csv | wc -l
    # Should be 0
    ```
 
@@ -368,9 +368,9 @@ assert not any(np.allclose(emb, 0) for emb in embeddings)
 | File | Line | Issue | Fix |
 |------|------|-------|-----|
 | `preprocessing/shehata/step2_extract_fragments.py` | 63 | Uses `sequence_alignment_aa` (has gaps) | Use `sequence_aa` (no gaps) |
-| `test_datasets/shehata/fragments/VH_only_shehata.csv` | Multiple | 13 sequences with `-` | Re-extract after fix |
-| `test_datasets/shehata/VL_only_shehata.csv` | Multiple | 4 sequences with `-` | Re-extract after fix |
-| `test_datasets/shehata/Full_shehata.csv` | Multiple | 17 sequences with `-` | Re-extract after fix |
+| `data/test/shehata/fragments/VH_only_shehata.csv` | Multiple | 13 sequences with `-` | Re-extract after fix |
+| `data/test/shehata/VL_only_shehata.csv` | Multiple | 4 sequences with `-` | Re-extract after fix |
+| `data/test/shehata/Full_shehata.csv` | Multiple | 17 sequences with `-` | Re-extract after fix |
 
 ---
 

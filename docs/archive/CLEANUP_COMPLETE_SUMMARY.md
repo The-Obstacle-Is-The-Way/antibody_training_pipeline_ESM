@@ -45,14 +45,14 @@
 
 **Before:** 72 Jain CSV files (chaos)
 ```
-test_datasets/jain/          23 CSVs + 3 legacy folders
+data/test/jain/          23 CSVs + 3 legacy folders
 experiments/novo_parity/      9 CSVs
 test_results/               ~60 Jain files/folders
 ```
 
 **After:** 49 organized files
 ```
-test_datasets/jain/          22 production CSVs
+data/test/jain/          22 production CSVs
   └── archive/              18 archived CSVs (deprecated)
 
 experiments/novo_parity/      9 research CSVs (intact)
@@ -66,7 +66,7 @@ test_results/                 0 Jain files (cleaned)
 
 ### 3. File Organization
 
-#### Production Datasets (`test_datasets/jain/`)
+#### Production Datasets (`data/test/jain/`)
 
 **22 production CSVs organized by purpose:**
 
@@ -89,7 +89,7 @@ test_results/                 0 Jain files (cleaned)
 - `VH_only_jain_86_p5e_s4.csv` (86)
 - `jain_86_novo_parity.csv` (86 with full metadata)
 
-#### Archive (`test_datasets/jain/archive/`)
+#### Archive (`data/test/jain/archive/`)
 
 **18 archived CSVs with clear labels:**
 
@@ -135,12 +135,12 @@ test_results/                 0 Jain files (cleaned)
 ### ✅ Both Methods Achieve Novo Parity
 
 **Method 1: OLD Reverse-Engineered**
-- File: `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv`
+- File: `data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv`
 - Result: [[40, 19], [10, 17]] ✅
 - Characteristics: Simple, deterministic, recommended for benchmarking
 
 **Method 2: P5e-S2 Canonical**
-- File: `test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv`
+- File: `data/test/jain/fragments/VH_only_jain_86_p5e_s2.csv`
 - Result: [[40, 19], [10, 17]] ✅
 - Characteristics: Biologically principled (PSR-based), recommended for research
 - ⚠️ Has one borderline antibody (nimotuzumab ~0.5 prob)
@@ -175,7 +175,7 @@ test_results/                 0 Jain files (cleaned)
    - Documents investigation timeline
    - Points to current docs
 
-3. **test_datasets/jain/archive/README.md**
+3. **data/test/jain/archive/README.md**
    - Clearly marks deprecated files
    - Explains legacy_reverse_engineered (duplicates)
    - **Warns against legacy_total_flags_methodology (incorrect)**
@@ -206,13 +206,13 @@ test_results/                 0 Jain files (cleaned)
 # Method 1: OLD reverse-engineered (PRIMARY) - v2.0.0
 antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+  --data data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
 # ✅ Result: [[40, 19], [10, 17]], 66.28%
 
 # Method 2: P5e-S2 canonical (ALTERNATIVE) - v2.0.0
 antibody-test \
   --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/jain/fragments/VH_only_jain_86_p5e_s2.csv
+  --data data/test/jain/fragments/VH_only_jain_86_p5e_s2.csv
 # ✅ Result: [[40, 19], [10, 17]] (within ±1 due to nimotuzumab)
 ```
 
@@ -244,7 +244,7 @@ Test results (Jain): 0 (was ~60) ✅
 
 ### ✅ Clear Organization
 
-**Production:** test_datasets/jain/ (clean, documented)
+**Production:** data/test/jain/ (clean, documented)
 **Research:** experiments/novo_parity/ (full provenance)
 **Archive:** Clearly marked deprecated/incorrect files
 **Docs:** One source of truth (JAIN_COMPLETE_GUIDE.md)

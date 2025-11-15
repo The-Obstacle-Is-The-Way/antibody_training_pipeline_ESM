@@ -35,8 +35,8 @@ To convert the main Excel file to CSV format:
 python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 ```
 
-**Input:** `test_datasets/shehata/raw/shehata-mmc2.xlsx`
-**Output:** `test_datasets/shehata/processed/shehata.csv`
+**Input:** `data/test/shehata/raw/shehata-mmc2.xlsx`
+**Output:** `data/test/shehata/processed/shehata.csv`
 
 **Processing steps:**
 1. Read Excel file (402 rows)

@@ -119,7 +119,7 @@
 - ✅ This was a failed attempt to reverse-engineer Novo's QC
 - ✅ P5e-S2 doesn't use z-score outliers - uses PSR reclassification
 - ✅ Creates jain_116_qc_candidates.csv which is NOT used
-- ✅ References `test_datasets/jain_ELISA_ONLY_116.csv` (old path)
+- ✅ References `data/test/jain_ELISA_ONLY_116.csv` (old path)
 
 **Historical context:**
 - Created Nov 3, 2025 during reverse engineering phase
@@ -425,7 +425,7 @@ scripts/
 ## Files That Reference Old Paths
 
 **From analysis:**
-- `zscore_jain_116_outliers.py` references `test_datasets/jain_ELISA_ONLY_116.csv` (old path)
+- `zscore_jain_116_outliers.py` references `data/test/jain_ELISA_ONLY_116.csv` (old path)
   - But script is being deleted anyway ✅
 
 ---

@@ -39,12 +39,12 @@ import pandas as pd
 
 # File paths
 BASE_DIR = Path(__file__).parent.parent.parent  # Project root
-INPUT_137 = BASE_DIR / "test_datasets/jain/processed/jain_with_private_elisa_FULL.csv"
-INPUT_SD03 = BASE_DIR / "test_datasets/jain/processed/jain_sd03.csv"
-OUTPUT_116 = BASE_DIR / "test_datasets/jain/processed/jain_ELISA_ONLY_116.csv"
-OUTPUT_86 = BASE_DIR / "test_datasets/jain/canonical/jain_86_novo_parity.csv"
+INPUT_137 = BASE_DIR / "data/test/jain/processed/jain_with_private_elisa_FULL.csv"
+INPUT_SD03 = BASE_DIR / "data/test/jain/processed/jain_sd03.csv"
+OUTPUT_116 = BASE_DIR / "data/test/jain/processed/jain_ELISA_ONLY_116.csv"
+OUTPUT_86 = BASE_DIR / "data/test/jain/canonical/jain_86_novo_parity.csv"
 OUTPUT_VH = (
-    BASE_DIR / "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+    BASE_DIR / "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 )  # VH-only benchmark
 
 # P5e-S2 Method Constants

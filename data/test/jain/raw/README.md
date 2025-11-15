@@ -42,7 +42,7 @@ To convert these Excel files to CSV format:
 python3 preprocessing/jain/step1_convert_excel_to_csv.py
 ```
 
-Output files will be created in `test_datasets/jain/processed/`.
+Output files will be created in `data/test/jain/processed/`.
 
 ---
 

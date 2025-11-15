@@ -109,7 +109,7 @@ The `riot_na` library (ANARCI wrapper) provides two sequence attributes:
 **Conversion Script:** `preprocessing/harvey/step1_convert_raw_csvs.py`
 - Extracts full sequences from IMGT position columns (1-128)
 - Combines high/low CSVs with binary labels (0=low, 1=high)
-- Outputs: `test_datasets/harvey/processed/harvey.csv`
+- Outputs: `data/test/harvey/processed/harvey.csv`
 
 ### What ZYMScott/polyreaction Is (NOT Used)
 
@@ -146,7 +146,7 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 
 ```bash
 python3 -c "import pandas as pd; \
-  vhh = pd.read_csv('test_datasets/harvey/fragments/VHH_only_harvey.csv'); \
+  vhh = pd.read_csv('data/test/harvey/fragments/VHH_only_harvey.csv'); \
   print(f'Gaps: {vhh[\"sequence\"].str.contains(\"-\", na=False).sum()}')"
 ```
 
@@ -209,12 +209,12 @@ Both datasets had the **EXACT SAME P0 BLOCKER** - here's the parallel:
 2. ✅ `tests/test_harvey_embedding_compatibility.py` - New test suite created
 
 ### Data Regenerated
-3. ✅ `test_datasets/harvey/fragments/VHH_only_harvey.csv` - 12,116 gaps removed
-4. ✅ `test_datasets/harvey/fragments/H-CDR1_harvey.csv` - Already gap-free
-5. ✅ `test_datasets/harvey/fragments/H-CDR2_harvey.csv` - Already gap-free
-6. ✅ `test_datasets/harvey/fragments/H-CDR3_harvey.csv` - Already gap-free
-7. ✅ `test_datasets/harvey/fragments/H-CDRs_harvey.csv` - Already gap-free
-8. ✅ `test_datasets/harvey/fragments/H-FWRs_harvey.csv` - Already gap-free
+3. ✅ `data/test/harvey/fragments/VHH_only_harvey.csv` - 12,116 gaps removed
+4. ✅ `data/test/harvey/fragments/H-CDR1_harvey.csv` - Already gap-free
+5. ✅ `data/test/harvey/fragments/H-CDR2_harvey.csv` - Already gap-free
+6. ✅ `data/test/harvey/fragments/H-CDR3_harvey.csv` - Already gap-free
+7. ✅ `data/test/harvey/fragments/H-CDRs_harvey.csv` - Already gap-free
+8. ✅ `data/test/harvey/fragments/H-FWRs_harvey.csv` - Already gap-free
 
 ### Documentation
 9. ✅ `docs/harvey/HARVEY_P0_FIX_REPORT.md` - This report

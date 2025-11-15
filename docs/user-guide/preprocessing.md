@@ -35,8 +35,8 @@ You need to preprocess data if:
 
 You DON'T need to preprocess if:
 
-- ❌ **Using pre-processed canonical files** - Already in `train_datasets/` or `test_datasets/canonical/`
-- ❌ **Using provided fragment files** - Already in `test_datasets/fragments/`
+- ❌ **Using pre-processed canonical files** - Already in `train_datasets/` or `data/test/canonical/`
+- ❌ **Using provided fragment files** - Already in `data/test/fragments/`
 
 ---
 
@@ -73,12 +73,12 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 **Outputs:**
 
 **Canonical files** (original column names):
-- `test_datasets/jain/canonical/jain_86_novo_parity.csv` - Full data (columns: `id`, `vh_sequence`, `vl_sequence`, ...)
-- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH only (columns: `id`, `vh_sequence`, `label`)
+- `data/test/jain/canonical/jain_86_novo_parity.csv` - Full data (columns: `id`, `vh_sequence`, `vl_sequence`, ...)
+- `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH only (columns: `id`, `vh_sequence`, `label`)
 
 **Fragment files** (standardized columns):
-- `test_datasets/jain/fragments/VH_only_jain.csv` - VH fragment (columns: `id`, `sequence`, `label`) **← Use for testing**
-- Additional fragment files in `test_datasets/jain/fragments/` (H-CDRs, L-CDRs, etc.)
+- `data/test/jain/fragments/VH_only_jain.csv` - VH fragment (columns: `id`, `sequence`, `label`) **← Use for testing**
+- Additional fragment files in `data/test/jain/fragments/` (H-CDRs, L-CDRs, etc.)
 
 **Column Naming:**
 - **Canonical files** use `vh_sequence`/`vl_sequence` (original source data)
@@ -99,13 +99,13 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 **Outputs:**
 
 **Processed files:**
-- `test_datasets/harvey/processed/harvey.csv` - Combined raw data (intermediate)
+- `data/test/harvey/processed/harvey.csv` - Combined raw data (intermediate)
 
 **Fragment files** (standardized columns):
-- `test_datasets/harvey/fragments/VHH_only_harvey.csv` - Full VHH (columns: `id`, `sequence`, `label`, ...)
-- `test_datasets/harvey/fragments/H-CDR1_harvey.csv` - Individual CDRs
-- `test_datasets/harvey/fragments/H-CDRs_harvey.csv` - Concatenated CDRs
-- `test_datasets/harvey/fragments/H-FWRs_harvey.csv` - Concatenated FWRs
+- `data/test/harvey/fragments/VHH_only_harvey.csv` - Full VHH (columns: `id`, `sequence`, `label`, ...)
+- `data/test/harvey/fragments/H-CDR1_harvey.csv` - Individual CDRs
+- `data/test/harvey/fragments/H-CDRs_harvey.csv` - Concatenated CDRs
+- `data/test/harvey/fragments/H-FWRs_harvey.csv` - Concatenated FWRs
 
 **Column Naming:**
 - All fragment files use standardized `sequence` column (ready for testing)
@@ -127,12 +127,12 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 **Outputs:**
 
 **Processed files:**
-- `test_datasets/shehata/processed/shehata.csv` - Combined processed data (intermediate)
+- `data/test/shehata/processed/shehata.csv` - Combined processed data (intermediate)
 
 **Fragment files** (standardized columns):
-- `test_datasets/shehata/fragments/VH_only_shehata.csv` - VH domain (columns: `id`, `sequence`, `label`, ...)
-- `test_datasets/shehata/fragments/H-CDRs_shehata.csv` - Heavy CDRs
-- `test_datasets/shehata/fragments/All-CDRs_shehata.csv` - All CDRs
+- `data/test/shehata/fragments/VH_only_shehata.csv` - VH domain (columns: `id`, `sequence`, `label`, ...)
+- `data/test/shehata/fragments/H-CDRs_shehata.csv` - Heavy CDRs
+- `data/test/shehata/fragments/All-CDRs_shehata.csv` - All CDRs
 - (16 fragment files total, pattern: `{fragmentName}_shehata.csv`)
 
 **Column Naming:**
@@ -205,12 +205,12 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 **Output Files:**
 
 **Canonical files** (original column names):
-- `test_datasets/jain/canonical/jain_86_novo_parity.csv` - Full data (columns: `id`, `vh_sequence`, `vl_sequence`, ...)
-- `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH only (columns: `id`, `vh_sequence`, `label`)
+- `data/test/jain/canonical/jain_86_novo_parity.csv` - Full data (columns: `id`, `vh_sequence`, `vl_sequence`, ...)
+- `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` - VH only (columns: `id`, `vh_sequence`, `label`)
 
 **Fragment files** (standardized columns):
-- `test_datasets/jain/fragments/VH_only_jain.csv` - VH fragment (columns: `id`, `sequence`, `label`) **← Use for testing**
-- Additional fragment files in `test_datasets/jain/fragments/` (H-CDRs, L-CDRs, etc.)
+- `data/test/jain/fragments/VH_only_jain.csv` - VH fragment (columns: `id`, `sequence`, `label`) **← Use for testing**
+- Additional fragment files in `data/test/jain/fragments/` (H-CDRs, L-CDRs, etc.)
 
 **Column Naming:**
 - **Canonical files** use `vh_sequence`/`vl_sequence` (original source data)
@@ -236,13 +236,13 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 **Output Files:**
 
 **Processed files:**
-- `test_datasets/harvey/processed/harvey.csv` - Combined raw data (intermediate)
+- `data/test/harvey/processed/harvey.csv` - Combined raw data (intermediate)
 
 **Fragment files** (standardized columns):
-- `test_datasets/harvey/fragments/VHH_only_harvey.csv` - Full VHH (columns: `id`, `sequence`, `label`, ...)
-- `test_datasets/harvey/fragments/H-CDR1_harvey.csv` - Individual CDRs
-- `test_datasets/harvey/fragments/H-CDRs_harvey.csv` - Concatenated CDRs
-- `test_datasets/harvey/fragments/H-FWRs_harvey.csv` - Concatenated FWRs
+- `data/test/harvey/fragments/VHH_only_harvey.csv` - Full VHH (columns: `id`, `sequence`, `label`, ...)
+- `data/test/harvey/fragments/H-CDR1_harvey.csv` - Individual CDRs
+- `data/test/harvey/fragments/H-CDRs_harvey.csv` - Concatenated CDRs
+- `data/test/harvey/fragments/H-FWRs_harvey.csv` - Concatenated FWRs
 
 **Column Naming:**
 - All fragment files use standardized `sequence` column (ready for testing)
@@ -267,12 +267,12 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 **Output Files:**
 
 **Processed files:**
-- `test_datasets/shehata/processed/shehata.csv` - Combined processed data (intermediate)
+- `data/test/shehata/processed/shehata.csv` - Combined processed data (intermediate)
 
 **Fragment files** (standardized columns):
-- `test_datasets/shehata/fragments/VH_only_shehata.csv` - VH domain (columns: `id`, `sequence`, `label`, ...)
-- `test_datasets/shehata/fragments/H-CDRs_shehata.csv` - Heavy CDRs
-- `test_datasets/shehata/fragments/All-CDRs_shehata.csv` - All CDRs
+- `data/test/shehata/fragments/VH_only_shehata.csv` - VH domain (columns: `id`, `sequence`, `label`, ...)
+- `data/test/shehata/fragments/H-CDRs_shehata.csv` - Heavy CDRs
+- `data/test/shehata/fragments/All-CDRs_shehata.csv` - All CDRs
 - (16 fragment files total, pattern: `{fragmentName}_shehata.csv`)
 
 **Column Naming:**
@@ -344,7 +344,7 @@ canonical_df = pd.DataFrame({
 })
 
 # Save canonical CSV
-canonical_df.to_csv("test_datasets/my_dataset/canonical/my_dataset.csv", index=False)
+canonical_df.to_csv("data/test/my_dataset/canonical/my_dataset.csv", index=False)
 ```
 
 ---
@@ -356,7 +356,7 @@ canonical_df.to_csv("test_datasets/my_dataset/canonical/my_dataset.csv", index=F
 from antibody_training_esm.datasets.base import AntibodyDataset
 
 # Load canonical dataset
-df = pd.read_csv("test_datasets/my_dataset/canonical/my_dataset.csv")
+df = pd.read_csv("data/test/my_dataset/canonical/my_dataset.csv")
 
 # Create dataset instance
 dataset = MyDataset()  # Implement AntibodyDataset interface
@@ -367,7 +367,7 @@ fragments = dataset.extract_all_fragments(df)
 # Save fragment CSVs
 for fragment_name, fragment_df in fragments.items():
     fragment_df.to_csv(
-        f"test_datasets/my_dataset/fragments/my_dataset_{fragment_name}.csv",
+        f"data/test/my_dataset/fragments/my_dataset_{fragment_name}.csv",
         index=False
     )
 ```
@@ -398,8 +398,8 @@ class MyDataset(AntibodyDataset):
     def __init__(self):
         super().__init__(
             name="my_dataset",
-            canonical_path="test_datasets/my_dataset/canonical/my_dataset.csv",
-            fragments_dir="test_datasets/my_dataset/fragments/"
+            canonical_path="data/test/my_dataset/canonical/my_dataset.csv",
+            fragments_dir="data/test/my_dataset/fragments/"
         )
 
     # Implement required methods...

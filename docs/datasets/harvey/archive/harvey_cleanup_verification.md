@@ -2,7 +2,7 @@
 >
 > This document describes the verification results from the 2025-11-05 Harvey cleanup execution.
 >
-> **For current pipeline documentation, see:** `test_datasets/harvey/README.md`
+> **For current pipeline documentation, see:** `data/test/harvey/README.md`
 >
 > This verification confirmed the cleanup was successful.
 
@@ -51,7 +51,7 @@
 
 ### Check 8: Failed Sequences Check ✅
 - Failed sequences logged: **453 IDs** ✅
-- Location: `test_datasets/harvey/fragments/failed_sequences.txt`
+- Location: `data/test/harvey/fragments/failed_sequences.txt`
 
 ### Check 9: Documentation Validation ✅
 - No old `harvey.csv` paths in docs (excluding intentional history): 0 ✅
@@ -86,7 +86,7 @@
 ## Final Structure
 
 ```
-test_datasets/harvey/
+data/test/harvey/
 ├── README.md (master guide)
 ├── raw/
 │   ├── README.md

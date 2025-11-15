@@ -240,7 +240,7 @@ If you're curious whether 852-sequence QC actually helps:
    # v2.0.0 equivalent:
    antibody-test \
      --model models/boughter_vh_strict_qc_esm1v_logreg.pkl \
-     --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+     --data data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
    ```
 
 3. **Compare to production model:**

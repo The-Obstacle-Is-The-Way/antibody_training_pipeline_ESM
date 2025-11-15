@@ -2,7 +2,7 @@
 >
 > This document describes the P0 blocker analysis from 2025-11-02 during Shehata Phase 2 development.
 >
-> **For current pipeline documentation, see:** `test_datasets/shehata/README.md`
+> **For current pipeline documentation, see:** `data/test/shehata/README.md`
 >
 > The issues described below have been resolved. All fragments are now gap-free and validated.
 
@@ -224,7 +224,7 @@ Next highest (labeled specific):
 
 ### P3-1: Dataset Location (test_datasets vs train_datasets)
 
-**Issue:** Shehata is in `test_datasets/` (correct per paper - external test set only).
+**Issue:** Shehata is in `data/test/` (correct per paper - external test set only).
 
 **Evidence from paper:**
 > "the most balanced dataset (i.e. Boughter one) was selected for training of ML models, while the remaining three (i.e. Jain, Shehata and Harvey) were used for testing."
@@ -293,7 +293,7 @@ Next highest (labeled specific):
 | 16 fragment types | ✅ All created | PASS |
 | ESM-1v embedding | ❌ Will fail (gaps) | **FAIL** |
 | Mean pooling | N/A (in data.py) | N/A |
-| External test set | ✅ test_datasets/ | PASS |
+| External test set | ✅ data/test/ | PASS |
 
 ---
 
@@ -332,7 +332,7 @@ Next highest (labeled specific):
      # TO:   f"full_seq_{chain}": annotation.sequence_aa
      ```
    - Re-run fragment extraction: `python3 preprocessing/shehata/step2_extract_fragments.py`
-   - Validate all gaps removed: `grep -c '\-' test_datasets/shehata/fragments/*.csv` (should be 0)
+   - Validate all gaps removed: `grep -c '\-' data/test/shehata/fragments/*.csv` (should be 0)
    - Test ESM embedding on all 17 previously-affected sequences
 
 2. **Add gap detection to validation**

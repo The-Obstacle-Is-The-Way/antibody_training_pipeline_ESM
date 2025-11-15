@@ -5,7 +5,7 @@
 > This document describes the 2025-11-05 reorganization effort.
 > - **Note:** Fragment files were regenerated on 2025-11-06 (AFTER this reorg)
 > - **Known issues:** References non-existent file `VH_only_jain_test_PARITY_86.csv` and old `python3 test.py` commands
-> - **Current testing:** Use `uv run antibody-test` with `test_datasets/jain/fragments/VH_only_jain.csv`
+> - **Current testing:** Use `uv run antibody-test` with `data/test/jain/fragments/VH_only_jain.csv`
 >
 > See `docs/datasets/jain/README.md` for current status.
 
@@ -17,7 +17,7 @@
 
 ## Summary
 
-Reorganized test_datasets/jain/ from messy flat structure to clean pipeline organization.
+Reorganized data/test/jain/ from messy flat structure to clean pipeline organization.
 
 **Result:** Clear data flow, traceable provenance, reproducible pipelines.
 
@@ -48,25 +48,25 @@ jain/
 ### 3. Created Documentation
 
 - 4 subdirectory READMEs explaining contents, provenance, and usage
-- Updated master `test_datasets/jain/README.md` with new structure
+- Updated master `data/test/jain/README.md` with new structure
 - Each README includes data flow diagrams and regeneration instructions
 
 ### 4. Updated All Scripts
 
 **Scripts updated to use new paths:**
 - `preprocessing/jain/step1_convert_excel_to_csv.py`
-  - Input: `test_datasets/jain/raw/*.xlsx`
-  - Output: `test_datasets/jain/processed/*.csv`
+  - Input: `data/test/jain/raw/*.xlsx`
+  - Output: `data/test/jain/processed/*.csv`
 
 - `preprocessing/jain/step2_preprocess_p5e_s2.py`
-  - Input: `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv`
-  - Output: `test_datasets/jain/canonical/jain_86_novo_parity.csv`
+  - Input: `data/test/jain/processed/jain_with_private_elisa_FULL.csv`
+  - Output: `data/test/jain/canonical/jain_86_novo_parity.csv`
 
 - `scripts/validation/validate_jain_conversion.py`
   - Updated all default paths to use `jain/raw/` and `jain/processed/`
 
 - `preprocessing/jain/test_novo_parity.py`
-  - Updated to use `test_datasets/jain/canonical/jain_86_novo_parity.csv`
+  - Updated to use `data/test/jain/canonical/jain_86_novo_parity.csv`
 
 ---
 
@@ -77,7 +77,7 @@ jain/
 ```bash
 # OLD v1.x command (removed):
 # python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-#   --data test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv
+#   --data data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
 **Current Test (v2.0+ - Novo Parity):**
@@ -88,7 +88,7 @@ cat > configs/test_jain_parity.yaml <<EOF
 model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
 label_column: "label"
 EOF
@@ -114,7 +114,7 @@ Accuracy: 0.6628 (66.28%)
 ### Before (Messy)
 
 ```
-test_datasets/
+data/test/
 ├── jain-pnas.*.xlsx (4 files at root)
 ├── Private_Jain2017_ELISA_indiv.xlsx (root)
 ├── jain_sd01/02/03.csv (root)
@@ -138,7 +138,7 @@ test_datasets/
 ### After (Clean)
 
 ```
-test_datasets/jain/
+data/test/jain/
 ├── README.md                  ← Master guide
 ├── raw/                       ← Original sources (NEVER MODIFY)
 │   ├── README.md
@@ -248,7 +248,7 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 This structure can be applied to other datasets:
 
 ```
-test_datasets/
+data/test/
 ├── harvey/
 │   ├── raw/
 │   ├── processed/

@@ -36,7 +36,7 @@ Build the definitive model zoo for antibody polyreactivity prediction—comprehe
 - **Harvey** (test): 141,021 nanobodies, PSR assay
 - **Shehata** (test): 398 antibodies, PSR assay cross-validation
 
-All datasets in `train_datasets/` and `test_datasets/` with canonical formats.
+All datasets in `train_datasets/` and `data/test/` with canonical formats.
 
 ### Production Infrastructure
 
@@ -71,7 +71,7 @@ antibody-train model=esm2_650m          # Override model
 antibody-train --multirun model=esm1v,esm2_650m  # Compare backbones
 
 # Testing
-antibody-test --model models/model.pkl --data test_datasets/jain/canonical/jain.csv
+antibody-test --model models/model.pkl --data data/test/jain/canonical/jain.csv
 ```
 
 ### Current Models

@@ -2,7 +2,7 @@
 
 **Date:** November 5, 2025
 **Status:** 📋 PLANNING - Awaiting Senior Approval (✅ AUDITED & CORRECTED)
-**Purpose:** Reorganize `train_datasets/` to match the clean dataset-centric structure we established for `test_datasets/`
+**Purpose:** Reorganize `train_datasets/` to match the clean dataset-centric structure we established for `data/test/`
 
 **⚠️ AUDIT STATUS:** This plan was comprehensively audited on Nov 5, 2025 by exploration agent. **All 6 critical errors have been identified and corrected.** See "CRITICAL CORRECTIONS" section below for details.
 
@@ -40,7 +40,7 @@ train_datasets/
 3. **Mixed pipeline stages in one directory** - Hard to trace provenance
 4. **No `canonical/` directory** - Where's the authoritative training file?
 5. **Strict QC files mixed with standard files** - Should be in separate subdirectory or clearly marked
-6. **No visual consistency with `test_datasets/` structure** - Makes navigation confusing
+6. **No visual consistency with `data/test/` structure** - Makes navigation confusing
 
 ---
 
@@ -92,7 +92,7 @@ train_datasets/
 - ✅ Easy to trace any file's provenance
 - ✅ Separates experimental files (`strict_qc/`) from production files
 - ✅ `canonical/` makes it obvious which file to use for training
-- ✅ Mirrors the clarity of `test_datasets/` structure
+- ✅ Mirrors the clarity of `data/test/` structure
 
 **Cons:**
 - Requires moving many files (but we have `git mv` for history preservation!)
@@ -134,7 +134,7 @@ train_datasets/
 **Pros:**
 - ✅ Simpler structure, fewer directories
 - ✅ `canonical/` still makes training file obvious
-- ✅ `fragments/` matches `test_datasets/` naming
+- ✅ `fragments/` matches `data/test/` naming
 
 **Cons:**
 - Stage 1 output (`boughter.csv`) still floating in middle level
@@ -567,7 +567,7 @@ python3 train.py --config configs/config_strict_qc.yaml
 ## Benefits of This Reorganization
 
 1. **🎯 Clarity:** Any developer can immediately see the data pipeline flow
-2. **📚 Consistency:** Matches the clean structure we built for `test_datasets/`
+2. **📚 Consistency:** Matches the clean structure we built for `data/test/`
 3. **🔍 Traceability:** Every file's origin is obvious from its directory location
 4. **🚀 Scalability:** Easy to add new training datasets (same structure)
 5. **📖 Documentation:** `canonical/README.md` explains what THE training file is

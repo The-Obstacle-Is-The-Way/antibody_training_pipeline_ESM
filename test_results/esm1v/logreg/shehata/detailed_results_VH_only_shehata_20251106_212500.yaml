@@ -1,7 +1,7 @@
 config:
   batch_size: 32
   data_paths:
-  - test_datasets/shehata/fragments/VH_only_shehata.csv
+  - data/test/shehata/fragments/VH_only_shehata.csv
   device: cpu
   label_column: label
   metrics:

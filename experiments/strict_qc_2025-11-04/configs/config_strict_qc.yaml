@@ -22,7 +22,7 @@ data:
   dataset_name: "boughter_vh_strict_qc"
   train_file: ./train_datasets/boughter/strict_qc/VH_only_boughter_strict_qc.csv  # Boughter VH strict QC (852 sequences)
   val_file: null    # No validation set - use CV instead
-  test_file: ./test_datasets/jain/canonical/jain_86_novo_parity.csv   # Jain P5e-S2 canonical (86 antibodies, recommended for Novo parity benchmarking)
+  test_file: ./data/test/jain/canonical/jain_86_novo_parity.csv   # Jain P5e-S2 canonical (86 antibodies, recommended for Novo parity benchmarking)
 
   # Data format options
   sequence_column: "sequence"  # Column name for protein sequences

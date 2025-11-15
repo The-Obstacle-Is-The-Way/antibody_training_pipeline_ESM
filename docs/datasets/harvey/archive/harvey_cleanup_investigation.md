@@ -2,7 +2,7 @@
 >
 > This document describes the cleanup investigation from 2025-11-05. The cleanup was subsequently approved and executed successfully.
 >
-> **For current pipeline documentation, see:** `test_datasets/harvey/README.md`
+> **For current pipeline documentation, see:** `data/test/harvey/README.md`
 >
 > Status warnings below are historical and do not reflect the current state.
 
@@ -21,10 +21,10 @@
 Harvey dataset structure is **MESSY** and requires cleanup similar to Shehata/Jain reorganization.
 
 **Current Problems:**
-1. ❌ Raw source files NOT in test_datasets/ (in reference_repos/)
+1. ❌ Raw source files NOT in data/test/ (in reference_repos/)
 2. ❌ Processed files scattered (3 CSVs at root, 6 in subdirectory)
 3. ❌ No clear data flow documentation
-4. ❌ No README files in test_datasets/harvey/
+4. ❌ No README files in data/test/harvey/
 5. ❌ Inconsistent with Shehata/Jain 4-tier structure
 
 **Recommendation:** Apply same 4-tier cleanup (raw → processed → canonical → fragments)
@@ -77,7 +77,7 @@ reference_repos/harvey_official_repo/backend/app/experiments/
 ├── low_polyreactivity_high_throughput.csv (69,702 + header)
 └── low_throughput_polyspecificity_scores_w_exp.csv (48 + header)
 
-test_datasets/  (ROOT LEVEL - BAD)
+data/test/  (ROOT LEVEL - BAD)
 ├── harvey.csv (141,474 antibodies + header = 141,475 lines)
 ├── harvey_high.csv (71,772 + header = 71,773 lines)
 ├── harvey_low.csv (69,702 + header = 69,703 lines)
@@ -93,14 +93,14 @@ test_datasets/  (ROOT LEVEL - BAD)
 
 ### Problems Identified
 
-**P1: Raw sources outside test_datasets/**
+**P1: Raw sources outside data/test/**
 - Raw data in `reference_repos/` not version controlled with dataset
-- Should be copied/symlinked to `test_datasets/harvey/raw/`
-- Breaking principle: "All data sources in test_datasets/"
+- Should be copied/symlinked to `data/test/harvey/raw/`
+- Breaking principle: "All data sources in data/test/"
 
 **P2: Processed files at root level**
-- `harvey.csv`, `harvey_high.csv`, `harvey_low.csv` at test_datasets/ root
-- Should be in `test_datasets/harvey/processed/`
+- `harvey.csv`, `harvey_high.csv`, `harvey_low.csv` at data/test/ root
+- Should be in `data/test/harvey/processed/`
 - Breaking principle: "Organized by dataset, not scattered"
 
 **P3: No canonical/ directory**
@@ -134,9 +134,9 @@ reference_repos/harvey_official_repo/backend/app/experiments/
   ├── high_polyreactivity_high_throughput.csv (71,772)
   └── low_polyreactivity_high_throughput.csv (69,702)
     ↓ [preprocessing/harvey/step1_convert_raw_csvs.py]
-test_datasets/harvey.csv (141,474 combined)
+data/test/harvey.csv (141,474 combined)
   ↓ [preprocessing/harvey/step2_extract_fragments.py + ANARCI]
-test_datasets/harvey/ fragments (141,021 - 453 failures)
+data/test/harvey/ fragments (141,021 - 453 failures)
 ```
 
 **Missing intermediate files:**
@@ -156,7 +156,7 @@ test_datasets/harvey/ fragments (141,021 - 453 failures)
 ### Target Layout
 
 ```
-test_datasets/harvey/
+data/test/harvey/
 ├── README.md                  ← Master guide
 ├── raw/                       ← Original sources (DO NOT MODIFY)
 │   ├── README.md
@@ -218,10 +218,10 @@ jain/
 
 ```
 reference_repos/harvey_official_repo/ (raw - WRONG LOCATION)
-test_datasets/harvey.csv (root - WRONG LOCATION)
-test_datasets/harvey_high.csv (root - WRONG LOCATION)
-test_datasets/harvey_low.csv (root - WRONG LOCATION)
-test_datasets/harvey/ (fragments only - MIXED PURPOSE)
+data/test/harvey.csv (root - WRONG LOCATION)
+data/test/harvey_high.csv (root - WRONG LOCATION)
+data/test/harvey_low.csv (root - WRONG LOCATION)
+data/test/harvey/ (fragments only - MIXED PURPOSE)
 ```
 
 **Problems:**
@@ -241,14 +241,14 @@ test_datasets/harvey/ (fragments only - MIXED PURPOSE)
 - low_polyreactivity_high_throughput.csv
 - low_throughput_polyspecificity_scores_w_exp.csv (optional)
 
-**From test_datasets/ root → processed/ (MOVE 1 file):**
-- harvey.csv → test_datasets/harvey/processed/harvey.csv
+**From data/test/ root → processed/ (MOVE 1 file):**
+- harvey.csv → data/test/harvey/processed/harvey.csv
 
-**From test_datasets/ root (DELETE 2 files per Decision 2):**
+**From data/test/ root (DELETE 2 files per Decision 2):**
 - ❌ harvey_high.csv (delete - duplicate of raw source, scripts will read from raw/)
 - ❌ harvey_low.csv (delete - duplicate of raw source, scripts will read from raw/)
 
-**From test_datasets/harvey/ → fragments/ (MOVE 6 CSVs + 1 log):**
+**From data/test/harvey/ → fragments/ (MOVE 6 CSVs + 1 log):**
 - H-CDR1_harvey.csv
 - H-CDR2_harvey.csv
 - H-CDR3_harvey.csv
@@ -265,14 +265,14 @@ test_datasets/harvey/ (fragments only - MIXED PURPOSE)
 ```python
 # Lines 119-121: Path variables
 # OLD:
-high_csv = Path("test_datasets/harvey_high.csv")
-low_csv = Path("test_datasets/harvey_low.csv")
-output_csv = Path("test_datasets/harvey.csv")
+high_csv = Path("data/test/harvey_high.csv")
+low_csv = Path("data/test/harvey_low.csv")
+output_csv = Path("data/test/harvey.csv")
 
 # NEW:
-high_csv = Path("test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv")
-low_csv = Path("test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv")
-output_csv = Path("test_datasets/harvey/processed/harvey.csv")
+high_csv = Path("data/test/harvey/raw/high_polyreactivity_high_throughput.csv")
+low_csv = Path("data/test/harvey/raw/low_polyreactivity_high_throughput.csv")
+output_csv = Path("data/test/harvey/processed/harvey.csv")
 
 # Lines 127-135: Error messages (update all path strings)
 # Lines 141-143: Print statements (update displayed paths)
@@ -282,19 +282,19 @@ output_csv = Path("test_datasets/harvey/processed/harvey.csv")
 ```python
 # Lines 202-203: Path variables
 # OLD:
-csv_path = Path("test_datasets/harvey.csv")
-output_dir = Path("test_datasets/harvey")
+csv_path = Path("data/test/harvey.csv")
+output_dir = Path("data/test/harvey")
 
 # NEW:
-csv_path = Path("test_datasets/harvey/processed/harvey.csv")
-output_dir = Path("test_datasets/harvey/fragments")
+csv_path = Path("data/test/harvey/processed/harvey.csv")
+output_dir = Path("data/test/harvey/fragments")
 
 # Line 133: Failure log path
 # OLD:
-failure_log = Path("test_datasets/harvey/failed_sequences.txt")
+failure_log = Path("data/test/harvey/failed_sequences.txt")
 
 # NEW:
-failure_log = Path("test_datasets/harvey/fragments/failed_sequences.txt")
+failure_log = Path("data/test/harvey/fragments/failed_sequences.txt")
 
 # Lines 207-211: Error messages and docstrings (update all path strings)
 ```
@@ -303,10 +303,10 @@ failure_log = Path("test_datasets/harvey/fragments/failed_sequences.txt")
 ```python
 # Line 193: Harvey validation entry
 # OLD:
-("harvey", Path("test_datasets/harvey"), 6),
+("harvey", Path("data/test/harvey"), 6),
 
 # NEW:
-("harvey", Path("test_datasets/harvey/fragments"), 6),
+("harvey", Path("data/test/harvey/fragments"), 6),
 ```
 
 **4. scripts/rethreshold_harvey.py** ~~(1 path reference)~~ **DELETED**
@@ -320,27 +320,27 @@ failure_log = Path("test_datasets/harvey/fragments/failed_sequences.txt")
 ```python
 # Line 73: Harvey file path
 # OLD:
-harvey_file = "test_datasets/harvey/VHH_only_harvey.csv"
+harvey_file = "data/test/harvey/VHH_only_harvey.csv"
 
 # NEW:
-harvey_file = "test_datasets/harvey/fragments/VHH_only_harvey.csv"
+harvey_file = "data/test/harvey/fragments/VHH_only_harvey.csv"
 ```
 
 **6. tests/test_harvey_embedding_compatibility.py** (5 path references)
 ```python
 # Lines 45, 96, 242: Harvey directory paths
 # OLD:
-harvey_dir = Path("test_datasets/harvey")
+harvey_dir = Path("data/test/harvey")
 
 # NEW:
-harvey_dir = Path("test_datasets/harvey/fragments")
+harvey_dir = Path("data/test/harvey/fragments")
 
 # Lines 153, 203: VHH file paths
 # OLD:
-vhh_file = Path("test_datasets/harvey/VHH_only_harvey.csv")
+vhh_file = Path("data/test/harvey/VHH_only_harvey.csv")
 
 # NEW:
-vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
+vhh_file = Path("data/test/harvey/fragments/VHH_only_harvey.csv")
 ```
 
 ### Documentation to Update (11 files, 76 total path references)
@@ -369,33 +369,33 @@ vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
 
 ### READMEs to Create (5 files)
 
-1. **test_datasets/harvey/README.md** (master guide)
+1. **data/test/harvey/README.md** (master guide)
    - Dataset overview
    - Data flow diagram
    - Citation information
    - Quick start guide
    - Verification commands
 
-2. **test_datasets/harvey/raw/README.md**
+2. **data/test/harvey/raw/README.md**
    - Original source files
    - Data provenance
    - Citation (Harvey et al., Mason et al.)
    - DO NOT MODIFY warning
    - Conversion instructions
 
-3. **test_datasets/harvey/processed/README.md**
+3. **data/test/harvey/processed/README.md**
    - CSV conversion details
    - Label assignment (0=low poly, 1=high poly)
    - Label distribution (49.1% / 50.9%)
    - harvey_high/low.csv purpose
    - Regeneration instructions
 
-4. **test_datasets/harvey/canonical/README.md**
+4. **data/test/harvey/canonical/README.md**
    - Purpose: Training benchmarks
    - Decision needed: balanced subsets? cross-validation splits?
    - Comparison with Boughter canonical/
 
-5. **test_datasets/harvey/fragments/README.md**
+5. **data/test/harvey/fragments/README.md**
    - 6 fragment types (VHH only - nanobodies)
    - ANARCI annotation details
    - Failed sequences (453 - 0.32%)
@@ -407,11 +407,11 @@ vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
 
 ### Decision 1: Raw Data Location
 
-**Question:** Copy or symlink reference_repos files to test_datasets/harvey/raw/?
+**Question:** Copy or symlink reference_repos files to data/test/harvey/raw/?
 
 **Options:**
 - **Option A: Copy files** (15MB + 15MB = 30MB)
-  - ✅ Self-contained test_datasets/
+  - ✅ Self-contained data/test/
   - ✅ No external dependencies
   - ❌ Duplicated data (uses more space)
 
@@ -479,19 +479,19 @@ vhh_file = Path("test_datasets/harvey/fragments/VHH_only_harvey.csv")
 
 ### 1. File Move Verification
 ```bash
-echo "Raw files (3):" && ls -1 test_datasets/harvey/raw/*.csv | wc -l
-echo "Processed files (1):" && ls -1 test_datasets/harvey/processed/*.csv | wc -l
-echo "Fragment files (6):" && ls -1 test_datasets/harvey/fragments/*.csv | wc -l
-echo "Total CSVs (10):" && find test_datasets/harvey -name "*.csv" | wc -l
+echo "Raw files (3):" && ls -1 data/test/harvey/raw/*.csv | wc -l
+echo "Processed files (1):" && ls -1 data/test/harvey/processed/*.csv | wc -l
+echo "Fragment files (6):" && ls -1 data/test/harvey/fragments/*.csv | wc -l
+echo "Total CSVs (10):" && find data/test/harvey -name "*.csv" | wc -l
 ```
 
 ### 2. Row Count Validation
 ```bash
 # Processed should have 141,474 + header
-wc -l test_datasets/harvey/processed/harvey.csv  # Should be 141,475
+wc -l data/test/harvey/processed/harvey.csv  # Should be 141,475
 
 # All fragments should have 141,021 + header
-for f in test_datasets/harvey/fragments/*.csv; do
+for f in data/test/harvey/fragments/*.csv; do
   count=$(wc -l < "$f")
   if [ "$count" -ne 141022 ]; then
     echo "ERROR: $f has $count lines (expected 141022)"
@@ -503,7 +503,7 @@ done
 ```bash
 python3 -c "
 import pandas as pd
-df = pd.read_csv('test_datasets/harvey/processed/harvey.csv')
+df = pd.read_csv('data/test/harvey/processed/harvey.csv')
 dist = df['label'].value_counts().sort_index().to_dict()
 expected = {0: 69702, 1: 71772}  # low (0) and high (1) polyreactivity
 print(f'Label distribution: {dist}')
@@ -538,30 +538,30 @@ python3 tests/test_harvey_embedding_compatibility.py
 ### 7. Model Test
 ```bash
 python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/harvey/fragments/VHH_only_harvey.csv
+  --data data/test/harvey/fragments/VHH_only_harvey.csv
 # Should load and run successfully with new paths
 ```
 
 ### 8. Failed Sequences Check
 ```bash
 # Verify failed_sequences.txt has 453 entries and moved to fragments/
-wc -l test_datasets/harvey/fragments/failed_sequences.txt  # Should be 453
+wc -l data/test/harvey/fragments/failed_sequences.txt  # Should be 453
 ```
 
 ### 9. Documentation Validation
 ```bash
 # Check no references to old paths remain (should find 0 after cleanup)
-grep -rn "test_datasets/harvey\.csv" docs/ README.md --include="*.md" | grep -v "processed/"
+grep -rn "data/test/harvey\.csv" docs/ README.md --include="*.md" | grep -v "processed/"
 # Should return NOTHING
 
 grep -rn "reference_repos/harvey_official_repo" scripts/ --include="*.py"
 # Should return NOTHING
 
-grep -rn "test_datasets/harvey_high\|test_datasets/harvey_low" . --include="*.py" --include="*.md"
+grep -rn "data/test/harvey_high\|data/test/harvey_low" . --include="*.py" --include="*.md"
 # Should return NOTHING (files deleted)
 
 # Verify all fragments paths use new structure
-grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
+grep -rn "data/test/harvey/fragments" scripts/ tests/ --include="*.py"
 # Should find 15 references (all updated)
 ```
 
@@ -572,7 +572,7 @@ grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
 **Estimated time:** 60-75 minutes (revised upward after comprehensive audit)
 
 ### Phase 1: Prepare (5 min)
-- Create directory structure: `test_datasets/harvey/{raw,processed,canonical,fragments}`
+- Create directory structure: `data/test/harvey/{raw,processed,canonical,fragments}`
 - Create 5 comprehensive READMEs
 
 ### Phase 2: Move Raw Files (5 min)
@@ -624,7 +624,7 @@ grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
 - **canonical/ decision** (empty vs. subsets?)
 
 ### Mitigation
-- Copy raw files to test_datasets/ (self-contained)
+- Copy raw files to data/test/ (self-contained)
 - Delete intermediate files (simplify)
 - Start with empty canonical/ (add later if needed)
 
@@ -687,7 +687,7 @@ grep -rn "test_datasets/harvey/fragments" scripts/ tests/ --include="*.py"
 
 ## Questions for Senior Approval
 
-**Q1:** Approve Decision 1 (Copy raw files to test_datasets/harvey/raw/)?
+**Q1:** Approve Decision 1 (Copy raw files to data/test/harvey/raw/)?
 
 **Q2:** Approve Decision 2 (Delete harvey_high/low.csv intermediates)?
 

@@ -162,7 +162,7 @@ embeddings_cache/            # Cached ESM embeddings
 scripts/                     # Utility scripts
 ├── migrate_model_directories.py  # Migrate models to hierarchical structure
 train_datasets/              # Training data CSVs
-test_datasets/               # Test data CSVs
+data/test/               # Test data CSVs
 tests/                       # Test suite
 ├── unit/                    # Fast unit tests (< 1s each)
 ├── integration/             # Integration tests
@@ -180,8 +180,8 @@ tests/                       # Test suite
 
 ### Dataset Organization
 - **Training data**: `train_datasets/{dataset}/canonical/*.csv`
-- **Test data**: `test_datasets/{dataset}/canonical/*.csv` or `fragments/*.csv`
-- **Raw data**: Never committed to Git - stored in `test_datasets/` and preprocessed locally
+- **Test data**: `data/test/{dataset}/canonical/*.csv` or `fragments/*.csv`
+- **Raw data**: Never committed to Git - stored in `data/test/` and preprocessed locally
 - Each dataset has dedicated preprocessing pipeline in `preprocessing/{dataset}/`
 
 ### Embedding Caching

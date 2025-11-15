@@ -8,7 +8,7 @@
 
 ## Goals
 
-1. **Data Consolidation**: `train_datasets/` + `test_datasets/` → `data/train/` + `data/test/`
+1. **Data Consolidation**: `train_datasets/` + `data/test/` → `data/train/` + `data/test/`
 2. **Config Cleanup**: Remove redundant root `configs/` directory (defer to v0.5.0)
 3. **Archive Legacy**: Move `hyperparameter_sweep_results/` → `experiments/archive/`
 
@@ -19,7 +19,7 @@
 **Reference**: See `CURRENT_STRUCTURE.txt` for full tree (238 dirs, 577 files)
 
 **Key findings**:
-- 125 hardcoded references to `train_datasets/` and `test_datasets/`
+- 125 hardcoded references to `train_datasets/` and `data/test/`
 - 2 active dependencies on `configs/config.yaml`
 - 1 reference to `hyperparameter_sweep_results/`
 - All cache directories (`.mypy_cache/`, `.uv_cache/`, `.benchmarks/`) already correctly git-ignored
@@ -37,7 +37,7 @@ train_datasets/
     ├── annotated/
     └── canonical/
 
-test_datasets/
+data/test/
 ├── harvey/
 │   ├── raw/
 │   ├── processed/
@@ -152,7 +152,7 @@ def update_file(file_path: Path, old_pattern: str, new_pattern: str) -> None:
         print(f"Updated: {file_path}")
 
 # Pattern 1: train_datasets/boughter → data/train/boughter
-# Pattern 2: test_datasets/{harvey,jain,shehata} → data/test/{dataset}
+# Pattern 2: data/test/{harvey,jain,shehata} → data/test/{dataset}
 ```
 
 #### Phase 3: Execute Migration (4 hours)
@@ -185,9 +185,9 @@ python scripts/migrate_data_directories.py            # Execute
 ```bash
 mkdir -p data/train data/test
 git mv train_datasets/boughter data/train/
-git mv test_datasets/harvey data/test/
-git mv test_datasets/jain data/test/
-git mv test_datasets/shehata data/test/
+git mv data/test/harvey data/test/
+git mv data/test/jain data/test/
+git mv data/test/shehata data/test/
 rmdir train_datasets test_datasets
 ```
 
@@ -196,7 +196,7 @@ rmdir train_datasets test_datasets
 # .gitignore
 # Old patterns:
 -train_datasets/boughter/raw/
--test_datasets/*/raw/
+-data/test/*/raw/
 
 # New patterns:
 +data/train/*/raw/
@@ -522,7 +522,7 @@ git revert <commit-hash>
 # Restore moved files
 git mv experiments/archive/hyperparameter_sweeps_2025-11-02/* hyperparameter_sweep_results/
 git mv data/train/boughter train_datasets/
-git mv data/test/* test_datasets/
+git mv data/test/* data/test/
 ```
 
 ---

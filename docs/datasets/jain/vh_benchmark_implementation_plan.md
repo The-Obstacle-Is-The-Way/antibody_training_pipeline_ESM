@@ -123,7 +123,7 @@ Use `stage="full"` for pre-filtered files:
 
 ```python
 df_test = jain.load_data(
-    full_csv_path="test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv",
+    full_csv_path="data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv",
     stage="full"  # ✅ CORRECT - file is already parity-filtered, load as-is
 )
 ```
@@ -154,10 +154,10 @@ df_test = jain.load_data(
 **Change 1:** Update fixture (line 61):
 ```python
 # Before:
-"jain_parity": "test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv",  # Doesn't exist!
+"jain_parity": "data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv",  # Doesn't exist!
 
 # After:
-"jain_parity": "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv",
+"jain_parity": "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv",
 ```
 
 **Change 2:** Update load_data call (line 101-103):
@@ -178,10 +178,10 @@ df_test = jain.load_data(
 **Change 3:** Update skipif path (line 72-73):
 ```python
 # Before:
-or not Path("test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv").exists(),
+or not Path("data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv").exists(),
 
 # After:
-or not Path("test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv").exists(),
+or not Path("data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv").exists(),
 ```
 
 **Why this is correct:**
@@ -226,17 +226,17 @@ Columns: ['id', 'vh_sequence', 'label']
 ```python
 # Define output paths
 BASE_DIR = Path(__file__).parent.parent.parent
-OUTPUT_116 = BASE_DIR / "test_datasets/jain/processed/jain_ELISA_ONLY_116.csv"
-OUTPUT_86 = BASE_DIR / "test_datasets/jain/canonical/jain_86_novo_parity.csv"
+OUTPUT_116 = BASE_DIR / "data/test/jain/processed/jain_ELISA_ONLY_116.csv"
+OUTPUT_86 = BASE_DIR / "data/test/jain/canonical/jain_86_novo_parity.csv"
 ```
 
 **New:**
 ```python
 # Define output paths
 BASE_DIR = Path(__file__).parent.parent.parent
-OUTPUT_116 = BASE_DIR / "test_datasets/jain/processed/jain_ELISA_ONLY_116.csv"
-OUTPUT_86 = BASE_DIR / "test_datasets/jain/canonical/jain_86_novo_parity.csv"
-OUTPUT_VH = BASE_DIR / "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"  # VH-only benchmark
+OUTPUT_116 = BASE_DIR / "data/test/jain/processed/jain_ELISA_ONLY_116.csv"
+OUTPUT_86 = BASE_DIR / "data/test/jain/canonical/jain_86_novo_parity.csv"
+OUTPUT_VH = BASE_DIR / "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"  # VH-only benchmark
 ```
 
 ### Change 2: Generate VH-only file
@@ -298,7 +298,7 @@ OUTPUT_VH = BASE_DIR / "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 ### Output Files:
 
 ```
-test_datasets/jain/canonical/
+data/test/jain/canonical/
 ├── jain_86_novo_parity.csv (86 rows × 24 columns)
 │   Schema: ['id', 'vh_sequence', 'vl_sequence', 'label', 'elisa_flags', 'psr', ...]
 │   Labels: {0.0: 59, 1.0: 27}
@@ -320,11 +320,11 @@ $ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 SAVING OUTPUTS
 ================================================================================
 
-  ✅ Saved 86-antibody dataset → test_datasets/jain/canonical/jain_86_novo_parity.csv
+  ✅ Saved 86-antibody dataset → data/test/jain/canonical/jain_86_novo_parity.csv
      Format: VH+VL+metadata (24 columns)
      Labels: 59 specific (0.0) + 27 non-specific (1.0)
 
-  ✅ Saved VH-only benchmark → test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+  ✅ Saved VH-only benchmark → data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
      Format: [id, vh_sequence, label] for model inference
      Labels: 59 specific (0.0) + 27 non-specific (1.0)
 
@@ -341,8 +341,8 @@ SAVING OUTPUTS
 import pandas as pd
 
 # Load both files
-canonical = pd.read_csv('test_datasets/jain/canonical/jain_86_novo_parity.csv')
-vh = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv')
+canonical = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
+vh = pd.read_csv('data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv')
 
 # Verify schema
 assert list(vh.columns) == ['id', 'vh_sequence', 'label'], f"Wrong columns: {vh.columns.tolist()}"
@@ -376,7 +376,7 @@ from antibody_training_esm.datasets import JainDataset
 # Test loading through JainDataset (simulates E2E test)
 jain = JainDataset()
 df = jain.load_data(
-    full_csv_path='test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv',
+    full_csv_path='data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv',
     stage='full'  # Don't apply parity filter (file already has 86)
 )
 
@@ -394,7 +394,7 @@ extractor_mock = lambda seqs: [[0.1] * 1280 for _ in seqs]  # Mock embeddings
 
 # Load data (like E2E test does)
 df_test = jain.load_data(
-    full_csv_path='test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv',
+    full_csv_path='data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv',
     stage='full'
 )
 
@@ -410,17 +410,17 @@ print("✓ E2E test workflow simulation passed")
 ### Test 5: Full Pipeline Regeneration
 ```bash
 # Delete generated files
-rm -f test_datasets/jain/canonical/jain_86_novo_parity.csv
-rm -f test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
-rm -f test_datasets/jain/processed/jain_ELISA_ONLY_116.csv
+rm -f data/test/jain/canonical/jain_86_novo_parity.csv
+rm -f data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
+rm -f data/test/jain/processed/jain_ELISA_ONLY_116.csv
 
 # Run full pipeline
 python3 preprocessing/jain/step1_convert_excel_to_csv.py
 python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 
 # Verify outputs exist
-ls -lh test_datasets/jain/canonical/jain_86_novo_parity.csv
-ls -lh test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+ls -lh data/test/jain/canonical/jain_86_novo_parity.csv
+ls -lh data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
 # Run validation
 python3 scripts/validation/validate_jain_csvs.py
@@ -497,7 +497,7 @@ label: 0.0 = specific, 1.0 = non-specific
 Note: Column is `vh_sequence` (not `sequence`) for JainDataset compatibility.
 ```
 
-### 2. test_datasets/jain/canonical/README.md
+### 2. data/test/jain/canonical/README.md
 
 Update to document both files and their relationship
 
@@ -514,7 +514,7 @@ Add resolution section documenting the fix
 git revert <commit-hash>
 
 # Option 2: Restore old file from git
-git checkout <old-commit> -- test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+git checkout <old-commit> -- data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
 # Option 3: Comment out code
 # Edit step2_preprocess_p5e_s2.py and comment lines
@@ -596,7 +596,7 @@ git checkout -b fix/generate-vh-benchmark-in-step2
 # 2. Make changes to step2_preprocess_p5e_s2.py (see "Detailed Implementation Plan")
 
 # 3. Delete old manually-created file
-rm test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+rm data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
 # 4. Run step2 to generate new file with correct schema
 python3 preprocessing/jain/step2_preprocess_p5e_s2.py
@@ -604,7 +604,7 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 # 5. Verify new file schema
 python3 -c "
 import pandas as pd
-df = pd.read_csv('test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv')
+df = pd.read_csv('data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv')
 assert list(df.columns) == ['id', 'vh_sequence', 'label'], f'Wrong schema: {df.columns.tolist()}'
 assert len(df) == 86, f'Wrong row count: {len(df)}'
 assert df['label'].value_counts()[0.0] == 59, 'Should have 59 specific'
@@ -639,7 +639,7 @@ python3 scripts/validation/validate_jain_csvs.py
 
 # 9. Update documentation
 # Edit preprocessing/jain/README.md (see "Documentation Updates")
-# Edit test_datasets/jain/canonical/README.md
+# Edit data/test/jain/canonical/README.md
 
 # ========================================
 # PART 5: Commit and PR
@@ -647,10 +647,10 @@ python3 scripts/validation/validate_jain_csvs.py
 
 # 10. Commit all changes
 git add preprocessing/jain/step2_preprocess_p5e_s2.py
-git add test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv
+git add data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 git add tests/e2e/test_reproduce_novo.py
 git add preprocessing/jain/README.md
-git add test_datasets/jain/canonical/README.md
+git add data/test/jain/canonical/README.md
 git commit -m "fix: Generate VH benchmark in step2 with correct schema and fix E2E tests
 
 - Add VH_only_jain_86_p5e_s2.csv generation to step2

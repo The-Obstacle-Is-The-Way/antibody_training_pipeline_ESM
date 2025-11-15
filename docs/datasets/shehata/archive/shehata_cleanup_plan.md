@@ -2,7 +2,7 @@
 >
 > This document describes the cleanup plan from 2025-11-05 that has since been executed.
 >
-> **For current pipeline documentation, see:** `test_datasets/shehata/README.md`
+> **For current pipeline documentation, see:** `data/test/shehata/README.md`
 >
 > The cleanup described below is complete and all changes have been applied.
 
@@ -42,7 +42,7 @@ Complete cleanup of Shehata dataset AND script organization, following Rob C. Ma
 
 ### Current State
 ```
-test_datasets/
+data/test/
 ├── shehata-mmc2.xlsx          (Main data - 402 rows)
 ├── shehata-mmc3.xlsx          (Unused)
 ├── shehata-mmc4.xlsx          (Unused)
@@ -53,7 +53,7 @@ test_datasets/
 
 ### Target State
 ```
-test_datasets/shehata/
+data/test/shehata/
 ├── README.md
 ├── raw/
 │   ├── README.md
@@ -74,19 +74,19 @@ test_datasets/shehata/
 ### File Move Commands
 ```bash
 # Create structure
-mkdir -p test_datasets/shehata/{raw,processed,canonical,fragments}
+mkdir -p data/test/shehata/{raw,processed,canonical,fragments}
 
 # Move Excel files to raw/
-mv test_datasets/shehata-mmc2.xlsx test_datasets/shehata/raw/
-mv test_datasets/shehata-mmc3.xlsx test_datasets/shehata/raw/
-mv test_datasets/shehata-mmc4.xlsx test_datasets/shehata/raw/
-mv test_datasets/shehata-mmc5.xlsx test_datasets/shehata/raw/
+mv data/test/shehata-mmc2.xlsx data/test/shehata/raw/
+mv data/test/shehata-mmc3.xlsx data/test/shehata/raw/
+mv data/test/shehata-mmc4.xlsx data/test/shehata/raw/
+mv data/test/shehata-mmc5.xlsx data/test/shehata/raw/
 
 # Move processed CSV
-mv test_datasets/shehata.csv test_datasets/shehata/processed/
+mv data/test/shehata.csv data/test/shehata/processed/
 
 # Move fragments
-mv test_datasets/shehata/*.csv test_datasets/shehata/fragments/
+mv data/test/shehata/*.csv data/test/shehata/fragments/
 ```
 
 ---
@@ -99,38 +99,38 @@ mv test_datasets/shehata/*.csv test_datasets/shehata/fragments/
 ```python
 # Line 275-276:
 # OLD:
-excel_path = Path("test_datasets/mmc2.xlsx")  # ❌ File doesn't exist
-output_path = Path("test_datasets/shehata.csv")
+excel_path = Path("data/test/mmc2.xlsx")  # ❌ File doesn't exist
+output_path = Path("data/test/shehata.csv")
 
 # NEW:
-excel_path = Path("test_datasets/shehata/raw/shehata-mmc2.xlsx")
-output_path = Path("test_datasets/shehata/processed/shehata.csv")
+excel_path = Path("data/test/shehata/raw/shehata-mmc2.xlsx")
+output_path = Path("data/test/shehata/processed/shehata.csv")
 ```
 
 **2. preprocessing/shehata/step2_extract_fragments.py**
 ```python
 # Line 220-221:
 # OLD:
-csv_path = Path("test_datasets/shehata.csv")
-output_dir = Path("test_datasets/shehata")
+csv_path = Path("data/test/shehata.csv")
+output_dir = Path("data/test/shehata")
 
 # NEW:
-csv_path = Path("test_datasets/shehata/processed/shehata.csv")
-output_dir = Path("test_datasets/shehata/fragments")
+csv_path = Path("data/test/shehata/processed/shehata.csv")
+output_dir = Path("data/test/shehata/fragments")
 ```
 
 **3. scripts/validation/validate_shehata_conversion.py**
 ```python
 # Line 194-195, 287:
 # OLD:
-excel_path = Path("test_datasets/mmc2.xlsx")  # ❌ File doesn't exist
-csv_path = Path("test_datasets/shehata.csv")
-fragments_dir = Path("test_datasets/shehata")
+excel_path = Path("data/test/mmc2.xlsx")  # ❌ File doesn't exist
+csv_path = Path("data/test/shehata.csv")
+fragments_dir = Path("data/test/shehata")
 
 # NEW:
-excel_path = Path("test_datasets/shehata/raw/shehata-mmc2.xlsx")
-csv_path = Path("test_datasets/shehata/processed/shehata.csv")
-fragments_dir = Path("test_datasets/shehata/fragments")
+excel_path = Path("data/test/shehata/raw/shehata-mmc2.xlsx")
+csv_path = Path("data/test/shehata/processed/shehata.csv")
+fragments_dir = Path("data/test/shehata/fragments")
 ```
 
 ### Analysis/Testing Scripts (5 files)
@@ -145,29 +145,29 @@ fragments_dir = Path("test_datasets/shehata/fragments")
 **5. scripts/testing/demo_assay_specific_thresholds.py**
 ```python
 # Line 96:
-"test_datasets/shehata/VH_only_shehata.csv"
-→ "test_datasets/shehata/fragments/VH_only_shehata.csv"
+"data/test/shehata/VH_only_shehata.csv"
+→ "data/test/shehata/fragments/VH_only_shehata.csv"
 ```
 
 **6. scripts/validate_fragments.py**
 ```python
 # Line 193:
-("shehata", Path("test_datasets/shehata"), 16)
-→ ("shehata", Path("test_datasets/shehata/fragments"), 16)
+("shehata", Path("data/test/shehata"), 16)
+→ ("shehata", Path("data/test/shehata/fragments"), 16)
 ```
 
 **7. scripts/validation/validate_fragments.py**
 ```python
 # Line 193 (same as #6, duplicate file):
-("shehata", Path("test_datasets/shehata"), 16)
-→ ("shehata", Path("test_datasets/shehata/fragments"), 16)
+("shehata", Path("data/test/shehata"), 16)
+→ ("shehata", Path("data/test/shehata/fragments"), 16)
 ```
 
 **8. tests/test_shehata_embedding_compatibility.py**
 ```python
 # Lines 25, 59, 114, 163, 200:
-fragments_dir = Path("test_datasets/shehata")
-→ fragments_dir = Path("test_datasets/shehata/fragments")
+fragments_dir = Path("data/test/shehata")
+→ fragments_dir = Path("data/test/shehata/fragments")
 ```
 
 ---
@@ -201,12 +201,12 @@ rm scripts/validate_fragments.py               # Use scripts/validation/ version
 **Lines 109-110:**
 ```markdown
 # OLD:
-- `test_datasets/shehata.csv` - Full paired VH+VL sequences (398 antibodies)
-- `test_datasets/shehata/*.csv` - 16 fragment-specific files (...)
+- `data/test/shehata.csv` - Full paired VH+VL sequences (398 antibodies)
+- `data/test/shehata/*.csv` - 16 fragment-specific files (...)
 
 # NEW:
-- `test_datasets/shehata/processed/shehata.csv` - Full paired VH+VL sequences (398 antibodies)
-- `test_datasets/shehata/fragments/*.csv` - 16 fragment-specific files (...)
+- `data/test/shehata/processed/shehata.csv` - Full paired VH+VL sequences (398 antibodies)
+- `data/test/shehata/fragments/*.csv` - 16 fragment-specific files (...)
 ```
 
 ### Top-Level Docs (3 files)
@@ -216,10 +216,10 @@ rm scripts/validate_fragments.py               # Use scripts/validation/ version
 **Line 128:**
 ```markdown
 # OLD:
-**Test file**: `test_datasets/shehata/VH_only_shehata.csv`
+**Test file**: `data/test/shehata/VH_only_shehata.csv`
 
 # NEW:
-**Test file**: `test_datasets/shehata/fragments/VH_only_shehata.csv`
+**Test file**: `data/test/shehata/fragments/VH_only_shehata.csv`
 ```
 
 **File:** `docs/BENCHMARK_TEST_RESULTS.md`
@@ -227,10 +227,10 @@ rm scripts/validate_fragments.py               # Use scripts/validation/ version
 **Line 75:**
 ```markdown
 # OLD:
-**Test file:** `test_datasets/shehata/VH_only_shehata.csv`
+**Test file:** `data/test/shehata/VH_only_shehata.csv`
 
 # NEW:
-**Test file:** `test_datasets/shehata/fragments/VH_only_shehata.csv`
+**Test file:** `data/test/shehata/fragments/VH_only_shehata.csv`
 ```
 
 **File:** `docs/research/assay-thresholds.md`
@@ -238,10 +238,10 @@ rm scripts/validate_fragments.py               # Use scripts/validation/ version
 **Line 143:**
 ```python
 # OLD:
-df = pd.read_csv("test_datasets/shehata/VH_only_shehata.csv")
+df = pd.read_csv("data/test/shehata/VH_only_shehata.csv")
 
 # NEW:
-df = pd.read_csv("test_datasets/shehata/fragments/VH_only_shehata.csv")
+df = pd.read_csv("data/test/shehata/fragments/VH_only_shehata.csv")
 ```
 
 ### Shehata-Specific Docs (7 files in docs/shehata/)
@@ -258,10 +258,10 @@ df = pd.read_csv("test_datasets/shehata/fragments/VH_only_shehata.csv")
 **Pattern (apply to all 7 files):**
 ```bash
 # Find and replace across all docs/shehata/ files:
-test_datasets/shehata.csv → test_datasets/shehata/processed/shehata.csv
-test_datasets/shehata/*.csv → test_datasets/shehata/fragments/*.csv
-test_datasets/shehata/VH_only → test_datasets/shehata/fragments/VH_only
-test_datasets/mmc2.xlsx → test_datasets/shehata/raw/shehata-mmc2.xlsx
+data/test/shehata.csv → data/test/shehata/processed/shehata.csv
+data/test/shehata/*.csv → data/test/shehata/fragments/*.csv
+data/test/shehata/VH_only → data/test/shehata/fragments/VH_only
+data/test/mmc2.xlsx → data/test/shehata/raw/shehata-mmc2.xlsx
 ```
 
 ### Harvey Docs (if Option B - script cleanup)
@@ -288,7 +288,7 @@ scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 
 ## Part 5: Create New READMEs (5 files)
 
-### 1. test_datasets/shehata/README.md (Master)
+### 1. data/test/shehata/README.md (Master)
 
 **Content:**
 - Citation (Shehata 2019 + Sakhnini 2025)
@@ -297,7 +297,7 @@ scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 - Link to subdirectory READMEs
 - Verification commands
 
-### 2. test_datasets/shehata/raw/README.md
+### 2. data/test/shehata/raw/README.md
 
 **Content:**
 - Original Excel files description
@@ -306,7 +306,7 @@ scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 - Note: mmc3/4/5 unused but archived for provenance
 - Conversion instructions
 
-### 3. test_datasets/shehata/processed/README.md
+### 3. data/test/shehata/processed/README.md
 
 **Content:**
 - shehata.csv description (398 antibodies)
@@ -314,7 +314,7 @@ scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 - Label distribution (391 specific, 7 non-specific)
 - Regeneration instructions
 
-### 4. test_datasets/shehata/canonical/README.md
+### 4. data/test/shehata/canonical/README.md
 
 **Content:**
 - Explanation: Shehata is external test set
@@ -322,7 +322,7 @@ scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 - Full 398-antibody dataset in processed/ is canonical
 - canonical/ kept empty for consistency with Jain structure
 
-### 5. test_datasets/shehata/fragments/README.md
+### 5. data/test/shehata/fragments/README.md
 
 **Content:**
 - 16 fragment types explained
@@ -337,21 +337,21 @@ scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 
 ### 1. File Move Verification
 ```bash
-echo "Raw files (4):" && ls -1 test_datasets/shehata/raw/*.xlsx | wc -l
-echo "Processed files (1):" && ls -1 test_datasets/shehata/processed/*.csv | wc -l
-echo "Fragment files (16):" && ls -1 test_datasets/shehata/fragments/*.csv | wc -l
-echo "Total CSVs (17):" && find test_datasets/shehata -name "*.csv" | wc -l
+echo "Raw files (4):" && ls -1 data/test/shehata/raw/*.xlsx | wc -l
+echo "Processed files (1):" && ls -1 data/test/shehata/processed/*.csv | wc -l
+echo "Fragment files (16):" && ls -1 data/test/shehata/fragments/*.csv | wc -l
+echo "Total CSVs (17):" && find data/test/shehata -name "*.csv" | wc -l
 ```
 
 ### 2. P0 Blocker Regression Check (CRITICAL)
 ```bash
-grep -c '\-' test_datasets/shehata/fragments/*.csv | grep -v ':0$'
+grep -c '\-' data/test/shehata/fragments/*.csv | grep -v ':0$'
 # Should return NOTHING (all files have 0 gaps)
 ```
 
 ### 3. Row Count Validation
 ```bash
-for f in test_datasets/shehata/fragments/*.csv; do
+for f in data/test/shehata/fragments/*.csv; do
   count=$(wc -l < "$f")
   if [ "$count" -ne 399 ]; then
     echo "ERROR: $f has $count lines (expected 399)"
@@ -365,7 +365,7 @@ python3 -c "
 import pandas as pd
 files = ['processed/shehata.csv', 'fragments/VH_only_shehata.csv', 'fragments/Full_shehata.csv']
 for f in files:
-    path = f'test_datasets/shehata/{f}'
+    path = f'data/test/shehata/{f}'
     df = pd.read_csv(path)
     dist = df['label'].value_counts().sort_index().to_dict()
     expected = {0: 391, 1: 7}
@@ -389,17 +389,17 @@ python3 tests/test_shehata_embedding_compatibility.py      # Should pass all tes
 ### 7. Model Test
 ```bash
 python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-  --data test_datasets/shehata/fragments/VH_only_shehata.csv
+  --data data/test/shehata/fragments/VH_only_shehata.csv
 # Should load and run successfully
 ```
 
 ### 8. Documentation Validation
 ```bash
 # Check no references to old paths remain
-grep -rn "test_datasets/shehata\.csv" docs/ README.md --include="*.md" | grep -v "processed/"
+grep -rn "data/test/shehata\.csv" docs/ README.md --include="*.md" | grep -v "processed/"
 # Should return NOTHING
 
-grep -rn "test_datasets/mmc2\.xlsx" docs/ --include="*.md" | grep -v "raw/"
+grep -rn "data/test/mmc2\.xlsx" docs/ --include="*.md" | grep -v "raw/"
 # Should return NOTHING
 
 # Check no references to deleted root scripts
@@ -469,11 +469,11 @@ grep -rn "scripts/validate_fragments" docs/ --include="*.md" | grep -v "validati
 - [ ] `scripts/validate_fragments.py`
 
 ### READMEs to Create (5)
-- [ ] `test_datasets/shehata/README.md`
-- [ ] `test_datasets/shehata/raw/README.md`
-- [ ] `test_datasets/shehata/processed/README.md`
-- [ ] `test_datasets/shehata/canonical/README.md`
-- [ ] `test_datasets/shehata/fragments/README.md`
+- [ ] `data/test/shehata/README.md`
+- [ ] `data/test/shehata/raw/README.md`
+- [ ] `data/test/shehata/processed/README.md`
+- [ ] `data/test/shehata/canonical/README.md`
+- [ ] `data/test/shehata/fragments/README.md`
 
 ### Documentation Files to Update (13)
 - [ ] `README.md` (2 lines)

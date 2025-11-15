@@ -104,11 +104,11 @@ train_datasets/boughter_raw/
 train_datasets/ginkgo/
 
 # Raw data files (download from paper supplementary materials)
-test_datasets/*.xlsx
-test_datasets/*.xls
+data/test/*.xlsx
+data/test/*.xls
 
 # Source data files (Excel) - do not track
-test_datasets/**/*.xlsx
+data/test/**/*.xlsx
 
 # Coverage reports
 coverage.xml
@@ -125,7 +125,7 @@ external_datasets/
 models/ginkgo_*/
 
 # Ginkgo competition datasets (large, local only)
-test_datasets/ginkgo/
+data/test/ginkgo/
 train_datasets/ginkgo/
 
 # Tessier dataset (large, local only)

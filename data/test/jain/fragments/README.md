@@ -100,14 +100,14 @@ See `manifest.yml` for exact provenance (source file hash, script version, expec
 import pandas as pd
 
 # Load CDR3-only dataset
-df = pd.read_csv('test_datasets/jain/fragments/H-CDR3_jain.csv')
+df = pd.read_csv('data/test/jain/fragments/H-CDR3_jain.csv')
 
 # Train model on CDR3 only
 sequences = df['sequence'].tolist()  # CDR3 sequences
 labels = df['label'].values
 
 # Compare to full VH performance
-df_vh = pd.read_csv('test_datasets/jain/fragments/VH_only_jain.csv')
+df_vh = pd.read_csv('data/test/jain/fragments/VH_only_jain.csv')
 ```
 
 ---
@@ -124,7 +124,7 @@ regions = [
 ]
 
 for region_file in regions:
-    df = pd.read_csv(f'test_datasets/jain/fragments/{region_file}')
+    df = pd.read_csv(f'data/test/jain/fragments/{region_file}')
     # Train and evaluate...
     # Compare accuracies to understand which regions matter most
 ```

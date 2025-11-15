@@ -20,9 +20,9 @@
 
 | File | Description |
 |------|-------------|
-| `test_datasets/pnas.1616408114.sd01.xlsx` | Metadata (clinical status, provenance) |
-| `test_datasets/pnas.1616408114.sd02.xlsx` | VH/VL protein sequences |
-| `test_datasets/pnas.1616408114.sd03.xlsx` | Biophysical measurements & assays |
+| `data/test/pnas.1616408114.sd01.xlsx` | Metadata (clinical status, provenance) |
+| `data/test/pnas.1616408114.sd02.xlsx` | VH/VL protein sequences |
+| `data/test/pnas.1616408114.sd03.xlsx` | Biophysical measurements & assays |
 | `literature/markdown/jain-et-al-2017-biophysical-properties-of-the-clinical-stage-antibody-landscape/...` | Markdown-converted main paper (Table 1 thresholds) |
 | `literature/pdf/pnas.201616408si.pdf` | Supporting information (assay grouping narratives) |
 
@@ -32,7 +32,7 @@
 
 | File | Purpose |
 |------|---------|
-| `test_datasets/jain.csv` | Cleaned dataset with flags, labels, and supporting assays |
+| `data/test/jain.csv` | Cleaned dataset with flags, labels, and supporting assays |
 | `preprocessing/jain/step1_convert_excel_to_csv.py` | Deterministic Excel→CSV converter |
 | `scripts/validation/validate_jain_conversion.py` | Integrity + provenance validation |
 
@@ -122,9 +122,9 @@ if total_flags >= 3:  # Fixed: Changed from >=4 to >=3 (matches Novo/Hybri)
 
 ### Files Regenerated
 
-1. ✅ `test_datasets/jain.csv` - Regenerated with correct labels
-2. ✅ All 16 fragment files in `test_datasets/jain/` - Regenerated
-3. ✅ `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv` - Now has 94 antibodies (was 70)
+1. ✅ `data/test/jain.csv` - Regenerated with correct labels
+2. ✅ All 16 fragment files in `data/test/jain/` - Regenerated
+3. ✅ `data/test/jain/canonical/VH_only_jain_test_FULL.csv` - Now has 94 antibodies (was 70)
 
 ### Validation After Fix
 

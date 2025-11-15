@@ -16,13 +16,13 @@ High-quality polyspecificity dataset from affinity maturation study. 398 paired 
 
 ```bash
 # Full paired sequences (398 antibodies)
-test_datasets/shehata/processed/shehata.csv
+data/test/shehata/processed/shehata.csv
 
 # VH-only sequences for testing
-test_datasets/shehata/fragments/VH_only_shehata.csv
+data/test/shehata/fragments/VH_only_shehata.csv
 
 # Other fragments (16 total)
-test_datasets/shehata/fragments/*.csv
+data/test/shehata/fragments/*.csv
 ```
 
 ---
@@ -113,9 +113,9 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 
 ```bash
 # Check file counts
-echo "Raw files (4):" && ls -1 test_datasets/shehata/raw/*.xlsx | wc -l
-echo "Processed files (1):" && ls -1 test_datasets/shehata/processed/*.csv | wc -l
-echo "Fragment files (16):" && ls -1 test_datasets/shehata/fragments/*.csv | wc -l
+echo "Raw files (4):" && ls -1 data/test/shehata/raw/*.xlsx | wc -l
+echo "Processed files (1):" && ls -1 data/test/shehata/processed/*.csv | wc -l
+echo "Fragment files (16):" && ls -1 data/test/shehata/fragments/*.csv | wc -l
 
 # Validate conversion
 python3 scripts/validation/validate_shehata_conversion.py
@@ -124,7 +124,7 @@ python3 scripts/validation/validate_shehata_conversion.py
 python3 tests/test_shehata_embedding_compatibility.py
 
 # CRITICAL: Check for gap characters (P0 blocker)
-grep -c '\-' test_datasets/shehata/fragments/*.csv | grep -v ':0'
+grep -c '\-' data/test/shehata/fragments/*.csv | grep -v ':0'
 # Should return NOTHING (all files should have 0 gaps)
 ```
 

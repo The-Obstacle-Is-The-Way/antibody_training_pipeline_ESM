@@ -63,7 +63,7 @@ antibody_training_pipeline_ESM/
 ├── docs/                             # Documentation
 ├── configs/                          # Configuration files
 ├── scripts/                          # Development scripts
-├── test_datasets/                    # Test data (small, version-controlled)
+├── data/test/                    # Test data (small, version-controlled)
 ├── train_datasets/                   # Training data (large, gitignored)
 │
 ├── pyproject.toml                    # Modern Python project config (PEP 517/518)
@@ -319,7 +319,7 @@ def load_data(path: str, stage: str = "parity") -> pd.DataFrame:
         FileNotFoundError: If dataset file not found
 
     Example:
-        >>> df = load_data("test_datasets/jain/processed/jain.csv")
+        >>> df = load_data("data/test/jain/processed/jain.csv")
         >>> print(f"Loaded {len(df)} sequences")
     """
 ```

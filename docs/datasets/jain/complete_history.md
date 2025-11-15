@@ -35,8 +35,8 @@
 
 **TL;DR:** ⚠️ OUTDATED - This describes the OLD v1.x methodology.
 
-**CURRENT (v2.0 - Novo Parity):** Use `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, requires config with `sequence_column: "vh_sequence"`).
-**For general testing:** Use `test_datasets/jain/fragments/VH_only_jain.csv` (137 antibodies, standardized columns).
+**CURRENT (v2.0 - Novo Parity):** Use `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, requires config with `sequence_column: "vh_sequence"`).
+**For general testing:** Use `data/test/jain/fragments/VH_only_jain.csv` (137 antibodies, standardized columns).
 **OBSOLETE:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (file removed, retired methodology)
 
 **Historical Context (v1.x):**
@@ -215,7 +215,7 @@ label (binary):
 ### Complete File Inventory (v1.x - OBSOLETE)
 
 ```
-test_datasets/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
+data/test/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 ├── VH_only_jain.csv                      # Moved to fragments/
 ├── VH_only_jain_test_FULL.csv            # ❌ REMOVED
 ├── VH_only_jain_test_QC_REMOVED.csv      # ❌ REMOVED
@@ -285,7 +285,7 @@ test_datasets/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 #### 4. ~~VH_only_jain_test_PARITY_86.csv~~ (86 antibodies) ⚠️ **OBSOLETE - v1.x FILE**
 **What it was (HISTORICAL):** QC_REMOVED set minus 5 borderline antibodies to achieve Novo parity
 
-**CURRENT REPLACEMENT:** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, P5e-S2 methodology)
+**CURRENT REPLACEMENT:** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, P5e-S2 methodology)
 
 **Removed antibodies (5 total):**
 1. **muromonab** - Murine origin (withdrawn from US market)
@@ -347,9 +347,9 @@ test_datasets/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 
 ### ~~Primary Recommendation: Use PARITY_86~~ (OBSOLETE)
 
-**File (OLD v1.x):** ~~`test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv`~~ ❌ REMOVED
+**File (OLD v1.x):** ~~`data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv`~~ ❌ REMOVED
 
-**CURRENT FILE (v2.0):** `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, P5e-S2 methodology)
+**CURRENT FILE (v2.0):** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, P5e-S2 methodology)
 
 **Why (HISTORICAL - v1.x methodology):**
 1. ✅ **Achieved Novo parity** (66.28% accuracy, exact confusion matrix match)
@@ -368,7 +368,7 @@ test_datasets/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 
 ### Alternative: Use QC_REMOVED (91 antibodies)
 
-**File:** `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv`
+**File:** `data/test/jain/canonical/VH_only_jain_test_QC_REMOVED.csv`
 
 **Why?**
 - If you want more test samples (91 vs 86)
@@ -381,7 +381,7 @@ test_datasets/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 
 ### Not Recommended: FULL (94 antibodies)
 
-**File:** `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv`
+**File:** `data/test/jain/canonical/VH_only_jain_test_FULL.csv`
 
 **Why not?**
 - Contains 3 VH length outliers (structural QC failures)
@@ -394,7 +394,7 @@ test_datasets/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 
 ### For Exploratory Analysis: Complete Dataset (137 antibodies)
 
-**File:** `test_datasets/jain/fragments/VH_only_jain.csv`
+**File:** `data/test/jain/fragments/VH_only_jain.csv`
 
 **Why?**
 - Full dataset with all 137 clinical antibodies
@@ -429,7 +429,7 @@ cat > configs/test_jain_parity.yaml <<EOF
 model_paths:
   - "models/boughter_vh_esm1v_logreg.pkl"
 data_paths:
-  - "test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv"
+  - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
 label_column: "label"
 EOF
@@ -500,9 +500,9 @@ uv run antibody-test --config configs/test_jain_parity.yaml
 - Breakthrough analysis: `docs/archive/key_insights/JAIN_BREAKTHROUGH_ANALYSIS.md`
 
 **Test Files (v2.0):**
-- Complete (137 antibodies): `test_datasets/jain/fragments/VH_only_jain.csv`
-- ⭐ Parity (86 antibodies): `test_datasets/jain/canonical/VH_only_jain_86_p5e_s2.csv`
-- Full metadata (86 antibodies): `test_datasets/jain/canonical/jain_86_novo_parity.csv`
+- Complete (137 antibodies): `data/test/jain/fragments/VH_only_jain.csv`
+- ⭐ Parity (86 antibodies): `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv`
+- Full metadata (86 antibodies): `data/test/jain/canonical/jain_86_novo_parity.csv`
 
 **OBSOLETE (v1.x files - REMOVED):**
 - ~~`VH_only_jain_test_FULL.csv`~~ (94 antibodies) - retired methodology
@@ -510,9 +510,9 @@ uv run antibody-test --config configs/test_jain_parity.yaml
 - ~~`VH_only_jain_test_PARITY_86.csv`~~ (86 antibodies) - replaced by VH_only_jain_86_p5e_s2.csv
 
 **Raw Data (not in repo):**
-- `test_datasets/jain-pnas.1616408114.sd01.xlsx` (metadata)
-- `test_datasets/jain-pnas.1616408114.sd02.xlsx` (sequences)
-- `test_datasets/jain-pnas.1616408114.sd03.xlsx` (biophysical assays)
+- `data/test/jain-pnas.1616408114.sd01.xlsx` (metadata)
+- `data/test/jain-pnas.1616408114.sd02.xlsx` (sequences)
+- `data/test/jain-pnas.1616408114.sd03.xlsx` (biophysical assays)
 
 ---
 

@@ -194,8 +194,8 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
 
 
 def main() -> int:
-    excel_path = Path("test_datasets/shehata/raw/shehata-mmc2.xlsx")
-    csv_path = Path("test_datasets/shehata/processed/shehata.csv")
+    excel_path = Path("data/test/shehata/raw/shehata-mmc2.xlsx")
+    csv_path = Path("data/test/shehata/processed/shehata.csv")
 
     print("=" * 60)
     print("Multi-Method Validation of Shehata Conversion")
@@ -287,7 +287,7 @@ def main() -> int:
         print(f"    Missing labels: {df_csv['label'].isna().sum()}")
 
     # Validate fragment CSVs (P0 blocker check)
-    fragments_dir = Path("test_datasets/shehata/fragments")
+    fragments_dir = Path("data/test/shehata/fragments")
     fragments_valid = validate_fragment_csvs(fragments_dir)
 
     print("\n" + "=" * 60)

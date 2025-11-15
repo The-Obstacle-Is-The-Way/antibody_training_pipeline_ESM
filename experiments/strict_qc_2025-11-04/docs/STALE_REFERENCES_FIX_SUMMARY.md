@@ -21,7 +21,7 @@ After reorganizing `scripts/` directory (moved testing scripts to `preprocessing
 - docs/METHODOLOGY_AND_DIVERGENCES.md (2 instances)
 - docs/TEST_DATASETS_REORGANIZATION_PLAN.md (1 instance)
 - docs/shehata/SHEHATA_CLEANUP_PLAN.md (2 instances)
-- test_datasets/jain/processed/README.md (1 instance)
+- data/test/jain/processed/README.md (1 instance)
 
 **Fix:** Updated all to reference `preprocessing/{dataset}/stage1_*.py` or `preprocessing/{dataset}/`
 
@@ -36,8 +36,8 @@ After reorganizing `scripts/` directory (moved testing scripts to `preprocessing
 
 **Jain (6 files):**
 - docs/SCRIPTS_AUDIT.md
-- test_datasets/jain/README.md
-- test_datasets/jain/canonical/README.md
+- data/test/jain/README.md
+- data/test/jain/canonical/README.md
 - preprocessing/jain/step2_preprocess_p5e_s2.py:355
 - docs/jain/JAIN_REORGANIZATION_COMPLETE.md
 - docs/TEST_DATASETS_REORGANIZATION_PLAN.md (2 instances)
@@ -60,10 +60,10 @@ After reorganizing `scripts/` directory (moved testing scripts to `preprocessing
 
 **Fix:** Updated both to:
 ```yaml
-test_file: ./test_datasets/jain/canonical/jain_86_novo_parity.csv  # P5e-S2 canonical (86 antibodies)
+test_file: ./data/test/jain/canonical/jain_86_novo_parity.csv  # P5e-S2 canonical (86 antibodies)
 ```
 
-**Rationale:** The 86-antibody P5e-S2 file is the recommended canonical benchmark per `test_datasets/jain/canonical/README.md`.
+**Rationale:** The 86-antibody P5e-S2 file is the recommended canonical benchmark per `data/test/jain/canonical/README.md`.
 
 ---
 
@@ -81,7 +81,7 @@ test_file: ./test_datasets/jain/canonical/jain_86_novo_parity.csv  # P5e-S2 cano
 
 3. **configs/config.yaml** (line 15) + **configs/config_strict_qc.yaml** (line 20)
    - BEFORE: `test_file: VH_only_jain_test_QC_REMOVED.csv` (91 antibodies, no path)
-   - AFTER: `test_file: ./test_datasets/jain/canonical/jain_86_novo_parity.csv` (86 antibodies, full path)
+   - AFTER: `test_file: ./data/test/jain/canonical/jain_86_novo_parity.csv` (86 antibodies, full path)
 
 ### Documentation Files (12 files)
 
@@ -95,13 +95,13 @@ test_file: ./test_datasets/jain/canonical/jain_86_novo_parity.csv  # P5e-S2 cano
 6. **docs/shehata/SHEHATA_CLEANUP_PLAN.md** (lines 171-172)
    - Updated comments `# Use scripts/conversion/ version` → `# Moved to preprocessing/`
 
-7. **test_datasets/jain/processed/README.md** (line 3)
+7. **data/test/jain/processed/README.md** (line 3)
    - Updated `scripts/conversion/ and preprocessing/` → `preprocessing/jain/`
 
-8. **test_datasets/jain/README.md**
+8. **data/test/jain/README.md**
    - Updated `scripts/testing/test_jain_novo_parity.py` → `preprocessing/jain/test_novo_parity.py`
 
-9. **test_datasets/jain/canonical/README.md**
+9. **data/test/jain/canonical/README.md**
    - Updated `scripts/testing/test_jain_novo_parity.py` → `preprocessing/jain/test_novo_parity.py`
 
 10. **docs/jain/JAIN_REORGANIZATION_COMPLETE.md**
@@ -122,7 +122,7 @@ test_file: ./test_datasets/jain/canonical/jain_86_novo_parity.csv  # P5e-S2 cano
 
 ### Before Fixes:
 ```bash
-$ grep -r "scripts/conversion/" docs/ test_datasets/ | wc -l
+$ grep -r "scripts/conversion/" docs/ data/test/ | wc -l
 6  # 🚨 Stale references
 
 $ grep -r "scripts/testing/test_jain" . | wc -l
@@ -137,7 +137,7 @@ $ grep "VH_only_jain_test_QC_REMOVED" configs/*.yaml | wc -l
 
 ### After Fixes:
 ```bash
-$ grep -r "scripts/conversion/" docs/ test_datasets/ | wc -l
+$ grep -r "scripts/conversion/" docs/ data/test/ | wc -l
 0  # ✅ All fixed
 
 $ grep -r "scripts/testing/test_jain" . | wc -l

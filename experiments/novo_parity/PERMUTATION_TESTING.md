@@ -13,7 +13,7 @@
 **For the FINAL EXACT MATCH solution, see:**
 - **`EXACT_MATCH_FOUND.md`** - P5e-S2 achieves [[40, 19], [10, 17]] ✅ EXACT MATCH
 - **`MISSION_ACCOMPLISHED.md`** - Executive summary of final results
-- **Canonical dataset**: `test_datasets/jain/canonical/jain_86_novo_parity.csv` (P5e-S2)
+- **Canonical dataset**: `data/test/jain/canonical/jain_86_novo_parity.csv` (P5e-S2)
 
 **Key difference**: Further iteration after P5 discovered that swapping olaratumab → eldelumab (extreme Tm outlier) and adding AC-SINS tiebreaker for PSR=0 antibodies achieves perfect match.
 
@@ -362,7 +362,7 @@ Diff:     0    0   -1   +1
 **Historical Note**: This section recommended P5 dataset (2 cells off). After further iteration, P5e-S2 was discovered which achieves EXACT MATCH [[40,19],[10,17]].
 
 **For current work**:
-1. **Use P5e-S2 dataset** (`test_datasets/jain/canonical/jain_86_novo_parity.csv`) for Novo parity comparisons
+1. **Use P5e-S2 dataset** (`data/test/jain/canonical/jain_86_novo_parity.csv`) for Novo parity comparisons
 2. **Document the approach**: PSR reclassification (3 PSR >0.4 + eldelumab + infliximab) + PSR/AC-SINS removal
 3. **Report**: 66.28% accuracy = EXACT MATCH to Novo's confusion matrix
 4. See `EXACT_MATCH_FOUND.md` and `MISSION_ACCOMPLISHED.md` for full details

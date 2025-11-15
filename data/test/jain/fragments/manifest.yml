@@ -2,7 +2,7 @@
 # Generated: 2025-11-06
 # Format: Standard CSV (no comment headers) for HuggingFace compatibility
 
-source_file: test_datasets/jain/processed/jain_with_private_elisa_FULL.csv
+source_file: data/test/jain/processed/jain_with_private_elisa_FULL.csv
 source_sha256: 51ab6828aa2bb53c61207f4b54367f686ece8fcc5c2c637b329bf8b1eaf6e091
 script: preprocessing/jain/step3_extract_fragments.py
 

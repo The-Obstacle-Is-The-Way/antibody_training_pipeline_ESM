@@ -57,9 +57,9 @@ To regenerate this file from raw sources:
 
 ```bash
 python3 preprocessing/harvey/step1_convert_raw_csvs.py
-# Input:  test_datasets/harvey/raw/high_polyreactivity_high_throughput.csv
-#         test_datasets/harvey/raw/low_polyreactivity_high_throughput.csv
-# Output: test_datasets/harvey/processed/harvey.csv
+# Input:  data/test/harvey/raw/high_polyreactivity_high_throughput.csv
+#         data/test/harvey/raw/low_polyreactivity_high_throughput.csv
+# Output: data/test/harvey/processed/harvey.csv
 ```
 
 **Processing steps:**
@@ -79,13 +79,13 @@ Verify the processed CSV is correct:
 
 ```bash
 # Check row count
-wc -l test_datasets/harvey/processed/harvey.csv
+wc -l data/test/harvey/processed/harvey.csv
 # Should be 141,475 (141,474 + header)
 
 # Check label distribution
 python3 -c "
 import pandas as pd
-df = pd.read_csv('test_datasets/harvey/processed/harvey.csv')
+df = pd.read_csv('data/test/harvey/processed/harvey.csv')
 print(df['label'].value_counts().sort_index())
 # Expected: 0    69702
 #           1    71772
@@ -94,7 +94,7 @@ print(df['label'].value_counts().sort_index())
 # Verify no missing values in critical columns
 python3 -c "
 import pandas as pd
-df = pd.read_csv('test_datasets/harvey/processed/harvey.csv')
+df = pd.read_csv('data/test/harvey/processed/harvey.csv')
 print('Missing seq:', df['seq'].isna().sum())  # Should be 0
 print('Missing label:', df['label'].isna().sum())  # Should be 0
 "
@@ -108,7 +108,7 @@ print('Missing label:', df['label'].isna().sum())  # Should be 0
 import pandas as pd
 
 # Load full dataset
-df = pd.read_csv("test_datasets/harvey/processed/harvey.csv")
+df = pd.read_csv("data/test/harvey/processed/harvey.csv")
 
 # Check label distribution
 print(df['label'].value_counts())
@@ -131,8 +131,8 @@ To extract region-specific fragments (CDRs, FWRs, VHH-only):
 
 ```bash
 python3 preprocessing/harvey/step2_extract_fragments.py
-# Input:  test_datasets/harvey/processed/harvey.csv
-# Output: test_datasets/harvey/fragments/*.csv (6 files)
+# Input:  data/test/harvey/processed/harvey.csv
+# Output: data/test/harvey/fragments/*.csv (6 files)
 ```
 
 See `../fragments/README.md` for fragment details.

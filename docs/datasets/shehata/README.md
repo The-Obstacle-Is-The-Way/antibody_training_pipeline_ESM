@@ -1,7 +1,7 @@
 # Shehata Dataset Documentation
 
 **Status:** ✅ Complete and validated
-**Pipeline:** `test_datasets/shehata/` → `preprocessing/shehata/`
+**Pipeline:** `data/test/shehata/` → `preprocessing/shehata/`
 
 ---
 
@@ -9,7 +9,7 @@
 
 **For the complete Shehata dataset pipeline, see the authoritative documentation:**
 
-👉 **[`test_datasets/shehata/README.md`](../../../test_datasets/shehata/README.md)** ← **SSOT**
+👉 **[`data/test/shehata/README.md`](../../../data/test/shehata/README.md)** ← **SSOT**
 
 That README contains:
 - Complete 2-step pipeline (Excel → CSV → fragments)
@@ -78,10 +78,10 @@ That README contains:
 ## Quick Links
 
 **Data:**
-- Raw Excel: `test_datasets/shehata/raw/shehata-mmc2.xlsx`
-- Processed: `test_datasets/shehata/processed/shehata.csv`
-- Canonical: `test_datasets/shehata/canonical/` (empty - dataset already balanced)
-- Fragments: `test_datasets/shehata/fragments/*.csv` (16 fragment types)
+- Raw Excel: `data/test/shehata/raw/shehata-mmc2.xlsx`
+- Processed: `data/test/shehata/processed/shehata.csv`
+- Canonical: `data/test/shehata/canonical/` (empty - dataset already balanced)
+- Fragments: `data/test/shehata/fragments/*.csv` (16 fragment types)
 
 **Scripts:**
 - Step 1: `preprocessing/shehata/step1_convert_excel_to_csv.py`

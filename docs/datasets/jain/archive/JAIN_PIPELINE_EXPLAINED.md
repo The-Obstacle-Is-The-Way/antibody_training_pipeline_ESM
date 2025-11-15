@@ -11,14 +11,14 @@
 **Script:** `preprocessing/jain/step1_convert_excel_to_csv.py`
 
 **Input:**
-- `test_datasets/jain/raw/Private_Jain2017_ELISA_indiv.xlsx` (private ELISA data)
-- `test_datasets/jain/raw/jain-pnas.1616408114.sd0*.xlsx` (public supplement)
+- `data/test/jain/raw/Private_Jain2017_ELISA_indiv.xlsx` (private ELISA data)
+- `data/test/jain/raw/jain-pnas.1616408114.sd0*.xlsx` (public supplement)
 
 **Output:**
-- `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
-- `test_datasets/jain/processed/jain_sd01.csv`
-- `test_datasets/jain/processed/jain_sd02.csv`
-- `test_datasets/jain/processed/jain_sd03.csv`
+- `data/test/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
+- `data/test/jain/processed/jain_sd01.csv`
+- `data/test/jain/processed/jain_sd02.csv`
+- `data/test/jain/processed/jain_sd03.csv`
 
 **Purpose:** Convert Excel to CSV with ELISA-based flagging
 
@@ -28,11 +28,11 @@
 **Script:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 
 **Input:**
-- `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
+- `data/test/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
 
 **Output:**
-- `test_datasets/jain/processed/jain_ELISA_ONLY_116.csv` (116 antibodies)
-- `test_datasets/jain/canonical/jain_86_novo_parity.csv` ← **PRIMARY OUTPUT**
+- `data/test/jain/processed/jain_ELISA_ONLY_116.csv` (116 antibodies)
+- `data/test/jain/canonical/jain_86_novo_parity.csv` ← **PRIMARY OUTPUT**
 
 **Methodology:**
 ```
@@ -56,12 +56,12 @@
 **Script:** `preprocessing/jain/step3_extract_fragments.py`
 
 **Input:**
-- `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv`
+- `data/test/jain/processed/jain_with_private_elisa_FULL.csv`
 
 **Output:**
-- `test_datasets/jain/fragments/VH_jain_test_FULL.csv`
-- `test_datasets/jain/fragments/VL_jain_test_FULL.csv`
-- `test_datasets/jain/fragments/H-CDR1_jain_test_FULL.csv`
+- `data/test/jain/fragments/VH_jain_test_FULL.csv`
+- `data/test/jain/fragments/VL_jain_test_FULL.csv`
+- `data/test/jain/fragments/H-CDR1_jain_test_FULL.csv`
 - ... (16 fragment types total)
 
 **Purpose:** Extract all fragment types (VH, VL, CDRs, FWRs) using ANARCI
@@ -72,13 +72,13 @@
 **Script:** `preprocessing/jain/step4_build_canonical_sets.py`
 
 **Input:**
-- `test_datasets/jain/processed/jain_with_private_elisa_FULL.csv`
+- `data/test/jain/processed/jain_with_private_elisa_FULL.csv`
 
 **Output:**
-- `test_datasets/jain/canonical/VH_only_jain_test_FULL.csv` (94 antibodies)
-- `test_datasets/jain/canonical/VH_only_jain_test_QC_REMOVED.csv` (91 antibodies)
-- `test_datasets/jain/canonical/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
-- `test_datasets/jain/canonical/jain_86_novo_parity.csv` ← **OVERWRITES STEP2!**
+- `data/test/jain/canonical/VH_only_jain_test_FULL.csv` (94 antibodies)
+- `data/test/jain/canonical/VH_only_jain_test_QC_REMOVED.csv` (91 antibodies)
+- `data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv` (86 antibodies)
+- `data/test/jain/canonical/jain_86_novo_parity.csv` ← **OVERWRITES STEP2!**
 
 **Methodology:**
 ```
@@ -104,7 +104,7 @@
 
 **Both step2 AND step4 write to:**
 ```
-test_datasets/jain/canonical/jain_86_novo_parity.csv
+data/test/jain/canonical/jain_86_novo_parity.csv
 ```
 
 **step2 output (CORRECT):**
@@ -237,7 +237,7 @@ output_novo = output_dir / "jain_86_specific_only.csv"
 ```bash
 $ python3 -c "
 import pandas as pd
-df = pd.read_csv('test_datasets/jain/canonical/jain_86_novo_parity.csv')
+df = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
 print(f'Total: {len(df)}')
 print(f'Specific: {(df[\"label\"] == 0).sum()}')
 print(f'Non-specific: {(df[\"label\"] == 1).sum()}')
