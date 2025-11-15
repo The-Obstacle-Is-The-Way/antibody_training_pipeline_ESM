@@ -1,7 +1,7 @@
 # Output Organization - Final Cleanup Plan
 
 **Date**: 2025-11-15
-**Status**: 🎯 **READY FOR SENIOR APPROVAL** (Revised v2 - Iron-Clad)
+**Status**: 🎯 **READY FOR SENIOR APPROVAL** (Revised v3 - Iron-Clad)
 **SSOT**: This document is the **Single Source of Truth** for output directory cleanup
 **Objective**: Achieve 100% professional ML research repository standards
 **Target**: Zero artifacts, complete reproducibility, Google DeepMind / OpenAI level organization
@@ -9,6 +9,12 @@
 ---
 
 ## Revision History
+
+**v3 (2025-11-15)** - FINAL IRON-CLAD VERSION:
+- ✅ **Fixed Issue 3 fallback gap**: Legacy mode now ACTUALLY saves CV results
+  - Before: Just logged warning, CV results lost
+  - After: Uses `config["training"]["model_save_dir"]` or `./outputs` fallback
+  - Both Hydra and legacy modes save CV artifacts
 
 **v2 (2025-11-15)** - CRITICAL CORRECTIONS:
 - ✅ **Fixed Issue 1**: Changed test fix to use `monkeypatch.chdir(tmp_path)` instead of passing `output_dir`
@@ -20,7 +26,7 @@
   - Verified line numbers and function signatures
 - ✅ **Added precise code references**: All line numbers verified against current codebase
 
-**v1 (2025-11-15)** - Initial draft (had 2 critical gaps)
+**v1 (2025-11-15)** - Initial draft (had 3 critical gaps)
 
 ---
 
@@ -226,7 +232,7 @@ def save_cv_results(
     logger.info(f"CV results saved to {cv_file}")
 
 
-# INTEGRATION POINT 1: train_pipeline() (Hydra-based) - Line ~753
+# INTEGRATION POINT: train_pipeline() (Hydra-based) - Line ~753
 # Replace:
 #     cv_results = perform_cross_validation(
 #         X_train_embedded, y_train_array, config, logger
@@ -237,25 +243,32 @@ def save_cv_results(
         X_train_embedded, y_train_array, config, logger
     )
 
-    # Save CV results to file (NEW)
+    # Save CV results to file (NEW) with proper fallback
     try:
+        # Try Hydra output directory first (production mode)
         hydra_cfg = HydraConfig.get()
         output_dir = Path(hydra_cfg.runtime.output_dir)
-        save_cv_results(cv_results, output_dir, cfg.experiment.name, logger)
-    except Exception as e:
-        logger.warning(f"Could not save CV results: {e}")
+        experiment_name = cfg.experiment.name
+        logger.info(f"Saving CV results to Hydra output dir: {output_dir}")
+    except Exception:
+        # Fallback for non-Hydra mode (legacy train_model or direct calls)
+        # Use model_save_dir from config, or default to ./outputs
+        model_save_dir = config.get("training", {}).get("model_save_dir", "./outputs")
+        output_dir = Path(model_save_dir)
+        experiment_name = config.get("experiment", {}).get("name", "training")
+        logger.info(f"Running without Hydra, saving CV results to: {output_dir}")
 
-
-# INTEGRATION POINT 2: train_model() (Legacy) - Line ~850 (if exists in legacy path)
-# Add after perform_cross_validation() call in legacy function
-# (Only if legacy train_model still has CV - may not exist)
+    # Now actually save (both modes covered)
+    save_cv_results(cv_results, output_dir, experiment_name, logger)
 ```
 
 **Key Corrections**:
 - ✅ Function name: `perform_cross_validation()` not `cross_validate_model()`
-- ✅ Handles Hydra mode: `HydraConfig.get()` wrapped in try/except
-- ✅ Handles legacy mode: Fallback to config-based output_dir
+- ✅ Handles Hydra mode: `HydraConfig.get()` for production runs
+- ✅ **Handles legacy mode with REAL fallback**: Uses `config["training"]["model_save_dir"]` when Hydra unavailable
+- ✅ **Actually saves CV results in both modes** (not just logging warning)
 - ✅ Integration points: Line numbers match actual code
+- ✅ **Verified fallback path**: `./outputs` if model_save_dir not in config
 
 **Optional Enhancement**: Save per-fold predictions
 ```python
@@ -468,12 +481,15 @@ cd ../..
 # Copy implementation from Issue 3 solution (CORRECTED version)
 ```
 
-**Task 4.2**: Integrate in `train_pipeline()` (Hydra mode)
+**Task 4.2**: Integrate in `train_pipeline()` (with proper fallback)
 
 ```python
 # Line ~753 in trainer.py
 # After: cv_results = perform_cross_validation(...)
-# Add: try/except block to save CV results with HydraConfig
+# Add: try/except block with REAL fallback (not just warning)
+# Hydra mode: use hydra_cfg.runtime.output_dir
+# Legacy mode: use config["training"]["model_save_dir"] or "./outputs"
+# BOTH modes save CV results (no silent skip)
 ```
 
 **Task 4.3**: Add imports if missing
@@ -500,9 +516,12 @@ cat outputs/cv_results_test/*/cv_results.yaml  # Verify created
 ```
 
 **Acceptance Criteria**:
-- ✅ `cv_results.yaml` created after training
+- ✅ `cv_results.yaml` created after training (both Hydra and legacy modes)
 - ✅ Contains all CV metrics (accuracy, F1, ROC-AUC)
 - ✅ Valid YAML format
+- ✅ Hydra mode: saves to `hydra_cfg.runtime.output_dir`
+- ✅ Legacy mode: saves to `config["training"]["model_save_dir"]` or `./outputs`
+- ✅ No silent failures (both modes actually save files)
 - ✅ Existing functionality unchanged
 
 ---
