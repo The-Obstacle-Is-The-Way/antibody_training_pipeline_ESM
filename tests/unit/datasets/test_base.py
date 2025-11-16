@@ -71,14 +71,22 @@ class ConcreteDataset(AntibodyDataset):
 
 
 @pytest.mark.unit
-def test_dataset_initializes_with_name_and_default_output(tmp_path: Path) -> None:
+def test_dataset_initializes_with_name_and_default_output(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Verify dataset initializes with dataset name and creates default output directory"""
-    # Arrange & Act
+    # Arrange - Change to tmp_path to avoid polluting repo, but still test default behavior
+    monkeypatch.chdir(tmp_path)
+
+    # Act - DO NOT pass output_dir (testing default behavior)
     dataset = ConcreteDataset(dataset_name="test_dataset")
 
-    # Assert
+    # Assert - Default behavior creates outputs/{dataset_name}
     assert dataset.dataset_name == "test_dataset"
-    assert dataset.output_dir == Path("outputs/test_dataset")
+    assert dataset.output_dir == Path(
+        "outputs/test_dataset"
+    )  # Still testing default path
+    assert dataset.output_dir.exists()  # Created in tmp_path due to chdir
     assert isinstance(dataset.logger, logging.Logger)
 
 

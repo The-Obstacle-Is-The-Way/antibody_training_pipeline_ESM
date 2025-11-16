@@ -9,6 +9,6 @@
   "random_state": 42,
   "esm_model": "facebook/esm1v_t33_650M_UR90S_1",
   "esm_revision": "main",
-  "batch_size": 4,
+  "batch_size": 8,
   "device": "cpu"
 }
