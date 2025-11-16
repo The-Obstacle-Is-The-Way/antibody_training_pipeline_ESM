@@ -526,6 +526,61 @@ def perform_cross_validation(
     return cv_results
 
 
+def save_cv_results(
+    cv_results: dict[str, dict[str, float]],
+    output_dir: Path,
+    experiment_name: str,
+    logger: logging.Logger,
+) -> None:
+    """
+    Save cross-validation results to structured YAML file.
+
+    Args:
+        cv_results: Dictionary of CV metrics with mean/std
+        output_dir: Directory to save CV results file
+        experiment_name: Name of the experiment
+        logger: Logger instance
+
+    Example output:
+        experiment: novo_replication
+        timestamp: 2025-11-15T17:30:00
+        cv_metrics:
+          cv_accuracy:
+            mean: 0.6413
+            std: 0.0972
+          cv_f1:
+            mean: 0.6604
+            std: 0.0994
+    """
+    from datetime import datetime
+
+    # Ensure output directory exists
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    cv_file = output_dir / "cv_results.yaml"
+
+    # Convert numpy types to native Python floats for clean YAML
+    cv_results_clean = {}
+    for metric, values in cv_results.items():
+        cv_results_clean[metric] = {
+            "mean": float(values["mean"]),
+            "std": float(values["std"]),
+        }
+
+    with open(cv_file, "w") as f:
+        yaml.dump(
+            {
+                "experiment": experiment_name,
+                "timestamp": datetime.now().isoformat(),
+                "cv_metrics": cv_results_clean,
+            },
+            f,
+            default_flow_style=False,
+        )
+
+    logger.info(f"CV results saved to {cv_file}")
+
+
 def save_model(
     classifier: BinaryClassifier, config: dict[str, Any], logger: logging.Logger
 ) -> dict[str, str]:
@@ -753,6 +808,28 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
         cv_results = perform_cross_validation(
             X_train_embedded, y_train_array, config, logger
         )
+
+        # Save CV results to file (with Hydra/legacy mode fallback)
+        try:
+            # Try Hydra output directory first (production mode)
+            from hydra.core.hydra_config import HydraConfig
+
+            hydra_cfg = HydraConfig.get()
+            cv_output_dir = Path(hydra_cfg.runtime.output_dir)
+            experiment_name = cfg.experiment.name
+            logger.info(f"Saving CV results to Hydra output dir: {cv_output_dir}")
+        except Exception:
+            # Fallback for non-Hydra mode (legacy train_model or direct calls)
+            # Use model_save_dir from config, or default to ./outputs
+            model_save_dir = config.get("training", {}).get(
+                "model_save_dir", "./outputs"
+            )
+            cv_output_dir = Path(model_save_dir)
+            experiment_name = config.get("experiment", {}).get("name", "training")
+            logger.info(f"Running without Hydra, saving CV results to: {cv_output_dir}")
+
+        # Save CV results (both Hydra and legacy modes)
+        save_cv_results(cv_results, cv_output_dir, experiment_name, logger)
 
         # Train final model on full training set
         logger.info("Training final model on full training set...")
