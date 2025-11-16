@@ -57,7 +57,7 @@ uv run antibody-train --multirun classifier.C=0.1,1.0,10.0
 
 **Model Testing:**
 ```bash
-uv run antibody-test --model models/model.pkl --dataset jain  # Test trained model
+uv run antibody-test --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl --dataset jain  # Test trained model
 ```
 
 ### Preprocessing
@@ -154,11 +154,12 @@ preprocessing/                # Dataset preprocessing pipelines
 conf/                         # Hydra configuration directory (inside package)
 ├── config.yaml              # Default Hydra config (Boughter train, Jain test)
 
-models/                       # Trained model checkpoints (hierarchical organization)
-├── esm1v/logreg/            # ESM-1v + Logistic Regression models
-├── esm2_650m/logreg/        # ESM2-650M + Logistic Regression models
-└── {model}/{classifier}/    # Organized by backbone and classifier type
-embeddings_cache/            # Cached ESM embeddings
+experiments/                 # Single source of truth for outputs
+├── runs/                    # Hydra runs + logs (gitignored)
+│   └── logs/                # Training/test logs
+├── checkpoints/             # Model artifacts (gitignored/LFS)
+├── cache/                   # Embedding caches (gitignored)
+└── benchmarks/              # Versioned benchmark artifacts (incl. archives)
 scripts/                     # Utility scripts
 ├── migrate_model_directories.py  # Migrate models to hierarchical structure
 data/train/              # Training data CSVs
@@ -181,17 +182,17 @@ tests/                       # Test suite
 ### Dataset Organization
 - **Training data**: `data/train/{dataset}/canonical/*.csv`
 - **Test data**: `data/test/{dataset}/canonical/*.csv` or `fragments/*.csv`
-- **Raw data**: Never committed to Git - stored in `data/test/` and preprocessed locally
+- **Raw data**: Never committed to Git - stored in `data/**/raw/` and preprocessed locally
 - Each dataset has dedicated preprocessing pipeline in `preprocessing/{dataset}/`
 
 ### Embedding Caching
-- ESM embeddings cached in `embeddings_cache/` as `.npy` files
+- ESM embeddings cached in `experiments/cache/` as `.npy` files
 - Cache key: SHA-256 hash of `model_name + dataset_path + revision`
 - Prevents expensive re-computation during hyperparameter sweeps
 - Cache invalidates automatically when model/data changes
 
 ### Model Persistence
-- Trained models saved as `.pkl` files in `models/`
+- Trained models saved as `.pkl` files in `experiments/checkpoints/{model}/{classifier}/`
 - Pickle usage limited to trusted local artifacts only
 - **Threat model**: No internet-exposed API, no untrusted pickle loading
 - Production deployment should migrate to JSON + NPZ (see `SECURITY_REMEDIATION_PLAN.md`)
@@ -263,14 +264,14 @@ Standard fragments across all datasets:
 1. Use default config `conf/config.yaml` or create custom config in `conf/`
 2. Override parameters from CLI: `data.train_file`, `data.test_file`, `classifier.*`
 3. Run: `uv run antibody-train experiment.name=my_experiment training.model_name=my_model`
-4. Model saved to `outputs/{experiment.name}/{timestamp}/{model_name}.pkl`
-5. Logs in `outputs/{experiment.name}/{timestamp}/training.log`
+4. Hydra writes run artifacts to `experiments/runs/{experiment.name}/{timestamp}/`
+5. Model saved to `experiments/checkpoints/{model}/{classifier}/{model_name}.pkl` and logs to `experiments/runs/logs/`
 
 ### Running Hyperparameter Sweeps
 1. See `preprocessing/boughter/train_hyperparameter_sweep.py` for reference
 2. Create sweep config with parameter grid
-3. Embeddings auto-cached for fast re-runs
-4. Results logged to sweep-specific directory
+3. Embeddings auto-cached via `experiments/cache/` for fast re-runs
+4. Hydra multiruns emit to `experiments/runs/{experiment.name}/multirun/{timestamp}/`
 
 ### Debugging Test Failures
 1. Run specific test: `uv run pytest tests/unit/core/test_trainer.py -v`
@@ -322,4 +323,4 @@ Standard fragments across all datasets:
 - **Paper**: Sakhnini et al. (2025) - Prediction of Antibody Non-Specificity using PLMs
 - **Datasets**: See `CITATIONS.md` for full attributions
 - **Security**: See `SECURITY_REMEDIATION_PLAN.md` for pickle mitigation
-- **Architecture**: See `AGENTS.md` for build/test/commit guidelines
+- **Architecture**: See `REPOSITORY_REORGANIZATION_PLAN.md` for current structure and `USAGE.md` for command references

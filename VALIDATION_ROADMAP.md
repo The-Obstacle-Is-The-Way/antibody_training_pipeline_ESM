@@ -81,24 +81,28 @@ antibody_training_pipeline_ESM/
 │   ├── jain/                              # 2-step pipeline
 │   ├── harvey/                            # 2-step pipeline
 │   └── shehata/                           # 2-step pipeline
-├── experiments/                            # NEW (Phase 5)
+├── experiments/                            # NEW (Phase 5) - All experiment artifacts
 │   ├── runs/                              # Hydra outputs (gitignored)
 │   ├── checkpoints/                       # Trained models (gitignored/LFS)
 │   ├── cache/                             # Embeddings cache (gitignored)
-│   ├── benchmarks/                        # Published results (versioned)
-│   │   ├── strict_qc/                     # ARCHIVED (never validated)
-│   │   └── novo_parity_2025-11-05/        # Validated results
-│   └── archive/                           # Historical hyperparameter sweeps
+│   └── benchmarks/                        # Published experimental results (versioned)
+│       ├── strict_qc/                     # ARCHIVED (never validated, provenance only)
+│       ├── novo_parity/                   # EXACT Novo parity reverse engineering
+│       └── archive/                       # Historical experiments (sweeps, pre-migration results)
+│           ├── hyperparameter_sweeps_2025-11-02/  # Boughter LogReg optimization
+│           └── test_results_pre_migration_2025-11-06/  # ESM1v/ESM2 baseline results
 ├── src/antibody_training_esm/             # Core package
 │   ├── core/                              # embeddings, classifier, trainer
 │   ├── datasets/                          # Dataset loaders
 │   ├── cli/                               # train, test, preprocess commands
 │   └── conf/                              # Hydra configs
-├── models/                                 # MOVED TO experiments/checkpoints/ (deprecated)
-├── outputs/                                # MOVED TO experiments/runs/ (deprecated)
-├── embeddings_cache/                       # MOVED TO experiments/cache/ (deprecated)
-└── logs/                                   # MOVED TO experiments/runs/logs/ (deprecated)
+├── scripts/                                # Utility scripts
+├── tests/                                  # Test suite (unit/integration/e2e)
+├── docs/                                   # Documentation
+└── literature/                             # Research papers (Novo paper)
 ```
+
+**Note:** Root-level `models/`, `outputs/`, `embeddings_cache/`, and `logs/` directories have been REMOVED in Phase 5. All experiment artifacts now live under `experiments/`.
 
 ### What Exists vs What's Needed
 
@@ -429,7 +433,7 @@ experiments/runs/hyperparam_sweep_test/
 
 **Status:** 🔄 **RUN THIS**
 
-**Decision:** If hyperparameter sweeps are not part of core Novo replication, **archive them** to `experiments/archive/hyperparameter_sweeps_YYYY-MM-DD/`
+**Decision:** Hyperparameter sweeps are NOT part of core Novo replication. They are ALREADY archived at `experiments/benchmarks/archive/hyperparameter_sweeps_2025-11-02/` (historical provenance)
 
 ---
 
@@ -458,11 +462,11 @@ Rationale:
 ```
 
 **Action Required:**
-- ✅ Update config paths in `experiments/benchmarks/strict_qc/configs/config_strict_qc.yaml`
-- ✅ Add warning banner to all strict_qc docs: "⚠️ ARCHIVED - Never validated"
-- ✅ Ensure no production code references strict_qc paths
+- ✅ Update config paths in `experiments/benchmarks/strict_qc/configs/config_strict_qc.yaml` **COMPLETED**
+- ✅ Add warning banner to all strict_qc docs: "⚠️ ARCHIVED - Never validated" **COMPLETED**
+- ✅ Ensure no production code references strict_qc paths **VERIFIED**
 
-**Status:** ✅ **ALREADY DOCUMENTED** (EXPERIMENT_README.md is clear)
+**Status:** ✅ **COMPLETE** (EXPERIMENT_README.md is clear, config paths fixed)
 
 ---
 
@@ -772,7 +776,8 @@ A user should be able to:
 
 **NONE** - Everything has a purpose:
 - `experiments/benchmarks/strict_qc/` → ARCHIVED (provenance)
-- `experiments/archive/` → Historical hyperparameter sweeps (reference)
+- `experiments/benchmarks/archive/` → Historical experiments (hyperparameter sweeps, pre-migration test results)
+- `experiments/benchmarks/novo_parity/` → Reverse engineering documentation (EXACT parity achieved)
 - `literature/` → Novo paper (citation)
 - `docs/` → Documentation (essential)
 
@@ -874,11 +879,16 @@ uv run antibody-test \
 
 - **Novo Paper:** `literature/markdown/novo_2025_main/Sakhnini_2025_Antibody_NonSpecificity_PLM_Biophysical.md`
 - **Strict QC Experiment:** `experiments/benchmarks/strict_qc/EXPERIMENT_README.md`
-- **Validated Results:** `experiments/benchmarks/novo_parity_2025-11-05/README.md` (if exists)
+- **Novo Parity Reverse Engineering:**
+  - `experiments/benchmarks/novo_parity/MISSION_ACCOMPLISHED.md` (Summary)
+  - `experiments/benchmarks/novo_parity/EXACT_MATCH_FOUND.md` (Detailed analysis)
+  - `experiments/benchmarks/novo_parity/FINAL_PERMUTATION_HUNT.md` (Permutation testing)
+- **Historical Test Results:** `experiments/benchmarks/archive/test_results_pre_migration_2025-11-06/README.md`
+- **Hyperparameter Sweeps:** `experiments/benchmarks/archive/hyperparameter_sweeps_2025-11-02/README.md`
 - **CLAUDE.md:** Development guide for Claude Code
 
 ---
 
 **Last Updated:** 2025-11-16
-**Status:** DRAFT - Pre-validation
-**Next Action:** Run Task 1.1 (Boughter preprocessing)
+**Status:** DOCUMENTATION COMPLETE - Ready for end-to-end validation
+**Next Action:** Run preprocessing validation (Tasks 1.1-1.4), then training and testing validation
