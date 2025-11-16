@@ -483,15 +483,16 @@ experiments/runs/hyperparam_sweep_test/
 - ❌ Never compared 914 vs 852 performance
 - ❌ Hypothesis DISPROVEN (914-sequence model validated at 66.28% on Jain)
 
-**Decision:**
+**Decision (Main Branch vs. Archive Branch):**
 ```
-KEEP AS ARCHIVED EXPERIMENT - Do NOT delete
+- Preserve the strict_qc experiment in the dedicated `archive` branch
+- Remove `experiments/benchmarks/strict_qc/` from the leroy-jenkins/full-send branch once cleanup is approved
 
 Rationale:
-1. Demonstrates good scientific practice (hypothesis → test → archive)
-2. Provenance: Shows why 914-sequence model is production
-3. Reproducibility: Anyone can test the 852-sequence hypothesis
-4. Documentation: EXPERIMENT_README.md clearly marks it as ARCHIVED/UNVALIDATED
+1. Demonstrates good scientific practice (hypothesis → test → archive) while keeping main pristine
+2. Provenance: Anyone can checkout the `archive` branch to see why the 914-sequence model is production
+3. Reproducibility: The 852-sequence hypothesis remains runnable from the archived branch
+4. Documentation: EXPERIMENT_README.md and configs stay intact in the archive branch for historical audit
 ```
 
 **Action Required:**
@@ -630,7 +631,7 @@ This repository has conducted FIVE major experimental initiatives:
 
 **Location**: `experiments/benchmarks/archive/hyperparameter_sweeps_2025-11-02/`
 
-**Decision**: ✅ **KEEP ARCHIVED** (shows hyperparameter optimization process)
+**Decision**: ✅ **PRESERVE IN ARCHIVE BRANCH** (shows hyperparameter optimization process; removed from main branch per cleanup plan)
 
 ---
 
@@ -699,7 +700,7 @@ This repository has conducted FIVE major experimental initiatives:
 
 **Documentation**: `EXPERIMENT_README.md` (clearly marked ARCHIVED/UNVALIDATED)
 
-**Decision**: ✅ **KEEP ARCHIVED** (scientific provenance, shows hypothesis testing)
+**Decision**: ✅ **PRESERVE IN ARCHIVE BRANCH** (scientific provenance, shows hypothesis testing; removed from main branch per cleanup plan)
 
 ---
 
@@ -716,7 +717,7 @@ This repository has conducted FIVE major experimental initiatives:
 
 **Location**: `experiments/benchmarks/archive/test_results_pre_migration_2025-11-06/esm2_650m/`
 
-**Decision**: ✅ **KEEP ARCHIVED** (alternative model comparison)
+**Decision**: ✅ **PRESERVE IN ARCHIVE BRANCH** (alternative model comparison; removed from main branch per cleanup plan)
 
 ---
 
@@ -960,8 +961,8 @@ uv run antibody-test \
    **CORRECTED**: Hyperparameter sweeps were for **Boughter ELISA training** (NOT PSR)
 
 2. **Q:** Should we delete strict_qc experiment?
-   **A:** NO - archive it with clear "UNVALIDATED" warning (scientific provenance)
-   **CONFIRMED**: Strict QC (852 seqs) was NEVER VALIDATED - keep archived
+   **A:** YES - remove from main branch, preserve in `archive` branch (scientific provenance)
+   **CONFIRMED**: Strict QC (852 seqs) was NEVER VALIDATED - removed from main, preserved in archive branch
 
 3. **Q:** Do all preprocessing pipelines still work?
    **A:** 🔄 **VALIDATE THIS** (run Tasks 1.1-1.4)
