@@ -525,8 +525,10 @@ python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 # 4. Train model
 uv run antibody-train
 
-# 5. Test model
-uv run antibody-test --model <path> --dataset jain --fragment VH
+# 5. Test model (choose the dataset you need)
+uv run antibody-test \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
+  --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
 # 6. Run tests
 uv run pytest
@@ -789,7 +791,7 @@ A user should be able to:
 2. **Install dependencies:** `uv sync --all-extras`
 3. **Preprocess data** (if raw data available)
 4. **Train model:** `uv run antibody-train`
-5. **Test model:** `uv run antibody-test --model X --dataset jain`
+5. **Test model:** `uv run antibody-test --model <model.pkl> --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv`
 6. **Reproduce Novo results:**
    - Boughter 10-fold CV: 67-71%
    - Jain test: 64-69%
