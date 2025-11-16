@@ -367,16 +367,21 @@ time uv run antibody-train training.n_splits=3
 
 **Commands:**
 ```bash
+# Test on P5e-S2 canonical (RECOMMENDED)
 uv run antibody-test \
   --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --dataset jain \
-  --fragment VH
+  --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
+
+# OR test on EXACT match dataset
+uv run antibody-test \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
+  --data experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv
 ```
 
 **Success Criteria:**
 - ✅ Accuracy: 64-69% (within validated range)
 - ✅ ROC-AUC: 0.60-0.65
-- ✅ Test results save to `experiments/runs/test_{timestamp}/`
+- ✅ Test results save to `experiments/benchmarks/` (--output-dir default)
 - ✅ Confusion matrix displayed
 - ✅ Metrics: accuracy, precision, recall, F1, ROC-AUC
 
@@ -391,14 +396,13 @@ uv run antibody-test \
 ```bash
 uv run antibody-test \
   --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --dataset shehata \
-  --fragment VH
+  --data data/test/shehata/fragments/VH_only_shehata.csv
 ```
 
 **Success Criteria:**
 - ✅ Accuracy: 50-55% (poor separation expected, documented in Novo paper)
 - ✅ ROC-AUC: 0.60-0.70 (better than random)
-- ✅ Log shows: "PSR assay - expect poor separation (assay incompatibility)"
+- ✅ Results show PSR assay incompatibility with ELISA-trained model
 
 **Status:** 🔄 **RUN THIS**
 
@@ -411,12 +415,11 @@ uv run antibody-test \
 ```bash
 uv run antibody-test \
   --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --dataset harvey \
-  --fragment VHH
+  --data data/test/harvey/fragments/VHH_only_harvey.csv
 ```
 
 **Success Criteria:**
-- ✅ Handles VHH-only fragment type
+- ✅ Handles VHH nanobody sequences
 - ✅ Prediction probabilities show broad distribution for PSR-specific
 - ✅ PSR-positive antibodies cluster at higher non-specificity probability
 
@@ -800,26 +803,6 @@ A user should be able to:
 
 ---
 
-## Repository Cleanup Plan (Post-Validation)
-
-### Files to Delete (After Validation)
-
-**NONE** - Everything has a purpose:
-- `experiments/benchmarks/strict_qc/` → ARCHIVED (provenance)
-- `experiments/benchmarks/archive/` → Historical experiments (hyperparameter sweeps, pre-migration test results)
-- `experiments/benchmarks/novo_parity/` → Reverse engineering documentation (EXACT parity achieved)
-- `literature/` → Novo paper (citation)
-- `docs/` → Documentation (essential)
-
-### Files to Update (After Validation)
-
-1. **CLAUDE.md** → Add validation results
-2. **README.md** → Add "Validated" badge
-3. **USAGE.md** → Update with experiments/ paths (already done)
-4. **docs/developer-guide/directory-organization.md** → Update examples (already done)
-
----
-
 ## 🧹 PROPOSED CLEANUP PLAN (Pending Senior Approval)
 
 **Status:** DRAFT - Awaiting approval before execution
@@ -953,11 +936,15 @@ See `data/test/jain/canonical/README.md` for detailed comparison.
 ### Production Testing Command
 
 ```bash
-# CORRECT Novo parity test
+# CORRECT Novo parity test (EXACT match dataset)
 uv run antibody-test \
   --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --data experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv \
-  --fragment VH
+  --data experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv
+
+# OR test with VH fragment from canonical
+uv run antibody-test \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
+  --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
 **Expected Result**: [[40, 19], [10, 17]], 66.28% accuracy ✅
