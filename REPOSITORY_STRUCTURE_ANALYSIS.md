@@ -415,7 +415,7 @@ $ git ls-files | grep test_results
 **The Problem**:
 - CLI defaults STILL point to `./test_results` (src/antibody_training_esm/cli/test.py:75,686,727)
 - 15+ test assertions expect `test_results` paths
-- **5 files reference nonexistent `test_results/TEST_RESULTS_SUMMARY.md`**
+- 6 Python files still reference `test_results/` directory path (cli/test.py, tests files)
 
 **Impact**: Running `antibody-test` will CREATE a new `test_results/` directory because defaults weren't updated after archival.
 
@@ -502,7 +502,7 @@ scripts/
 
 **Current Root Has**:
 - 16 Markdown files (README, CLAUDE, PROBLEMS, ROADMAP, etc.)
-- 9 top-level directories for outputs (`outputs/`, `models/`, `embeddings_cache/`, `logs/`, `test_results/`, `experiments/`)
+- 5 top-level directories for outputs (`outputs/`, `models/`, `embeddings_cache/`, `logs/`, `experiments/`)
 - 4 config files (Dockerfile, docker-compose.yml, Makefile, pyproject.toml)
 
 **Professional Repos Have**:
