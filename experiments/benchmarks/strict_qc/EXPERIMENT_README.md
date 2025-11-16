@@ -146,7 +146,7 @@ The 914-sequence model was externally validated with strong results on the Jain 
 - **ROC-AUC:** 0.66
 - **Assessment:** ✅ Expected poor separation (PSR/ELISA assay incompatibility documented in Novo paper)
 
-**See:** `../archive/test_results_pre_migration_2025-11-06/README.md`
+**See:** `../archive/experiments/benchmarks_pre_migration_2025-11-06/README.md`
 
 ---
 
@@ -219,7 +219,7 @@ models/boughter_vh_esm1v_logreg.pkl                              # Validated mod
 **Validation:**
 - Jain: 66.28% accuracy ✅
 - Shehata: 52.26% accuracy ✅
-- See: `../archive/test_results_pre_migration_2025-11-06/README.md`
+- See: `../archive/experiments/benchmarks_pre_migration_2025-11-06/README.md`
 
 ---
 
@@ -254,7 +254,7 @@ If you're curious whether 852-sequence QC actually helps:
 ## References
 
 - **Production Model:** `../../models/boughter_vh_esm1v_logreg.pkl`
-- **Test Results:** `../archive/test_results_pre_migration_2025-11-06/README.md`
+- **Test Results:** `../archive/experiments/benchmarks_pre_migration_2025-11-06/README.md`
 - **Novo Methodology:** `../../docs/NOVO_TRAINING_METHODOLOGY.md`
 - **Codebase Audit:** `../../docs/CODEBASE_AUDIT_VS_NOVO.md`
 - **Cleanup Plan:** `../../STRICT_QC_CLEANUP_PLAN.md`

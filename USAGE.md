@@ -190,7 +190,7 @@ metrics:
   - pr_auc
 
 # Output configuration
-output_dir: ./test_results
+output_dir: ./experiments/benchmarks
 plot_results: true
 save_predictions: true
 statistical_tests: true
@@ -239,7 +239,7 @@ Cross-validation results:
   roc_auc: 0.9087 (+/- 0.0156)
   pr_auc: 0.8923 (+/- 0.0178)
 
-Plots saved to: ./test_results/results_test_data.png
+Plots saved to: ./experiments/benchmarks/results_test_data.png
 ```
 
 ### Custom Column Names

@@ -42,7 +42,7 @@ def test_config(tmp_path: Path) -> TestConfig:
     return TestConfig(
         model_paths=["model.pkl"],
         data_paths=["data.csv"],
-        output_dir=str(tmp_path / "test_results"),
+        output_dir=str(tmp_path / "experiments/benchmarks"),
         device="cpu",
         batch_size=16,
         sequence_column="sequence",

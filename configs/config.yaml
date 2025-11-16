@@ -30,7 +30,7 @@ data:
 
   # Data storage
   save_embeddings: true       # Cache embeddings for faster re-runs
-  embeddings_cache_dir: "./embeddings_cache"
+  embeddings_cache_dir: "./experiments/cache"
 
 # Classifier configuration - matches Novo Nordisk methodology
 classifier:
@@ -59,11 +59,11 @@ training:
   # Model saving
   save_model: true
   model_name: "boughter_vh_esm1v_logreg"  # Model name
-  model_save_dir: "./models"
+  model_save_dir: "./experiments/checkpoints"
 
   # Logging
   log_level: "INFO"
-  log_file: "./logs/boughter_training.log"
+  log_file: "./experiments/runs/logs/boughter_training.log"
 
   # Performance optimization
   batch_size: 8              # Batch size for embedding extraction

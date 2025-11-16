@@ -114,7 +114,7 @@ def test_train_pipeline_uses_hydra_output_dir_for_logging(
     """Test that train_pipeline() uses Hydra's output directory for logs"""
     # Arrange
     train_csv, df = mock_training_data
-    hydra_output_dir = tmp_path / "outputs"
+    hydra_output_dir = tmp_path / "experiments/runs"
 
     # Initialize Hydra with custom output dir
     with initialize(

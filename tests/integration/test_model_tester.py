@@ -91,7 +91,7 @@ def test_config(
         data_paths=[str(test_dataset_csv)],
         sequence_column="sequence",
         label_column="label",
-        output_dir=str(tmp_path / "test_results"),
+        output_dir=str(tmp_path / "experiments/benchmarks"),
         batch_size=8,
         device="cpu",
     )
@@ -560,7 +560,7 @@ def test_run_comprehensive_test_no_model_collision(
     config = TestConfig(
         model_paths=[str(trained_classifier), str(model2_path)],
         data_paths=[str(test_dataset_csv)],
-        output_dir=str(tmp_path / "test_results"),
+        output_dir=str(tmp_path / "experiments/benchmarks"),
         device="cpu",
     )
 
@@ -623,7 +623,7 @@ def test_run_comprehensive_test_generates_aggregated_reports(
     config = TestConfig(
         model_paths=[str(trained_classifier), str(model2_path)],
         data_paths=[str(test_dataset_csv)],
-        output_dir=str(tmp_path / "test_results"),
+        output_dir=str(tmp_path / "experiments/benchmarks"),
         device="cpu",
     )
 
@@ -633,7 +633,7 @@ def test_run_comprehensive_test_generates_aggregated_reports(
     results = tester.run_comprehensive_test()
 
     # Assert: Aggregated reports exist in root output_dir
-    output_root = tmp_path / "test_results"
+    output_root = tmp_path / "experiments/benchmarks"
 
     # Look for aggregated confusion matrix and results in root (not in subdirs)
     root_files = list(output_root.glob("*"))

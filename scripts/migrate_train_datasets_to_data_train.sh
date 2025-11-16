@@ -65,7 +65,7 @@ REMAINING=$(grep -rl "train_datasets/" \
   --include="Dockerfile*" \
   . 2>/dev/null | \
   grep -v "^./.git/" | \
-  grep -v "^./outputs/" | \
+  grep -v "^./experiments/runs/" | \
   grep -v "TRAIN_DATASETS_CONSOLIDATION_PLAN.md" | \
   grep -v "REPOSITORY_CLEANUP_PLAN.md" | \
   grep -v "TEST_DATASETS_CONSOLIDATION_PLAN.md" | \
@@ -93,7 +93,7 @@ FILES=$(grep -rl "train_datasets/" \
   --include="Dockerfile*" \
   . 2>/dev/null | \
   grep -v "^./.git/" | \
-  grep -v "^./outputs/" | \
+  grep -v "^./experiments/runs/" | \
   grep -v "TRAIN_DATASETS_CONSOLIDATION_PLAN.md" | \
   grep -v "REPOSITORY_CLEANUP_PLAN.md" | \
   grep -v "TEST_DATASETS_CONSOLIDATION_PLAN.md" | \

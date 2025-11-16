@@ -18,11 +18,11 @@ training:
   # Model saving
   save_model: true
   model_name: boughter_vh_esm1v_logreg
-  model_save_dir: ./models
+  model_save_dir: ./experiments/checkpoints
 
   # Logging (Hydra-aware: relative to Hydra output dir, or logs/ in legacy mode)
   log_level: INFO
-  log_file: logs/training.log
+  log_file: training.log
 
   # Performance optimization
   batch_size: 8

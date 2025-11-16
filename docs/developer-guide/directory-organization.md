@@ -51,7 +51,7 @@ models/
 Test results are organized hierarchically by backbone, classifier, and dataset:
 
 ```
-test_results/
+experiments/benchmarks/
 ├── esm1v/
 │   └── logreg/
 │       ├── jain/
@@ -69,7 +69,7 @@ test_results/
         └── jain/
 ```
 
-**Structure:** `test_results/{model_shortname}/{classifier_type}/{dataset}/`
+**Structure:** `experiments/benchmarks/{model_shortname}/{classifier_type}/{dataset}/`
 
 ## Implementation
 

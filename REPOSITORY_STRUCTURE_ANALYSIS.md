@@ -16,7 +16,7 @@ The repository **works correctly** and Phase 1-4 cleanup (test artifacts, histor
 - ✅ Core functionality is solid (374/374 tests passing, 82.38% coverage)
 - ⚠️ Output artifacts scattered across multiple locations (`outputs/`, `models/`, `embeddings_cache/`, `logs/`)
 - ⚠️ Mixed organization patterns (dataset-centric preprocessing vs task-centric scripts)
-- ⚠️ CLI defaults point to `./test_results` (directory doesn't exist, will recreate on first run)
+- ⚠️ CLI defaults point to `./experiments/benchmarks` (directory doesn't exist, will recreate on first run)
 
 **Recommendation**: Commit Phase 1-4 cleanup, then execute **Phase 5 Repository Reorganization** to consolidate outputs and align with professional standards.
 
@@ -26,26 +26,26 @@ The repository **works correctly** and Phase 1-4 cleanup (test artifacts, histor
 
 **WARNING**: Simply moving directories will break the codebase. The following hard dependencies must be updated:
 
-### 🔴 CRITICAL: test_results/ Does NOT Exist at Root
+### 🔴 CRITICAL: experiments/benchmarks/ Does NOT Exist at Root
 
 **REALITY CHECK**:
-- ❌ **test_results/ directory DOES NOT EXIST at root** (archived to `experiments/archive/test_results_pre_migration_2025-11-06/`)
-- ✅ CLI defaults point to `./test_results` (will recreate directory on first run)
-- ✅ Tests assert `test_results` paths (16+ test assertions including `tests/unit/cli/test_model_tester.py:45`)
+- ❌ **experiments/benchmarks/ directory DOES NOT EXIST at root** (archived to `experiments/archive/experiments/benchmarks_pre_migration_2025-11-06/`)
+- ✅ CLI defaults point to `./experiments/benchmarks` (will recreate directory on first run)
+- ✅ Tests assert `experiments/benchmarks` paths (16+ test assertions including `tests/unit/cli/test_model_tester.py:45`)
 
-**Note**: All previous stale references to TEST_RESULTS_SUMMARY.md have been fixed to point to `experiments/archive/test_results_pre_migration_2025-11-06/README.md`
+**Note**: All previous stale references to TEST_RESULTS_SUMMARY.md have been fixed to point to `experiments/archive/experiments/benchmarks_pre_migration_2025-11-06/README.md`
 
 ### Code Dependencies Requiring Updates
 
 #### CLI Test Defaults (3 code locations):
-- `src/antibody_training_esm/cli/test.py:75` - TestConfig dataclass `output_dir: str = "./test_results"`
+- `src/antibody_training_esm/cli/test.py:75` - TestConfig dataclass `output_dir: str = "./experiments/benchmarks"`
 - `src/antibody_training_esm/cli/test.py:686` - Sample config creation
 - `src/antibody_training_esm/cli/test.py:727` - Argparse default
 
 #### Test Suite Path Assertions (16+ locations):
-- `tests/unit/cli/test_test.py:568` - `assert call_args.output_dir == "./test_results"`
-- `tests/unit/cli/test_model_tester.py:45` - `output_dir=str(tmp_path / "test_results")`
-- `tests/integration/test_model_tester.py:94,563,626,636` - `tmp_path / "test_results"`
+- `tests/unit/cli/test_test.py:568` - `assert call_args.output_dir == "./experiments/benchmarks"`
+- `tests/unit/cli/test_model_tester.py:45` - `output_dir=str(tmp_path / "experiments/benchmarks")`
+- `tests/integration/test_model_tester.py:94,563,626,636` - `tmp_path / "experiments/benchmarks"`
 - `tests/unit/core/test_directory_utils.py:164,176,188,200` - Path assertions for hierarchical structure
 - `tests/unit/datasets/test_base.py:84-88` - `assert dataset.output_dir == Path("outputs/test_dataset")`
 - `tests/unit/core/test_trainer.py:66,888-890,1309` - Cache and model path tests
@@ -81,7 +81,6 @@ See `REPOSITORY_REORGANIZATION_PLAN.md` Step 4 for complete update checklist.
 
 ```
 antibody_training_pipeline_ESM/
-├── AGENTS.md
 ├── CHANGELOG.md
 ├── CITATIONS.md
 ├── CLAUDE.md
@@ -192,7 +191,7 @@ antibody_training_pipeline_ESM/
 │   ├── README.md
 │   ├── archive/                      # ✅ Historical results (versioned)
 │   │   ├── hyperparameter_sweeps_2025-11-02/
-│   │   └── test_results_pre_migration_2025-11-06/
+│   │   └── experiments/benchmarks_pre_migration_2025-11-06/
 │   ├── hyperparameter_sweeps/        # ⚠️ Placeholder only (contains .gitkeep)
 │   ├── novo_parity/                  # ✅ Active experiment (well-organized)
 │   │   ├── ELISA_THRESHOLD_HYPOTHESIS_TEST.md
@@ -228,14 +227,11 @@ antibody_training_pipeline_ESM/
 │       ├── [... corresponding PDFs ...]
 │
 ├── logs/                             # ⚠️ ROOT-LEVEL LOGS (gitignored per .gitignore:57-58, but NOT tracked in git)
-│   ├── boughter_retrain_20251106_211513.log
-│   ├── boughter_training.log
-│   ├── build.log
-│   ├── full_test_suite_20251106_211755.log
-│   ├── prod-build.log
-│   ├── test_harvey_20251106_212635.log
-│   └── test_shehata_20251106_212354.log
-│   # Total: 7 log files (all gitignored, none tracked)
+│   ├── boughter_*.log                # Training + retrain runs
+│   ├── build.log / prod-build.log    # Build pipeline logs
+│   ├── full_test_suite_*.log         # End-to-end test runs
+│   └── test_*.log                    # Dataset-specific smoke tests
+│   # NOTE: File list is ephemeral and grows/shrinks as tests/builds run (all gitignored)
 │
 ├── models/                           # ⚠️ ROOT-LEVEL MODELS (should be in experiments/)
 │   ├── esm1v/                       # ✅ Hierarchical organization (good)
@@ -351,9 +347,9 @@ antibody_training_pipeline_ESM/
 │           └── conftest.py          # 🆕 Added in Phase 1
 │
 └── uv.lock
-
-130 directories, 202 files
 ```
+
+**Note**: Above tree is a **representative summary** of key repository structure. Full repository contains ~7,300 directories and ~64,000 files (including reference_repos/, literature/, and all nested subdirectories).
 
 ---
 
@@ -368,7 +364,7 @@ antibody_training_pipeline_ESM/
 | `outputs/` | Hydra training runs | Gitignored | Varies | ✅ Correct usage |
 | `models/` | Trained model checkpoints | **Versioned** | 56KB | ⚠️ Should be in experiments/checkpoints/ |
 | `embeddings_cache/` | ESM embedding cache | Gitignored | 4.5MB | ⚠️ Should be in experiments/cache/ |
-| `test_results/` | Test evaluation results | **DOESN'T EXIST** | N/A | ❌ CLI defaults still reference it |
+| `experiments/benchmarks/` | Test evaluation results | **DOESN'T EXIST** | N/A | ❌ CLI defaults still reference it |
 | `logs/` | Training/test logs | Gitignored | 192KB | ⚠️ Should be in experiments/runs/logs/ |
 
 **Impact**:
@@ -387,28 +383,28 @@ experiments/
 
 ---
 
-### **Problem 2: test_results/ Does NOT Exist (But Code Still References It)** ❌
+### **Problem 2: experiments/benchmarks/ Does NOT Exist (But Code Still References It)** ❌
 
 **Evidence**:
 ```bash
-$ ls -la test_results/
-ls: test_results/: No such file or directory
+$ ls -la experiments/benchmarks/
+ls: experiments/benchmarks/: No such file or directory
 
-$ git ls-files | grep test_results
+$ git ls-files | grep experiments/benchmarks
 # NO OUTPUT - directory not tracked in git
 ```
 
 **History**:
-- Phase 2 cleanup **archived** old test results to `experiments/archive/test_results_pre_migration_2025-11-06/`
-- `test_results/` directory was NEVER recreated at root
+- Phase 2 cleanup **archived** old test results to `experiments/archive/experiments/benchmarks_pre_migration_2025-11-06/`
+- `experiments/benchmarks/` directory was NEVER recreated at root
 - New test results go to `experiments/novo_parity/results/` (86 Jain parity benchmark)
 
 **The Problem**:
-- CLI defaults STILL point to `./test_results` (src/antibody_training_esm/cli/test.py:75,686,727)
-- 15+ test assertions expect `test_results` paths
-- 6 Python files still reference `test_results/` directory path (cli/test.py, tests files)
+- CLI defaults STILL point to `./experiments/benchmarks` (src/antibody_training_esm/cli/test.py:75,686,727)
+- 15+ test assertions expect `experiments/benchmarks` paths
+- 6 Python files still reference `experiments/benchmarks/` directory path (cli/test.py, tests files)
 
-**Impact**: Running `antibody-test` will CREATE a new `test_results/` directory because defaults weren't updated after archival.
+**Impact**: Running `antibody-test` will CREATE a new `experiments/benchmarks/` directory because defaults weren't updated after archival.
 
 **Recommendation**: Update CLI defaults to `experiments/runs/` OR `experiments/benchmarks/` and fix stale doc references.
 
@@ -421,7 +417,7 @@ $ git ls-files | grep test_results
 experiments/
 ├── archive/                   # ✅ Historical results (good)
 │   ├── hyperparameter_sweeps_2025-11-02/  # Archived sweeps (20+ CSVs)
-│   └── test_results_pre_migration_2025-11-06/  # Archived test results
+│   └── experiments/benchmarks_pre_migration_2025-11-06/  # Archived test results
 ├── hyperparameter_sweeps/     # ⚠️ Placeholder only (contains tracked .gitkeep for future sweeps)
 ├── novo_parity/               # ✅ Active experiment (good)
 │   ├── datasets/              # Alternative Jain variants
@@ -571,8 +567,8 @@ repo_name/
 
 ### ❌ **Immediate Issues**
 
-1. **test_results/** doesn't exist at root (CLI defaults will recreate on first run)
-2. **No clear SSOT** for where test results should go (CLI creates `test_results/`, but experiments use `experiments/*/results/`)
+1. **experiments/benchmarks/** doesn't exist at root (CLI defaults will recreate on first run)
+2. **No clear SSOT** for where test results should go (CLI creates `experiments/benchmarks/`, but experiments use `experiments/*/results/`)
 3. **Training scripts** buried in `preprocessing/{dataset}/`
 
 ---
@@ -583,7 +579,7 @@ repo_name/
 |--------|---------------|---------------------|-----|
 | **Output Organization** | 4 root-level output dirs (outputs, models, embeddings_cache, logs) | Single experiments/ dir | ⚠️ Major |
 | **Script Organization** | Dataset-centric preprocessing/ | Task-centric scripts/ | ⚠️ Moderate |
-| **Test Results** | CLI creates test_results/ + experiments/*/results/ | experiments/benchmarks/ only | ⚠️ Moderate |
+| **Test Results** | CLI creates experiments/benchmarks/ + experiments/*/results/ | experiments/benchmarks/ only | ⚠️ Moderate |
 | **Models** | models/ at root (versioned, 56KB) | experiments/checkpoints/ (gitignored or LFS) | ⚠️ Minor |
 | **Embeddings Cache** | embeddings_cache/ at root (4.5MB) | experiments/cache/ | ⚠️ Minor |
 | **Root Clutter** | 16 markdown files, 9 output dirs | 6-8 top-level dirs max | ⚠️ Moderate |
@@ -615,10 +611,9 @@ embeddings_cache/*
 logs/*
 
 # ⚠️ Reality Check:
-# - test_results/ references commented out (lines 48-50), directory doesn't exist
+# - experiments/benchmarks/ references commented out (lines 48-50), directory doesn't exist
 # - models/ PARTIALLY gitignored (scratch/ginkgo_* only), production models VERSIONED
-# - logs/ IS gitignored (logs/*), but logs/ directory IS tracked (contains files)
-#   This is a .gitignore pattern issue - logs/* ignores contents but the directory itself exists
+# - logs/* gitignores all files in logs/ directory (directory itself NOT tracked, all contents gitignored)
 ```
 
 **Professional Pattern**:

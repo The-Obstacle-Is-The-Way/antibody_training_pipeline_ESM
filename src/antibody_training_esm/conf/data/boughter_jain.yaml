@@ -13,7 +13,7 @@ max_sequence_length: 1024
 
 # Embedding caching (required by trainer.py)
 save_embeddings: true
-embeddings_cache_dir: ./embeddings_cache
+embeddings_cache_dir: ./experiments/cache
 
 # Fragment metadata (for testing only)
 train_fragment: VH

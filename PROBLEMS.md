@@ -9,18 +9,18 @@
   ├── outputs/                          # ✅ GOOD - Hydra scratch (gitignored)
   ├── models/                           # ❓ INCONSISTENT - versioned at root
   ├── embeddings_cache/                 # ❓ INCONSISTENT - gitignored at root
-  ├── test_results/                     # ❌ REDUNDANT - empty .gitkeep only
+  ├── experiments/benchmarks/                     # ❌ REDUNDANT - empty .gitkeep only
   ├── experiments/                      # ⚠️  CONFUSED - mixed purposes
   │   ├── novo_parity/                 # ✅ Has datasets/, results/, docs/
   │   ├── strict_qc_2025-11-04/        # ❓ Has data/ and configs/
   │   ├── hyperparameter_sweeps/       # Empty
-  │   └── archive/                     # Has old test_results + sweeps
+  │   └── archive/                     # Has old experiments/benchmarks + sweeps
 
   The Critical Problems I Found:
 
-  Problem 1: test_results/ is Completely Useless
+  Problem 1: experiments/benchmarks/ is Completely Useless
 
-  $ ls -la test_results/
+  $ ls -la experiments/benchmarks/
   total 0
   drwxr-xr-x@  3 ray  staff    96 Nov 15 17:18 .
   -rw-r--r--@  1 ray  staff     0 Nov 15 17:18 .gitkeep
@@ -30,7 +30,7 @@
   What it actually is: An empty directory with a .gitkeep we just added
 
   The reality:
-  - Old results were archived to experiments/archive/test_results_pre_migration_2025-11-06/
+  - Old results were archived to experiments/archive/experiments/benchmarks_pre_migration_2025-11-06/
   - New results go to... where? experiments/novo_parity/results/ exists
   - This creates ambiguity - where should test results actually go?
 
@@ -47,7 +47,7 @@
 
   The confusion:
   - Training outputs → outputs/ (ephemeral)
-  - Test results → test_results/? experiments/{name}/results/? Both?
+  - Test results → experiments/benchmarks/? experiments/{name}/results/? Both?
   - Alternative datasets → experiments/strict_qc_2025-11-04/data/? data/train/?
 
   DeepMind/OpenAI pattern:
@@ -96,7 +96,7 @@
   - models/ (56KB, versioned)
   - embeddings_cache/ (4.5MB, gitignored)
   - outputs/ (gitignored)
-  - test_results/ (empty)
+  - experiments/benchmarks/ (empty)
   - experiments/ (mixed)
 
   Professional repos have:
@@ -248,7 +248,7 @@
   mv experiments/strict_qc_2025-11-04 experiments/benchmarks/strict_qc
 
   # 4. Delete redundant directories
-  rm -rf outputs/ models/ embeddings_cache/ test_results/
+  rm -rf outputs/ models/ embeddings_cache/ experiments/benchmarks/
 
   # 5. Update .gitignore
 
@@ -278,7 +278,7 @@
 
   Conservative Fix (DO THIS NOW):
 
-  1. Delete test_results/ - it's empty and serves no purpose
+  1. Delete experiments/benchmarks/ - it's empty and serves no purpose
   2. Add DIRECTORY_STRUCTURE.md - document outputs/ vs experiments/ clearly
   3. Keep everything else - avoid breaking changes before commit
 
@@ -298,7 +298,7 @@
 
   🎯 The Bottom Line
 
-  Is test_results/ needed? NO. It's legacy BS. Delete it.
+  Is experiments/benchmarks/ needed? NO. It's legacy BS. Delete it.
 
   Is the current structure professional? NO. It has competing patterns:
   - Root-level artifacts (models/, embeddings_cache/)
@@ -309,12 +309,12 @@
   cache, benchmarks).
 
   What should YOU do now?
-  1. Delete test_results/ (it's empty)
+  1. Delete experiments/benchmarks/ (it's empty)
   2. Document current structure clearly
   3. Commit Phase 1-4 cleanup
   4. Plan repository reorganization as Phase 5
 
   You feel me, homie? The structure works but it's not optimal. Let's fix the obvious BS (empty
-  test_results/), then tackle the deeper reorganization separately.
+  experiments/benchmarks/), then tackle the deeper reorganization separately.
 
-  Want me to delete test_results/ and update the docs, or wait for your call?
+  Want me to delete experiments/benchmarks/ and update the docs, or wait for your call?

@@ -248,6 +248,25 @@ rmdir embeddings_cache  # Should be empty now
 
 **Rationale**: Professional ML repositories (DeepMind, Meta AI, OpenAI) maintain **single experiments/ hierarchy** for ALL outputs. Scattered root-level directories defeat organization goals.
 
+**Current State Verification (BEFORE Execution)**:
+```bash
+# logs/ EXISTS at root with ephemeral build/test/training logs
+ls logs/
+# CURRENT: Multiple *.log files (boughter_*, build.log, test_*, full_test_suite_*, prod-build.log)
+# NOTE: Exact files vary as new builds/tests create additional .log files
+
+# experiments/runs/logs/ does NOT exist yet
+ls experiments/runs/logs/
+# CURRENT: No such file or directory
+
+# Hydra configs use logs/ prefix
+grep "log_file:" src/antibody_training_esm/conf/config_schema.py src/antibody_training_esm/conf/config.yaml configs/config.yaml
+# CURRENT:
+# config_schema.py:88: log_file: str = "logs/training.log"
+# config.yaml:25: log_file: logs/training.log
+# configs/config.yaml:66: log_file: "./logs/boughter_training.log"
+```
+
 **Current Behavior**:
 - **Hydra mode** (antibody-train CLI): Logs go to `outputs/{experiment}/{timestamp}/` (Hydra's output dir, ignores logs/)
 - **Legacy mode** (train_model() function): Logs go to `logs/` at root (hardcoded in trainer.py:183, auto-created via trainer.py:185)
@@ -255,36 +274,63 @@ rmdir embeddings_cache  # Should be empty now
 **Implementation**:
 
 ```bash
-# 1. Update all config files to point to experiments/runs/logs/
-sed -i '' 's|logs/training.log|experiments/runs/logs/training.log|g' \
-  src/antibody_training_esm/conf/config_schema.py \
-  src/antibody_training_esm/conf/config.yaml \
+# 1. Update Hydra config files to use relative path (Hydra prepends output_dir)
+
+# Python schema file - match quoted string
+sed -i '' 's|"logs/training\.log"|"training.log"|g' \
+  src/antibody_training_esm/conf/config_schema.py
+
+# YAML config file - match unquoted value
+sed -i '' 's|log_file: logs/training\.log|log_file: training.log|g' \
+  src/antibody_training_esm/conf/config.yaml
+
+# 2. Update legacy config to use full experiments/runs/logs/ path
+sed -i '' 's|"\./logs/|"./experiments/runs/logs/|g' \
   configs/config.yaml
 
-# 2. Move existing logs
+# 3. Update trainer.py legacy branch to use full path from config (line 183)
+sed -i '' 's|log_file = Path\.cwd() / "logs" / log_file_str|log_file = Path.cwd() / log_file_str|g' \
+  src/antibody_training_esm/core/trainer.py
+
+# 4. Move existing logs
 mkdir -p experiments/runs/logs
 mv logs/* experiments/runs/logs/ 2>/dev/null || true
 rmdir logs
 ```
 
-**Affected Files**:
-1. `src/antibody_training_esm/conf/config_schema.py:88` - `log_file: str = "logs/training.log"` → `"experiments/runs/logs/training.log"`
-2. `src/antibody_training_esm/conf/config.yaml:25` - `log_file: logs/training.log` → `experiments/runs/logs/training.log`
-3. `configs/config.yaml:66` - `log_file: "./logs/boughter_training.log"` → `"./experiments/runs/logs/boughter_training.log"`
+**Current State (Before Execution)**:
+1. `src/antibody_training_esm/conf/config_schema.py:88` → `log_file: str = "logs/training.log"`
+2. `src/antibody_training_esm/conf/config.yaml:25` → `log_file: logs/training.log`
+3. `configs/config.yaml:66` → `log_file: "./logs/boughter_training.log"`
+4. `src/antibody_training_esm/core/trainer.py:183` → `log_file = Path.cwd() / "logs" / log_file_str`
 
-**Validation**:
+**After Execution**:
+1. `src/antibody_training_esm/conf/config_schema.py:88` → `log_file: str = "training.log"` (Hydra prepends output_dir)
+2. `src/antibody_training_esm/conf/config.yaml:25` → `log_file: training.log` (Hydra prepends output_dir)
+3. `configs/config.yaml:66` → `log_file: "./experiments/runs/logs/boughter_training.log"` (legacy mode needs full path)
+4. `src/antibody_training_esm/core/trainer.py:183` → `log_file = Path.cwd() / log_file_str` (uses full path from config)
+
+**Validation (Run AFTER Execution)**:
 ```bash
-# No more logs/ at root
+# Verify logs/ removed from root
 ls logs/
 # Expected: Error (directory should not exist)
 
-# Logs now in experiments/
+# Verify logs moved to experiments/
 ls experiments/runs/logs/
 # Expected: All .log files present
 
-# Configs updated
-grep -n "logs/" src/antibody_training_esm/conf/config_schema.py src/antibody_training_esm/conf/config.yaml configs/config.yaml
-# Expected: All show "experiments/runs/logs/"
+# Verify Hydra configs use relative path
+grep -n "log_file:" src/antibody_training_esm/conf/config_schema.py src/antibody_training_esm/conf/config.yaml
+# Expected: "training.log" (NOT "logs/training.log")
+
+# Verify legacy config uses full path
+grep -n "log_file:" configs/config.yaml
+# Expected: "./experiments/runs/logs/boughter_training.log"
+
+# Verify trainer.py updated
+grep -n "log_file = Path" src/antibody_training_esm/core/trainer.py | grep -v "# "
+# Expected: Line 183 should NOT contain '/ "logs" /'
 ```
 
 **NOTE**: logs/* is completely gitignored per `.gitignore:57`. Current contents are build/test logs (~180KB, ephemeral).
@@ -424,17 +470,19 @@ rm .gitignore.bak
 4. `tests/unit/datasets/test_base.py:84-87` - Update assertion OR verify autouse fixture handles it
 5. `tests/unit/datasets/conftest.py:24` - Update comment
 6. `tests/unit/core/test_trainer_hydra.py:117` - Change `tmp_path / "outputs"` → `tmp_path / "experiments/runs"`
-7. `tests/unit/core/test_trainer.py:66,888-890,1309` - Embeddings cache and model hierarchical path tests (may need updates if cache/model paths change)
 
 **Script Files (MUST UPDATE)**:
 7. `scripts/migrate_train_datasets_to_data_train.sh:68,96` - Update filter pattern
 
-#### **4.3: Update embeddings_cache/ References (3 configs)**
+#### **4.3: Update embeddings_cache/ References (3 configs + tests)**
 
 **Config Files (MUST UPDATE)**:
-1. `configs/config.yaml:33` - Change `embeddings_cache_dir: "./embeddings_cache"` → `"experiments/cache"`
-2. `src/antibody_training_esm/conf/data/boughter_jain.yaml:16` - Change `embeddings_cache_dir: ./embeddings_cache` → `experiments/cache`
-3. `src/antibody_training_esm/conf/config_schema.py:53` - Change `embeddings_cache_dir: str = "./embeddings_cache"` → `"experiments/cache"`
+1. `configs/config.yaml:33` - Change `embeddings_cache_dir: "./embeddings_cache"` → `"./experiments/cache"`
+2. `src/antibody_training_esm/conf/data/boughter_jain.yaml:16` - Change `embeddings_cache_dir: ./embeddings_cache` → `./experiments/cache`
+3. `src/antibody_training_esm/conf/config_schema.py:53` - Change `embeddings_cache_dir: str = "./embeddings_cache"` → `"./experiments/cache"`
+
+**Test Files (MUST UPDATE)**:
+4. `tests/unit/core/test_hydra_config.py:52` - Change `assert cfg.data.embeddings_cache_dir == "./embeddings_cache"` → `"./experiments/cache"`
 
 #### **4.4: Update models/ References (7 docstrings)**
 
@@ -577,7 +625,7 @@ antibody_training_pipeline_ESM/
 ├── outputs/                     # Hydra runs (gitignored)
 ├── models/                      # Trained models (56KB, versioned)
 ├── embeddings_cache/            # ESM cache (4.5MB, gitignored)
-├── logs/                        # Build/test logs (7 .log files, ~180KB, all gitignored, none tracked)
+├── logs/                        # Build/test logs (multiple *.log files, ~180KB, all gitignored, ephemeral)
 └── experiments/
     ├── archive/                 # Archived benchmarks
     ├── hyperparameter_sweeps/   # Placeholder (.gitkeep only)
