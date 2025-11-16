@@ -9,8 +9,9 @@ import logging
 from typing import Any
 
 import numpy as np
-from sklearn.linear_model import LogisticRegression
 
+from antibody_training_esm.core.classifier_factory import create_classifier
+from antibody_training_esm.core.classifier_strategy import ClassifierStrategy
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
@@ -64,76 +65,47 @@ class BinaryClassifier:
             params["model_name"], params["device"], batch_size, revision=revision
         )
 
-        # Get all LogisticRegression hyperparameters from config (with defaults)
-        class_weight = params.get("class_weight", None)
-        C = params.get("C", 1.0)
-        penalty = params.get("penalty", "l2")
-        solver = params.get("solver", "lbfgs")
-
-        self.classifier = LogisticRegression(
-            C=C,
-            penalty=penalty,
-            solver=solver,
-            random_state=params["random_state"],
-            max_iter=params["max_iter"],
-            class_weight=class_weight,
-        )
+        # Use factory to create classifier strategy (supports LogReg, XGBoost, etc.)
+        self.classifier: ClassifierStrategy = create_classifier(params)
 
         logger.info(
-            "Classifier initialized: C=%s, penalty=%s, solver=%s, random_state=%s, class_weight=%s",
-            C,
-            penalty,
-            solver,
-            random_state,
-            class_weight,
-        )
-        logger.info(
-            "VERIFICATION: LogisticRegression config = C=%s, penalty=%s, solver=%s, class_weight=%s",
-            self.classifier.C,
-            self.classifier.penalty,
-            self.classifier.solver,
-            self.classifier.class_weight,
+            "Classifier initialized: type=%s, params=%s",
+            params.get("type", "logistic_regression"),
+            self.classifier.get_params(),
         )
 
-        # Store all hyperparameters for recreation and sklearn compatibility
+        # Store hyperparameters for recreation and sklearn compatibility
         self.random_state = random_state
         self.is_fitted = False
         self.device = self.embedding_extractor.device
         self.model_name = params["model_name"]
-        self.max_iter = params["max_iter"]
-        self.class_weight = class_weight
-        self.C = C
-        self.penalty = penalty
-        self.solver = solver
         self.batch_size = batch_size
         self.revision = revision  # Store HF model revision for reproducibility
 
         # Store all params for sklearn compatibility
         self._params = params
 
-    def get_params(self, deep: bool = True) -> dict[str, Any]:  # noqa: ARG002
+    def get_params(self, deep: bool = True) -> dict[str, Any]:
         """
         Get parameters for sklearn compatibility (required for cross_val_score)
 
         Args:
-            deep: If True, return parameters for sub-estimators (unused but required by sklearn API)
+            deep: If True, return parameters for sub-estimators
 
         Returns:
-            Dictionary of parameters
+            Dictionary of parameters (embedding params + classifier params)
         """
-        # Return only valid constructor parameters (exclude 'type', 'cv_folds', 'stratify', etc.)
-        valid_params = {
+        # Merge embedding extractor params + classifier strategy params
+        params = {
             "random_state": self.random_state,
-            "max_iter": self.max_iter,
-            "class_weight": self.class_weight,
-            "C": self.C,
-            "penalty": self.penalty,
-            "solver": self.solver,
             "model_name": self.model_name,
             "device": self.device,
             "batch_size": self.batch_size,
+            "revision": self.revision,
         }
-        return valid_params
+        # Add classifier-specific params from strategy
+        params.update(self.classifier.get_params(deep=deep))
+        return params
 
     def set_params(self, **params: Any) -> "BinaryClassifier":
         """
@@ -148,55 +120,64 @@ class BinaryClassifier:
         Notes:
             This method updates parameters without destroying fitted state.
             If model_name or device changes, the embedding extractor is recreated.
-            LogisticRegression parameters are updated on the classifier instance.
+            If classifier type changes, the classifier strategy is recreated.
         """
-        # Track if we need to recreate embedding extractor
+        # Update internal params dict
+        self._params.update(params)
+
+        # Track if we need to recreate components
         needs_extractor_reload = False
+        needs_classifier_reload = False
 
-        for key, value in params.items():
-            self._params[key] = value
-
+        # Check which components need reloading
+        embedding_params = {"model_name", "device", "batch_size", "revision"}
+        if any(key in params for key in embedding_params):
+            needs_extractor_reload = True
             # Update instance attributes
-            if key == "random_state":
-                self.random_state = value
-                self.classifier.random_state = value
-            elif key == "max_iter":
-                self.max_iter = value
-                self.classifier.max_iter = value
-            elif key == "C":
-                self.C = value
-                self.classifier.C = value
-            elif key == "penalty":
-                self.penalty = value
-                self.classifier.penalty = value
-            elif key == "solver":
-                self.solver = value
-                self.classifier.solver = value
-            elif key == "class_weight":
-                self.class_weight = value
-                self.classifier.class_weight = value
-            elif key == "batch_size":
-                self.batch_size = value
-                needs_extractor_reload = True
-            elif key == "model_name":
-                self.model_name = value
-                needs_extractor_reload = True
-            elif key == "device":
-                self.device = value
-                needs_extractor_reload = True
-            elif key == "revision":
-                self.revision = value
-                needs_extractor_reload = True
+            self.model_name = self._params.get("model_name", self.model_name)
+            self.device = self._params.get("device", self.device)
+            self.batch_size = self._params.get("batch_size", self.batch_size)
+            self.revision = self._params.get("revision", self.revision)
 
-        # Recreate embedding extractor only if necessary
+        if "type" in params:
+            needs_classifier_reload = True
+
+        # Update random_state (used by both components)
+        if "random_state" in params:
+            self.random_state = params["random_state"]
+
+        # Recreate embedding extractor if needed
         if needs_extractor_reload:
             logger.info(
-                f"Recreating embedding extractor with updated params: "
-                f"model_name={self.model_name}, device={self.device}, batch_size={self.batch_size}"
+                f"Recreating embedding extractor: model_name={self.model_name}, "
+                f"device={self.device}, batch_size={self.batch_size}"
             )
             self.embedding_extractor = ESMEmbeddingExtractor(
                 self.model_name, self.device, self.batch_size, revision=self.revision
             )
+
+        # Recreate classifier strategy if type changed
+        if needs_classifier_reload:
+            logger.info(f"Recreating classifier: type={params.get('type')}")
+            self.classifier = create_classifier(self._params)
+            self.is_fitted = False  # New classifier is unfitted
+        else:
+            # Update existing classifier params (e.g., C, penalty, solver)
+            classifier_params = {
+                k: v
+                for k, v in params.items()
+                if k not in embedding_params and k not in {"random_state", "type"}
+            }
+            if classifier_params:
+                # For LogReg and other sklearn estimators, update attributes directly
+                for key, value in classifier_params.items():
+                    if hasattr(self.classifier, key):
+                        setattr(self.classifier, key, value)
+                        # Also update underlying sklearn classifier
+                        if hasattr(self.classifier, "classifier") and hasattr(
+                            self.classifier.classifier, key
+                        ):
+                            setattr(self.classifier.classifier, key, value)
 
         return self
 
@@ -298,6 +279,35 @@ class BinaryClassifier:
 
         score: float = self.classifier.score(X, y)
         return score
+
+    # ========================================================================
+    # Backward Compatibility Properties (delegate to strategy)
+    # ========================================================================
+
+    @property
+    def C(self) -> float:
+        """Regularization parameter (LogReg only, for backward compatibility)"""
+        return getattr(self.classifier, "C", 1.0)
+
+    @property
+    def penalty(self) -> str:
+        """Regularization type (LogReg only, for backward compatibility)"""
+        return getattr(self.classifier, "penalty", "l2")
+
+    @property
+    def solver(self) -> str:
+        """Optimization algorithm (LogReg only, for backward compatibility)"""
+        return getattr(self.classifier, "solver", "lbfgs")
+
+    @property
+    def class_weight(self) -> Any:
+        """Class weights (LogReg only, for backward compatibility)"""
+        return getattr(self.classifier, "class_weight", None)
+
+    @property
+    def max_iter(self) -> int:
+        """Maximum iterations (LogReg only, for backward compatibility)"""
+        return getattr(self.classifier, "max_iter", 1000)
 
     def __getstate__(self) -> dict[str, Any]:
         """Custom pickle method - don't save the ESM model"""
