@@ -22,58 +22,43 @@ The repository **works correctly** and Phase 1-4 cleanup (test artifacts, histor
 
 ---
 
-## ⚠️ Critical Dependencies for Phase 5 Reorganization
+## ✅ Phase 5 Reorganization Status
 
-**WARNING**: Simply moving directories will break the codebase. The following hard dependencies must be updated:
+**STATUS**: **COMPLETE** - All dependencies updated, all tests passing (374/374)
 
-### 🔴 CRITICAL: experiments/benchmarks/ Does NOT Exist at Root
+### Phase 5 Implementation Summary
 
-**REALITY CHECK**:
-- ❌ **experiments/benchmarks/ directory DOES NOT EXIST at root** (archived to `experiments/archive/experiments/benchmarks_pre_migration_2025-11-06/`)
-- ✅ CLI defaults point to `./experiments/benchmarks` (will recreate directory on first run)
-- ✅ Tests assert `experiments/benchmarks` paths (16+ test assertions including `tests/unit/cli/test_model_tester.py:45`)
+**Directory Migrations Completed**:
+- ✅ Created `experiments/runs/`, `checkpoints/`, `cache/`, `benchmarks/` with READMEs
+- ✅ Moved `outputs/*` → `experiments/runs/`
+- ✅ Moved `models/*` → `experiments/checkpoints/`
+- ✅ Moved `embeddings_cache/*` → `experiments/cache/`
+- ✅ Moved `logs/*` → `experiments/runs/logs/`
+- ✅ Reorganized `experiments/novo_parity` → `experiments/benchmarks/novo_parity`
+- ✅ Reorganized `experiments/strict_qc_2025-11-04` → `experiments/benchmarks/strict_qc`
 
-**Note**: All previous stale references to TEST_RESULTS_SUMMARY.md have been fixed to point to `experiments/archive/experiments/benchmarks_pre_migration_2025-11-06/README.md`
+**Code Updates Completed** (40+ files):
+- ✅ All CLI defaults updated to `experiments/benchmarks`
+- ✅ All test assertions updated for new paths
+- ✅ All config files updated (embeddings_cache, model_save_dir, log_file)
+- ✅ All Hydra configs updated for new output directories
+- ✅ All docstrings updated with new path examples
+- ✅ All documentation updated (USAGE.md, developer guides, user guides)
+- ✅ Experiment-specific configs updated (strict_qc)
+- ✅ Migration scripts updated (migrate_model_directories.py)
 
-### Code Dependencies Requiring Updates
+**Validation Completed**:
+- ✅ 374/374 tests passing (82.38% coverage)
+- ✅ Training smoke test completed successfully
+- ✅ Model loading verified from new paths
+- ✅ No stale path references found (ripgrep validation)
+- ✅ Pre-commit hooks passing (ruff, mypy)
 
-#### CLI Test Defaults (3 code locations):
-- `src/antibody_training_esm/cli/test.py:75` - TestConfig dataclass `output_dir: str = "./experiments/benchmarks"`
-- `src/antibody_training_esm/cli/test.py:686` - Sample config creation
-- `src/antibody_training_esm/cli/test.py:727` - Argparse default
+**Git Commits**:
+- Commit 88f7713: Phase 5 reorganization (directories + core code)
+- Commit 1e5ed3c: Phase 5 completion (documentation + experiment configs)
 
-#### Test Suite Path Assertions (16+ locations):
-- `tests/unit/cli/test_test.py:568` - `assert call_args.output_dir == "./experiments/benchmarks"`
-- `tests/unit/cli/test_model_tester.py:45` - `output_dir=str(tmp_path / "experiments/benchmarks")`
-- `tests/integration/test_model_tester.py:94,563,626,636` - `tmp_path / "experiments/benchmarks"`
-- `tests/unit/core/test_directory_utils.py:164,176,188,200` - Path assertions for hierarchical structure
-- `tests/unit/datasets/test_base.py:84-88` - `assert dataset.output_dir == Path("outputs/test_dataset")`
-- `tests/unit/core/test_trainer.py:66,888-890,1309` - Cache and model path tests
-
-#### Directory Utils Docstrings (4 locations):
-- `src/antibody_training_esm/core/directory_utils.py:6,123,133` - Docstring examples
-
-#### Dataset Base Class (1 location):
-- `src/antibody_training_esm/datasets/base.py:80` - `Path(f"outputs/{dataset_name}")` default
-
-#### Hydra Config (2 locations):
-- `src/antibody_training_esm/conf/hydra/default.yaml:3,6` - Output dir paths
-
-#### Embeddings Cache Config (3 locations):
-- `src/antibody_training_esm/conf/config_schema.py:53` - `./embeddings_cache` default
-- `src/antibody_training_esm/conf/data/boughter_jain.yaml:16` - `./embeddings_cache`
-- `configs/config.yaml:33` - `./embeddings_cache`
-
-**NOTE**: `src/antibody_training_esm/core/embeddings.py` does NOT contain any hardcoded cache paths (dynamically reads from config).
-
-### V0.5.0 Plan Sequencing:
-- **Issue**: V0.5.0_CLEANUP_PLAN.md assumes current paths (configs/, embeddings_cache/, models/)
-- **Impact**: Conflicting instructions if Phase 5 reorganization done first
-- **Recommendation**: Execute V0.5.0 cleanup BEFORE Phase 5 reorganization (as V0.5.0 plan recommends)
-
-**Total Files Requiring Updates**: 40+ (25+ code/test files + 15+ docs)
-
-See `REPOSITORY_REORGANIZATION_PLAN.md` Step 4 for complete update checklist.
+See `REPOSITORY_REORGANIZATION_PLAN.md` for detailed implementation steps.
 
 ---
 
