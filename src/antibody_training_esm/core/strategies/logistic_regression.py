@@ -179,6 +179,27 @@ class LogisticRegressionStrategy:
         result: np.ndarray = self.classifier.predict_proba(X)
         return result
 
+    def score(self, X: np.ndarray, y: np.ndarray) -> float:
+        """
+        Return mean accuracy on test data.
+
+        Args:
+            X: Embeddings array, shape (n_samples, n_features)
+            y: True labels, shape (n_samples,)
+
+        Returns:
+            Mean accuracy score
+
+        Examples:
+            >>> X_test = np.random.rand(20, 1280)
+            >>> y_test = np.array([0, 1] * 10)
+            >>> acc = strategy.score(X_test, y_test)
+            >>> 0.0 <= acc <= 1.0
+            True
+        """
+        result: float = self.classifier.score(X, y)
+        return result
+
     def get_params(self, deep: bool = True) -> dict[str, Any]:  # noqa: ARG002
         """
         Get hyperparameters (sklearn API).
