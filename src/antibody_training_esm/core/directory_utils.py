@@ -2,8 +2,8 @@
 Directory utilities for organizing model artifacts hierarchically
 
 Implements standardized directory structure:
-    models/{model_shortname}/{classifier_type}/{model_files}
-    test_results/{model_shortname}/{classifier_type}/{dataset}/{results}
+    experiments/checkpoints/{model_shortname}/{classifier_type}/{model_files}
+    experiments/benchmarks/{model_shortname}/{classifier_type}/{dataset}/{results}
 """
 
 import re
@@ -100,7 +100,7 @@ def get_hierarchical_model_dir(
         ...     "facebook/esm1v_t33_650M_UR90S_1",
         ...     {"type": "logistic_regression"}
         ... )
-        PosixPath('models/esm1v/logreg')
+        PosixPath('experiments/checkpoints/esm1v/logreg')
     """
     model_short = extract_model_shortname(model_name)
     classifier_short = extract_classifier_shortname(classifier_config)
@@ -120,7 +120,7 @@ def get_hierarchical_test_results_dir(
     Structure: {base_dir}/{model_shortname}/{classifier_type}/{dataset}/
 
     Args:
-        base_dir: Base test results directory (e.g., "./test_results")
+        base_dir: Base test results directory (e.g., "./experiments/benchmarks")
         model_name: Full HuggingFace model name
         classifier_config: Classifier configuration dictionary
         dataset_name: Dataset name (e.g., "jain", "harvey")
@@ -130,12 +130,12 @@ def get_hierarchical_test_results_dir(
 
     Examples:
         >>> get_hierarchical_test_results_dir(
-        ...     "./test_results",
+        ...     "./experiments/benchmarks",
         ...     "facebook/esm1v_t33_650M_UR90S_1",
         ...     {"type": "logistic_regression"},
         ...     "jain"
         ... )
-        PosixPath('test_results/esm1v/logreg/jain')
+        PosixPath('experiments/benchmarks/esm1v/logreg/jain')
     """
     model_short = extract_model_shortname(model_name)
     classifier_short = extract_classifier_shortname(classifier_config)

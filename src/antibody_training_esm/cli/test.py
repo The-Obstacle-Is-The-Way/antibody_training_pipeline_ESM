@@ -8,7 +8,7 @@ Professional command-line interface for testing trained antibody classifiers:
 3. Generate confusion matrices and comprehensive logging
 
 Usage:
-    antibody-test --model models/antibody_classifier.pkl --data sample_data.csv
+    antibody-test --model experiments/checkpoints/antibody_classifier.pkl --data sample_data.csv
     antibody-test --config test_config.yaml
     antibody-test --model m1.pkl m2.pkl --data d1.csv d2.csv
 """
@@ -72,7 +72,7 @@ class TestConfig:
     data_paths: list[str]
     sequence_column: str = "sequence"  # Column name for sequences in dataset
     label_column: str = "label"  # Column name for labels in dataset
-    output_dir: str = "./test_results"
+    output_dir: str = "./experiments/benchmarks"
     metrics: list[str] | None = None
     save_predictions: bool = True
     batch_size: int = DEFAULT_BATCH_SIZE  # Batch size for embedding extraction
@@ -679,11 +679,11 @@ def load_config_file(config_path: str) -> TestConfig:
 def create_sample_test_config() -> None:
     """Create a sample test configuration file"""
     sample_config = {
-        "model_paths": ["./models/antibody_classifier.pkl"],
+        "model_paths": ["./experiments/checkpoints/antibody_classifier.pkl"],
         "data_paths": ["./sample_data.csv"],
         "sequence_column": "sequence",
         "label_column": "label",
-        "output_dir": "./test_results",
+        "output_dir": "./experiments/benchmarks",
         "metrics": ["accuracy", "precision", "recall", "f1", "roc_auc", "pr_auc"],
         "save_predictions": True,
     }
@@ -702,10 +702,10 @@ def main() -> int:
         epilog="""
 Examples:
     # Test single model on single dataset
-    antibody-test --model models/antibody_classifier.pkl --data sample_data.csv
+    antibody-test --model experiments/checkpoints/antibody_classifier.pkl --data sample_data.csv
 
     # Test multiple models on multiple datasets
-    antibody-test --model models/model1.pkl models/model2.pkl --data dataset1.csv dataset2.csv
+    antibody-test --model experiments/checkpoints/model1.pkl experiments/checkpoints/model2.pkl --data dataset1.csv dataset2.csv
 
     # Use configuration file
     antibody-test --config test_config.yaml
@@ -724,7 +724,9 @@ Examples:
     parser.add_argument("--data", nargs="+", help="Path(s) to test dataset CSV files")
     parser.add_argument("--config", help="Path to test configuration YAML file")
     parser.add_argument(
-        "--output-dir", default="./test_results", help="Output directory for results"
+        "--output-dir",
+        default="./experiments/benchmarks",
+        help="Output directory for results",
     )
     parser.add_argument(
         "--device",

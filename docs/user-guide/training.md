@@ -65,7 +65,7 @@ classifier:
 training:
   save_model: true            # Save trained model to disk
   model_name: "boughter_vh_esm1v_logreg"
-  model_save_dir: "./models"
+  model_save_dir: "./experiments/checkpoints"
 
 experiment:
   name: "boughter_novo_reproduction"

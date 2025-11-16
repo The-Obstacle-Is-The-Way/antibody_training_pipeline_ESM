@@ -180,7 +180,7 @@ def setup_logging(config: dict[str, Any] | DictConfig) -> logging.Logger:
         log_file = Path(log_file_str)
         if not log_file.is_absolute():
             # If relative path, route to logs/ directory (not repo root!)
-            log_file = Path.cwd() / "logs" / log_file_str
+            log_file = Path.cwd() / log_file_str
         # Create log directory if it doesn't exist
         log_file.parent.mkdir(parents=True, exist_ok=True)
 
@@ -591,7 +591,7 @@ def save_model(
         {model_save_dir}/{model_shortname}/{classifier_type}/{model_name}.*
 
     Example:
-        models/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+        experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 
     Args:
         classifier: Trained classifier
@@ -601,9 +601,9 @@ def save_model(
     Returns:
         Dictionary with paths to saved files:
         {
-            "pickle": "models/esm1v/logreg/model.pkl",
-            "npz": "models/esm1v/logreg/model.npz",
-            "config": "models/esm1v/logreg/model_config.json"
+            "pickle": "experiments/checkpoints/esm1v/logreg/model.pkl",
+            "npz": "experiments/checkpoints/esm1v/logreg/model.npz",
+            "config": "experiments/checkpoints/esm1v/logreg/model_config.json"
         }
         Empty dict if saving is disabled.
     """

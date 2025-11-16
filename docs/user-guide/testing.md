@@ -72,7 +72,7 @@ model_paths:
 data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"  # Fragment file
 
-output_dir: "./test_results"
+output_dir: "./experiments/benchmarks"
 device: "auto"  # or "cpu", "cuda", "mps"
 batch_size: 16
 ```
@@ -228,7 +228,7 @@ data_paths:
 
 sequence_column: "vh_sequence"  # Override for canonical file
 label_column: "label"
-output_dir: "./test_results"
+output_dir: "./experiments/benchmarks"
 device: "auto"
 batch_size: 16
 ```
@@ -370,7 +370,7 @@ model_paths:
 data_paths:
   - "data/test/shehata/fragments/VH_only_shehata.csv"
 
-output_dir: "./test_results"
+output_dir: "./experiments/benchmarks"
 device: "auto"
 batch_size: 16
 
@@ -455,7 +455,7 @@ data_paths:
   - "data/test/shehata/fragments/VH_only_shehata.csv"
   - "data/test/harvey/fragments/VHH_only_harvey.csv"
 
-output_dir: "./test_results"
+output_dir: "./experiments/benchmarks"
 ```
 
 ```bash
@@ -574,7 +574,7 @@ model_paths:
 data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"
 
-output_dir: "./test_results"
+output_dir: "./experiments/benchmarks"
 ```
 
 **Method 3: Compare Fragment Performance**

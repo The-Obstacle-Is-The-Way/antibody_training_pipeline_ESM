@@ -51,7 +51,7 @@ models/
 Test results are organized hierarchically by backbone, classifier, and dataset:
 
 ```
-test_results/
+experiments/benchmarks/
 ├── esm1v/
 │   └── logreg/
 │       ├── jain/
@@ -69,7 +69,7 @@ test_results/
         └── jain/
 ```
 
-**Structure:** `test_results/{model_shortname}/{classifier_type}/{dataset}/`
+**Structure:** `experiments/benchmarks/{model_shortname}/{classifier_type}/{dataset}/`
 
 ## Implementation
 
@@ -82,11 +82,11 @@ from antibody_training_esm.core.directory_utils import get_hierarchical_model_di
 
 # Generate hierarchical directory path
 model_dir = get_hierarchical_model_dir(
-    base_dir="./models",
+    base_dir="./experiments/checkpoints",
     model_name="facebook/esm1v_t33_650M_UR90S_1",
     classifier_config={"type": "logistic_regression"}
 )
-# Returns: Path("models/esm1v/logreg")
+# Returns: Path("experiments/checkpoints/esm1v/logreg")
 ```
 
 ### Model Shortname Extraction
@@ -127,7 +127,7 @@ python scripts/migrate_model_directories.py --dry-run
 python scripts/migrate_model_directories.py
 
 # Custom models directory
-python scripts/migrate_model_directories.py --models-dir /path/to/models
+python scripts/migrate_model_directories.py --models-dir /path/to/experiments/checkpoints
 ```
 
 The script:
@@ -138,14 +138,14 @@ The script:
 
 **Example:**
 ```
-OLD: models/boughter_vh_esm1v_logreg.pkl
-NEW: models/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+OLD: experiments/checkpoints/boughter_vh_esm1v_logreg.pkl
+NEW: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 ```
 
 ## Benefits
 
 1. **Scalability**: Easily manage 9+ models without clutter
-2. **Discoverability**: Find models by browsing `models/esm1v/logreg/`
+2. **Discoverability**: Find models by browsing `experiments/checkpoints/esm1v/logreg/`
 3. **Consistency**: Matches test results directory structure
 4. **Automation**: Directory creation is automatic and transparent
 5. **Flexibility**: Easy to add new backbones and classifiers
@@ -157,7 +157,7 @@ The hierarchical structure is controlled by the `model_save_dir` config paramete
 ```yaml
 # conf/config.yaml
 training:
-  model_save_dir: ./models  # Base directory for hierarchical structure
+  model_save_dir: ./experiments/checkpoints  # Base directory for hierarchical structure
 ```
 
 The system automatically creates subdirectories:
@@ -175,7 +175,7 @@ The same way as before:
 
 ```python
 import pickle
-with open("models/esm1v/logreg/boughter_vh_esm1v_logreg.pkl", "rb") as f:
+with open("experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl", "rb") as f:
     model = pickle.load(f)
 ```
 
@@ -185,7 +185,7 @@ Or using the utility:
 from antibody_training_esm.core.directory_utils import get_hierarchical_model_dir
 from pathlib import Path
 
-model_dir = get_hierarchical_model_dir("./models", model_name, classifier_config)
+model_dir = get_hierarchical_model_dir("./experiments/checkpoints", model_name, classifier_config)
 model_path = model_dir / "boughter_vh_esm1v_logreg.pkl"
 ```
 

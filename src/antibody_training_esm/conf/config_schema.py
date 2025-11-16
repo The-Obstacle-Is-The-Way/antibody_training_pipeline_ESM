@@ -50,7 +50,7 @@ class DataConfig:
     label_column: str = "label"
 
     # REQUIRED by trainer.py
-    embeddings_cache_dir: str = "./embeddings_cache"
+    embeddings_cache_dir: str = "./experiments/cache"
 
     # Optional fields
     dataset_name: str = "boughter_vh"
@@ -81,11 +81,11 @@ class TrainingConfig:
     # Model saving
     save_model: bool = True
     model_name: str = "boughter_vh_esm1v_logreg"
-    model_save_dir: str = "./models"
+    model_save_dir: str = "./experiments/checkpoints"
 
     # Logging (Hydra-aware: relative to Hydra output dir, or logs/ in legacy mode)
     log_level: str = "INFO"
-    log_file: str = "logs/training.log"  # Routes to logs/ dir in legacy mode, Hydra output dir in Hydra mode
+    log_file: str = "training.log"  # Routes to logs/ dir in legacy mode, Hydra output dir in Hydra mode
 
     # Performance optimization
     batch_size: int = 8

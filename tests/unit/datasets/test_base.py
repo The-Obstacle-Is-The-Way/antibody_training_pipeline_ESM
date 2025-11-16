@@ -84,7 +84,7 @@ def test_dataset_initializes_with_name_and_default_output(
     # Assert - Default behavior creates outputs/{dataset_name}
     assert dataset.dataset_name == "test_dataset"
     assert dataset.output_dir == Path(
-        "outputs/test_dataset"
+        "experiments/runs/test_dataset"
     )  # Still testing default path
     assert dataset.output_dir.exists()  # Created in tmp_path due to chdir
     assert isinstance(dataset.logger, logging.Logger)

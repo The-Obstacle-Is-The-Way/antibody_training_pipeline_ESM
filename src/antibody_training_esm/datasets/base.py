@@ -77,7 +77,7 @@ class AntibodyDataset(ABC):
         """
         self.dataset_name = dataset_name
         self.output_dir = (
-            Path(output_dir) if output_dir else Path(f"outputs/{dataset_name}")
+            Path(output_dir) if output_dir else Path(f"experiments/runs/{dataset_name}")
         )
         self.logger = logger or self._create_default_logger()
 

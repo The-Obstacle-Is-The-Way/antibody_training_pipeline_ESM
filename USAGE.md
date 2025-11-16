@@ -71,7 +71,7 @@ data:
   label_column: "label"                  # Column name for labels
   validation_split: 0.2                  # Train/val split if no val_file
   save_embeddings: true                  # Cache embeddings
-  embeddings_cache_dir: "./embeddings_cache"
+  embeddings_cache_dir: "./experiments/cache"
 ```
 
 ### Classifier Configuration
@@ -88,9 +88,9 @@ training:
   metrics: ["accuracy", "precision", "recall", "f1", "roc_auc"]
   save_model: true
   model_name: "antibody_classifier"  # Name for the saved model (without extension)
-  model_save_dir: "./models"          # Directory to save models
+  model_save_dir: "./experiments/checkpoints"          # Directory to save models
   log_level: "INFO"
-  log_file: "./logs/training.log"
+  log_file: "training.log"
 ```
 
 **Note**: The trained model will be saved as `{model_save_dir}/{model_name}.pkl`. Change `model_name` to give your model a custom name.
@@ -143,14 +143,14 @@ EVQLLESGGGLVQPGGSLRLSCAASGFTFS...,0,non-developable
 After training, the pipeline creates several output files:
 
 ### Model Files
-- `models/antibody_classifier.pkl`: Trained classifier (includes scaler and model)
+- `experiments/checkpoints/antibody_classifier.pkl`: Trained classifier (includes scaler and model)
 
 ### Cache Files
-- `embeddings_cache/train_embeddings.pkl`: Cached training embeddings
-- `embeddings_cache/val_embeddings.pkl`: Cached validation embeddings
+- `experiments/cache/train_embeddings.pkl`: Cached training embeddings
+- `experiments/cache/val_embeddings.pkl`: Cached validation embeddings
 
 ### Log Files
-- `logs/training.log`: Detailed training logs
+- `experiments/runs/logs/training.log`: Detailed training logs
 
 ## Testing the Trained Model
 
@@ -165,7 +165,7 @@ Create or edit `test_config.yaml` to specify testing parameters:
 
 # Model configuration
 model_paths:
-  - ./models/antibody_classifier.pkl  # Path(s) to trained model checkpoint(s)
+  - ./experiments/checkpoints/esm1v/logreg/antibody_classifier.pkl  # Path(s) to trained model checkpoint(s)
 
 # Data configuration
 data_paths:
@@ -190,7 +190,7 @@ metrics:
   - pr_auc
 
 # Output configuration
-output_dir: ./test_results
+output_dir: ./experiments/benchmarks
 plot_results: true
 save_predictions: true
 statistical_tests: true
@@ -239,7 +239,7 @@ Cross-validation results:
   roc_auc: 0.9087 (+/- 0.0156)
   pr_auc: 0.8923 (+/- 0.0178)
 
-Plots saved to: ./test_results/results_test_data.png
+Plots saved to: ./experiments/benchmarks/results_test_data.png
 ```
 
 ### Custom Column Names
@@ -303,7 +303,7 @@ Cross-validation Results:
   cv_f1: 0.8398 (+/- 0.0267)
   cv_roc_auc: 0.9087 (+/- 0.0156)
 
-Saving model to ./models/antibody_classifier.pkl
+Saving model to ./experiments/checkpoints/esm1v/logreg/antibody_classifier.pkl
 Model saved successfully
 ```
 
@@ -337,4 +337,3 @@ Set `log_level` to `"DEBUG"` for detailed information:
 training:
   log_level: "DEBUG"
 ```
-

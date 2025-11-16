@@ -56,7 +56,17 @@ Original git commit history preserved via `git mv`.
 
 ## Future Sweeps
 
-New hyperparameter sweeps should write to:
-`experiments/hyperparameter_sweeps/`
+**⚠️ ARCHIVED - READ-ONLY**
+
+This directory is historical reference only. New hyperparameter sweeps should use Hydra's multirun:
+
+```bash
+uv run antibody-train \
+  --multirun \
+  classifier.C=0.1,1.0,10.0 \
+  experiment.name=my_sweep
+```
+
+Outputs will go to: `experiments/runs/my_sweep/multirun/YYYY-MM-DD/HH-MM-SS/`
 
 **NOT** to this archive directory.

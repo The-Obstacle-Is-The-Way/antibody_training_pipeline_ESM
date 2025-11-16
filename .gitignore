@@ -50,7 +50,6 @@ htmlcov/
 # !test_results/.gitkeep
 
 # Cache
-embeddings_cache/*
 !embeddings_cache/.gitkeep
 
 # Logs
@@ -60,14 +59,12 @@ logs/*
 
 # Models (commit benchmark weights - they're research deliverables)
 # Only ignore scratch/experimental models
-models/scratch/
 
 # Data (root level only)
 /data/*
 !/data/.gitkeep
 
 # Outputs
-outputs/*
 !outputs/.gitkeep
 
 # Test config
@@ -126,7 +123,6 @@ ginkgo_submissions*/
 external_datasets/
 
 # Experimental models (Ginkgo competition)
-models/ginkgo_*/
 
 # Ginkgo competition datasets (large, local only)
 data/test/ginkgo/
@@ -134,3 +130,19 @@ train_datasets/ginkgo/
 
 # Tessier dataset (large, local only)
 train_datasets/tessier/
+
+# Phase 5 Reorganization: Consolidated experiments/ structure
+experiments/runs/*
+experiments/checkpoints/*
+experiments/cache/*
+
+# Keep directory structure
+!experiments/runs/.gitkeep
+!experiments/checkpoints/.gitkeep
+!experiments/cache/.gitkeep
+!experiments/runs/README.md
+!experiments/checkpoints/README.md
+!experiments/cache/README.md
+
+# Benchmarks are versioned
+!experiments/benchmarks/

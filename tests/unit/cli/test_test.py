@@ -565,7 +565,7 @@ def test_test_cli_uses_default_output_dir(mock_model_tester: MagicMock) -> None:
 
         # Assert
         call_args = mock_model_tester.call_args[0][0]
-        assert call_args.output_dir == "./test_results"
+        assert call_args.output_dir == "./experiments/benchmarks"
 
 
 @pytest.mark.unit

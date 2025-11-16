@@ -49,7 +49,7 @@ def test_config_loads() -> None:
         assert cfg.data.source == "local"
         assert cfg.data.sequence_column == "sequence"
         assert cfg.data.label_column == "label"
-        assert cfg.data.embeddings_cache_dir == "./embeddings_cache"
+        assert cfg.data.embeddings_cache_dir == "./experiments/cache"
 
         # Verify training config (all required fields)
         assert cfg.training.n_splits == 10

@@ -82,7 +82,7 @@ antibody-test --model models/model.pkl --data data/test/jain/canonical/jain.csv
 
 **Test results organized hierarchically:**
 ```
-test_results/
+experiments/benchmarks/
 ├── esm1v/logreg/
 │   ├── harvey/
 │   ├── jain/
