@@ -806,9 +806,9 @@ A user should be able to:
 
 ---
 
-## 🧹 PROPOSED CLEANUP PLAN (Pending Senior Approval)
+## 🧹 ✅ CLEANUP PLAN (EXECUTED - 2025-11-16)
 
-**Status:** DRAFT - Awaiting approval before execution
+**Status:** ✅ COMPLETE - Executed on dev branch (2025-11-16)
 **Created:** 2025-11-16
 **Preserved In:** `archive` branch (ALL history saved)
 
@@ -897,7 +897,7 @@ experiments/benchmarks/
     └── scripts/                # Reproducible
 ```
 
-**Status:** ⏸️ **AWAITING SENIOR APPROVAL**
+**Status:** ✅ **COMPLETE - Executed on dev branch (2025-11-16)**
 
 ---
 
@@ -982,15 +982,17 @@ uv run antibody-test \
 
 **Today (2025-11-16):**
 - ✅ Document validation roadmap (this file)
+- ✅ Execute cleanup plan (strict_qc/ and archive/ removed from dev branch)
 - 🔄 Run preprocessing validation (Tasks 1.1-1.4)
 - 🔄 Run training validation (Task 2.1)
 
 **Next Session:**
+
 - 🔄 Run testing validation (Tasks 3.1-3.3)
-- 🔄 Run hyperparameter sweep test (Task 4.1)
 - 🔄 Run fresh clone test (Task 6.1)
 
 **After Validation:**
+
 - ✅ Update all docs with validated results
 - ✅ Tag v2.0.0-validated
 - ✅ Merge to main
@@ -1000,14 +1002,17 @@ uv run antibody-test \
 ## References
 
 - **Novo Paper:** `literature/markdown/novo_2025_main/Sakhnini_2025_Antibody_NonSpecificity_PLM_Biophysical.md`
-- **Strict QC Experiment:** `experiments/benchmarks/strict_qc/EXPERIMENT_README.md`
 - **Novo Parity Reverse Engineering:**
   - `experiments/benchmarks/novo_parity/MISSION_ACCOMPLISHED.md` (Summary)
   - `experiments/benchmarks/novo_parity/EXACT_MATCH_FOUND.md` (Detailed analysis)
   - `experiments/benchmarks/novo_parity/FINAL_PERMUTATION_HUNT.md` (Permutation testing)
-- **Historical Test Results:** `experiments/benchmarks/archive/test_results_pre_migration_2025-11-06/README.md`
-- **Hyperparameter Sweeps:** `experiments/benchmarks/archive/hyperparameter_sweeps_2025-11-02/README.md`
 - **CLAUDE.md:** Development guide for Claude Code
+
+**Historical Artifacts (removed from dev branch, preserved in archive branch):**
+
+- Strict QC Experiment: `git checkout archive` → `experiments/benchmarks/strict_qc/EXPERIMENT_README.md`
+- Historical Test Results: `git checkout archive` → `experiments/benchmarks/archive/test_results_pre_migration_2025-11-06/README.md`
+- Hyperparameter Sweeps: `git checkout archive` → `experiments/benchmarks/archive/hyperparameter_sweeps_2025-11-02/README.md`
 
 ---
 
