@@ -125,9 +125,10 @@ test_results_pre_migration_2025-11-06/
 - ✅ All data paths still valid (test datasets unchanged)
 
 ### For Future Benchmarks
-- ✅ New test results should go in `/test_results/` (now empty)
-- ✅ Use hierarchical directory structure: `{model}/{classifier}/{dataset}/`
-- ✅ Archive old results when methodology changes
+- ✅ New test results should go in `experiments/runs/{test_name}/` (Hydra outputs)
+- ✅ Use hierarchical model directory structure: `experiments/checkpoints/{model}/{classifier}/`
+- ✅ Archive old results when methodology changes to `experiments/benchmarks/archive/`
+- ⚠️ **IMPORTANT:** The `/test_results/` directory was removed in Phase 5 - use Hydra's experiments/runs/ instead
 
 ---
 
