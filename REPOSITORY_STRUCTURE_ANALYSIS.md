@@ -14,11 +14,75 @@ The repository **works correctly** and Phase 1-4 cleanup (test artifacts, histor
 
 **Key Findings**:
 - ✅ Core functionality is solid (374/374 tests passing, 82.38% coverage)
-- ⚠️ Output artifacts scattered across multiple locations (`outputs/`, `models/`, `embeddings_cache/`, `test_results/`)
+- ⚠️ Output artifacts scattered across multiple locations (`outputs/`, `models/`, `embeddings_cache/`, `logs/`)
 - ⚠️ Mixed organization patterns (dataset-centric preprocessing vs task-centric scripts)
-- ⚠️ Competing sources of truth for experimental results (`experiments/` vs `test_results/`)
+- ⚠️ CLI defaults point to `./test_results` (directory doesn't exist, will recreate on first run)
 
 **Recommendation**: Commit Phase 1-4 cleanup, then execute **Phase 5 Repository Reorganization** to consolidate outputs and align with professional standards.
+
+---
+
+## ⚠️ Critical Dependencies for Phase 5 Reorganization
+
+**WARNING**: Simply moving directories will break the codebase. The following hard dependencies must be updated:
+
+### 🔴 CRITICAL: test_results/ Does NOT Exist at Root
+
+**REALITY CHECK**:
+- ❌ **test_results/ directory DOES NOT EXIST at root** (archived to `experiments/archive/test_results_pre_migration_2025-11-06/`)
+- ✅ CLI defaults point to `./test_results` (will recreate directory on first run)
+- ✅ Tests assert `test_results` paths (16+ test assertions including `tests/unit/cli/test_model_tester.py:45`)
+
+**Note**: All previous stale references to TEST_RESULTS_SUMMARY.md have been fixed to point to `experiments/archive/test_results_pre_migration_2025-11-06/README.md`
+
+### Code Dependencies Requiring Updates
+
+#### CLI Test Defaults (3 code locations):
+- `src/antibody_training_esm/cli/test.py:75` - TestConfig dataclass `output_dir: str = "./test_results"`
+- `src/antibody_training_esm/cli/test.py:686` - Sample config creation
+- `src/antibody_training_esm/cli/test.py:727` - Argparse default
+
+#### Test Suite Path Assertions (16+ locations):
+- `tests/unit/cli/test_test.py:568` - `assert call_args.output_dir == "./test_results"`
+- `tests/unit/cli/test_model_tester.py:45` - `output_dir=str(tmp_path / "test_results")`
+- `tests/integration/test_model_tester.py:94,563,626,636` - `tmp_path / "test_results"`
+- `tests/unit/core/test_directory_utils.py:164,176,188,200` - Path assertions for hierarchical structure
+- `tests/unit/datasets/test_base.py:84-88` - `assert dataset.output_dir == Path("outputs/test_dataset")`
+- `tests/unit/core/test_trainer.py:66,888-890,1309` - Cache and model path tests
+
+#### Directory Utils Docstrings (4 locations):
+- `src/antibody_training_esm/core/directory_utils.py:6,123,133` - Docstring examples
+
+#### Dataset Base Class (1 location):
+- `src/antibody_training_esm/datasets/base.py:80` - `Path(f"outputs/{dataset_name}")` default
+
+#### Hydra Config (2 locations):
+- `src/antibody_training_esm/conf/hydra/default.yaml:3,6` - Output dir paths
+
+#### Embeddings Cache Config (3 locations):
+- `src/antibody_training_esm/conf/config_schema.py:53` - `./embeddings_cache` default
+- `src/antibody_training_esm/conf/data/boughter_jain.yaml:16` - `./embeddings_cache`
+- `configs/config.yaml:33` - `./embeddings_cache`
+
+**NOTE**: `src/antibody_training_esm/core/embeddings.py` does NOT contain any hardcoded cache paths (dynamically reads from config).
+
+### ⚠️ AGENTS.md Policy Conflict
+
+**Current Policy** (AGENTS.md:4):
+> "Checkpoints and logs belong in `models/`, `logs/`, `outputs/`"
+
+**Phase 5 Plan**: Move these to `experiments/checkpoints/`, `experiments/runs/`, etc.
+
+**Resolution Needed**: Update AGENTS.md OR revise Phase 5 plan to align with house style.
+
+### V0.5.0 Plan Conflict:
+- **Issue**: V0.5.0_CLEANUP_PLAN.md assumes current paths (configs/, embeddings_cache/, models/)
+- **Impact**: Conflicting instructions if Phase 5 reorganization done first
+- **Recommendation**: Execute V0.5.0 cleanup BEFORE Phase 5 reorganization (as V0.5.0 plan recommends)
+
+**Total Files Requiring Updates**: 40+ (25+ code/test files + 15+ docs)
+
+See `REPOSITORY_REORGANIZATION_PLAN.md` Step 4 for complete update checklist.
 
 ---
 
@@ -138,7 +202,7 @@ antibody_training_pipeline_ESM/
 │   ├── archive/                      # ✅ Historical results (versioned)
 │   │   ├── hyperparameter_sweeps_2025-11-02/
 │   │   └── test_results_pre_migration_2025-11-06/
-│   ├── hyperparameter_sweeps/        # ❌ EMPTY (no .gitkeep)
+│   ├── hyperparameter_sweeps/        # ⚠️ Placeholder only (contains .gitkeep)
 │   ├── novo_parity/                  # ✅ Active experiment (well-organized)
 │   │   ├── ELISA_THRESHOLD_HYPOTHESIS_TEST.md
 │   │   ├── EXACT_MATCH_FOUND.md
@@ -172,7 +236,7 @@ antibody_training_pipeline_ESM/
 │   └── pdf/
 │       ├── [... corresponding PDFs ...]
 │
-├── logs/                             # ⚠️ ROOT-LEVEL LOGS (should be in experiments/)
+├── logs/                             # ⚠️ ROOT-LEVEL LOGS (gitignored per .gitignore:57-58, but NOT tracked in git)
 │   ├── boughter_retrain_20251106_211513.log
 │   ├── boughter_training.log
 │   ├── build.log
@@ -180,6 +244,7 @@ antibody_training_pipeline_ESM/
 │   ├── prod-build.log
 │   ├── test_harvey_20251106_212635.log
 │   └── test_shehata_20251106_212354.log
+│   # Total: 7 log files (all gitignored, none tracked)
 │
 ├── models/                           # ⚠️ ROOT-LEVEL MODELS (should be in experiments/)
 │   ├── esm1v/                       # ✅ Hierarchical organization (good)
@@ -195,12 +260,16 @@ antibody_training_pipeline_ESM/
 │   # Total size: 56KB (versioned in git)
 │
 ├── outputs/                          # ✅ HYDRA SCRATCH (gitignored)
-│   ├── cv_results_test/
-│   │   └── 2025-11-15_20-09-58/
-│   ├── cv_yaml_test/
-│   │   └── 2025-11-15_20-10-53/
 │   └── post_migration_smoke_test/
 │       └── 2025-11-15_15-43-37/
+│           ├── .hydra/              # Hydra config snapshots
+│           │   ├── config.yaml
+│           │   ├── hydra.yaml
+│           │   └── overrides.yaml
+│           ├── trainer.log
+│           └── logs/
+│               └── training.log
+│   # Note: cv_results_test/ and cv_yaml_test/ were temporary, now deleted
 │
 ├── preprocessing/                    # ⚠️ DATASET-CENTRIC (should be task-centric)
 │   ├── README.md
@@ -268,9 +337,6 @@ antibody_training_pipeline_ESM/
 │       ├── evaluation/
 │       └── utils/
 │
-├── test_results/                     # ❌ EMPTY + REDUNDANT
-│   └── .gitkeep                     # Only file (just added in Phase 2)
-│
 ├── tests/                            # ✅ COMPREHENSIVE TEST SUITE
 │   ├── __init__.py
 │   ├── conftest.py
@@ -309,10 +375,10 @@ antibody_training_pipeline_ESM/
 | Directory | Purpose | Git Status | Size | Problem |
 |-----------|---------|------------|------|---------|
 | `outputs/` | Hydra training runs | Gitignored | Varies | ✅ Correct usage |
-| `models/` | Trained model checkpoints | **Versioned** | 56KB | ⚠️ Should be in experiments/ |
+| `models/` | Trained model checkpoints | **Versioned** | 56KB | ⚠️ Should be in experiments/ OR align with AGENTS.md |
 | `embeddings_cache/` | ESM embedding cache | Gitignored | 4.5MB | ⚠️ Should be in experiments/ |
-| `test_results/` | Test evaluation results | Versioned | **Empty** | ❌ Redundant, delete |
-| `logs/` | Training/test logs | Versioned | Varies | ⚠️ Should be in experiments/ |
+| `test_results/` | Test evaluation results | **DOESN'T EXIST** | N/A | ❌ CLI defaults still reference it |
+| `logs/` | Training/test logs | **Versioned** | 192KB | ⚠️ AGENTS.md says logs/ is OK, but .gitignore ignores logs/* |
 
 **Impact**:
 - Unclear where to find artifacts ("Are models in `models/` or `outputs/{run}/`?")
@@ -330,22 +396,30 @@ experiments/
 
 ---
 
-### **Problem 2: test_results/ is Empty and Redundant** ❌
+### **Problem 2: test_results/ Does NOT Exist (But Code Still References It)** ❌
 
 **Evidence**:
 ```bash
 $ ls -la test_results/
-total 0
-drwxr-xr-x@  3 ray  staff    96 Nov 15 17:18 .
--rw-r--r--@  1 ray  staff     0 Nov 15 17:18 .gitkeep
+ls: test_results/: No such file or directory
+
+$ git ls-files | grep test_results
+# NO OUTPUT - directory not tracked in git
 ```
 
 **History**:
 - Phase 2 cleanup **archived** old test results to `experiments/archive/test_results_pre_migration_2025-11-06/`
+- `test_results/` directory was NEVER recreated at root
 - New test results go to `experiments/novo_parity/results/` (86 Jain parity benchmark)
-- Directory now serves **no purpose**
 
-**Recommendation**: **DELETE** `test_results/` entirely. Use `experiments/benchmarks/` for published results.
+**The Problem**:
+- CLI defaults STILL point to `./test_results` (src/antibody_training_esm/cli/test.py:75,686,727)
+- 15+ test assertions expect `test_results` paths
+- **5 files reference nonexistent `test_results/TEST_RESULTS_SUMMARY.md`**
+
+**Impact**: Running `antibody-test` will CREATE a new `test_results/` directory because defaults weren't updated after archival.
+
+**Recommendation**: Update CLI defaults to `experiments/runs/` OR `experiments/benchmarks/` and fix stale doc references.
 
 ---
 
@@ -355,7 +429,9 @@ drwxr-xr-x@  3 ray  staff    96 Nov 15 17:18 .
 ```
 experiments/
 ├── archive/                   # ✅ Historical results (good)
-├── hyperparameter_sweeps/     # ❌ Empty directory (no .gitkeep)
+│   ├── hyperparameter_sweeps_2025-11-02/  # Archived sweeps (20+ CSVs)
+│   └── test_results_pre_migration_2025-11-06/  # Archived test results
+├── hyperparameter_sweeps/     # ⚠️ Placeholder only (contains tracked .gitkeep for future sweeps)
 ├── novo_parity/               # ✅ Active experiment (good)
 │   ├── datasets/              # Alternative Jain variants
 │   ├── results/               # Test results
@@ -365,7 +441,7 @@ experiments/
 
 **Issues**:
 - `strict_qc_2025-11-04/data/` duplicates canonical datasets from `data/train/`
-- `hyperparameter_sweeps/` is empty (no .gitkeep, no README)
+- `hyperparameter_sweeps/` only contains .gitkeep (placeholder for future sweeps, past sweeps archived)
 - No clear distinction between "active experiments" and "published benchmarks"
 
 **Professional Pattern**:
@@ -497,15 +573,15 @@ repo_name/
 
 ### ⚠️ **What Needs Improvement**
 
-1. **Scattered Outputs** (`models/`, `embeddings_cache/`, `logs/`, `test_results/` at root)
-2. **Empty Redundant Directories** (`test_results/`, `experiments/hyperparameter_sweeps/`)
+1. **Scattered Outputs** (`models/`, `embeddings_cache/`, `logs/` at root; `outputs/` from Hydra runs)
+2. **Empty Placeholder Directories** (`experiments/hyperparameter_sweeps/` contains only .gitkeep)
 3. **Mixed Organization Patterns** (dataset-centric preprocessing, incomplete `scripts/`)
-4. **Unclear Output Hierarchy** (`outputs/` vs `experiments/` vs `test_results/`)
+4. **Unclear Output Hierarchy** (`outputs/` vs `experiments/` - no single SSOT for experiment artifacts)
 
 ### ❌ **Immediate Issues**
 
-1. **test_results/** is completely empty (only `.gitkeep`)
-2. **No clear SSOT** for where test results should go
+1. **test_results/** doesn't exist at root (CLI defaults will recreate on first run)
+2. **No clear SSOT** for where test results should go (CLI creates `test_results/`, but experiments use `experiments/*/results/`)
 3. **Training scripts** buried in `preprocessing/{dataset}/`
 
 ---
@@ -514,9 +590,9 @@ repo_name/
 
 | Aspect | Current State | Professional Pattern | Gap |
 |--------|---------------|---------------------|-----|
-| **Output Organization** | 5 root-level dirs (outputs, models, embeddings_cache, logs, test_results) | Single experiments/ dir | ⚠️ Major |
+| **Output Organization** | 4 root-level output dirs (outputs, models, embeddings_cache, logs) | Single experiments/ dir | ⚠️ Major |
 | **Script Organization** | Dataset-centric preprocessing/ | Task-centric scripts/ | ⚠️ Moderate |
-| **Test Results** | Empty test_results/ + experiments/*/results/ | experiments/benchmarks/ only | ⚠️ Moderate |
+| **Test Results** | CLI creates test_results/ + experiments/*/results/ | experiments/benchmarks/ only | ⚠️ Moderate |
 | **Models** | models/ at root (versioned, 56KB) | experiments/checkpoints/ (gitignored or LFS) | ⚠️ Minor |
 | **Embeddings Cache** | embeddings_cache/ at root (4.5MB) | experiments/cache/ | ⚠️ Minor |
 | **Root Clutter** | 16 markdown files, 9 output dirs | 6-8 top-level dirs max | ⚠️ Moderate |
@@ -545,10 +621,13 @@ outputs/*
 models/scratch/
 models/ginkgo_*/
 embeddings_cache/*
+logs/*
 
-# ⚠️ Issue: test_results/ NOT gitignored (but it's empty)
-# ⚠️ Issue: models/ NOT fully gitignored (versioned models at root)
-# ⚠️ Issue: logs/ NOT gitignored (versioned logs at root)
+# ⚠️ Reality Check:
+# - test_results/ references commented out (lines 48-50), directory doesn't exist
+# - models/ PARTIALLY gitignored (scratch/ginkgo_* only), production models VERSIONED
+# - logs/ IS gitignored (logs/*), but logs/ directory IS tracked (contains files)
+#   This is a .gitignore pattern issue - logs/* ignores contents but the directory itself exists
 ```
 
 **Professional Pattern**:

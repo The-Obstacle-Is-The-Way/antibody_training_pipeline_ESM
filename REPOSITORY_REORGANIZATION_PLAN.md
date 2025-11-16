@@ -19,16 +19,33 @@
 
 ---
 
+## ⚠️ **CRITICAL: AGENTS.md Policy Conflict**
+
+**WARNING**: This plan conflicts with repository house style defined in AGENTS.md.
+
+**AGENTS.md:4** states:
+> "Checkpoints and logs belong in `models/`, `logs/`, `outputs/`"
+
+**Phase 5 Plan**: Moves models → experiments/checkpoints/, logs → experiments/runs/logs/ (ephemeral), embeddings_cache → experiments/cache/
+
+**Resolution Required BEFORE Execution**:
+1. **Option A**: Update AGENTS.md to align with Phase 5 (move to experiments/ hierarchy)
+2. **Option B**: Revise Phase 5 to keep models/, logs/, outputs/ at root (align with current house style)
+
+**Recommendation**: Seek senior decision on repository organization philosophy.
+
+---
+
 ## Context & Motivation
 
 ### Current Problems
 
 From `REPOSITORY_STRUCTURE_ANALYSIS.md`:
 
-1. **Scattered Outputs**: 5 root-level directories (`outputs/`, `models/`, `embeddings_cache/`, `logs/`, `test_results/`)
-2. **Empty Redundant Directories**: `test_results/` contains only `.gitkeep`
-3. **Competing Patterns**: `experiments/novo_parity/results/` vs `test_results/` for benchmarks
-4. **Inconsistent Gitignore**: Some outputs versioned, others gitignored
+1. **Scattered Outputs**: 4 root-level directories (`outputs/`, `models/`, `embeddings_cache/`, `logs/`)
+2. **Stale Code References**: CLI defaults still point to nonexistent `test_results/` directory (will recreate on first run)
+3. **AGENTS.md Policy Conflict**: House style says "logs belong in logs/, models in models/" but Phase 5 moves them to experiments/
+4. **Inconsistent Gitignore**: Some outputs versioned (models/), others gitignored (outputs/, embeddings_cache/, logs/)
 
 ### Professional Pattern
 
@@ -61,11 +78,12 @@ antibody_training_pipeline_ESM/
 ├── outputs/                  # Hydra runs (gitignored)
 ├── models/                   # Trained models (versioned, 56KB)
 ├── embeddings_cache/         # ESM embeddings (gitignored, 4.5MB)
-├── logs/                     # Training logs (versioned)
-├── test_results/             # Empty (only .gitkeep)
+├── logs/                     # Build/test logs (gitignored per .gitignore:57, ~180KB ephemeral)
 └── experiments/              # Mixed purposes
     ├── archive/
-    ├── hyperparameter_sweeps/  # Empty
+    │   ├── hyperparameter_sweeps_2025-11-02/  # Archived sweeps
+    │   └── test_results_pre_migration_2025-11-06/  # Archived test results
+    ├── hyperparameter_sweeps/  # Contains .gitkeep only
     ├── novo_parity/
     └── strict_qc_2025-11-04/
 ```
@@ -184,24 +202,31 @@ mv models/* experiments/checkpoints/
 rmdir models  # Should be empty now
 ```
 
-**Affected Files**:
-- `src/antibody_training_esm/core/config.py` - `DEFAULT_MODEL_DIR`
-- `configs/config.yaml` - `training.model_save_dir`
-- Any hardcoded `models/` paths in scripts
+**Affected Files (Config Files Only - No Python Constant Exists)**:
+- `src/antibody_training_esm/conf/config_schema.py:84` - `model_save_dir: str = "./models"`
+- `src/antibody_training_esm/conf/config.yaml:21` - `model_save_dir: ./models`
+- `configs/config.yaml:62` - `model_save_dir: "./models"` (legacy root config, may be deleted by v0.5.0)
 
-**Code Update**:
+**Code Updates**:
 ```python
-# src/antibody_training_esm/core/config.py
-- DEFAULT_MODEL_DIR = "models"
-+ DEFAULT_MODEL_DIR = "experiments/checkpoints"
+# src/antibody_training_esm/conf/config_schema.py
+- model_save_dir: str = "./models"
++ model_save_dir: str = "./experiments/checkpoints"
 ```
 
 ```yaml
-# configs/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 training:
--  model_save_dir: models
-+  model_save_dir: experiments/checkpoints
+-  model_save_dir: ./models
++  model_save_dir: ./experiments/checkpoints
+
+# configs/config.yaml (if still exists after v0.5.0 cleanup)
+training:
+-  model_save_dir: "./models"
++  model_save_dir: "./experiments/checkpoints"
 ```
+
+**NOTE**: There is NO `DEFAULT_MODEL_DIR` constant in `src/antibody_training_esm/core/config.py`. Model paths are configured via config files only.
 
 #### **2.3: Move Embeddings Cache**
 
@@ -211,39 +236,49 @@ mv embeddings_cache/* experiments/cache/
 rmdir embeddings_cache  # Should be empty now
 ```
 
-**Affected Files**:
-- `src/antibody_training_esm/core/embeddings.py` - Cache directory logic
+**Affected Files (Config Files, NOT embeddings.py)**:
+- `src/antibody_training_esm/conf/config_schema.py:53` - `embeddings_cache_dir: str = "./embeddings_cache"`
+- `src/antibody_training_esm/conf/data/boughter_jain.yaml:16` - `embeddings_cache_dir: ./embeddings_cache`
+- `configs/config.yaml:33` - `embeddings_cache_dir: "./embeddings_cache"`
 
-**Code Update**:
+**Code Updates**:
 ```python
-# src/antibody_training_esm/core/embeddings.py (approximate location)
-- cache_dir = Path("embeddings_cache")
-+ cache_dir = Path("experiments/cache")
+# src/antibody_training_esm/conf/config_schema.py
+- embeddings_cache_dir: str = "./embeddings_cache"
++ embeddings_cache_dir: str = "./experiments/cache"
 ```
+
+```yaml
+# src/antibody_training_esm/conf/data/boughter_jain.yaml
+- embeddings_cache_dir: ./embeddings_cache
++ embeddings_cache_dir: ./experiments/cache
+
+# configs/config.yaml
+- embeddings_cache_dir: "./embeddings_cache"
++ embeddings_cache_dir: "./experiments/cache"
+```
+
+**NOTE**: `src/antibody_training_esm/core/embeddings.py` does NOT contain hardcoded cache paths - it reads dynamically from config via trainer.py:797.
 
 #### **2.4: Move Logs**
 
 ```bash
-# Move logs/ to experiments/benchmarks/logs/ (since they're versioned)
-mkdir -p experiments/benchmarks/logs
-mv logs/* experiments/benchmarks/logs/
+# Move logs/ to experiments/runs/logs/ (ephemeral gitignored outputs)
+mkdir -p experiments/runs/logs
+mv logs/* experiments/runs/logs/ 2>/dev/null || true  # May be empty
 rmdir logs  # Should be empty now
 ```
 
-**Affected Files**: None (logs are output-only)
+**Affected Files**: None (logs are gitignored ephemeral outputs, no code references)
 
-#### **2.5: Delete Empty test_results/**
+**NOTE**: logs/* is completely gitignored per `.gitignore:57`. Current contents are build/test logs (~180KB). Moving to experiments/runs/logs/ (ephemeral) NOT experiments/benchmarks/logs/ (versioned).
 
-```bash
-# Delete empty test_results/ directory
-rm -rf test_results/
-```
+**⚠️ DECISION REQUIRED**:
+- **Option A**: Move logs/ to experiments/runs/logs/ (consolidate all ephemeral outputs)
+- **Option B**: Keep logs/ at root per AGENTS.md:4 policy ("logs belong in logs/")
+- Either way, logs remain gitignored scratch space
 
-**Rationale**: Directory is empty (only `.gitkeep` from Phase 2) and serves no purpose. Test results now go to `experiments/benchmarks/{experiment}/`.
-
-**Affected Files**: None (directory was unused)
-
-#### **2.6: Reorganize experiments/**
+#### **2.5: Reorganize experiments/**
 
 ```bash
 # Move existing experiments to benchmarks/
@@ -251,7 +286,8 @@ mv experiments/novo_parity experiments/benchmarks/
 mv experiments/strict_qc_2025-11-04 experiments/benchmarks/strict_qc
 mv experiments/archive experiments/benchmarks/archive
 
-# Delete empty hyperparameter_sweeps/ (already archived)
+# Remove hyperparameter_sweeps/ (contains only .gitkeep, past sweeps archived)
+git rm experiments/hyperparameter_sweeps/.gitkeep
 rmdir experiments/hyperparameter_sweeps
 ```
 
@@ -330,51 +366,95 @@ rm .gitignore.bak
 
 ---
 
-### **Step 4: Update Code References** (High Risk)
+### **Step 4: Update Code References** (High Risk - 34+ Files)
 
-#### **Files to Update**:
+⚠️ **CRITICAL**: This step is NOT optional. Skipping any file will cause breakage.
 
-1. **src/antibody_training_esm/core/config.py**
-   ```python
-   - DEFAULT_MODEL_DIR = "models"
-   + DEFAULT_MODEL_DIR = "experiments/checkpoints"
+#### **4.1: Update test_results/ References (7 code + 12 docs)**
 
-   - DEFAULT_CACHE_DIR = "embeddings_cache"
-   + DEFAULT_CACHE_DIR = "experiments/cache"
-   ```
+**Code Files (MUST UPDATE)**:
+1. `src/antibody_training_esm/cli/test.py:75` - Change `output_dir: str = "./test_results"` → `"./experiments/benchmarks"`
+2. `src/antibody_training_esm/cli/test.py:686` - Update example config
+3. `src/antibody_training_esm/cli/test.py:727` - Change argparse `default="./test_results"` → `"experiments/benchmarks"`
+4. `src/antibody_training_esm/core/directory_utils.py:6` - Update docstring
+5. `src/antibody_training_esm/core/directory_utils.py:111-143` - Update `get_hierarchical_test_results_dir()` function (consider renaming parameter)
+6. `src/antibody_training_esm/core/directory_utils.py:123` - Update param doc
+7. `src/antibody_training_esm/core/directory_utils.py:133-138` - Update example
 
-2. **configs/config.yaml**
-   ```yaml
-   training:
-   -  model_save_dir: models
-   +  model_save_dir: experiments/checkpoints
-   ```
+**Documentation Files (MUST UPDATE)**:
+- README.md
+- AGENTS.md
+- CLAUDE.md
+- ROADMAP.md
+- USAGE.md
+- docs/user-guide/testing.md
+- docs/user-guide/getting-started.md
+- docs/developer-guide/directory-organization.md
+- docs/developer-guide/development-workflow.md
+- experiments/strict_qc_2025-11-04/EXPERIMENT_README.md
+- REPOSITORY_STRUCTURE_ANALYSIS.md
+- PROBLEMS.md
 
-3. **src/antibody_training_esm/core/embeddings.py**
-   - Search for `embeddings_cache` or `cache_dir` references
-   - Update to `experiments/cache`
+**🔴 CRITICAL TEST FILES (MISSING FROM ORIGINAL PLAN)**:
+1. `tests/unit/cli/test_test.py:568` - `assert call_args.output_dir == "./test_results"`
+2. `tests/unit/cli/test_model_tester.py:45` - `output_dir=str(tmp_path / "test_results")` (TestConfig fixture)
+3. `tests/integration/test_model_tester.py:94,563,626,636` - All use `tmp_path / "test_results"`
+4. `tests/unit/core/test_directory_utils.py:164,176,188,200` - 4 assertions expecting `Path("test_results/...")`
 
-4. **src/antibody_training_esm/core/trainer.py**
-   - Check for hardcoded `models/` paths (should use config)
+**Impact if Missed**: ALL CLI and directory utils tests will FAIL when test_results defaults change.
 
-5. **CLAUDE.md**
-   - Update directory structure documentation
-   - Update example commands
+#### **4.2: Update outputs/ References (5 code + 3 tests + 1 script)**
 
-6. **docs/developer-guide/directory-organization.md**
-   - Rewrite with new structure
+**Code Files (MUST UPDATE)**:
+1. `src/antibody_training_esm/datasets/base.py:80` - Change `Path(f"outputs/{dataset_name}")` → `Path(f"experiments/runs/{dataset_name}")`
+2. `src/antibody_training_esm/conf/hydra/default.yaml:3` - Change `dir: outputs/${experiment.name}` → `experiments/runs/${experiment.name}`
+3. `src/antibody_training_esm/conf/hydra/default.yaml:6` - Change `dir: outputs/sweeps/` → `experiments/runs/sweeps/`
 
-#### **Search for Hardcoded Paths**:
+**Test Files (MUST UPDATE)**:
+4. `tests/unit/datasets/test_base.py:84-87` - Update assertion OR verify autouse fixture handles it
+5. `tests/unit/datasets/conftest.py:24` - Update comment
+6. `tests/unit/core/test_trainer_hydra.py:117` - Change `tmp_path / "outputs"` → `tmp_path / "experiments/runs"`
+7. `tests/unit/core/test_trainer.py:66,888-890,1309` - Embeddings cache and model hierarchical path tests (may need updates if cache/model paths change)
 
+**Script Files (MUST UPDATE)**:
+7. `scripts/migrate_train_datasets_to_data_train.sh:68,96` - Update filter pattern
+
+#### **4.3: Update embeddings_cache/ References (3 configs)**
+
+**Config Files (MUST UPDATE)**:
+1. `configs/config.yaml:33` - Change `embeddings_cache_dir: "./embeddings_cache"` → `"experiments/cache"`
+2. `src/antibody_training_esm/conf/data/boughter_jain.yaml:16` - Change `embeddings_cache_dir: ./embeddings_cache` → `experiments/cache`
+3. `src/antibody_training_esm/conf/config_schema.py:53` - Change `embeddings_cache_dir: str = "./embeddings_cache"` → `"experiments/cache"`
+
+#### **4.4: Update models/ References (7 docstrings)**
+
+**Docstring Files (SHOULD UPDATE for consistency)**:
+1. `src/antibody_training_esm/core/trainer.py:594` - Update example path
+2. `src/antibody_training_esm/core/trainer.py:604-606` - Update comment examples
+3. `src/antibody_training_esm/cli/test.py:11` - Update usage docstring
+4. `src/antibody_training_esm/cli/test.py:682` - Update example config
+5. `src/antibody_training_esm/cli/test.py:705,708` - Update usage examples
+6. `src/antibody_training_esm/core/directory_utils.py:5` - Update docstring
+7. `src/antibody_training_esm/core/directory_utils.py:103` - Update example
+
+#### **4.5: Update .gitignore and Helper Scripts**
+
+**Files (MUST UPDATE)**:
+1. `.gitignore` - Already updated in Step 3
+2. Documentation referencing old cleanup commands (e.g., "rm -rf embeddings_cache/")
+
+#### **Verification Commands**:
+
+After updates, run these to confirm NO remaining references:
 ```bash
-# Find all hardcoded references to old directories
-grep -r "models/" src/ --include="*.py" | grep -v "__pycache__"
-grep -r "embeddings_cache" src/ --include="*.py" | grep -v "__pycache__"
-grep -r "outputs/" src/ --include="*.py" | grep -v "__pycache__"
-grep -r "test_results" src/ --include="*.py" | grep -v "__pycache__"
-```
+# Should return ZERO results (except comments/docs):
+rg "test_results" src/ --type py | grep -v "#"
+rg 'Path.*"outputs/' src/ --type py | grep -v "#"
+rg "embeddings_cache" src/antibody_training_esm/conf/ --type yaml
 
-**Action**: Review each result and update to use `experiments/{subdir}/` or config variables.
+# These are OK to have (docstrings):
+rg "models/" src/ --type py | grep ">>>"  # Example outputs
+```
 
 ---
 
@@ -484,23 +564,24 @@ git checkout .gitignore
 
 ```
 antibody_training_pipeline_ESM/
-├── outputs/                     # Hydra runs
+├── outputs/                     # Hydra runs (gitignored)
 ├── models/                      # Trained models (56KB, versioned)
 ├── embeddings_cache/            # ESM cache (4.5MB, gitignored)
-├── logs/                        # Training logs (versioned)
-├── test_results/                # Empty (.gitkeep only)
+├── logs/                        # Build/test logs (7 .log files, ~180KB, all gitignored, none tracked)
 └── experiments/
-    ├── archive/                 # Old benchmarks
-    ├── hyperparameter_sweeps/   # Empty
+    ├── archive/                 # Archived benchmarks
+    ├── hyperparameter_sweeps/   # Placeholder (.gitkeep only)
     ├── novo_parity/             # Active experiment
     └── strict_qc_2025-11-04/    # Alternative dataset
 ```
 
+**Note**: test_results/ doesn't exist at root (archived to experiments/archive/test_results_pre_migration_2025-11-06/)
+
 **Issues**:
-- 5 root-level output directories
-- Inconsistent gitignore (models/ versioned, outputs/ not)
-- Empty redundant directories
-- Unclear where test results go
+- 4 root-level output directories (models/, outputs/, embeddings_cache/, logs/)
+- Inconsistent gitignore (models/ versioned, others gitignored)
+- CLI defaults point to non-existent test_results/ (will recreate on first run)
+- Placeholder directory (hyperparameter_sweeps/ with only .gitkeep)
 
 ### **After (Professional State)**
 
@@ -587,9 +668,10 @@ antibody_training_pipeline_ESM/
    - Current: 56KB models versioned in git
    - Professional: Usually gitignored or LFS (>10MB threshold)
 
-2. **Logs Placement**: Should historical logs go in `experiments/benchmarks/logs/` or be deleted?
-   - Current plan: Move to benchmarks (they're versioned)
-   - Alternative: Delete if not needed for reproducibility
+2. **Logs Placement**: Should current logs/ be moved or kept at root?
+   - **Option A**: Move to `experiments/runs/logs/` (consolidate all ephemeral outputs)
+   - **Option B**: Keep at root per AGENTS.md:4 policy ("logs belong in logs/")
+   - **NOTE**: logs/* is completely gitignored (.gitignore:57) - these are build/test logs, NOT versioned artifacts
 
 3. **strict_qc Experiment**: Rename to `strict_qc` or keep `strict_qc_2025-11-04`?
    - Current plan: Rename to `strict_qc` for cleaner naming

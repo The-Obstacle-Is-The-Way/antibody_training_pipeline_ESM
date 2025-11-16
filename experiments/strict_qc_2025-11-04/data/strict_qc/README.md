@@ -13,7 +13,7 @@ This directory contains experimental fragment files with additional strict quali
 **Production Model:** Uses `canonical/VH_only_boughter_training.csv` (914 sequences)
 - ✅ Validated on Jain: 66.28% accuracy
 - ✅ Validated on Shehata: 52.26% accuracy (expected poor separation)
-- See: `test_results/TEST_RESULTS_SUMMARY.md`
+- See: `../../archive/test_results_pre_migration_2025-11-06/README.md`
 
 **This Directory:** Model trained on strict_qc (852 sequences) has NEVER been tested.
 

@@ -4,7 +4,7 @@
 # ✅ PRODUCTION CONFIG - VALIDATED MODEL
 # This config produces the validated model: models/boughter_vh_esm1v_logreg.pkl
 # Validated on: Jain (66.28% acc), Shehata (52.26% acc)
-# See: test_results/TEST_RESULTS_SUMMARY.md
+# See: experiments/archive/test_results_pre_migration_2025-11-06/README.md
 
 # Model configuration
 model:
