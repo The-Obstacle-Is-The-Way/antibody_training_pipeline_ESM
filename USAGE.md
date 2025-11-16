@@ -165,7 +165,7 @@ Create or edit `test_config.yaml` to specify testing parameters:
 
 # Model configuration
 model_paths:
-  - ./models/antibody_classifier.pkl  # Path(s) to trained model checkpoint(s)
+  - ./experiments/checkpoints/esm1v/logreg/antibody_classifier.pkl  # Path(s) to trained model checkpoint(s)
 
 # Data configuration
 data_paths:
@@ -303,7 +303,7 @@ Cross-validation Results:
   cv_f1: 0.8398 (+/- 0.0267)
   cv_roc_auc: 0.9087 (+/- 0.0156)
 
-Saving model to ./models/antibody_classifier.pkl
+Saving model to ./experiments/checkpoints/esm1v/logreg/antibody_classifier.pkl
 Model saved successfully
 ```
 
@@ -337,4 +337,3 @@ Set `log_level` to `"DEBUG"` for detailed information:
 training:
   log_level: "DEBUG"
 ```
-

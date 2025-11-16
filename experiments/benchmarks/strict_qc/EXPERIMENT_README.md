@@ -253,7 +253,7 @@ If you're curious whether 852-sequence QC actually helps:
 
 ## References
 
-- **Production Model:** `../../models/boughter_vh_esm1v_logreg.pkl`
+- **Production Model:** `../checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 - **Test Results:** `../archive/experiments/benchmarks_pre_migration_2025-11-06/README.md`
 - **Novo Methodology:** `../../docs/NOVO_TRAINING_METHODOLOGY.md`
 - **Codebase Audit:** `../../docs/CODEBASE_AUDIT_VS_NOVO.md`

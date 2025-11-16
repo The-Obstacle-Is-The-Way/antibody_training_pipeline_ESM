@@ -1,8 +1,10 @@
 # Output Pipeline Architecture: Implementation Complete
 
 **Date:** 2025-11-11 (Updated 22:00 UTC)
-**Status:** ✅ IMPLEMENTED - Hierarchical output system complete
+**Status:** ✅ IMPLEMENTED - Hierarchical output system complete  
 **Author:** System trace + first principles analysis
+
+> **Phase 5 Note (2025-11-15):** The canonical locations have moved under `experiments/` (runs, checkpoints, cache, benchmarks). This document captures the historical design analysis; whenever you see `models/` or `test_results/`, mentally substitute `experiments/checkpoints/…` and `experiments/benchmarks/…`. All pipeline code already writes to the new hierarchy.
 
 ---
 
@@ -22,27 +24,22 @@
 
 ## Current State: What We Have
 
-### 1. Model Weights Output (`models/`)
+### 1. Model Weights Output (`experiments/checkpoints/`)
 
-**Location:** `./models/`
+**Current Location:** `./experiments/checkpoints/{model_shortname}/{classifier_type}/`
 
-**Current Files:**
+Historical snapshot (pre-Phase 5) showed a flat `models/` directory. After the reorg, those files now live at:
 ```
-models/
-├── .gitkeep
-├── boughter_vh_esm1v_logreg.pkl          # ESM-1v weights (11KB)
-├── boughter_vh_esm1v_logreg.npz          # ESM-1v NPZ format
-├── boughter_vh_esm1v_logreg_config.json  # ESM-1v config
-├── boughter_vh_esm2_650m_logreg.pkl      # ESM2-650M weights (11KB)
-├── boughter_vh_esm2_650m_logreg.npz      # ESM2-650M NPZ format
-└── boughter_vh_esm2_650m_logreg_config.json  # ESM2-650M config
+experiments/checkpoints/
+├── esm1v/logreg/boughter_vh_esm1v_logreg.{pkl,npz,json}
+└── esm2_650m/logreg/boughter_vh_esm2_650m_logreg.{pkl,npz,json}
 ```
 
 **Naming Pattern (Code):**
 ```python
 # From src/antibody_training_esm/core/trainer.py
 model_name = config["training"]["model_name"]  # e.g., "boughter_vh_esm1v_logreg"
-model_save_dir = config["training"]["model_save_dir"]  # "./models"
+model_save_dir = config["training"]["model_save_dir"]  # "./experiments/checkpoints"
 
 # Files saved:
 f"{model_save_dir}/{model_name}.pkl"
@@ -59,24 +56,23 @@ antibody-train training.model_name=boughter_vh_esm2_650m_logreg
 
 ---
 
-### 2. Test Results Output (`test_results/`)
+### 2. Test Results Output (`experiments/benchmarks/`)
 
-**Location:** `./test_results/{dataset_name}/` (MANUAL STRATIFICATION)
+**Location:** `./experiments/benchmarks/{benchmark_name}/`
 
-**IMPORTANT:** The test CLI (test.py:63) writes all artifacts to a single `output_dir` (default: `./test_results`). The existing subdirectory structure below was created by manually running the CLI with `--output-dir test_results/jain`, `--output-dir test_results/harvey`, etc. The tool does NOT automatically stratify by dataset—it writes everything to whatever `output_dir` you pass.
+**IMPORTANT:** As of Phase 5, the CLI defaults to `./experiments/benchmarks` and stratifies outputs by benchmark (e.g., `novo_parity`, `strict_qc`). The historical `test_results/…` tree shown below is preserved for context, but those files now reside under `experiments/benchmarks/…`.
 
-**Current Files (ESM-1v baseline):**
 ```
-test_results/
-├── jain/  # Created via: antibody-test --output-dir test_results/jain
+experiments/benchmarks/novo_parity/
+├── jain/
 │   ├── confusion_matrix_VH_only_jain_test_PARITY_86.png
 │   ├── detailed_results_VH_only_jain_test_PARITY_86_20251106_211815.yaml
 │   └── predictions_boughter_vh_esm1v_logreg_VH_only_jain_test_PARITY_86_20251106_211815.csv
-├── harvey/  # Created via: antibody-test --output-dir test_results/harvey
+├── harvey/
 │   ├── confusion_matrix_VHH_only_harvey.png
 │   ├── detailed_results_VHH_only_harvey_20251106_223905.yaml
 │   └── predictions_boughter_vh_esm1v_logreg_VHH_only_harvey_20251106_223905.csv
-└── shehata/  # Created via: antibody-test --output-dir test_results/shehata
+└── shehata/
     ├── confusion_matrix_VH_only_shehata.png
     ├── detailed_results_VH_only_shehata_20251106_212500.yaml
     └── predictions_boughter_vh_esm1v_logreg_VH_only_shehata_20251106_212500.csv

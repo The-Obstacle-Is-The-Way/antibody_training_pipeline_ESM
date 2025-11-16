@@ -76,7 +76,6 @@ antibody_training_pipeline_ESM/
 ├── KNOWN_ISSUES.md
 ├── LICENSE
 ├── Makefile
-├── PROBLEMS.md                        # 🆕 Structural issues identified
 ├── README.md
 ├── ROADMAP.md
 ├── USAGE.md
