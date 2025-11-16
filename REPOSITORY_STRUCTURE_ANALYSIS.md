@@ -66,16 +66,7 @@ The repository **works correctly** and Phase 1-4 cleanup (test artifacts, histor
 
 **NOTE**: `src/antibody_training_esm/core/embeddings.py` does NOT contain any hardcoded cache paths (dynamically reads from config).
 
-### ⚠️ AGENTS.md Policy Conflict
-
-**Current Policy** (AGENTS.md:4):
-> "Checkpoints and logs belong in `models/`, `logs/`, `outputs/`"
-
-**Phase 5 Plan**: Move these to `experiments/checkpoints/`, `experiments/runs/`, etc.
-
-**Resolution Needed**: Update AGENTS.md OR revise Phase 5 plan to align with house style.
-
-### V0.5.0 Plan Conflict:
+### V0.5.0 Plan Sequencing:
 - **Issue**: V0.5.0_CLEANUP_PLAN.md assumes current paths (configs/, embeddings_cache/, models/)
 - **Impact**: Conflicting instructions if Phase 5 reorganization done first
 - **Recommendation**: Execute V0.5.0 cleanup BEFORE Phase 5 reorganization (as V0.5.0 plan recommends)
@@ -375,10 +366,10 @@ antibody_training_pipeline_ESM/
 | Directory | Purpose | Git Status | Size | Problem |
 |-----------|---------|------------|------|---------|
 | `outputs/` | Hydra training runs | Gitignored | Varies | ✅ Correct usage |
-| `models/` | Trained model checkpoints | **Versioned** | 56KB | ⚠️ Should be in experiments/ OR align with AGENTS.md |
-| `embeddings_cache/` | ESM embedding cache | Gitignored | 4.5MB | ⚠️ Should be in experiments/ |
+| `models/` | Trained model checkpoints | **Versioned** | 56KB | ⚠️ Should be in experiments/checkpoints/ |
+| `embeddings_cache/` | ESM embedding cache | Gitignored | 4.5MB | ⚠️ Should be in experiments/cache/ |
 | `test_results/` | Test evaluation results | **DOESN'T EXIST** | N/A | ❌ CLI defaults still reference it |
-| `logs/` | Training/test logs | **Versioned** | 192KB | ⚠️ AGENTS.md says logs/ is OK, but .gitignore ignores logs/* |
+| `logs/` | Training/test logs | Gitignored | 192KB | ⚠️ Should be in experiments/runs/logs/ |
 
 **Impact**:
 - Unclear where to find artifacts ("Are models in `models/` or `outputs/{run}/`?")

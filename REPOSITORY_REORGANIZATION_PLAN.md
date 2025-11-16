@@ -19,23 +19,6 @@
 
 ---
 
-## ⚠️ **CRITICAL: AGENTS.md Policy Conflict**
-
-**WARNING**: This plan conflicts with repository house style defined in AGENTS.md.
-
-**AGENTS.md:4** states:
-> "Checkpoints and logs belong in `models/`, `logs/`, `outputs/`"
-
-**Phase 5 Plan**: Moves models → experiments/checkpoints/, logs → experiments/runs/logs/ (ephemeral), embeddings_cache → experiments/cache/
-
-**Resolution Required BEFORE Execution**:
-1. **Option A**: Update AGENTS.md to align with Phase 5 (move to experiments/ hierarchy)
-2. **Option B**: Revise Phase 5 to keep models/, logs/, outputs/ at root (align with current house style)
-
-**Recommendation**: Seek senior decision on repository organization philosophy.
-
----
-
 ## Context & Motivation
 
 ### Current Problems
@@ -44,8 +27,7 @@ From `REPOSITORY_STRUCTURE_ANALYSIS.md`:
 
 1. **Scattered Outputs**: 4 root-level directories (`outputs/`, `models/`, `embeddings_cache/`, `logs/`)
 2. **Stale Code References**: CLI defaults still point to nonexistent `test_results/` directory (will recreate on first run)
-3. **AGENTS.md Policy Conflict**: House style says "logs belong in logs/, models in models/" but Phase 5 moves them to experiments/
-4. **Inconsistent Gitignore**: Some outputs versioned (models/), others gitignored (outputs/, embeddings_cache/, logs/)
+3. **Inconsistent Gitignore**: Some outputs versioned (models/), others gitignored (outputs/, embeddings_cache/, logs/)
 
 ### Professional Pattern
 
@@ -260,89 +242,50 @@ rmdir embeddings_cache  # Should be empty now
 
 **NOTE**: `src/antibody_training_esm/core/embeddings.py` does NOT contain hardcoded cache paths - it reads dynamically from config via trainer.py:797.
 
-#### **2.4: Move Logs** ⚠️ **BLOCKED - REQUIRES DECISION**
+#### **2.4: Move Logs**
 
-**⚠️ CRITICAL DISCOVERY**: logs/ is **NOT** "no code references" - it's hardcoded in 3 active configs + trainer.py!
+**Action**: Consolidate logs/ under experiments/ hierarchy + update all config references.
 
-**Active References**:
-1. `src/antibody_training_esm/conf/config_schema.py:88` - `log_file: str = "logs/training.log"`
-2. `src/antibody_training_esm/conf/config.yaml:25` - `log_file: logs/training.log`
-3. `configs/config.yaml:66` - `log_file: "./logs/boughter_training.log"`
-4. `src/antibody_training_esm/core/trainer.py:183` - `log_file = Path.cwd() / "logs" / log_file_str` (legacy mode)
+**Rationale**: Professional ML repositories (DeepMind, Meta AI, OpenAI) maintain **single experiments/ hierarchy** for ALL outputs. Scattered root-level directories defeat organization goals.
 
 **Current Behavior**:
 - **Hydra mode** (antibody-train CLI): Logs go to `outputs/{experiment}/{timestamp}/` (Hydra's output dir, ignores logs/)
-- **Legacy mode** (train_model() function): Logs go to `logs/` at root (will be auto-created if missing via trainer.py:185)
+- **Legacy mode** (train_model() function): Logs go to `logs/` at root (hardcoded in trainer.py:183, auto-created via trainer.py:185)
 
-**Problem**: If we delete logs/ without updating configs:
-- Legacy mode will recreate `logs/` at root (defeats reorganization)
-- Or training will fail if mkdir fails
+**Implementation**:
 
-**⚠️ DECISION REQUIRED - Three Options**:
-
-**Option A: Keep logs/ at root (RECOMMENDED)**
-- ✅ Aligns with AGENTS.md:4 policy ("logs belong in logs/")
-- ✅ No config changes needed
-- ✅ Works for both Hydra and legacy mode
-- ✅ Simple, no migration needed
-- ⚠️ Doesn't consolidate outputs (but logs are ephemeral scratch space anyway)
-
-**Action**:
 ```bash
-# No action - keep logs/ at root
-# Only clean out stale logs if desired:
-# find logs/ -type f -mtime +30 -delete
-```
-
-**Affected Files**: None
-
----
-
-**Option B: Move logs/ + Update all configs**
-- ✅ Consolidates all ephemeral outputs under experiments/
-- ❌ Requires updating 3 config files
-- ❌ Breaks any external scripts using `logs/` path
-- ⚠️ Complex migration
-
-**Action**:
-```bash
-# 1. Update configs first
+# 1. Update all config files to point to experiments/runs/logs/
 sed -i '' 's|logs/training.log|experiments/runs/logs/training.log|g' \
   src/antibody_training_esm/conf/config_schema.py \
   src/antibody_training_esm/conf/config.yaml \
   configs/config.yaml
 
-# 2. Move logs
+# 2. Move existing logs
 mkdir -p experiments/runs/logs
 mv logs/* experiments/runs/logs/ 2>/dev/null || true
 rmdir logs
 ```
 
 **Affected Files**:
-- `src/antibody_training_esm/conf/config_schema.py:88`
-- `src/antibody_training_esm/conf/config.yaml:25`
-- `configs/config.yaml:66`
+1. `src/antibody_training_esm/conf/config_schema.py:88` - `log_file: str = "logs/training.log"` → `"experiments/runs/logs/training.log"`
+2. `src/antibody_training_esm/conf/config.yaml:25` - `log_file: logs/training.log` → `experiments/runs/logs/training.log`
+3. `configs/config.yaml:66` - `log_file: "./logs/boughter_training.log"` → `"./experiments/runs/logs/boughter_training.log"`
 
----
-
-**Option C: Defer until v0.5.0 removes legacy mode**
-- ✅ Cleaner after legacy train_model() removed
-- ✅ Hydra mode doesn't use logs/ anyway
-- ⚠️ Delays consolidation
-
-**Action**:
+**Validation**:
 ```bash
-# No action - revisit after V0.5.0_CLEANUP_PLAN.md execution
+# No more logs/ at root
+ls logs/
+# Expected: Error (directory should not exist)
+
+# Logs now in experiments/
+ls experiments/runs/logs/
+# Expected: All .log files present
+
+# Configs updated
+grep -n "logs/" src/antibody_training_esm/conf/config_schema.py src/antibody_training_esm/conf/config.yaml configs/config.yaml
+# Expected: All show "experiments/runs/logs/"
 ```
-
----
-
-**RECOMMENDATION**: **Option A** - Keep logs/ at root per AGENTS.md policy. Rationale:
-1. logs/ is ephemeral scratch space (all files gitignored)
-2. Legacy mode will recreate it anyway if deleted
-3. Hydra mode ignores it (uses outputs/ instead)
-4. AGENTS.md:4 explicitly says "logs belong in logs/"
-5. No breaking changes, no config migrations needed
 
 **NOTE**: logs/* is completely gitignored per `.gitignore:57`. Current contents are build/test logs (~180KB, ephemeral).
 
@@ -451,7 +394,6 @@ rm .gitignore.bak
 
 **Documentation Files (MUST UPDATE)**:
 - README.md
-- AGENTS.md
 - CLAUDE.md
 - ROADMAP.md
 - USAGE.md
@@ -735,15 +677,12 @@ antibody_training_pipeline_ESM/
 1. **Model Versioning**: Should models be Git LFS or fully gitignored?
    - Current: 56KB models versioned in git
    - Professional: Usually gitignored or LFS (>10MB threshold)
+   - **Recommendation**: Keep versioned for now (small size), migrate to LFS if models grow >10MB
 
-2. **Logs Placement**: Should current logs/ be moved or kept at root?
-   - **Option A**: Move to `experiments/runs/logs/` (consolidate all ephemeral outputs)
-   - **Option B**: Keep at root per AGENTS.md:4 policy ("logs belong in logs/")
-   - **NOTE**: logs/* is completely gitignored (.gitignore:57) - these are build/test logs, NOT versioned artifacts
-
-3. **strict_qc Experiment**: Rename to `strict_qc` or keep `strict_qc_2025-11-04`?
+2. **strict_qc Experiment**: Rename to `strict_qc` or keep `strict_qc_2025-11-04`?
    - Current plan: Rename to `strict_qc` for cleaner naming
    - Alternative: Keep timestamp for historical context
+   - **Recommendation**: Rename to `strict_qc` for consistency with `novo_parity` naming
 
 ---
 
