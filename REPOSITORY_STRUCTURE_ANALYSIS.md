@@ -1,7 +1,7 @@
 # Repository Structure Analysis - Current State & Professional Comparison
 
-**Date**: 2025-11-15
-**Status**: Post-Phase 1-4 Cleanup, Pre-Phase 5 Reorganization
+**Date**: 2025-11-16 (Updated post-Phase 5)
+**Status**: Phase 5 Reorganization COMPLETE - Professional ML Repository Structure Achieved
 **Purpose**: Comprehensive diagnosis of repository organization vs professional ML research standards
 
 ---
@@ -357,15 +357,15 @@ antibody_training_pipeline_ESM/
 
 ### **Problem 1: Scattered Output Artifacts** ⚠️
 
-**Issue**: Output artifacts are scattered across **5 different root-level locations**:
+**Issue**: Output artifacts are consolidated under experiments/ hierarchy (Phase 5 complete):
 
 | Directory | Purpose | Git Status | Size | Problem |
 |-----------|---------|------------|------|---------|
-| `outputs/` | Hydra training runs | Gitignored | Varies | ✅ Correct usage |
-| `models/` | Trained model checkpoints | **Versioned** | 56KB | ⚠️ Should be in experiments/checkpoints/ |
-| `embeddings_cache/` | ESM embedding cache | Gitignored | 4.5MB | ⚠️ Should be in experiments/cache/ |
-| `experiments/benchmarks/` | Test evaluation results | **DOESN'T EXIST** | N/A | ❌ CLI defaults still reference it |
-| `logs/` | Training/test logs | Gitignored | 192KB | ⚠️ Should be in experiments/runs/logs/ |
+| `experiments/runs/` | Hydra training runs | Gitignored | Varies | ✅ Moved from outputs/ |
+| `experiments/checkpoints/` | Trained model checkpoints | Gitignored | 56KB | ✅ Moved from models/ |
+| `experiments/cache/` | ESM embedding cache | Gitignored | 4.5MB | ✅ Moved from embeddings_cache/ |
+| `experiments/benchmarks/` | Published benchmark results | Versioned | Varies | ✅ Created in Phase 5 |
+| `experiments/runs/logs/` | Training/test logs | Gitignored | 192KB | ✅ Moved from logs/ |
 
 **Impact**:
 - Unclear where to find artifacts ("Are models in `models/` or `outputs/{run}/`?")
@@ -383,30 +383,41 @@ experiments/
 
 ---
 
-### **Problem 2: experiments/benchmarks/ Does NOT Exist (But Code Still References It)** ❌
+### **Problem 2: Phase 5 Reorganization Complete** ✅
 
-**Evidence**:
+**Status**: **RESOLVED** - All output directories consolidated under `experiments/` hierarchy.
+
+**Phase 5 Changes**:
+- ✅ Created `experiments/runs/`, `experiments/checkpoints/`, `experiments/cache/`, `experiments/benchmarks/`
+- ✅ Moved `outputs/*` → `experiments/runs/`
+- ✅ Moved `models/*` → `experiments/checkpoints/`
+- ✅ Moved `embeddings_cache/*` → `experiments/cache/`
+- ✅ Moved `logs/*` → `experiments/runs/logs/`
+- ✅ Reorganized `experiments/novo_parity` → `experiments/benchmarks/novo_parity`
+- ✅ Reorganized `experiments/strict_qc_2025-11-04` → `experiments/benchmarks/strict_qc`
+- ✅ Updated all code references, configs, tests, and documentation
+
+**Current State**:
 ```bash
-$ ls -la experiments/benchmarks/
-ls: experiments/benchmarks/: No such file or directory
-
-$ git ls-files | grep experiments/benchmarks
-# NO OUTPUT - directory not tracked in git
+$ ls -la experiments/
+experiments/
+├── benchmarks/        # Published results (versioned)
+├── cache/             # Embeddings cache (gitignored)
+├── checkpoints/       # Trained models (gitignored)
+└── runs/              # Hydra outputs (gitignored)
 ```
 
-**History**:
-- Phase 2 cleanup **archived** old test results to `experiments/archive/experiments/benchmarks_pre_migration_2025-11-06/`
-- `experiments/benchmarks/` directory was NEVER recreated at root
-- New test results go to `experiments/novo_parity/results/` (86 Jain parity benchmark)
+**Validation**:
+- ✅ 374/374 tests passing
+- ✅ Training smoke test completed
+- ✅ Model loading verified from new paths
+- ✅ All documentation updated
 
-**The Problem**:
-- CLI defaults STILL point to `./experiments/benchmarks` (src/antibody_training_esm/cli/test.py:75,686,727)
-- 15+ test assertions expect `experiments/benchmarks` paths
-- 6 Python files still reference `experiments/benchmarks/` directory path (cli/test.py, tests files)
-
-**Impact**: Running `antibody-test` will CREATE a new `experiments/benchmarks/` directory because defaults weren't updated after archival.
-
-**Recommendation**: Update CLI defaults to `experiments/runs/` OR `experiments/benchmarks/` and fix stale doc references.
+**Benefits Achieved**:
+- Single source of truth for all outputs (`experiments/`)
+- Clear ephemeral vs published separation
+- Consistent gitignore patterns
+- Professional ML repository structure
 
 ---
 

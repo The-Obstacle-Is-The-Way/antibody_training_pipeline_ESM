@@ -3,8 +3,8 @@
 Migration script to reorganize existing models into hierarchical structure
 
 Moves models from flat structure to hierarchical:
-    OLD: models/boughter_vh_esm1v_logreg.pkl
-    NEW: models/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+    OLD: experiments/checkpoints/boughter_vh_esm1v_logreg.pkl
+    NEW: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 
 Usage:
     python scripts/migrate_model_directories.py --dry-run  # Preview changes
@@ -161,8 +161,8 @@ def main() -> None:
     parser.add_argument(
         "--models-dir",
         type=Path,
-        default=Path("models"),
-        help="Path to models directory (default: models)",
+        default=Path("experiments/checkpoints"),
+        help="Path to models directory (default: experiments/checkpoints)",
     )
     parser.add_argument(
         "--dry-run",

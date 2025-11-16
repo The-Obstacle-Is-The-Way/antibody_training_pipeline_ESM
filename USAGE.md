@@ -71,7 +71,7 @@ data:
   label_column: "label"                  # Column name for labels
   validation_split: 0.2                  # Train/val split if no val_file
   save_embeddings: true                  # Cache embeddings
-  embeddings_cache_dir: "./embeddings_cache"
+  embeddings_cache_dir: "./experiments/cache"
 ```
 
 ### Classifier Configuration
@@ -88,9 +88,9 @@ training:
   metrics: ["accuracy", "precision", "recall", "f1", "roc_auc"]
   save_model: true
   model_name: "antibody_classifier"  # Name for the saved model (without extension)
-  model_save_dir: "./models"          # Directory to save models
+  model_save_dir: "./experiments/checkpoints"          # Directory to save models
   log_level: "INFO"
-  log_file: "./logs/training.log"
+  log_file: "training.log"
 ```
 
 **Note**: The trained model will be saved as `{model_save_dir}/{model_name}.pkl`. Change `model_name` to give your model a custom name.
@@ -143,14 +143,14 @@ EVQLLESGGGLVQPGGSLRLSCAASGFTFS...,0,non-developable
 After training, the pipeline creates several output files:
 
 ### Model Files
-- `models/antibody_classifier.pkl`: Trained classifier (includes scaler and model)
+- `experiments/checkpoints/antibody_classifier.pkl`: Trained classifier (includes scaler and model)
 
 ### Cache Files
-- `embeddings_cache/train_embeddings.pkl`: Cached training embeddings
-- `embeddings_cache/val_embeddings.pkl`: Cached validation embeddings
+- `experiments/cache/train_embeddings.pkl`: Cached training embeddings
+- `experiments/cache/val_embeddings.pkl`: Cached validation embeddings
 
 ### Log Files
-- `logs/training.log`: Detailed training logs
+- `experiments/runs/logs/training.log`: Detailed training logs
 
 ## Testing the Trained Model
 

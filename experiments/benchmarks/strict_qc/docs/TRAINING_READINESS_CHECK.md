@@ -64,9 +64,9 @@ All systems are **GO** for training on the Boughter strict QC dataset!
 ```python
 # From train.py line 207-232
 model_name = config["training"]["model_name"]  # "boughter_vh_strict_qc_esm1v_logreg"
-model_save_dir = config["training"]["model_save_dir"]  # "./models"
+model_save_dir = config["training"]["model_save_dir"]  # "./experiments/checkpoints"
 model_path = os.path.join(model_save_dir, f"{model_name}.pkl")
-# Result: ./models/boughter_vh_strict_qc_esm1v_logreg.pkl
+# Result: ./experiments/checkpoints/boughter_vh_strict_qc_esm1v_logreg.pkl
 ```
 
 **Saved Model Will Include:**
@@ -92,15 +92,15 @@ model_path = os.path.join(model_save_dir, f"{model_name}.pkl")
    ↓
 3. Initialize ESM-1V model: facebook/esm1v_t33_650M_UR90S_1
    ↓
-4. Extract embeddings (cached to ./embeddings_cache)
+4. Extract embeddings (cached to ./experiments/cache)
    ↓
 5. 10-fold cross-validation (stratified)
    ↓
 6. Train final model on full training set
    ↓
-7. Save model: ./models/boughter_vh_strict_qc_esm1v_logreg.pkl
+7. Save model: ./experiments/checkpoints/boughter_vh_strict_qc_esm1v_logreg.pkl
    ↓
-8. Log results: ./logs/boughter_strict_qc_training.log
+8. Log results: ./experiments/runs/logs/boughter_strict_qc_training.log
 ```
 
 **Validation Status:**
@@ -125,8 +125,8 @@ python3 main.py configs/config_strict_qc.yaml
 
 # Expected output:
 # - Cross-validation accuracy: ~71% (hypothesis)
-# - Model saved to: ./models/boughter_vh_strict_qc_esm1v_logreg.pkl
-# - Log file: ./logs/boughter_strict_qc_training.log
+# - Model saved to: ./experiments/checkpoints/boughter_vh_strict_qc_esm1v_logreg.pkl
+# - Log file: ./experiments/runs/logs/boughter_strict_qc_training.log
 ```
 
 ### Option 2: Original Boughter QC (For Comparison)
@@ -137,7 +137,7 @@ python3 main.py configs/config.yaml
 
 # Previous result:
 # - Cross-validation accuracy: 67.5% ± 8.9%
-# - Model saved to: ./models/boughter_vh_esm1v_logreg.pkl
+# - Model saved to: ./experiments/checkpoints/boughter_vh_esm1v_logreg.pkl
 ```
 
 ### Option 3: Both (Sequential Training)
@@ -148,8 +148,8 @@ python3 main.py configs/config.yaml
 python3 main.py configs/config_strict_qc.yaml
 
 # Compare models:
-# - ./models/boughter_vh_esm1v_logreg.pkl (914 seqs, 67.5% CV accuracy)
-# - ./models/boughter_vh_strict_qc_esm1v_logreg.pkl (852 seqs, ~71% expected)
+# - ./experiments/checkpoints/boughter_vh_esm1v_logreg.pkl (914 seqs, 67.5% CV accuracy)
+# - ./experiments/checkpoints/boughter_vh_strict_qc_esm1v_logreg.pkl (852 seqs, ~71% expected)
 ```
 
 ---
@@ -227,9 +227,9 @@ sed -i '' 's/batch_size: 8/batch_size: 4/' configs/config_strict_qc.yaml
 ## Output Files Created by Training
 
 ```
-./models/boughter_vh_strict_qc_esm1v_logreg.pkl   # Trained model (pickled)
-./logs/boughter_strict_qc_training.log             # Full training log
-./embeddings_cache/                                 # Cached ESM embeddings (deleted after training)
+./experiments/checkpoints/boughter_vh_strict_qc_esm1v_logreg.pkl   # Trained model (pickled)
+./experiments/runs/logs/boughter_strict_qc_training.log             # Full training log
+./experiments/cache/                                 # Cached ESM embeddings (deleted after training)
 ```
 
 ---
@@ -252,7 +252,7 @@ sed -i '' 's/batch_size: 8/batch_size: 4/' configs/config_strict_qc.yaml
 
 1. **Review Training Log:**
    ```bash
-   cat ./logs/boughter_strict_qc_training.log
+   cat ./experiments/runs/logs/boughter_strict_qc_training.log
    ```
 
 2. **Check Cross-Validation Results:**
@@ -263,7 +263,7 @@ sed -i '' 's/batch_size: 8/batch_size: 4/' configs/config_strict_qc.yaml
    ```bash
    # Use test.py script (if available) to evaluate on Jain
    python3 test.py \
-     --model ./models/boughter_vh_strict_qc_esm1v_logreg.pkl \
+     --model ./experiments/checkpoints/boughter_vh_strict_qc_esm1v_logreg.pkl \
      --test_file VH_only_jain_test_QC_REMOVED.csv
    ```
 
