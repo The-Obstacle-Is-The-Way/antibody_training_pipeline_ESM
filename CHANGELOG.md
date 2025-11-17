@@ -20,7 +20,7 @@ Major feature release introducing [Hydra](https://hydra.cc) for flexible, compos
 - Default config: `conf/config.yaml` (Boughter train → Jain test)
 - CLI override support: `antibody-train model.batch_size=16 classifier.C=0.5`
 - Multirun sweeps: `antibody-train --multirun classifier.C=0.1,1.0,10.0`
-- Automatic experiment tracking in `outputs/{experiment.name}/{timestamp}/`
+- Automatic experiment tracking in `outputs/{experiment.name}/{timestamp}/` *(now `experiments/runs/`, moved in v0.5.0)*
 
 **Structured Configuration (Type-Safe)**
 - Dataclass schemas for all config sections (ModelConfig, ClassifierConfig, DataConfig, etc.)
@@ -37,8 +37,8 @@ Major feature release introducing [Hydra](https://hydra.cc) for flexible, compos
 - Provenance tracking: every experiment has `.hydra/config.yaml` snapshot
 
 **Logging & Output Management**
-- Hydra-managed output directories: `outputs/{experiment.name}/{timestamp}/`
-- Automatic log routing: `outputs/.../logs/training.log`
+- Hydra-managed output directories: `outputs/{experiment.name}/{timestamp}/` *(now `experiments/runs/`, moved in v0.5.0)*
+- Automatic log routing: `outputs/.../logs/training.log` *(now `experiments/runs/.../logs/`, moved in v0.5.0)*
 - Backward-compatible legacy mode for non-Hydra runs
 - Training logs organized by experiment name and timestamp
 
@@ -244,7 +244,7 @@ Comprehensive security and reliability audit of core ML pipeline. Fixed 34 criti
 
 **Recommended:** Delete old embedding cache and retrain to ensure no corrupted embeddings from pre-v0.3.0:
 ```bash
-rm -rf embeddings_cache/
+rm -rf embeddings_cache/  # (now experiments/cache/ in v0.5.0+)
 uv run antibody-train
 ```
 
@@ -332,7 +332,7 @@ Major feature release enabling production-ready model deployment with secure ser
   from antibody_training_esm.core import load_model_from_npz
 
   model = load_model_from_npz(
-      npz_path="models/model.npz",
+      npz_path="models/model.npz",  # (now experiments/checkpoints/{model}/{classifier}/ in v0.5.0+)
       json_path="models/model_config.json"
   )
   ```
