@@ -42,6 +42,13 @@ After Phase 5 reorganization (experiments/ consolidation), we need to **validate
 
 ---
 
+**Checkpoint (Post–Option A Fix):**
+- ✅ Phase 3 (Testing) completed for ESM1v/logreg on all three benchmarks; outputs under `experiments/benchmarks/esm1v/logreg/<dataset>/`.
+- ✅ Metadata fixed (`model_name` + `classifier` in checkpoint JSON); no `unknown/` folders remain.
+- ⏭️ Remaining to finish roadmap: Phase 2 (rerun training), Phase 4 (sweep smoke), Phase 6 (fresh clone).
+
+---
+
 **KEY FINDINGS FROM DEEP DOCUMENTATION REVIEW:**
 - Hyperparameter sweeps were for Boughter ELISA training (NOT PSR datasets)
 - Novo parity was ACHIEVED via reverse-engineering (P5e-S2: 66.28% exact match)

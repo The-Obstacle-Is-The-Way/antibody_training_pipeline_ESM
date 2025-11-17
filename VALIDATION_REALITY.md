@@ -10,6 +10,19 @@
 
 ---
 
+## ✅ What’s Already Validated (Post–Option A Fix)
+
+- **Testing (ESM1v/logreg)**: Jain 66.28%, Shehata 52.51%, Harvey ~59% now stored under `experiments/benchmarks/esm1v/logreg/<dataset>/` (no `unknown/`).
+- **Metadata Fix**: `save_model()` writes `model_name` + `classifier` block; checkpoint JSON patched.
+- **Output Roots**: All benchmark tests now use `experiments/benchmarks/`.
+
+## ⏭️ Still Outstanding
+
+- **Training rerun**: `uv run antibody-train` on the cleaned branch to regenerate the checkpoint with the new JSON writer (Phase 2).
+- **Hyperparameter sweep smoke test**: minimal `--multirun` to confirm outputs land in `experiments/runs/<name>/multirun/…` (Phase 4).
+- **Fresh clone smoke**: clone → `uv sync` → train → test → `pytest` (Phase 6).
+- **ESM2**: not in scope for the current validation pass (only ESM1v validated).
+
 ## What Actually Exists After Refactoring
 
 ### ✅ Training Pipeline (COMPLETE)
