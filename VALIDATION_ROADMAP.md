@@ -365,17 +365,40 @@ time uv run antibody-train training.n_splits=3
 #### Task 3.1: Test on Jain Dataset (Novo Parity)
 **Expected:** ~66% accuracy (ELISA-compatible assay)
 
+**⚠️ IMPORTANT:** Jain dataset uses `vh_sequence` column (intentional - see preprocessing/jain/step2_preprocess_p5e_s2.py:323).
+The test CLI defaults to `sequence_column="sequence"`, so you MUST use `--config` with a YAML file.
+
 **Commands:**
 ```bash
-# Test on P5e-S2 canonical (RECOMMENDED)
-uv run antibody-test \
-  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
+# Step 1: Create test config (one-time setup)
+mkdir -p configs/testing
+cat > configs/testing/jain_p5e_s2.yaml << 'EOF'
+model_paths: [experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl]
+data_paths: [data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv]
+sequence_column: vh_sequence
+label_column: label
+output_dir: experiments/runs/tests/jain
+device: cpu
+batch_size: 8
+EOF
 
-# OR test on EXACT match dataset
-uv run antibody-test \
-  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --data experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv
+# Step 2: Run test with config
+uv run antibody-test --config configs/testing/jain_p5e_s2.yaml
+```
+
+**Alternative (inline config for quick testing):**
+```bash
+cat > /tmp/jain_test.yaml << 'EOF'
+model_paths: [experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl]
+data_paths: [data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv]
+sequence_column: vh_sequence
+label_column: label
+output_dir: experiments/runs/tests/jain
+device: cpu
+batch_size: 8
+EOF
+
+uv run antibody-test --config /tmp/jain_test.yaml
 ```
 
 **Success Criteria:**
