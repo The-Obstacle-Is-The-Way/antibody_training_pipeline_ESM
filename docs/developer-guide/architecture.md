@@ -116,8 +116,11 @@ preprocessing/                # Dataset preprocessing pipelines
 conf/                         # Hydra configuration directory (inside package)
 ├── config.yaml              # Default Hydra config (Boughter train, Jain test)
 
-models/                       # Trained model checkpoints (.pkl)
-embeddings_cache/            # Cached ESM embeddings
+experiments/                  # Single source of truth for outputs
+├── checkpoints/              # Trained model checkpoints (.pkl)
+├── cache/                    # Cached ESM embeddings
+├── runs/                     # Hydra outputs (gitignored)
+└── benchmarks/               # Versioned benchmark artifacts
 data/train/              # Training data CSVs
 data/test/               # Test data CSVs
 tests/                       # Test suite
@@ -147,7 +150,7 @@ tests/                       # Test suite
 
 ### Embedding Caching
 
-- ESM embeddings cached in `embeddings_cache/` as `.npy` files
+- ESM embeddings cached in `experiments/cache/` as `.npy` files
 - Cache key: SHA-256 hash of `model_name + dataset_path + revision`
 - Prevents expensive re-computation during hyperparameter sweeps
 - Cache invalidates automatically when model/data changes

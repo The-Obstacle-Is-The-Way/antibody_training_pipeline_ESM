@@ -13,7 +13,7 @@ As the model zoo grows (9+ models: 3 backbones × 3 classifiers), a flat directo
 Models are organized hierarchically by backbone and classifier:
 
 ```
-models/
+experiments/checkpoints/
 ├── esm1v/
 │   ├── logreg/
 │   │   ├── boughter_vh_esm1v_logreg.pkl
