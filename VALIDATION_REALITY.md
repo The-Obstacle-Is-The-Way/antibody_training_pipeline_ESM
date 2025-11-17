@@ -1,5 +1,15 @@
 # Validation Reality Check - 2025-11-16
 
+## ⚠️ EXECUTION ORDER: Clean FIRST, Validate SECOND
+
+**Decision**: Execute V0.5.0_CLEANUP_PLAN.md Problem 1 (remove `configs/config.yaml` + `train_model()`) BEFORE validation.
+
+**See**: `CLEANUP_BEFORE_VALIDATION_DECISION.md` for full evidence-based reasoning.
+
+**Why**: Validation commands use Hydra (`uv run antibody-train`) and TestConfig (`uv run antibody-test`), NOT legacy `configs/config.yaml`. We validate the production state, not transitional state.
+
+---
+
 ## What Actually Exists After Refactoring
 
 ### ✅ Training Pipeline (COMPLETE)

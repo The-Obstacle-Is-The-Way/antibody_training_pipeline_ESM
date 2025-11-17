@@ -27,6 +27,21 @@ After Phase 5 reorganization (experiments/ consolidation), we need to **validate
 4. Results match published benchmarks
 5. Everything is reproducible from a clean clone
 
+---
+
+## ⚠️ EXECUTION ORDER
+
+**PREREQUISITE**: Execute V0.5.0_CLEANUP_PLAN.md Problem 1 BEFORE running this validation.
+
+**Steps**:
+1. **FIRST**: Remove legacy `configs/config.yaml` and `train_model()` function (V0.5.0_CLEANUP_PLAN.md)
+2. **THEN**: Create `configs/testing/jain_p5e_s2.yaml` (Task 3.1 below)
+3. **THEN**: Run validation phases 2-6 (this document)
+
+**Rationale**: Validation should test the FINAL production state (Hydra-only), not transitional state with legacy artifacts. See `CLEANUP_BEFORE_VALIDATION_DECISION.md` for full analysis.
+
+---
+
 **KEY FINDINGS FROM DEEP DOCUMENTATION REVIEW:**
 - Hyperparameter sweeps were for Boughter ELISA training (NOT PSR datasets)
 - Novo parity was ACHIEVED via reverse-engineering (P5e-S2: 66.28% exact match)
