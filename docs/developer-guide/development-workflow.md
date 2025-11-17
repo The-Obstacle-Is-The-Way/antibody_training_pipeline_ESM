@@ -37,7 +37,7 @@ make hooks       # Run pre-commit checks manually
 **Training/Testing:**
 ```bash
 make train       # Train with default config
-uv run antibody-test --model models/model.pkl --data data/test/jain/fragments/VH_only_jain.csv  # Test model
+uv run antibody-test --model experiments/checkpoints/esm1v/logreg/model.pkl --data data/test/jain/fragments/VH_only_jain.csv  # Test model
 ```
 
 ---
@@ -167,7 +167,7 @@ uv run antibody-train experiment.name=my_experiment hardware.device=cuda
 
 **Test trained model:**
 ```bash
-uv run antibody-test --model models/model.pkl --data data/test/jain/fragments/VH_only_jain.csv
+uv run antibody-test --model experiments/checkpoints/esm1v/logreg/model.pkl --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **All CLI options:**
@@ -255,9 +255,9 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 
 2. **Model saved to:**
    ```
-   outputs/{experiment.name}/{timestamp}/{model_name}.pkl
-   outputs/{experiment.name}/{timestamp}/training.log
-   outputs/{experiment.name}/{timestamp}/.hydra/config.yaml
+   experiments/runs/{experiment.name}/{timestamp}/{model_name}.pkl
+   experiments/runs/{experiment.name}/{timestamp}/training.log
+   experiments/runs/{experiment.name}/{timestamp}/.hydra/config.yaml
    ```
 
 ---

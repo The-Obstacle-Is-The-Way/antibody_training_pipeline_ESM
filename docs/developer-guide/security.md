@@ -92,15 +92,15 @@ All trained models are automatically saved in **both formats**:
 
 ```python
 # Research path (pickle) - still works
-with open("models/model.pkl", "rb") as f:
+with open("experiments/checkpoints/esm1v/logreg/model.pkl", "rb") as f:
     model = pickle.load(f)
 
 # Production path (NPZ+JSON) - NEW
 from antibody_training_esm.core import load_model_from_npz
 
 model = load_model_from_npz(
-    npz_path="models/model.npz",
-    json_path="models/model_config.json"
+    npz_path="experiments/checkpoints/esm1v/logreg/model.npz",
+    json_path="experiments/checkpoints/esm1v/logreg/model_config.json"
 )
 ```
 
@@ -473,7 +473,7 @@ response = requests.get("https://example.com/model.pkl")
 model = pickle.loads(response.content)  # RCE vulnerability!
 
 # ✅ ONLY LOCAL FILES
-with open("models/model.pkl", "rb") as f:
+with open("experiments/checkpoints/esm1v/logreg/model.pkl", "rb") as f:
     model = pickle.load(f)  # Safe - we generated this file
 ```
 
