@@ -14,12 +14,14 @@ import logging
 import os
 from datetime import datetime
 from pathlib import Path
-from typing import Any, TypedDict
+from typing import Any, TypedDict, cast
 
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
 import yaml
+from hydra import compose, initialize_config_dir
+from omegaconf import OmegaConf
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold, cross_validate
 
@@ -41,9 +43,8 @@ class HyperParamConfig(TypedDict, total=False):
 class HyperparameterSweep:
     """Run systematic hyperparameter sweep for LogisticRegression"""
 
-    def __init__(self, config_path: str | Path) -> None:
-        with open(config_path) as f:
-            self.config = yaml.safe_load(f)
+    def __init__(self, config_dict: dict[str, Any]) -> None:
+        self.config = config_dict
 
         # Load training data
         train_file = self.config["data"]["train_file"]
@@ -276,8 +277,16 @@ class HyperparameterSweep:
         return valid_results
 
 
-def main(config_path: str | Path = "configs/config.yaml") -> int:
-    sweep = HyperparameterSweep(config_path)
+def main() -> int:
+    """Run hyperparameter sweep using Hydra configuration."""
+    # Use Hydra to load config
+    config_dir = Path("src/antibody_training_esm/conf").resolve()
+
+    with initialize_config_dir(config_dir=str(config_dir), version_base=None):
+        cfg = compose(config_name="config")
+        config = cast(dict[str, Any], OmegaConf.to_container(cfg, resolve=True))
+
+    sweep = HyperparameterSweep(config)
     sweep.run_sweep()
     return 0
 

@@ -10,7 +10,6 @@ import json
 import logging
 import os
 import pickle  # nosec B403 - Used only for local trusted data (models, caches)
-import warnings
 from pathlib import Path
 from typing import Any, cast
 
@@ -865,40 +864,6 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
     except Exception as e:
         logger.error(f"Training failed with error: {str(e)}")
         raise
-
-
-def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
-    """
-    Legacy training function (DEPRECATED)
-
-    DEPRECATED: Use train_pipeline(cfg) with Hydra instead.
-    This function will be removed in v0.5.0.
-
-    Args:
-        config_path: Path to configuration YAML file
-
-    Returns:
-        Dictionary containing training results and metrics
-
-    Raises:
-        Exception: If training fails
-    """
-    # Emit deprecation warning
-    warnings.warn(
-        "train_model(config_path) is deprecated and will be removed in v0.5.0. "
-        "Use train_pipeline(cfg) with Hydra instead. "
-        "See docs for migration guide: https://docs.hydra.cc",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    # Load configuration
-    config = load_config(config_path)
-
-    # Convert to DictConfig and delegate to train_pipeline
-    cfg = OmegaConf.create(config)
-
-    return train_pipeline(cfg)
 
 
 @hydra.main(version_base=None, config_path="../conf", config_name="config")
