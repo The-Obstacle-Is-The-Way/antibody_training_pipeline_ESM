@@ -66,7 +66,7 @@ uv run antibody-train
 
 1. **Download ESM-1v** - Downloads ~700 MB model from HuggingFace (first run only)
 2. **Extract Embeddings** - Generates 1280-dimensional embeddings for all sequences
-3. **Cache Embeddings** - Saves embeddings to `embeddings_cache/` (SHA-256 hashed)
+3. **Cache Embeddings** - Saves embeddings to `experiments/cache/` (SHA-256 hashed)
 4. **10-Fold Cross-Validation** - Trains and evaluates on Boughter dataset
 5. **Train Final Model** - Trains on full Boughter dataset
 6. **Test on Jain** - Evaluates on hold-out test set
@@ -156,7 +156,7 @@ A simple logistic regression classifier was trained on the embeddings to predict
 
 ### 3. Embedding Caching
 
-Embeddings were cached to `embeddings_cache/` with SHA-256 hashed filenames. This enables:
+Embeddings were cached to `experiments/cache/` with SHA-256 hashed filenames. This enables:
 
 - **Fast hyperparameter sweeps** - No need to re-extract embeddings
 - **Automatic invalidation** - Cache updates when model/data changes
