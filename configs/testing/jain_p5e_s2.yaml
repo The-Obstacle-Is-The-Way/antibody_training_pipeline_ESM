@@ -1,0 +1,7 @@
+model_paths: [experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl]
+data_paths: [data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv]
+sequence_column: vh_sequence
+label_column: label
+output_dir: experiments/runs/tests/jain
+device: cpu
+batch_size: 8
