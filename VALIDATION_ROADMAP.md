@@ -27,6 +27,28 @@ After Phase 5 reorganization (experiments/ consolidation), we need to **validate
 4. Results match published benchmarks
 5. Everything is reproducible from a clean clone
 
+---
+
+## ⚠️ EXECUTION ORDER
+
+**PREREQUISITE**: Execute V0.5.0_CLEANUP_PLAN.md Problem 1 BEFORE running this validation.
+
+**Steps**:
+1. **FIRST**: Remove legacy `configs/config.yaml` and `train_model()` function (V0.5.0_CLEANUP_PLAN.md)
+2. **THEN**: Create `configs/testing/jain_p5e_s2.yaml` (Task 3.1 below)
+3. **THEN**: Run validation phases 2-6 (this document)
+
+**Rationale**: Validation should test the FINAL production state (Hydra-only), not transitional state with legacy artifacts. See `CLEANUP_BEFORE_VALIDATION_DECISION.md` for full analysis.
+
+---
+
+**Checkpoint (Post–Option A Fix):**
+- ✅ Phase 3 (Testing) completed for ESM1v/logreg on all three benchmarks; outputs under `experiments/benchmarks/esm1v/logreg/<dataset>/`.
+- ✅ Metadata fixed (`model_name` + `classifier` in checkpoint JSON); no `unknown/` folders remain.
+- ⏭️ Remaining to finish roadmap: Phase 2 (rerun training), Phase 4 (sweep smoke), Phase 6 (fresh clone).
+
+---
+
 **KEY FINDINGS FROM DEEP DOCUMENTATION REVIEW:**
 - Hyperparameter sweeps were for Boughter ELISA training (NOT PSR datasets)
 - Novo parity was ACHIEVED via reverse-engineering (P5e-S2: 66.28% exact match)
@@ -137,24 +159,34 @@ antibody_training_pipeline_ESM/
 **Goal:** Ensure all preprocessing pipelines work end-to-end
 
 #### Task 1.1: Boughter (Training Set)
-**Input:** `data/train/boughter/raw/Boughter_ExtraDataFile1.xlsx` (if available)
+**Input:** `data/train/boughter/raw/*.txt` (FASTA and flag files)
 **Expected Output:**
 ```
+data/train/boughter/annotated/
+├── All-CDRs_boughter.csv                      # 16 fragment types
+├── All-FWRs_boughter.csv
+├── Full_boughter.csv
+├── H-CDR1_boughter.csv
+├── H-CDR2_boughter.csv
+├── H-CDR3_boughter.csv
+└── [10 more fragment files]
+
 data/train/boughter/canonical/
-├── VH_only_boughter_training.csv              # 914 sequences
-├── VL_only_boughter_training.csv              # 914 sequences
-├── H-CDR1_boughter_training.csv               # 914 sequences
-├── H-CDR2_boughter_training.csv               # 914 sequences
-├── H-CDR3_boughter_training.csv               # 914 sequences
-└── [11 more fragment files]
+├── VH_only_boughter_training.csv              # 914 sequences (PRODUCTION)
+└── README.md
 ```
 
 **Commands:**
 ```bash
-# Stage 1: DNA translation (if raw data available)
+# Stage 1: DNA translation from .txt FASTA files
+# Input: flu_fastaH.txt, flu_fastaL.txt, gut_hiv_fastaH.txt, etc.
+# Output: data/train/boughter/processed/*.csv
 python3 preprocessing/boughter/stage1_dna_translation.py
 
 # Stage 2+3: ANARCI annotation + QC
+# Input: data/train/boughter/processed/*.csv
+# Output: data/train/boughter/annotated/*.csv (16 fragments)
+#         data/train/boughter/canonical/VH_only_boughter_training.csv
 python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 
 # Validation
@@ -162,41 +194,46 @@ python3 preprocessing/boughter/validate_stages2_3.py
 ```
 
 **Success Criteria:**
-- ✅ 914 sequences in VH_only_boughter_training.csv
-- ✅ All 16 fragment files generated
+- ✅ 914 sequences in `canonical/VH_only_boughter_training.csv`
+- ✅ All 16 fragment files generated in `annotated/` directory
 - ✅ Label balance: ~50/50 (457 label 0, 457 label 1)
 - ✅ No X in CDRs
 - ✅ Validation script passes
 
 **Status:** 🔄 **RUN THIS**
 
+**Note:** The canonical directory contains ONLY the production VH training file. All 16 fragments are in `annotated/`.
+
 ---
 
 #### Task 1.2: Jain (Test Set - Novo Parity)
-**Input:** `data/test/jain/raw/jain_2017_supplementary_data.xlsx`
+**Input:** `data/test/jain/raw/*.xlsx` (4 Excel files: Private_Jain2017_ELISA_indiv.xlsx + jain-pnas.1616408114.sd01-03.xlsx)
 **Expected Output:**
 ```
 data/test/jain/canonical/
-├── jain_86_novo_parity.csv                    # 86 antibodies (P5e-S2, HIC retention)
-├── VH_only_jain_test_PARITY_86.csv           # 86 VH sequences
-└── [15 more fragment files]
+├── jain_86_novo_parity.csv                    # 86 antibodies (P5e-S2, full biophysical)
+├── VH_only_jain_test_PARITY_86.csv           # 86 antibodies (OLD method, VH only)
+└── VH_only_jain_86_p5e_s2.csv                # 86 antibodies (P5e-S2, VH fragment)
 ```
 
 **Commands:**
 ```bash
-# Step 1: Excel → CSV conversion
+# Step 1: Excel → CSV conversion (4 files → intermediate CSVs)
 python3 preprocessing/jain/step1_convert_excel_to_csv.py
 
-# Step 2: Extract P5e-S2 canonical subset
+# Step 2: Extract P5e-S2 canonical subset (RECOMMENDED)
 python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 
 **Success Criteria:**
-- ✅ 86 antibodies in jain_86_novo_parity.csv
+- ✅ 86 antibodies in `jain_86_novo_parity.csv`
 - ✅ All clinical-stage IgG1 antibodies
-- ✅ P5e-S2 columns present (HIC retention assay)
+- ✅ Full biophysical columns (PSR, AC-SINS, HIC, Tm, etc.)
+- ✅ `VH_only_jain_test_PARITY_86.csv` is OLD deterministic method (DIFFERENT dataset, NOT a fragment)
 
 **Status:** 🔄 **RUN THIS**
+
+**CRITICAL:** The canonical directory contains ONLY 3 benchmark CSVs. There are NO 16-fragment files. See `data/test/jain/canonical/README.md` for dataset comparison.
 
 ---
 
@@ -206,10 +243,12 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 ```
 data/test/harvey/fragments/
 ├── VHH_only_harvey.csv                        # 141k nanobodies
-├── VHH-CDR1_harvey.csv
-├── VHH-CDR2_harvey.csv
-├── VHH-CDR3_harvey.csv
-└── [more VHH-specific fragment files]
+├── H-CDR1_harvey.csv                          # Heavy chain CDR1 (nanobodies = heavy only)
+├── H-CDR2_harvey.csv                          # Heavy chain CDR2
+├── H-CDR3_harvey.csv                          # Heavy chain CDR3
+├── H-CDRs_harvey.csv                          # Combined heavy CDRs
+├── H-FWRs_harvey.csv                          # Heavy frameworks
+└── README.md
 ```
 
 **Commands:**
@@ -222,26 +261,36 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
 **Success Criteria:**
-- ✅ ~141k VHH sequences
-- ✅ PSR scores present (poly-specific reagent assay)
+- ✅ ~141k VHH sequences in `VHH_only_harvey.csv`
+- ✅ Fragment files named `H-CDR*.csv` (NOT `VHH-CDR*.csv`) because nanobodies are heavy-chain only
+- ✅ Fragment columns: id, sequence, label, source, sequence_length (NO PSR columns in fragments)
 
 **Status:** 🔄 **RUN THIS**
+
+**CRITICAL:** Harvey fragments contain ONLY basic columns (id, sequence, label, source, sequence_length). PSR scores are in the raw data, NOT in fragment files.
 
 ---
 
 #### Task 1.4: Shehata (PSR Test Set)
-**Input:** `data/test/shehata/raw/shehata_2019_supplementary.xlsx`
+**Input:** `data/test/shehata/raw/shehata-mmc2.xlsx` (main dataset, 398 antibodies)
 **Expected Output:**
 ```
 data/test/shehata/fragments/
 ├── VH_only_shehata.csv                        # 398 antibodies
-├── VL_only_shehata.csv
-└── [14 more fragment files]
+├── VL_only_shehata.csv                        # 398 antibodies
+├── H-CDR1_shehata.csv
+├── H-CDR2_shehata.csv
+├── H-CDR3_shehata.csv
+├── L-CDR1_shehata.csv
+├── L-CDR2_shehata.csv
+├── L-CDR3_shehata.csv
+└── [8 more fragment files + README.md]
 ```
 
 **Commands:**
 ```bash
 # Step 1: Excel → CSV conversion
+# Input: shehata-mmc2.xlsx (NOT shehata_2019_supplementary.xlsx)
 python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 
 # Step 2: Extract fragments
@@ -249,11 +298,14 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 ```
 
 **Success Criteria:**
-- ✅ 398 antibodies
-- ✅ PSR scores present
+- ✅ 398 antibodies in `VH_only_shehata.csv`
+- ✅ PSR scores present in fragment files
 - ✅ 7 PSR-positive antibodies (1.76% imbalance expected)
+- ✅ Correct raw data filename: `shehata-mmc2.xlsx` (NOT `shehata_2019_supplementary.xlsx`)
 
 **Status:** 🔄 **RUN THIS**
+
+**Note:** Raw data files are `shehata-mmc2.xlsx` through `shehata-mmc5.xlsx`. The main dataset (398 antibodies) is in mmc2.
 
 ---
 
@@ -335,18 +387,46 @@ time uv run antibody-train training.n_splits=3
 #### Task 3.1: Test on Jain Dataset (Novo Parity)
 **Expected:** ~66% accuracy (ELISA-compatible assay)
 
+**⚠️ IMPORTANT:** Jain dataset uses `vh_sequence` column (intentional - see preprocessing/jain/step2_preprocess_p5e_s2.py:323).
+The test CLI defaults to `sequence_column="sequence"`, so you MUST use `--config` with a YAML file.
+
 **Commands:**
 ```bash
-uv run antibody-test \
-  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --dataset jain \
-  --fragment VH
+# Step 1: Create test config (one-time setup)
+mkdir -p configs/testing
+cat > configs/testing/jain_p5e_s2.yaml << 'EOF'
+model_paths: [experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl]
+data_paths: [data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv]
+sequence_column: vh_sequence
+label_column: label
+output_dir: experiments/runs/tests/jain
+device: cpu
+batch_size: 8
+EOF
+
+# Step 2: Run test with config
+uv run antibody-test --config configs/testing/jain_p5e_s2.yaml
+```
+
+**Alternative (inline config for quick testing):**
+```bash
+cat > /tmp/jain_test.yaml << 'EOF'
+model_paths: [experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl]
+data_paths: [data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv]
+sequence_column: vh_sequence
+label_column: label
+output_dir: experiments/runs/tests/jain
+device: cpu
+batch_size: 8
+EOF
+
+uv run antibody-test --config /tmp/jain_test.yaml
 ```
 
 **Success Criteria:**
 - ✅ Accuracy: 64-69% (within validated range)
 - ✅ ROC-AUC: 0.60-0.65
-- ✅ Test results save to `experiments/runs/test_{timestamp}/`
+- ✅ Test results save to `experiments/benchmarks/` (--output-dir default)
 - ✅ Confusion matrix displayed
 - ✅ Metrics: accuracy, precision, recall, F1, ROC-AUC
 
@@ -361,14 +441,13 @@ uv run antibody-test \
 ```bash
 uv run antibody-test \
   --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --dataset shehata \
-  --fragment VH
+  --data data/test/shehata/fragments/VH_only_shehata.csv
 ```
 
 **Success Criteria:**
 - ✅ Accuracy: 50-55% (poor separation expected, documented in Novo paper)
 - ✅ ROC-AUC: 0.60-0.70 (better than random)
-- ✅ Log shows: "PSR assay - expect poor separation (assay incompatibility)"
+- ✅ Results show PSR assay incompatibility with ELISA-trained model
 
 **Status:** 🔄 **RUN THIS**
 
@@ -381,12 +460,11 @@ uv run antibody-test \
 ```bash
 uv run antibody-test \
   --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --dataset harvey \
-  --fragment VHH
+  --data data/test/harvey/fragments/VHH_only_harvey.csv
 ```
 
 **Success Criteria:**
-- ✅ Handles VHH-only fragment type
+- ✅ Handles VHH nanobody sequences
 - ✅ Prediction probabilities show broad distribution for PSR-specific
 - ✅ PSR-positive antibodies cluster at higher non-specificity probability
 
@@ -450,15 +528,16 @@ experiments/runs/hyperparam_sweep_test/
 - ❌ Never compared 914 vs 852 performance
 - ❌ Hypothesis DISPROVEN (914-sequence model validated at 66.28% on Jain)
 
-**Decision:**
+**Decision (Main Branch vs. Archive Branch):**
 ```
-KEEP AS ARCHIVED EXPERIMENT - Do NOT delete
+- Preserve the strict_qc experiment in the dedicated `archive` branch
+- Remove `experiments/benchmarks/strict_qc/` from the leroy-jenkins/full-send branch once cleanup is approved
 
 Rationale:
-1. Demonstrates good scientific practice (hypothesis → test → archive)
-2. Provenance: Shows why 914-sequence model is production
-3. Reproducibility: Anyone can test the 852-sequence hypothesis
-4. Documentation: EXPERIMENT_README.md clearly marks it as ARCHIVED/UNVALIDATED
+1. Demonstrates good scientific practice (hypothesis → test → archive) while keeping main pristine
+2. Provenance: Anyone can checkout the `archive` branch to see why the 914-sequence model is production
+3. Reproducibility: The 852-sequence hypothesis remains runnable from the archived branch
+4. Documentation: EXPERIMENT_README.md and configs stay intact in the archive branch for historical audit
 ```
 
 **Action Required:**
@@ -492,8 +571,10 @@ python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 # 4. Train model
 uv run antibody-train
 
-# 5. Test model
-uv run antibody-test --model <path> --dataset jain --fragment VH
+# 5. Test model (choose the dataset you need)
+uv run antibody-test \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
+  --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
 # 6. Run tests
 uv run pytest
@@ -595,7 +676,7 @@ This repository has conducted FIVE major experimental initiatives:
 
 **Location**: `experiments/benchmarks/archive/hyperparameter_sweeps_2025-11-02/`
 
-**Decision**: ✅ **KEEP ARCHIVED** (shows hyperparameter optimization process)
+**Decision**: ✅ **PRESERVE IN ARCHIVE BRANCH** (shows hyperparameter optimization process; removed from main branch per cleanup plan)
 
 ---
 
@@ -664,7 +745,7 @@ This repository has conducted FIVE major experimental initiatives:
 
 **Documentation**: `EXPERIMENT_README.md` (clearly marked ARCHIVED/UNVALIDATED)
 
-**Decision**: ✅ **KEEP ARCHIVED** (scientific provenance, shows hypothesis testing)
+**Decision**: ✅ **PRESERVE IN ARCHIVE BRANCH** (scientific provenance, shows hypothesis testing; removed from main branch per cleanup plan)
 
 ---
 
@@ -681,7 +762,7 @@ This repository has conducted FIVE major experimental initiatives:
 
 **Location**: `experiments/benchmarks/archive/test_results_pre_migration_2025-11-06/esm2_650m/`
 
-**Decision**: ✅ **KEEP ARCHIVED** (alternative model comparison)
+**Decision**: ✅ **PRESERVE IN ARCHIVE BRANCH** (alternative model comparison; removed from main branch per cleanup plan)
 
 ---
 
@@ -756,7 +837,7 @@ A user should be able to:
 2. **Install dependencies:** `uv sync --all-extras`
 3. **Preprocess data** (if raw data available)
 4. **Train model:** `uv run antibody-train`
-5. **Test model:** `uv run antibody-test --model X --dataset jain`
+5. **Test model:** `uv run antibody-test --model <model.pkl> --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv`
 6. **Reproduce Novo results:**
    - Boughter 10-fold CV: 67-71%
    - Jain test: 64-69%
@@ -770,23 +851,98 @@ A user should be able to:
 
 ---
 
-## Repository Cleanup Plan (Post-Validation)
+## 🧹 ✅ CLEANUP PLAN (EXECUTED - 2025-11-16)
 
-### Files to Delete (After Validation)
+**Status:** ✅ COMPLETE - Executed on dev branch (2025-11-16)
+**Created:** 2025-11-16
+**Preserved In:** `archive` branch (ALL history saved)
 
-**NONE** - Everything has a purpose:
-- `experiments/benchmarks/strict_qc/` → ARCHIVED (provenance)
-- `experiments/benchmarks/archive/` → Historical experiments (hyperparameter sweeps, pre-migration test results)
-- `experiments/benchmarks/novo_parity/` → Reverse engineering documentation (EXACT parity achieved)
-- `literature/` → Novo paper (citation)
-- `docs/` → Documentation (essential)
+### Philosophy:
+Keep ONLY validated Novo Nordisk replication artifacts in main branch.
+Delete experimental dead ends (preserved forever in `archive` branch).
 
-### Files to Update (After Validation)
+### What to DELETE from Main Branch:
 
-1. **CLAUDE.md** → Add validation results
-2. **README.md** → Add "Validated" badge
-3. **USAGE.md** → Update with experiments/ paths (already done)
-4. **docs/developer-guide/directory-organization.md** → Update examples (already done)
+1. **`experiments/benchmarks/strict_qc/`** (2MB)
+   - **Reason:** Never validated - failed hypothesis (852 sequences never tested)
+   - **Status:** Preserved in `archive` branch
+   - **Decision:** REMOVE - confusing dead end
+
+2. **`experiments/benchmarks/archive/`** (17MB)
+   - **hyperparameter_sweeps_2025-11-02/**: Tuning process (not final results)
+   - **test_results_pre_migration_2025-11-06/**: Outdated paths (pre-Phase 5)
+   - **Reason:** Historical artifacts, not scientific results
+   - **Status:** Preserved in `archive` branch
+   - **Decision:** REMOVE - internal process artifacts
+
+### What to KEEP in Main Branch:
+
+1. **`experiments/benchmarks/novo_parity/`** (75MB) ✅
+   - **Reason:** VALIDATED reverse-engineering (EXACT 66.28% match)
+   - **This IS the scientific result** - not an experiment
+   - **Contains:**
+     - Methodology docs (MISSION_ACCOMPLISHED.md, EXACT_MATCH_FOUND.md)
+     - EXACT match dataset (jain_86_p5e_s2.csv)
+     - Reproducible scripts
+   - **Decision:** KEEP - core replication proof
+
+2. **`experiments/benchmarks/README.md`**
+   - Update to reflect novo_parity/ only
+
+### Justification (From First Principles):
+
+**What would DeepMind/Novo/Professional Labs do?**
+- ✅ Keep validated results (novo_parity = EXACT match proof)
+- ❌ Delete failed experiments from main (strict_qc never validated)
+- ❌ Delete internal tuning artifacts from main (hyperparameter sweeps)
+- ✅ Preserve everything in archive branch (git never loses history)
+
+**novo_parity/ is NOT experimental:**
+- It's your VALIDATED scientific achievement
+- Proves you didn't just "get close" - you EXACTLY matched Novo
+- Documents the selection methodology (P5e-S2: PSR + AC-SINS)
+- Future users need this to understand which 86 antibodies and WHY
+
+### Execution Commands (DO NOT RUN WITHOUT APPROVAL):
+
+```bash
+# Switch to main branch
+git checkout leroy-jenkins/full-send
+
+# Delete experimental artifacts
+git rm -r experiments/benchmarks/strict_qc/
+git rm -r experiments/benchmarks/archive/
+
+# Update experiments/benchmarks/README.md
+# Update VALIDATION_ROADMAP.md (remove strict_qc/archive references)
+
+# Commit cleanup
+git commit -m "chore: Remove experimental artifacts (preserved in archive branch)
+
+- Remove strict_qc/ (never validated)
+- Remove archive/ (historical tuning/pre-migration)
+- Keep novo_parity/ (VALIDATED EXACT match)
+- All deleted content preserved in 'archive' branch"
+
+# Push to remote
+git push origin leroy-jenkins/full-send
+```
+
+### Result After Cleanup:
+
+```
+experiments/benchmarks/
+├── README.md
+└── novo_parity/              # ✅ EXACT 66.28% match methodology
+    ├── README.md              # Navigation guide
+    ├── MISSION_ACCOMPLISHED.md
+    ├── EXACT_MATCH_FOUND.md
+    ├── datasets/
+    │   └── jain_86_p5e_s2.csv  # THE EXACT MATCH
+    └── scripts/                # Reproducible
+```
+
+**Status:** ✅ **COMPLETE - Executed on dev branch (2025-11-16)**
 
 ---
 
@@ -798,9 +954,9 @@ A user should be able to:
 
 There are **THREE** Jain test sets in this repository:
 
-1. `data/test/jain/canonical/jain_86_novo_parity.csv` - 86 antibodies (P5e-S2 subset)
-2. `data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv` - VH fragment of above
-3. `experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv` - **EXACT MATCH** dataset
+1. `data/test/jain/canonical/jain_86_novo_parity.csv` - 86 antibodies (P5e-S2 method, full biophysical)
+2. `data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv` - 86 antibodies (OLD deterministic method, DIFFERENT dataset)
+3. `experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv` - **EXACT MATCH** dataset (P5e-S2 method)
 
 ### The Answer
 
@@ -818,14 +974,25 @@ experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv
 
 **The canonical dataset (jain_86_novo_parity.csv) is CLOSE but not EXACT** - it gets ~66% but not the exact confusion matrix.
 
+**IMPORTANT:** `VH_only_jain_test_PARITY_86.csv` is NOT a fragment of `jain_86_novo_parity.csv`. They are two DIFFERENT 86-antibody sets:
+- **P5e-S2 (jain_86_novo_parity.csv)**: Starts with 116 antibodies (ELISA filter) → 86 via PSR/AC-SINS
+- **OLD (VH_only_jain_test_PARITY_86.csv)**: Starts with 94 antibodies (DIFFERENT ELISA filter) → 86 via length outliers
+- **Only 62/86 antibodies overlap** between these methods, yet both achieve [[40, 19], [10, 17]]
+
+See `data/test/jain/canonical/README.md` for detailed comparison.
+
 ### Production Testing Command
 
 ```bash
-# CORRECT Novo parity test
+# CORRECT Novo parity test (EXACT match dataset)
 uv run antibody-test \
   --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --data experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv \
-  --fragment VH
+  --data experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv
+
+# OR test with VH fragment from canonical
+uv run antibody-test \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
+  --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
 **Expected Result**: [[40, 19], [10, 17]], 66.28% accuracy ✅
@@ -839,8 +1006,8 @@ uv run antibody-test \
    **CORRECTED**: Hyperparameter sweeps were for **Boughter ELISA training** (NOT PSR)
 
 2. **Q:** Should we delete strict_qc experiment?
-   **A:** NO - archive it with clear "UNVALIDATED" warning (scientific provenance)
-   **CONFIRMED**: Strict QC (852 seqs) was NEVER VALIDATED - keep archived
+   **A:** YES - remove from main branch, preserve in `archive` branch (scientific provenance)
+   **CONFIRMED**: Strict QC (852 seqs) was NEVER VALIDATED - removed from main, preserved in archive branch
 
 3. **Q:** Do all preprocessing pipelines still work?
    **A:** 🔄 **VALIDATE THIS** (run Tasks 1.1-1.4)
@@ -860,15 +1027,17 @@ uv run antibody-test \
 
 **Today (2025-11-16):**
 - ✅ Document validation roadmap (this file)
+- ✅ Execute cleanup plan (strict_qc/ and archive/ removed from dev branch)
 - 🔄 Run preprocessing validation (Tasks 1.1-1.4)
 - 🔄 Run training validation (Task 2.1)
 
 **Next Session:**
+
 - 🔄 Run testing validation (Tasks 3.1-3.3)
-- 🔄 Run hyperparameter sweep test (Task 4.1)
 - 🔄 Run fresh clone test (Task 6.1)
 
 **After Validation:**
+
 - ✅ Update all docs with validated results
 - ✅ Tag v2.0.0-validated
 - ✅ Merge to main
@@ -878,14 +1047,17 @@ uv run antibody-test \
 ## References
 
 - **Novo Paper:** `literature/markdown/novo_2025_main/Sakhnini_2025_Antibody_NonSpecificity_PLM_Biophysical.md`
-- **Strict QC Experiment:** `experiments/benchmarks/strict_qc/EXPERIMENT_README.md`
 - **Novo Parity Reverse Engineering:**
   - `experiments/benchmarks/novo_parity/MISSION_ACCOMPLISHED.md` (Summary)
   - `experiments/benchmarks/novo_parity/EXACT_MATCH_FOUND.md` (Detailed analysis)
   - `experiments/benchmarks/novo_parity/FINAL_PERMUTATION_HUNT.md` (Permutation testing)
-- **Historical Test Results:** `experiments/benchmarks/archive/test_results_pre_migration_2025-11-06/README.md`
-- **Hyperparameter Sweeps:** `experiments/benchmarks/archive/hyperparameter_sweeps_2025-11-02/README.md`
 - **CLAUDE.md:** Development guide for Claude Code
+
+**Historical Artifacts (removed from dev branch, preserved in archive branch):**
+
+- Strict QC Experiment: `git checkout archive` → `experiments/benchmarks/strict_qc/EXPERIMENT_README.md`
+- Historical Test Results: `git checkout archive` → `experiments/benchmarks/archive/test_results_pre_migration_2025-11-06/README.md`
+- Hyperparameter Sweeps: `git checkout archive` → `experiments/benchmarks/archive/hyperparameter_sweeps_2025-11-02/README.md`
 
 ---
 

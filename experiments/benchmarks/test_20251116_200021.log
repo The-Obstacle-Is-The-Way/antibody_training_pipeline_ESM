@@ -1,0 +1,45 @@
+2025-11-16 20:00:21,344 - antibody_training_esm.cli.test - INFO - Starting model testing
+2025-11-16 20:00:21,344 - antibody_training_esm.cli.test - INFO - Models to test: ['experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl']
+2025-11-16 20:00:21,344 - antibody_training_esm.cli.test - INFO - Datasets to test: ['data/test/harvey/fragments/VHH_only_harvey.csv']
+2025-11-16 20:00:21,344 - antibody_training_esm.cli.test - INFO - 
+============================================================
+2025-11-16 20:00:21,344 - antibody_training_esm.cli.test - INFO - Testing on dataset: VHH_only_harvey
+2025-11-16 20:00:21,344 - antibody_training_esm.cli.test - INFO - ============================================================
+2025-11-16 20:00:21,344 - antibody_training_esm.cli.test - INFO - Loading dataset from data/test/harvey/fragments/VHH_only_harvey.csv
+2025-11-16 20:00:21,553 - antibody_training_esm.cli.test - INFO - Loaded 141021 samples from data/test/harvey/fragments/VHH_only_harvey.csv (sequence_col='sequence', label_col='label')
+2025-11-16 20:00:21,574 - antibody_training_esm.cli.test - INFO -   Label distribution: {1: 71759, 0: 69262}
+2025-11-16 20:00:21,580 - antibody_training_esm.cli.test - INFO - 
+Testing model: boughter_vh_esm1v_logreg
+2025-11-16 20:00:21,580 - antibody_training_esm.cli.test - INFO - Using hierarchical output: experiments/benchmarks/esm1v/logreg/VHH_only_harvey (model=esm1v, classifier=logreg)
+2025-11-16 20:00:21,580 - antibody_training_esm.cli.test - INFO - Loading model from experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+2025-11-16 20:00:22,408 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on cpu with batch_size=8 and max_length=1024
+2025-11-16 20:00:22,408 - antibody_training_esm.cli.test - WARNING - Device mismatch: model trained on cpu, test config specifies mps. Recreating extractor...
+2025-11-16 20:00:22,409 - antibody_training_esm.cli.test - INFO - Cleaned up old extractor on cpu
+2025-11-16 20:00:23,788 - antibody_training_esm.core.embeddings - INFO - ESM model facebook/esm1v_t33_650M_UR90S_1 (revision=main) loaded on mps with batch_size=8 and max_length=1024
+2025-11-16 20:00:23,788 - antibody_training_esm.cli.test - INFO - Created new extractor on mps
+2025-11-16 20:00:23,788 - antibody_training_esm.cli.test - INFO - Updating batch_size from 8 to 32
+2025-11-16 20:00:23,788 - antibody_training_esm.cli.test - INFO - Model loaded successfully: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl on device: mps
+2025-11-16 20:00:23,788 - antibody_training_esm.cli.test - INFO - Extracting embeddings for 141021 sequences...
+2025-11-16 20:00:23,788 - antibody_training_esm.core.embeddings - INFO - Extracting embeddings for 141021 sequences with batch_size=32...
+2025-11-16 21:02:16,740 - antibody_training_esm.cli.test - INFO - Embeddings cached to experiments/benchmarks/esm1v/logreg/VHH_only_harvey/VHH_only_harvey_boughter_vh_esm1v_logreg_test_embeddings.pkl
+2025-11-16 21:02:16,741 - antibody_training_esm.cli.test - INFO - Evaluating pretrained model boughter_vh_esm1v_logreg on VHH_only_harvey
+2025-11-16 21:02:17,426 - antibody_training_esm.cli.test - INFO - Test results for boughter_vh_esm1v_logreg on VHH_only_harvey:
+2025-11-16 21:02:17,426 - antibody_training_esm.cli.test - INFO -   accuracy: 0.5900
+2025-11-16 21:02:17,426 - antibody_training_esm.cli.test - INFO -   precision: 0.5556
+2025-11-16 21:02:17,426 - antibody_training_esm.cli.test - INFO -   recall: 0.9707
+2025-11-16 21:02:17,426 - antibody_training_esm.cli.test - INFO -   f1: 0.7067
+2025-11-16 21:02:17,426 - antibody_training_esm.cli.test - INFO -   roc_auc: 0.7532
+2025-11-16 21:02:17,426 - antibody_training_esm.cli.test - INFO -   pr_auc: 0.7248
+2025-11-16 21:02:17,426 - antibody_training_esm.cli.test - INFO - Creating confusion matrices for VHH_only_harvey in experiments/benchmarks/esm1v/logreg/VHH_only_harvey
+2025-11-16 21:02:17,687 - antibody_training_esm.cli.test - INFO - Confusion matrix saved to experiments/benchmarks/esm1v/logreg/VHH_only_harvey/confusion_matrix_boughter_vh_esm1v_logreg_VHH_only_harvey.png
+2025-11-16 21:02:19,156 - antibody_training_esm.cli.test - INFO - Detailed results saved to experiments/benchmarks/esm1v/logreg/VHH_only_harvey/detailed_results_boughter_vh_esm1v_logreg_VHH_only_harvey_20251116_210217.yaml
+2025-11-16 21:02:19,291 - antibody_training_esm.cli.test - INFO - Predictions saved to experiments/benchmarks/esm1v/logreg/VHH_only_harvey/predictions_boughter_vh_esm1v_logreg_VHH_only_harvey_20251116_210217.csv
+2025-11-16 21:02:19,291 - antibody_training_esm.cli.test - INFO - Generating aggregated multi-model report for VHH_only_harvey in ./experiments/benchmarks
+2025-11-16 21:02:19,291 - antibody_training_esm.cli.test - INFO - Creating confusion matrices for VHH_only_harvey in ./experiments/benchmarks
+2025-11-16 21:02:19,489 - antibody_training_esm.cli.test - INFO - Confusion matrix saved to ./experiments/benchmarks/confusion_matrix_boughter_vh_esm1v_logreg_VHH_only_harvey.png
+2025-11-16 21:02:20,983 - antibody_training_esm.cli.test - INFO - Detailed results saved to ./experiments/benchmarks/detailed_results_boughter_vh_esm1v_logreg_VHH_only_harvey_20251116_210219.yaml
+2025-11-16 21:02:21,117 - antibody_training_esm.cli.test - INFO - Predictions saved to ./experiments/benchmarks/predictions_boughter_vh_esm1v_logreg_VHH_only_harvey_20251116_210219.csv
+2025-11-16 21:02:21,117 - antibody_training_esm.cli.test - INFO - 
+Testing completed. Results saved to: ./experiments/benchmarks
+2025-11-16 21:02:21,117 - antibody_training_esm.cli.test - INFO - Cleaning up cached embedding files...
+2025-11-16 21:02:21,164 - antibody_training_esm.cli.test - INFO - Deleted cached embeddings: experiments/benchmarks/esm1v/logreg/VHH_only_harvey/VHH_only_harvey_boughter_vh_esm1v_logreg_test_embeddings.pkl

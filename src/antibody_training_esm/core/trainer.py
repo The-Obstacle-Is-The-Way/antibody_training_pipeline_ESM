@@ -10,7 +10,6 @@ import json
 import logging
 import os
 import pickle  # nosec B403 - Used only for local trusted data (models, caches)
-import warnings
 from pathlib import Path
 from typing import Any, cast
 
@@ -646,17 +645,28 @@ def save_model(
     json_path = f"{base_path}_config.json"
     metadata = {
         # Model architecture
+        "model_name": classifier.model_name,  # HuggingFace model ID (for test.py routing)
         "model_type": "LogisticRegression",
         "sklearn_version": sklearn.__version__,
-        # LogisticRegression hyperparameters
+        # Classifier configuration block (structured for directory routing)
+        "classifier": {
+            "type": "logistic_regression",
+            "C": classifier.C,
+            "penalty": classifier.penalty,
+            "solver": classifier.solver,
+            "class_weight": classifier.class_weight,  # JSON handles None, str, dict natively
+            "max_iter": classifier.max_iter,
+            "random_state": classifier.random_state,
+        },
+        # Legacy flat fields (keep for backwards compatibility)
         "C": classifier.C,
         "penalty": classifier.penalty,
         "solver": classifier.solver,
-        "class_weight": classifier.class_weight,  # JSON handles None, str, dict natively
+        "class_weight": classifier.class_weight,
         "max_iter": classifier.max_iter,
         "random_state": classifier.random_state,
         # ESM embedding extractor params
-        "esm_model": classifier.model_name,
+        "esm_model": classifier.model_name,  # Alias for model_name
         "esm_revision": classifier.revision,
         "batch_size": classifier.batch_size,
         "device": classifier.device,
@@ -865,40 +875,6 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
     except Exception as e:
         logger.error(f"Training failed with error: {str(e)}")
         raise
-
-
-def train_model(config_path: str = "configs/config.yaml") -> dict[str, Any]:
-    """
-    Legacy training function (DEPRECATED)
-
-    DEPRECATED: Use train_pipeline(cfg) with Hydra instead.
-    This function will be removed in v0.5.0.
-
-    Args:
-        config_path: Path to configuration YAML file
-
-    Returns:
-        Dictionary containing training results and metrics
-
-    Raises:
-        Exception: If training fails
-    """
-    # Emit deprecation warning
-    warnings.warn(
-        "train_model(config_path) is deprecated and will be removed in v0.5.0. "
-        "Use train_pipeline(cfg) with Hydra instead. "
-        "See docs for migration guide: https://docs.hydra.cc",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-
-    # Load configuration
-    config = load_config(config_path)
-
-    # Convert to DictConfig and delegate to train_pipeline
-    cfg = OmegaConf.create(config)
-
-    return train_pipeline(cfg)
 
 
 @hydra.main(version_base=None, config_path="../conf", config_name="config")
