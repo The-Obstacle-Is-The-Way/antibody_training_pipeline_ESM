@@ -120,7 +120,7 @@ import pickle
 import pandas as pd
 
 # Load model
-with open("models/boughter_vh_esm1v_logreg.pkl", 'rb') as f:
+with open("experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl", 'rb') as f:
     model = pickle.load(f)
 
 # Load Jain test data

@@ -381,14 +381,14 @@ uv run antibody-train  # Uses conf/config.yaml by default
 **Test on Jain:**
 ```bash
 uv run antibody-test \
-    --model models/boughter_vh_esm1v_logreg.pkl \
+    --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
     --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
 **Test on Harvey:**
 ```bash
 uv run antibody-test \
-    --model models/boughter_vh_esm1v_logreg.pkl \
+    --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
     --data data/test/harvey/fragments/VHH_only_harvey.csv \
     --threshold 0.5495
 ```

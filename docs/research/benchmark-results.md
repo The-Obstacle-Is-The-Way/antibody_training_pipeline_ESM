@@ -1,7 +1,7 @@
 # Benchmark Results: Cross-Dataset Validation
 
 **Last Updated:** 2025-11-10
-**Model:** `models/boughter_vh_esm1v_logreg.pkl`
+**Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 **Status:** All validations complete
 
 ---
