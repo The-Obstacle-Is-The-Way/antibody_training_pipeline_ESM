@@ -369,7 +369,7 @@ Always enable model saving:
 training:
   save_model: true
   model_name: "descriptive_experiment_name"  # Use meaningful names
-  model_save_dir: "models/"
+  model_save_dir: "experiments/checkpoints/"
 
 experiment:
   name: "descriptive_experiment_name"

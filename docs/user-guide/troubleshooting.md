@@ -261,7 +261,7 @@ df.to_csv("data_fixed.csv", index=False)
 Clear embeddings cache and retrain:
 
 ```bash
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 uv run antibody-train
 ```
 
@@ -357,7 +357,7 @@ print(f"Dataset size: {len(df)}")
 
 ```bash
 # Check cache directory
-ls -lh embeddings_cache/
+ls -lh experiments/cache/
 # Should see .npy files after first run
 ```
 
@@ -403,7 +403,7 @@ ValueError: Embeddings from cache contain 3 all-zero rows
 
 **Solution:**
 ```bash
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 uv run antibody-train
 ```
 
@@ -422,7 +422,7 @@ ValueError: Embeddings from cache have wrong shape: expected 914 sequences, got 
 
 **Solution:**
 ```bash
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 uv run antibody-train
 ```
 
@@ -515,7 +515,7 @@ Available columns: ['id', 'sequence', 'label', 'VH_sequence']
 **Solution:**
 ```bash
 # Delete old cache
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 
 # Retrain with v0.3.0+ (has validation)
 uv run antibody-train
@@ -1047,10 +1047,10 @@ python -c "import torch; print(f'MPS: {torch.backends.mps.is_available()}')"
 uv pip list
 
 # Check repository structure
-ls -lh configs/ models/ data/train/ data/test/
+ls -lh experiments/ data/train/ data/test/
 
 # Check embeddings cache
-ls -lh embeddings_cache/
+ls -lh experiments/cache/
 
 # Run full quality pipeline
 make all

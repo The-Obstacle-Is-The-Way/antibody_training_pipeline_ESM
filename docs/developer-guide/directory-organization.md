@@ -29,7 +29,7 @@ models/
     └── xgboost/
 ```
 
-**Structure:** `models/{model_shortname}/{classifier_type}/{model_files}`
+**Structure:** `experiments/checkpoints/{model_shortname}/{classifier_type}/{model_files}`
 
 **Model Shortnames:**
 - `esm1v` - Facebook ESM-1v (650M)

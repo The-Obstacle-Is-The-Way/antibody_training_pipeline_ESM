@@ -154,7 +154,7 @@ tests/                       # Test suite
 
 ### Model Persistence
 
-- Trained models saved as `.pkl` files in `models/`
+- Trained models saved as `.pkl` files in `experiments/checkpoints/`
 - Pickle usage limited to trusted local artifacts only
 - **Threat model**: No internet-exposed API, no untrusted pickle loading
 - Production deployment should migrate to JSON + NPZ (see `SECURITY_REMEDIATION_PLAN.md`)

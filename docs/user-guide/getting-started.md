@@ -70,7 +70,7 @@ uv run antibody-train
 4. **10-Fold Cross-Validation** - Trains and evaluates on Boughter dataset
 5. **Train Final Model** - Trains on full Boughter dataset
 6. **Test on Jain** - Evaluates on hold-out test set
-7. **Save Model** - Saves trained model to `models/`
+7. **Save Model** - Saves trained model to `experiments/checkpoints/`
 
 **Expected output:**
 
@@ -85,7 +85,7 @@ uv run antibody-train
 ✅ Test Set (Jain):
    - Accuracy: 66.28%
    - Confusion Matrix: [[40, 19], [10, 17]]
-✅ Model saved to: models/boughter_vh_esm1v_logreg.pkl
+✅ Model saved to: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 ```
 
 **Training Time:**
@@ -99,13 +99,13 @@ Check that outputs were created:
 
 ```bash
 # Trained model
-ls -lh models/*.pkl
+ls -lh experiments/checkpoints/**/*.pkl
 
 # Cached embeddings
-ls -lh embeddings_cache/
+ls -lh experiments/cache/
 
-# Logs (if enabled)
-ls -lh logs/
+# Logs (Hydra outputs)
+ls -lh experiments/runs/*/logs/
 ```
 
 ---

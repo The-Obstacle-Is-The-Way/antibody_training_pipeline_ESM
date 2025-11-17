@@ -159,12 +159,12 @@ uv run antibody-train --multirun classifier.C=0.1,1.0 classifier.penalty=l1,l2
 
 **Output structure:**
 ```
-outputs/
+experiments/runs/
 └── {experiment.name}/
     └── {timestamp}/
         ├── .hydra/config.yaml   # Full resolved config
         ├── logs/training.log    # Training logs
-        └── {model}.pkl          # Trained model
+        └── {model}.pkl          # Trained model artifact
 ```
 
 **Why Hydra?**

@@ -203,10 +203,10 @@ statistical_tests: true
 antibody-test --config test_config.yaml
 
 # Or test directly with command line arguments
-antibody-test --model models/antibody_classifier.pkl --data test_data.csv
+antibody-test --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl --data test_data.csv
 
 # Test multiple models on multiple datasets
-antibody-test --model models/model1.pkl models/model2.pkl --data data1.csv data2.csv
+antibody-test --model experiments/checkpoints/esm1v/logreg/model1.pkl experiments/checkpoints/esm2_650m/logreg/model2.pkl --data data1.csv data2.csv
 
 # Create a sample test configuration
 antibody-test --create-config
@@ -258,7 +258,7 @@ import pickle
 import numpy as np
 
 # Load the trained model
-with open('models/antibody_classifier.pkl', 'rb') as f:
+with open('experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl', 'rb') as f:
     classifier = pickle.load(f)
 
 # Predict on new sequences
