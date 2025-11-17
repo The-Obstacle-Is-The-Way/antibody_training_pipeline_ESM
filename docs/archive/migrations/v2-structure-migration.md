@@ -2,6 +2,18 @@
 
 **Professional Python Package Organization for Antibody Training ESM**
 
+> **⚠️ HISTORICAL MIGRATION DOCUMENT (v2.0.0 Package Structure)**
+>
+> This document describes the v2.0.0 package structure migration (root files → `src/antibody_training_esm/`).
+>
+> **Note:** References to output directories (`models/`, `embeddings_cache/`, `logs/`, `configs/`) reflect pre-Phase 5 structure. These were later reorganized in v0.5.0:
+> - `models/` → `experiments/checkpoints/{model}/{classifier}/`
+> - `embeddings_cache/` → `experiments/cache/`
+> - `logs/` → `experiments/runs/*/logs/`
+> - `configs/` → `src/antibody_training_esm/conf/`
+>
+> For current directory structure, see docs/developer-guide/directory-organization.md
+
 ---
 
 ## Executive Summary

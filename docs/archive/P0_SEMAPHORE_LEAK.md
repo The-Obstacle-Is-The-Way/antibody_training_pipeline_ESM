@@ -1,5 +1,12 @@
 # P0 Bug: Semaphore Leak & Double Model Loading
 
+> **⚠️ HISTORICAL BUG REPORT (Pre-Phase 5)**
+>
+> This document references the old directory structure (`models/`) which was reorganized in Phase 5 (v0.5.0):
+> - `models/` → `experiments/checkpoints/{model}/{classifier}/`
+>
+> Paths preserved for historical accuracy. For current structure, see docs/developer-guide/directory-organization.md
+
 **Status:** 🔴 CRITICAL - Crashes Harvey benchmark (141k sequences)
 **Root Cause:** Amateur object lifecycle management - orphaned GPU models
 **Discovered:** 2025-11-06 (Harvey crashed at 15% with semaphore leak warning)
