@@ -538,7 +538,7 @@ uv run antibody-test \
 Test embeddings are cached (same as training):
 
 ```
-embeddings_cache/
+experiments/cache/
 └── {SHA256_hash}.npy
 ```
 
