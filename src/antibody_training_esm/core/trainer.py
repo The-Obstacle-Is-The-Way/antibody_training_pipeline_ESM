@@ -645,17 +645,28 @@ def save_model(
     json_path = f"{base_path}_config.json"
     metadata = {
         # Model architecture
+        "model_name": classifier.model_name,  # HuggingFace model ID (for test.py routing)
         "model_type": "LogisticRegression",
         "sklearn_version": sklearn.__version__,
-        # LogisticRegression hyperparameters
+        # Classifier configuration block (structured for directory routing)
+        "classifier": {
+            "type": "logistic_regression",
+            "C": classifier.C,
+            "penalty": classifier.penalty,
+            "solver": classifier.solver,
+            "class_weight": classifier.class_weight,  # JSON handles None, str, dict natively
+            "max_iter": classifier.max_iter,
+            "random_state": classifier.random_state,
+        },
+        # Legacy flat fields (keep for backwards compatibility)
         "C": classifier.C,
         "penalty": classifier.penalty,
         "solver": classifier.solver,
-        "class_weight": classifier.class_weight,  # JSON handles None, str, dict natively
+        "class_weight": classifier.class_weight,
         "max_iter": classifier.max_iter,
         "random_state": classifier.random_state,
         # ESM embedding extractor params
-        "esm_model": classifier.model_name,
+        "esm_model": classifier.model_name,  # Alias for model_name
         "esm_revision": classifier.revision,
         "batch_size": classifier.batch_size,
         "device": classifier.device,
