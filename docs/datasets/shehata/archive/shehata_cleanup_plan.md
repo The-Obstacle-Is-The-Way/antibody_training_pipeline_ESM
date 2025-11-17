@@ -388,7 +388,7 @@ python3 tests/test_shehata_embedding_compatibility.py      # Should pass all tes
 
 ### 7. Model Test
 ```bash
-python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
+python3 test.py --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/shehata/fragments/VH_only_shehata.csv
 # Should load and run successfully
 ```

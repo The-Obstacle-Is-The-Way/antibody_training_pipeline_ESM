@@ -23,7 +23,7 @@
 # Create config file specifying model, data, AND column override
 cat > configs/test_jain_parity.yaml <<EOF
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 data_paths:
   - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
@@ -40,7 +40,7 @@ Expected: [[40, 19], [10, 17]], 66.28% accuracy (EXACT Novo parity)
 ```bash
 # Full dataset test (different from Novo parity benchmark)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 
 Expected: Different results (137 antibodies vs 86 parity subset)
@@ -251,7 +251,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
    ```bash
    # Works with default CLI (sequence column)
    uv run antibody-test \
-     --model models/boughter_vh_esm1v_logreg.pkl \
+     --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
      --data data/test/jain/fragments/VH_only_jain.csv
    ```
 
@@ -265,7 +265,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 
 ### OLD Model (Primary)
 
-**File:** `models/boughter_vh_esm1v_logreg.pkl`
+**File:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 
 **Training:**
 - Date: Nov 2, 2025
@@ -279,7 +279,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 
 ### Production Model (VALIDATED)
 
-**File:** `models/boughter_vh_esm1v_logreg.pkl`
+**File:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 
 **Training:**
 - Date: Nov 2, 2025
@@ -346,7 +346,7 @@ experiments/novo_parity/
 # Create config file
 cat > configs/test_jain_parity.yaml <<EOF
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 data_paths:
   - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"
@@ -368,7 +368,7 @@ uv run antibody-test --config configs/test_jain_parity.yaml
 
 # Test 2: Full dataset (137 antibodies) - use fragment file directly
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 # Expected: Different results (different antibody set)
 ```

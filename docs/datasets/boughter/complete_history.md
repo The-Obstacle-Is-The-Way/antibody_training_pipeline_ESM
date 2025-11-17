@@ -264,7 +264,7 @@ data/train/boughter/
 - Label 0 (specific, 0 flags): 457 sequences (50.0%)
 - Label 1 (non-specific, 4+ flags): 457 sequences (50.0%)
 
-**Model:** `models/boughter_vh_esm1v_logreg.pkl`
+**Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 
 **Performance:**
 - CV accuracy: 67.5% ± 8.9% (10-fold)
@@ -306,7 +306,7 @@ An experimental strict QC filtering (852-914 sequences) was tested but archived 
 
 ### Boughter QC (914 sequences)
 
-**Model:** `models/boughter_vh_esm1v_logreg.pkl`
+**Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 
 **Cross-Validation (10-fold):**
 - Accuracy: **67.5% ± 8.9%**
@@ -388,7 +388,7 @@ Boughter:      [58.6% =========== 67.5% ============ 76.4%]
 4. ✅ **Validated approach** (from published paper)
 5. ✅ **Simpler pipeline** (no Stage 4 needed)
 
-**Model:** `models/boughter_vh_esm1v_logreg.pkl`
+**Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 
 **Expected Jain test accuracy:** ~66% (generalization to clinical antibodies)
 
@@ -416,7 +416,7 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 - Fragment CSVs: `data/train/boughter/annotated/*_boughter.csv` (16 files, 1,065 seqs each)
 
 **Trained Models:**
-- Production: `models/boughter_vh_esm1v_logreg.pkl` ⭐ **VALIDATED** (Jain 66.28%, Shehata 52.26%)
+- Production: `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` ⭐ **VALIDATED** (Jain 66.28%, Shehata 52.26%)
 
 **Preprocessing Scripts:**
 - Stage 1: `preprocessing/boughter/stage1_dna_translation.py`
@@ -466,7 +466,7 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
    - External validation:
      - Jain (HIC retention): 66.28% accuracy ✅
      - Shehata (PSR assay): 52.26% accuracy ✅
-   - Model: `models/boughter_vh_esm1v_logreg.pkl`
+   - Model: `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
    - Pipeline: Stages 1-2-3 (ANARCI + IMGT + Boughter QC)
 
 ⚠️ **Experimental Strict QC (852 sequences)** - Archived (no improvement)
@@ -480,7 +480,7 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 - Production model externally validated with strong results
 - Ready for deployment
 
-**For production use:** `models/boughter_vh_esm1v_logreg.pkl` (914 sequences) ⭐
+**For production use:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` (914 sequences) ⭐
 
 **For external testing:** Use Jain or Shehata test datasets (validated)
 
