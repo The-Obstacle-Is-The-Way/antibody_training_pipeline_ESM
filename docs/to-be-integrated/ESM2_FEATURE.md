@@ -84,9 +84,9 @@ antibody-train --multirun model=esm1v,esm2_650m classifier=logreg
 antibody-train --multirun model=esm1v,esm2_650m
 
 # Expected outputs:
-# - models/boughter_vh_esm1v_logreg.pkl
-# - models/boughter_vh_esm2_650m_logreg.pkl
-# - outputs/<timestamp>/training.log (metrics for both)
+# - experiments/checkpoints/boughter_vh_esm1v_logreg.pkl
+# - experiments/checkpoints/boughter_vh_esm2_650m_logreg.pkl
+# - experiments/runs/<timestamp>/training.log (metrics for both)
 ```
 
 **Document results in:** `BENCHMARK_RESULTS.md`
@@ -125,7 +125,7 @@ device: ${hardware.device}
 1. Hydra loads this config when `model=esm2_650m` specified
 2. `ESMEmbeddingExtractor` downloads model from HuggingFace
 3. Model cached locally for reuse
-4. Embeddings extracted, cached in `embeddings_cache/`
+4. Embeddings extracted, cached in `experiments/cache/`
 5. Training proceeds as normal
 
 ### Compatibility

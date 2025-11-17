@@ -103,7 +103,7 @@ Whichever approach we choose, silence the warnings before we upgrade Hydra or th
 ## 4. Log File Creation ✅ **FIXED**
 
 ### Context
-Earlier today the Hydra code path failed when writing `logs/training.log` because the directory didn’t exist. We patched this by adding:
+Earlier today the Hydra code path failed when writing `experiments/runs/*/logs/training.log` because the directory didn’t exist. We patched this by adding:
 ```python
 log_file.parent.mkdir(parents=True, exist_ok=True)
 ```

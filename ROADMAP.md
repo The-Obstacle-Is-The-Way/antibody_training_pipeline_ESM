@@ -71,14 +71,14 @@ antibody-train model=esm2_650m          # Override model
 antibody-train --multirun model=esm1v,esm2_650m  # Compare backbones
 
 # Testing
-antibody-test --model models/model.pkl --data data/test/jain/canonical/jain.csv
+antibody-test --model experiments/checkpoints/model.pkl --data data/test/jain/canonical/jain.csv
 ```
 
 ### Current Models
 
 **Trained and benchmarked:**
-- `models/boughter_vh_esm1v_logreg.{pkl,npz,json}` (Novo baseline)
-- `models/boughter_vh_esm2_650m_logreg.{pkl,npz,json}` (ESM2 comparison)
+- `experiments/checkpoints/boughter_vh_esm1v_logreg.{pkl,npz,json}` (Novo baseline)
+- `experiments/checkpoints/boughter_vh_esm2_650m_logreg.{pkl,npz,json}` (ESM2 comparison)
 
 **Test results organized hierarchically:**
 ```

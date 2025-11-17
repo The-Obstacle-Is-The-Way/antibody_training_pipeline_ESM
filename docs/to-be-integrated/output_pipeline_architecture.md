@@ -4,7 +4,7 @@
 **Status:** ✅ IMPLEMENTED - Hierarchical output system complete  
 **Author:** System trace + first principles analysis
 
-> **Phase 5 Note (2025-11-15):** The canonical locations have moved under `experiments/` (runs, checkpoints, cache, benchmarks). This document captures the historical design analysis; whenever you see `models/` or `test_results/`, mentally substitute `experiments/checkpoints/…` and `experiments/benchmarks/…`. All pipeline code already writes to the new hierarchy.
+> **Phase 5 Note (2025-11-15):** The canonical locations have moved under `experiments/` (runs, checkpoints, cache, benchmarks). This document captures the historical design analysis; whenever you see `experiments/checkpoints/` or `experiments/benchmarks/`, mentally substitute `experiments/checkpoints/…` and `experiments/benchmarks/…`. All pipeline code already writes to the new hierarchy.
 
 ---
 
@@ -28,7 +28,7 @@
 
 **Current Location:** `./experiments/checkpoints/{model_shortname}/{classifier_type}/`
 
-Historical snapshot (pre-Phase 5) showed a flat `models/` directory. After the reorg, those files now live at:
+Historical snapshot (pre-Phase 5) showed a flat `experiments/checkpoints/` directory. After the reorg, those files now live at:
 ```
 experiments/checkpoints/
 ├── esm1v/logreg/boughter_vh_esm1v_logreg.{pkl,npz,json}
@@ -60,7 +60,7 @@ antibody-train training.model_name=boughter_vh_esm2_650m_logreg
 
 **Location:** `./experiments/benchmarks/{benchmark_name}/`
 
-**IMPORTANT:** As of Phase 5, the CLI defaults to `./experiments/benchmarks` and stratifies outputs by benchmark (e.g., `novo_parity`, `strict_qc`). The historical `test_results/…` tree shown below is preserved for context, but those files now reside under `experiments/benchmarks/…`.
+**IMPORTANT:** As of Phase 5, the CLI defaults to `./experiments/benchmarks` and stratifies outputs by benchmark (e.g., `novo_parity`, `strict_qc`). The historical `experiments/benchmarks/…` tree shown below is preserved for context, but those files now reside under `experiments/benchmarks/…`.
 
 ```
 experiments/benchmarks/novo_parity/
@@ -104,36 +104,36 @@ yaml_file = f"detailed_results_{dataset_name}_{timestamp}.yaml"
 **Previous Risk** (now resolved):
 ```bash
 # Test ESM-1v on Jain
-antibody-test --model models/boughter_vh_esm1v_logreg.pkl --dataset jain
-# Creates: test_results/jain/confusion_matrix_VH_only_jain_test_PARITY_86.png
+antibody-test --model experiments/checkpoints/boughter_vh_esm1v_logreg.pkl --dataset jain
+# Creates: experiments/benchmarks/jain/confusion_matrix_VH_only_jain_test_PARITY_86.png
 
 # Test ESM2-650M on Jain
-antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl --dataset jain
-# Previously OVERWROTE: test_results/jain/confusion_matrix_VH_only_jain_test_PARITY_86.png ❌
+antibody-test --model experiments/checkpoints/boughter_vh_esm2_650m_logreg.pkl --dataset jain
+# Previously OVERWROTE: experiments/benchmarks/jain/confusion_matrix_VH_only_jain_test_PARITY_86.png ❌
 ```
 
 **Current Behavior** (after fix):
 ```bash
 # Test ESM-1v on Jain
-antibody-test --model models/boughter_vh_esm1v_logreg.pkl --dataset jain
-# Creates: test_results/esm1v/logreg/jain/confusion_matrix_boughter_vh_esm1v_logreg_jain.png ✅
+antibody-test --model experiments/checkpoints/boughter_vh_esm1v_logreg.pkl --dataset jain
+# Creates: experiments/benchmarks/esm1v/logreg/jain/confusion_matrix_boughter_vh_esm1v_logreg_jain.png ✅
 
 # Test ESM2-650M on Jain
-antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl --dataset jain
-# Creates: test_results/esm2_650m/logreg/jain/confusion_matrix_boughter_vh_esm2_650m_logreg_jain.png ✅
+antibody-test --model experiments/checkpoints/boughter_vh_esm2_650m_logreg.pkl --dataset jain
+# Creates: experiments/benchmarks/esm2_650m/logreg/jain/confusion_matrix_boughter_vh_esm2_650m_logreg_jain.png ✅
 ```
 
 **Both baseline and comparison results are preserved in separate hierarchical directories.**
 
 ---
 
-### 3. Training Outputs (`outputs/`)
+### 3. Training Outputs (`experiments/runs/`)
 
-**Location:** `./outputs/{experiment.name}/{timestamp}/`
+**Location:** `./experiments/runs/{experiment.name}/{timestamp}/`
 
 **Current Structure:**
 ```
-outputs/
+experiments/runs/
 ├── novo_replication/
 │   ├── 2025-11-11_18-00-50/  # ESM-1v training run
 │   │   ├── .hydra/
@@ -159,7 +159,7 @@ experiment.name = "novo_replication"  # Default
 
 # Hydra auto-generates timestamp directories
 timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-output_dir = f"outputs/{experiment.name}/{timestamp}/"
+output_dir = f"experiments/runs/{experiment.name}/{timestamp}/"
 ```
 
 **✅ VERDICT:** Training outputs are SAFE - timestamped directories prevent overrides.
@@ -176,7 +176,7 @@ output_dir = f"outputs/{experiment.name}/{timestamp}/"
 | **Predictions CSV** | `predictions_{model}_{dataset}_{time}.csv` | ✅ Yes | ✅ Yes | 🟢 SAFE |
 | **Confusion Matrix PNG** | `confusion_matrix_{model}_{dataset}.png` | ✅ YES | ❌ No | ✅ **FIXED** |
 | **Detailed Results YAML** | `detailed_results_{model}_{dataset}_{time}.yaml` | ✅ YES | ✅ Yes | ✅ **FIXED** |
-| **Training Logs** | `outputs/{exp}/{timestamp}/` | N/A | ✅ Yes | 🟢 SAFE |
+| **Training Logs** | `experiments/runs/{exp}/{timestamp}/` | N/A | ✅ Yes | 🟢 SAFE |
 
 **Note:** Confusion matrix and detailed results now include model names in filenames (Phase 1 fix) AND are organized hierarchically (Phase 2 fix).
 
@@ -194,8 +194,8 @@ output_dir = f"outputs/{experiment.name}/{timestamp}/"
 
 **2. TestConfig Enhancement** (lines 147-168)
 - Added `get_hierarchical_output_dir()` method
-- Computes paths like: `test_results/{backbone}/{classifier}/{dataset}/`
-- Example: `get_hierarchical_output_dir("esm1v", "logreg", "jain")` → `"./test_results/esm1v/logreg/jain"`
+- Computes paths like: `experiments/benchmarks/{backbone}/{classifier}/{dataset}/`
+- Example: `get_hierarchical_output_dir("esm1v", "logreg", "jain")` → `"./experiments/benchmarks/esm1v/logreg/jain"`
 
 **3. Output Functions Refactored** (lines 405-513)
 - `plot_confusion_matrix()`: Now accepts `output_dir` parameter, creates hierarchical directories
@@ -216,7 +216,7 @@ output_dir = f"outputs/{experiment.name}/{timestamp}/"
 ### Result
 
 ```
-test_results/
+experiments/benchmarks/
 ├── esm1v/
 │   └── logreg/
 │       ├── jain/
@@ -250,10 +250,10 @@ test_results/
   a) Add new config knobs for `backbone` and `classifier` subdirectories, or
   b) Add logic in `train_pipeline()` (trainer.py) to derive subdirectories from `cfg.model.name` and `cfg.classifier` and dynamically update `model_save_dir` before saving.
 
-Without these code changes, creating empty folders won't help—the trainer will still write to the root `./models/` directory.
+Without these code changes, creating empty folders won't help—the trainer will still write to the root `./experiments/checkpoints/` directory.
 
 ```
-models/
+experiments/checkpoints/
 ├── esm1v/
 │   ├── logreg/
 │   │   ├── boughter_vh_esm1v_logreg.pkl
@@ -283,11 +283,11 @@ models/
 
 **CRITICAL:** This also requires CODE CHANGES in test.py. The current implementation writes to a single flat `self.config.output_dir`. To achieve this hierarchy, we must:
   1. Extract backbone and classifier from the model config or filename
-  2. Dynamically compute output_dir as `test_results/{backbone}/{classifier}/{dataset}/`
+  2. Dynamically compute output_dir as `experiments/benchmarks/{backbone}/{classifier}/{dataset}/`
   3. Update lines 353, 368, 387 in test.py to use this new directory structure
 
 ```
-test_results/
+experiments/benchmarks/
 ├── esm1v/
 │   ├── logreg/
 │   │   ├── jain/
@@ -374,8 +374,8 @@ class TestConfig:
 **Testing:**
 ```bash
 # After fix
-antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl --dataset jain
-# Output: test_results/esm2_650m/logreg/jain/confusion_matrix_esm2_650m_logreg_jain.png
+antibody-test --model experiments/checkpoints/boughter_vh_esm2_650m_logreg.pkl --dataset jain
+# Output: experiments/benchmarks/esm2_650m/logreg/jain/confusion_matrix_esm2_650m_logreg_jain.png
 ```
 
 ### Phase 2: Reorganize Existing Results (Before New Tests)
@@ -387,12 +387,12 @@ antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl --dataset jain
 cp -r test_results test_results_BACKUP_20251111
 
 # Create new structure
-mkdir -p test_results/esm1v/logreg/{jain,harvey,shehata}
+mkdir -p experiments/benchmarks/esm1v/logreg/{jain,harvey,shehata}
 
 # Move existing results
-mv test_results/jain/* test_results/esm1v/logreg/jain/
-mv test_results/harvey/* test_results/esm1v/logreg/harvey/
-mv test_results/shehata/* test_results/esm1v/logreg/shehata/
+mv experiments/benchmarks/jain/* experiments/benchmarks/esm1v/logreg/jain/
+mv experiments/benchmarks/harvey/* experiments/benchmarks/esm1v/logreg/harvey/
+mv experiments/benchmarks/shehata/* experiments/benchmarks/esm1v/logreg/shehata/
 ```
 
 ### Phase 3: Reorganize Model Weights (Requires Trainer Code Changes)
@@ -414,7 +414,7 @@ mv test_results/shehata/* test_results/esm1v/logreg/shehata/
 When we add XGBoost:
 ```bash
 # After implementing the code changes, the trainer will automatically create:
-models/
+experiments/checkpoints/
 ├── esm1v/
 │   ├── logreg/
 │   │   ├── boughter_vh_esm1v_logreg.pkl
@@ -631,19 +631,19 @@ Before running ESM2-650M tests:
 
 ```bash
 # Test ESM-1v
-antibody-test --model models/boughter_vh_esm1v_logreg.pkl --dataset jain
+antibody-test --model experiments/checkpoints/boughter_vh_esm1v_logreg.pkl --dataset jain
 
 # Output:
-test_results/esm1v/logreg/jain/
+experiments/benchmarks/esm1v/logreg/jain/
 ├── confusion_matrix_esm1v_logreg_jain.png
 ├── predictions_esm1v_logreg_jain_20251111.csv
 └── detailed_results_esm1v_logreg_jain_20251111.yaml
 
 # Test ESM2-650M
-antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl --dataset jain
+antibody-test --model experiments/checkpoints/boughter_vh_esm2_650m_logreg.pkl --dataset jain
 
 # Output (NO OVERRIDE!):
-test_results/esm2_650m/logreg/jain/
+experiments/benchmarks/esm2_650m/logreg/jain/
 ├── confusion_matrix_esm2_650m_logreg_jain.png  # Different file!
 ├── predictions_esm2_650m_logreg_jain_20251111.csv
 └── detailed_results_esm2_650m_logreg_jain_20251111.yaml
@@ -725,8 +725,8 @@ def extract_classifier(model_name: str) -> str:
 - **Impact:** Scales cleanly to full model zoo
 
 **Phase 2: Reorganize Existing Results (15 minutes)**
-- Backup current test_results/ directory
-- Move ESM-1v results to test_results/esm1v/logreg/{jain,harvey,shehata}/
+- Backup current experiments/benchmarks/ directory
+- Move ESM-1v results to experiments/benchmarks/esm1v/logreg/{jain,harvey,shehata}/
 - **Blocks:** Consistent baseline for comparisons
 - **Effort:** 5 min backup + 5 min moves + 5 min verification
 - **Impact:** Preserves existing work in new structure
@@ -777,26 +777,26 @@ After implementing Phase 1A + 1B + 2, we should be able to:
 
 ```bash
 # Test ESM-1v on Jain
-antibody-test --model models/boughter_vh_esm1v_logreg.pkl \
+antibody-test --model experiments/checkpoints/boughter_vh_esm1v_logreg.pkl \
               --dataset data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
-# Output: test_results/esm1v/logreg/jain/
+# Output: experiments/benchmarks/esm1v/logreg/jain/
 #   ├── confusion_matrix_jain.png
 #   ├── predictions_jain_20251111.csv
 #   └── detailed_results_jain_20251111.yaml
 
 # Test ESM2-650M on Jain
-antibody-test --model models/boughter_vh_esm2_650m_logreg.pkl \
+antibody-test --model experiments/checkpoints/boughter_vh_esm2_650m_logreg.pkl \
               --dataset data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
 
-# Output: test_results/esm2_650m/logreg/jain/  ✅ NO OVERRIDE!
+# Output: experiments/benchmarks/esm2_650m/logreg/jain/  ✅ NO OVERRIDE!
 #   ├── confusion_matrix_jain.png
 #   ├── predictions_jain_20251111.csv
 #   └── detailed_results_jain_20251111.yaml
 
 # Compare confusion matrices side-by-side
-open test_results/esm1v/logreg/jain/confusion_matrix_jain.png
-open test_results/esm2_650m/logreg/jain/confusion_matrix_jain.png
+open experiments/benchmarks/esm1v/logreg/jain/confusion_matrix_jain.png
+open experiments/benchmarks/esm2_650m/logreg/jain/confusion_matrix_jain.png
 ```
 
 ---

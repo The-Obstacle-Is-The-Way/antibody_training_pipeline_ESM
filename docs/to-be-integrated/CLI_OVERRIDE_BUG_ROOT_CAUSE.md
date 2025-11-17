@@ -350,7 +350,7 @@ After implementing the fix:
 
 6. **Check saved config:**
    ```bash
-   cat outputs/*/latest/.hydra/config.yaml | grep "model.name"
+   cat experiments/runs/*/latest/.hydra/config.yaml | grep "model.name"
    # Should show: facebook/esm2_t33_650M_UR50D
    ```
 
