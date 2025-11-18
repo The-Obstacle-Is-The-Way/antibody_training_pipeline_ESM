@@ -7,7 +7,7 @@
 > - **For user testing:** See `docs/user-guide/testing.md`
 > - **Last Updated:** 2025-11-04 (before label discrepancy fix on 2025-11-06)
 > - **Known issues:**
->   - References non-existent file `VH_only_jain_test_PARITY_86.csv` (removed)
+>   - References archived file `VH_only_jain_test_PARITY_86.csv` (now in `data/test/jain/canonical/archive/`)
 >   - References `python test.py` commands (removed, use `uv run antibody-test`)
 >   - Describes retired 94→86 methodology
 >
@@ -219,7 +219,7 @@ data/test/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 ├── VH_only_jain.csv                      # Moved to fragments/
 ├── VH_only_jain_test_FULL.csv            # ❌ REMOVED
 ├── VH_only_jain_test_QC_REMOVED.csv      # ❌ REMOVED
-└── VH_only_jain_test_PARITY_86.csv       # ❌ REMOVED (replaced by VH_only_jain_86_p5e_s2.csv)
+└── VH_only_jain_test_PARITY_86.csv       # ⚠️ ARCHIVED (replaced by VH_only_jain_86_p5e_s2.csv; archived copy lives in canonical/archive/)
 ```
 
 ### Detailed File Descriptions
@@ -347,7 +347,7 @@ data/test/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 
 ### ~~Primary Recommendation: Use PARITY_86~~ (OBSOLETE)
 
-**File (OLD v1.x):** ~~`data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv`~~ ❌ REMOVED
+**File (OLD v1.x):** ~~`data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv`~~ ⚠️ ARCHIVED (deprecated; see canonical/archive/)
 
 **CURRENT FILE (v2.0):** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, P5e-S2 methodology)
 
