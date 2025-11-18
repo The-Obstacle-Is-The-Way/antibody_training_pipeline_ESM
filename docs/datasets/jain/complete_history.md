@@ -409,7 +409,7 @@ data/test/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 
 ### Testing the Production Model
 
-**Production Model:** `models/boughter_vh_esm1v_logreg.pkl` (914 sequences)
+**Production Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` (914 sequences)
 - CV accuracy: 67.5% ± 8.9%
 - **Externally validated:** Jain 66.28%, Shehata 52.26% ✅
 
@@ -427,7 +427,7 @@ data/test/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 # Create config with model_paths, data_paths, AND column override
 cat > configs/test_jain_parity.yaml <<EOF
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 data_paths:
   - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"

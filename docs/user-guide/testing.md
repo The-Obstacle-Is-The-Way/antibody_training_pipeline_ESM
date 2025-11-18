@@ -47,7 +47,7 @@ Before testing, it's important to understand the two types of CSV files in the p
 ```bash
 # Test trained model on Jain dataset (using fragment file)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -67,7 +67,7 @@ uv run antibody-test --config test_config.yaml
 
 ```yaml
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"  # Fragment file
@@ -88,7 +88,7 @@ The pipeline includes three test datasets with preprocessed fragment files:
 ```bash
 # Using fragment file (recommended - standardized columns)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -109,7 +109,7 @@ uv run antibody-test \
 ```bash
 # Test on full VHH sequences
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/harvey/fragments/VHH_only_harvey.csv
 ```
 
@@ -126,7 +126,7 @@ uv run antibody-test \
 ```bash
 # Test on VHH CDRs only
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/harvey/fragments/H-CDRs_harvey.csv
 ```
 
@@ -143,7 +143,7 @@ uv run antibody-test \
 
 ```bash
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/shehata/fragments/VH_only_shehata.csv
 ```
 
@@ -166,22 +166,22 @@ All datasets provide fragment-specific CSV files. Test on specific antibody regi
 ```bash
 # Test on H-CDRs (Heavy Chain CDRs)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/shehata/fragments/H-CDRs_shehata.csv
 
 # Test on All-CDRs (Heavy + Light)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/shehata/fragments/All-CDRs_shehata.csv
 
 # Test on H-FWRs (Heavy Framework Regions)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/shehata/fragments/H-FWRs_shehata.csv
 
 # Test on combined VH+VL
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/shehata/fragments/VH+VL_shehata.csv
 ```
 
@@ -199,7 +199,7 @@ uv run antibody-test \
 ```bash
 # Test on training set fragments (for cross-validation)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/train/boughter/annotated/VH_only_boughter.csv
 ```
 
@@ -221,7 +221,7 @@ Canonical files preserve original column names and full metadata. To use them, c
 ```yaml
 # test_config_jain_canonical.yaml
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
   - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
@@ -256,7 +256,7 @@ uv run antibody-test --config test_config_jain_canonical.yaml
 ### Standard Output
 
 ```
-✅ Loaded model: models/boughter_vh_esm1v_logreg.pkl
+✅ Loaded model: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 ✅ Loaded test data: 86 samples
 ✅ Extracted embeddings (86 x 1280)
 ✅ Predictions complete
@@ -365,7 +365,7 @@ Create a test config with PSR-specific threshold:
 ```yaml
 # test_config_psr.yaml
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
   - "data/test/shehata/fragments/VH_only_shehata.csv"
@@ -393,13 +393,13 @@ from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
 # Option A: Load from pickle (research)
 import pickle
-with open("models/boughter_vh_esm1v_logreg.pkl", "rb") as f:
+with open("experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl", "rb") as f:
     classifier = pickle.load(f)
 
 # Option B: Load from NPZ+JSON (production)
 classifier = load_model_from_npz(
-    npz_path="models/boughter_vh_esm1v_logreg.npz",
-    json_path="models/boughter_vh_esm1v_logreg_config.json"
+    npz_path="experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.npz",
+    json_path="experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg_config.json"
 )
 
 # Extract embeddings for test data
@@ -436,7 +436,7 @@ Test a single model on multiple datasets in one command:
 
 ```bash
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data \
     data/test/jain/fragments/VH_only_jain.csv \
     data/test/shehata/fragments/VH_only_shehata.csv \
@@ -448,7 +448,7 @@ uv run antibody-test \
 ```yaml
 # test_config_multi.yaml
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"
@@ -471,7 +471,7 @@ for data_file in \
   data/test/shehata/fragments/VH_only_shehata.csv; do
   echo "Testing on $data_file..."
   uv run antibody-test \
-    --model models/boughter_vh_esm1v_logreg.pkl \
+    --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
     --data "$data_file"
 done
 ```
@@ -507,7 +507,7 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 
 ```bash
 uv run antibody-test \
-  --model models/my_model.pkl \
+  --model experiments/checkpoints/esm1v/logreg/my_model.pkl \
   --data /path/to/my_test_data.csv
 ```
 
@@ -538,7 +538,7 @@ uv run antibody-test \
 Test embeddings are cached (same as training):
 
 ```
-embeddings_cache/
+experiments/cache/
 └── {SHA256_hash}.npy
 ```
 
@@ -558,8 +558,8 @@ Compare performance of different models on same test set:
 ```bash
 uv run antibody-test \
   --model \
-    models/boughter_vh_esm1v_logreg.pkl \
-    models/boughter_vh_esm2_logreg.pkl \
+    experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
+    experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -568,8 +568,8 @@ uv run antibody-test \
 ```yaml
 # test_config_compare.yaml
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
-  - "models/boughter_vh_esm2_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_logreg.pkl"
 
 data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"
@@ -589,7 +589,7 @@ for fragment_file in \
   H-FWRs_shehata.csv; do
   echo "Testing on $fragment_file..."
   uv run antibody-test \
-    --model models/boughter_vh_esm1v_logreg.pkl \
+    --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
     --data data/test/shehata/fragments/$fragment_file
 done
 ```
@@ -612,10 +612,10 @@ done
 
 ```bash
 # Check model exists
-ls -lh models/
+ls -lh experiments/checkpoints/esm1v/logreg/
 
 # Verify model is valid pickle
-file models/boughter_vh_esm1v_logreg.pkl
+file experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 ```
 
 ---
@@ -665,7 +665,7 @@ uv run python -c "import torch; print(torch.cuda.is_available())"
 # Force GPU usage
 export CUDA_VISIBLE_DEVICES=0  # Use GPU 0
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/harvey/fragments/VHH_only_harvey.csv \
   --device cuda
 ```
@@ -674,7 +674,7 @@ Or reduce batch size:
 
 ```bash
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/harvey/fragments/VHH_only_harvey.csv \
   --batch-size 8  # Reduce from default (16)
 ```
@@ -690,7 +690,7 @@ Adjust prediction threshold for different precision/recall tradeoffs:
 ```python
 # Load model
 from antibody_training_esm.core.classifier import BinaryClassifier
-classifier = BinaryClassifier.load("models/boughter_train_jain_test_vh.pkl")
+classifier = BinaryClassifier.load("experiments/checkpoints/esm1v/logreg/boughter_train_jain_test_vh.pkl")
 
 # Get prediction probabilities
 probs = classifier.predict_proba(test_embeddings)[:, 1]  # P(non-specific)

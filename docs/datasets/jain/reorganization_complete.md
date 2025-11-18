@@ -76,7 +76,7 @@ jain/
 
 ```bash
 # OLD v1.x command (removed):
-# python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
+# python3 test.py --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
 #   --data data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
 ```
 
@@ -86,7 +86,7 @@ jain/
 # Create config with model_paths, data_paths, AND column override
 cat > configs/test_jain_parity.yaml <<EOF
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 data_paths:
   - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"

@@ -13,7 +13,7 @@ As the model zoo grows (9+ models: 3 backbones × 3 classifiers), a flat directo
 Models are organized hierarchically by backbone and classifier:
 
 ```
-models/
+experiments/checkpoints/
 ├── esm1v/
 │   ├── logreg/
 │   │   ├── boughter_vh_esm1v_logreg.pkl
@@ -29,7 +29,7 @@ models/
     └── xgboost/
 ```
 
-**Structure:** `models/{model_shortname}/{classifier_type}/{model_files}`
+**Structure:** `experiments/checkpoints/{model_shortname}/{classifier_type}/{model_files}`
 
 **Model Shortnames:**
 - `esm1v` - Facebook ESM-1v (650M)
@@ -155,7 +155,7 @@ NEW: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 The hierarchical structure is controlled by the `model_save_dir` config parameter:
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 training:
   model_save_dir: ./experiments/checkpoints  # Base directory for hierarchical structure
 ```

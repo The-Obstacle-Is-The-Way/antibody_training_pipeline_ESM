@@ -1,15 +1,21 @@
 # Boughter Training Setup - Ready to Launch
 
-> **⚠️ LEGACY DOCUMENTATION (v1.x)**
+> **⚠️ LEGACY DOCUMENTATION (v1.x - Pre-Phase 5)**
 >
-> This document references the old root file structure (train.py, test.py, etc.) which was removed in v2.0.0.
+> This document references:
+> 1. **Old root file structure** (train.py, test.py, etc.) which was removed in v2.0.0
+> 2. **Old directory structure** (`models/`, `embeddings_cache/`, `logs/`, `configs/`) reorganized in Phase 5 (v0.5.0):
+>    - `models/` → `experiments/checkpoints/{model}/{classifier}/`
+>    - `embeddings_cache/` → `experiments/cache/`
+>    - `logs/` → `experiments/runs/*/logs/`
+>    - `configs/` → `src/antibody_training_esm/conf/`
 >
-> **For v2.0.0+, use:**
-> - `antibody-train --config configs/config.yaml` instead of `python train.py`
+> **For current usage:**
+> - `antibody-train` instead of `python train.py`
 > - `antibody-test --model X --data Y` instead of `python test.py`
 > - `from antibody_training_esm.core.classifier import BinaryClassifier` instead of `from classifier import BinaryClassifier`
 >
-> See [IMPORT_AND_STRUCTURE_GUIDE.md](../../IMPORT_AND_STRUCTURE_GUIDE.md) for v2.0.0 usage.
+> See docs/developer-guide/architecture.md for v2.0.0+ structure.
 
 **Date**: 2025-11-02
 **Status**: ✅ **READY TO TRAIN** (updated for v2.0.0)

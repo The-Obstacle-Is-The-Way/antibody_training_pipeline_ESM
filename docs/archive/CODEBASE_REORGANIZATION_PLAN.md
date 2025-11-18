@@ -1,11 +1,15 @@
 # Codebase Reorganization Plan
 
-> **✅ COMPLETED IN v2.0.0**
+> **✅ COMPLETED IN v2.0.0 (Pre-Phase 5 Directory Reorganization)**
 >
-> This planning document led to the successful Phase 1-5 migration completed in v2.0.0.
-> All root files have been removed, and the codebase now follows professional package structure.
+> This planning document led to the successful Phase 1-5 package structure migration completed in v2.0.0.
+> All root Python files were removed, and the codebase now follows professional package structure.
 >
-> See [IMPORT_AND_STRUCTURE_GUIDE.md](../IMPORT_AND_STRUCTURE_GUIDE.md) for the final implementation.
+> **Note:** This document references the old output directory structure (`models/`, `data/train/`, `data/test/`) which was later reorganized in Phase 5 (v0.5.0):
+> - `models/` → `experiments/checkpoints/{model}/{classifier}/`
+> - Training/test data paths remain unchanged
+>
+> See docs/archive/migrations/v2-structure-migration.md for package structure and docs/developer-guide/directory-organization.md for current directory layout.
 
 **Date:** 2025-11-06
 **Status:** ✅ COMPLETED (See v2.0.0 release)

@@ -92,15 +92,15 @@ All trained models are automatically saved in **both formats**:
 
 ```python
 # Research path (pickle) - still works
-with open("models/model.pkl", "rb") as f:
+with open("experiments/checkpoints/esm1v/logreg/model.pkl", "rb") as f:
     model = pickle.load(f)
 
 # Production path (NPZ+JSON) - NEW
 from antibody_training_esm.core import load_model_from_npz
 
 model = load_model_from_npz(
-    npz_path="models/model.npz",
-    json_path="models/model_config.json"
+    npz_path="experiments/checkpoints/esm1v/logreg/model.npz",
+    json_path="experiments/checkpoints/esm1v/logreg/model_config.json"
 )
 ```
 
@@ -232,7 +232,7 @@ def validate_config(config: dict[str, Any]) -> None:
 
 **Configuration:**
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"
   revision: "main"  # Pinned revision for reproducibility
@@ -473,7 +473,7 @@ response = requests.get("https://example.com/model.pkl")
 model = pickle.loads(response.content)  # RCE vulnerability!
 
 # ✅ ONLY LOCAL FILES
-with open("models/model.pkl", "rb") as f:
+with open("experiments/checkpoints/esm1v/logreg/model.pkl", "rb") as f:
     model = pickle.load(f)  # Safe - we generated this file
 ```
 
@@ -608,7 +608,7 @@ As of v0.3.0, the codebase follows consistent error handling patterns to prevent
 
 **Example:**
 ```python
-def train_model(config_path: str = "conf/config.yaml") -> dict[str, Any]:
+def train_model(config_path: str = "src/antibody_training_esm/conf/config.yaml") -> dict[str, Any]:
     config = load_config(config_path)
     validate_config(config)  # ← Validate BEFORE GPU allocation
     logger = setup_logging(config)

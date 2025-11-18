@@ -136,10 +136,10 @@ make all
 
 ## Training with Hydra
 
-The pipeline uses [Hydra](https://hydra.cc) for flexible configuration management. Default config is in `conf/config.yaml`:
+The pipeline uses [Hydra](https://hydra.cc) for flexible configuration management. Default config is in `src/antibody_training_esm/conf/config.yaml`:
 
 ```bash
-# Train with default Hydra config (conf/config.yaml)
+# Train with default Hydra config (src/antibody_training_esm/conf/config.yaml)
 make train
 # OR
 uv run antibody-train
@@ -159,12 +159,12 @@ uv run antibody-train --multirun classifier.C=0.1,1.0 classifier.penalty=l1,l2
 
 **Output structure:**
 ```
-outputs/
+experiments/runs/
 └── {experiment.name}/
     └── {timestamp}/
         ├── .hydra/config.yaml   # Full resolved config
         ├── logs/training.log    # Training logs
-        └── {model}.pkl          # Trained model
+        └── {model}.pkl          # Trained model artifact
 ```
 
 **Why Hydra?**

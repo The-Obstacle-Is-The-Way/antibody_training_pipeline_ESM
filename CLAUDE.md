@@ -151,7 +151,7 @@ preprocessing/                # Dataset preprocessing pipelines
 ├── harvey/                  # 2-step: Combine CSVs → fragments
 └── shehata/                 # 2-step: Excel → CSV → fragments
 
-conf/                         # Hydra configuration directory (inside package)
+src/antibody_training_esm/conf/        # Hydra configuration directory (inside package)
 ├── config.yaml              # Default Hydra config (Boughter train, Jain test)
 
 experiments/                 # Single source of truth for outputs
@@ -173,8 +173,8 @@ tests/                       # Test suite
 ## Important Patterns & Conventions
 
 ### Configuration System
-- All training controlled via Hydra configs in `conf/` (inside package)
-- Default config: `conf/config.yaml` (Boughter → Jain)
+- All training controlled via Hydra configs in `src/antibody_training_esm/conf/` (inside package)
+- Default config: `src/antibody_training_esm/conf/config.yaml` (Boughter → Jain)
 - Override any parameter from CLI without editing files: `antibody-train hardware.device=cuda`
 - Config structure: `model`, `data`, `classifier`, `training`, `experiment`, `hardware`
 - HuggingFace model revisions pinned for reproducibility
@@ -261,7 +261,7 @@ Standard fragments across all datasets:
 5. Update `preprocessing/README.md`
 
 ### Training a New Model
-1. Use default config `conf/config.yaml` or create custom config in `conf/`
+1. Use default config `src/antibody_training_esm/conf/config.yaml` or create custom config in `src/antibody_training_esm/conf/`
 2. Override parameters from CLI: `data.train_file`, `data.test_file`, `classifier.*`
 3. Run: `uv run antibody-train experiment.name=my_experiment training.model_name=my_model`
 4. Hydra writes run artifacts to `experiments/runs/{experiment.name}/{timestamp}/`

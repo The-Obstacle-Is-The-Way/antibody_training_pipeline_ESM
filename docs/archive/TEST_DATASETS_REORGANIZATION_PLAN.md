@@ -1,5 +1,13 @@
 # Test Datasets Reorganization Plan
 
+> **⚠️ HISTORICAL PLANNING DOCUMENT (Never Executed - Pre-Phase 5)**
+>
+> This document references the old root-level directory structure (`models/`, `test_results/`, etc.) which was reorganized in Phase 5 (v0.5.0):
+> - `models/` → `experiments/checkpoints/{model}/{classifier}/`
+> - `test_results/` → `experiments/benchmarks/`
+>
+> Paths preserved for historical accuracy. For current structure, see docs/developer-guide/directory-organization.md
+
 **Date:** 2025-11-05
 **Branch:** leroy-jenkins/full-send
 **Goal:** Clear, traceable, reproducible dataset organization for Jain (and eventually Harvey/Shehata)

@@ -1,5 +1,17 @@
 # Documentation Structure Plan
 
+> **⚠️ HISTORICAL PLANNING DOCUMENT (Documentation Reorganization - Completed)**
+>
+> This document describes the Phase 0-8 documentation reorganization completed in November 2025.
+> The plan was successfully executed and all canonical documentation now lives in:
+> - `docs/user-guide/` (6 guides)
+> - `docs/developer-guide/` (8 guides)
+> - `docs/research/` (4 guides)
+> - `docs/datasets/` (unchanged)
+> - `docs/archive/` (historical docs)
+>
+> For current documentation structure, see docs/README.md
+
 **Created:** 2025-11-09
 **Last Updated:** 2025-11-10
 **Branch:** docs/canonical-structure

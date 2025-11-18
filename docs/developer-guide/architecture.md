@@ -113,11 +113,14 @@ preprocessing/                # Dataset preprocessing pipelines
 ├── harvey/                  # 2-step: Combine CSVs → fragments
 └── shehata/                 # 2-step: Excel → CSV → fragments
 
-conf/                         # Hydra configuration directory (inside package)
+src/antibody_training_esm/conf/        # Hydra configuration directory (inside package)
 ├── config.yaml              # Default Hydra config (Boughter train, Jain test)
 
-models/                       # Trained model checkpoints (.pkl)
-embeddings_cache/            # Cached ESM embeddings
+experiments/                  # Single source of truth for outputs
+├── checkpoints/              # Trained model checkpoints (.pkl)
+├── cache/                    # Cached ESM embeddings
+├── runs/                     # Hydra outputs (gitignored)
+└── benchmarks/               # Versioned benchmark artifacts
 data/train/              # Training data CSVs
 data/test/               # Test data CSVs
 tests/                       # Test suite
@@ -132,8 +135,8 @@ tests/                       # Test suite
 
 ### Configuration System
 
-- All training controlled via Hydra configs in `conf/` (inside package)
-- Default config: `conf/config.yaml` (Boughter → Jain)
+- All training controlled via Hydra configs in `src/antibody_training_esm/conf/` (inside package)
+- Default config: `src/antibody_training_esm/conf/config.yaml` (Boughter → Jain)
 - Override any parameter from CLI without editing files: `antibody-train hardware.device=cuda`
 - Config structure: `model`, `data`, `classifier`, `training`, `experiment`, `hardware`
 - HuggingFace model revisions pinned for reproducibility
@@ -147,14 +150,14 @@ tests/                       # Test suite
 
 ### Embedding Caching
 
-- ESM embeddings cached in `embeddings_cache/` as `.npy` files
+- ESM embeddings cached in `experiments/cache/` as `.npy` files
 - Cache key: SHA-256 hash of `model_name + dataset_path + revision`
 - Prevents expensive re-computation during hyperparameter sweeps
 - Cache invalidates automatically when model/data changes
 
 ### Model Persistence
 
-- Trained models saved as `.pkl` files in `models/`
+- Trained models saved as `.pkl` files in `experiments/checkpoints/`
 - Pickle usage limited to trusted local artifacts only
 - **Threat model**: No internet-exposed API, no untrusted pickle loading
 - Production deployment should migrate to JSON + NPZ (see `SECURITY_REMEDIATION_PLAN.md`)

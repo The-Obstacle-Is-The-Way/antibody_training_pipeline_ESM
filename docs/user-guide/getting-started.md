@@ -42,7 +42,7 @@ You should see help messages for both commands.
 The pipeline includes a default Hydra configuration for Novo Nordisk parity validation:
 
 ```bash
-cat conf/config.yaml
+cat src/antibody_training_esm/conf/config.yaml
 ```
 
 **Key settings:**
@@ -66,11 +66,11 @@ uv run antibody-train
 
 1. **Download ESM-1v** - Downloads ~700 MB model from HuggingFace (first run only)
 2. **Extract Embeddings** - Generates 1280-dimensional embeddings for all sequences
-3. **Cache Embeddings** - Saves embeddings to `embeddings_cache/` (SHA-256 hashed)
+3. **Cache Embeddings** - Saves embeddings to `experiments/cache/` (SHA-256 hashed)
 4. **10-Fold Cross-Validation** - Trains and evaluates on Boughter dataset
 5. **Train Final Model** - Trains on full Boughter dataset
 6. **Test on Jain** - Evaluates on hold-out test set
-7. **Save Model** - Saves trained model to `models/`
+7. **Save Model** - Saves trained model to `experiments/checkpoints/`
 
 **Expected output:**
 
@@ -85,7 +85,7 @@ uv run antibody-train
 ✅ Test Set (Jain):
    - Accuracy: 66.28%
    - Confusion Matrix: [[40, 19], [10, 17]]
-✅ Model saved to: models/boughter_vh_esm1v_logreg.pkl
+✅ Model saved to: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 ```
 
 **Training Time:**
@@ -99,13 +99,13 @@ Check that outputs were created:
 
 ```bash
 # Trained model
-ls -lh models/*.pkl
+ls -lh experiments/checkpoints/**/*.pkl
 
 # Cached embeddings
-ls -lh embeddings_cache/
+ls -lh experiments/cache/
 
-# Logs (if enabled)
-ls -lh logs/
+# Logs (Hydra outputs)
+ls -lh experiments/runs/*/logs/
 ```
 
 ---
@@ -156,7 +156,7 @@ A simple logistic regression classifier was trained on the embeddings to predict
 
 ### 3. Embedding Caching
 
-Embeddings were cached to `embeddings_cache/` with SHA-256 hashed filenames. This enables:
+Embeddings were cached to `experiments/cache/` with SHA-256 hashed filenames. This enables:
 
 - **Fast hyperparameter sweeps** - No need to re-extract embeddings
 - **Automatic invalidation** - Cache updates when model/data changes
@@ -228,10 +228,10 @@ uv run antibody-train
 uv run antibody-train hardware.batch_size=8
 ```
 
-Or edit `conf/config.yaml`:
+Or edit `src/antibody_training_esm/conf/config.yaml`:
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   batch_size: 8  # Reduce from default (16)
 ```

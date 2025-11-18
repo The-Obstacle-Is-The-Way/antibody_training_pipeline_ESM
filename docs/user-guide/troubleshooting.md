@@ -91,7 +91,7 @@ RuntimeError: MPS backend out of memory
 **Solution 1: Reduce Batch Size**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   batch_size: 4  # Reduce from default (16)
 ```
@@ -106,7 +106,7 @@ torch.mps.empty_cache()
 **Solution 3: Use CPU Instead**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   device: "cpu"
 ```
@@ -128,7 +128,7 @@ RuntimeError: CUDA out of memory. Tried to allocate XX.XX MiB
 **Solution 1: Reduce Batch Size**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   batch_size: 8  # Reduce from default (16)
 ```
@@ -143,7 +143,7 @@ torch.cuda.empty_cache()
 **Solution 3: Use Smaller Model**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"  # 650M parameters
   # Instead of:
@@ -153,7 +153,7 @@ model:
 **Solution 4: Use CPU**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   device: "cpu"
 ```
@@ -261,7 +261,7 @@ df.to_csv("data_fixed.csv", index=False)
 Clear embeddings cache and retrain:
 
 ```bash
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 uv run antibody-train
 ```
 
@@ -337,7 +337,7 @@ ls ~/.cache/huggingface/hub/models--facebook--esm1v_t33_650M_UR90S_1/
 **Solution 1: Use GPU**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   device: "cuda"  # or "mps" for Apple Silicon
 ```
@@ -357,7 +357,7 @@ print(f"Dataset size: {len(df)}")
 
 ```bash
 # Check cache directory
-ls -lh embeddings_cache/
+ls -lh experiments/cache/
 # Should see .npy files after first run
 ```
 
@@ -403,7 +403,7 @@ ValueError: Embeddings from cache contain 3 all-zero rows
 
 **Solution:**
 ```bash
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 uv run antibody-train
 ```
 
@@ -422,7 +422,7 @@ ValueError: Embeddings from cache have wrong shape: expected 914 sequences, got 
 
 **Solution:**
 ```bash
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 uv run antibody-train
 ```
 
@@ -442,10 +442,10 @@ ValueError: Config validation failed:
 **Cause:** Config YAML is incomplete or using old format.
 
 **Solution:**
-1. Check your config against the default Hydra config (`conf/config.yaml`)
+1. Check your config against the default Hydra config (`src/antibody_training_esm/conf/config.yaml`)
 2. Add missing sections/keys
 3. Required keys as of v0.3.0:
-   - `data`: train_file, test_file, embeddings_cache_dir
+   - `data`: train_file, test_file, embeddings_cache_dir (default: `experiments/cache/`)
    - `model`: name, device
    - `training`: log_level, metrics, n_splits
    - `experiment`: name
@@ -515,7 +515,7 @@ Available columns: ['id', 'sequence', 'label', 'VH_sequence']
 **Solution:**
 ```bash
 # Delete old cache
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 
 # Retrain with v0.3.0+ (has validation)
 uv run antibody-train
@@ -551,18 +551,18 @@ The CSV file may be corrupted or truncated. Please check the file or re-run prep
 **Symptoms:**
 
 ```python
-FileNotFoundError: models/my_model.pkl not found
+FileNotFoundError: experiments/checkpoints/esm1v/logreg/my_model.pkl not found
 ```
 
 **Solution:**
 
 ```bash
 # Check model exists
-ls -lh models/
+ls -lh experiments/checkpoints/esm1v/logreg/
 
 # Verify model path in command (using fragment file for compatibility)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \  # Correct path
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \  # Correct path
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -583,7 +583,7 @@ You're trying to test with a **canonical file** using default config:
 ```bash
 # THIS FAILS (canonical file has vh_sequence, not sequence)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
@@ -594,7 +594,7 @@ Fragment files have standardized `sequence` column:
 ```bash
 # THIS WORKS (fragment file has sequence column)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -605,7 +605,7 @@ If you need to use canonical files (for metadata access):
 ```yaml
 # test_config_canonical.yaml
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 data_paths:
   - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
 sequence_column: "vh_sequence"  # Override for canonical file
@@ -658,7 +658,7 @@ Cross-dataset generalization is **inherently challenging**:
 # Train ELISA, test ELISA (Boughter → Jain)
 # Use fragment file for compatibility with default config
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -669,7 +669,7 @@ For ELISA → PSR prediction, adjust threshold in test config:
 ```yaml
 # test_config_psr.yaml
 model_paths:
-  - "models/boughter_vh_esm1v_logreg.pkl"
+  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
 
 data_paths:
   - "data/test/shehata/fragments/VH_only_shehata.csv"
@@ -683,7 +683,7 @@ Or manually in Python:
 import pickle
 
 # Load model
-with open("models/boughter_vh_esm1v_logreg.pkl", "rb") as f:
+with open("experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl", "rb") as f:
     classifier = pickle.load(f)
 
 # Get prediction probabilities
@@ -700,7 +700,7 @@ Train and test on same fragment type:
 ```bash
 # If trained on VH, test on VH (not CDRs or FWRs)
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/shehata/fragments/VH_only_shehata.csv  # VH only
 ```
 
@@ -731,7 +731,7 @@ python -c "import torch; print(torch.cuda.is_available())"
 
 # Force GPU usage
 export CUDA_VISIBLE_DEVICES=0
-uv run antibody-test --model models/my_model.pkl --dataset harvey
+uv run antibody-test --model experiments/checkpoints/esm1v/logreg/my_model.pkl --dataset harvey
 ```
 
 **Expected Times:**
@@ -846,7 +846,7 @@ data:
 Validate YAML:
 
 ```bash
-python -c "import yaml; yaml.safe_load(open('conf/config.yaml'))"
+python -c "import yaml; yaml.safe_load(open('src/antibody_training_esm/conf/config.yaml'))"
 ```
 
 ---
@@ -959,7 +959,7 @@ pytest  # Some fail
 
 ```bash
 # Test in fresh environment
-rm -rf .venv embeddings_cache/
+rm -rf .venv experiments/cache/
 uv venv
 source .venv/bin/activate
 uv sync
@@ -994,7 +994,7 @@ Model file is corrupted
 Retrain model:
 
 ```bash
-rm models/corrupted_model.pkl
+rm experiments/checkpoints/esm1v/logreg/corrupted_model.pkl
 uv run antibody-train
 ```
 
@@ -1047,10 +1047,10 @@ python -c "import torch; print(f'MPS: {torch.backends.mps.is_available()}')"
 uv pip list
 
 # Check repository structure
-ls -lh configs/ models/ data/train/ data/test/
+ls -lh experiments/ data/train/ data/test/
 
 # Check embeddings cache
-ls -lh embeddings_cache/
+ls -lh experiments/cache/
 
 # Run full quality pipeline
 make all

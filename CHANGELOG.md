@@ -17,10 +17,10 @@ Major feature release introducing [Hydra](https://hydra.cc) for flexible, compos
 - Complete Hydra integration with structured configs (dataclasses for type safety)
 - Composable config system: `model` × `classifier` × `data` combinations
 - Config directory: `src/antibody_training_esm/conf/` (inside package, deployment-ready)
-- Default config: `conf/config.yaml` (Boughter train → Jain test)
+- Default config: `src/antibody_training_esm/conf/config.yaml` (Boughter train → Jain test)
 - CLI override support: `antibody-train model.batch_size=16 classifier.C=0.5`
 - Multirun sweeps: `antibody-train --multirun classifier.C=0.1,1.0,10.0`
-- Automatic experiment tracking in `outputs/{experiment.name}/{timestamp}/`
+- Automatic experiment tracking in `outputs/{experiment.name}/{timestamp}/` *(now `experiments/runs/`, moved in v0.5.0)*
 
 **Structured Configuration (Type-Safe)**
 - Dataclass schemas for all config sections (ModelConfig, ClassifierConfig, DataConfig, etc.)
@@ -30,15 +30,15 @@ Major feature release introducing [Hydra](https://hydra.cc) for flexible, compos
 - Registered with Hydra ConfigStore for runtime validation
 
 **CLI Improvements**
-- No more `--config` flag required (uses `conf/config.yaml` by default)
+- No more `--config` flag required (uses `src/antibody_training_esm/conf/config.yaml` by default)
 - Override any parameter from command line without editing files
 - Multirun support for hyperparameter sweeps (1 command → N experiments)
 - Hydra auto-saves complete config snapshot per run
 - Provenance tracking: every experiment has `.hydra/config.yaml` snapshot
 
 **Logging & Output Management**
-- Hydra-managed output directories: `outputs/{experiment.name}/{timestamp}/`
-- Automatic log routing: `outputs/.../logs/training.log`
+- Hydra-managed output directories: `outputs/{experiment.name}/{timestamp}/` *(now `experiments/runs/`, moved in v0.5.0)*
+- Automatic log routing: `outputs/.../logs/training.log` *(now `experiments/runs/.../logs/`, moved in v0.5.0)*
 - Backward-compatible legacy mode for non-Hydra runs
 - Training logs organized by experiment name and timestamp
 
@@ -120,7 +120,7 @@ antibody-train --multirun classifier.C=0.1,1.0,10.0
 **For Existing Users:**
 - No changes required - existing workflows continue to work
 - New Hydra features available immediately
-- Config files moved from `configs/` to `conf/` (inside package)
+- Config files moved from `configs/` to `src/antibody_training_esm/conf/` (inside package)
 - Legacy `train_model(config_path)` function still works (deprecated warning)
 
 **For New Users:**
@@ -140,8 +140,8 @@ antibody-train --multirun classifier.C=0.1,1.0,10.0
 ### 🎯 What's Next?
 
 With Hydra in place, we can now:
-- Add ESM2 support (just create `conf/model/esm2.yaml`)
-- Add MLP classifier (just create `conf/classifier/mlp.yaml`)
+- Add ESM2 support (just create `src/antibody_training_esm/conf/model/esm2.yaml`)
+- Add MLP classifier (just create `src/antibody_training_esm/conf/classifier/mlp.yaml`)
 - Systematic benchmarking with multirun sweeps
 - W&B integration for experiment tracking (Phase 2)
 
@@ -244,7 +244,7 @@ Comprehensive security and reliability audit of core ML pipeline. Fixed 34 criti
 
 **Recommended:** Delete old embedding cache and retrain to ensure no corrupted embeddings from pre-v0.3.0:
 ```bash
-rm -rf embeddings_cache/
+rm -rf embeddings_cache/  # (now experiments/cache/ in v0.5.0+)
 uv run antibody-train
 ```
 
@@ -332,7 +332,7 @@ Major feature release enabling production-ready model deployment with secure ser
   from antibody_training_esm.core import load_model_from_npz
 
   model = load_model_from_npz(
-      npz_path="models/model.npz",
+      npz_path="models/model.npz",  # (now experiments/checkpoints/{model}/{classifier}/ in v0.5.0+)
       json_path="models/model_config.json"
   )
   ```

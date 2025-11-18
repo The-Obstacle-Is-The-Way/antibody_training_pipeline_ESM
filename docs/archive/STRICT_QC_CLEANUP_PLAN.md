@@ -1,5 +1,16 @@
 # Strict QC Cleanup Plan
 
+> **⚠️ HISTORICAL PLANNING DOCUMENT (Never Executed - Pre-Phase 5)**
+>
+> This document references the old root-level directory structure (`models/`, `embeddings_cache/`, `outputs/`, `logs/`, `configs/`) which was reorganized in Phase 5 (v0.5.0):
+> - `models/` → `experiments/checkpoints/{model}/{classifier}/`
+> - `embeddings_cache/` → `experiments/cache/`
+> - `outputs/` → `experiments/runs/`
+> - `logs/` → `experiments/runs/*/logs/`
+> - `configs/` → `src/antibody_training_esm/conf/`
+>
+> Paths preserved for historical accuracy. For current structure, see docs/developer-guide/directory-organization.md
+
 **Date:** 2025-11-06
 **Status:** PLANNING - Do not execute until reviewed
 **Branch:** leroy-jenkins/full-send (backed up to main)

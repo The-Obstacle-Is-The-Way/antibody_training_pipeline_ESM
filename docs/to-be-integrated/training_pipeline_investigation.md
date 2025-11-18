@@ -88,7 +88,7 @@ We register structured configs with the same names as YAML files:
 ```python
 cs.store(group="model", name="esm1v", node=ModelConfig)
 ```
-and also ship `conf/model/esm1v.yaml`. Hydra 1.0 allowed this implicit matching; 1.1 warns, and 1.2 will error.
+and also ship `src/antibody_training_esm/conf/model/esm1v.yaml`. Hydra 1.0 allowed this implicit matching; 1.1 warns, and 1.2 will error.
 
 ### Fix Recommendation
 Follow Hydra’s migration guide:
@@ -103,7 +103,7 @@ Whichever approach we choose, silence the warnings before we upgrade Hydra or th
 ## 4. Log File Creation ✅ **FIXED**
 
 ### Context
-Earlier today the Hydra code path failed when writing `logs/training.log` because the directory didn’t exist. We patched this by adding:
+Earlier today the Hydra code path failed when writing `experiments/runs/*/logs/training.log` because the directory didn’t exist. We patched this by adding:
 ```python
 log_file.parent.mkdir(parents=True, exist_ok=True)
 ```

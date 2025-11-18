@@ -39,10 +39,10 @@ uv run antibody-train classifier.C=0.5 classifier.penalty=l1
 
 ## Configuration with Hydra
 
-Training is controlled via Hydra configuration in `conf/`. The default config structure:
+Training is controlled via Hydra configuration in `src/antibody_training_esm/conf/`. The default config structure:
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"  # ESM-1v model from HuggingFace
@@ -105,7 +105,7 @@ uv run antibody-train
 **Testing** (after training):
 ```bash
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -133,7 +133,7 @@ uv run antibody-train
 **Testing** (after training):
 ```bash
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/harvey/fragments/VHH_only_harvey.csv
 ```
 
@@ -161,7 +161,7 @@ uv run antibody-train
 **Testing** (after training):
 ```bash
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/shehata/fragments/VH_only_shehata.csv
 ```
 
@@ -347,7 +347,7 @@ If cross-validation accuracy is high but test accuracy is low:
 Embeddings are cached automatically:
 
 ```
-embeddings_cache/
+experiments/cache/
 └── {SHA256_hash}.npy  # Cached embeddings for dataset + model
 ```
 
@@ -369,7 +369,7 @@ Always enable model saving:
 training:
   save_model: true
   model_name: "descriptive_experiment_name"  # Use meaningful names
-  model_save_dir: "models/"
+  model_save_dir: "experiments/checkpoints/"
 
 experiment:
   name: "descriptive_experiment_name"
@@ -378,10 +378,12 @@ experiment:
 **Dual-format model saving** (automatic):
 
 ```
-models/
-├── {model_name}.pkl          # Pickle (research/debugging)
-├── {model_name}.npz          # NumPy arrays (production weights)
-└── {model_name}_config.json  # Metadata (production config)
+experiments/checkpoints/
+└── {model_name}/
+    └── {classifier}/
+        ├── {model_name}.pkl          # Pickle (research/debugging)
+        ├── {model_name}.npz          # NumPy arrays (production weights)
+        └── {model_name}_config.json  # Metadata (production config)
 ```
 
 **Why dual-format?**
@@ -398,7 +400,7 @@ models/
 
 ```bash
 uv run antibody-test \
-  --model models/boughter_vh_esm1v_logreg.pkl \
+  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -409,8 +411,8 @@ from antibody_training_esm.core import load_model_from_npz
 
 # Load model from production format
 model = load_model_from_npz(
-    npz_path="models/boughter_vh_esm1v_logreg.npz",
-    json_path="models/boughter_vh_esm1v_logreg_config.json"
+    npz_path="experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.npz",
+    json_path="experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg_config.json"
 )
 
 # Use model for predictions
@@ -500,7 +502,7 @@ QVQLQESGPGLV...,1
 **Solution:** Clear cache and retrain:
 
 ```bash
-rm -rf embeddings_cache/
+rm -rf experiments/cache/
 uv run antibody-train
 ```
 

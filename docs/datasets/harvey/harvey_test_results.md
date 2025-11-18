@@ -99,7 +99,7 @@ Sum of absolute differences: 4,168 (~3% of dataset)
 - **Batch size:** 2 (optimized for MPS memory stability)
 
 ### Model Details
-- **Model file:** `models/boughter_vh_esm1v_logreg.pkl`
+- **Model file:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 - **Training data:** Boughter dataset
 - **Architecture:** ESM-1v VH-based LogisticRegression
 - **No StandardScaler:** Removed per Novo methodology
@@ -254,7 +254,7 @@ To reproduce these results:
 
 ```bash
 # 1. Ensure model is trained
-ls models/boughter_vh_esm1v_logreg.pkl
+ls experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 
 # 2. Prepare Harvey dataset
 ls data/test/harvey/fragments/VHH_only_harvey.csv

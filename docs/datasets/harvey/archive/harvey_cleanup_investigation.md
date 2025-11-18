@@ -537,7 +537,7 @@ python3 tests/test_harvey_embedding_compatibility.py
 
 ### 7. Model Test
 ```bash
-python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
+python3 test.py --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
   --data data/test/harvey/fragments/VHH_only_harvey.csv
 # Should load and run successfully with new paths
 ```
