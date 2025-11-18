@@ -711,5 +711,5 @@ def test_validate_config_missing_keys():
 
 ---
 
-**Last Updated:** 2025-11-11
+**Last Updated:** 2025-11-18
 **Branch:** `leroy-jenkins/full-send`

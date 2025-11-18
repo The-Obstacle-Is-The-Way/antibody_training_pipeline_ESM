@@ -744,5 +744,5 @@ gh workflow run benchmark.yml -f run_harvey=false
 
 ---
 
-**Last Updated:** 2025-11-10
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `leroy-jenkins/full-send`
