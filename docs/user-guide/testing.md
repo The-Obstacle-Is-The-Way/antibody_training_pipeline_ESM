@@ -79,6 +79,8 @@ batch_size: 32  # Default embedding batch size
 
 **Note:** The CLI automatically organizes results hierarchically by backbone/classifier/dataset under `output_dir` (e.g., `experiments/benchmarks/esm1v/logreg/jain/…`) when the model config JSON is present alongside the checkpoint. Specify only the base `output_dir`; the stratification is handled for you.
 
+**Thresholds:** `antibody-test` now auto-detects assay type from the dataset name (`harvey|shehata` → PSR threshold 0.5495, `jain|boughter` → ELISA threshold 0.5). Override with `--threshold` or the `threshold` field in a config if you need explicit control.
+
 ---
 
 ## Test Dataset Options
@@ -358,7 +360,7 @@ Actual  Neg  [40     19]   ← True Neg: 40, False Pos: 19
 
 ### ELISA → PSR Prediction
 
-Training on ELISA (Boughter) and testing on PSR (Harvey/Shehata) requires **assay-specific threshold tuning**.
+Training on ELISA (Boughter) and testing on PSR (Harvey/Shehata) requires **assay-specific threshold tuning**. The CLI now **auto-detects** PSR datasets by name and applies threshold 0.5495; use the config/CLI overrides below if you want to pin a specific value.
 
 **Method 1: Test Configuration (Recommended)**
 

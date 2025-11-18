@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-11-10
 **Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
-**Status:** All validations complete
+**Status:** Validations updated with calibrated PSR thresholds (Harvey re-run pending)
 
 ---
 
@@ -13,11 +13,11 @@ We successfully replicated the Novo Nordisk methodology (Sakhnini et al. 2025) a
 | Dataset | Type | Size | Our Accuracy | Novo Accuracy | Gap | Status |
 |---------|------|------|--------------|---------------|-----|--------|
 | **Boughter** | Training (10-fold CV) | 914 | **67.5% ± 8.9%** | 71% | -3.5% | ✅ **Excellent** |
-| **Harvey** | Test (Nanobodies) | 141,021 | **61.5%** | 61.7% | **-0.2pp** | ⭐ **Near-Perfect** |
-| **Jain** | Test (Clinical) | 86 | **66.28%** | 68.6% | -2.3pp | ✅ **Excellent** |
-| **Shehata** | Test (B-cell) | 398 | **52.5%** | 58.8% | -6.3pp | ✅ **Reasonable** |
+| **Harvey** | Test (Nanobodies) | 141,021 | **59.0%** (0.5 baseline) | 61.7% | **-2.7pp** | ⚠️ **Re-run with PSR threshold** |
+| **Jain** | Test (Clinical) | 86 | **66.28%** | 68.6% | -2.32pp | ✅ **Validated (parity set)** |
+| **Shehata** | Test (B-cell) | 398 | **58.29%** (auto PSR=0.5495) | 58.8% | -0.51pp | ⭐ **Near-parity** |
 
-**Key Achievement:** Harvey dataset showed **near-perfect parity** (within 0.2 percentage points) across 141,021 sequences.
+**Key Changes:** PSR threshold is now auto-applied in `antibody-test`. Shehata improved from 52.5% → 58.29% (within 0.51pp of Novo). Harvey needs a fresh run with the PSR threshold (last 0.5 baseline = 59.0%).
 
 **Model Configuration:**
 - **Training:** Boughter dataset, ESM-1v VH embeddings
@@ -99,7 +99,7 @@ True    Spec      40      19      (59 specific)
 
 ---
 
-## 3. Shehata Test Set - B-cell Antibodies
+## 3. Shehata Test Set - B-cell Antibodies (PSR threshold auto-applied)
 
 ### Dataset Details
 - **Size:** 398 antibodies (391 specific, 7 non-specific)
@@ -112,27 +112,26 @@ True    Spec      40      19      (59 specific)
 **Test file:** `data/test/shehata/fragments/VH_only_shehata.csv`
 
 ```
-Confusion Matrix: [[204, 187], [2, 5]]
+Confusion Matrix (auto PSR threshold 0.5495): [[227, 164], [2, 5]]
 
                 Predicted
                 Spec  Non-spec
-True    Spec     204     187      (391 specific)
+True    Spec     227     164      (391 specific)
         Non-spec   2       5      (7 non-specific)
 ```
 
 | Metric | Our Result | Novo Benchmark | Difference |
 |--------|-----------|----------------|------------|
-| **Accuracy** | **52.5%** (209/398) | 58.8% (234/398) | **-6.3pp** |
+| **Accuracy** | **58.29%** (232/398) | 58.8% (234/398) | **-0.51pp** |
 | **Sensitivity** | **71.4%** (5/7) | **71.4%** (5/7) | **0pp** ✅ |
-| **Specificity** | 52.2% (204/391) | 58.6% (229/391) | -6.4pp |
-| **Precision** | 2.6% (5/192) | 3.0% (5/167) | -0.4pp |
+| **Specificity** | 58.1% (227/391) | 58.6% (229/391) | -0.5pp |
+| **Precision** | 2.96% (5/169) | 3.0% (5/167) | -0.04pp |
 
 ### Analysis
 
-✅ **Reasonable match with key findings**
+⭐ **Near-parity after PSR threshold**
 - **IDENTICAL sensitivity:** Both models achieved 71.4% (5/7) on rare non-specific class
-- **Lower specificity:** 25 more false positives (187 vs 162)
-- **More conservative:** Our model predicts non-specific more aggressively
+- **Small specificity gap:** 2 TN/FP difference vs Novo
 - **Challenge:** Extreme imbalance (only 7 non-specific out of 398)
 - **Assay difference:** PSR-based vs ELISA-based training may explain variance
 
@@ -141,13 +140,13 @@ True    Spec     204     187      (391 specific)
 [[229, 162], [2, 5]]
 ```
 
-**Key Insight:** Perfect match on the rare non-specific class demonstrates model equivalence on the hardest predictions.
+**Key Insight:** PSR calibration closes the gap to within 0.51pp while keeping perfect rare-class sensitivity.
 
-**Status:** ✅ **Reasonable** - Perfect non-specific class detection, within 6.4pp overall
+**Status:** ⭐ **Near-parity** - Perfect non-specific class detection, minimal remaining gap
 
 ---
 
-## 4. Harvey Test Set - Nanobodies ⭐ BEST RESULT
+## 4. Harvey Test Set - Nanobodies (PSR threshold re-run pending)
 
 ### Dataset Details
 - **Size:** 141,021 nanobodies (69,262 specific, 71,759 non-specific)
@@ -156,55 +155,39 @@ True    Spec     204     187      (391 specific)
 - **Balance:** Nearly balanced (49.1% / 50.9%)
 - **Test Duration:** 89.3 minutes on Apple Silicon MPS
 
-### Results
+### Results (0.5 baseline run on 2025-11-16)
 
 **Test file:** `data/test/harvey/fragments/VHH_only_harvey.csv`
-**Test Date:** 2025-11-03 08:09-09:38
 
 ```
-Confusion Matrix: [[18318, 50944], [3293, 68466]]
+Confusion Matrix (0.5 baseline): [[13548, 55714], [2104, 69655]]
 
                 Predicted
                 Spec    Non-spec
-True    Spec    18318     50944      (69,262 specific)
-        Non-spec 3293     68466      (71,759 non-specific)
+True    Spec    13548     55714      (69,262 specific)
+        Non-spec 2104     69655      (71,759 non-specific)
 ```
 
 | Metric | Our Result | Novo Benchmark | Difference |
 |--------|-----------|----------------|------------|
-| **Accuracy** | **61.5%** (86,784/141,021) | 61.7% (87,411/141,559) | **-0.2pp** ⭐ |
-| **Sensitivity** | **95.4%** (68,466/71,759) | 94.2% (67,633/71,819) | **+1.2pp** ✅ |
-| **Specificity** | 26.4% (18,318/69,262) | 28.4% (19,778/69,740) | -2.0pp |
-| **Precision** | 57.3% (68,466/119,410) | 57.5% (67,633/117,595) | -0.2pp |
-| **F1-Score** | **71.6%** | 71.4% | **+0.2pp** ✅ |
+| **Accuracy** | **59.0%** (83,203/141,021) | 61.7% (87,411/141,559) | **-2.7pp** |
+| **Sensitivity** | **97.1%** (69,655/71,759) | 94.2% (67,633/71,819) | **+2.9pp** ✅ |
+| **Specificity** | 19.6% (13,548/69,262) | 28.4% (19,778/69,740) | -8.8pp |
+| **Precision** | 55.5% (69,655/125,369) | 57.5% (67,633/117,595) | -2.0pp |
 
 ### Analysis
 
-⭐ **NEAR-PERFECT PARITY - BEST BENCHMARK RESULT**
-- **Only 0.2pp accuracy difference** (61.5% vs 61.7%) - statistical tie
-- **Better sensitivity:** 95.4% vs 94.2% (+1.2pp advantage)
-- **Marginally better F1:** 71.6% vs 71.4%
-- **Excellent large-scale reproduction:** 141k sequences successfully processed
-- **Trade-off pattern:** Slightly more conservative (higher sensitivity, lower specificity)
+⚠️ **Re-run required with PSR threshold**
+- Baseline 0.5 run under-indexes specificity; sensitivity remains strong.
+- `antibody-test` now auto-applies PSR threshold (0.5495) for Harvey—re-run expected to close the 2.7pp gap.
+- Large-scale inference remains validated (141k sequences processed successfully).
 
 **Novo Confusion Matrix** (for comparison):
 ```
 [[19778, 49962], [4186, 67633]]
 ```
 
-**Confusion Matrix Difference:** 4,168 total cell differences (2.9% of predictions)
-
-### Technical Implementation
-
-```yaml
-Hardware: Apple Silicon (MPS backend)
-Batch Size: 2 (optimized for memory stability)
-Processing Time: 89.3 minutes (1.49 hours)
-Memory Management: torch.mps.empty_cache() after each batch
-Sequences/minute: ~1,579
-```
-
-**Status:** ✅ **VALIDATED** - Virtually identical to Novo benchmark on largest dataset
+**Status:** ⚠️ **Pending recalibration** - rerun with auto PSR threshold to update metrics
 
 ---
 
@@ -215,8 +198,8 @@ Sequences/minute: ~1,579
 | Assay | Datasets | Our Accuracy Range | Novo Accuracy Range | Pattern |
 |-------|----------|-------------------|-------------------|---------|
 | **ELISA** | Boughter, Jain | 66-68% | 68-71% | Better (training domain match) |
-| **PSR (balanced)** | Harvey | 61.5% | 61.7% | Near-perfect parity |
-| **PSR (imbalanced)** | Shehata | 52.5% | 58.8% | More challenging |
+| **PSR (balanced)** | Harvey | 59.0% (0.5 baseline) | 61.7% | Pending PSR re-run |
+| **PSR (imbalanced)** | Shehata | 58.29% | 58.8% | Near-parity |
 
 **Key Finding:** Best performance on ELISA-based datasets (training domain), but excellent generalization to PSR assays.
 
@@ -224,8 +207,8 @@ Sequences/minute: ~1,579
 
 | Dataset | Our Sensitivity | Novo Sensitivity | Our Specificity | Novo Specificity |
 |---------|----------------|-----------------|----------------|-----------------|
-| **Harvey** | **95.4%** | 94.2% | 26.4% | 28.4% |
-| **Shehata** | **71.4%** | **71.4%** | 52.2% | 58.6% |
+| **Harvey** | **97.1%** | 94.2% | 19.6% | 28.4% |
+| **Shehata** | **71.4%** | **71.4%** | 58.1% | 58.6% |
 | **Jain** | 63.0% | 65.5% | 67.8% | 70.2% |
 
 **Pattern:** Our model is slightly more **conservative** (predicts non-specific more often):
@@ -237,9 +220,9 @@ Sequences/minute: ~1,579
 
 | Dataset | Imbalance Ratio | Accuracy Gap | Sensitivity Match |
 |---------|----------------|--------------|------------------|
-| Harvey (balanced) | 49/51 | **-0.2pp** | +1.2pp |
-| Jain (moderate) | 66/34 | -2.3pp | -2.5pp |
-| Shehata (extreme) | 98/2 | -6.3pp | **0pp** |
+| Harvey (balanced) | 49/51 | **-2.7pp** (0.5 baseline) | +2.9pp |
+| Jain (moderate) | 66/34 | -2.32pp | -2.5pp |
+| Shehata (extreme) | 98/2 | -0.51pp | **0pp** |
 
 **Key Finding:** Model performs best on balanced datasets, but maintains excellent sensitivity even on extremely imbalanced data.
 
@@ -247,13 +230,12 @@ Sequences/minute: ~1,579
 
 ## Key Findings
 
-### 1. Harvey Performance (Large-Scale Validation) ⭐ BEST RESULT
+### 1. Harvey Performance (Large-Scale Validation)
 
-- **Virtual parity:** 61.5% vs Novo's 61.7% (only 0.2pp difference)
-- **Better sensitivity:** 95.4% vs 94.2% (+1.2pp advantage)
-- **Marginally better F1:** 71.6% vs 71.4%
+- **Current baseline:** 59.0% vs Novo's 61.7% (0.5 threshold)
+- **Sensitivity edge:** 97.1% vs 94.2% (+2.9pp), but specificity lags (19.6% vs 28.4%)
 - **Large-scale success:** 141k sequences on Apple Silicon
-- **Conclusion:** Near-perfect reproduction of Novo benchmark on largest dataset
+- **Next step:** Re-run with auto PSR threshold (0.5495) to close the accuracy gap
 
 ### 2. Jain Performance (Clinical Antibodies)
 
@@ -265,21 +247,16 @@ Sequences/minute: ~1,579
 ### 3. Shehata Performance (PSR Assay Challenge)
 
 - **Perfect non-specific detection:** Both models achieved 71.4% sensitivity (5/7)
-- **Lower specificity:** 25 more false positives
+- **Near-parity overall:** 58.29% vs 58.8% (0.51pp gap) with auto PSR threshold
 - **Extreme imbalance:** Only 7 non-specific out of 398 (1.8%)
-- **Conclusion:** Reasonable match given extreme class imbalance and assay type difference
+- **Conclusion:** PSR calibration closes the gap while preserving rare-class sensitivity
 
 ### 4. Cross-Dataset Patterns
 
-**Consistent sensitivity advantage:**
-- Harvey: 95.4% vs Novo 94.2%
+**Sensitivity advantage (with specificity trade-off):**
+- Harvey: 97.1% vs Novo 94.2% (specificity gap driven by 0.5 baseline; PSR re-run pending)
 - Shehata: 71.4% vs Novo 71.4% (identical)
-- Model is effective at catching non-specific antibodies
-
-**Specificity trade-off:**
-- Model predicts non-specific slightly more often
-- More conservative decision threshold
-- Clinically favorable (reduces false negatives)
+- Model remains conservative (flags non-specifics readily); PSR calibration reduces the penalty on Shehata
 
 **Assay dependency:**
 - ELISA: 66-68% accuracy (best, training domain)
@@ -363,8 +340,8 @@ Sequences/minute: ~1,579
 1. ✅ **Excellent sensitivity:** 63-95% across all test sets
 2. ✅ **Large-scale inference:** Successfully processes 141k sequences
 3. ✅ **Domain transfer:** Works across ELISA and PSR assays
-4. ✅ **Nanobody compatibility:** 61.5% accuracy on VHH domains
-5. ✅ **Reproducibility:** Near-perfect match to published benchmarks
+4. ✅ **Nanobody compatibility:** 59.0% accuracy baseline on VHH domains (PSR calibration pending)
+5. ✅ **Reproducibility:** Near-parity on Jain/Shehata; Harvey pending recalibration
 
 ### Limitations
 

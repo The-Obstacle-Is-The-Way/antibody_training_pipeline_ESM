@@ -8,16 +8,16 @@
 
 ## Executive Summary
 
-We successfully replicated the Novo Nordisk antibody non-specificity prediction methodology (Sakhnini et al. 2025) across **3 of 4 datasets** with excellent results:
+We successfully replicated the Novo Nordisk antibody non-specificity prediction methodology (Sakhnini et al. 2025) across **3 of 4 datasets**, and we now auto-apply assay-specific thresholds in the testing CLI:
 
 | Dataset | Our Accuracy | Novo Accuracy | Gap | Status |
 |---------|--------------|---------------|-----|--------|
 | **Boughter** (Training, 10-fold CV) | **67.5% ± 8.9%** | 71% | -3.5% | ✅ **Excellent** |
-| **Harvey** (141k nanobodies) | **61.5%** | 61.7% | **-0.2pp** | ⭐ **Near-Perfect** |
-| **Shehata** (398 B-cell) | **52.5%** | 58.8% | -6.3pp | ✅ **Reasonable** |
-| **Jain** (86 clinical) | **66.28%** | 68.6% | -2.3pp | ✅ **Exact parity** |
+| **Harvey** (141k nanobodies) | **59.0%** (0.5 baseline) | 61.7% | -2.7pp | ⚠️ **Re-run with PSR threshold auto-applied** |
+| **Shehata** (398 B-cell) | **58.29%** (auto PSR=0.5495) | 58.8% | -0.51pp | ⭐ **Near-parity** |
+| **Jain** (86 clinical) | **66.28%** | 68.6% | -2.32pp | ✅ **Validated (parity set)** |
 
-**Key Achievement:** Harvey dataset showed **near-perfect parity** (within 0.2 percentage points) across 141,021 sequences.
+**Key Achievements:** Shehata now lands within **0.51pp** of Novo with the auto PSR threshold; Harvey needs a fresh run with the new auto PSR threshold (last run at 0.5 = 59.0%).
 
 **Implementation:** ESM-1v embeddings + Logistic Regression (sklearn), no StandardScaler, 10-fold CV on training set.
 
@@ -61,6 +61,7 @@ Performance Metrics (accuracy, sensitivity, specificity)
 - Algorithm: sklearn LogisticRegression
 - **No StandardScaler** (ESM embeddings pre-normalized)
 - Assay-specific thresholds: ELISA=0.5, PSR=0.5495
+- `src/antibody_training_esm/cli/test.py` auto-detects assay type from dataset name (PSR for Harvey/Shehata, ELISA for Boughter/Jain) with optional `--threshold` override
 
 **Training:**
 - `src/antibody_training_esm/core/trainer.py` - 10-fold CV, model persistence
@@ -82,12 +83,12 @@ Performance Metrics (accuracy, sensitivity, specificity)
 **Our Implementation:** ✅ **EXACT MATCH**
 - **Script:** `preprocessing/boughter/stage1_dna_translation.py`
 - **Threshold:** `num_flags >= 4` (excludes 1-3 flags)
-- **Training set:** 461 specific + 487 non-specific = **948 total**
+- **Training set:** 443 specific + 471 non-specific = **914 total**
 - **Flag distribution:**
   ```
-  Flag 0: 461 antibodies (specific, included)
+  Flag 0: 443 antibodies (specific, included)
   Flags 1-3: 169 antibodies (mild, EXCLUDED)
-  Flags 4-7: 487 antibodies (non-specific, included)
+  Flags 4-7: 471 antibodies (non-specific, included)
   ```
 
 **Results:**
@@ -110,21 +111,19 @@ Performance Metrics (accuracy, sensitivity, specificity)
 - **NO flag-based thresholding** (labels come pre-assigned)
 - **Decision threshold:** 0.5495 (PSR assay-specific)
 
-**Our Implementation:** ✅ **EXACT MATCH**
+**Our Implementation:** ⚠️ **Needs re-run with auto PSR threshold**
 - **Script:** `preprocessing/harvey/step1_convert_raw_csvs.py`
 - **Labeling:** Directly uses Harvey's pre-labeled high/low CSVs
 - **Test set:** 69,262 specific + 71,759 non-specific = **141,021 total**
-- **Decision threshold:** 0.5495 (calibrated for PSR assay)
+- **Decision threshold:** 0.5 (most recent run); PSR 0.5495 now auto-applied in `antibody-test`
 
-**Results:**
-- Accuracy: **61.5%**
+**Results (0.5 baseline run on 2025-11-16):**
+- Accuracy: **59.0%**
+- Confusion matrix: [[13,548, 55,714], [2,104, 69,655]]
 - Novo: **61.7%**
-- Gap: **-0.2pp** ⭐ **NEAR-PERFECT PARITY**
+- Gap: **-2.7pp** (pending re-validation with PSR threshold)
 
-**Analysis:** This is the strongest validation - massive dataset (141k sequences) with near-identical performance. Demonstrates:
-1. Correct ESM-1v embedding extraction
-2. Correct mean pooling implementation
-3. Correct threshold calibration (0.5495 for PSR)
+**Plan:** Re-run Harvey with the new auto PSR threshold (0.5495) to close the remaining gap.
 
 ---
 
@@ -135,22 +134,23 @@ Performance Metrics (accuracy, sensitivity, specificity)
 - **Labeling:** PSR score threshold (continuous value, not flags)
 - **Decision threshold:** 0.5495 (PSR assay-specific, 98.24th percentile)
 
-**Our Implementation:** ✅ **EXACT MATCH**
+**Our Implementation:** ✅ **Near-parity with calibrated PSR threshold**
 - **Script:** `preprocessing/shehata/step1_convert_excel_to_csv.py`
 - **Labeling:** PSR score threshold (98.24th percentile = 0.5495)
 - **Test set:** 391 specific + 7 non-specific = **398 total** (extreme imbalance)
-- **Decision threshold:** 0.5495 (calibrated for PSR assay)
+- **Decision threshold:** 0.5495 (auto-applied in `antibody-test`)
 
 **Results:**
-- Accuracy: **52.5%**
+- Accuracy: **58.29%**
+- Confusion matrix: [[227, 164], [2, 5]]
 - Novo: **58.8%**
-- Gap: **-6.3pp**
+- Gap: **-0.51pp**
 - **Sensitivity (non-specific class):** **71.4%** - IDENTICAL to Novo
 
 **Analysis:** Gap explainable by:
 1. Extreme class imbalance (391:7 ratio)
 2. Small non-specific sample (n=7) → high variance
-3. **Key insight:** IDENTICAL sensitivity on rare class (71.4%) shows model equivalence
+3. **Key insight:** IDENTICAL sensitivity on rare class (71.4%) shows model equivalence with minimal remaining gap
 
 ---
 
@@ -161,7 +161,7 @@ Performance Metrics (accuracy, sensitivity, specificity)
 - **Labeling:** 0 flags vs >3 flags (same as Boughter)
 - **Dataset size:** 86 antibodies (Novo's QC-filtered set)
 
-**Our Implementation:** ✅ **EXACT PARITY ACHIEVED**
+**Our Implementation:** ✅ **Validated (close to Novo)**
 - **Script:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 - **Labeling:** 0 flags vs >3 flags
 - **Test set:** 86 antibodies (matched Novo's QC criteria)
@@ -169,14 +169,14 @@ Performance Metrics (accuracy, sensitivity, specificity)
 
 **Results:**
 - Accuracy: **66.28%** (57/86 correct)
-- Novo: **66.28%** (exact match)
-- Confusion matrix: **[[40, 19], [10, 17]]** - IDENTICAL cell-for-cell
-- Non-specific performance: **PERFECT match** (10 FN, 17 TP)
+- Novo: **68.6%**
+- Confusion matrix: **[[40, 19], [10, 17]]**
+- Gap: **-2.32pp**; non-specific row matches Novo (10 FN, 17 TP), FP/TP differ by two samples
 
-**Analysis:** Achieved exact parity by:
+**Analysis:** Achieved near parity by:
 1. Identifying 5 antibodies removed by Novo (murine/chimeric origin, clinical QC)
 2. Matching QC criteria (see `novo-parity.md` for details)
-3. Validating model equivalence on non-specific predictions
+3. Validating model equivalence on non-specific predictions with minor FP/TP swap
 
 ---
 
@@ -321,15 +321,15 @@ ASSAY_THRESHOLDS = {
 - Precision (specific): 0.80
 - Recall (specific): 0.68
 - F1-score (specific): 0.73
-- **Confusion matrix: [[40, 19], [10, 17]]** - EXACT Novo match
+- **Confusion matrix: [[40, 19], [10, 17]]** - Matches TN/FN; FP/TP differ by two antibodies
 
 **Harvey (Nanobodies - 141k):**
-- Accuracy: 61.5%
-- Novo: 61.7% (-0.2pp)
-- **NEAR-PERFECT PARITY**
+- Accuracy: 59.0% (0.5 baseline; PSR re-run pending)
+- Novo: 61.7% (-2.7pp)
+- **Re-run with PSR threshold (auto) to close gap**
 
 **Shehata (PSR Assay - 398):**
-- Accuracy: 52.5%
+- Accuracy: 58.29% (auto PSR threshold)
 - Sensitivity (non-specific): 71.4% - IDENTICAL to Novo
 
 ---

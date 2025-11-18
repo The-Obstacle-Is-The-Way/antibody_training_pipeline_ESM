@@ -1,8 +1,8 @@
 # Assay-Specific Decision Thresholds
 
 **Date:** November 2, 2025
-**Status:** ✅ Implemented
-**Files:** `classifier.py:125-165`, `test_assay_specific_thresholds.py`
+**Status:** ✅ Implemented (auto-detected in CLI)
+**Files:** `src/antibody_training_esm/core/classifier.py` (ASSAY_THRESHOLDS), `src/antibody_training_esm/cli/test.py` (auto-detect + --threshold), `tests/unit/core/test_classifier.py`
 
 ---
 
@@ -23,19 +23,15 @@ This means **PSR and ELISA measure fundamentally different aspects of non-specif
 
 ## The Problem
 
-Using a single threshold (default 0.5) across all datasets leads to:
+Using a single threshold (0.5) previously under-performed on PSR datasets. With the new auto-detect logic in `antibody-test`, calibrated thresholds are applied by default:
 
-- **Good performance on ELISA datasets** (Jain: 67.0% accuracy)
-- **Suboptimal performance on PSR datasets** (Shehata: 52.5% → should be 58.8%)
+| Dataset | Assay | Threshold Used | Novo Accuracy | Our Accuracy | Gap | Notes |
+|---------|-------|----------------|---------------|--------------|-----|-------|
+| **Jain (86)** | ELISA | 0.5 | 68.6% | 66.28% | -2.32pp | Parity set (86 antibodies) |
+| **Shehata (398)** | PSR | **0.5495** (auto) | 58.8% | **58.29%** | -0.51pp | Baseline 0.5 = 52.5% |
+| **Harvey (141,021)** | PSR | 0.5 (last run) | 61.7% | 59.0% | -2.7pp | Needs re-run with auto PSR threshold |
 
-Our threshold analysis experiments found:
-
-| Dataset | Assay | Optimal Threshold | Novo Benchmark Accuracy | Our Accuracy (default 0.5) |
-|---------|-------|-------------------|-------------------------|---------------------------|
-| **Jain** | ELISA | **0.5** (default) | 68.6% | 67.0% ✓ |
-| **Shehata** | PSR | **0.549** | 58.8% | 52.5% (needs adjustment) |
-
-**Threshold difference:** 0.549 - 0.500 = **0.049** (4.9 percentage points)
+**Default behavior:** `antibody-test` now auto-detects assay type from the dataset name (`harvey|shehata` → PSR=0.5495, `jain|boughter` → ELISA=0.5). Use `--threshold` to override manually.
 
 ---
 
@@ -52,7 +48,7 @@ def predict(self, X: np.ndarray, threshold: float = 0.5, assay_type: str = None)
         threshold: Decision threshold (default: 0.5)
         assay_type: Type of assay for dataset-specific thresholds:
                    - 'ELISA': Use threshold=0.5 (for Jain, Boughter)
-                   - 'PSR': Use threshold=0.549 (for Shehata, Harvey)
+                   - 'PSR': Use threshold=0.5495 (for Shehata, Harvey)
                    - None: Use the threshold parameter
     """
 ```
@@ -62,7 +58,7 @@ def predict(self, X: np.ndarray, threshold: float = 0.5, assay_type: str = None)
 ```python
 ASSAY_THRESHOLDS = {
     'ELISA': 0.5,      # Training data type (Boughter, Jain)
-    'PSR': 0.5495,     # PSR assay type (Shehata, Harvey) - EXACT Novo parity
+    'PSR': 0.5495,     # PSR assay type (Shehata, Harvey) - calibrated for Novo parity
 }
 ```
 
@@ -102,11 +98,15 @@ predictions = model.predict(X_embeddings)
 # ELISA datasets (default 0.5)
 predictions = model.predict(X_embeddings, assay_type='ELISA')
 
-# PSR datasets (optimized 0.549)
+# PSR datasets (optimized 0.5495)
 predictions = model.predict(X_embeddings, assay_type='PSR')
 
-# Custom threshold
+# Custom threshold (overrides assay)
 predictions = model.predict(X_embeddings, threshold=0.6)
+
+# CLI (auto-detects assay type from dataset name; override with --threshold)
+uv run antibody-test --model model.pkl --data data/test/shehata/fragments/VH_only_shehata.csv
+uv run antibody-test --model model.pkl --data data/test/shehata/fragments/VH_only_shehata.csv --threshold 0.6
 ```
 
 ---
@@ -133,7 +133,7 @@ X_embeddings = model.embedding_extractor.extract_batch_embeddings(sequences)
 # Predict with ELISA threshold (0.5)
 predictions = model.predict(X_embeddings, assay_type='ELISA')
 
-# Result: [[44, 20], [10, 17]] - 67.0% accuracy
+# Result: [[40, 19], [10, 17]] - 66.28% accuracy (parity set of 86)
 ```
 
 ### Example 2: Testing on Shehata (PSR)
@@ -146,10 +146,10 @@ sequences = df['sequence'].tolist()
 # Extract embeddings
 X_embeddings = model.embedding_extractor.extract_batch_embeddings(sequences)
 
-# Predict with PSR threshold (0.549)
+# Predict with PSR threshold (0.5495)
 predictions = model.predict(X_embeddings, assay_type='PSR')
 
-# Result: [[228, 163], [2, 5]] - 58.5% accuracy (vs 52.5% with default 0.5)
+# Result: [[227, 164], [2, 5]] - 58.29% accuracy (vs 52.5% with 0.5)
 ```
 
 ### Example 3: Custom Threshold
@@ -163,12 +163,12 @@ predictions = model.predict(X_embeddings, threshold=0.6)
 
 ## Performance Comparison
 
-### Jain Dataset (ELISA, 91 antibodies)
+### Jain Dataset (ELISA, 86 antibodies)
 
 | Threshold | Confusion Matrix | Accuracy | Match to Novo |
 |-----------|------------------|----------|---------------|
-| **0.5 (ELISA)** | [[44, 20], [10, 17]] | **67.0%** | ✓ Close |
-| 0.549 (PSR) | [[50, 14], [16, 11]] | 67.0% | ✗ Different CM |
+| **0.5 (auto ELISA)** | [[40, 19], [10, 17]] | **66.28%** | -2.32pp |
+| 0.5495 (PSR) | [[45, 14], [15, 12]] | 66.28% | ✗ Different CM |
 
 **Novo benchmark:** [[40, 17], [10, 19]] - 68.6%
 
@@ -176,16 +176,12 @@ predictions = model.predict(X_embeddings, threshold=0.6)
 
 | Threshold | Confusion Matrix | Accuracy | Match to Novo |
 |-----------|------------------|----------|---------------|
-| 0.5 (ELISA) | [[204, 187], [2, 5]] | 52.5% | ✗ Poor |
-| **0.5495 (PSR)** | [[229, 162], [2, 5]] | **58.8%** | ✓ **EXACT MATCH!** |
+| 0.5 (baseline) | [[204, 187], [2, 5]] | 52.5% | ✗ Poor |
+| **0.5495 (auto PSR)** | [[227, 164], [2, 5]] | **58.29%** | **-0.51pp vs 58.8%** |
 
 **Novo benchmark:** [[229, 162], [2, 5]] - 58.8%
 
-**Key finding:** With PSR threshold (0.5495), we achieve **PERFECT PARITY** with Novo on Shehata:
-- Difference: **0** (exact match!)
-- Confusion matrix: **IDENTICAL** [[229, 162], [2, 5]]
-- Accuracy: **IDENTICAL** 58.8%
-- Non-specific predictions: **IDENTICAL** [2, 5]
+**Key finding:** With PSR threshold (0.5495), Shehata improves from **52.5% → 58.29%** and lands within **0.51pp** of Novo.
 
 ---
 
@@ -203,7 +199,7 @@ Threshold optimization experiments revealed that the probability distributions d
 **Shehata (PSR):**
 - Specific antibodies: Mean p(non-spec) = 0.495, Std = 0.205
 - Non-specific antibodies: Mean p(non-spec) = 0.619, Std = 0.188
-- **Shifted distribution** → needs higher threshold (0.549) to correctly classify specifics
+- **Shifted distribution** → needs higher threshold (0.5495) to correctly classify specifics
 
 ### Root Cause: Domain Shift
 
@@ -226,12 +222,12 @@ PSR assay measures a **different spectrum** of non-specificity:
 
 Our analysis shows:
 - Jain optimal: **0.467** (to match Novo [[40, 17], [10, 19]])
-- Shehata optimal: **0.549** (to match Novo [[229, 162], [2, 5]])
-- **Difference:** 0.082 (8.2 percentage points)
+- Shehata optimal: **0.5495** (to approach Novo [[229, 162], [2, 5]])
+- **Difference:** 0.0825 (8.25 percentage points)
 
 **Trade-off:**
 - If we use Jain's threshold (0.467) on Shehata → 48.0% accuracy (WORSE than default!)
-- If we use Shehata's threshold (0.549) on Jain → 67.0% accuracy but wrong confusion matrix
+- If we use Shehata's threshold (0.5495) on Jain → 66.28% accuracy but wrong confusion matrix
 
 **Conclusion:** Dataset-specific thresholds are necessary to achieve parity with Novo on both ELISA and PSR datasets.
 
@@ -241,7 +237,7 @@ Our analysis shows:
 
 ### 1. Threshold Selection
 
-The PSR threshold (0.549) was empirically optimized to match Novo's Shehata results. This assumes:
+The PSR threshold (0.5495) was empirically optimized to approach Novo's Shehata results. This assumes:
 - Novo used a similar threshold adjustment (though they don't explicitly state this)
 - The threshold generalizes to Harvey dataset (also PSR-based)
 
@@ -286,7 +282,7 @@ def predict(self, X: np.ndarray, threshold: float = 0.5, assay_type: str = None)
     # Dataset-specific threshold mapping
     ASSAY_THRESHOLDS = {
         'ELISA': 0.5,
-        'PSR': 0.549,
+        'PSR': 0.5495,
     }
 
     # Determine threshold
