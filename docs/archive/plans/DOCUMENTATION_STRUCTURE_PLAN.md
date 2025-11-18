@@ -427,7 +427,7 @@ datasets/
 1. **`novo-parity.md`** (CONSOLIDATE from 3 docs)
    - Executive summary of Novo Nordisk reverse engineering
    - Exact match results ([[40, 19], [10, 17]])
-   - Links to experiments/novo_parity/
+   - Links to archived experiments/benchmarks/novo_parity/ (checkout `archive` branch)
    - **Sources:**
      - `docs/research/NOVO_PARITY_ANALYSIS.md`
      - `docs/research/CODEBASE_AUDIT_VS_NOVO.md`
