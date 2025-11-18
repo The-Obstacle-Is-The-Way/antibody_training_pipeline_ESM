@@ -229,7 +229,7 @@ class BinaryClassifier:
                       Ignored if assay_type is specified
             assay_type: Type of assay for dataset-specific thresholds. Options:
                        - 'ELISA': Use threshold=0.5 (for Jain, Boughter datasets)
-                       - 'PSR': Use threshold=0.549 (for Shehata, Harvey datasets)
+                       - 'PSR': Use threshold=0.5495 (for Shehata, Harvey datasets)
                        - None: Use the threshold parameter
 
         Returns:
