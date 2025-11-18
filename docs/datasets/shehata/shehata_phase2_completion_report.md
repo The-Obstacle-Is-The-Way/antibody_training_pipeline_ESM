@@ -292,19 +292,19 @@ Follows `preprocessing/process_boughter.py` pattern:
 
 ### Model Evaluation (Not Part of Preprocessing):
 
-1. 🔲 Load fragments with data.load_local_data()
-2. 🔲 Generate ESM-1v embeddings for all 16 fragment types
-3. 🔲 Run inference with trained models
-4. 🔲 Compare performance across fragments
-5. 🔲 Reproduce paper Figure 3C-D (PSR predictions)
-6. 🔲 Create performance comparison table (Table 4 from paper)
+1. ✅ Load fragments with data.load_local_data()
+2. ✅ Generate ESM-1v embeddings for all 16 fragment types
+3. ✅ Run inference with trained models (Achieved 58.29% accuracy with PSR threshold)
+4. ✅ Compare performance across fragments
+5. ✅ Reproduce paper Figure 3C-D (PSR predictions) - See `docs/research/benchmark-results.md`
+6. ✅ Create performance comparison table (Table 4 from paper)
 
 ### Repository Hygiene:
 
-1. 🔲 Create comprehensive PR for Issue #3
-2. 🔲 Update main README with Shehata dataset info
-3. 🔲 Add data/test/shehata/ to .gitignore if needed
-4. 🔲 Document dependencies (riot_na) in requirements.txt
+1. ✅ Create comprehensive PR for Issue #3
+2. ✅ Update main README with Shehata dataset info
+3. ✅ Add data/test/shehata/ to .gitignore if needed
+4. ✅ Document dependencies (riot_na) in requirements.txt
 
 ---
 
