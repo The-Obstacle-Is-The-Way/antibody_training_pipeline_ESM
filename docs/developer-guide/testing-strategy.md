@@ -144,8 +144,8 @@ tests/
 ### Current Status
 
 **Test Counts:**
-- **Total tests:** 465 tests passed (3 skipped)
-- **Test files:** 89 source files checked
+- **Total tests:** 468 tests
+- **Test files:** 24 source files checked
 
 **Coverage:**
 - **Overall:** 90.20% (enforced ≥70% in CI)

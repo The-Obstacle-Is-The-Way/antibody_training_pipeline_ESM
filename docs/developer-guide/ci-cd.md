@@ -294,8 +294,8 @@ The repository has **5 CI/CD workflows** in `.github/workflows/`:
 3. **Shehata (PSR test set):**
    - Accuracy: 58.29% (auto PSR threshold: 0.5495)
 
-4. **Harvey (nanobody test set):**
-   - Accuracy: 59.0% baseline (threshold=0.5); PSR 0.5495 re-run pending
+4. Harvey (nanobody test set):
+   - Accuracy: 61.33% (threshold=0.5495 auto-detected)
    - 141k sequences (~90 minutes)
 
 ### Why weekly, not every PR?
