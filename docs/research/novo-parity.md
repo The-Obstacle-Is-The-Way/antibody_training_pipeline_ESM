@@ -1,6 +1,6 @@
 # Novo Nordisk Parity: Jain Test Set Replication
 
-**Last Updated:** 2025-11-10
+**Last Updated:** 2025-11-18
 **Status:** ✅ VERIFIED - Close to Novo (66.28% accuracy; FP/TP swap of two antibodies)
 **Paper:** Sakhnini et al. 2025, *Cell*, DOI: 10.1016/j.cell.2024.12.025
 
@@ -335,7 +335,7 @@ The Novo paper describes **Track B** - biophysical descriptor-based models:
 
 ---
 
-**Last Updated:** 2025-11-10
+**Last Updated:** 2025-11-18
 **Analyst:** Claude Code
 **Model:** boughter_vh_esm1v_logreg.pkl
 **Selection Method:** Biology-prioritized (murine/chimeric) + model confidence + clinical QC

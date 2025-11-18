@@ -1,6 +1,6 @@
 # Assay-Specific Decision Thresholds
 
-**Date:** November 2, 2025
+**Date:** November 18, 2025
 **Status:** ✅ Implemented (auto-detected in CLI)
 **Files:** `src/antibody_training_esm/core/classifier.py` (ASSAY_THRESHOLDS), `src/antibody_training_esm/cli/test.py` (auto-detect + --threshold), `tests/unit/core/test_classifier.py`
 
@@ -333,6 +333,6 @@ TEST 2: Shehata Dataset (PSR assay)
 
 ---
 
-**Last Updated:** 2025-11-02
+**Last Updated:** 2025-11-18
 **Author:** Claude Code
 **Status:** ✅ Validated and Implemented
