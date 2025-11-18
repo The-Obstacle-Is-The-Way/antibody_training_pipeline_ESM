@@ -46,8 +46,9 @@ class BinaryClassifier:
         if params is None:
             params = kwargs
 
-        # Validate required parameters
-        REQUIRED_PARAMS = ["random_state", "model_name", "device", "max_iter"]
+        # Validate required parameters (universal across all strategies)
+        # Note: max_iter is LogReg-specific, removed from required params
+        REQUIRED_PARAMS = ["random_state", "model_name", "device"]
         missing = [p for p in REQUIRED_PARAMS if p not in params]
         if missing:
             raise ValueError(

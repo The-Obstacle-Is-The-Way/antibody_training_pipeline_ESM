@@ -629,55 +629,76 @@ def save_model(
         pickle.dump(classifier, f)
     logger.info(f"Saved pickle checkpoint: {pickle_path}")
 
-    # Format 2: NPZ (production arrays - all sklearn LogisticRegression fitted attributes)
-    npz_path = f"{base_path}.npz"
-    np.savez(
-        npz_path,
-        coef=classifier.classifier.coef_,
-        intercept=classifier.classifier.intercept_,
-        classes=classifier.classifier.classes_,
-        n_features_in=np.array([classifier.classifier.n_features_in_]),
-        n_iter=classifier.classifier.n_iter_,
-    )
-    logger.info(f"Saved NPZ arrays: {npz_path}")
+    # Format 2: Strategy-specific production serialization
+    # Use duck typing to detect serialization method
+    saved_paths = {"pickle": str(pickle_path)}
 
-    # Format 3: JSON (production metadata - all BinaryClassifier params)
+    if hasattr(classifier.classifier, "save_model"):
+        # XGBoost native .xgb format (pickle-free)
+        xgb_path = f"{base_path}.xgb"
+        classifier.classifier.save_model(str(xgb_path))
+        logger.info(f"Saved XGBoost native model: {xgb_path}")
+        saved_paths["xgb"] = str(xgb_path)
+    elif hasattr(classifier.classifier, "to_arrays"):
+        # LogReg NPZ format (sklearn arrays)
+        npz_path = f"{base_path}.npz"
+        arrays = classifier.classifier.to_arrays()
+        np.savez(npz_path, **arrays)
+        logger.info(f"Saved NPZ arrays: {npz_path}")
+        saved_paths["npz"] = str(npz_path)
+    else:
+        # Fallback: legacy LogReg direct attribute access
+        npz_path = f"{base_path}.npz"
+        np.savez(
+            npz_path,
+            coef=classifier.classifier.coef_,
+            intercept=classifier.classifier.intercept_,
+            classes=classifier.classifier.classes_,
+            n_features_in=np.array([classifier.classifier.n_features_in_]),
+            n_iter=classifier.classifier.n_iter_,
+        )
+        logger.info(f"Saved NPZ arrays (legacy): {npz_path}")
+        saved_paths["npz"] = str(npz_path)
+
+    # Format 3: JSON metadata (universal across all strategies)
     json_path = f"{base_path}_config.json"
+
+    # Get strategy config via to_dict() method (all strategies implement this)
+    strategy_config = classifier.classifier.to_dict()
+    classifier_type = strategy_config.get("type", "logistic_regression")
+
     metadata = {
         # Model architecture
-        "model_name": classifier.model_name,  # HuggingFace model ID (for test.py routing)
-        "model_type": "LogisticRegression",
+        "model_name": classifier.model_name,  # HuggingFace model ID
+        "model_type": classifier_type,  # Dynamic: logistic_regression, xgboost, etc.
         "sklearn_version": sklearn.__version__,
-        # Classifier configuration block (structured for directory routing)
-        "classifier": {
-            "type": "logistic_regression",
-            "C": classifier.C,
-            "penalty": classifier.penalty,
-            "solver": classifier.solver,
-            "class_weight": classifier.class_weight,  # JSON handles None, str, dict natively
-            "max_iter": classifier.max_iter,
-            "random_state": classifier.random_state,
-        },
-        # Legacy flat fields (keep for backwards compatibility)
-        "C": classifier.C,
-        "penalty": classifier.penalty,
-        "solver": classifier.solver,
-        "class_weight": classifier.class_weight,
-        "max_iter": classifier.max_iter,
-        "random_state": classifier.random_state,
+        # Classifier configuration block (from strategy's to_dict())
+        "classifier": strategy_config,
         # ESM embedding extractor params
-        "esm_model": classifier.model_name,  # Alias for model_name
+        "esm_model": classifier.model_name,
         "esm_revision": classifier.revision,
         "batch_size": classifier.batch_size,
         "device": classifier.device,
     }
 
+    # Legacy flat fields for backward compatibility (LogReg only)
+    if classifier_type == "logistic_regression":
+        metadata.update({
+            "C": classifier.C,
+            "penalty": classifier.penalty,
+            "solver": classifier.solver,
+            "class_weight": classifier.class_weight,
+            "max_iter": classifier.max_iter,
+            "random_state": classifier.random_state,
+        })
+
     with open(json_path, "w") as f:
         json.dump(metadata, f, indent=2)
     logger.info(f"Saved JSON config: {json_path}")
 
-    logger.info("Model saved successfully (dual-format: pickle + NPZ+JSON)")
-    return {"pickle": str(pickle_path), "npz": str(npz_path), "config": str(json_path)}
+    saved_paths["config"] = str(json_path)
+    logger.info(f"Model saved successfully ({classifier_type} format)")
+    return saved_paths
 
 
 def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
