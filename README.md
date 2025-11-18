@@ -57,6 +57,14 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 ## To-Be Implemented
 - **Prediction Script**: A user-friendly script to quickly get non-specificity predictions for new antibody sequences.
 
+  To predict the non-specificity of antibodies in a CSV file, use the `antibody-predict` command:
+
+  ```bash
+  uv run antibody-predict input_file=path/to/your/input.csv output_file=path/to/your/predictions.csv
+  ```
+
+  The input CSV must contain a column named `sequence`. The output CSV will contain the original data with two new columns: `prediction` and `probability`.
+
 - **Biophysical Descriptor Module**: A feature to calculate and incorporate key biophysical parameters, such as the isoelectric point (pI), which was identified as a major driver of non-specificity.
 
 - **Support for Other PLMs**: Integration of other antibody-specific language models like AbLang or AntiBERTy for performance comparison.

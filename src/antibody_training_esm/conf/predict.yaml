@@ -1,0 +1,9 @@
+# @package _global_
+
+defaults:
+  - /model: esm1v
+  - /classifier: logreg
+  - _self_
+
+input_file: null
+output_file: "predictions.csv"
