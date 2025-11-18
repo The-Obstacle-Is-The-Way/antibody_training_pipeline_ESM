@@ -402,7 +402,7 @@ anarci or riot_na      # CDR annotation (Phase 2 only)
 1. ✅ **Phase 1 Complete** - Excel → CSV conversion (398 sequences)
 2. ✅ **Phase 2 Complete** - CSV → Fragments (16 fragment files, all gap-free)
 3. ✅ **P0 Blocker Resolved** - Gap characters eliminated from all fragments
-4. ✅ **PSR Threshold Calibrated** - Dataset-specific threshold: 0.5495 (implemented in classifier.py:167)
+4. ✅ **PSR Threshold Calibrated** - Dataset-specific threshold: 0.5495 (implemented in `src/antibody_training_esm/core/classifier.py`)
 5. ✅ **Validation Complete** - All fragments verified gap-free, label distribution preserved
 6. ✅ **Documentation Updated** - See `data/test/shehata/README.md` for SSOT
 

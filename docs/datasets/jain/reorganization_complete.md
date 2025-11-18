@@ -4,7 +4,7 @@
 >
 > This document describes the 2025-11-05 reorganization effort.
 > - **Note:** Fragment files were regenerated on 2025-11-06 (AFTER this reorg)
-> - **Known issues:** References non-existent file `VH_only_jain_test_PARITY_86.csv` and old `python3 test.py` commands
+> - **Known issues:** References archived file `VH_only_jain_test_PARITY_86.csv` (now in `data/test/jain/canonical/archive/`) and old `python3 test.py` commands
 > - **Current testing:** Use `uv run antibody-test` with `data/test/jain/fragments/VH_only_jain.csv`
 >
 > See `docs/datasets/jain/README.md` for current status.

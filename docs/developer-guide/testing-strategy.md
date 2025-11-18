@@ -144,8 +144,8 @@ tests/
 ### Current Status
 
 **Test Counts:**
-- **Total tests:** 468 tests
-- **Test files:** 24 source files checked
+- **Total tests:** 468 tests collected
+- **Source files:** 24 files (type-checked with mypy --strict)
 
 **Coverage:**
 - **Overall:** 90.20% (enforced ≥70% in CI)

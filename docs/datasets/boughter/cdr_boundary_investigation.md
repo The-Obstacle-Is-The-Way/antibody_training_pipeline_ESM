@@ -1,14 +1,19 @@
 # Boughter CDR Boundary Investigation
 
+**Date:** 2025-11-01 (Last Updated: 2025-11-18)
+**Status:** ✅ **RESOLVED - Use Strict IMGT (CDR-H3: 105-117, excludes position 118)**
+
+---
+
 ## Executive Summary
 
 **Finding**: Boughter et al. (eLife 2020) dataset uses IgBLAST alignment-based CDR extraction, NOT strict IMGT/ANARCI numbering, despite Sakhnini et al. (2025) stating "IMGT numbering scheme."
 
 **Key Discrepancies**:
-- **CDR-H3**: Extends to position 118 (includes FR4 J-anchor W), not strict IMGT 105–117
-- **CDR-H2**: Variable lengths suggest IgBLAST alignment boundaries, not consistent IMGT 56–65
+- **CDR-H3**: Boughter includes position 118 (J-anchor W), IMGT excludes it (105–117)
+- **CDR-H2**: Variable lengths are NORMAL biological variation (deletions/insertions)
 
-**Impact**: Developers using ANARCI with strict IMGT will get mismatches when validating against Boughter's published CDR sequences.
+**Resolution**: Use strict IMGT (CDR-H3: 105-117) - position 118 is Framework 4, not CDR
 
 ---
 
@@ -457,11 +462,11 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     return df_clean
 ```
 
-**Expected Pipeline Results:**
-- Stage 1: 1167 sequences (DNA translation)
-- Stage 2: 859 sequences (ANARCI annotation - 73.6%)
-- Stage 3: ~750-800 sequences (X/empty filtering)
-- **Final**: Matches Boughter's 1053 and Novo's ~1000
+**Actual Pipeline Results:**
+- Stage 1: 1,117 sequences (DNA translation from 1,171 raw)
+- Stage 2: 1,110 sequences (ANARCI annotation - 99.4% success)
+- Stage 3: 1,065 sequences (X/empty CDR filtering - 95.9% retention)
+- **Training subset**: 914 sequences (0 and 4+ flags only, per Novo methodology)
 
 ### References Added
 - Boughter seq_loader.py: Lines 10-16, 76-82, 200-206, 268-274, 337-343
@@ -473,6 +478,15 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
 
 ---
 
-*Document version: 4.0*
-*Last updated: 2025-11-02 (Added 2025 best practices validation)*
-*Status: ✅ **VALIDATED - All Questions Resolved + 2025 Best Practices Confirmed***
+---
+
+## ✅ FINAL STATUS: RESOLVED
+
+**Resolution:** Use strict IMGT (CDR-H3: 105-117, excludes position 118)
+**Rationale:** Position 118 is Framework 4 (J-anchor), not CDR - biologically and methodologically correct
+**Implementation:** `preprocessing/boughter/stage2_stage3_annotation_qc.py` (ANARCI + IMGT)
+**Production Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` ✅
+
+*Document version: 5.0*
+*Last updated: 2025-11-18 (Added clear resolution status)*
+*Status: ✅ **RESOLVED - All Questions Answered, Implementation Complete***

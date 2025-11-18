@@ -47,7 +47,8 @@ def test_config_loads() -> None:
 
         # Verify data config (all required fields)
         assert cfg.data.source == "local"
-        assert cfg.data.sequence_column == "sequence"
+        # Default data config now points to Jain canonical parity file with 'vh_sequence'
+        assert cfg.data.sequence_column == "vh_sequence"
         assert cfg.data.label_column == "label"
         assert cfg.data.embeddings_cache_dir == "./experiments/cache"
 

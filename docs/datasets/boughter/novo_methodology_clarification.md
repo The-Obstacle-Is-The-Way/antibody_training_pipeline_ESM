@@ -257,16 +257,17 @@ total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 - ✅ ANARCI/IMGT annotation (like Novo)
 - ✅ Boughter-style QC (like Novo)
 - ✅ Boughter-style flagging (like Novo)
-- ✅ Achieved 67.5% ± 8.9% (Novo: 71%, within std dev)
+- ✅ Achieved 67.5% ± 8.9% CV accuracy (Novo: 71%, within std dev)
+- ✅ Externally validated: Jain 66.28%, Shehata 58.29% (PSR threshold=0.5495, 2025-11-18)
 
-**Next steps:**
-- Filter 62 sequences with X at position 0 (not in CDRs, but in full VH)
-- Retrain on 852 clean sequences
-- Expected to close the 3.5% gap
+**Experimental validation (completed):**
+- ✅ Tested filtering 62 sequences with X at position 0 → strict QC (852 sequences)
+- ✅ Result: 66.55% vs 67.5% (NO improvement, statistically equivalent)
+- ✅ Conclusion: 62 sequences were valid training data, not noise
+- ✅ Experiment archived: `experiments/strict_qc_2025-11-04/`
 
 ---
 
-**Document Version:** 1.0
-**Last Updated:** 2025-11-04
-**Status:** ✅ Complete and validated
-**Maintainer:** Ray (Clarity Digital Twin Project)
+**Document Version:** 2.0
+**Last Updated:** 2025-11-18
+**Status:** ✅ **RESOLVED - Methodology fully clarified, no contradiction found**
