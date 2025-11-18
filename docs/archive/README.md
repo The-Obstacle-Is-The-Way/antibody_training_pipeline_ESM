@@ -18,9 +18,11 @@ archive/
 │   ├── 2025-11-11-production-readiness-audit.md         # 34 critical bugs fixed
 │   └── 2025-11-05-scripts-audit.md                      # 13 scripts analyzed
 │
-├── investigations/                                        # One-off debugging sessions (3 docs)
+├── investigations/                                        # One-off debugging sessions (5 docs)
 │   ├── 2025-11-03-mps-memory-leak.md                    # Apple Silicon MPS fix
 │   ├── 2025-11-06-p0-semaphore-leak.md                  # Double model loading bug
+│   ├── 2025-11-11-cli-override-bug.md                   # ConfigStore conflicting with YAML configs
+│   ├── 2025-11-11-training-pipeline-fixes.md            # Embedding cache + CLI entry point fixes
 │   └── p0-blockers.md                                    # Complete quality audit (P0/P1/P2/P3)
 │
 ├── migrations/                                            # Codebase reorganizations (3 docs)
@@ -28,14 +30,16 @@ archive/
 │   ├── 2025-11-06-repository-modernization.md           # uv, ruff, mypy strict
 │   └── v2-structure-migration.md                         # Import conventions guide
 │
-├── plans/                                                 # Completed planning documents (1 doc)
+├── plans/                                                 # Completed planning documents (2 docs)
+│   ├── 2025-11-11-output-pipeline-architecture.md        # Hierarchical output organization design
 │   └── DOCUMENTATION_STRUCTURE_PLAN.md                   # Docs reorganization (Phases 0-8)
 │
-├── summaries/                                             # Completion reports, status summaries (4 docs)
+├── summaries/                                             # Completion reports, status summaries (5 docs)
 │   ├── 2025-11-02-fixes-applied.md                      # StandardScaler removal (+12.77% accuracy)
 │   ├── 2025-11-02-phase1-test-results.md                # Experiment results
 │   ├── 2025-11-02-training-setup-status.md              # Pipeline ready milestone
-│   └── 2025-11-06-type-checking-complete.md             # 100% type safety achieved
+│   ├── 2025-11-06-type-checking-complete.md             # 100% type safety achieved
+│   └── 2025-11-12-esm2-feature.md                        # ESM2-650M backbone support
 │
 └── trash/                                                 # Obsolete/redundant docs (safe to delete)
     ├── CLEANUP_COMPLETE_SUMMARY.md                       # Superseded by canonical docs
@@ -45,7 +49,7 @@ archive/
     └── TEST_DATASETS_REORGANIZATION_PLAN.md              # Never executed (obsolete plan)
 ```
 
-**Total:** 14 active documents + 5 trash (19 total)
+**Total:** 18 active documents + 5 trash (23 total)
 
 ---
 
@@ -61,7 +65,7 @@ Comprehensive code, security, and quality audits:
 - **2025-11-05-scripts-audit.md** (451 lines)
   Comprehensive audit of 13 scripts across analysis/testing/training/validation. Documents what was experimental vs production.
 
-### 🔍 Investigations (3 docs)
+### 🔍 Investigations (5 docs)
 
 One-off debugging sessions and bug investigations:
 
@@ -70,6 +74,12 @@ One-off debugging sessions and bug investigations:
 
 - **2025-11-06-p0-semaphore-leak.md** (265 lines)
   Documents double ESM model loading bug that caused Harvey crashes. Excellent example of object lifecycle debugging.
+
+- **2025-11-11-cli-override-bug.md** (392 lines)
+  Root cause analysis of critical bug where `antibody-train model=esm2_650m` was ignored due to ConfigStore/YAML conflicts. Fixed by commenting out ConfigStore registrations. Lessons learned about Hydra's automatic schema matching deprecation.
+
+- **2025-11-11-training-pipeline-fixes.md** (182 lines)
+  Multi-issue investigation documenting 4 critical fixes: CLI entry point (config group overrides), embedding cache collision (model metadata in cache key), Hydra deprecation warnings, and log directory creation.
 
 - **p0-blockers.md** (615 lines)
   Comprehensive P0/P1/P2/P3 blocker tracking. Documents code quality audit with 32 type errors fixed, 90.82% coverage achieved.
@@ -87,14 +97,17 @@ Codebase reorganizations and structural changes:
 - **v2-structure-migration.md** (401 lines)
   Import conventions guide for v2.0.0 package structure. Documents breaking changes from root imports.
 
-### 📝 Plans (1 doc)
+### 📝 Plans (2 docs)
 
 Completed planning documents:
+
+- **2025-11-11-output-pipeline-architecture.md** (816 lines)
+  Hierarchical output organization design and implementation plan. Documents the problem (file collisions when testing multiple models), solution (stratified outputs by backbone/classifier/dataset), and complete implementation via `directory_utils.py`. Critical reference for understanding the experiments/ hierarchy.
 
 - **DOCUMENTATION_STRUCTURE_PLAN.md** (935 lines)
   Massive planning document for docs reorganization (Phases 0-8). Successfully executed plan creating user-guide/, developer-guide/, research/ structure.
 
-### ✅ Summaries (4 docs)
+### ✅ Summaries (5 docs)
 
 Completion reports and status summaries:
 
@@ -109,6 +122,9 @@ Completion reports and status summaries:
 
 - **2025-11-06-type-checking-complete.md** (168 lines)
   Documents achieving 100% type safety (75 errors fixed). Shows systematic type error resolution approach.
+
+- **2025-11-12-esm2-feature.md** (223 lines)
+  Feature completion summary for ESM2-650M backbone support. Documents config file addition (`model/esm2_650m.yaml`), usage via `antibody-train model=esm2_650m`, and benchmark comparison plan (ESM-1v vs ESM2). Includes research context on why ESM-1v likely outperforms ESM2 on antibody tasks.
 
 ### 🗑️ Trash (5 docs - safe to delete)
 

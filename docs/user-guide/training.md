@@ -446,19 +446,34 @@ data:
 
 ### Custom ESM Model
 
-Use different ESM model versions:
+Use different ESM model versions via Hydra config groups:
 
-```yaml
-model:
-  name: "facebook/esm2_t33_650M_UR50D"  # ESM-2 (newer)
-  revision: "main"
+```bash
+# ESM-1v (default, Novo Nordisk validated)
+uv run antibody-train model=esm1v
+
+# ESM2-650M (supported, comparable performance)
+uv run antibody-train model=esm2_650m
+```
+
+**Or** override the model name directly:
+
+```bash
+uv run antibody-train model.name=facebook/esm2_t33_650M_UR50D
 ```
 
 **Available ESM models:**
 
+| Model | Config Group | Performance | Status |
+|-------|-------------|-------------|--------|
+| ESM-1v (650M) | `model=esm1v` | 66.3% Jain accuracy (Novo baseline) | ✅ Default |
+| ESM2-650M | `model=esm2_650m` | ~64-68% Jain (predicted) | ✅ Supported |
+| ESM2-3B | N/A (manual override) | Higher (requires 24+ GB GPU) | 📋 Planned |
+
+**Full model names** (for manual override):
 - `facebook/esm1v_t33_650M_UR90S_1` - ESM-1v (default, validated)
-- `facebook/esm2_t33_650M_UR50D` - ESM-2 (experimental)
-- `facebook/esm2_t36_3B_UR50D` - ESM-2 Large (requires 24+ GB GPU)
+- `facebook/esm2_t33_650M_UR50D` - ESM2-650M (supported)
+- `facebook/esm2_t36_3B_UR50D` - ESM2-3B (requires 24+ GB GPU)
 
 ---
 
