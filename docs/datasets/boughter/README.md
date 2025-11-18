@@ -183,7 +183,7 @@ docs/datasets/boughter/
 
 **Production Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 **Training Data:** 914 sequences (VH_only_boughter_training.csv)
-**Validation:** Jain 66.28% | Shehata 52.26% | Harvey 61.33%
+**Validation:** Jain 66.28% | Shehata 58.29% | Harvey 61.33%
 **Status:** ✅ **Production-ready and externally validated**
 
 ---
