@@ -77,6 +77,9 @@ class TestConfig:
     save_predictions: bool = True
     batch_size: int = DEFAULT_BATCH_SIZE  # Batch size for embedding extraction
     device: str = "mps"  # Device to use for inference [cuda, cpu, mps] - MUST match training config
+    threshold: float | None = (
+        None  # Manual threshold override (None = auto-detect from dataset name)
+    )
 
     def __post_init__(self) -> None:
         if self.metrics is None:
@@ -296,6 +299,39 @@ class ModelTester:
 
         return embeddings
 
+    def detect_assay_type(self, dataset_name: str) -> str | None:
+        """
+        Auto-detect assay type from dataset name for threshold selection
+
+        Args:
+            dataset_name: Name of the dataset (e.g., "VH_only_jain", "VHH_only_harvey")
+
+        Returns:
+            'ELISA' for ELISA-based datasets (Boughter, Jain)
+            'PSR' for PSR-based datasets (Harvey, Shehata)
+            None if unable to detect
+
+        Notes:
+            Novo Nordisk (Sakhnini et al. 2025, Section 2.7):
+            "Antibodies characterised by the PSR assay appear to be on a different
+            non-specificity spectrum than that from the non-specificity ELISA assay."
+
+            PSR datasets require threshold=0.5495 for optimal performance.
+            ELISA datasets use standard threshold=0.5.
+        """
+        dataset_lower = dataset_name.lower()
+
+        # PSR-based datasets (Harvey, Shehata)
+        if any(marker in dataset_lower for marker in ["harvey", "shehata"]):
+            return "PSR"
+
+        # ELISA-based datasets (Boughter, Jain)
+        if any(marker in dataset_lower for marker in ["boughter", "jain"]):
+            return "ELISA"
+
+        # Unable to detect - will use default threshold
+        return None
+
     def evaluate_pretrained(
         self,
         model: BinaryClassifier,
@@ -307,8 +343,33 @@ class ModelTester:
         """Evaluate pretrained model directly on test set (no retraining)"""
         self.logger.info(f"Evaluating pretrained model {model_name} on {dataset_name}")
 
-        # Get predictions using the pretrained model
-        y_pred = model.predict(X)
+        # Determine threshold: manual override > auto-detect > default 0.5
+        if self.config.threshold is not None:
+            # Manual override via CLI
+            threshold = self.config.threshold
+            assay_type = None
+            self.logger.info(f"Using manual threshold override: {threshold}")
+        else:
+            # Auto-detect assay type from dataset name
+            assay_type = self.detect_assay_type(dataset_name)
+            if assay_type is not None:
+                threshold = model.ASSAY_THRESHOLDS[assay_type]
+                self.logger.info(
+                    f"Auto-detected assay type: {assay_type} → threshold={threshold} "
+                    f"(Dataset: {dataset_name})"
+                )
+            else:
+                threshold = 0.5
+                self.logger.warning(
+                    f"Unable to auto-detect assay type for '{dataset_name}'. "
+                    f"Using default threshold={threshold}. "
+                    f"For optimal results, specify --threshold or use standard dataset names."
+                )
+
+        # Get predictions using the pretrained model with appropriate threshold
+        y_pred = model.predict(
+            X, threshold=threshold, assay_type=None
+        )  # threshold already determined
         y_proba = model.predict_proba(X)[:, 1]
 
         # Calculate metrics
@@ -701,8 +762,11 @@ def main() -> int:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-    # Test single model on single dataset
+    # Test single model on single dataset (auto-detects threshold from dataset name)
     antibody-test --model experiments/checkpoints/antibody_classifier.pkl --data sample_data.csv
+
+    # Test on PSR dataset with auto-detected threshold (0.5495 for Harvey/Shehata)
+    antibody-test --model model.pkl --data data/test/harvey/fragments/VHH_only_harvey.csv
 
     # Test multiple models on multiple datasets
     antibody-test --model experiments/checkpoints/model1.pkl experiments/checkpoints/model2.pkl --data dataset1.csv dataset2.csv
@@ -710,8 +774,8 @@ Examples:
     # Use configuration file
     antibody-test --config test_config.yaml
 
-    # Override device and batch size
-    antibody-test --config test_config.yaml --device cuda --batch-size 64
+    # Override device, batch size, and threshold
+    antibody-test --config test_config.yaml --device cuda --batch-size 64 --threshold 0.6
 
     # Create sample configuration
     antibody-test --create-config
@@ -737,6 +801,12 @@ Examples:
         "--batch-size",
         type=int,
         help="Batch size for embedding extraction (overrides config)",
+    )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        help="Manual decision threshold override (default: auto-detect from dataset name). "
+        "Use 0.5 for ELISA datasets (Boughter, Jain) or 0.5495 for PSR datasets (Harvey, Shehata).",
     )
     parser.add_argument(
         "--create-config", action="store_true", help="Create sample configuration file"
@@ -765,6 +835,8 @@ Examples:
         config.device = args.device
     if args.batch_size:
         config.batch_size = args.batch_size
+    if args.threshold:
+        config.threshold = args.threshold
 
     # Run testing
     try:
