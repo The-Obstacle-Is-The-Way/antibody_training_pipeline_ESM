@@ -238,9 +238,9 @@ total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 - **IMGT:** Lefranc MP et al. 2003, Dev Comp Immunol 27:55-77
 
 ### Our Documentation
-- **Root analysis:** `docs/boughter/archive/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`
-- **CDR boundary audit:** `docs/boughter/cdr_boundary_first_principles_audit.md`
-- **Data sources:** `docs/boughter/data_sources.md`
+- **Root analysis:** `docs/datasets/boughter/archive/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`
+- **CDR boundary audit:** `docs/datasets/boughter/cdr_boundary_first_principles_audit.md`
+- **Data sources:** `docs/datasets/boughter/data_sources.md`
 
 ---
 

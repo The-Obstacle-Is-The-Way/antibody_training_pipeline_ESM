@@ -63,12 +63,12 @@
 
 For current, actively maintained Boughter documentation, see:
 
-### Primary Reference Documents (in docs/boughter/)
-1. **BOUGHTER_DATASET_COMPLETE_HISTORY.md** - Master historical reference
-2. **BOUGHTER_NOVO_METHODOLOGY_CLARIFICATION.md** - Critical methodological clarification
-3. **BOUGHTER_P0_FIX_REPORT.md** - Essential bug fix documentation (gap characters, stop codons)
-4. **boughter_cdr_boundary_investigation.md** - CDR boundary technical analysis
-5. **boughter_data_sources.md** - Novo methodology requirements
+### Primary Reference Documents (in docs/datasets/boughter/)
+1. **complete_history.md** - Master historical reference
+2. **novo_methodology_clarification.md** - Critical methodological clarification
+3. **p0_fix_report.md** - Essential bug fix documentation (gap characters, stop codons)
+4. **cdr_boundary_investigation.md** - CDR boundary technical analysis
+5. **data_sources.md** - Novo methodology requirements
 6. **cdr_boundary_first_principles_audit.md** - Gold standard first-principles analysis
 
 ### Implementation Reference (in preprocessing/boughter/)
@@ -81,6 +81,6 @@ For current, actively maintained Boughter documentation, see:
 
 ---
 
-**Last Updated:** 2025-11-06
+**Last Updated:** 2025-11-17
 **Archive Created:** 2025-11-06
 **Reason:** Documentation cleanup to establish clear hierarchy and single source of truth

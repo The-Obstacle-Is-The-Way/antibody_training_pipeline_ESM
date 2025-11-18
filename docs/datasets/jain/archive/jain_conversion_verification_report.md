@@ -140,6 +140,6 @@ if total_flags >= 3:  # Fixed: Changed from >=4 to >=3 (matches Novo/Hybri)
 
 ### References
 
-- See `docs/jain/FINAL_JAIN_ANALYSIS.md` for complete analysis
-- See `docs/jain/JAIN_FIX_PLAN.md` for implementation details
+- See `docs/datasets/jain/complete_guide.md` (QC/removals and parity context)
+- See `docs/datasets/jain/vh_benchmark_implementation_plan.md` for replication plan
 - Discord evidence: Hybri's replication used >=3 threshold, matched Novo's 86-antibody test set

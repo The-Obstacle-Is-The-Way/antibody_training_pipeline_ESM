@@ -435,7 +435,7 @@ A: Yes! But one antibody (nimotuzumab) has probability ≈0.5 and can flip. Use 
 A: experiments/ = full research workspace with rich metadata. data/test/ = clean production files for benchmarking.
 
 **Q: Why are there so many Jain files?**
-A: Different feature engineering approaches (VH-only, CDRs, FWRs, etc.) and different QC methodologies. See cleanup plan.
+A: Different feature engineering approaches (VH-only, CDRs, FWRs, etc.) and different QC methodologies. Historical cleanup plans are archived; canonical files are listed above.
 
 **Q: Which model should I use?**
 A: `boughter_vh_esm1v_logreg.pkl` (OLD, 914 training) for Novo parity. NEW model (859) is more accurate but doesn't match Novo.
@@ -444,12 +444,11 @@ A: `boughter_vh_esm1v_logreg.pkl` (OLD, 914 training) for Novo parity. NEW model
 
 ## Additional Documentation
 
-- **CSV Cleanup Plan:** `docs/archive/investigation_2025_11_05/JAIN_CLEANUP_PLAN_REVISED.md`
 - **Experiment Logs:** `experiments/novo_parity/EXACT_MATCH_FOUND.md`
-- **Archived Investigation:** `docs/archive/investigation_2025_11_05/`
+- **Historical Investigations:** See `docs/archive/investigations/` (no active cleanup plan required)
 
 ---
 
-**Last verified:** 2025-11-05
+**Last verified:** 2025-11-17
 **Status:** ✅ Accurate and up-to-date
 **Maintained by:** Claude + Ray
