@@ -73,11 +73,13 @@ data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"  # Fragment file
 
 output_dir: "./experiments/benchmarks"
-device: "auto"  # or "cpu", "cuda", "mps"
-batch_size: 16
+device: "mps"   # Default; override with "cpu" or "cuda" as needed
+batch_size: 32  # Default embedding batch size
 ```
 
 **Note:** The CLI automatically organizes results hierarchically by backbone/classifier/dataset under `output_dir` (e.g., `experiments/benchmarks/esm1v/logreg/jain/…`) when the model config JSON is present alongside the checkpoint. Specify only the base `output_dir`; the stratification is handled for you.
+
+**Thresholds:** `antibody-test` now auto-detects assay type from the dataset name (`harvey|shehata` → PSR threshold 0.5495, `jain|boughter` → ELISA threshold 0.5). Override with `--threshold` or the `threshold` field in a config if you need explicit control.
 
 ---
 
@@ -231,8 +233,8 @@ data_paths:
 sequence_column: "vh_sequence"  # Override for canonical file
 label_column: "label"
 output_dir: "./experiments/benchmarks"
-device: "auto"
-batch_size: 16
+device: "mps"
+batch_size: 32
 ```
 
 Then run:
@@ -358,7 +360,7 @@ Actual  Neg  [40     19]   ← True Neg: 40, False Pos: 19
 
 ### ELISA → PSR Prediction
 
-Training on ELISA (Boughter) and testing on PSR (Harvey/Shehata) requires **assay-specific threshold tuning**.
+Training on ELISA (Boughter) and testing on PSR (Harvey/Shehata) requires **assay-specific threshold tuning**. The CLI now **auto-detects** PSR datasets by name and applies threshold 0.5495; use the config/CLI overrides below if you want to pin a specific value.
 
 **Method 1: Test Configuration (Recommended)**
 
@@ -373,8 +375,8 @@ data_paths:
   - "data/test/shehata/fragments/VH_only_shehata.csv"
 
 output_dir: "./experiments/benchmarks"
-device: "auto"
-batch_size: 16
+device: "mps"
+batch_size: 32
 
 # PSR assay-specific threshold
 threshold: 0.5495  # Novo Nordisk PSR threshold (default ELISA: 0.5)
@@ -407,8 +409,8 @@ classifier = load_model_from_npz(
 # Extract embeddings for test data
 extractor = ESMEmbeddingExtractor(
     model_name="facebook/esm1v_t33_650M_UR90S_1",
-    device="auto",
-    batch_size=16
+    device="mps",  # Override if you need "cuda" or "cpu"
+    batch_size=32
 )
 test_embeddings = extractor.extract_embeddings(test_sequences)
 
@@ -736,5 +738,5 @@ plt.savefig('roc_curve.png')
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `dev`

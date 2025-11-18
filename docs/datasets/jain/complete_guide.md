@@ -104,7 +104,7 @@ All located in `data/test/jain/`:
 
 ### Experiments (Research Workspace)
 
-**Location:** `experiments/novo_parity/datasets/`
+**Location:** `experiments/benchmarks/novo_parity/datasets/` (in `archive` branch)
 
 | File | Description |
 |------|-------------|
@@ -328,7 +328,7 @@ data/test/
 ### Research Files (experiments/)
 
 ```
-experiments/novo_parity/
+experiments/benchmarks/novo_parity/  # in archive branch
 ├── datasets/ (9 permutation CSVs)
 ├── results/ (JSON audit files, predictions)
 ├── scripts/ (Python experiment code)
@@ -396,7 +396,8 @@ print(df.columns)
 
 ```bash
 # Run experiment 05 (P5e-S2 baseline)
-cd experiments/novo_parity/scripts
+git checkout archive
+cd experiments/benchmarks/novo_parity/scripts
 python run_exp05_inference.py
 
 # Run permutation tests
@@ -444,7 +445,7 @@ A: `boughter_vh_esm1v_logreg.pkl` (OLD, 914 training) for Novo parity. NEW model
 
 ## Additional Documentation
 
-- **Experiment Logs:** `experiments/novo_parity/EXACT_MATCH_FOUND.md`
+- **Experiment Logs:** `experiments/benchmarks/novo_parity/EXACT_MATCH_FOUND.md` (archive branch)
 - **Historical Investigations:** See `docs/archive/investigations/` (no active cleanup plan required)
 
 ---

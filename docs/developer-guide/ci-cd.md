@@ -292,11 +292,10 @@ The repository has **5 CI/CD workflows** in `.github/workflows/`:
    - ELISA threshold: 0.5
 
 3. **Shehata (PSR test set):**
-   - Accuracy: ~58.8%
-   - PSR threshold: 0.5495
+   - Accuracy: 58.29% (auto PSR threshold: 0.5495)
 
-4. **Harvey (nanobody test set):**
-   - Accuracy: 61.5-61.7%
+4. Harvey (nanobody test set):
+   - Accuracy: 61.33% (threshold=0.5495 auto-detected)
    - 141k sequences (~90 minutes)
 
 ### Why weekly, not every PR?
@@ -308,7 +307,7 @@ The repository has **5 CI/CD workflows** in `.github/workflows/`:
 ### If parity fails
 
 - Check benchmark artifacts (confusion matrices)
-- Compare with baseline results in `experiments/novo_parity/`
+- Compare with archived parity results (`archive` branch: `experiments/benchmarks/novo_parity/`)
 - Investigate changes since last passing run
 - Issue created automatically on failure
 
@@ -745,5 +744,5 @@ gh workflow run benchmark.yml -f run_harvey=false
 
 ---
 
-**Last Updated:** 2025-11-10
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `leroy-jenkins/full-send`

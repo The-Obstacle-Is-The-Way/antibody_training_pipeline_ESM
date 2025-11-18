@@ -99,11 +99,11 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 
 ## Assay-Specific Threshold
 
-**PSR Threshold:** 0.549 (optimized for PSR assay)
+**PSR Threshold:** 0.5495 (optimized for PSR assay)
 
 **Note:** Different assays require different classification thresholds:
 - ELISA (Jain): 0.5 (default)
-- PSR (Shehata): 0.549
+- PSR (Shehata): 0.5495
 
 See `docs/research/assay-thresholds.md` for details.
 

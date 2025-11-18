@@ -92,8 +92,8 @@ RuntimeError: MPS backend out of memory
 
 ```yaml
 # src/antibody_training_esm/conf/config.yaml
-hardware:
-  batch_size: 4  # Reduce from default (16)
+training:
+  batch_size: 4  # Reduce from default (8)
 ```
 
 **Solution 2: Clear MPS Cache**
@@ -129,8 +129,8 @@ RuntimeError: CUDA out of memory. Tried to allocate XX.XX MiB
 
 ```yaml
 # src/antibody_training_esm/conf/config.yaml
-hardware:
-  batch_size: 8  # Reduce from default (16)
+training:
+  batch_size: 8  # Default; lower further if needed
 ```
 
 **Solution 2: Clear CUDA Cache**
@@ -1099,5 +1099,5 @@ make all
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `dev`

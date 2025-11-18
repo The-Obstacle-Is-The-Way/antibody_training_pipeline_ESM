@@ -66,13 +66,14 @@ training:
   save_model: true            # Save trained model to disk
   model_name: "boughter_vh_esm1v_logreg"
   model_save_dir: "./experiments/checkpoints"
+  batch_size: 8               # Embedding extraction batch size (default)
+  num_workers: 4
 
 experiment:
   name: "boughter_novo_reproduction"
 
 hardware:
-  device: "auto"              # "auto", "cpu", "cuda", "mps"
-  batch_size: 16              # Embedding extraction batch size
+  device: "mps"               # Default (auto-detects CUDA/MPS in code)
 ```
 
 **Note:** With Hydra, you can override any parameter from CLI without editing files:
@@ -348,7 +349,7 @@ Embeddings are cached automatically:
 
 ```
 experiments/cache/
-└── {SHA256_hash}.npy  # Cached embeddings for dataset + model
+└── {dataset}_{SHA256_hash}_embeddings.pkl  # Pickle dict with embeddings + metadata
 ```
 
 **Benefits:**
@@ -482,8 +483,9 @@ uv run antibody-train model.name=facebook/esm2_t33_650M_UR50D
 Reduce batch size if encountering OOM errors:
 
 ```yaml
+training:
+  batch_size: 8   # Default; lower if needed (e.g., 4)
 hardware:
-  batch_size: 8   # Reduce from default (16)
   device: "cuda"  # or "mps" for Apple Silicon
 ```
 
@@ -492,8 +494,8 @@ hardware:
 | Batch Size | GPU Memory | Speed |
 |------------|-----------|-------|
 | 4          | 4 GB      | Slow  |
-| 8          | 8 GB      | Medium |
-| 16         | 12 GB     | Fast (default) |
+| 8          | 8 GB      | Medium (default) |
+| 16         | 12 GB     | Fast  |
 | 32         | 24 GB     | Fastest |
 
 ---
@@ -544,5 +546,5 @@ See [Troubleshooting Guide](troubleshooting.md) for more solutions.
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `dev`

@@ -8,14 +8,17 @@ This directory contains technical documentation for the antibody training pipeli
 
 ## 🎯 **FOR NOVO NORDISK PARITY RESULTS (FINAL)**
 
-**The authoritative reverse engineering results are located in:**
+**Location:** Archived in the `archive` branch to keep `dev` clean.
 
-📁 **`experiments/novo_parity/`**
+```bash
+git checkout archive
+cd experiments/benchmarks/novo_parity/
+```
 
-**Key documents:**
-- **Executive Summary**: `experiments/novo_parity/MISSION_ACCOMPLISHED.md`
-- **Technical Details**: `experiments/novo_parity/EXACT_MATCH_FOUND.md`
-- **Final Dataset**: `experiments/novo_parity/datasets/jain_86_p5e_s2.csv`
+**Key documents (in archive):**
+- **Executive Summary**: `experiments/benchmarks/novo_parity/MISSION_ACCOMPLISHED.md`
+- **Technical Details**: `experiments/benchmarks/novo_parity/EXACT_MATCH_FOUND.md`
+- **Final Dataset**: `experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv`
 
 **Result**: [[40, 19], [10, 17]] ✅ **EXACT MATCH** to Novo Nordisk's confusion matrix (66.28% accuracy)
 

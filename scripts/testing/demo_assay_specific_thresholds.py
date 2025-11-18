@@ -108,7 +108,7 @@ def main() -> int:
         novo_jain,
     )
 
-    # Test Shehata with PSR threshold (0.549)
+    # Test Shehata with PSR threshold (0.5495)
     print("\n" + "=" * 60)
     print("TEST 2: Shehata Dataset (PSR assay)")
     print("=" * 60)

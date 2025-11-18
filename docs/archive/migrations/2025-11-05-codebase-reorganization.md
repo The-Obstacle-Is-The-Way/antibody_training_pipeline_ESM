@@ -227,8 +227,8 @@ antibody_training_pipeline_esm/          # Root (renamed from ESM)
 4. Update integration tests to use new imports
 
 ### Phase 7: Update Experiments
-1. Move executable scripts out of `experiments/novo_parity/scripts/`
-2. Keep only results and datasets in `experiments/`
+1. Move executable scripts out of `experiments/benchmarks/novo_parity/scripts/` (now stored in `archive` branch)
+2. Keep only results and datasets in `experiments/` (or archive them if historical)
 3. Executable experiment code → either `scripts/experiments/` or `src/`
 
 ### Phase 8: Update Documentation

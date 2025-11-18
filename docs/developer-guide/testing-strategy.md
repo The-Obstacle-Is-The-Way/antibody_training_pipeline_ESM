@@ -144,11 +144,11 @@ tests/
 ### Current Status
 
 **Test Counts:**
-- **Total tests:** 403 tests (311 unit + 75 integration + 17 E2E)
-- **Test files:** 24 test modules
+- **Total tests:** 468 tests
+- **Test files:** 24 source files checked
 
 **Coverage:**
-- **Overall:** 90.80% (enforced ≥70% in CI)
+- **Overall:** 90.20% (enforced ≥70% in CI)
 - **Core modules:** 97.96% average (classifier 100%, embeddings 94.50%, trainer 99.37%)
 - **Datasets:** 89.58% average (boughter 91.67%, harvey 86.11%, jain 96.64%, shehata 88.42%, base 85.06%)
 - **CLI:** 85.84% (test.py), 100% (train.py), 78.12% (preprocess.py)
@@ -911,5 +911,5 @@ uv run pytest tests/unit/core/test_classifier.py --cov=src/antibody_training_esm
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `leroy-jenkins/full-send`
