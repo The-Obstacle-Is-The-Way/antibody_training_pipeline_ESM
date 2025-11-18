@@ -53,7 +53,7 @@ python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 ```
 
 **Outputs:**
-- `data/train/boughter/annotated/VH_only_boughter.csv` - VH sequences (1,065 rows)
+- `data/train/boughter/annotated/VH_only_boughter.csv` - VH sequences (1,076 rows)
 - `data/train/boughter/annotated/*_boughter.csv` - 16 fragment CSVs (H-CDRs, L-CDRs, etc.)
 
 **Note:** Training subset (914 sequences) selected from VH_only_boughter.csv based on polyreactivity labels.

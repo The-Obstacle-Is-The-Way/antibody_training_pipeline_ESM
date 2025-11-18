@@ -139,7 +139,8 @@ antibody_training_pipeline_ESM/
 ├── .venv/                      # Virtual environment (created by uv venv)
 ├── src/                        # Source code
 │   └── antibody_training_esm/
-├── configs/                    # Configuration files
+├── src/antibody_training_esm/conf/  # Hydra configuration files
+├── experiments/                # cache/, checkpoints/, benchmarks/, runs/ (created after first run)
 ├── preprocessing/              # Dataset preprocessing scripts
 ├── tests/                      # Test suite
 ├── docs/                       # Documentation

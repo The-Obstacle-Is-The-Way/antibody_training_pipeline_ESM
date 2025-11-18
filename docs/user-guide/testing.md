@@ -73,8 +73,8 @@ data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"  # Fragment file
 
 output_dir: "./experiments/benchmarks"
-device: "auto"  # or "cpu", "cuda", "mps"
-batch_size: 16
+device: "mps"   # Default; override with "cpu" or "cuda" as needed
+batch_size: 32  # Default embedding batch size
 ```
 
 **Note:** The CLI automatically organizes results hierarchically by backbone/classifier/dataset under `output_dir` (e.g., `experiments/benchmarks/esm1v/logreg/jain/…`) when the model config JSON is present alongside the checkpoint. Specify only the base `output_dir`; the stratification is handled for you.
@@ -231,8 +231,8 @@ data_paths:
 sequence_column: "vh_sequence"  # Override for canonical file
 label_column: "label"
 output_dir: "./experiments/benchmarks"
-device: "auto"
-batch_size: 16
+device: "mps"
+batch_size: 32
 ```
 
 Then run:
@@ -373,8 +373,8 @@ data_paths:
   - "data/test/shehata/fragments/VH_only_shehata.csv"
 
 output_dir: "./experiments/benchmarks"
-device: "auto"
-batch_size: 16
+device: "mps"
+batch_size: 32
 
 # PSR assay-specific threshold
 threshold: 0.5495  # Novo Nordisk PSR threshold (default ELISA: 0.5)
@@ -407,8 +407,8 @@ classifier = load_model_from_npz(
 # Extract embeddings for test data
 extractor = ESMEmbeddingExtractor(
     model_name="facebook/esm1v_t33_650M_UR90S_1",
-    device="auto",
-    batch_size=16
+    device="mps",  # Override if you need "cuda" or "cpu"
+    batch_size=32
 )
 test_embeddings = extractor.extract_embeddings(test_sequences)
 
