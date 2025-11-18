@@ -5,19 +5,10 @@ import hydra
 import pandas as pd
 import torch
 from omegaconf import DictConfig
-from transformers import AutoModelForMaskedLM, AutoTokenizer
 import joblib
 import numpy as np
 
-
-def get_embeddings(sequences: list[str], model, tokenizer, device: str) -> np.ndarray:
-    """Generates embeddings for a list of sequences."""
-    inputs = tokenizer(sequences, return_tensors="pt", padding=True, truncation=True)
-    inputs = {k: v.to(device) for k, v in inputs.items()}
-    with torch.no_grad():
-        outputs = model(**inputs, output_hidden_states=True)
-    hidden_states = outputs.hidden_states[-1]
-    return hidden_states.mean(dim=1).cpu().numpy()
+from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
 
 def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
@@ -33,11 +24,11 @@ def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
     """
     device = "cuda" if torch.cuda.is_available() else "cpu"
 
-    # Load ESM model and tokenizer
-    model_name = cfg.model.name
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForMaskedLM.from_pretrained(model_name).to(device)
-    model.eval()
+    # Initialize the embedding extractor
+    embedder = ESMEmbeddingExtractor(
+        model_name=cfg.model.name,
+        device=device,
+    )
 
     # Load classifier
     classifier = joblib.load(cfg.classifier.path)
@@ -47,7 +38,7 @@ def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
     sequences = input_df["sequence"].tolist()
 
     # Generate embeddings
-    embeddings = get_embeddings(sequences, model, tokenizer, device)
+    embeddings = embedder.extract_batch_embeddings(sequences)
 
     # Make predictions
     predictions = classifier.predict(embeddings)

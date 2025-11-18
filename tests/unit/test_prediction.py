@@ -22,12 +22,8 @@ def sample_input_df():
 
 def test_run_prediction(sample_input_df):
     with patch("joblib.load") as mock_joblib_load, patch(
-        "transformers.AutoTokenizer.from_pretrained"
-    ), patch(
-        "transformers.AutoModelForMaskedLM.from_pretrained"
-    ), patch(
-        "antibody_training_esm.core.prediction.get_embeddings"
-    ) as mock_get_embeddings:
+        "antibody_training_esm.core.prediction.ESMEmbeddingExtractor"
+    ) as mock_embedder:
         # Mocking the classifier
         mock_classifier = MagicMock()
         mock_classifier.predict.return_value = np.array([1, 0])
@@ -36,8 +32,10 @@ def test_run_prediction(sample_input_df):
         )
         mock_joblib_load.return_value = mock_classifier
 
-        # Mocking get_embeddings to avoid actual model loading/inference
-        mock_get_embeddings.return_value = np.random.rand(2, 1280)  # dummy embeddings
+        # Mocking the ESMEmbeddingExtractor
+        mock_embedder.return_value.extract_batch_embeddings.return_value = np.random.rand(
+            2, 1280
+        )  # dummy embeddings
 
         # Create a mock config object
         cfg = OmegaConf.create(

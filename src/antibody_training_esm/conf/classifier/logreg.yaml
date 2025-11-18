@@ -7,3 +7,4 @@ random_state: ${training.random_state}
 class_weight: null
 cv_folds: 10
 stratify: true
+path: null

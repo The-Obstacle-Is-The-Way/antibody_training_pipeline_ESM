@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import hydra
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 import pandas as pd
 
 from antibody_training_esm.core.prediction import run_prediction
@@ -11,10 +11,10 @@ from antibody_training_esm.core.prediction import run_prediction
 @hydra.main(config_path="../conf", config_name="predict", version_base=None)
 def main(cfg: DictConfig) -> None:
     """Main function to run the prediction CLI."""
-    try:
-        if cfg.input_file is None:
-            raise ValueError("Input file must be specified.")
+    if cfg.input_file is None:
+        raise ValueError("Input file must be specified via command-line override: `input_file=...`")
 
+    try:
         # Load input data
         input_df = pd.read_csv(cfg.input_file)
 
