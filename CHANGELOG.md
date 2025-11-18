@@ -140,8 +140,8 @@ antibody-train --multirun classifier.C=0.1,1.0,10.0
 ### 🎯 What's Next?
 
 With Hydra in place, we can now:
-- Add ESM2 support (just create `conf/model/esm2.yaml`)
-- Add MLP classifier (just create `conf/classifier/mlp.yaml`)
+- Add ESM2 support (just create `src/antibody_training_esm/conf/model/esm2.yaml`)
+- Add MLP classifier (just create `src/antibody_training_esm/conf/classifier/mlp.yaml`)
 - Systematic benchmarking with multirun sweeps
 - W&B integration for experiment tracking (Phase 2)
 
