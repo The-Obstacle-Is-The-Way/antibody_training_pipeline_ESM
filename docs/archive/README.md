@@ -6,78 +6,119 @@ This directory contains **historical documentation** from the development proces
 
 ---
 
-## Current Archive Files (Root Level)
+## Directory Structure
 
-**Note:** Subdirectories (`migrations/`, `investigations/`, `plans/`, `summaries/`) are being populated. Most archive documents still live at root level (`docs/archive/*.md`) but are gradually being organized into subdirectories.
-
-### Migrations (4 docs)
-Codebase reorganizations and structural changes:
-
-| Current Path | Date | Description |
-|--------------|------|-------------|
-| `CODEBASE_REORGANIZATION_PLAN.md` | 2025-11-05 | v2.0.0 restructuring plan (root files → src/) |
-| `TEST_DATASETS_REORGANIZATION_PLAN.md` | 2025-11 | Test dataset directory reorganization |
-| `REPOSITORY_MODERNIZATION_PLAN.md` | 2025-11-06 | 2025 tooling upgrade plan (uv, ruff, mypy) |
-| `migrations/v2-structure-migration.md` | 2025-11 | v2.0.0 import structure guide (moved from docs/development/) |
-
-### Investigations (5 docs)
-One-off debugging sessions and issue investigations:
-
-| Current Path | Date | Description |
-|--------------|------|-------------|
-| `MPS_MEMORY_LEAK_FIX.md` | 2025-11-03 | Apple Silicon MPS memory leak fix (P0 bug) |
-| `P0_SEMAPHORE_LEAK.md` | 2025-11-05 | Semaphore leak investigation |
-| `SCRIPTS_AUDIT.md` | 2025-11-05 | Script audit report |
-| `RESIDUAL_TYPE_ERRORS.md` | 2025-11 | Deferred type errors in preprocessing scripts |
-| `investigations/p0-blockers.md` | 2025-11 | P0/P1/P2/P3 blocker tracking (moved from docs/development/) |
-
-### Plans (3 docs)
-Completed planning documents:
-
-| Current Path | Date | Description |
-|--------------|------|-------------|
-| `CLEANUP_PLAN.md` | 2025-11-05 | Jain dataset cleanup execution plan |
-| `STRICT_QC_CLEANUP_PLAN.md` | 2025-11 | Quality control cleanup plan |
-| `TRAINING_SETUP_STATUS.md` | 2025-11 | Training setup status report |
-
-### Summaries (4 docs)
-Completion reports and status summaries:
-
-| Current Path | Date | Description |
-|--------------|------|-------------|
-| `CLEANUP_COMPLETE_SUMMARY.md` | 2025-11-05 | Jain cleanup execution summary |
-| `FIXES_APPLIED.md` | 2025-11 | Bug fixes and corrections log |
-| `PHASE1_TEST_RESULTS.md` | 2025-11 | Phase 1 test results |
-| `DOCS_AUDIT_STATUS.md` | 2025-11 | Documentation audit (pre-reorganization) |
-
----
-
-## Planned Directory Structure (Phase 6)
-
-After Phase 6 of the documentation reorganization, files will be organized into subdirectories:
+All archive documents are organized into 5 categories:
 
 ```
 archive/
-├── README.md                     # This file
-├── migrations/                   # Codebase reorganizations (4 docs)
-│   └── v2-structure-migration.md
-├── investigations/               # Debugging sessions (5 docs)
-│   └── p0-blockers.md
-├── plans/                        # Completed plans (3 docs)
-└── summaries/                    # Completion reports (4 docs)
+├── README.md                                              # This file
+│
+├── audits/                                                # Code audits, security audits, quality audits (2 docs)
+│   ├── 2025-11-11-production-readiness-audit.md         # 34 critical bugs fixed
+│   └── 2025-11-05-scripts-audit.md                      # 13 scripts analyzed
+│
+├── investigations/                                        # One-off debugging sessions (3 docs)
+│   ├── 2025-11-03-mps-memory-leak.md                    # Apple Silicon MPS fix
+│   ├── 2025-11-06-p0-semaphore-leak.md                  # Double model loading bug
+│   └── p0-blockers.md                                    # Complete quality audit (P0/P1/P2/P3)
+│
+├── migrations/                                            # Codebase reorganizations (3 docs)
+│   ├── 2025-11-05-codebase-reorganization.md            # v2.0.0 package structure
+│   ├── 2025-11-06-repository-modernization.md           # uv, ruff, mypy strict
+│   └── v2-structure-migration.md                         # Import conventions guide
+│
+├── plans/                                                 # Completed planning documents (1 doc)
+│   └── DOCUMENTATION_STRUCTURE_PLAN.md                   # Docs reorganization (Phases 0-8)
+│
+├── summaries/                                             # Completion reports, status summaries (4 docs)
+│   ├── 2025-11-02-fixes-applied.md                      # StandardScaler removal (+12.77% accuracy)
+│   ├── 2025-11-02-phase1-test-results.md                # Experiment results
+│   ├── 2025-11-02-training-setup-status.md              # Pipeline ready milestone
+│   └── 2025-11-06-type-checking-complete.md             # 100% type safety achieved
+│
+└── trash/                                                 # Obsolete/redundant docs (safe to delete)
+    ├── CLEANUP_COMPLETE_SUMMARY.md                       # Superseded by canonical docs
+    ├── CLEANUP_PLAN.md                                   # Superseded by completion
+    ├── DOCS_AUDIT_STATUS.md                              # Superseded by DOCUMENTATION_STRUCTURE_PLAN.md
+    ├── STRICT_QC_CLEANUP_PLAN.md                         # Never executed (experimental)
+    └── TEST_DATASETS_REORGANIZATION_PLAN.md              # Never executed (obsolete plan)
 ```
+
+**Total:** 14 active documents + 5 trash (19 total)
 
 ---
 
-## Current Active Documentation
+## Document Categories
 
-For current, evergreen documentation, see:
+### 📋 Audits (2 docs)
 
-- **User Guides:** `docs/user-guide/` (pending Phase 3)
-- **Developer Guides:** `docs/developer-guide/` (pending Phase 4)
-- **Research Notes:** `docs/research/`
-- **Dataset Documentation:** `docs/datasets/`
-- **Development Documentation:** ~~`docs/development/`~~ (archived as of Phase 6)
+Comprehensive code, security, and quality audits:
+
+- **2025-11-11-production-readiness-audit.md** (886 lines)
+  Exceptional technical audit documenting 34 critical bugs fixed. Valuable reference for security practices, data validation patterns, and production readiness checklist.
+
+- **2025-11-05-scripts-audit.md** (451 lines)
+  Comprehensive audit of 13 scripts across analysis/testing/training/validation. Documents what was experimental vs production.
+
+### 🔍 Investigations (3 docs)
+
+One-off debugging sessions and bug investigations:
+
+- **2025-11-03-mps-memory-leak.md** (203 lines)
+  Critical P0 bug fix for Apple Silicon. Documents why Harvey (141k sequences) crashed and the one-line fix. Still referenced in user-guide/troubleshooting.md.
+
+- **2025-11-06-p0-semaphore-leak.md** (265 lines)
+  Documents double ESM model loading bug that caused Harvey crashes. Excellent example of object lifecycle debugging.
+
+- **p0-blockers.md** (615 lines)
+  Comprehensive P0/P1/P2/P3 blocker tracking. Documents code quality audit with 32 type errors fixed, 90.82% coverage achieved.
+
+### 🚀 Migrations (3 docs)
+
+Codebase reorganizations and structural changes:
+
+- **2025-11-05-codebase-reorganization.md** (419 lines)
+  Documents v2.0.0 package structure migration (root files → src/). Critical reference for understanding import patterns and professional package organization.
+
+- **2025-11-06-repository-modernization.md** (918 lines)
+  Comprehensive 2025 tooling upgrade plan (uv, ruff, mypy strict). Excellent reference for modern Python best practices.
+
+- **v2-structure-migration.md** (401 lines)
+  Import conventions guide for v2.0.0 package structure. Documents breaking changes from root imports.
+
+### 📝 Plans (1 doc)
+
+Completed planning documents:
+
+- **DOCUMENTATION_STRUCTURE_PLAN.md** (935 lines)
+  Massive planning document for docs reorganization (Phases 0-8). Successfully executed plan creating user-guide/, developer-guide/, research/ structure.
+
+### ✅ Summaries (4 docs)
+
+Completion reports and status summaries:
+
+- **2025-11-02-fixes-applied.md** (148 lines)
+  Documents critical StandardScaler removal that improved Jain accuracy from 55.32% → 68.09%. Historical record of Novo methodology alignment.
+
+- **2025-11-02-phase1-test-results.md** (36 lines)
+  Short results summary from StandardScaler removal experiment. Numerical validation of hypothesis.
+
+- **2025-11-02-training-setup-status.md** (164 lines)
+  Documents OSS repo being "fully wired and working" with Boughter data. Historical milestone.
+
+- **2025-11-06-type-checking-complete.md** (168 lines)
+  Documents achieving 100% type safety (75 errors fixed). Shows systematic type error resolution approach.
+
+### 🗑️ Trash (5 docs - safe to delete)
+
+Obsolete, redundant, or never-executed planning documents:
+
+- **CLEANUP_COMPLETE_SUMMARY.md** - Superseded by JAIN_COMPLETE_GUIDE.md (canonical)
+- **CLEANUP_PLAN.md** - Superseded by completion
+- **DOCS_AUDIT_STATUS.md** - Superseded by DOCUMENTATION_STRUCTURE_PLAN.md
+- **STRICT_QC_CLEANUP_PLAN.md** - Never executed (experimental strict_qc)
+- **TEST_DATASETS_REORGANIZATION_PLAN.md** - Never executed (Jain reorg plan)
 
 ---
 
@@ -90,49 +131,33 @@ A document belongs in `archive/` if it meets ALL of these criteria:
 3. ✅ **Historical** - Provides context for past decisions but not current operations
 4. ✅ **Superseded** - Information may be outdated or replaced by current practices
 
-**Example:** `MPS_MEMORY_LEAK_FIX.md` is archived because the bug is fixed, the investigation is complete, and the fix is merged. The knowledge is valuable for historical context but not needed for daily operations.
+**Example:** `2025-11-03-mps-memory-leak.md` is archived because the bug is fixed, the investigation is complete, and the fix is merged. The knowledge is valuable for historical context but not needed for daily operations.
 
 ---
 
-## Index of All Archived Documents
+## Current Active Documentation
 
-### By Category
+For current, evergreen documentation, see:
 
-**Migrations (4 docs):**
-- Codebase reorganization (v2.0.0 structure)
-- Test dataset reorganization
-- Repository modernization (2025 tooling)
-- v2.0.0 import structure guide
-
-**Investigations (5 docs):**
-- MPS memory leak fix (P0)
-- Semaphore leak investigation
-- Scripts audit
-- Residual type errors (deferred work)
-- P0/P1/P2/P3 blocker tracking
-
-**Plans (3 docs):**
-- Jain cleanup execution plan
-- Strict QC cleanup plan
-- Training setup status
-
-**Summaries (4 docs):**
-- Jain cleanup completion summary
-- Bug fixes log
-- Phase 1 test results
-- Documentation audit (pre-reorg)
-
-**Total:** 16 archived documents
+- **User Guides:** `docs/user-guide/` (installation, training, testing, troubleshooting)
+- **Developer Guides:** `docs/developer-guide/` (architecture, workflow, testing, CI/CD, security)
+- **Research Notes:** `docs/research/` (methodology, Novo parity, benchmarks)
+- **Dataset Documentation:** `docs/datasets/` (Boughter, Jain, Harvey, Shehata)
 
 ---
 
-## Related Documentation
+## Reorganization History
 
-- **Documentation Plan:** `docs/DOCUMENTATION_STRUCTURE_PLAN.md` (active, guides reorganization)
-- **Current Development Status:** See `docs/development/` for active work
-- **Research Findings:** See `docs/research/` for scientific methodology
+**2025-11-17:** Complete archive reorganization
+- Organized 14 root-level files into 5 subdirectories (audits, investigations, migrations, plans, summaries)
+- Added date prefixes to all files for chronological clarity
+- Moved 5 obsolete/redundant docs to trash/ (26% reduction)
+- All documents now follow consistent naming: `YYYY-MM-DD-descriptive-name.md`
+
+**Before:** 14 root files + 5 subdirectory files (19 total)
+**After:** 1 root file (README.md) + 14 organized files + 5 trash (19 total)
 
 ---
 
-**Last Updated:** 2025-11-10
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-17
+**Branch:** `leroy-jenkins/full-send`
