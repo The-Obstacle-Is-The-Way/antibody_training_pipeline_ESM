@@ -87,7 +87,7 @@ All three documents describe methodologies that:
 2. ❌ Would produce INCORRECT results if followed
 3. ❌ Reference files and pipelines that don't exist
 
-**Current SSOT:** See `preprocessing/jain/README.md` and parent `docs/jain/README.md`
+**Current SSOT:** See `preprocessing/jain/README.md` and `docs/datasets/jain/README.md`
 
 ---
 

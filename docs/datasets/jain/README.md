@@ -146,15 +146,15 @@ Step 3: Fragment Extraction (ANARCI/IMGT)
 ### When to Update Documentation
 
 1. **Implementation changes** → Update `preprocessing/jain/README.md` (SSOT)
-2. **Methodology insights** → Update relevant docs/jain/*.md files
+2. **Methodology insights** → Update relevant `docs/datasets/jain/*.md` files
 3. **Bug fixes** → Update label_discrepancy_findings.md or create new report
-4. **Historical/debugging docs** → Move to archive/ with explanation
+4. **Historical/debugging docs** → Move to `docs/datasets/jain/archive/` with explanation
 
 ### Documentation Principles
 
 - **preprocessing/jain/README.md** is the SINGLE SOURCE OF TRUTH for implementation
-- **docs/jain/*.md** provide context, rationale, and technical justification
-- **docs/jain/archive/** contains retired methodologies and historical analysis
+- **docs/datasets/jain/*.md** provide context, rationale, and technical justification
+- **docs/datasets/jain/archive/** contains retired methodologies and historical analysis
 - Keep docs DRY - reference other docs instead of duplicating
 - Mark outdated sections with clear ⚠️ **WARNING** banners
 
@@ -175,6 +175,6 @@ Step 3: Fragment Extraction (ANARCI/IMGT)
 
 ---
 
-**Last Updated:** 2025-11-06
+**Last Updated:** 2025-11-17
 **Documentation Version:** 2.0 (post-code-drift-cleanup)
 **Status:** ⚠️ Partially outdated - major rewrites needed for complete_guide and data_sources

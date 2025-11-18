@@ -127,7 +127,7 @@ Flags are calculated from 4 assay groups using 90th percentile thresholds of app
   - 1–3 → `mild`
   - 4 → `non_specific`
 - `label` = 0 for `specific`, 1 for `non_specific`, `NaN` for `mild`
-- Additional metadata (approved-antibody percentile calculations) available in `docs/jain_conversion_verification_report.md` (to be generated)
+- Additional metadata (approved-antibody percentile calculations) available in `docs/datasets/jain/archive/jain_conversion_verification_report.md`
 
 ### Processed Data Workflow
 

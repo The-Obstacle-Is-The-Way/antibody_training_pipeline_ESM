@@ -20,7 +20,7 @@
   - HIV_nat: 128 | HIV_cntrl: 44 | HIV_plos: 40 | Gut_hiv: 72
 - **Novo parity check**: Dataset size (>1000) and label balance match Sakhnini et al. (2025). Remaining gaps are confined to the HIV control/PLOS subsets (see §5.2).
 - **Artifacts generated**: 16 fragment CSVs (VH/VL, individual CDRs, concatenations, FWRs, paired chains) ready for ESM-2 embedding.
-- **P0 Fix Applied (2025-11-02)**: V-domain reconstruction from fragments to eliminate gap characters and constant region contamination. See `docs/boughter/BOUGHTER_P0_FIX_REPORT.md` for details.
+- **P0 Fix Applied (2025-11-02)**: V-domain reconstruction from fragments to eliminate gap characters and constant region contamination. See `docs/datasets/boughter/p0_fix_report.md` for details.
 
 ---
 
@@ -38,7 +38,7 @@
 
 **Test Suite**: `tests/test_boughter_embedding_compatibility.py` validates gap detection, amino acid validation, and ESM model compatibility.
 
-**Detailed Report**: See `docs/boughter/BOUGHTER_P0_FIX_REPORT.md`
+**Detailed Report**: See `docs/datasets/boughter/p0_fix_report.md`
 
 ---
 

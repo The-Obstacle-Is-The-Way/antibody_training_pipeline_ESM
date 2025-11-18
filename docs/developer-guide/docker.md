@@ -182,7 +182,7 @@ docker-compose run dev antibody-train \
 
 ```bash
 docker-compose run dev antibody-test \
-    --model experiments/checkpoints/esm1v/logreg/model.pkl \
+    --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
     --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -266,7 +266,7 @@ docker run -v $(pwd)/data:/app/data antibody-training-prod:1.0 \
 
 # Test model
 docker run -v $(pwd)/data:/app/data antibody-training-prod:1.0 \
-    antibody-test --model /app/data/model.pkl \
+    antibody-test --model /app/data/boughter_vh_esm1v_logreg.pkl \
     --data /app/data/test/jain/fragments/VH_only_jain.csv
 ```
 

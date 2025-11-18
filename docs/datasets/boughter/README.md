@@ -98,7 +98,7 @@ preprocessing/boughter/README.md ← SINGLE SOURCE OF TRUTH (implementation)
          ↑
          └── References these docs for methodology and context
 
-docs/boughter/
+docs/datasets/boughter/
 ├── README.md (THIS FILE) ← Documentation index
 │
 ├── complete_history.md ← Master reference
@@ -166,19 +166,19 @@ docs/boughter/
 ### When to Update Documentation
 
 1. **Implementation changes** → Update `preprocessing/boughter/README.md` (SSOT)
-2. **Methodology insights** → Update relevant docs/boughter/*.md files
+2. **Methodology insights** → Update relevant `docs/datasets/boughter/*.md` files
 3. **Bug fixes** → Create new report (follow p0_fix_report.md pattern)
 4. **Historical/debugging docs** → Move to archive/ with explanation
 
 ### Documentation Principles
 
 - **preprocessing/boughter/README.md** is the SINGLE SOURCE OF TRUTH for implementation
-- **docs/boughter/*.md** provide context, rationale, and technical justification
-- **docs/boughter/archive/** contains historical investigation and status reports
+- **docs/datasets/boughter/*.md** provide context, rationale, and technical justification
+- **docs/datasets/boughter/archive/** contains historical investigation and status reports
 - Keep docs DRY (Don't Repeat Yourself) - reference other docs instead of duplicating
 
 ---
 
-**Last Updated:** 2025-11-06
+**Last Updated:** 2025-11-17
 **Documentation Version:** 2.0 (post-cleanup)
 **Status:** ✅ Active and maintained

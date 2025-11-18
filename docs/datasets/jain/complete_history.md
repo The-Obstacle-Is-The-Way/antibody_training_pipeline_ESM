@@ -493,11 +493,11 @@ uv run antibody-test --config configs/test_jain_parity.yaml
 ## File Locations
 
 **Documentation:**
-- This file: `JAIN_DATASET_COMPLETE_HISTORY.md`
-- Data sources: `docs/jain/jain_data_sources.md`
-- Replication plan: `docs/jain/JAIN_REPLICATION_PLAN.md`
-- QC removals: `docs/jain/JAIN_QC_REMOVALS_COMPLETE.md`
-- Breakthrough analysis: `docs/archive/key_insights/JAIN_BREAKTHROUGH_ANALYSIS.md`
+- This file: `docs/datasets/jain/complete_history.md`
+- Data sources: `docs/datasets/jain/jain_data_sources.md`
+- Replication plan: `docs/datasets/jain/vh_benchmark_implementation_plan.md`
+- QC removals: `docs/datasets/jain/complete_guide.md` (see QC/removals section)
+- Breakthrough analysis: `experiments/novo_parity/EXACT_MATCH_FOUND.md` (canonical parity result)
 
 **Test Files (v2.0):**
 - Complete (137 antibodies): `data/test/jain/fragments/VH_only_jain.csv`

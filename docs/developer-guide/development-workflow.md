@@ -37,7 +37,7 @@ make hooks       # Run pre-commit checks manually
 **Training/Testing:**
 ```bash
 make train       # Train with default config
-uv run antibody-test --model experiments/checkpoints/esm1v/logreg/model.pkl --data data/test/jain/fragments/VH_only_jain.csv  # Test model
+uv run antibody-test --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl --data data/test/jain/fragments/VH_only_jain.csv  # Test model (hierarchical path)
 ```
 
 ---
@@ -167,7 +167,8 @@ uv run antibody-train experiment.name=my_experiment hardware.device=cuda
 
 **Test trained model:**
 ```bash
-uv run antibody-test --model experiments/checkpoints/esm1v/logreg/model.pkl --data data/test/jain/fragments/VH_only_jain.csv
+uv run antibody-test --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl --data data/test/jain/fragments/VH_only_jain.csv
+# Note: antibody-test auto-writes results under experiments/benchmarks/{backbone}/{classifier}/{dataset}/
 ```
 
 **All CLI options:**

@@ -77,6 +77,8 @@ device: "auto"  # or "cpu", "cuda", "mps"
 batch_size: 16
 ```
 
+**Note:** The CLI automatically organizes results hierarchically by backbone/classifier/dataset under `output_dir` (e.g., `experiments/benchmarks/esm1v/logreg/jain/…`) when the model config JSON is present alongside the checkpoint. Specify only the base `output_dir`; the stratification is handled for you.
+
 ---
 
 ## Test Dataset Options

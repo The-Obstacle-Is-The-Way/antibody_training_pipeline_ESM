@@ -291,9 +291,9 @@ python3 tests/test_boughter_embedding_compatibility.py
 6. ✅ All 13 other fragment files regenerated (already clean)
 
 ### Documentation
-7. ✅ `docs/boughter/p0_fix_report.md` - This report
-8. ✅ `docs/boughter/archive/boughter_processing_status.md` - Archived (pre-P0 fix snapshot)
-9. ✅ `docs/boughter/archive/accuracy_verification_report.md` - Archived (pre-P0 fix snapshot)
+7. ✅ `docs/datasets/boughter/p0_fix_report.md` - This report
+8. ✅ `docs/datasets/boughter/archive/boughter_processing_status.md` - Archived (pre-P0 fix snapshot)
+9. ✅ `docs/datasets/boughter/archive/accuracy_verification_report.md` - Archived (pre-P0 fix snapshot)
 
 ---
 
@@ -336,4 +336,3 @@ python3 tests/test_boughter_embedding_compatibility.py
 **Branch:** ray/learning
 **Commit:** [pending]
 **Status:** ✅ Ready for final commit and PR
-

@@ -627,8 +627,8 @@ Training Set Breakdown:
 - `reference_repos/AIMS_manuscripts/app_data/hiv_igg_data/*.dat` (HIV CDRs)
 
 **Documentation:**
-- `docs/boughter/cdr_boundary_first_principles_audit.md` (Position 118 analysis)
-- `docs/boughter/BOUGHTER_P0_FIX_REPORT.md` (V-domain reconstruction)
+- `docs/datasets/boughter/cdr_boundary_first_principles_audit.md` (Position 118 analysis)
+- `docs/datasets/boughter/p0_fix_report.md` (V-domain reconstruction)
 - `data/train/BOUGHTER_DATA_PROVENANCE.md` (Complete data lineage)
 - `preprocessing/boughter/README.md` (Pipeline documentation)
 
