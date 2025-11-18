@@ -164,14 +164,21 @@ For current, evergreen documentation, see:
 
 ## Reorganization History
 
+**2025-11-17:** Integration of to-be-integrated docs
+- Moved 4 completed investigation/feature docs from `to-be-integrated/` to archive with Phase 5 annotations
+- Integrated evergreen knowledge into canonical documentation:
+  - ESM2 model selection → `docs/user-guide/training.md`
+  - Config group override troubleshooting → `docs/user-guide/troubleshooting.md`
+  - Embedding cache behavior → `docs/developer-guide/architecture.md`
+  - Hierarchical output structure → Already documented in `docs/developer-guide/directory-organization.md`
+- **Archive totals:** 18 active documents + 5 trash (23 total, +4 from integration)
+
 **2025-11-17:** Complete archive reorganization
 - Organized 14 root-level files into 5 subdirectories (audits, investigations, migrations, plans, summaries)
 - Added date prefixes to all files for chronological clarity
 - Moved 5 obsolete/redundant docs to trash/ (26% reduction)
 - All documents now follow consistent naming: `YYYY-MM-DD-descriptive-name.md`
-
-**Before:** 14 root files + 5 subdirectory files (19 total)
-**After:** 1 root file (README.md) + 14 organized files + 5 trash (19 total)
+- **Archive totals:** 14 active documents + 5 trash (19 total)
 
 ---
 
