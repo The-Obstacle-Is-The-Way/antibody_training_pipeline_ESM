@@ -186,7 +186,7 @@ tests/                       # Test suite
 - Each dataset has dedicated preprocessing pipeline in `preprocessing/{dataset}/`
 
 ### Embedding Caching
-- ESM embeddings cached in `experiments/cache/` as `.npy` files
+- ESM embeddings cached in `experiments/cache/` as `.pkl` files (NumPy arrays + metadata)
 - Cache key: SHA-256 hash of `model_name + dataset_path + revision`
 - Prevents expensive re-computation during hyperparameter sweeps
 - Cache invalidates automatically when model/data changes
