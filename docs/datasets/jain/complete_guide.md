@@ -87,15 +87,15 @@ All located in `data/test/jain/`:
 | `jain_ELISA_ONLY_116.csv` | 116 | After ELISA 0/4+ filter |
 | `VH_only_jain_test_FULL.csv` | 94 | ❌ REMOVED (obsolete) |
 | `VH_only_jain_test_QC_REMOVED.csv` | 91 | ❌ REMOVED (obsolete) |
-| `VH_only_jain_test_PARITY_86.csv` | 86 | ❌ REMOVED (retired OLD method) |
+| `VH_only_jain_test_PARITY_86.csv` | 86 | ⚠️ DEPRECATED (use VH_only_jain_86_p5e_s2.csv instead) |
 
 ### Novo Parity Datasets (86 antibodies - THE GOAL)
 
 | File | Method | Result | Use For |
 |------|--------|--------|---------|
-| ~~`VH_only_jain_test_PARITY_86.csv`~~ | ❌ REMOVED (OLD reverse-engineered) | [[40,19],[10,17]] | **OBSOLETE** |
-| `VH_only_jain_86_p5e_s2.csv` | P5e-S2 canonical (with `vh_sequence` column) | [[40,19],[10,17]] ✅ | Canonical file (needs config) |
-| `VH_only_jain.csv` (fragments/) | Fragment file (with `sequence` column) | [[40,19],[10,17]] ✅ | **RECOMMENDED** (works with CLI) |
+| ~~`VH_only_jain_test_PARITY_86.csv`~~ | ⚠️ DEPRECATED (wrong column name) | [[40,19],[10,17]] | Use VH_only_jain_86_p5e_s2.csv |
+| `VH_only_jain_86_p5e_s2.csv` | P5e-S2 canonical (with `vh_sequence` column) | [[40,19],[10,17]] ✅ | **RECOMMENDED** for Novo parity |
+| `VH_only_jain.csv` (fragments/) | Full 137-antibody dataset | Different results (137 rows) | General testing, NOT parity |
 | `jain_86_novo_parity.csv` | P5e-S2 (full metadata) | [[40,19],[10,17]] ✅* | Full biophysical data |
 | `VH_only_jain_86_p5e_s4.csv` | P5e-S4 (Tm-based) | [[39,20],[10,17]] ❌ | Research only |
 | `jain_86_elisa_1.3.csv` | ELISA threshold exp | Experimental | Threshold testing |
@@ -153,7 +153,7 @@ Remove 5 borderline antibodies
 
 **File (FOR NOVO PARITY):** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, needs config)
 **File (FOR GENERAL TESTING):** `data/test/jain/fragments/VH_only_jain.csv` (137 antibodies, standardized columns)
-**OBSOLETE:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (removed)
+**DEPRECATED:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (deprecated - use VH_only_jain_86_p5e_s2.csv)
 
 **Result (86-antibody parity):** [[40, 19], [10, 17]] ✅ **EXACT Novo match**
 
@@ -307,18 +307,18 @@ data/test/
 │
 └── jain/
     ├── canonical/ (original column names: vh_sequence, vl_sequence)
-    │   ├── VH_only_jain_86_p5e_s2.csv (86) - needs config override
+    │   ├── VH_only_jain_86_p5e_s2.csv (86) ⭐ **RECOMMENDED FOR NOVO PARITY**
+    │   ├── VH_only_jain_test_PARITY_86.csv (86) ⚠️ DEPRECATED (use above)
     │   └── jain_86_novo_parity.csv (86 with full metadata)
     │
     ├── fragments/ (standardized columns: sequence, label)
-    │   ├── VH_only_jain.csv (137) ⭐ **RECOMMENDED FOR TESTING**
+    │   ├── VH_only_jain.csv (137) - Full dataset, NOT for parity
     │   └── ... (14 other fragment types)
     │
     ├── processed/ (intermediate outputs)
     │   ├── jain_ELISA_ONLY_116.csv (116)
     │   └── jain_with_private_elisa_FULL.csv (137)
     │
-    ├── ~~VH_only_jain_test_PARITY_86.csv~~ (❌ REMOVED - obsolete OLD method)
     ├── VH_only_jain_86_p5e_s4.csv (86)
     ├── jain_86_novo_parity.csv (86 with full metadata)
     │
@@ -427,7 +427,7 @@ If using these datasets, please cite:
 **Q: Which dataset should I use for Novo parity benchmarking?**
 A: `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, MUST use config with `sequence_column: "vh_sequence"`).
 Fragment file `VH_only_jain.csv` has 137 antibodies (not the 86-antibody parity subset).
-OBSOLETE: ~~`VH_only_jain_test_PARITY_86.csv`~~ (removed)
+DEPRECATED: ~~`VH_only_jain_test_PARITY_86.csv`~~ (deprecated - wrong column name, use VH_only_jain_86_p5e_s2.csv)
 
 **Q: Does P5e-S2 achieve Novo parity or not?**
 A: Yes! But one antibody (nimotuzumab) has probability ≈0.5 and can flip. Use stored predictions for exact reproducibility.

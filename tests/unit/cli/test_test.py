@@ -716,7 +716,7 @@ def test_jain_test_set_size_validation_passes_canonical_86(
     from antibody_training_esm.cli.test import ModelTester, TestConfig
 
     # Arrange - Create Jain test CSV with CORRECT size (86)
-    jain_test_path = tmp_path / "VH_only_jain_test_PARITY_86.csv"
+    jain_test_path = tmp_path / "VH_only_jain_86_p5e_s2.csv"
     correct_size_df = pd.DataFrame(
         {
             "id": [f"AB{i:03d}" for i in range(86)],  # CORRECT: 86
