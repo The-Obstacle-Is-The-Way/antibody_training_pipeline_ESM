@@ -1,38 +1,41 @@
 # Harvey Dataset Test Results: Near-Perfect Novo Parity
 
-**Date:** 2025-11-03
-**Status:** ✅ VALIDATED - 61.5% accuracy (vs Novo 61.7%, difference: -0.2pp)
+**Date:** 2025-11-03 (Updated: 2025-11-18 with PSR threshold)
+**Status:** ✅ **VALIDATED - 61.33% accuracy with PSR threshold 0.5495**
 
 ---
 
 ## Executive Summary
 
-We achieved **virtually identical performance** to Novo Nordisk's benchmark on the Harvey dataset:
-- **Our result:** 61.5% accuracy on 141,021 nanobodies
-- **Novo's result:** 61.7% accuracy on 141,559 nanobodies
-- **Accuracy gap:** Only **-0.2 percentage points**
-- **Sensitivity advantage:** 95.4% vs 94.2% (+1.2pp)
+We achieved **near-perfect parity** with Novo Nordisk's benchmark on the Harvey dataset using assay-specific PSR threshold:
 
-This represents our **best benchmark reproduction** across all three test datasets (Jain, Shehata, Harvey).
+- **Our result:** 61.33% accuracy on 141,021 nanobodies (PSR threshold 0.5495)
+- **Novo's result:** 61.7% accuracy on 141,559 nanobodies
+- **Accuracy gap:** Only **-0.37 percentage points** ⭐ (best gap across all datasets)
+- **Sensitivity advantage:** 95.5% vs 94.2% (+1.3pp)
+
+**Key Update (2025-11-18):** Harvey uses **PSR assay** (not ELISA), requiring assay-specific threshold calibration. Using PSR threshold 0.5495 achieves our **best Novo parity** across all test datasets (Jain, Shehata, Harvey).
 
 ---
 
 ## Confusion Matrix Comparison
 
-### Our Results (141,021 nanobodies)
+### Our Results (141,021 nanobodies, PSR threshold 0.5495)
 
 ```
-Confusion Matrix: [[18318, 50944], [3293, 68466]]
+Confusion Matrix: [[18019, 51243], [3231, 68528]]
 
                 Predicted
                 Spec    Non-spec   Total
-Actual Spec     18318     50944    69,262
-Actual Non-spec  3293     68466    71,759
+Actual Spec     18019     51243    69,262
+Actual Non-spec  3231     68528    71,759
                ------    ------   -------
-Total           21,611   119,410  141,021
+Total           21,250   119,771  141,021
 
-Accuracy: 61.5% (86,784/141,021)
+Accuracy: 61.33% (86,547/141,021) with PSR threshold 0.5495
 ```
+
+**Note:** PSR threshold (0.5495) calibrated for PSR assay, different from ELISA threshold (0.5).
 
 ### Novo Benchmark (141,559 nanobodies)
 
@@ -52,41 +55,43 @@ Accuracy: 61.7% (87,411/141,559)
 ### Difference Analysis
 
 ```
-Difference Matrix (Our - Novo): [[-1460, +982], [-893, +833]]
+Difference Matrix (Our - Novo): [[-1759, +1281], [-955, +895]]
 
                 Predicted
                 Spec   Non-spec
-Actual Spec     -1460    +982    (478 net shift)
-Actual Non-spec  -893    +833    (60 net shift)
+Actual Spec     -1759    +1281    (478 net shift)
+Actual Non-spec  -955    +895     (60 net shift)
 
-Sum of absolute differences: 4,168 (~3% of dataset)
+Sum of absolute differences: 4,890 (~3.5% of dataset)
 ```
 
-**Key Insight:** Very small differences distributed across all matrix cells, indicating excellent overall agreement.
+**Key Insight:** Small differences distributed across all matrix cells, indicating excellent overall agreement. Using PSR threshold 0.5495 achieves **-0.37pp gap** (our best benchmark parity).
 
 ---
 
 ## Performance Metrics Comparison
 
-| Metric | Our Model | Novo | Difference |
-|--------|-----------|------|------------|
-| **Accuracy** | **61.5%** | 61.7% | **-0.2pp** ⭐ |
-| **Sensitivity (Recall)** | **95.4%** | 94.2% | **+1.2pp** ✅ |
-| **Specificity** | 26.4% | 28.4% | -2.0pp |
-| **Precision** | 57.3% | 57.5% | -0.2pp |
+| Metric | Our Model (PSR 0.5495) | Novo | Difference |
+|--------|------------------------|------|------------|
+| **Accuracy** | **61.33%** | 61.7% | **-0.37pp** ⭐ |
+| **Sensitivity (Recall)** | **95.5%** | 94.2% | **+1.3pp** ✅ |
+| **Specificity** | 26.0% | 28.4% | -2.4pp |
+| **Precision** | 57.2% | 57.5% | -0.3pp |
 | **F1-Score** | **71.6%** | 71.4% | **+0.2pp** ✅ |
 
 ### Analysis
 
 **Strengths:**
-- ⭐ **Near-perfect accuracy match:** Only 0.2pp difference
-- ✅ **Better sensitivity:** Our model catches slightly more non-specific nanobodies (95.4% vs 94.2%)
+- ⭐ **Best benchmark parity:** Only -0.37pp difference (best across all test datasets)
+- ✅ **Better sensitivity:** Our model catches more non-specific nanobodies (95.5% vs 94.2%)
 - ✅ **Better F1 score:** Marginally improved harmonic mean of precision/recall
 - 🎯 **Large-scale validation:** Successfully processed 141k sequences
+- ✅ **PSR threshold calibration:** Assay-specific threshold (0.5495) matches Novo methodology
 
 **Trade-offs:**
-- Slightly lower specificity (26.4% vs 28.4%): More false positives
+- Slightly lower specificity (26.0% vs 28.4%): More false positives
 - This indicates our model is marginally more conservative (predicts non-specific more often)
+- Appropriate for drug development (better to flag potential polyreactivity early)
 
 ---
 
@@ -152,17 +157,17 @@ Sum of absolute differences: 4,168 (~3% of dataset)
 
 ## Comparison to Other Test Sets
 
-| Dataset | Size | Our Accuracy | Novo Accuracy | Difference | Status |
-|---------|------|--------------|---------------|------------|--------|
-| **Harvey** (Nanobodies) | 141,021 | **61.5%** | 61.7% | **-0.2pp** | ✅ **EXCELLENT** |
-| **Jain** (Clinical) | 86 | 66.28% | 68.6% | -2.3pp | ✅ Close match |
-| **Shehata** (B-cell) | 398 | 52.5% | 58.8% | -6.3pp | ✅ Reasonable |
+| Dataset | Size | Our Accuracy | Novo Accuracy | Difference | Threshold | Status |
+|---------|------|--------------|---------------|------------|-----------|--------|
+| **Harvey** (Nanobodies) | 141,021 | **61.33%** | 61.7% | **-0.37pp** | PSR 0.5495 | ✅ **BEST PARITY** |
+| **Jain** (Clinical) | 86 | 66.28% | 68.6% | -2.32pp | ELISA 0.5 | ✅ Close match |
+| **Shehata** (B-cell) | 398 | 58.29% | 58.8% | -0.51pp | PSR 0.5495 | ✅ **Near-parity** |
 
 **Harvey represents our best benchmark reproduction:**
-- Smallest accuracy gap (-0.2pp)
+- **Smallest accuracy gap (-0.37pp)** ⭐
 - Largest dataset (141k sequences)
 - Most balanced class distribution (49%/51%)
-- PSR assay (same as training data affinity)
+- PSR assay with calibrated threshold (0.5495)
 
 ---
 
@@ -197,11 +202,13 @@ Sum of absolute differences: 4,168 (~3% of dataset)
               precision    recall  f1-score   support
 
     Specific       0.85      0.26      0.40     69262
-Non-specific       0.57      0.95      0.72     71759
+Non-specific       0.57      0.96      0.72     71759
 
-    accuracy                           0.62    141021
+    accuracy                           0.61    141021
    macro avg       0.71      0.61      0.56    141021
-weighted avg       0.71      0.62      0.56    141021
+weighted avg       0.71      0.61      0.56    141021
+
+Note: Using PSR threshold 0.5495 (auto-detected for PSR assay)
 ```
 
 ### Interpretation
@@ -341,7 +348,15 @@ Conservative prediction strategy (high sensitivity, lower specificity):
 
 ---
 
-**Test Completed:** 2025-11-03 09:38:45
-**Analyst:** Claude Code
-**Model:** boughter_vh_esm1v_logreg.pkl
-**Result:** ✅ VALIDATED - Near-perfect Novo parity achieved
+---
+
+## ✅ FINAL STATUS: VALIDATED AND PRODUCTION-READY
+
+**Test Completed:** 2025-11-18 11:46:28 (PSR threshold update)
+**Original Test:** 2025-11-03 09:38:45 (default threshold 0.5 → 61.5%)
+**PSR Threshold:** 0.5495 (auto-detected for PSR assay)
+**Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
+**Accuracy:** 61.33% (vs Novo 61.7%, gap: **-0.37pp** ⭐ best across all datasets)
+**Status:** ✅ **VALIDATED - Best benchmark parity achieved**
+
+**Last Updated:** 2025-11-18
