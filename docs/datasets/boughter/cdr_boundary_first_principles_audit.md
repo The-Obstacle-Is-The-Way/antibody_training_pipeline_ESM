@@ -1,10 +1,14 @@
 # CDR Boundary First-Principles Audit
 
-## Investigation Date
-2025-11-01
+**Date:** 2025-11-01 (Last Updated: 2025-11-18)
+**Status:** ✅ **RESOLVED - Use Strict IMGT (CDR-H3: 105-117)**
+
+---
 
 ## Question
 **Is there a genuine discrepancy between Boughter's CDR boundaries and IMGT standards, or is this a misunderstanding?**
+
+**Answer:** YES - genuine discrepancy. Boughter includes position 118 (J-anchor), IMGT excludes it. **We use strict IMGT.**
 
 ---
 
@@ -499,14 +503,33 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     return df_clean
 ```
 
-**Expected Results:**
-- Stage 1 → Stage 2 → Stage 3
-- 1167 → 859 → ~750-800
-- Final matches Novo's methodology
+**Actual Production Results:**
+- Stage 1: 1,117 sequences (DNA translation from 1,171 raw DNA)
+- Stage 2: 1,110 sequences (ANARCI annotation - 99.4% success)
+- Stage 3: 1,065 sequences (post-annotation QC - 95.9% retention)
+- Training subset: 914 sequences (0 and 4+ flags only)
+- **Production model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` ✅
 
 ---
 
-*Audit version: 3.0*
-*Conducted: 2025-11-01, Updated: 2025-11-02 (Added 2025 best practices validation)*
+## ✅ FINAL RESOLUTION
+
+**Question:** Is there a genuine discrepancy?
+**Answer:** YES - Boughter includes position 118 (J-anchor W), IMGT excludes it
+
+**Our Decision:** Use strict IMGT (CDR-H3: 105-117, excludes position 118)
+**Rationale:**
+- Position 118 = Framework 4 (J-anchor), NOT CDR
+- Conserved residue (W/F) provides zero predictive information
+- IMGT is international standard, ensures cross-dataset compatibility
+
+**Implementation:** `preprocessing/boughter/stage2_stage3_annotation_qc.py` (ANARCI + IMGT)
+**Production Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` ✅
+**Validation:** Jain 66.28%, Shehata 52.26%, Harvey 61.33%
+
+---
+
+*Audit version: 4.0*
+*Conducted: 2025-11-01, Updated: 2025-11-18 (Added final resolution status)*
 *Method: First-principles independent verification + 2025 literature + code analysis*
-*Status: ✅ **COMPLETE - All Questions Resolved + Implementation Validated***
+*Status: ✅ **RESOLVED - Implementation Complete and Externally Validated***

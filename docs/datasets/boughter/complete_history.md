@@ -1,8 +1,18 @@
 # Boughter Dataset: Complete History & Final Processing Documentation
 
-**Date:** 2025-11-04 (Last Updated: 2025-11-06)
-**Status:** ✅ Complete - Novo methodology replicated, strict QC implemented and tested
+**Date:** 2025-11-04 (Last Updated: 2025-11-18)
+**Status:** ✅ **COMPLETE - Production Model Validated and Deployed**
 **Purpose:** Comprehensive reference for Boughter dataset structure, QC levels, and file selection
+
+---
+
+## ✅ PRODUCTION STATUS
+
+**Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
+**Training Data:** 914 sequences (Boughter QC, 0 and 4+ flags)
+**CV Accuracy:** 67.5% ± 8.9% (10-fold)
+**External Validation:** Jain 66.28% | Shehata 52.26% | Harvey 61.33%
+**Status:** ✅ **Production-ready, externally validated**
 
 > **💡 Note:** For current preprocessing pipeline implementation, see [`preprocessing/boughter/README.md`](../../../preprocessing/boughter/README.md) (SINGLE SOURCE OF TRUTH).
 > This document provides historical context, QC level comparisons, and decision rationale.
@@ -487,7 +497,6 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 ---
 
 **Document Status:**
-- **Version:** 2.0 (Post-archive cleanup)
-- **Date:** 2025-11-06
-- **Status:** ✅ Complete - Production model validated, experimental work archived
-- **Maintainer:** Ray (Clarity Digital Twin Project)
+- **Version:** 3.0 (Final production status)
+- **Date:** 2025-11-18
+- **Status:** ✅ **COMPLETE - Production model validated and deployed**

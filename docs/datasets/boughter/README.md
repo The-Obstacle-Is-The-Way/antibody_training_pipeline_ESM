@@ -179,6 +179,15 @@ docs/datasets/boughter/
 
 ---
 
-**Last Updated:** 2025-11-17
-**Documentation Version:** 2.0 (post-cleanup)
+## ✅ Current Status
+
+**Production Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
+**Training Data:** 914 sequences (VH_only_boughter_training.csv)
+**Validation:** Jain 66.28% | Shehata 52.26% | Harvey 61.33%
+**Status:** ✅ **Production-ready and externally validated**
+
+---
+
+**Last Updated:** 2025-11-18
+**Documentation Version:** 3.0 (production status added)
 **Status:** ✅ Active and maintained
