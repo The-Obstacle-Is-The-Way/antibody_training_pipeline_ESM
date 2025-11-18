@@ -12,6 +12,7 @@
 
 - ✅ `preprocessing/harvey/step1_convert_raw_csvs.py` - Converts raw CSVs to processed format
 - ✅ `preprocessing/harvey/step2_extract_fragments.py` - ANARCI annotation and fragment extraction
+- ✅ `preprocessing/harvey/test_psr_threshold.py` - Standalone validation with PSR threshold (0.5495)
 - ✅ All validation tests passing
 - ✅ P0 blocker resolved (gap characters removed)
 - ✅ **Best benchmark parity achieved (61.33% with PSR threshold 0.5495 vs Novo's 61.7%, gap: -0.37pp)**

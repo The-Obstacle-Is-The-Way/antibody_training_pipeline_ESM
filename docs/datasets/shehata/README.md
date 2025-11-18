@@ -65,13 +65,13 @@ That README contains:
 - **Fix:** Changed `annotation.sequence_alignment_aa` → `annotation.sequence_aa`
 - **Result:** All 398 sequences now gap-free and ESM-1v compatible
 
-### PSR-Specific Threshold Calibration (2025-11-03)
+### PSR-Specific Threshold Calibration (2025-11-03, Updated: 2025-11-18)
 - **Discovery:** Default threshold (0.5) gives 52.5% accuracy
-- **Optimized:** PSR-specific threshold (0.5495) gives 58.8% accuracy
-- **Result:** Exact parity with Novo Nordisk benchmark
+- **Optimized:** PSR-specific threshold (0.5495) gives **58.29%** accuracy
+- **Result:** **Near-parity** with Novo Nordisk benchmark (58.8%, gap: -0.51pp)
 - **Implementation:** `src/antibody_training_esm/core/classifier.py:167`
 
-✅ **Perfect benchmark replication achieved**
+✅ **Near-perfect benchmark replication achieved** (+5.79pp improvement from baseline)
 
 ---
 
@@ -122,7 +122,7 @@ The Shehata dataset generates **16 fragment files** (paired antibodies):
 - **ELISA datasets (Jain, Boughter):** Use default 0.5 threshold
 - **PSR datasets (Shehata, Harvey):** Use calibrated 0.5495 threshold
 
-**Rationale:** PSR assay has different probability distributions than ELISA. The 0.5495 threshold ensures exact parity with Novo Nordisk benchmarks.
+**Rationale:** PSR assay has different probability distributions than ELISA. The 0.5495 threshold achieves near-parity with Novo Nordisk benchmarks (Shehata: 58.29% vs Novo 58.8%, gap: -0.51pp).
 
 **Usage:**
 ```python
@@ -143,5 +143,5 @@ See [`threshold_calibration_discovery.md`](threshold_calibration_discovery.md) f
 
 ---
 
-**Last Updated:** 2025-11-06
-**Status:** ✅ Production ready
+**Last Updated:** 2025-11-18
+**Status:** ✅ **Production ready - Near-parity with Novo benchmark achieved**

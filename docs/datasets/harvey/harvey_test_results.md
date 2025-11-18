@@ -1,6 +1,6 @@
 # Harvey Dataset Test Results: Near-Perfect Novo Parity
 
-**Date:** 2025-11-03 (Updated: 2025-11-18 with PSR threshold)
+**Date:** 2025-11-18
 **Status:** ✅ **VALIDATED - 61.33% accuracy with PSR threshold 0.5495**
 
 ---
@@ -20,15 +20,15 @@ We achieved **near-perfect parity** with Novo Nordisk's benchmark on the Harvey 
 
 ## Confusion Matrix Comparison
 
-### Our Results (141,021 nanobodies, PSR threshold 0.5495)
+### Our Results (141,021 nanobodies, PSR threshold 0.5495, run: 2025-11-18)
 
 ```
-Confusion Matrix: [[18019, 51243], [3231, 68528]]
+Confusion Matrix: [[17945, 51317], [3220, 68539]]
 
                 Predicted
                 Spec    Non-spec   Total
-Actual Spec     18019     51243    69,262
-Actual Non-spec  3231     68528    71,759
+Actual Spec     17945     51317    69,262
+Actual Non-spec  3220     68539    71,759
                ------    ------   -------
 Total           21,250   119,771  141,021
 
@@ -55,14 +55,14 @@ Accuracy: 61.7% (87,411/141,559)
 ### Difference Analysis
 
 ```
-Difference Matrix (Our - Novo): [[-1759, +1281], [-955, +895]]
+Difference Matrix (Our - Novo): [[-1833, +1355], [-966, +906]]
 
                 Predicted
                 Spec   Non-spec
-Actual Spec     -1759    +1281    (478 net shift)
-Actual Non-spec  -955    +895     (60 net shift)
+Actual Spec     -1833    +1355    (522 net shift)
+Actual Non-spec  -966    +906     (-60 net shift)
 
-Sum of absolute differences: 4,890 (~3.5% of dataset)
+Sum of absolute differences: 5,060 (~3.6% of dataset)
 ```
 
 **Key Insight:** Small differences distributed across all matrix cells, indicating excellent overall agreement. Using PSR threshold 0.5495 achieves **-0.37pp gap** (our best benchmark parity).
@@ -101,7 +101,7 @@ Sum of absolute differences: 4,890 (~3.5% of dataset)
 - **Hardware:** Apple Silicon (M1/M2/M3)
 - **Backend:** MPS (Metal Performance Shaders)
 - **Memory management:** `torch.mps.empty_cache()` after each batch
-- **Batch size:** 2 (optimized for MPS memory stability)
+- **Batch size:** 32 (optimized for MPS extraction stability)
 
 ### Model Details
 - **Model file:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
@@ -118,30 +118,30 @@ Sum of absolute differences: 4,890 (~3.5% of dataset)
 - **Balance:** Nearly balanced dataset
 
 ### Execution Time
-- **Start:** 2025-11-03 08:09:21
-- **End:** 2025-11-03 09:38:45
-- **Duration:** 89.3 minutes (5,358 seconds)
-- **Throughput:** ~26.3 sequences/second
-- **Batches processed:** 70,511 batches (2 sequences per batch)
-- **Average batch time:** ~7.6 seconds/batch
+- **Start:** 2025-11-18 10:41:27
+- **End:** 2025-11-18 11:46:32
+- **Duration:** ~65.1 minutes (3,905 seconds)
+- **Throughput:** ~36.1 sequences/second
+- **Batches processed:** 4,407 batches (32 sequences per batch)
+- **Average batch time:** ~0.89 seconds/batch
 
 ---
 
 ## Technical Challenges & Solutions
 
 ### Challenge 1: MPS Memory Management
-**Problem:** Initial tests with batch_size=8 crashed at ~400 batches due to MPS memory accumulation
+**Problem:** Early MPS trials showed memory growth during long runs
 **Solution:**
 - Added MPS-specific cache clearing: `torch.mps.empty_cache()`
-- Reduced batch size to 2 for sustained stability
-- Result: Successful completion of all 70,511 batches
+- Held extraction at batch_size=32 with stable memory
+- Result: Successful completion of all 4,407 batches
 
 ### Challenge 2: Large-Scale Processing
 **Problem:** Processing 141k sequences is computationally intensive
 **Solution:**
 - Implemented progress bar with real-time batch metrics
 - Optimized embedding extraction pipeline
-- Result: 89.3 minutes total processing time (acceptable for validation)
+- Result: ~65 minutes total processing time (acceptable for validation)
 
 ### Challenge 3: Dataset Size Difference
 **Problem:** Our dataset has 141,021 sequences vs Novo's 141,559 (538 sequence difference)
@@ -179,19 +179,19 @@ Sum of absolute differences: 4,890 (~3.5% of dataset)
 - **Assay compatibility:** PSR assay predictions align well with Novo's PSR-based methodology
 
 ### 2. Sensitivity-Specificity Trade-off
-- **High sensitivity (95.4%):** Very good at catching non-specific nanobodies
-- **Low specificity (26.4%):** Tends to over-predict non-specificity
+- **High sensitivity (95.5%):** Very good at catching non-specific nanobodies
+- **Low specificity (25.9%):** Tends to over-predict non-specificity
 - **Clinical implication:** Conservative approach (better to flag potential issues)
 - **Novo comparison:** Nearly identical trade-off pattern (94.2% sensitivity, 28.4% specificity)
 
 ### 3. Large-Scale Stability
-- **Robust processing:** Successfully completed 70,511 batches without crashes
+- **Robust processing:** Successfully completed 4,407 batches without crashes
 - **Consistent predictions:** No artifacts or batch-dependent patterns observed
 - **MPS backend success:** Apple Silicon hardware performed reliably with proper memory management
 
 ### 4. Reproducibility Achievement
 - **Methodology replication:** Successfully reproduced Novo's training and inference pipeline
-- **Performance parity:** 61.5% vs 61.7% (0.2pp gap) validates our implementation
+- **Performance parity:** 61.33% vs 61.7% (-0.37pp gap) validates our implementation
 - **Open science:** All code, data, and methods fully documented and reproducible
 
 ---
@@ -201,12 +201,12 @@ Sum of absolute differences: 4,890 (~3.5% of dataset)
 ```
               precision    recall  f1-score   support
 
-    Specific       0.85      0.26      0.40     69262
-Non-specific       0.57      0.96      0.72     71759
+    Specific       0.8479    0.2591    0.3969     69262
+Non-specific       0.5718    0.9551    0.7154     71759
 
-    accuracy                           0.61    141021
-   macro avg       0.71      0.61      0.56    141021
-weighted avg       0.71      0.61      0.56    141021
+    accuracy                           0.6133    141021
+   macro avg       0.7099    0.6071    0.5561    141021
+weighted avg       0.7074    0.6133    0.5590    141021
 
 Note: Using PSR threshold 0.5495 (auto-detected for PSR assay)
 ```
@@ -214,13 +214,13 @@ Note: Using PSR threshold 0.5495 (auto-detected for PSR assay)
 ### Interpretation
 
 **Specific Class (label=0):**
-- Precision: 85% - When we predict "specific", we're usually right
-- Recall: 26% - But we miss many specific nanobodies (false positives)
+- Precision: 84.8% - When we predict "specific", we're usually right
+- Recall: 25.9% - But we miss many specific nanobodies (false positives)
 - F1: 0.40 - Moderate performance due to low recall
 
 **Non-specific Class (label=1):**
-- Precision: 57% - When we predict "non-specific", we're right ~60% of the time
-- Recall: 95% - We catch almost all non-specific nanobodies
+- Precision: 57.2% - When we predict "non-specific", we're right ~57% of the time
+- Recall: 95.5% - We catch almost all non-specific nanobodies
 - F1: 0.72 - Strong performance (high recall dominates)
 
 **Overall Pattern:**
@@ -236,22 +236,18 @@ Note: Using PSR threshold 0.5495 (auto-detected for PSR assay)
 
 | Cell | Our Value | Novo Value | Difference | % Difference |
 |------|-----------|------------|------------|--------------|
-| TN (Spec→Spec) | 18,318 | 19,778 | -1,460 | -7.4% |
-| FP (Spec→Non-spec) | 50,944 | 49,962 | +982 | +2.0% |
-| FN (Non-spec→Spec) | 3,293 | 4,186 | -893 | -21.3% |
-| TP (Non-spec→Non-spec) | 68,466 | 67,633 | +833 | +1.2% |
+| TN (Spec→Spec) | 17,945 | 19,778 | -1,833 | -9.3% |
+| FP (Spec→Non-spec) | 51,317 | 49,962 | +1,355 | +2.7% |
+| FN (Non-spec→Spec) | 3,220 | 4,186 | -966 | -23.1% |
+| TP (Non-spec→Non-spec) | 68,539 | 67,633 | +906 | +1.3% |
 
 **Key Observations:**
 - All differences are within acceptable bounds for ML models
-- Largest relative difference: False negatives (-21.3%), but our model has FEWER false negatives (better!)
+- Largest relative difference: False negatives (-23.1%), but our model has FEWER false negatives (better!)
 - No systematic bias - differences distributed across all cells
 
-### McNemar's Test (Approximate)
-- **Hypothesis:** Are the two classifiers significantly different?
-- **Discordant pairs:** ~2,843 (predictions differ between models)
-- **Total predictions:** 141,021
-- **Discordance rate:** 2.0%
-- **Conclusion:** Models are statistically very similar
+### McNemar's Test
+- **Status:** Not recomputed for the PSR-threshold run (Novo per-sequence predictions unavailable)
 
 ---
 
@@ -270,9 +266,9 @@ ls data/test/harvey/fragments/VHH_only_harvey.csv
 python3 preprocessing/harvey/test_psr_threshold.py
 
 # Expected output:
-# - Confusion Matrix: [[18318, 50944], [3293, 68466]]
-# - Accuracy: 61.5%
-# - Processing time: ~90 minutes on Apple Silicon
+# - Confusion Matrix: [[17945, 51317], [3220, 68539]]
+# - Accuracy: 61.33%
+# - Processing time: ~65 minutes on Apple Silicon
 ```
 
 ### Hardware Requirements
@@ -287,7 +283,7 @@ python3 preprocessing/harvey/test_psr_threshold.py
 
 ### 1. Benchmark Validation ✅
 We achieved **near-perfect parity** with Novo Nordisk's Harvey benchmark:
-- Accuracy within 0.2pp (61.5% vs 61.7%)
+- Accuracy within 0.37pp (61.33% vs 61.7%)
 - Sensitivity advantage (+1.2pp)
 - Confusion matrix differences <3% of dataset
 - **Conclusion:** Our model successfully replicates Novo's methodology and performance
@@ -295,7 +291,7 @@ We achieved **near-perfect parity** with Novo Nordisk's Harvey benchmark:
 ### 2. Large-Scale Capability ✅
 Successfully processed 141k sequences:
 - Stable MPS backend performance
-- Efficient batch processing (89.3 minutes)
+- Efficient batch processing (~65 minutes)
 - No crashes or artifacts
 - **Conclusion:** Production-ready for large-scale antibody screening
 
@@ -307,7 +303,7 @@ Strong performance on nanobodies despite training on full antibodies:
 
 ### 4. Clinical Applicability ✅
 Conservative prediction strategy (high sensitivity, lower specificity):
-- Catches 95.4% of non-specific nanobodies
+- Catches 95.5% of non-specific nanobodies
 - Appropriate for drug development (better to flag issues early)
 - Aligns with Novo's clinical decision-making approach
 - **Conclusion:** Model is suitable for therapeutic antibody developability screening
@@ -353,7 +349,7 @@ Conservative prediction strategy (high sensitivity, lower specificity):
 ## ✅ FINAL STATUS: VALIDATED AND PRODUCTION-READY
 
 **Test Completed:** 2025-11-18 11:46:28 (PSR threshold update)
-**Original Test:** 2025-11-03 09:38:45 (default threshold 0.5 → 61.5%)
+**Historical Baseline:** 2025-11-16 (default threshold 0.5 → 59.0%)
 **PSR Threshold:** 0.5495 (auto-detected for PSR assay)
 **Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 **Accuracy:** 61.33% (vs Novo 61.7%, gap: **-0.37pp** ⭐ best across all datasets)
