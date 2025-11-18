@@ -57,29 +57,32 @@ Scientific methodology and validation:
 
 ### 📁 Archive (`archive/`)
 
-Historical documentation from development process:
+Historical documentation from development, fully organized under `docs/archive/`:
 
-- **Completed Plans**
-  - `CLEANUP_PLAN.md` - Jain dataset cleanup plan (completed 2025-11-05)
-  - `CLEANUP_COMPLETE_SUMMARY.md` - Cleanup execution summary
-  - `STRICT_QC_CLEANUP_PLAN.md` - Quality control cleanup plan
-  - `TRAINING_SETUP_STATUS.md` - Training setup status report
+- **Audits**
+  - `archive/audits/2025-11-11-production-readiness-audit.md`
+  - `archive/audits/2025-11-05-scripts-audit.md`
 
-- **Investigations & Fixes**
-  - `FIXES_APPLIED.md` - Bug fixes and corrections log
-  - `MPS_MEMORY_LEAK_FIX.md` - MPS memory leak fix (2025-11-03)
-  - `P0_SEMAPHORE_LEAK.md` - Semaphore leak investigation
-  - `SCRIPTS_AUDIT.md` - Script audit report
-  - `RESIDUAL_TYPE_ERRORS.md` - Type error tracking
+- **Investigations**
+  - `archive/investigations/2025-11-03-mps-memory-leak.md`
+  - `archive/investigations/2025-11-06-p0-semaphore-leak.md`
+  - `archive/investigations/p0-blockers.md`
 
-- **Codebase Reorganization**
-  - `CODEBASE_REORGANIZATION_PLAN.md` - v2.0.0 restructuring plan
-  - `TEST_DATASETS_REORGANIZATION_PLAN.md` - Test dataset reorganization
-  - `REPOSITORY_MODERNIZATION_PLAN.md` - 2025 tooling upgrade plan
+- **Migrations**
+  - `archive/migrations/2025-11-05-codebase-reorganization.md`
+  - `archive/migrations/2025-11-06-repository-modernization.md`
+  - `archive/migrations/v2-structure-migration.md`
 
-- **Audit Reports**
-  - `DOCS_AUDIT_STATUS.md` - Documentation audit (pre-reorganization)
-  - `PHASE1_TEST_RESULTS.md` - Phase 1 test results
+- **Plans**
+  - `archive/plans/DOCUMENTATION_STRUCTURE_PLAN.md`
+
+- **Summaries**
+  - `archive/summaries/2025-11-02-fixes-applied.md`
+  - `archive/summaries/2025-11-02-phase1-test-results.md`
+  - `archive/summaries/2025-11-02-training-setup-status.md`
+  - `archive/summaries/2025-11-06-type-checking-complete.md`
+
+> Obsolete/duplicate plans are isolated in `archive/trash/` (safe to delete). See `docs/archive/README.md` for rationale.
 
 ### 📁 Dataset Documentation (`datasets/`)
 

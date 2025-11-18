@@ -1,8 +1,19 @@
 # CLI Override Bug - Root Cause Analysis (CORRECTED)
 
+> **⚠️ HISTORICAL BUG INVESTIGATION (2025-11-11 - RESOLVED)**
+>
+> This document represents a completed bug investigation and fix.
+>
+> **Status:** ✅ FIXED in production
+> - ConfigStore registrations commented out in `src/antibody_training_esm/conf/config_schema.py:139-142`
+> - Console script entry point fixed in `pyproject.toml:78` (direct to Hydra-decorated function)
+> - Config group overrides (`model=esm2_650m`, `classifier=xgboost`) now work correctly
+>
+> **For current troubleshooting:** See `docs/user-guide/troubleshooting.md`
+
 **Date**: 2025-11-11
-**Status**: ROOT CAUSE IDENTIFIED (VERIFIED)
-**Severity**: CRITICAL (blocks config group overrides in production CLI)
+**Status**: ROOT CAUSE IDENTIFIED (VERIFIED) → ✅ **FIXED**
+**Severity**: CRITICAL (blocks config group overrides in production CLI) → ✅ **RESOLVED**
 
 ---
 

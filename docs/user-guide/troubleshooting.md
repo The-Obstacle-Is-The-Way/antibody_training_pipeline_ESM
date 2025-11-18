@@ -113,7 +113,7 @@ hardware:
 
 **Permanent Fix:**
 
-The MPS memory leak was fixed in commit `9c8e5f2`. If still encountering issues, see `docs/archive/MPS_MEMORY_LEAK_FIX.md` for historical context.
+The MPS memory leak was fixed in commit `9c8e5f2`. If still encountering issues, see `docs/archive/investigations/2025-11-03-mps-memory-leak.md` for historical context.
 
 ---
 

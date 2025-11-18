@@ -1,5 +1,17 @@
 # Output Pipeline Architecture: Implementation Complete
 
+> **⚠️ COMPLETED PLANNING DOCUMENT (2025-11-11 - IMPLEMENTED)**
+>
+> This document represents a completed architecture design and implementation plan.
+>
+> **Status:** ✅ IMPLEMENTED in production
+> - Hierarchical directory utilities: `src/antibody_training_esm/core/directory_utils.py`
+> - Functions: `extract_model_shortname()`, `extract_classifier_shortname()`, `get_hierarchical_test_results_dir()`
+> - Structure: `experiments/checkpoints/{model}/{classifier}/` and `experiments/benchmarks/{model}/{classifier}/{dataset}/`
+> - Used by: `test.py`, `trainer.py` (via directory_utils)
+>
+> **For current architecture:** See `docs/developer-guide/directory-organization.md`
+
 **Date:** 2025-11-11 (Updated 22:00 UTC)
 **Status:** ✅ IMPLEMENTED - Hierarchical output system complete  
 **Author:** System trace + first principles analysis

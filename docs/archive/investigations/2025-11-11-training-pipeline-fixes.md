@@ -1,5 +1,17 @@
 # Training Pipeline Investigation (2025-11-11)
 
+> **⚠️ HISTORICAL BUG INVESTIGATION (2025-11-11 - RESOLVED)**
+>
+> This document represents a completed multi-issue investigation and fix.
+>
+> **Status:** ✅ 3/4 issues FIXED, 1 cosmetic issue OPEN
+> - Issue #1 (CLI overrides): ✅ FIXED in `pyproject.toml:78` (direct Hydra entry point)
+> - Issue #2 (embedding cache): ✅ FIXED in `trainer.py:304-373` (model metadata in cache key)
+> - Issue #3 (Hydra warnings): ⚠️ LIKELY RESOLVED (ConfigStore commented out, should eliminate warnings)
+> - Issue #4 (log creation): ✅ FIXED (log directory creation patched)
+>
+> **For current troubleshooting:** See `docs/user-guide/troubleshooting.md` and `docs/developer-guide/architecture.md`
+
 _Author: Internal QA agent_
 _Scope: `antibody_training_pipeline_ESM` training CLI (Hydra integration + caching)_
 _Status: Updated 2025-11-11 - Issues #1 and #2 FIXED_
