@@ -173,7 +173,7 @@ docker-compose run dev bash
 # Use default Hydra config
 docker-compose run dev antibody-train
 
-# OR override parameters
+# OR override parameters (e.g., increase batch size from default 8)
 docker-compose run dev antibody-train \
     hardware.device=cpu training.batch_size=16
 ```
