@@ -93,7 +93,7 @@ We conducted comprehensive searches to determine if Novo or others documented th
 
 ### Methodology
 
-**Historical Note:** An experimental script `analyze_thresholds.py` was created for threshold discovery (now deleted - purpose fulfilled). The threshold calibration logic is now implemented in `src/antibody_training_esm/core/classifier.py:164-170`.
+**Historical Note:** An experimental script `analyze_thresholds.py` was created for threshold discovery (now deleted - purpose fulfilled). The threshold calibration logic now lives in `src/antibody_training_esm/core/classifier.py` (`ASSAY_THRESHOLDS` mapping and the `predict` docstring).
 
 **Original threshold search approach:**
 
@@ -108,7 +108,7 @@ for threshold in np.arange(0.0, 1.0, 0.001):
         print(f"EXACT MATCH at threshold = {threshold}")
 ```
 
-**Current implementation:** See `classifier.py:164-170` for the production threshold mapping.
+**Current implementation:** See `classifier.py` (`ASSAY_THRESHOLDS` and `predict`) for the production threshold mapping. The `antibody-test` CLI auto-detects PSR datasets by name (Shehata/Harvey) and applies threshold 0.5495 by default; override with `--threshold` if you need explicit control.
 
 ### Results
 
@@ -134,7 +134,7 @@ The threshold 0.5495 achieves **near-perfect parity** with Novo:
 
 ### Code Changes
 
-Modified `classifier.py:125-165` to support assay-specific thresholds:
+Modified `classifier.py` to support assay-specific thresholds:
 
 ```python
 def predict(self, X: np.ndarray, threshold: float = 0.5, assay_type: Optional[str] = None) -> np.ndarray:
@@ -344,7 +344,7 @@ If we use Shehata's threshold (0.5495) on Jain:
 
 ## Files Modified
 
-- **`src/antibody_training_esm/core/classifier.py:164-170`** - Dataset-specific threshold mapping (PSR: 0.5495, ELISA: 0.5)
+- **`src/antibody_training_esm/core/classifier.py`** - Dataset-specific threshold mapping (PSR: 0.5495, ELISA: 0.5)
 - ~~**`analyze_thresholds.py`**~~ - Threshold optimization script (DELETED - experimental, purpose fulfilled)
 - **`test_assay_specific_thresholds.py`** - Demonstration and validation
 - **`docs/research/assay-thresholds.md`** - Comprehensive user-facing documentation (production doc)

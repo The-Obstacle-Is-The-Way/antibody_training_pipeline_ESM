@@ -69,7 +69,8 @@ That README contains:
 - **Discovery:** Default threshold (0.5) gives 52.5% accuracy
 - **Optimized:** PSR-specific threshold (0.5495) gives **58.29%** accuracy
 - **Result:** **Near-parity** with Novo Nordisk benchmark (58.8%, gap: -0.51pp)
-- **Implementation:** `src/antibody_training_esm/core/classifier.py:167`
+- **Implementation:** `src/antibody_training_esm/core/classifier.py` (`ASSAY_THRESHOLDS` + `predict`)
+- **CLI:** `antibody-test` auto-detects PSR from dataset name and applies 0.5495; override with `--threshold` if needed
 
 ✅ **Near-perfect benchmark replication achieved** (+5.79pp improvement from baseline)
 
