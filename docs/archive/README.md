@@ -42,14 +42,10 @@ archive/
 │   └── 2025-11-12-esm2-feature.md                        # ESM2-650M backbone support
 │
 └── trash/                                                 # Obsolete/redundant docs (safe to delete)
-    ├── CLEANUP_COMPLETE_SUMMARY.md                       # Superseded by canonical docs
-    ├── CLEANUP_PLAN.md                                   # Superseded by completion
-    ├── DOCS_AUDIT_STATUS.md                              # Superseded by DOCUMENTATION_STRUCTURE_PLAN.md
-    ├── STRICT_QC_CLEANUP_PLAN.md                         # Never executed (experimental)
-    └── TEST_DATASETS_REORGANIZATION_PLAN.md              # Never executed (obsolete plan)
+    └── (empty)                                           # Trash cleared; nothing pending deletion
 ```
 
-**Total:** 18 active documents + 5 trash (23 total)
+**Total:** 17 active documents (trash currently empty)
 
 ---
 
@@ -164,21 +160,26 @@ For current, evergreen documentation, see:
 
 ## Reorganization History
 
-**2025-11-17:** Integration of to-be-integrated docs
+**2025-11-17 (evening):** Trash cleanup
+- Deleted 5 obsolete trash documents (user action)
+- **Archive totals:** 17 active documents + 0 trash (17 total) ← **current state**
+
+**2025-11-17 (afternoon):** Integration of to-be-integrated docs
 - Moved 4 completed investigation/feature docs from `to-be-integrated/` to archive with Phase 5 annotations
 - Integrated evergreen knowledge into canonical documentation:
   - ESM2 model selection → `docs/user-guide/training.md`
   - Config group override troubleshooting → `docs/user-guide/troubleshooting.md`
   - Embedding cache behavior → `docs/developer-guide/architecture.md`
   - Hierarchical output structure → Already documented in `docs/developer-guide/directory-organization.md`
-- **Archive totals:** 18 active documents + 5 trash (23 total, +4 from integration)
+- Deleted `to-be-integrated/` directory after integration
+- **Archive totals:** 17 active documents + 5 trash (22 total, +4 from integration)
 
-**2025-11-17:** Complete archive reorganization
+**2025-11-17 (morning):** Complete archive reorganization
 - Organized 14 root-level files into 5 subdirectories (audits, investigations, migrations, plans, summaries)
 - Added date prefixes to all files for chronological clarity
-- Moved 5 obsolete/redundant docs to trash/ (26% reduction)
+- Moved 5 obsolete/redundant docs to trash/ (28% reduction: 18→13 active)
 - All documents now follow consistent naming: `YYYY-MM-DD-descriptive-name.md`
-- **Archive totals:** 14 active documents + 5 trash (19 total)
+- **Archive totals:** 13 active documents + 5 trash (18 total)
 
 ---
 

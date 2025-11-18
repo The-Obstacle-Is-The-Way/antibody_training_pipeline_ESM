@@ -57,7 +57,7 @@ Scientific methodology and validation:
 
 ### 📁 Archive (`archive/`)
 
-Historical documentation from development, fully organized under `docs/archive/`:
+Historical documentation, fully organized under `docs/archive/`:
 
 - **Audits**
   - `archive/audits/2025-11-11-production-readiness-audit.md`
@@ -66,6 +66,8 @@ Historical documentation from development, fully organized under `docs/archive/`
 - **Investigations**
   - `archive/investigations/2025-11-03-mps-memory-leak.md`
   - `archive/investigations/2025-11-06-p0-semaphore-leak.md`
+  - `archive/investigations/2025-11-11-cli-override-bug.md`
+  - `archive/investigations/2025-11-11-training-pipeline-fixes.md`
   - `archive/investigations/p0-blockers.md`
 
 - **Migrations**
@@ -74,6 +76,7 @@ Historical documentation from development, fully organized under `docs/archive/`
   - `archive/migrations/v2-structure-migration.md`
 
 - **Plans**
+  - `archive/plans/2025-11-11-output-pipeline-architecture.md`
   - `archive/plans/DOCUMENTATION_STRUCTURE_PLAN.md`
 
 - **Summaries**
@@ -81,8 +84,9 @@ Historical documentation from development, fully organized under `docs/archive/`
   - `archive/summaries/2025-11-02-phase1-test-results.md`
   - `archive/summaries/2025-11-02-training-setup-status.md`
   - `archive/summaries/2025-11-06-type-checking-complete.md`
+  - `archive/summaries/2025-11-12-esm2-feature.md`
 
-> Obsolete/duplicate plans are isolated in `archive/trash/` (safe to delete). See `docs/archive/README.md` for rationale.
+> Trash is currently empty; see `docs/archive/README.md` for archive policy.
 
 ### 📁 Dataset Documentation (`datasets/`)
 
@@ -97,5 +101,5 @@ Each dataset directory contains preprocessing scripts, validation reports, and d
 
 ---
 
-**Last Updated**: 2025-11-09
-**Branch**: `docs/canonical-structure`
+**Last Updated**: 2025-11-17
+**Branch**: `leroy-jenkins/full-send`
