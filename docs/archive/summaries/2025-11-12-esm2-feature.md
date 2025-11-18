@@ -1,5 +1,16 @@
 # Feature: ESM2-650M Backbone Support
 
+> **⚠️ FEATURE COMPLETION SUMMARY (2025-11-12 - SHIPPED)**
+>
+> This document represents a completed feature addition.
+>
+> **Status:** ✅ SHIPPED in production
+> - Config file added: `src/antibody_training_esm/conf/model/esm2_650m.yaml`
+> - Model: `facebook/esm2_t33_650M_UR50D` (33 layers, 650M params)
+> - Usage: `antibody-train model=esm2_650m classifier=logreg`
+>
+> **For current usage:** See `docs/user-guide/training.md` (Model Selection section)
+
 **Date:** 2025-11-12
 **Status:** ✅ Shipped
 **PR Branch:** `claude/hydro-integration-cleanup-011CV31bYw12SGiHWMousaZy`

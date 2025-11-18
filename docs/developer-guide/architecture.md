@@ -150,10 +150,16 @@ tests/                       # Test suite
 
 ### Embedding Caching
 
-- ESM embeddings cached in `experiments/cache/` as `.npy` files
-- Cache key: SHA-256 hash of `model_name + dataset_path + revision`
-- Prevents expensive re-computation during hyperparameter sweeps
-- Cache invalidates automatically when model/data changes
+- ESM embeddings cached in `experiments/cache/` as `.pkl` files (NumPy arrays + metadata)
+- **Cache key:** SHA-256 hash of `model_name + revision + max_length + sequences`
+  - **Includes model metadata** to prevent ESM2 from reusing ESM-1v embeddings (critical bug fix 2025-11-11)
+  - Different backbones generate separate caches with unique hashes
+- **Cache validation:** Stored metadata (`model_name`, `revision`, `max_length`) verified on load
+  - Recomputes embeddings if metadata mismatch detected
+  - Prevents silent cache collisions between different PLMs
+- **Performance:** Prevents expensive re-computation during hyperparameter sweeps
+- **Location:** `experiments/cache/{dataset}_{hash}_embeddings.pkl`
+- **Implementation:** See `src/antibody_training_esm/core/trainer.py:304-373`
 
 ### Model Persistence
 

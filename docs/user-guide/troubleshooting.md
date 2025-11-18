@@ -113,7 +113,7 @@ hardware:
 
 **Permanent Fix:**
 
-The MPS memory leak was fixed in commit `9c8e5f2`. If still encountering issues, see `docs/archive/MPS_MEMORY_LEAK_FIX.md` for historical context.
+The MPS memory leak was fixed in commit `9c8e5f2`. If still encountering issues, see `docs/archive/investigations/2025-11-03-mps-memory-leak.md` for historical context.
 
 ---
 
@@ -870,6 +870,47 @@ uv run antibody-train
 # Or use absolute path
 uv run antibody-train --config /full/path/to/config.yaml
 ```
+
+---
+
+### Config Group Override Not Applied
+
+**Symptoms:**
+
+```bash
+# Using ESM2 config group, but still trains with ESM-1v
+uv run antibody-train model=esm2_650m
+# Output shows: Loading model facebook/esm1v_t33_650M_UR90S_1  ❌ WRONG!
+```
+
+**Cause:** This was a critical bug (2025-11-11) where ConfigStore registrations conflicted with YAML config groups, causing Hydra to ignore config group overrides.
+
+**Status:** ✅ **FIXED** in production (ConfigStore registrations commented out)
+
+**Solution (if you encounter this):**
+
+1. **Verify config group override syntax:**
+   ```bash
+   # CORRECT - config group override
+   antibody-train model=esm2_650m
+
+   # ALSO CORRECT - field override
+   antibody-train model.name=facebook/esm2_t33_650M_UR50D
+   ```
+
+2. **Check Hydra sees the override:**
+   ```bash
+   antibody-train --cfg job model=esm2_650m | grep "model:"
+   # Should show: model.name: facebook/esm2_t33_650M_UR50D
+   ```
+
+3. **If issue persists, check ConfigStore registrations are commented out:**
+   ```bash
+   grep -n "cs.store" src/antibody_training_esm/conf/config_schema.py
+   # All lines should start with "#" (commented)
+   ```
+
+**Historical Context:** See `docs/archive/investigations/2025-11-11-cli-override-bug.md` for full root cause analysis.
 
 ---
 
