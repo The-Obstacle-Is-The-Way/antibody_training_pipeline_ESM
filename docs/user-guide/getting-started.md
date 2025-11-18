@@ -49,7 +49,7 @@ cat src/antibody_training_esm/conf/config.yaml
 
 - **Training Dataset:** Boughter (914 VH sequences, ELISA assay)
 - **Test Dataset:** Jain (86 clinical antibodies, ELISA assay)
-- **Model:** ESM-1v (facebook/esm-1v)
+- **Model:** ESM-1v (facebook/esm1v_t33_650M_UR90S_1)
 - **Classifier:** Logistic Regression (C=1.0, max_iter=1000)
 
 ### Step 3: Train the Model
@@ -225,15 +225,15 @@ uv run antibody-train
 
 ```bash
 # Override batch size from CLI
-uv run antibody-train hardware.batch_size=8
+uv run antibody-train training.batch_size=8
 ```
 
 Or edit `src/antibody_training_esm/conf/config.yaml`:
 
 ```yaml
 # src/antibody_training_esm/conf/config.yaml
-hardware:
-  batch_size: 8  # Reduce from default (16)
+training:
+  batch_size: 8  # Reduce from default
 ```
 
 ### Issue: Training takes too long
@@ -261,5 +261,5 @@ For a deeper understanding of how the pipeline works:
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `dev`

@@ -212,5 +212,5 @@ rm -rf antibody_training_pipeline_ESM
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `dev`

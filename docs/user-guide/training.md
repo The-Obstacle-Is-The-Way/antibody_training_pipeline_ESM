@@ -544,5 +544,5 @@ See [Troubleshooting Guide](troubleshooting.md) for more solutions.
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
+**Last Updated:** 2025-11-18
+**Branch:** `dev`
