@@ -29,7 +29,7 @@ Using a single threshold (0.5) previously under-performed on PSR datasets. With 
 |---------|-------|----------------|---------------|--------------|-----|-------|
 | **Jain (86)** | ELISA | 0.5 | 68.6% | 66.28% | -2.32pp | Parity set (86 antibodies) |
 | **Shehata (398)** | PSR | **0.5495** (auto) | 58.8% | **58.29%** | -0.51pp | Baseline 0.5 = 52.5% |
-| **Harvey (141,021)** | PSR | 0.5 (last run) | 61.7% | 59.0% | -2.7pp | Needs re-run with auto PSR threshold |
+| **Harvey (141,021)** | PSR | **0.5495** (auto) | 61.7% | **61.33%** | **-0.37pp** | ✅ Near-parity achieved |
 
 **Default behavior:** `antibody-test` now auto-detects assay type from the dataset name (`harvey|shehata` → PSR=0.5495, `jain|boughter` → ELISA=0.5). Use `--threshold` to override manually.
 

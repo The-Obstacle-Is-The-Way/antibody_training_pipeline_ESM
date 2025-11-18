@@ -1,8 +1,8 @@
 # Benchmark Results: Cross-Dataset Validation
 
-**Last Updated:** 2025-11-10
+**Last Updated:** 2025-11-18
 **Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
-**Status:** Validations updated with calibrated PSR thresholds (Harvey re-run pending)
+**Status:** ✅ All PSR validations complete - Harvey (61.33%), Shehata (58.29%) achieve near-parity
 
 ---
 

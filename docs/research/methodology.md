@@ -13,11 +13,11 @@ We successfully replicated the Novo Nordisk antibody non-specificity prediction 
 | Dataset | Our Accuracy | Novo Accuracy | Gap | Status |
 |---------|--------------|---------------|-----|--------|
 | **Boughter** (Training, 10-fold CV) | **67.5% ± 8.9%** | 71% | -3.5% | ✅ **Excellent** |
-| **Harvey** (141k nanobodies) | **59.0%** (0.5 baseline) | 61.7% | -2.7pp | ⚠️ **Re-run with PSR threshold auto-applied** |
+| **Harvey** (141k nanobodies) | **61.33%** (PSR 0.5495) | 61.7% | **-0.37pp** | ✅ **Near-parity** |
 | **Shehata** (398 B-cell) | **58.29%** (auto PSR=0.5495) | 58.8% | -0.51pp | ⭐ **Near-parity** |
 | **Jain** (86 clinical) | **66.28%** | 68.6% | -2.32pp | ✅ **Validated (parity set)** |
 
-**Key Achievements:** Shehata now lands within **0.51pp** of Novo with the auto PSR threshold; Harvey needs a fresh run with the new auto PSR threshold (last run at 0.5 = 59.0%).
+**Key Achievements:** Both PSR datasets achieve near-parity - Shehata: **0.51pp** gap, Harvey: **0.37pp** gap (both with auto PSR threshold 0.5495).
 
 **Implementation:** ESM-1v embeddings + Logistic Regression (sklearn), no StandardScaler, 10-fold CV on training set.
 
@@ -117,13 +117,13 @@ Performance Metrics (accuracy, sensitivity, specificity)
 - **Test set:** 69,262 specific + 71,759 non-specific = **141,021 total**
 - **Decision threshold:** 0.5 (most recent run); PSR 0.5495 now auto-applied in `antibody-test`
 
-**Results (0.5 baseline run on 2025-11-16):**
-- Accuracy: **59.0%**
-- Confusion matrix: [[13,548, 55,714], [2,104, 69,655]]
+**Results (PSR auto-detect run on 2025-11-18):**
+- Accuracy: **61.33%**
+- Confusion matrix: [[17,945, 51,317], [3,222, 68,537]]
 - Novo: **61.7%**
-- Gap: **-2.7pp** (pending re-validation with PSR threshold)
+- Gap: **-0.37pp** ✅ **Near-parity achieved**
 
-**Plan:** Re-run Harvey with the new auto PSR threshold (0.5495) to close the remaining gap.
+**Auto-detection validated:** PSR threshold (0.5495) automatically applied from dataset name, closing gap from 2.7pp → 0.37pp.
 
 ---
 
@@ -324,9 +324,9 @@ ASSAY_THRESHOLDS = {
 - **Confusion matrix: [[40, 19], [10, 17]]** - Matches TN/FN; FP/TP differ by two antibodies
 
 **Harvey (Nanobodies - 141k):**
-- Accuracy: 59.0% (0.5 baseline; PSR re-run pending)
-- Novo: 61.7% (-2.7pp)
-- **Re-run with PSR threshold (auto) to close gap**
+- Accuracy: **61.33%** (PSR 0.5495 auto-detected)
+- Novo: 61.7% (**-0.37pp**) ✅
+- **Near-parity achieved** - Auto PSR threshold validated on 141k sequences
 
 **Shehata (PSR Assay - 398):**
 - Accuracy: 58.29% (auto PSR threshold)
