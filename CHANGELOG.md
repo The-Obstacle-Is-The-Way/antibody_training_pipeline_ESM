@@ -17,7 +17,7 @@ Major feature release introducing [Hydra](https://hydra.cc) for flexible, compos
 - Complete Hydra integration with structured configs (dataclasses for type safety)
 - Composable config system: `model` × `classifier` × `data` combinations
 - Config directory: `src/antibody_training_esm/conf/` (inside package, deployment-ready)
-- Default config: `conf/config.yaml` (Boughter train → Jain test)
+- Default config: `src/antibody_training_esm/conf/config.yaml` (Boughter train → Jain test)
 - CLI override support: `antibody-train model.batch_size=16 classifier.C=0.5`
 - Multirun sweeps: `antibody-train --multirun classifier.C=0.1,1.0,10.0`
 - Automatic experiment tracking in `outputs/{experiment.name}/{timestamp}/` *(now `experiments/runs/`, moved in v0.5.0)*
@@ -30,7 +30,7 @@ Major feature release introducing [Hydra](https://hydra.cc) for flexible, compos
 - Registered with Hydra ConfigStore for runtime validation
 
 **CLI Improvements**
-- No more `--config` flag required (uses `conf/config.yaml` by default)
+- No more `--config` flag required (uses `src/antibody_training_esm/conf/config.yaml` by default)
 - Override any parameter from command line without editing files
 - Multirun support for hyperparameter sweeps (1 command → N experiments)
 - Hydra auto-saves complete config snapshot per run

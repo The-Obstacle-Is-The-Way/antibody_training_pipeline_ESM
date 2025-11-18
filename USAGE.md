@@ -16,13 +16,13 @@ This guide explains how to use the antibody classification pipeline with ESM-1V 
   ```
 
 2. **Update configuration**:
-  Edit `conf/config.yaml` to point to your data file:
+  Edit `src/antibody_training_esm/conf/config.yaml` to point to your data file:
   ```yaml
   data:
     train_file: "path/to/your/training_data.csv"
   ```
 3. **update source**
-  Edit `conf/config.yaml` with the desired source:
+  Edit `src/antibody_training_esm/conf/config.yaml` with the desired source:
   ```yaml
   data:
     source: "local"
@@ -31,14 +31,14 @@ This guide explains how to use the antibody classification pipeline with ESM-1V 
 ## Option 2: HuggingFace dataset
 
 1. **Update configuration**:
-  Edit `conf/config.yaml` with dataset name:
+  Edit `src/antibody_training_esm/conf/config.yaml` with dataset name:
   ```yaml
   data:
     dataset_name: "VH_dataset"
   ```
 
 2. **update source**
-  Edit `conf/config.yaml` with the desired source:
+  Edit `src/antibody_training_esm/conf/config.yaml` with the desired source:
   ```yaml
   data:
     source: "hf"
@@ -46,7 +46,7 @@ This guide explains how to use the antibody classification pipeline with ESM-1V 
 
 # Run training pipeline with Hydra
    ```bash
-   # Use default config (conf/config.yaml)
+   # Use default config (src/antibody_training_esm/conf/config.yaml)
    antibody-train
 
    # OR override parameters from CLI
@@ -99,7 +99,7 @@ training:
 
 ### Basic Usage
 ```bash
-# Use default Hydra config (conf/config.yaml)
+# Use default Hydra config (src/antibody_training_esm/conf/config.yaml)
 antibody-train
 
 # Override parameters from CLI

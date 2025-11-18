@@ -108,7 +108,7 @@ experiments/benchmarks/
 **Tasks:**
 1. Add `xgboost` to `pyproject.toml` dependencies
 2. Create XGBoost classifier wrapper with sklearn API
-3. Add Hydra config: `conf/classifier/xgboost.yaml`
+3. Add Hydra config: `src/antibody_training_esm/conf/classifier/xgboost.yaml`
 4. Train on both backbones (ESM-1v, ESM2-650M)
 5. Benchmark on Jain/Harvey/Shehata
 
@@ -136,7 +136,7 @@ antibody-train --multirun model=esm1v,esm2_650m classifier=logreg,xgboost
 
 **Tasks:**
 1. Verify HuggingFace model path: `alchemab/antiberta2` or `jeffreyruffolo/AntiBERTa`
-2. Create Hydra config: `conf/model/antiberta.yaml`
+2. Create Hydra config: `src/antibody_training_esm/conf/model/antiberta.yaml`
 3. Test embedding extraction works
 4. Train with both LogReg and XGBoost
 5. Benchmark on all test sets
@@ -162,7 +162,7 @@ antibody-train --multirun model=antiberta classifier=logreg,xgboost
 
 **Tasks:**
 1. Implement 2-layer MLP classifier (sklearn MLPClassifier)
-2. Add Hydra config: `conf/classifier/mlp.yaml`
+2. Add Hydra config: `src/antibody_training_esm/conf/classifier/mlp.yaml`
 3. Train all 9 combinations (3 backbones × 3 classifiers)
 4. Generate comprehensive comparison table
 5. Create visualizations (bar charts, ROC curves)
