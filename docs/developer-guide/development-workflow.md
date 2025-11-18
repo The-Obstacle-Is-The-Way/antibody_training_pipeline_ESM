@@ -157,7 +157,7 @@ make all         # Format → Lint → Typecheck → Test
 **Train with default config:**
 ```bash
 make train
-# Uses: conf/config.yaml (Boughter train, Jain test)
+# Uses: src/antibody_training_esm/conf/config.yaml (Boughter train, Jain test)
 ```
 
 **Override parameters from CLI:**

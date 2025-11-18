@@ -42,7 +42,7 @@ You should see help messages for both commands.
 The pipeline includes a default Hydra configuration for Novo Nordisk parity validation:
 
 ```bash
-cat conf/config.yaml
+cat src/antibody_training_esm/conf/config.yaml
 ```
 
 **Key settings:**
@@ -228,10 +228,10 @@ uv run antibody-train
 uv run antibody-train hardware.batch_size=8
 ```
 
-Or edit `conf/config.yaml`:
+Or edit `src/antibody_training_esm/conf/config.yaml`:
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   batch_size: 8  # Reduce from default (16)
 ```

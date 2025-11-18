@@ -120,7 +120,7 @@ antibody-train --multirun classifier.C=0.1,1.0,10.0
 **For Existing Users:**
 - No changes required - existing workflows continue to work
 - New Hydra features available immediately
-- Config files moved from `configs/` to `conf/` (inside package)
+- Config files moved from `configs/` to `src/antibody_training_esm/conf/` (inside package)
 - Legacy `train_model(config_path)` function still works (deprecated warning)
 
 **For New Users:**

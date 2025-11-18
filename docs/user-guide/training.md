@@ -39,10 +39,10 @@ uv run antibody-train classifier.C=0.5 classifier.penalty=l1
 
 ## Configuration with Hydra
 
-Training is controlled via Hydra configuration in `conf/`. The default config structure:
+Training is controlled via Hydra configuration in `src/antibody_training_esm/conf/`. The default config structure:
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"  # ESM-1v model from HuggingFace

@@ -10,7 +10,7 @@
 
 **Problem**: `antibody-train model=esm2_650m` does NOT apply the config group override - it still uses ESM-1v instead of ESM2.
 
-**Root Cause**: ConfigStore registrations in `conf/config_schema.py` use the SAME NAMES as YAML files. When Hydra loads configs via the package module (which the console script does), the ConfigStore entries OVERRIDE the YAML, causing config group overrides to revert to structured config defaults instead of loading the override YAML.
+**Root Cause**: ConfigStore registrations in `src/antibody_training_esm/conf/config_schema.py` use the SAME NAMES as YAML files. When Hydra loads configs via the package module (which the console script does), the ConfigStore entries OVERRIDE the YAML, causing config group overrides to revert to structured config defaults instead of loading the override YAML.
 
 **Impact**: ALL config group overrides (`model=X`, `classifier=Y`, `data=Z`) fail when using the `antibody-train` console script. Field overrides (`model.name=X`) still work. This is exactly what Hydra's deprecation warnings have been telling us.
 
@@ -142,8 +142,8 @@ cs.store(group="data", name="boughter_jain", node=DataConfig)
 ```
 
 These registrations use the **SAME NAMES** as the YAML files:
-- ConfigStore: `name="config"` → YAML: `conf/config.yaml`
-- ConfigStore: `group="model", name="esm1v"` → YAML: `conf/model/esm1v.yaml`
+- ConfigStore: `name="config"` → YAML: `src/antibody_training_esm/conf/config.yaml`
+- ConfigStore: `group="model", name="esm1v"` → YAML: `src/antibody_training_esm/conf/model/esm1v.yaml`
 
 This is the **deprecated "automatic schema matching"** that Hydra warns about!
 
@@ -213,7 +213,7 @@ Config group overrides (`model=X`) fail because Hydra needs to:
 2. Load the corresponding config (YAML or ConfigStore)
 3. Merge it with defaults
 
-When ConfigStore entries exist with the same names, Hydra prefers them over YAML, so `model=esm2_650m` loads the ConfigStore `ModelConfig` dataclass (with ESM-1v defaults) instead of the `conf/model/esm2_650m.yaml` file.
+When ConfigStore entries exist with the same names, Hydra prefers them over YAML, so `model=esm2_650m` loads the ConfigStore `ModelConfig` dataclass (with ESM-1v defaults) instead of the `src/antibody_training_esm/conf/model/esm2_650m.yaml` file.
 
 ---
 
@@ -260,7 +260,7 @@ cs.store(group="schema/data", name="base", node=DataConfig)
 Then explicitly reference them in YAML for validation only:
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 defaults:
   - _self_
   - model: esm1v

@@ -155,7 +155,7 @@ NEW: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 The hierarchical structure is controlled by the `model_save_dir` config parameter:
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 training:
   model_save_dir: ./experiments/checkpoints  # Base directory for hierarchical structure
 ```

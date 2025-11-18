@@ -151,7 +151,7 @@ preprocessing/                # Dataset preprocessing pipelines
 ├── harvey/                  # 2-step: Combine CSVs → fragments
 └── shehata/                 # 2-step: Excel → CSV → fragments
 
-conf/                         # Hydra configuration directory (inside package)
+src/antibody_training_esm/conf/        # Hydra configuration directory (inside package)
 ├── config.yaml              # Default Hydra config (Boughter train, Jain test)
 
 experiments/                 # Single source of truth for outputs

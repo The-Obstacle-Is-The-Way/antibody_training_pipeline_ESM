@@ -88,7 +88,7 @@ We register structured configs with the same names as YAML files:
 ```python
 cs.store(group="model", name="esm1v", node=ModelConfig)
 ```
-and also ship `conf/model/esm1v.yaml`. Hydra 1.0 allowed this implicit matching; 1.1 warns, and 1.2 will error.
+and also ship `src/antibody_training_esm/conf/model/esm1v.yaml`. Hydra 1.0 allowed this implicit matching; 1.1 warns, and 1.2 will error.
 
 ### Fix Recommendation
 Follow Hydra’s migration guide:

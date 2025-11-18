@@ -219,7 +219,7 @@ All fragment files contain **1,065 rows** with the following columns:
 The training pipeline uses:
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 data:
   train_file: ./data/train/boughter/canonical/VH_only_boughter_training.csv
 ```

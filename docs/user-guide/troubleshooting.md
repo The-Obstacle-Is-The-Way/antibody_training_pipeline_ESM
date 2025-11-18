@@ -91,7 +91,7 @@ RuntimeError: MPS backend out of memory
 **Solution 1: Reduce Batch Size**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   batch_size: 4  # Reduce from default (16)
 ```
@@ -106,7 +106,7 @@ torch.mps.empty_cache()
 **Solution 3: Use CPU Instead**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   device: "cpu"
 ```
@@ -128,7 +128,7 @@ RuntimeError: CUDA out of memory. Tried to allocate XX.XX MiB
 **Solution 1: Reduce Batch Size**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   batch_size: 8  # Reduce from default (16)
 ```
@@ -143,7 +143,7 @@ torch.cuda.empty_cache()
 **Solution 3: Use Smaller Model**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 model:
   name: "facebook/esm1v_t33_650M_UR90S_1"  # 650M parameters
   # Instead of:
@@ -153,7 +153,7 @@ model:
 **Solution 4: Use CPU**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   device: "cpu"
 ```
@@ -337,7 +337,7 @@ ls ~/.cache/huggingface/hub/models--facebook--esm1v_t33_650M_UR90S_1/
 **Solution 1: Use GPU**
 
 ```yaml
-# conf/config.yaml
+# src/antibody_training_esm/conf/config.yaml
 hardware:
   device: "cuda"  # or "mps" for Apple Silicon
 ```
@@ -442,7 +442,7 @@ ValueError: Config validation failed:
 **Cause:** Config YAML is incomplete or using old format.
 
 **Solution:**
-1. Check your config against the default Hydra config (`conf/config.yaml`)
+1. Check your config against the default Hydra config (`src/antibody_training_esm/conf/config.yaml`)
 2. Add missing sections/keys
 3. Required keys as of v0.3.0:
    - `data`: train_file, test_file, embeddings_cache_dir (default: `experiments/cache/`)
@@ -846,7 +846,7 @@ data:
 Validate YAML:
 
 ```bash
-python -c "import yaml; yaml.safe_load(open('conf/config.yaml'))"
+python -c "import yaml; yaml.safe_load(open('src/antibody_training_esm/conf/config.yaml'))"
 ```
 
 ---
