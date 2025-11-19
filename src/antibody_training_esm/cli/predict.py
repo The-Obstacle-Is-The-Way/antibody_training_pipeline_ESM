@@ -8,9 +8,21 @@ from antibody_training_esm.core.prediction import run_prediction
 @hydra.main(config_path="../conf", config_name="predict", version_base=None)
 def main(cfg: DictConfig) -> None:
     """Main function to run the prediction CLI."""
+    # Validate required arguments
     if cfg.input_file is None:
         raise ValueError(
             "Input file must be specified via command-line override: `input_file=...`"
+        )
+
+    if cfg.classifier.path is None:
+        raise ValueError(
+            "Classifier path must be specified via command-line override:\n"
+            "  classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl\n"
+            "\nExample usage:\n"
+            "  uv run antibody-predict \\\n"
+            "      input_file=data/test.csv \\\n"
+            "      output_file=predictions.csv \\\n"
+            "      classifier.path=path/to/model.pkl"
         )
 
     try:

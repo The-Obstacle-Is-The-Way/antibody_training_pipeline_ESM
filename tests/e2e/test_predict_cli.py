@@ -12,7 +12,12 @@ from sklearn.linear_model import LogisticRegression
 
 @pytest.fixture
 def isolated_predict_test_env(tmp_path: Path) -> dict[str, Any]:
-    """Creates a self-contained environment for the prediction CLI test."""
+    """
+    Creates a self-contained environment for the prediction CLI test.
+
+    Note: This test will attempt to load ESM models from HuggingFace cache.
+    On a fresh system without cached models, this may download ~2.5GB.
+    """
     test_dir = tmp_path / "predict_test"
     test_dir.mkdir()
     input_file = test_dir / "input.csv"
@@ -71,8 +76,15 @@ def isolated_predict_test_env(tmp_path: Path) -> dict[str, Any]:
     }
 
 
+@pytest.mark.slow
+@pytest.mark.e2e
 def test_predict_cli_end_to_end(isolated_predict_test_env: dict[str, Any]) -> None:
-    """Tests the predict CLI end-to-end in an isolated environment."""
+    """
+    Tests the predict CLI end-to-end in an isolated environment.
+
+    Note: This test runs the actual CLI via subprocess and will load
+    ESM models from HuggingFace cache. Marked as @slow and @e2e.
+    """
     env = isolated_predict_test_env
     input_file = env["input_file"]
     output_file = env["output_file"]

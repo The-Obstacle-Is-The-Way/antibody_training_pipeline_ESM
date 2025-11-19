@@ -16,7 +16,7 @@ The tool requires a **CSV file** as input.
     *   **Customizable:** If your column is named differently (e.g., `vh_sequence`, `heavy_chain`), you can specify this using the `sequence_column` argument (see below).
     *   **Content:** The amino acid sequence of the antibody (Variable Heavy domain / VH).
     *   **Case:** Case-insensitive (sequences are automatically normalized to uppercase).
-    *   **Cleaning:** Whitespace and standard gaps are handled, but pure amino acid sequences are preferred.
+    *   **Cleaning:** Leading/trailing whitespace is stripped. **Note:** Gap characters (e.g., `-`) are NOT supported and will cause validation errors. Use pure amino acid sequences only (20 standard amino acids + X for unknown/ambiguous).
 *   **Other Columns:** Any other columns (e.g., `id`, `name`, `notes`) will be **preserved** in the output file.
 
 ### Example Input File (`my_candidates.csv`)

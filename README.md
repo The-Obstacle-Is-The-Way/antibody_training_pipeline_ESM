@@ -54,16 +54,20 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 
 - **Model Evaluation**: Standard evaluation metrics, including k-fold cross-validation, accuracy, sensitivity, and specificity, are implemented to assess model performance.
 
-## To-Be Implemented
-- **Prediction Script**: A user-friendly script to quickly get non-specificity predictions for new antibody sequences.
-
-  To predict the non-specificity of antibodies in a CSV file, use the `antibody-predict` command:
+- **Prediction CLI**: Get predictions for new antibody sequences from trained models.
 
   ```bash
-  uv run antibody-predict input_file=path/to/your/input.csv output_file=path/to/your/predictions.csv
+  uv run antibody-predict \
+      input_file=path/to/your/input.csv \
+      output_file=path/to/your/predictions.csv \
+      classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
   ```
 
-  The input CSV must contain a column named `sequence`. The output CSV will contain the original data with two new columns: `prediction` and `probability`.
+  The input CSV must contain a column named `sequence` (or specify a custom column with `sequence_column=your_column`). The output CSV will contain the original data with two new columns: `prediction` and `probability`.
+
+  For detailed usage, see [`INFERENCE_GUIDE.md`](INFERENCE_GUIDE.md).
+
+## To-Be Implemented
 
 - **Biophysical Descriptor Module**: A feature to calculate and incorporate key biophysical parameters, such as the isoelectric point (pI), which was identified as a major driver of non-specificity.
 
