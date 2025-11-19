@@ -4,6 +4,7 @@ import json
 import logging
 import os
 import pickle  # nosec B403
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -46,7 +47,7 @@ class ModelTester:
 
         log_file = os.path.join(
             self.config.output_dir,
-            "test_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
+            f"test_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
         )
 
         logging.basicConfig(
