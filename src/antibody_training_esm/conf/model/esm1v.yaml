@@ -1,3 +1,4 @@
 name: facebook/esm1v_t33_650M_UR90S_1
 revision: main
+# Default to CPU for stability on macOS; override with hardware.device or CLI if desired
 device: ${hardware.device}

@@ -20,6 +20,8 @@ def main(cfg: DictConfig) -> None:
         raise ValueError(
             "Classifier path must be specified via command-line override:\n"
             "  classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl\n"
+            "  # OR for production models (.npz):\n"
+            "  classifier.path=experiments/.../model.npz classifier.config_path=.../model_config.json\n"
             "\nExample usage:\n"
             "  uv run antibody-predict \\\n"
             "      input_file=data/test.csv \\\n"

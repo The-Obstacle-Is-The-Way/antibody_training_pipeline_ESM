@@ -49,6 +49,7 @@ dependencies = [
     "tqdm>=4.65.0",
     "transformers>=4.30.0",
     "xgboost>=2.0.0",
+    "gradio>=4.0.0",
 ]
 
 [project.optional-dependencies]
@@ -80,6 +81,7 @@ antibody-train = "antibody_training_esm.core.trainer:main"
 antibody-test = "antibody_training_esm.cli.test:main"
 antibody-preprocess = "antibody_training_esm.cli.preprocess:main"
 antibody-predict = "antibody_training_esm.cli.predict:main"
+antibody-app = "antibody_training_esm.cli.app:main"
 
 [tool.ruff]
 target-version = "py312"

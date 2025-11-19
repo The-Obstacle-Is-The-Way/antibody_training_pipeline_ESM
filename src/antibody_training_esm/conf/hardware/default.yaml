@@ -1,0 +1,5 @@
+# Hardware configuration
+# Default to MPS for macOS performance (training/testing); Gradio app handles stability fallback
+device: mps
+gpu_memory_fraction: 0.8
+clear_cache_frequency: 100

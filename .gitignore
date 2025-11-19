@@ -84,6 +84,7 @@ Thumbs.db
 # Project specific (root level only)
 /logs/
 /outputs/
+.gradio/
 
 # Literature PDFs and markdown conversions (for personal reference only)
 literature/
@@ -132,6 +133,8 @@ train_datasets/tessier/
 # Phase 5 Reorganization: Consolidated experiments/ structure
 experiments/runs/*
 experiments/checkpoints/*
+!experiments/checkpoints/esm1v/
+!experiments/checkpoints/esm2_650m/
 experiments/cache/*
 
 # Keep directory structure

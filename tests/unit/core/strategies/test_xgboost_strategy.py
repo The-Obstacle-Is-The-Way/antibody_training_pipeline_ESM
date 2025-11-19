@@ -409,7 +409,7 @@ def test_xgboost_strategy_save_and_load_model(
     original_probs = strategy.predict_proba(X_test)
 
     # Act: Save model (REAL file I/O)
-    xgb_path = tmp_path / "model.xgb"
+    xgb_path = tmp_path / "model.json"
     json_path = tmp_path / "config.json"
 
     strategy.save_model(str(xgb_path))

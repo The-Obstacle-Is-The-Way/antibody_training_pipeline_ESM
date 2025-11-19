@@ -1,3 +1,5 @@
+import logging
+from pathlib import Path
 from typing import Any
 
 import joblib
@@ -6,7 +8,11 @@ import pandas as pd
 import torch
 from omegaconf import DictConfig
 
+from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
+from antibody_training_esm.core.trainer import load_model_from_npz
+
+logger = logging.getLogger(__name__)
 
 
 class Predictor:
@@ -18,28 +24,64 @@ class Predictor:
     """
 
     def __init__(
-        self, model_name: str, classifier_path: str, device: str | None = None
+        self,
+        model_name: str,
+        classifier_path: str,
+        device: str | None = None,
+        config_path: str | None = None,
     ):
         """
         Initialize the Predictor with model configurations.
 
         Args:
             model_name: The name of the ESM model to use (e.g. 'facebook/esm1v_t33_650M_UR90S_1').
-            classifier_path: Path to the trained scikit-learn classifier (pickle/joblib file).
+            classifier_path: Path to the trained scikit-learn classifier (pickle/joblib file) or NPZ weights.
             device: The device to run the model on ('cpu' or 'cuda'). If None, auto-detects.
+            config_path: Path to the JSON config file (required if classifier_path is .npz).
         """
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = self._select_device(device)
         self.model_name = model_name
         self.classifier_path = classifier_path
+        self.config_path = config_path
 
         self._embedder: ESMEmbeddingExtractor | None = None
         self._classifier: Any = None
 
     @property
     def classifier(self) -> Any:
-        """Lazy loads the classifier."""
+        """
+        Lazy loads the classifier.
+
+        Supports:
+        1. Legacy Pickle (.pkl): Loaded via joblib.
+        2. Production NPZ (.npz): Loaded via load_model_from_npz using accompanying JSON config.
+        """
         if self._classifier is None:
-            self._classifier = joblib.load(self.classifier_path)
+            path_obj = Path(self.classifier_path)
+
+            if path_obj.suffix == ".npz":
+                # NPZ loading path
+                if self.config_path:
+                    json_path = Path(self.config_path)
+                else:
+                    # Infer JSON path: model.npz -> model_config.json
+                    json_path = path_obj.with_name(f"{path_obj.stem}_config.json")
+
+                if not json_path.exists():
+                    raise FileNotFoundError(
+                        f"JSON config not found at {json_path}. "
+                        "For .npz models, a corresponding JSON config is required. "
+                        "Specify it explicitly with config_path if the naming convention differs."
+                    )
+
+                logger.info(f"Loading model from NPZ: {path_obj} (Config: {json_path})")
+                self._classifier = load_model_from_npz(str(path_obj), str(json_path))
+
+            else:
+                # Legacy/Pickle loading path
+                logger.info(f"Loading model from Pickle: {path_obj}")
+                self._classifier = joblib.load(self.classifier_path)
+
         return self._classifier
 
     @property
@@ -61,7 +103,26 @@ class Predictor:
                 hasattr(clf, "embedding_extractor")
                 and clf.embedding_extractor is not None
             ):
-                self._embedder = clf.embedding_extractor
+                embedder = clf.embedding_extractor
+
+                # If the persisted embedder device doesn't match requested device,
+                # recreate it to avoid MPS/CUDA mismatches (common segfault source on macOS).
+                if self.device and str(embedder.device) != self.device:
+                    batch_size = getattr(embedder, "batch_size", DEFAULT_BATCH_SIZE)
+                    revision = getattr(embedder, "revision", "main")
+                    logger.info(
+                        "Recreating embedder on requested device %s (was %s)",
+                        self.device,
+                        embedder.device,
+                    )
+                    embedder = ESMEmbeddingExtractor(
+                        model_name=self.model_name,
+                        device=self.device,
+                        batch_size=batch_size,
+                        revision=revision,
+                    )
+
+                self._embedder = embedder
             else:
                 # Fallback: Create a new one (e.g., if using raw sklearn model)
                 self._embedder = ESMEmbeddingExtractor(
@@ -176,6 +237,22 @@ class Predictor:
             "probability": float(results["probability"].iloc[0]),
         }
 
+    @staticmethod
+    def _select_device(device: str | None) -> str:
+        """
+        Select the best available device.
+
+        Prioritizes CUDA, then MPS (macOS), then CPU.
+        """
+        if device:
+            return device
+
+        if torch.cuda.is_available():
+            return "cuda"
+        if torch.backends.mps.is_available():
+            return "mps"
+        return "cpu"
+
 
 def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
     """
@@ -188,9 +265,12 @@ def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
     Returns:
         DataFrame with 'prediction' and 'probability' columns added.
     """
+    config_path = getattr(cfg.classifier, "config_path", None)
+
     predictor = Predictor(
         model_name=cfg.model.name,
         classifier_path=cfg.classifier.path,
+        config_path=config_path,
     )
 
     # Extract config parameters with defaults
