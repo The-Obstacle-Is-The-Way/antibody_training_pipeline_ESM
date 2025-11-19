@@ -39,7 +39,23 @@ def launch_gradio_app(cfg: DictConfig) -> None:
         classifier_path=cfg.classifier.path,
     )
 
-    def predict_sequence(sequence: str) -> tuple[str, float]:
+    def validate_input(sequence: str) -> None:
+        """
+        Validates that the input sequence contains only valid amino acids.
+        """
+        if not sequence:
+            raise ValueError("Input sequence cannot be empty.")
+
+        # Standard 20 amino acids + X (unknown)
+        valid_chars = set("ACDEFGHIKLMNPQRSTVWYX")
+        invalid_chars = set(sequence) - valid_chars
+
+        if invalid_chars:
+            raise ValueError(
+                f"Invalid characters found: {', '.join(sorted(invalid_chars))}"
+            )
+
+    def predict_sequence(sequence: str) -> tuple[str, str]:
         """
         Prediction function for the Gradio interface.
 
@@ -47,21 +63,57 @@ def launch_gradio_app(cfg: DictConfig) -> None:
             sequence: The antibody sequence to predict.
 
         Returns:
-            A tuple containing the prediction string and the probability.
+            A tuple containing the prediction string and the formatted probability.
         """
-        result = predictor.predict_single(sequence)
-        return result["prediction"], result["probability"]
+        try:
+            # Clean input
+            cleaned_seq = sequence.strip().upper()
+
+            # Validate
+            validate_input(cleaned_seq)
+
+            # Predict
+            result = predictor.predict_single(cleaned_seq)
+
+            # Format probability
+            prob_percent = f"{result['probability']:.1%}"
+
+            return result["prediction"], prob_percent
+
+        except ValueError as e:
+            raise gr.Error(str(e)) from e
+        except Exception as e:
+            raise gr.Error(f"Prediction failed: {str(e)}") from e
+
+    # Example sequences
+    examples = [
+        [
+            "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVRQAPGQGLEWMGGIYPGDSDTRYSPSFQGQVTISADKSISTAYLQWSSLKASDTAMYYCARSTYYGGDWYFNVWGQGTLVTVSS"
+        ],
+        [
+            "DIQMTQSPSSLSASVGDRVTITCRASQSISSYLNWYQQKPGKAPKLLIYAASSLQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPLTFGGGTKVEIK"
+        ],
+    ]
 
     # Create the Gradio interface
     iface = gr.Interface(
         fn=predict_sequence,
-        inputs=gr.Textbox(lines=5, label="Antibody Sequence"),
+        inputs=gr.Textbox(
+            lines=5,
+            label="Antibody Sequence (VH or VL)",
+            placeholder="Paste amino acid sequence here (e.g., QVQL...)",
+        ),
         outputs=[
             gr.Textbox(label="Prediction"),
-            gr.Number(label="Probability of Non-Specificity"),
+            gr.Textbox(label="Probability of Non-Specificity"),
         ],
         title="Antibody Non-Specificity Predictor",
-        description="Enter an antibody sequence to predict its non-specificity.",
+        description=(
+            "Enter an antibody Variable Heavy (VH) or Variable Light (VL) sequence "
+            "to predict its non-specificity (polyreactivity)."
+        ),
+        examples=examples,
+        allow_flagging="never",
     )
 
     # Launch the app

@@ -1,18 +1,28 @@
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import gradio as gr
 import pytest
 from hydra import compose, initialize
 
 from antibody_training_esm.cli.app import launch_gradio_app, main
 
 
-# Mock the Gradio interface to avoid launching the web app during tests
 @patch("gradio.Interface")
-def test_launch_gradio_app(mock_interface: MagicMock, tmp_path: Path) -> None:
+@patch("antibody_training_esm.cli.app.Predictor")
+def test_launch_gradio_app(
+    mock_predictor_cls: MagicMock, mock_interface: MagicMock, tmp_path: Path
+) -> None:
     """
-    Tests that the Gradio app launches with the correct parameters.
+    Tests that the Gradio app launches with the correct parameters and logic.
     """
+    # Setup mock predictor
+    mock_predictor = mock_predictor_cls.return_value
+    mock_predictor.predict_single.return_value = {
+        "prediction": "non-specific",
+        "probability": 0.875,
+    }
+
     # Create a dummy classifier file
     classifier_path = tmp_path / "model.pkl"
     classifier_path.touch()
@@ -24,9 +34,39 @@ def test_launch_gradio_app(mock_interface: MagicMock, tmp_path: Path) -> None:
         )
         launch_gradio_app(cfg)
 
-    # Assert that the Gradio interface was created and launched
+    # Assert that Predictor was initialized
+    mock_predictor_cls.assert_called_once()
+
+    # Assert that the Gradio interface was created
     mock_interface.assert_called_once()
-    mock_interface.return_value.launch.assert_called_once()
+    _, kwargs = mock_interface.call_args
+    assert "fn" in kwargs
+    assert "examples" in kwargs
+
+    # Extract the prediction function
+    predict_fn = kwargs["fn"]
+
+    # --- Test Valid Prediction ---
+    prediction, probability = predict_fn("QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVR")
+
+    # Verify predictor call
+    mock_predictor.predict_single.assert_called_with(
+        "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVR"
+    )
+
+    # Verify output formatting
+    assert prediction == "non-specific"
+    assert probability == "87.5%"
+
+    # --- Test Input Validation (Invalid Chars) ---
+    with pytest.raises(gr.Error) as excinfo:
+        predict_fn("QVQL...123")
+    assert "Invalid characters found" in str(excinfo.value)
+
+    # --- Test Input Validation (Empty) ---
+    with pytest.raises(gr.Error) as excinfo:
+        predict_fn("")
+    assert "Input sequence cannot be empty" in str(excinfo.value)
 
 
 @patch("antibody_training_esm.cli.app.launch_gradio_app")
