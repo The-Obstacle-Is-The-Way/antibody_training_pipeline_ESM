@@ -216,6 +216,7 @@ class LogisticRegressionStrategy:
             1.0
         """
         return {
+            "type": "logistic_regression",
             "C": self.C,
             "penalty": self.penalty,
             "solver": self.solver,
