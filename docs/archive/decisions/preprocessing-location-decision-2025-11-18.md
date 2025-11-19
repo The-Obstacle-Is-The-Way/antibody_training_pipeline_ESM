@@ -359,7 +359,7 @@ uv run python -m antibody_training_esm.preprocessing.jain.step2_preprocess_p5e_s
    (10/10). For production deployment, consider moving to
    `src/antibody_training_esm/preprocessing/`.
 
-  For rationale, see `docs/needs_integration/PREPROCESSING_STRUCTURE.md` (current location).
+  For rationale, see `docs/archive/decisions/preprocessing-location-decision-2025-11-18.md` (canonical ADR).
    ```
 
 ---
@@ -375,7 +375,7 @@ uv run python -m antibody_training_esm.preprocessing.jain.step2_preprocess_p5e_s
 
    **Note:** Preprocessing pipelines live at project root (`preprocessing/`),
    not inside `src/`. This is a conscious design decision for dataset-centric
-   organization. See `docs/needs_integration/PREPROCESSING_STRUCTURE.md` for full rationale.
+   organization. See `docs/archive/decisions/preprocessing-location-decision-2025-11-18.md` (canonical ADR) for the full rationale.
    ```
 
 ---

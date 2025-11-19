@@ -110,15 +110,27 @@ Codebase reorganizations and structural changes:
 - **v2-structure-migration.md** (401 lines)
   Import conventions guide for v2.0.0 package structure. Documents breaking changes from root imports.
 
-### 📝 Plans (2 docs)
+### 📝 Plans + Specs (6 docs)
 
-Completed planning documents:
+Completed planning documents (kept for historical context):
 
 - **2025-11-11-output-pipeline-architecture.md** (816 lines)
   Hierarchical output organization design and implementation plan. Documents the problem (file collisions when testing multiple models), solution (stratified outputs by backbone/classifier/dataset), and complete implementation via `directory_utils.py`. Critical reference for understanding the experiments/ hierarchy.
 
 - **DOCUMENTATION_STRUCTURE_PLAN.md** (935 lines)
   Massive planning document for docs reorganization (Phases 0-8). Successfully executed plan creating user-guide/, developer-guide/, research/ structure.
+
+- **xgboost-integration-spec.md** (655 lines)
+  Technical specification that scoped the XGBoost classifier effort (motivation, risks, success metrics). Superseded by `docs/developer-guide/xgboost.md` now that implementation is complete.
+
+- **xgboost-api-design.md** (1,085 lines)
+  Detailed API design for the strategy/factory pattern. Shows UML-style breakdown of protocols, factories, and serialization hooks. Historical blueprint used before implementation.
+
+- **xgboost-test-plan.md** (1,013 lines)
+  Exhaustive test coverage plan (unit, integration, E2E, performance). Use for auditing past decisions; live tests reside under `tests/*`.
+
+- **xgboost-implementation-status.md** (273 lines)
+  Rolling status tracker for Phase 1 delivery (roadmap tasks, branches, checkpoints). Documentation of the now-complete execution phase.
 
 ### ✅ Summaries (6 docs)
 

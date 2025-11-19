@@ -39,6 +39,7 @@ cd experiments/benchmarks/novo_parity/
 - `docker.md` - Docker development and deployment
 - `testing-strategy.md` - Test architecture, patterns, coverage
 - `ci-cd.md` - CI/CD pipeline, workflows, enforcement
+- `xgboost.md` - Canonical guide for the XGBoost classifier backend (usage, config, tests)
 
 ### 📁 ~~Development Documentation (`development/`)~~
 
@@ -105,9 +106,13 @@ Historical documentation, fully organized under `docs/archive/`:
   - `archive/migrations/2025-11-06-repository-modernization.md`
   - `archive/migrations/v2-structure-migration.md`
 
-- **Plans** (2 files)
+- **Plans + Specs** (6 files)
   - `archive/plans/2025-11-11-output-pipeline-architecture.md`
   - `archive/plans/DOCUMENTATION_STRUCTURE_PLAN.md`
+  - `archive/plans/xgboost-integration-spec.md`
+  - `archive/plans/xgboost-api-design.md`
+  - `archive/plans/xgboost-test-plan.md`
+  - `archive/plans/xgboost-implementation-status.md`
 
 - **Trash** (2 files)
   - `archive/trash/refactor-test-cli-plan.md` (NEW)

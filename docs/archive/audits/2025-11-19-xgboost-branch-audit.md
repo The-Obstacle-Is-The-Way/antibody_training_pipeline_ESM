@@ -159,11 +159,11 @@ The existing `BinaryClassifier` on `main` does NOT use this pattern.
 
 ### Quantity
 
-- **4 comprehensive documents** (3,026 lines total):
-  - `docs/developer-guide/xgboost-api-design.md` (1,085 lines)
-  - `docs/developer-guide/xgboost-integration-spec.md` (655 lines)
-  - `docs/developer-guide/xgboost-test-plan.md` (1,013 lines)
-  - `docs/developer-guide/xgboost-implementation-status.md` (273 lines)
+- **4 comprehensive documents** (3,026 lines total, now archived):
+  - `docs/archive/plans/xgboost-api-design.md` (1,085 lines)
+  - `docs/archive/plans/xgboost-integration-spec.md` (655 lines)
+  - `docs/archive/plans/xgboost-test-plan.md` (1,013 lines)
+  - `docs/archive/plans/xgboost-implementation-status.md` (273 lines)
 
 ### Quality
 
@@ -172,6 +172,8 @@ The existing `BinaryClassifier` on `main` does NOT use this pattern.
 - ✅ **Code examples** - Comprehensive usage examples for all strategies
 - ✅ **Migration guide** - Detailed backward compatibility guarantees
 - ✅ **Test plan** - Test cases mapped to implementation
+
+> **Current source of truth:** See `docs/developer-guide/xgboost.md` for the maintained guide; the documents above remain in the archive for historical reference.
 
 **Weaknesses**:
 - ⚠️ **No mention of magic numbers issue** - Default values conflict not documented
