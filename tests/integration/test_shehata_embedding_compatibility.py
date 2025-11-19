@@ -16,8 +16,10 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 
+@pytest.mark.integration
 def test_gap_characters() -> None:
     """Test 1: Verify no gap characters in any fragment CSV"""
     print("\n" + "=" * 60)
@@ -49,6 +51,7 @@ def test_gap_characters() -> None:
     assert all_clean, "Gap characters detected"
 
 
+@pytest.mark.integration
 def test_amino_acid_validation() -> None:
     """Test 2: Verify all sequences contain only valid amino acids"""
     print("\n" + "=" * 60)
@@ -103,6 +106,7 @@ def test_amino_acid_validation() -> None:
     assert all_valid, "Invalid amino acids detected"
 
 
+@pytest.mark.integration
 def test_previously_affected_sequences() -> None:
     """Test 3: Spot-check sequences that previously had gaps"""
     print("\n" + "=" * 60)
@@ -154,6 +158,7 @@ def test_previously_affected_sequences() -> None:
     assert all_clean, "Some sequences still have issues"
 
 
+@pytest.mark.integration
 def test_model_validation_logic() -> None:
     """Test 4: Simulate model.py validation logic"""
     print("\n" + "=" * 60)
@@ -195,6 +200,7 @@ def test_model_validation_logic() -> None:
     assert all_valid, "Some sequences would fail ESM validation"
 
 
+@pytest.mark.integration
 def test_data_integrity() -> None:
     """Test 5: Verify data integrity after regeneration"""
     print("\n" + "=" * 60)

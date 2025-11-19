@@ -28,11 +28,13 @@ import sys
 from pathlib import Path
 
 import pandas as pd
+import pytest
 
 # Valid amino acids for ESM-1v model (from model.py:86)
 VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWYX")
 
 
+@pytest.mark.integration
 def test_gap_characters() -> None:
     """
     Test 1: Verify no gap characters in any fragment CSV.
@@ -95,6 +97,7 @@ def test_gap_characters() -> None:
     assert all_clean, "Gap characters detected - P0 blocker still present!"
 
 
+@pytest.mark.integration
 def test_amino_acid_validation() -> None:
     """
     Test 2: Verify all sequences contain only valid amino acids.
@@ -156,6 +159,7 @@ def test_amino_acid_validation() -> None:
     assert all_valid, "Invalid amino acids detected"
 
 
+@pytest.mark.integration
 def test_previously_affected_sequences() -> None:
     """
     Test 3: Spot-check sequences that previously had gaps.
@@ -225,6 +229,7 @@ def test_previously_affected_sequences() -> None:
     assert vh_gaps == 0 and vl_gaps == 0 and all_clean, "Gaps still present after fix"
 
 
+@pytest.mark.integration
 def test_model_validation_logic() -> None:
     """
     Test 4: Simulate model.py validation logic.
@@ -283,6 +288,7 @@ def test_model_validation_logic() -> None:
     assert all_passed, "Dataset NOT compatible with ESM-1v"
 
 
+@pytest.mark.integration
 def test_data_integrity() -> None:
     """
     Test 5: Verify data integrity after regeneration.

@@ -44,6 +44,10 @@ from typing import Any, cast
 import pandas as pd
 import riot_na
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 # Initialize ANARCI for amino acid annotation (IMGT scheme)
 annotator = riot_na.create_riot_aa()
 
@@ -124,7 +128,7 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] 
                 fragments[f"cdr3_aa_{chain}"],
             ]
         ):
-            print(f"  ANARCI returned no CDRs for {seq_id} ({chain} chain)")
+            logger.info(f"  ANARCI returned no CDRs for {seq_id} ({chain} chain)")
             return None
 
         # Create concatenated fragments (safe now - no None values)
@@ -148,7 +152,7 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] 
         return fragments
 
     except Exception as e:
-        print(f"  ANARCI failed for {seq_id} ({chain} chain): {e}")
+        logger.info(f"  ANARCI failed for {seq_id} ({chain} chain): {e}")
         return None
 
 
@@ -206,7 +210,7 @@ def annotate_all(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame with all fragments annotated
     """
-    print(f"\nAnnotating {len(df)} antibodies with ANARCI (strict IMGT)...")
+    logger.info(f"\nAnnotating {len(df)} antibodies with ANARCI (strict IMGT)...")
 
     results = []
     failures = []
@@ -222,21 +226,23 @@ def annotate_all(df: pd.DataFrame) -> pd.DataFrame:
         # Progress indicator
         idx_int = cast(int, idx)
         if (idx_int + 1) % 100 == 0:
-            print(f"  Progress: {idx_int + 1}/{len(df)} ({len(failures)} failures)")
+            logger.info(
+                f"  Progress: {idx_int + 1}/{len(df)} ({len(failures)} failures)"
+            )
 
     df_annotated = pd.DataFrame(results)
 
-    print(f"\n✓ Successfully annotated: {len(df_annotated)}/{len(df)} antibodies")
+    logger.info(f"\n✓ Successfully annotated: {len(df_annotated)}/{len(df)} antibodies")
 
     if failures:
-        print(f"✗ Failures: {len(failures)}")
+        logger.info(f"✗ Failures: {len(failures)}")
         failure_rate = len(failures) / len(df) * 100
-        print(f"  Failure rate: {failure_rate:.2f}%")
+        logger.info(f"  Failure rate: {failure_rate:.2f}%")
 
         # Write failures to log
         failure_log = Path("data/train/boughter/annotated/annotation_failures.log")
         failure_log.write_text("\n".join(failures))
-        print(f"  Failed IDs written to: {failure_log}")
+        logger.info(f"  Failed IDs written to: {failure_log}")
 
     return df_annotated
 
@@ -282,7 +288,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
         "Full": ("vh_vl", "full_sequence"),
     }
 
-    print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
+    logger.info(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
     for fragment_name, (column_name, description) in fragments.items():
         output_path = output_dir / f"{fragment_name}_boughter.csv"
@@ -321,9 +327,9 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
             f.write(metadata)
             fragment_df.to_csv(f, index=False)
 
-        print(f"  ✓ {fragment_name:12s} -> {output_path.name}")
+        logger.info(f"  ✓ {fragment_name:12s} -> {output_path.name}")
 
-    print(f"\n✓ All {len(fragments)} fragment files created in: {output_dir}")
+    logger.info(f"\n✓ All {len(fragments)} fragment files created in: {output_dir}")
 
 
 def export_training_subset(df: pd.DataFrame, output_path: Path) -> None:
@@ -337,7 +343,7 @@ def export_training_subset(df: pd.DataFrame, output_path: Path) -> None:
 
     train_df = df[df["include_in_training"]].copy()
     if len(train_df) == 0:
-        print("⚠ No sequences flagged for training; canonical export skipped.")
+        logger.info("⚠ No sequences flagged for training; canonical export skipped.")
         return
 
     canonical_df = (
@@ -349,12 +355,12 @@ def export_training_subset(df: pd.DataFrame, output_path: Path) -> None:
     canonical_df.to_csv(output_path, index=False)
 
     label_counts = canonical_df["label"].value_counts().sort_index()
-    print(f"\n✓ Canonical training file exported: {output_path}")
-    print(f"  Total sequences: {len(canonical_df)}")
+    logger.info(f"\n✓ Canonical training file exported: {output_path}")
+    logger.info(f"  Total sequences: {len(canonical_df)}")
     for label, count in label_counts.items():
         label_name = "Specific (0)" if label == 0.0 else "Non-specific (1)"
         pct = count / len(canonical_df) * 100
-        print(f"  {label_name}: {count} ({pct:.1f}%)")
+        logger.info(f"  {label_name}: {count} ({pct:.1f}%)")
 
 
 def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
@@ -373,11 +379,10 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
 
     See docs/accuracy_verification_report.md for rationale.
     """
-    print("\n" + "=" * 70)
-    print("Stage 3: Post-annotation Quality Control")
-    print("=" * 70)
-    print(f"Input sequences: {len(df)}")
-    print()
+    logger.info("\n" + "=" * 70)
+    logger.info("Stage 3: Post-annotation Quality Control")
+    logger.info("=" * 70)
+    logger.info(f"Input sequences: {len(df)}")
 
     cdr_columns = [
         "cdr1_aa_H",
@@ -410,27 +415,27 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     problematic_ids = sequences_with_X | sequences_with_empty
     df_clean = df_clean[~df_clean["id"].isin(problematic_ids)]
 
-    print(f"Sequences with X in ANY CDR: {len(sequences_with_X)}")
-    print(f"Sequences with empty CDRs:    {len(sequences_with_empty)}")
-    print(f"Total unique sequences removed: {len(problematic_ids)}")
+    logger.info(f"Sequences with X in ANY CDR: {len(sequences_with_X)}")
+    logger.info(f"Sequences with empty CDRs:    {len(sequences_with_empty)}")
+    logger.info(f"Total unique sequences removed: {len(problematic_ids)}")
 
     if problematic_ids:
         qc_log = Path("data/train/boughter/annotated/qc_filtered_sequences.txt")
         qc_log.write_text("\n".join(sorted(problematic_ids)))
-        print(f"Filtered IDs written to: {qc_log}")
+        logger.info(f"Filtered IDs written to: {qc_log}")
 
-    print()
-    print(f"Output sequences: {len(df_clean)}")
-    print(f"Retention rate: {len(df_clean) / len(df) * 100:.1f}%")
+    logger.info("")
+    logger.info(f"Output sequences: {len(df_clean)}")
+    logger.info(f"Retention rate: {len(df_clean) / len(df) * 100:.1f}%")
 
     return df_clean
 
 
 def print_annotation_stats(df: pd.DataFrame) -> None:
     """Print CDR length distributions and annotation statistics."""
-    print("\n" + "=" * 70)
-    print("CDR Length Distributions (Strict IMGT)")
-    print("=" * 70)
+    logger.info("=" * 70)
+    logger.info("Boughter Stage 2 & 3: ANARCI Annotation & QC")
+    logger.info("=" * 70)
 
     cdr_columns = {
         "H-CDR1": "cdr1_aa_H",
@@ -443,7 +448,7 @@ def print_annotation_stats(df: pd.DataFrame) -> None:
 
     for cdr_name, col_name in cdr_columns.items():
         lengths = df[col_name].str.len()
-        print(
+        logger.info(
             f"\n{cdr_name}: min={lengths.min()}, max={lengths.max()}, "
             f"mean={lengths.mean():.1f}, median={lengths.median():.0f}"
         )
@@ -452,7 +457,7 @@ def print_annotation_stats(df: pd.DataFrame) -> None:
         length_dist = lengths.value_counts().sort_index()
         if len(length_dist) <= 10:
             for length, count in length_dist.items():
-                print(f"  {length:2d} aa: {count:4d} sequences")
+                logger.info(f"  {length:2d} aa: {count:4d} sequences")
 
 
 def main() -> int:
@@ -461,18 +466,18 @@ def main() -> int:
     input_csv = Path("data/train/boughter/processed/boughter.csv")
 
     if not input_csv.exists():
-        print(f"ERROR: {input_csv} not found!")
-        print(
+        logger.info(f"ERROR: {input_csv} not found!")
+        logger.info(
             "Please run preprocessing/boughter/stage1_dna_translation.py first (Stage 1)"
         )
         return 1
 
-    print("=" * 70)
-    print("Boughter Dataset - Stage 2: ANARCI Annotation")
-    print("=" * 70)
+    logger.info("=" * 70)
+    logger.info("Boughter Dataset - Stage 2: ANARCI Annotation")
+    logger.info("=" * 70)
 
     df = pd.read_csv(input_csv)
-    print(f"\nLoaded {len(df)} antibodies from Stage 1")
+    logger.info(f"\nLoaded {len(df)} antibodies from Stage 1")
 
     # Stage 2: Annotate all sequences
     df_annotated = annotate_all(df)
@@ -491,22 +496,22 @@ def main() -> int:
     canonical_path = Path("data/train/boughter/canonical/VH_only_boughter_training.csv")
     export_training_subset(df_clean, canonical_path)
 
-    print("\n" + "=" * 70)
-    print("Boughter Dataset Processing Complete!")
-    print("=" * 70)
-    print("\nPipeline Summary:")
-    print(f"  Stage 1 (Translation):  {len(df)} sequences")
-    print(
+    logger.info("\n" + "=" * 70)
+    logger.info("Boughter Dataset Processing Complete!")
+    logger.info("=" * 70)
+    logger.info("\nPipeline Summary:")
+    logger.info(f"  Stage 1 (Translation):  {len(df)} sequences")
+    logger.info(
         f"  Stage 2 (ANARCI):       {len(df_annotated)} sequences ({len(df_annotated) / len(df) * 100:.1f}%)"
     )
-    print(
+    logger.info(
         f"  Stage 3 (Quality QC):   {len(df_clean)} sequences ({len(df_clean) / len(df) * 100:.1f}%)"
     )
-    print("\nNext steps:")
-    print("  1. Verify fragment files in data/train/boughter/annotated/")
-    print("  2. Check annotation_failures.log for any issues")
-    print("  3. Review quality metrics in validation report")
-    print("  4. Use fragment files for ESM embedding and training")
+    logger.info("\nNext steps:")
+    logger.info("  1. Verify fragment files in data/train/boughter/annotated/")
+    logger.info("  2. Check annotation_failures.log for any issues")
+    logger.info("  3. Review quality metrics in validation report")
+    logger.info("  4. Use fragment files for ESM embedding and training")
     return 0
 
 

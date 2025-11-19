@@ -28,6 +28,10 @@ from pathlib import Path
 
 import pandas as pd
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 
 def extract_sequence_from_imgt(row: pd.Series, imgt_cols: Sequence[str]) -> str:
     """
@@ -61,19 +65,19 @@ def convert_harvey_csvs(
     Returns:
         Combined DataFrame
     """
-    print(f"Reading {high_csv_path}...")
+    logger.info(f"Reading {high_csv_path}...")
     df_high = pd.read_csv(high_csv_path)
-    print(f"  High polyreactivity: {len(df_high)} sequences")
+    logger.info(f"  High polyreactivity: {len(df_high)} sequences")
 
-    print(f"Reading {low_csv_path}...")
+    logger.info(f"Reading {low_csv_path}...")
     df_low = pd.read_csv(low_csv_path)
-    print(f"  Low polyreactivity: {len(df_low)} sequences")
+    logger.info(f"  Low polyreactivity: {len(df_low)} sequences")
 
     # IMGT position columns (1-128)
     imgt_cols = [str(i) for i in range(1, 129)]
 
     # Extract full sequences from IMGT positions
-    print("Extracting sequences from IMGT positions...")
+    logger.info("Extracting sequences from IMGT positions...")
     df_high["seq"] = df_high.apply(
         lambda row: extract_sequence_from_imgt(row, imgt_cols), axis=1
     )
@@ -86,7 +90,7 @@ def convert_harvey_csvs(
     df_low["label"] = 0  # low polyreactivity
 
     # Combine datasets with standardized columns
-    print("Combining datasets...")
+    logger.info("Combining datasets...")
     df_combined = pd.concat(
         [
             df_high[["seq", "CDR1_nogaps", "CDR2_nogaps", "CDR3_nogaps", "label"]],
@@ -96,21 +100,21 @@ def convert_harvey_csvs(
     )
 
     # Save combined dataset
-    print(f"Saving to {output_path}...")
+    logger.info(f"Saving to {output_path}...")
     df_combined.to_csv(output_path, index=False)
 
     # Statistics
-    print(f"\nCombined dataset: {len(df_combined)} sequences")
-    print(f"  High polyreactivity (label=1): {(df_combined['label'] == 1).sum()}")
-    print(f"  Low polyreactivity (label=0): {(df_combined['label'] == 0).sum()}")
-    print(
+    logger.info(f"\nCombined dataset: {len(df_combined)} sequences")
+    logger.info(f"  High polyreactivity (label=1): {(df_combined['label'] == 1).sum()}")
+    logger.info(f"  Low polyreactivity (label=0): {(df_combined['label'] == 0).sum()}")
+    logger.info(
         f"  Balance: {(df_combined['label'] == 1).sum() / len(df_combined) * 100:.1f}% high"
     )
 
     # Sequence length stats
     seq_lengths = df_combined["seq"].str.len()
-    print(f"\nSequence length range: {seq_lengths.min()}-{seq_lengths.max()} aa")
-    print(f"Mean length: {seq_lengths.mean():.1f} aa")
+    logger.info(f"\nSequence length range: {seq_lengths.min()}-{seq_lengths.max()} aa")
+    logger.info(f"Mean length: {seq_lengths.mean():.1f} aa")
 
     return df_combined
 
@@ -124,37 +128,36 @@ def main() -> int:
 
     # Validate inputs
     if not high_csv.exists():
-        print(f"Error: {high_csv} not found!")
-        print("Please ensure raw files are in data/test/harvey/raw/")
+        logger.info(f"Error: {high_csv} not found!")
+        logger.info("Please ensure raw files are in data/test/harvey/raw/")
         return 1
 
     if not low_csv.exists():
-        print(f"Error: {low_csv} not found!")
-        print("Please ensure raw files are in data/test/harvey/raw/")
+        logger.info(f"Error: {low_csv} not found!")
+        logger.info("Please ensure raw files are in data/test/harvey/raw/")
         return 1
 
-    print("=" * 70)
-    print("Harvey Dataset: CSV Conversion")
-    print("=" * 70)
-    print(f"\nInput (high):  {high_csv}")
-    print(f"Input (low):   {low_csv}")
-    print(f"Output:        {output_csv}")
-    print()
+    logger.info("=" * 70)
+    logger.info("Harvey Dataset: CSV Conversion")
+    logger.info("=" * 70)
+    logger.info(f"\nInput (high):  {high_csv}")
+    logger.info(f"Input (low):   {low_csv}")
+    logger.info(f"Output:        {output_csv}")
 
     # Convert
     df = convert_harvey_csvs(str(high_csv), str(low_csv), str(output_csv))
 
-    print("\n" + "=" * 70)
-    print("[DONE] Harvey CSV Conversion Complete!")
-    print("=" * 70)
+    logger.info("\n" + "=" * 70)
+    logger.info("[DONE] Harvey CSV Conversion Complete!")
+    logger.info("=" * 70)
 
-    print(f"\nOutput file: {output_csv.absolute()}")
-    print(f"Total sequences: {len(df)}")
-    print("\nNext steps:")
-    print(
+    logger.info(f"\nOutput file: {output_csv.absolute()}")
+    logger.info(f"Total sequences: {len(df)}")
+    logger.info("\nNext steps:")
+    logger.info(
         "  1. Run preprocessing/harvey/step2_extract_fragments.py to extract fragments"
     )
-    print("  2. Validate with scripts/validation/validate_fragments.py")
+    logger.info("  2. Validate with scripts/validation/validate_fragments.py")
     return 0
 
 

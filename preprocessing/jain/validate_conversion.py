@@ -28,6 +28,9 @@ from preprocessing.jain.step1_convert_excel_to_csv import (
     calculate_flags,
     load_data,
 )
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
 
 
 def parse_args() -> argparse.Namespace:
@@ -72,7 +75,7 @@ def main() -> None:
     csv_df = pd.read_csv(args.csv)
 
     # Regenerate from source to verify consistency
-    print("Regenerating dataset from source Excel files...")
+    logger.info("Regenerating dataset from source Excel files...")
     regenerated = load_data()
     regenerated = calculate_flags(regenerated)
 
@@ -122,22 +125,22 @@ def main() -> None:
     )
 
     # High-level stats
-    print("=" * 60)
-    print("Jain Conversion Validation (ELISA-only SSOT)")
-    print("=" * 60)
-    print(f"Rows: {len(csv_df)}, Columns: {len(csv_df.columns)}")
+    logger.info("=" * 60)
+    logger.info("Jain Conversion Validation (ELISA-only SSOT)")
+    logger.info("=" * 60)
+    logger.info(f"Rows: {len(csv_df)}, Columns: {len(csv_df.columns)}")
 
-    print("\nELISA flag distribution (0-6 range):")
+    logger.info("\nELISA flag distribution (0-6 range):")
     for flag_count in range(7):  # 0-6 inclusive
         count = (csv_df["elisa_flags"] == flag_count).sum()
         pct = count / len(csv_df) * 100
-        print(f"  {flag_count} ELISA flags: {count:3d} antibodies ({pct:5.1f}%)")
+        logger.info(f"  {flag_count} ELISA flags: {count:3d} antibodies ({pct:5.1f}%)")
 
-    print("\nFlag category distribution (ELISA-based):")
-    print(csv_df["flag_category"].value_counts().sort_index())
+    logger.info("\nFlag category distribution (ELISA-based):")
+    logger.info(csv_df["flag_category"].value_counts().sort_index())
 
-    print("\nLabel distribution (ELISA-based, nullable):")
-    print(csv_df["label"].value_counts(dropna=False))
+    logger.info("\nLabel distribution (ELISA-based, nullable):")
+    logger.info(str(csv_df["label"].value_counts(dropna=False)))
 
     # Expected counts
     expected = {"specific": 94, "nonspecific": 22, "mild": 21}
@@ -145,10 +148,10 @@ def main() -> None:
     actual_nonspecific = (csv_df["label"] == 1).sum()
     actual_mild = csv_df["label"].isna().sum()
 
-    print(
+    logger.info(
         f"\nExpected distribution: {expected['specific']}/{expected['nonspecific']}/{expected['mild']}"
     )
-    print(
+    logger.info(
         f"Actual distribution:   {actual_specific}/{actual_nonspecific}/{actual_mild}"
     )
 
@@ -157,22 +160,22 @@ def main() -> None:
         and actual_nonspecific == expected["nonspecific"]
         and actual_mild == expected["mild"]
     ):
-        print("✅ Distribution matches ELISA SSOT expectations!")
+        logger.info("Distribution matches ELISA SSOT expectations!")
     else:
-        print("⚠️ WARNING: Distribution mismatch!")
+        logger.warning("WARNING: Distribution mismatch!")
 
     invalid = validate_sequences(csv_df)
     if invalid["heavy"] == 0 and invalid["light"] == 0:
-        print(
+        logger.info(
             "\nSequence validation: ✅ all VH/VL sequences contain only valid amino acids"
         )
     else:
-        print("\nSequence validation: ⚠ issues detected")
-        print(f"  Heavy chains with invalid residues: {invalid['heavy']}")
-        print(f"  Light chains with invalid residues: {invalid['light']}")
+        logger.info("\nSequence validation: ⚠ issues detected")
+        logger.info(f"  Heavy chains with invalid residues: {invalid['heavy']}")
+        logger.info(f"  Light chains with invalid residues: {invalid['light']}")
 
-    print("\nChecksum (SHA256):", checksum(args.csv))
-    print("\nValidation complete ✅")
+    logger.info(f"\nChecksum (SHA256): {checksum(args.csv)}")
+    logger.info("\nValidation complete ✅")
 
 
 if __name__ == "__main__":
