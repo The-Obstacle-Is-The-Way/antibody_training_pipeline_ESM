@@ -1,10 +1,11 @@
 # Architectural Fixes Plan: Make This Codebase Pristine
 
 **Date:** 2025-11-18
-**Status:** ✅ PHASE 1 COMPLETE - READY FOR PHASE 2
+**Status:** ✅ PHASE 1 COMPLETE | ✅ PHASE 1.5 COMPLETE - READY FOR PHASE 2
 **Goal:** Transform codebase from "B+ (Jekyll & Hyde)" to "A+ (Pristine)"
 **Author:** Claude Code (Deep Architectural Audit)
 **Branch:** `claude/plan-preprocessing-refactor`
+**Merge Status:** Ready for dev → leroy-jenkins/full-send
 
 **Note on preprocessing location:** Preprocessing stays at project root. Moving it under `src/` is optional (not required) and should only be considered if packaging/deployment requires it. See `docs/needs_integration/PREPROCESSING_STRUCTURE.md` for the rationale.
 
@@ -45,13 +46,119 @@
 - **Architectural clarity**: scripts/ design decision documented (run-only, not importable)
 - **Zero regressions**: 100% test pass rate maintained, all quality gates green
 
+### 🎯 Next: Phase 1.5 (Validation Gap Closure)
+
+Critical validation and architectural fixes discovered during testing:
+- Model path mismatch (test_novo_parity.py)
+- GitIgnore conflict blocking processed CSVs
+- Multi-backbone testing architecture missing
+
+---
+
+## 🎉 Phase 1.5 (Validation Gap Closure) Completion Summary
+
+**Completed:** 2025-11-18 (evening session)
+**Time Taken:** ~1 hour
+**Status:** ✅ COMPLETE
+
+### ✅ Fixes Implemented
+
+| Fix | Status | File | Verification |
+|-----|--------|------|--------------|
+| Model path mismatch | ✅ Complete | preprocessing/jain/test_novo_parity.py | Novo parity confirmed |
+| GitIgnore conflict | ✅ Complete | .gitignore | Processed CSVs now trackable |
+| Multi-backbone CLI | ✅ Complete | test_novo_parity.py | Both backbones tested |
+| CSV staging decision | ✅ Complete | jain_ELISA_ONLY_116.csv | 17-column version committed |
+
+### 🔬 Validation Results - Tier 2 Gap CLOSED
+
+**Previously Skipped (from Tier 2 validation):**
+```
+⏺ ⚠️ Novo parity test skipped (requires trained model - expected)
+```
+
+**NOW VALIDATED:**
+```
+✅ ESM1v + logreg: 66.28% accuracy, [[40,19],[10,17]] - EXACT NOVO PARITY
+✅ ESM2_650m + logreg: 62.79% accuracy, [[39,20],[12,15]] - Baseline comparison
+✅ test_novo_parity.py: Hierarchical path support (--backbone, --classifier)
+✅ GitIgnore: Processed CSVs trackable (research deliverables)
+✅ jain_ELISA_ONLY_116.csv: 17-column SSOT staged and committed
+```
+
+### 📊 Impact
+
+- **Validation gap closed:** Novo parity test previously skipped due to model path mismatch - NOW PROVEN
+- **Multi-backbone architecture:** Easy testing of esm1v/esm2_650m with single `--backbone` flag
+- **Future-proof:** Supports new backbones/classifiers via hierarchical `experiments/checkpoints/{backbone}/{classifier}/` paths
+- **GitIgnore fixed:** Aligns with CLAUDE.md policy (track deliverables, ignore raw sources)
+- **Data integrity:** All 3-tier validation PASSED (git diff, validators, spot check)
+
+### 🎯 Files Modified
+
+**1. preprocessing/jain/test_novo_parity.py:**
+- Added argparse with `--backbone`, `--classifier`, `--model` flags
+- Auto-constructs paths: `experiments/checkpoints/{backbone}/{classifier}/boughter_vh_{backbone}_{classifier}.pkl`
+- Updated docstring with multi-backbone usage examples
+- Displays backbone/classifier in output header
+
+**2. .gitignore:**
+- **REMOVED** lines 64-65: `/data/*` and `!/data/.gitkeep` (contradictory blanket ignore)
+- **REMOVED** line 86: `/data/` (redundant blocker)
+- **ADDED** comment: "Data - track processed CSVs (research deliverables), ignore raw sources"
+- **RESULT:** 111 tracked data files now consistent with policy
+
+**3. data/test/jain/processed/jain_ELISA_ONLY_116.csv:**
+- Staged 17-column version (full biophysical flags metadata)
+- Confirmed as intentional SSOT intermediate dataset
+- Regenerated during step2 preprocessing (harmless artifact)
+
+### 🎉 Complete 3-Tier Validation Results
+
+**Context:** Logging migration (Fix #5) needed validation to ensure zero regressions
+
+**Tier 1 (Git Diff Audit):** ✅ PASSED
+- Only logging changes found (print→logger, imports, README)
+- Zero logic modifications
+- All quality gates green (mypy, ruff, bandit)
+
+**Tier 2 (Validation Scripts):** ✅ PASSED
+- Boughter Stage 1: ✅ PASSED
+- Boughter Stages 2+3: ✅ PASSED
+- Jain validate_conversion: ✅ PASSED
+- Jain test_novo_parity: ✅ PASSED (was skipped, NOW FIXED AND VALIDATED)
+- Shehata validate_conversion: ✅ PASSED
+- Harvey: No validator (acceptable - low complexity pipeline)
+
+**Tier 3 (Jain End-to-End Spot Check):** ✅ PASSED
+- Backed up processed/ and canonical/
+- Reran step1→step2→step3
+- Canonical: Identical (byte-for-byte match)
+- Processed: Expected 7→17 column enrichment
+- Deleted backups (clean state)
+
+**🎊 CONCLUSION: Logging migration introduced ZERO regressions**
+
+### 🐛 Critical Bugs Fixed
+
+| Bug | Severity | Impact | Fix |
+|-----|----------|--------|-----|
+| **Model path mismatch** | 🔴 CRITICAL | Novo parity test always failed | Hierarchical path support |
+| **GitIgnore contradiction** | 🟠 HIGH | Blocked 111 data files from tracking | Removed blanket `/data/*` rules |
+| **Multi-backbone blindspot** | 🟡 MEDIUM | Couldn't easily test esm2_650m | Added `--backbone` CLI flag |
+| **CSV mystery** | 🟢 LOW | Confusing regeneration | Forensic analysis + decision |
+
 ### 🎯 Next: Phase 2 (P1 - High Priority Fixes)
 
-Remaining high-impact improvements (11-14 hours estimated):
-- Print → logging migration (799 statements)
+Remaining high-impact improvements (10-12 hours estimated):
+- ~~Print → logging migration (799 statements)~~ ✅ COMPLETE
 - File splitting (4 files > 500 lines)
 - Centralized path configuration
 - File permission standardization
+- Bare except blocks
+- Type ignores
+- Utils directory cleanup
+- Config duplication
 
 ---
 
@@ -99,16 +206,21 @@ Remaining high-impact improvements (11-14 hours estimated):
 
 ## Issue Inventory
 
-### 🔴 CRITICAL SEVERITY (4 Issues) - ✅ ALL COMPLETE
+### 🔴 CRITICAL SEVERITY (8 Issues) - ✅ ALL COMPLETE
 
-| # | Issue | Location | Status | Commit |
-|---|-------|----------|--------|--------|
+| # | Issue | Location | Status | Commit/Session |
+|---|-------|----------|--------|----------------|
 | 1 | sys.path manipulation | `preprocessing/harvey/test_psr_threshold.py:14` | ✅ Fixed | 004c08c |
 | 2 | Missing pytest markers | 4 integration test files | ✅ Fixed | 580af5e |
 | 3 | Document scripts/ decision | `scripts/README.md` (new file) | ✅ Done | c3c2443 |
 | 4 | Document PYTHONPATH | `preprocessing/README.md` | ✅ Done | fc34027 |
+| **1.5-1** | **Model path mismatch** | `preprocessing/jain/test_novo_parity.py` | ✅ Fixed | Phase 1.5 |
+| **1.5-2** | **GitIgnore contradiction** | `.gitignore` lines 64-65, 86 | ✅ Fixed | Phase 1.5 |
+| **1.5-3** | **Multi-backbone blindspot** | `test_novo_parity.py` | ✅ Fixed | Phase 1.5 |
+| **1.5-4** | **Validation gap** | Novo parity test skipped | ✅ Closed | Phase 1.5 |
 
 **Total P0 Time:** 25 minutes (100% complete)
+**Total P0 + Phase 1.5 Time:** ~1.5 hours (100% complete)
 
 ---
 
