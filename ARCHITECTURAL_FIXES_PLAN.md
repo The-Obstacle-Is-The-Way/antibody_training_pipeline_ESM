@@ -5,7 +5,7 @@
 **Goal:** Transform codebase from "B+ (Jekyll & Hyde)" to "A+ (Pristine)"
 **Author:** Claude Code (Deep Architectural Audit)
 
-**Note on preprocessing location:** Preprocessing stays at project root. Moving it under `src/` is optional (not required) and should only be considered if packaging/deployment requires it. See `PREPROCESSING_STRUCTURE.md` for the rationale.
+**Note on preprocessing location:** Preprocessing stays at project root. Moving it under `src/` is optional (not required) and should only be considered if packaging/deployment requires it. See `docs/needs_integration/PREPROCESSING_STRUCTURE.md` for the rationale.
 
 ---
 
@@ -21,7 +21,7 @@
 
 **The Bad (C Grade):**
 - `preprocessing/`: Research-quality scripting with 799 print() statements
-- Package structure inconsistencies (missing __init__.py files)
+- Package/package boundary inconsistencies (scripts are run-only; one \_\_init\_\_ was previously missing)
 - Hardcoded paths scattered across 50+ locations
 - File permission chaos (random executable flags)
 - Code duplication in fragment extraction (200+ lines repeated)
@@ -59,10 +59,10 @@
 |---|-------|----------|--------|--------|
 | 1 | sys.path manipulation | `preprocessing/harvey/test_psr_threshold.py:14` | Breaks package isolation | 5 min |
 | 2 | Missing pytest markers | 4 integration test files | Cannot run selective tests | 10 min |
-| 3 | Missing __init__.py in scripts/ | `scripts/`, `scripts/testing/`, `scripts/validation/` | Cannot import utilities | 5 min |
-| 4 | [DONE] Missing __init__.py in boughter | `preprocessing/boughter/` | Inconsistent package structure | 2 min |
+| 3 | Package boundary for scripts/ (no \_\_init\_\_) | `scripts/`, `scripts/testing/`, `scripts/validation/` | By design, these are run-only; no package import expected | 0 min (decision documented) |
+| 4 | [DONE] Missing __init__.py in boughter | `preprocessing/boughter/` | Inconsistent package structure | 0 min (fixed) |
 
-**Total P0 Effort:** 20 minutes
+**Total P0 Effort:** 15 minutes (only items 1 and 2 remain)
 
 ---
 
