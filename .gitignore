@@ -60,9 +60,8 @@ logs/*
 # Models (commit benchmark weights - they're research deliverables)
 # Only ignore scratch/experimental models
 
-# Data (root level only)
-/data/*
-!/data/.gitkeep
+# Data - track processed CSVs (research deliverables), ignore raw sources
+# Specific ignore patterns below (lines 105+) handle raw data/Excel files
 
 # Outputs
 !outputs/.gitkeep
@@ -83,7 +82,6 @@ test_config.yaml
 Thumbs.db
 
 # Project specific (root level only)
-/data/
 /logs/
 /outputs/
 
