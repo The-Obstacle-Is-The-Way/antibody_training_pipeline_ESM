@@ -318,7 +318,10 @@ def test_load_classifier_without_batch_size_param(
     with open(model_path, "wb") as f:
         pickle.dump(classifier, f)
 
-    with open(model_path, "rb") as f:
+    with (
+        pytest.warns(UserWarning, match="Loading old model"),
+        open(model_path, "rb") as f,
+    ):
         loaded_classifier = pickle.load(f)
 
     # Assert: Default batch_size is used

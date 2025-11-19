@@ -101,6 +101,9 @@ def launch_gradio_app(cfg: DictConfig) -> None:
             # Validate
             validate_input(cleaned_seq)
 
+            # Log request (observability)
+            print(f"Processing sequence length: {len(cleaned_seq)}")
+
             # Predict
             result = predictor.predict_single(cleaned_seq)
 
@@ -131,6 +134,7 @@ def launch_gradio_app(cfg: DictConfig) -> None:
             lines=5,
             label="Antibody Sequence (VH or VL)",
             placeholder="Paste amino acid sequence here (e.g., QVQL...)",
+            info="Supported characters: Standard amino acids (ACDEFGHIKLMNPQRSTVWY).",
         ),
         outputs=[
             gr.Textbox(label="Prediction"),
@@ -141,12 +145,23 @@ def launch_gradio_app(cfg: DictConfig) -> None:
             "Enter an antibody Variable Heavy (VH) or Variable Light (VL) sequence "
             "to predict its non-specificity (polyreactivity)."
         ),
+        article=f"Model: {cfg.model.name} | Device: {device}",
         examples=examples,
+        cache_examples=True,
         flagging_mode="never",
+        analytics_enabled=False,
     )
 
-    # Launch the app
-    iface.launch()
+    # Enable queueing for concurrency management
+    iface.queue(default_concurrency_limit=2, max_size=10)
+
+    # Launch the app with hardened settings
+    iface.launch(
+        server_name="0.0.0.0",
+        server_port=7860,
+        share=False,
+        show_api=False,
+    )
 
 
 @hydra.main(config_path="../conf", config_name="predict", version_base=None)

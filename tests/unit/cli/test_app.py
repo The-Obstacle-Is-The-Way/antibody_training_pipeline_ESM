@@ -27,7 +27,9 @@ def test_launch_gradio_app(
     classifier_path = tmp_path / "model.pkl"
     classifier_path.touch()
 
-    with initialize(config_path="../../../src/antibody_training_esm/conf"):
+    with initialize(
+        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    ):
         cfg = compose(
             config_name="predict",
             overrides=[f"classifier.path={classifier_path}"],
@@ -42,6 +44,14 @@ def test_launch_gradio_app(
     _, kwargs = mock_interface.call_args
     assert "fn" in kwargs
     assert "examples" in kwargs
+    assert kwargs["analytics_enabled"] is False
+
+    # Verify queueing and launch parameters
+    mock_iface_instance = mock_interface.return_value
+    mock_iface_instance.queue.assert_called_once()
+    mock_iface_instance.launch.assert_called_once_with(
+        server_name="0.0.0.0", server_port=7860, share=False, show_api=False
+    )
 
     # Extract the prediction function
     predict_fn = kwargs["fn"]
@@ -78,7 +88,9 @@ def test_main(mock_launch_gradio_app: MagicMock, tmp_path: Path) -> None:
     classifier_path = tmp_path / "model.pkl"
     classifier_path.touch()
 
-    with initialize(config_path="../../../src/antibody_training_esm/conf"):
+    with initialize(
+        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    ):
         cfg = compose(
             config_name="predict",
             overrides=[f"classifier.path={classifier_path}"],
@@ -92,7 +104,9 @@ def test_launch_gradio_app_no_classifier_path() -> None:
     """
     Tests that the Gradio app raises a ValueError when no classifier path is provided.
     """
-    with initialize(config_path="../../../src/antibody_training_esm/conf"):
+    with initialize(
+        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    ):
         cfg = compose(config_name="predict")
         with pytest.raises(ValueError):
             launch_gradio_app(cfg)
@@ -102,7 +116,9 @@ def test_launch_gradio_app_classifier_not_found(tmp_path: Path) -> None:
     """
     Tests that the Gradio app raises a FileNotFoundError when the classifier is not found.
     """
-    with initialize(config_path="../../../src/antibody_training_esm/conf"):
+    with initialize(
+        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    ):
         cfg = compose(
             config_name="predict",
             overrides=[f"classifier.path={tmp_path / 'non_existent_model.pkl'}"],
@@ -134,7 +150,9 @@ def test_launch_gradio_app_mac_mps_handling(
     classifier_path.touch()
 
     # Load config requesting MPS
-    with initialize(config_path="../../../src/antibody_training_esm/conf"):
+    with initialize(
+        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    ):
         cfg = compose(
             config_name="predict",
             overrides=[
@@ -166,7 +184,9 @@ def test_launch_gradio_app_with_npz_config(
     classifier_path.touch()
     config_path.touch()
 
-    with initialize(config_path="../../../src/antibody_training_esm/conf"):
+    with initialize(
+        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    ):
         cfg = compose(
             config_name="predict",
             overrides=[
