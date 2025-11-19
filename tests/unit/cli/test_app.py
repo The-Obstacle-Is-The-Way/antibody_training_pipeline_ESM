@@ -109,3 +109,45 @@ def test_launch_gradio_app_classifier_not_found(tmp_path: Path) -> None:
         )
         with pytest.raises(FileNotFoundError):
             launch_gradio_app(cfg)
+
+
+@patch("torch.set_num_threads")
+@patch("platform.system")
+@patch("gradio.Interface")
+@patch("antibody_training_esm.cli.app.Predictor")
+def test_launch_gradio_app_mac_mps_handling(
+    mock_predictor_cls: MagicMock,
+    mock_interface: MagicMock,
+    mock_platform_system: MagicMock,
+    mock_set_num_threads: MagicMock,
+    tmp_path: Path,
+) -> None:
+    """
+    Test that the app forces CPU and single-threading on macOS when MPS is requested.
+    This prevents known OpenMP SegFaults in the Gradio environment.
+    """
+    # Simulate macOS environment
+    mock_platform_system.return_value = "Darwin"
+
+    # Create a dummy classifier file
+    classifier_path = tmp_path / "model.pkl"
+    classifier_path.touch()
+
+    # Load config requesting MPS
+    with initialize(config_path="../../../src/antibody_training_esm/conf"):
+        cfg = compose(
+            config_name="predict",
+            overrides=[
+                f"classifier.path={classifier_path}",
+                "model.device=mps",  # User requests MPS
+            ],
+        )
+        launch_gradio_app(cfg)
+
+    # Assert 1: Predictor initialized with 'cpu' (Safety downgrade)
+    # The actual call args are (model_name, classifier_path, device=...)
+    _, kwargs = mock_predictor_cls.call_args
+    assert kwargs["device"] == "cpu"
+
+    # Assert 2: Threading restricted to 1 (OpenMP crash prevention)
+    mock_set_num_threads.assert_called_with(1)
