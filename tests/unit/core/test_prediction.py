@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 from omegaconf import OmegaConf
 
-from antibody_training_esm.core.prediction import run_prediction
+from antibody_training_esm.core.prediction import Predictor, run_prediction
 
 
 @pytest.fixture
@@ -20,7 +20,8 @@ def sample_input_df() -> pd.DataFrame:
     )
 
 
-def test_run_prediction(sample_input_df: pd.DataFrame) -> None:
+def test_predictor_class(sample_input_df: pd.DataFrame) -> None:
+    """Test the Predictor class directly."""
     with (
         patch("joblib.load") as mock_joblib_load,
         patch(
@@ -38,21 +39,52 @@ def test_run_prediction(sample_input_df: pd.DataFrame) -> None:
         # Mocking the ESMEmbeddingExtractor
         mock_embedder.return_value.extract_batch_embeddings.return_value = (
             np.random.rand(2, 1280)
-        )  # dummy embeddings
-
-        # Create a mock config object
-        cfg = OmegaConf.create(
-            {
-                "model": {"name": "facebook/esm1v_t33_650M_UR90S_1"},
-                "classifier": {"path": "dummy_path"},
-            }
         )
 
-        # Call the function
-        output_df = run_prediction(sample_input_df, cfg)
+        # Initialize Predictor
+        predictor = Predictor(
+            model_name="facebook/esm1v_t33_650M_UR90S_1", classifier_path="dummy_path"
+        )
+
+        # Test predict_dataframe
+        output_df = predictor.predict_dataframe(sample_input_df)
 
         # Assertions
         assert "prediction" in output_df.columns
         assert "probability" in output_df.columns
         assert output_df["prediction"].tolist() == ["non-specific", "specific"]
         assert np.allclose(output_df["probability"].tolist(), [0.85, 0.23])
+
+        # Verify lazy loading
+        mock_joblib_load.assert_called_once()
+        mock_embedder.assert_called_once()
+
+
+def test_predictor_missing_column(sample_input_df: pd.DataFrame) -> None:
+    """Test error handling for missing column."""
+    predictor = Predictor("model", "path")
+    bad_df = pd.DataFrame({"wrong_col": ["SEQ"]})
+
+    with pytest.raises(ValueError, match="Input DataFrame must contain"):
+        predictor.predict_dataframe(bad_df)
+
+
+def test_run_prediction_wrapper(sample_input_df: pd.DataFrame) -> None:
+    """Test the backward-compatible wrapper function."""
+    with patch("antibody_training_esm.core.prediction.Predictor") as mock_predictor_cls:
+        mock_instance = MagicMock()
+        mock_predictor_cls.return_value = mock_instance
+
+        cfg = OmegaConf.create(
+            {
+                "model": {"name": "test_model"},
+                "classifier": {"path": "test_path"},
+            }
+        )
+
+        run_prediction(sample_input_df, cfg)
+
+        mock_predictor_cls.assert_called_with(
+            model_name="test_model", classifier_path="test_path"
+        )
+        mock_instance.predict_dataframe.assert_called_with(sample_input_df)
