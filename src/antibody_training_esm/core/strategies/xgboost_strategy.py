@@ -103,17 +103,17 @@ class XGBoostStrategy:
             >>> strategy.n_estimators
             50
         """
-        # Extract hyperparameters with defaults
-        # Defaults are XGBoost defaults (good starting point)
-        self.n_estimators = config.get("n_estimators", 100)
-        self.max_depth = config.get("max_depth", 6)
-        self.learning_rate = config.get("learning_rate", 0.3)
-        self.subsample = config.get("subsample", 1.0)
-        self.colsample_bytree = config.get("colsample_bytree", 1.0)
-        self.reg_alpha = config.get("reg_alpha", 0.0)
-        self.reg_lambda = config.get("reg_lambda", 1.0)
-        self.random_state = config.get("random_state", 42)
-        self.objective = config.get("objective", "binary:logistic")
+        # Extract hyperparameters (enforce single source of truth from YAML)
+        # No hardcoded defaults in Python - config must be complete
+        self.n_estimators = config["n_estimators"]
+        self.max_depth = config["max_depth"]
+        self.learning_rate = config["learning_rate"]
+        self.subsample = config["subsample"]
+        self.colsample_bytree = config["colsample_bytree"]
+        self.reg_alpha = config["reg_alpha"]
+        self.reg_lambda = config["reg_lambda"]
+        self.random_state = config["random_state"]
+        self.objective = config["objective"]
 
         # Create XGBClassifier estimator
         self.classifier = xgb.XGBClassifier(

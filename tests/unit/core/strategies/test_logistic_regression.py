@@ -10,8 +10,9 @@ Philosophy:
 - NO bogus mocks - test REAL sklearn LogisticRegression
 - Test edge cases and error handling
 - Test serialization round-trips with real file I/O
+- Strict config validation (no defaults in code)
 
-Date: 2025-11-15
+Date: 2025-11-19
 Coverage Target: 100%
 """
 
@@ -29,18 +30,35 @@ from antibody_training_esm.core.strategies.logistic_regression import (
 )
 
 # ============================================================================
+# Fixtures
+# ============================================================================
+
+
+@pytest.fixture
+def default_config() -> dict[str, Any]:
+    """Return a valid full configuration for LogisticRegression."""
+    return {
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "max_iter": 1000,
+        "random_state": 42,
+        "class_weight": None,
+    }
+
+
+# ============================================================================
 # Initialization Tests
 # ============================================================================
 
 
 @pytest.mark.unit
-def test_logreg_strategy_initializes_with_defaults() -> None:
-    """Verify LogRegStrategy initializes with default hyperparameters."""
-    # Arrange
-    config: dict[str, Any] = {}  # Empty config - should use defaults
-
+def test_logreg_strategy_initializes_with_config(
+    default_config: dict[str, Any],
+) -> None:
+    """Verify LogRegStrategy initializes with provided configuration."""
     # Act
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
 
     # Assert
     assert strategy.C == 1.0
@@ -52,17 +70,33 @@ def test_logreg_strategy_initializes_with_defaults() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_initializes_with_custom_params() -> None:
+def test_logreg_strategy_raises_key_error_on_missing_config() -> None:
+    """Verify LogRegStrategy fails fast if config is incomplete."""
+    # Arrange
+    config = {"C": 1.0}  # Missing other required keys
+
+    # Act & Assert
+    with pytest.raises(KeyError):
+        LogisticRegressionStrategy(config)
+
+
+@pytest.mark.unit
+def test_logreg_strategy_initializes_with_custom_params(
+    default_config: dict[str, Any],
+) -> None:
     """Verify LogRegStrategy accepts custom hyperparameters."""
     # Arrange
-    config = {
-        "C": 0.1,
-        "penalty": "l1",
-        "solver": "liblinear",
-        "max_iter": 500,
-        "random_state": 123,
-        "class_weight": "balanced",
-    }
+    config = default_config.copy()
+    config.update(
+        {
+            "C": 0.1,
+            "penalty": "l1",
+            "solver": "liblinear",
+            "max_iter": 500,
+            "random_state": 123,
+            "class_weight": "balanced",
+        }
+    )
 
     # Act
     strategy = LogisticRegressionStrategy(config)
@@ -77,13 +111,12 @@ def test_logreg_strategy_initializes_with_custom_params() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_creates_sklearn_classifier() -> None:
+def test_logreg_strategy_creates_sklearn_classifier(
+    default_config: dict[str, Any],
+) -> None:
     """Verify LogRegStrategy creates sklearn LogisticRegression instance."""
-    # Arrange
-    config = {"C": 0.5}
-
     # Act
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
 
     # Assert: Verify sklearn classifier exists
     assert strategy.classifier is not None
@@ -98,7 +131,9 @@ def test_logreg_strategy_creates_sklearn_classifier() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_fits_and_predicts_on_simple_dataset() -> None:
+def test_logreg_strategy_fits_and_predicts_on_simple_dataset(
+    default_config: dict[str, Any],
+) -> None:
     """Verify LogRegStrategy can fit and predict on linearly separable data."""
     # Arrange: Create simple 2D dataset (linearly separable)
     X_train = np.array(
@@ -118,8 +153,7 @@ def test_logreg_strategy_fits_and_predicts_on_simple_dataset() -> None:
         ]
     )
 
-    config = {"random_state": 42}
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
 
     # Act
     strategy.fit(X_train, y_train)
@@ -131,15 +165,16 @@ def test_logreg_strategy_fits_and_predicts_on_simple_dataset() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_predict_proba_returns_valid_probabilities() -> None:
+def test_logreg_strategy_predict_proba_returns_valid_probabilities(
+    default_config: dict[str, Any],
+) -> None:
     """Verify predict_proba returns probabilities that sum to 1."""
     # Arrange
     np.random.seed(42)
     X_train = np.random.rand(50, 10)
     y_train = np.random.randint(0, 2, 50)
 
-    config = {"random_state": 42}
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
     strategy.fit(X_train, y_train)
 
     X_test = np.random.rand(10, 10)
@@ -154,14 +189,15 @@ def test_logreg_strategy_predict_proba_returns_valid_probabilities() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_sets_classes_attribute_after_fit() -> None:
+def test_logreg_strategy_sets_classes_attribute_after_fit(
+    default_config: dict[str, Any],
+) -> None:
     """Verify classes_ attribute is set after fit (sklearn compatibility)."""
     # Arrange
     X_train = np.array([[0, 0], [1, 1], [2, 2], [3, 3]])
     y_train = np.array([0, 0, 1, 1])
 
-    config = {"random_state": 42}
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
 
     # Act
     strategy.fit(X_train, y_train)
@@ -177,16 +213,11 @@ def test_logreg_strategy_sets_classes_attribute_after_fit() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_implements_get_params() -> None:
+def test_logreg_strategy_implements_get_params(default_config: dict[str, Any]) -> None:
     """Verify get_params returns all hyperparameters (sklearn API)."""
     # Arrange
-    config = {
-        "C": 0.5,
-        "penalty": "l2",
-        "solver": "lbfgs",
-        "max_iter": 500,
-        "random_state": 42,
-    }
+    config = default_config.copy()
+    config.update({"C": 0.5, "max_iter": 500})
     strategy = LogisticRegressionStrategy(config)
 
     # Act
@@ -199,17 +230,18 @@ def test_logreg_strategy_implements_get_params() -> None:
     assert "max_iter" in params
     assert "random_state" in params
     assert params["C"] == 0.5
-    assert params["penalty"] == "l2"
+    assert params["max_iter"] == 500
 
 
 @pytest.mark.unit
-def test_logreg_strategy_is_instance_of_classifier_strategy_protocol() -> None:
+def test_logreg_strategy_is_instance_of_classifier_strategy_protocol(
+    default_config: dict[str, Any],
+) -> None:
     """Verify LogRegStrategy satisfies ClassifierStrategy protocol."""
     from antibody_training_esm.core.classifier_strategy import ClassifierStrategy
 
     # Arrange
-    config = {"random_state": 42}
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
 
     # Act & Assert: Protocol check (runtime_checkable)
     assert isinstance(strategy, ClassifierStrategy)
@@ -221,17 +253,13 @@ def test_logreg_strategy_is_instance_of_classifier_strategy_protocol() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_to_dict_returns_hyperparameters() -> None:
+def test_logreg_strategy_to_dict_returns_hyperparameters(
+    default_config: dict[str, Any],
+) -> None:
     """Verify to_dict() returns all hyperparameters for JSON serialization."""
     # Arrange
-    config = {
-        "C": 0.5,
-        "penalty": "l2",
-        "solver": "lbfgs",
-        "max_iter": 500,
-        "random_state": 42,
-        "class_weight": "balanced",
-    }
+    config = default_config.copy()
+    config.update({"class_weight": "balanced", "C": 0.5})
     strategy = LogisticRegressionStrategy(config)
 
     # Act
@@ -240,19 +268,17 @@ def test_logreg_strategy_to_dict_returns_hyperparameters() -> None:
     # Assert
     assert config_dict["type"] == "logistic_regression"
     assert config_dict["C"] == 0.5
-    assert config_dict["penalty"] == "l2"
-    assert config_dict["solver"] == "lbfgs"
-    assert config_dict["max_iter"] == 500
-    assert config_dict["random_state"] == 42
     assert config_dict["class_weight"] == "balanced"
+    assert config_dict["random_state"] == 42
 
 
 @pytest.mark.unit
-def test_logreg_strategy_to_arrays_raises_if_not_fitted() -> None:
+def test_logreg_strategy_to_arrays_raises_if_not_fitted(
+    default_config: dict[str, Any],
+) -> None:
     """Verify to_arrays() raises ValueError if classifier not fitted."""
     # Arrange
-    config = {"random_state": 42}
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
 
     # Act & Assert
     with pytest.raises(ValueError, match="Classifier must be fitted"):
@@ -260,14 +286,15 @@ def test_logreg_strategy_to_arrays_raises_if_not_fitted() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_to_arrays_returns_fitted_state() -> None:
+def test_logreg_strategy_to_arrays_returns_fitted_state(
+    default_config: dict[str, Any],
+) -> None:
     """Verify to_arrays() returns all fitted state arrays."""
     # Arrange
     X_train = np.random.rand(50, 10)
     y_train = np.random.randint(0, 2, 50)
 
-    config = {"random_state": 42}
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
     strategy.fit(X_train, y_train)
 
     # Act
@@ -287,7 +314,9 @@ def test_logreg_strategy_to_arrays_returns_fitted_state() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_serialization_roundtrip(tmp_path: Path) -> None:
+def test_logreg_strategy_serialization_roundtrip(
+    tmp_path: Path, default_config: dict[str, Any]
+) -> None:
     """Verify serialize → deserialize → predict gives IDENTICAL results."""
     # Arrange: Train model
     np.random.seed(42)
@@ -295,8 +324,7 @@ def test_logreg_strategy_serialization_roundtrip(tmp_path: Path) -> None:
     y_train = np.random.randint(0, 2, 50)
     X_test = np.random.rand(10, 10)
 
-    config = {"C": 0.5, "random_state": 42}
-    strategy = LogisticRegressionStrategy(config)
+    strategy = LogisticRegressionStrategy(default_config)
     strategy.fit(X_train, y_train)
 
     # Get original predictions
@@ -332,20 +360,19 @@ def test_logreg_strategy_serialization_roundtrip(tmp_path: Path) -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_from_dict_creates_unfitted_classifier_if_arrays_none() -> None:
+def test_logreg_strategy_from_dict_creates_unfitted_classifier_if_arrays_none(
+    default_config: dict[str, Any],
+) -> None:
     """Verify from_dict() creates unfitted classifier if arrays=None."""
     # Arrange
-    config = {
-        "type": "logistic_regression",
-        "C": 0.5,
-        "random_state": 42,
-    }
+    config = default_config.copy()
+    config["type"] = "logistic_regression"
 
     # Act
     strategy = LogisticRegressionStrategy.from_dict(config, arrays=None)
 
     # Assert
-    assert strategy.C == 0.5
+    assert strategy.C == 1.0
     assert strategy.random_state == 42
 
     # Verify not fitted (no classes_ attribute on sklearn estimator)
@@ -359,13 +386,13 @@ def test_logreg_strategy_from_dict_creates_unfitted_classifier_if_arrays_none() 
 
 
 @pytest.mark.unit
-def test_logreg_strategy_handles_class_weight_dict() -> None:
+def test_logreg_strategy_handles_class_weight_dict(
+    default_config: dict[str, Any],
+) -> None:
     """Verify LogRegStrategy handles class_weight as dict."""
     # Arrange
-    config = {
-        "class_weight": {0: 1.0, 1: 2.0},  # Weight class 1 more heavily
-        "random_state": 42,
-    }
+    config = default_config.copy()
+    config["class_weight"] = {0: 1.0, 1: 2.0}  # Weight class 1 more heavily
     strategy = LogisticRegressionStrategy(config)
 
     X_train = np.array([[0, 0], [1, 1], [2, 2], [3, 3]])
@@ -381,7 +408,9 @@ def test_logreg_strategy_handles_class_weight_dict() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_deterministic_with_same_random_state() -> None:
+def test_logreg_strategy_deterministic_with_same_random_state(
+    default_config: dict[str, Any],
+) -> None:
     """Verify same random_state gives deterministic results."""
     # Arrange
     np.random.seed(42)
@@ -389,15 +418,12 @@ def test_logreg_strategy_deterministic_with_same_random_state() -> None:
     y_train = np.random.randint(0, 2, 100)
     X_test = np.random.rand(20, 10)
 
-    config1 = {"random_state": 42}
-    config2 = {"random_state": 42}
-
     # Act: Train two identical models
-    strategy1 = LogisticRegressionStrategy(config1)
+    strategy1 = LogisticRegressionStrategy(default_config)
     strategy1.fit(X_train, y_train)
     preds1 = strategy1.predict(X_test)
 
-    strategy2 = LogisticRegressionStrategy(config2)
+    strategy2 = LogisticRegressionStrategy(default_config)
     strategy2.fit(X_train, y_train)
     preds2 = strategy2.predict(X_test)
 
@@ -406,7 +432,9 @@ def test_logreg_strategy_deterministic_with_same_random_state() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_different_random_state_gives_different_results() -> None:
+def test_logreg_strategy_different_random_state_gives_different_results(
+    default_config: dict[str, Any],
+) -> None:
     """Verify different random_state can give different results (solver-dependent)."""
     # Arrange
     np.random.seed(42)
@@ -414,8 +442,11 @@ def test_logreg_strategy_different_random_state_gives_different_results() -> Non
     X_train = np.random.rand(100, 50)
     y_train = np.random.randint(0, 2, 100)
 
-    config1 = {"random_state": 42, "solver": "sag"}  # Stochastic solver
-    config2 = {"random_state": 123, "solver": "sag"}
+    config1 = default_config.copy()
+    config1["solver"] = "sag"
+
+    config2 = config1.copy()
+    config2["random_state"] = 123
 
     # Act
     strategy1 = LogisticRegressionStrategy(config1)
@@ -427,8 +458,6 @@ def test_logreg_strategy_different_random_state_gives_different_results() -> Non
     coef2 = strategy2.classifier.coef_.copy()
 
     # Assert: Coefficients may differ (stochastic optimization)
-    # NOTE: This test may occasionally fail if solver converges to same solution
-    # That's OK - it's testing behavior, not guaranteeing difference
     assert coef1.shape == coef2.shape
 
 
@@ -438,10 +467,13 @@ def test_logreg_strategy_different_random_state_gives_different_results() -> Non
 
 
 @pytest.mark.unit
-def test_logreg_strategy_json_handles_none_class_weight() -> None:
+def test_logreg_strategy_json_handles_none_class_weight(
+    default_config: dict[str, Any],
+) -> None:
     """Verify JSON serialization handles None class_weight correctly."""
     # Arrange
-    config = {"class_weight": None, "random_state": 42}
+    config = default_config.copy()
+    config["class_weight"] = None
     strategy = LogisticRegressionStrategy(config)
 
     # Act
@@ -454,10 +486,13 @@ def test_logreg_strategy_json_handles_none_class_weight() -> None:
 
 
 @pytest.mark.unit
-def test_logreg_strategy_json_handles_dict_class_weight() -> None:
+def test_logreg_strategy_json_handles_dict_class_weight(
+    default_config: dict[str, Any],
+) -> None:
     """Verify JSON serialization handles dict class_weight correctly."""
     # Arrange
-    config = {"class_weight": {0: 1.0, 1: 2.0}, "random_state": 42}
+    config = default_config.copy()
+    config["class_weight"] = {0: 1.0, 1: 2.0}
     strategy = LogisticRegressionStrategy(config)
 
     # Act

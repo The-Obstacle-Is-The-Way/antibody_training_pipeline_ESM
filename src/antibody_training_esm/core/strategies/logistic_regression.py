@@ -95,14 +95,14 @@ class LogisticRegressionStrategy:
             >>> strategy.C
             0.5
         """
-        # Extract hyperparameters with defaults
-        # Defaults match EXISTING BinaryClassifier behavior
-        self.C = config.get("C", 1.0)
-        self.penalty = config.get("penalty", "l2")
-        self.solver = config.get("solver", "lbfgs")
-        self.max_iter = config.get("max_iter", 1000)
-        self.random_state = config.get("random_state", 42)
-        self.class_weight = config.get("class_weight")
+        # Extract hyperparameters (enforce single source of truth from YAML)
+        # No hardcoded defaults in Python - config must be complete
+        self.C = config["C"]
+        self.penalty = config["penalty"]
+        self.solver = config["solver"]
+        self.max_iter = config["max_iter"]
+        self.random_state = config["random_state"]
+        self.class_weight = config["class_weight"]
 
         # Create sklearn LogisticRegression estimator
         self.classifier = LogisticRegression(
