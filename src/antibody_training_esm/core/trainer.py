@@ -760,11 +760,11 @@ def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
     # Restore fitted LogisticRegression state
     # Cast to Any because protocol doesn't enforce LogReg attributes
     inner_clf = cast(Any, classifier.classifier)
-    inner_clf.coef_ = coef
-    inner_clf.intercept_ = intercept
-    inner_clf.classes_ = classes
-    inner_clf.n_features_in_ = n_features_in
-    inner_clf.n_iter_ = n_iter
+    inner_clf.classifier.coef_ = coef
+    inner_clf.classifier.intercept_ = intercept
+    inner_clf.classifier.classes_ = classes
+    inner_clf.classifier.n_features_in_ = n_features_in
+    inner_clf.classifier.n_iter_ = n_iter
     classifier.is_fitted = True
 
     return classifier
