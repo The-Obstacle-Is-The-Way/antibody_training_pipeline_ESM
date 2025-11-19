@@ -285,6 +285,7 @@ def default_classifier_params() -> dict[str, Any]:
         "solver": "lbfgs",
         "max_iter": 1000,
         "random_state": 42,
+        "class_weight": None,
     }
 
 

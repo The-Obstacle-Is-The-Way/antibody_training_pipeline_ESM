@@ -5,178 +5,186 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.0] - 2025-11-19
+## [0.6.0] - 2025-11-19
 
-### 🚀 Production Inference Pipeline - Complete Predict → Test → Train Workflow
+### 🏗️ Multi-Classifier Support - Strategy Pattern Architecture
 
-Major release delivering production-ready inference capabilities with comprehensive CLI tooling, modular architecture refactoring, and massive documentation improvements. This completes the full antibody prediction workflow from training to deployment.
-
-**Highlights:**
-- ✅ **antibody-predict CLI** - Production inference with 100% test coverage
-- ✅ **Modular Testing Pipeline** - 872-line monolith → 6 focused modules (83.8% reduction)
-- ✅ **Column Name Flexibility** - Custom sequence/label columns across all CLIs
-- ✅ **90.42% Test Coverage** - Up from 89.01% (+1.41%)
-- ✅ **256 Commits** - 31 features, 20 fixes, 15 refactors, 99 docs
-- ✅ **476 Tests Passing** - Up from 468 (+8 tests)
+Major architectural release introducing the Strategy Pattern for classifier backends, enabling runtime selection between LogisticRegression and XGBoost. This lays the groundwork for future classifier additions (MLP, SVM, etc.) while maintaining 100% backward compatibility.
 
 ### ✨ Features
 
-**Production Inference CLI (`antibody-predict`)**
-- Complete CLI for predicting antibody non-specificity from sequences
-- Input validation: missing files, invalid columns, classifier paths
-- Flexible column names: `sequence_column` override for custom CSV formats
-- Assay-specific thresholds: PSR (0.5495) and ELISA (0.5) calibration via `assay_type`
-- Manual threshold override: `threshold` parameter (0.0-1.0)
-- CSV I/O: Preserves all original columns + adds `prediction` and `probability`
-- Resource optimization: Reuses embedder from classifier (avoids 2x 650MB model loading)
-- Clear error messages with usage examples
-- New files:
-  - `src/antibody_training_esm/cli/predict.py` (57 lines, 100% coverage)
-  - `src/antibody_training_esm/core/prediction.py` (203 lines, 87.5% coverage)
-  - `src/antibody_training_esm/conf/predict.yaml` (16 lines)
-  - `INFERENCE_GUIDE.md` (111-line comprehensive user guide)
+**Strategy Pattern Architecture**
+- Protocol-based `ClassifierStrategy` interface for pluggable classifier backends
+- Runtime classifier selection via `classifier.type` config parameter
+- Factory pattern (`create_classifier`) for strategy instantiation
+- Full sklearn API compatibility maintained across all strategies
+- Type-safe design with mypy --strict compliance
 
-**Modular Testing Pipeline Refactor**
-- Transformed `test.py` from 872-line monolith → clean 6-module architecture
-- 83.8% size reduction in main file (872 → 141 lines)
-- Single Responsibility Principle: each module has one clear purpose
-- Zero circular dependencies (clean acyclic DAG)
-- 100% backward compatible (all 34 CLI tests pass)
-- New modules:
-  - `testing/config.py` (62 lines) - TestConfig dataclass + YAML loading
-  - `testing/data.py` (73 lines) - Dataset loading + validation
-  - `testing/evaluation.py` (141 lines) - Metrics + assay detection
-  - `testing/tester.py` (383 lines) - Model orchestration
-  - `testing/visualization.py` (127 lines) - Plotting + serialization
+**XGBoost Classifier Support**
+- New `XGBoostStrategy` implementation wrapping `xgboost.XGBClassifier`
+- Native `.xgb` serialization format (pickle-free production path)
+- Comprehensive hyperparameter support (n_estimators, max_depth, learning_rate, etc.)
+- Nonlinear decision boundaries for complex polyreactivity patterns
+- Complete test coverage with XOR dataset validation
 
-**Column Name Flexibility**
-- All CLIs now support custom sequence/label column names
-- Testing CLI: `--sequence-column` and `--label-column` flags
-- Prediction CLI: `sequence_column` config parameter
-- Solves canonical vs fragment file column naming (vh_sequence vs sequence)
-- Enables CLI usage with research-quality canonical datasets
+**Configuration System**
+- New `conf/classifier/xgboost.yaml` config group
+- Single Source of Truth (SSOT): Hydra YAML is authoritative for all hyperparameters
+- Removed hardcoded defaults from Python code (magic numbers eliminated)
+- Strict configuration validation (fails fast on missing keys)
 
-**Logging Migration**
-- Complete migration from `print()` to `logging` module
-- Preprocessing scripts use proper log levels (INFO, DEBUG, WARNING, ERROR)
-- Mypy/ruff compliance maintained
-- Better production observability
+**Model Persistence**
+- Canonical trained models committed for reproducibility:
+  - `experiments/checkpoints/esm1v/logreg/` (ESM-1v + LogReg, 11KB)
+  - `experiments/checkpoints/esm2_650m/logreg/` (ESM-2 650M + LogReg, 11KB)
+- Triple serialization format support: `.pkl` (legacy), `.npz` + `.json` (research), `.xgb` (native)
+- Out-of-box inference capability without retraining
 
 ### 🐛 Bug Fixes
 
-**Critical Fixes**
-- Fixed inference CLI crash when `classifier.path=None` (now raises clear error with usage example)
-- Fixed double ESM loading (Predictor reuses classifier's embedder, saves 650MB memory)
-- Fixed E2E test downloading 2.5GB ESM model in CI (now gated behind `RUN_PREDICT_CLI_E2E=1`)
-- Fixed documentation claiming gap character support (gaps NOT supported, docs corrected)
-- Fixed Hydra CWD switching breaking relative paths (added `hydra.job.chdir: False`)
+**Configuration SSOT Enforcement**
+- Removed all `config.get(key, default)` fallback values from strategy classes
+- Eliminated dual source of truth between YAML and Python code
+- Fixed `random_state` conflict (Python: 42, YAML: `${training.random_state}`)
+- Now enforces complete config dictionary from Hydra (KeyError if missing)
 
-**Other Fixes**
-- Fixed missing test markers (@pytest.mark.e2e, @pytest.mark.slow)
-- Fixed .gitignore to exclude coverage.json (build artifact)
-- Fixed sys.path hacks removed from tests (proper package imports)
-- Fixed integration test markers added to embedding compatibility tests
+**Serialization Improvements**
+- Fixed internal classifier attribute access in model persistence
+- Enhanced Protocol compliance for save/load methods
+- Improved error messages for unfitted classifier save attempts
 
 ### 🔧 Improvements
 
-**Test Coverage**
-- Overall: 89.01% → 90.42% (+1.41%)
-- predict.py: 0% → 100%
-- prediction.py: 87.5%
-- **New tests:** 10 (6 CLI unit + 4 core logic tests)
-- **Test files added:**
-  - `tests/unit/cli/test_predict.py` (122 lines, 6 tests)
-  - `tests/unit/core/test_prediction.py` (136 lines, 4 tests)
-  - `tests/e2e/test_predict_cli.py` (124 lines, gated E2E)
+**Test Suite Hardening**
+- Updated entire test suite to provide explicit, complete configuration dictionaries
+- 520 tests passing (up from 476 in v0.5.0), 4 skipped
+- 90% test coverage maintained
+- New test fixtures: `default_classifier_params`, `FULL_LOGREG_DEFAULTS`
+- Comprehensive XGBoost integration and E2E tests added
 
-**Documentation (99 Updates!)**
-- **New guides:**
-  - `INFERENCE_GUIDE.md` - 111-line comprehensive prediction CLI guide
-  - `RELEASE_NOTES_v0.5.0.md` - Full release documentation
-  - `docs/needs_integration/INFERENCE_COMPLETION_REPORT.md` - Validation report
-  - `docs/needs_integration/CLI_TEST_REFACTOR_VALIDATION.md` - 328-line refactor audit
-  - `docs/needs_integration/DATASET_COLUMN_NAMING_INVESTIGATION.md` - 402-line design analysis
-  - `docs/needs_integration/SPEC_SHEET.md` - Feature specification
-- **Updated:**
-  - `README.md` - Prediction CLI section, updated usage examples
-  - `CLAUDE.md` - Inference CLI patterns
-  - `USAGE.md` - Prediction examples
-  - `GEMINI.md` - Agent guidance
-  - `AGENTS.md` - Multi-agent workflows
+**Code Quality**
+- Removed 153 lines of legacy/redundant code
+- Added 6,419 lines of new functionality (Strategy Pattern + XGBoost + tests)
+- Zero ruff/mypy violations (strict mode)
+- Comprehensive documentation (3,026 lines across 4 developer guides)
 
 **Developer Experience**
-- Proper test markers for selective test runs (@slow, @e2e, @integration)
-- 100% mypy --strict compliance maintained
-- Zero ruff warnings across all new code
-- Modular CLI design (easier testing, debugging, extension)
+- Clear extension path for future classifiers (MLP, SVM, etc.)
+- Registry pattern available for plugin-based classifier registration
+- Improved type hints and protocol definitions
+- Better separation of concerns (embeddings vs classification)
+
+### 📦 Dependencies
+
+**New Requirements:**
+- `xgboost>=2.0.0` - Gradient boosting classifier backend
+
+### ✅ Verification
+
+**End-to-End Validation:**
+- ✅ All 520 tests passing (90% coverage)
+- ✅ Backward compatibility: Existing LogReg behavior unchanged
+- ✅ Novo parity: 6/6 critical E2E benchmarks passing
+- ✅ XGBoost nonlinear tests: XOR dataset validation passing
+- ✅ Serialization: All 3 formats (pkl/npz/xgb) working correctly
+- ✅ Type safety: mypy --strict clean
+- ✅ Code quality: ruff format + ruff check clean
 
 ### 🔄 Migration Notes
 
 **100% Backward Compatible** - No breaking changes!
 
-**New CLI Available:**
+**Existing Usage (Still Works):**
 ```bash
-# Prediction (NEW in v0.5.0)
-uv run antibody-predict \
-    input_file=sequences.csv \
-    output_file=predictions.csv \
-    classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+# Default behavior unchanged (uses LogisticRegression)
+antibody-train
 
-# Enhanced testing (column name overrides)
-uv run antibody-test \
-    --model model.pkl \
-    --data data.csv \
-    --sequence-column vh_sequence \  # NEW
-    --label-column label              # NEW
+# Explicit LogReg (same as before)
+antibody-train classifier.type=logistic_regression
 ```
 
-**No Changes Required:**
-- Existing workflows continue to work
-- Training CLI unchanged
-- Testing CLI backward compatible (new flags optional)
-
-### 📊 Stats
-
-- **256 commits** since v0.4.0
-- **473 files changed** (+820,059/-230,640 lines)
-- **31 features**, 20 fixes, 15 refactors, 12 tests, 99 docs
-- **476 tests passing** (up from 468)
-- **90.42% coverage** (up from 89.01%)
-- **100% type safety** (mypy --strict clean)
-
-### ✅ Validation
-
-**Quality Gates:**
+**New XGBoost Usage:**
 ```bash
-$ uv run pytest
-===== 476 passed, 4 skipped in 83.57s =====
+# Train with XGBoost classifier
+antibody-train classifier.type=xgboost
 
-$ make typecheck
-✅ Success: no issues found in 97 source files
+# Override XGBoost hyperparameters
+antibody-train classifier.type=xgboost classifier.n_estimators=200 classifier.max_depth=8
 
-$ make lint
-✅ All checks passed!
-
-$ uv run bandit -r src/
-✅ No issues identified
+# Hyperparameter sweep
+antibody-train --multirun classifier.type=xgboost classifier.n_estimators=50,100,200
 ```
 
-### 🎯 What's Next?
+### 📚 Documentation
 
-**Immediate (Post-v0.5.0):**
-- Deploy to HuggingFace Spaces (Gradio wrapper)
-- Model registry (auto-download checkpoints from GitHub Releases)
-- Docker image with cached ESM models
+**New Developer Guides (3,026 lines):**
+- `docs/developer-guide/xgboost-api-design.md` (1,085 lines)
+- `docs/developer-guide/xgboost-integration-spec.md` (655 lines)
+- `docs/developer-guide/xgboost-test-plan.md` (1,013 lines)
+- `docs/developer-guide/xgboost-implementation-status.md` (273 lines)
 
-**Short-term (v0.6.0):**
-- Batch prediction API
-- Confidence intervals (bootstrap uncertainty)
-- Feature importance (SHAP values)
+**Audit Report:**
+- `XGBOOST_BRANCH_AUDIT_REPORT.md` - Comprehensive technical review
 
-**Long-term (v1.0.0):**
-- Biophysical features (pI, net charge, hydrophobicity)
-- Multi-model ensembles (ESM-1v + ESM-2 + AntiBERTy)
-- Web dashboard
+### 🎯 Future Work
+
+- MLP classifier strategy (neural network backend)
+- SVM classifier strategy (support vector machines)
+- Ensemble strategies (voting, stacking)
+- Plugin system for third-party classifiers
+
+---
+
+## [0.5.0] - 2025-11-19
+
+### 🚀 Production Inference Pipeline
+
+Complete `predict → test → train` workflow with production-ready inference CLI, modular testing pipeline, and comprehensive validation suite.
+
+### ✨ Features
+
+**Inference CLI (`antibody-predict`)**
+- Production-ready `antibody-predict` command with 100% test coverage
+- Assay-specific thresholds (PSR: 0.5495, ELISA: 0.5)
+- Resource optimization (reuses embedder instance, saves 650MB RAM)
+- Column name flexibility (--sequence-col, --label-col)
+- Clear validation and error messages
+
+**Modular Testing Pipeline**
+- Refactored `test.py`: 872 → 141 lines (83.8% reduction, -731 lines)
+- Extracted `ModelTester` class for reusable testing logic
+- Column name flexibility across all CLIs (train/test/predict)
+- Comprehensive CLI test suite
+
+**Validation & Quality**
+- 90.42% test coverage (up from 89.01%)
+- 476 tests passing
+- Complete validation suite for all CLIs
+
+### 🐛 Bug Fixes
+
+**pyproject.toml Version Mismatch (Docker Fix)**
+- Fixed v0.5.0 tag pointing to 0.4.0 in pyproject.toml
+- Docker packages now correctly show 0.5.0
+- Retroactive fix with force-updated tag
+
+### 📦 Dependencies
+
+No new dependencies added.
+
+### ✅ Verification
+
+**End-to-End Validation:**
+- ✅ 476 tests passing
+- ✅ 90.42% coverage
+- ✅ All CLIs functional with column flexibility
+- ✅ Inference pipeline validated on all datasets
+
+### 📚 Documentation
+
+**New Guides:**
+- `docs/user-guide/INFERENCE_GUIDE.md` - Complete inference workflow
+- Updated CLAUDE.md, USAGE.md with predict CLI examples
 
 ---
 

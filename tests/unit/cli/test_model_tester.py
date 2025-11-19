@@ -64,6 +64,11 @@ def mock_binary_classifier() -> BinaryClassifier:
         batch_size=32,
         random_state=42,
         max_iter=100,  # Required param
+        # ADDED defaults
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     # Mock only the embedding extractor to avoid loading real ESM model

@@ -44,6 +44,7 @@ def test_params() -> dict[str, Any]:
         "C": 1.0,
         "penalty": "l2",
         "solver": "lbfgs",
+        "class_weight": None,
         "batch_size": 8,  # Small batches for fast tests
     }
 

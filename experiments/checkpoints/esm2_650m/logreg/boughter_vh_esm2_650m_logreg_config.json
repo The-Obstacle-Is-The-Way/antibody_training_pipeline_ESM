@@ -1,0 +1,14 @@
+{
+  "model_type": "LogisticRegression",
+  "sklearn_version": "1.7.2",
+  "C": 1.0,
+  "penalty": "l2",
+  "solver": "lbfgs",
+  "class_weight": null,
+  "max_iter": 1000,
+  "random_state": 42,
+  "esm_model": "facebook/esm2_t33_650M_UR50D",
+  "esm_revision": "main",
+  "batch_size": 8,
+  "device": "mps"
+}

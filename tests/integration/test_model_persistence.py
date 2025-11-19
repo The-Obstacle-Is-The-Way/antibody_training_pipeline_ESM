@@ -41,6 +41,7 @@ def trained_classifier(mock_transformers_model: tuple[Any, Any]) -> BinaryClassi
         "C": 0.5,
         "penalty": "l2",
         "solver": "lbfgs",
+        "class_weight": None,
         "batch_size": 8,
     }
     classifier = BinaryClassifier(params=params)
@@ -247,6 +248,10 @@ def test_fitted_state_preserved_after_load(
         "random_state": 42,
         "max_iter": 100,
         "batch_size": 8,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
 
@@ -292,6 +297,10 @@ def test_load_classifier_without_batch_size_param(
         "random_state": 42,
         "max_iter": 100,
         "batch_size": 8,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
 
@@ -332,6 +341,9 @@ def test_save_multiple_models_to_different_files(
         "max_iter": 100,
         "C": 0.1,
         "batch_size": 8,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier_1 = BinaryClassifier(params=params_1)
 
@@ -342,6 +354,9 @@ def test_save_multiple_models_to_different_files(
         "max_iter": 100,
         "C": 1.0,
         "batch_size": 8,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier_2 = BinaryClassifier(params=params_2)
 
@@ -486,6 +501,9 @@ def test_full_train_save_load_predict_pipeline(
         "max_iter": 100,
         "C": 0.5,
         "batch_size": 8,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
 

@@ -42,6 +42,7 @@ def cv_params() -> dict[str, Any]:
         "C": 1.0,
         "penalty": "l2",
         "solver": "lbfgs",
+        "class_weight": None,
         "batch_size": 8,
     }
 
@@ -430,6 +431,9 @@ def test_set_params_works_during_cross_validation(
         max_iter=100,
         C=1.0,
         batch_size=8,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     # Act: Update parameters

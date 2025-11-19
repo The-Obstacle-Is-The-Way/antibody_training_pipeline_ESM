@@ -26,7 +26,7 @@ Phase: 4 (CLI & E2E Tests)
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pytest
@@ -166,12 +166,17 @@ def test_psr_threshold_calibration(mock_transformers_model: tuple[Any, Any]) -> 
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(X_train, y_train)
 
     # Create test case with probability = 0.55 (above PSR threshold 0.5495)
     # Mock predict_proba to return known probabilities
-    classifier.classifier.predict_proba = lambda X: np.array([[0.45, 0.55]])
+    # Cast to Any to allow monkeypatching instance method
+    cast(Any, classifier.classifier).predict_proba = lambda X: np.array([[0.45, 0.55]])
 
     # Act: Predict with PSR threshold
     X_test = np.zeros((1, 1280))
@@ -198,11 +203,15 @@ def test_elisa_threshold_default(mock_transformers_model: tuple[Any, Any]) -> No
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(X_train, y_train)
 
     # Create test case with probability = 0.51 (just above ELISA threshold)
-    classifier.classifier.predict_proba = lambda X: np.array([[0.49, 0.51]])
+    cast(Any, classifier.classifier).predict_proba = lambda X: np.array([[0.49, 0.51]])
 
     # Act: Predict with ELISA threshold (default)
     X_test = np.zeros((1, 1280))
@@ -316,6 +325,10 @@ def test_cross_dataset_predictions_are_valid(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(X_train, y_train)
 
@@ -350,6 +363,10 @@ def test_training_is_reproducible_with_same_seed(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier1.fit(X, y)
     pred1 = classifier1.predict(X_test)
@@ -360,6 +377,10 @@ def test_training_is_reproducible_with_same_seed(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier2.fit(X, y)
     pred2 = classifier2.predict(X_test)
@@ -381,6 +402,10 @@ def test_novo_parameters_documented_correctly() -> None:
         random_state=42,
         max_iter=100,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     # Assert: PSR threshold documented
