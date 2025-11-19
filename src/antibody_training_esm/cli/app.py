@@ -2,6 +2,7 @@
 This module contains the Gradio app for the antibody non-specificity prediction pipeline.
 """
 
+import logging
 import platform
 from pathlib import Path
 
@@ -11,6 +12,9 @@ import torch
 from omegaconf import DictConfig
 
 from antibody_training_esm.core.prediction import Predictor
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 
 def launch_gradio_app(cfg: DictConfig) -> None:
@@ -23,6 +27,11 @@ def launch_gradio_app(cfg: DictConfig) -> None:
     Args:
         cfg: The Hydra configuration object.
     """
+    # Set log level from config
+    logging.basicConfig(
+        level=getattr(logging, cfg.gradio.log_level.upper(), logging.INFO)
+    )
+
     # Robust Device & Threading Configuration
     # -------------------------------------------------------------------------
     # 1. Determine the optimal device for inference
@@ -32,8 +41,8 @@ def launch_gradio_app(cfg: DictConfig) -> None:
     device = cfg.model.get("device", "cpu")
 
     if platform.system() == "Darwin" and device == "mps":
-        print(
-            "WARNING: macOS detected. Forcing CPU for Gradio app stability (MPS workaround)."
+        logger.warning(
+            "macOS detected. Forcing CPU for Gradio app stability (MPS workaround)."
         )
         device = "cpu"
 
@@ -42,8 +51,8 @@ def launch_gradio_app(cfg: DictConfig) -> None:
     #    - We restrict it to 1 thread to ensure stability.
     #    - Linux/CUDA systems remain untouched and can use full parallelism.
     if platform.system() == "Darwin" and device == "cpu":
-        print(
-            "WARNING: macOS/CPU detected. Setting torch.set_num_threads(1) to prevent OpenMP crashes."
+        logger.warning(
+            "macOS/CPU detected. Setting torch.set_num_threads(1) to prevent OpenMP crashes."
         )
         torch.set_num_threads(1)
 
@@ -67,6 +76,14 @@ def launch_gradio_app(cfg: DictConfig) -> None:
         device=device,
         config_path=config_path,
     )
+
+    # Warm-up: Run a dummy prediction to load the model into memory eagerly
+    try:
+        logger.info("Warming up model with dummy prediction...")
+        predictor.predict_single("QVQL")
+        logger.info("Model warmed up and ready.")
+    except Exception as e:
+        logger.warning(f"Model warm-up failed (non-fatal): {e}")
 
     def validate_input(sequence: str) -> None:
         """
@@ -102,7 +119,7 @@ def launch_gradio_app(cfg: DictConfig) -> None:
             validate_input(cleaned_seq)
 
             # Log request (observability)
-            print(f"Processing sequence length: {len(cleaned_seq)}")
+            logger.info(f"Processing sequence: length={len(cleaned_seq)}")
 
             # Predict
             result = predictor.predict_single(cleaned_seq)
@@ -114,31 +131,43 @@ def launch_gradio_app(cfg: DictConfig) -> None:
 
         except ValueError as e:
             raise gr.Error(str(e)) from e
+        except torch.cuda.OutOfMemoryError as e:
+            logger.error("GPU OOM during inference")
+            raise gr.Error(
+                "Server overloaded (GPU OOM). Please try again in a moment."
+            ) from e
         except Exception as e:
+            logger.exception("Unexpected prediction failure")
             raise gr.Error(f"Prediction failed: {str(e)}") from e
 
-    # Example sequences
+    # Example sequences (Diverse set)
     examples = [
         [
             "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVRQAPGQGLEWMGGIYPGDSDTRYSPSFQGQVTISADKSISTAYLQWSSLKASDTAMYYCARSTYYGGDWYFNVWGQGTLVTVSS"
-        ],
+        ],  # Standard VH
         [
             "DIQMTQSPSSLSASVGDRVTITCRASQSISSYLNWYQQKPGKAPKLLIYAASSLQSGVPSRFSGSGSGTDFTLTISSLQPEDFATYYCQQSYSTPLTFGGGTKVEIK"
-        ],
+        ],  # Standard VL
+        [
+            "EVQLVESGGGLVQPGGSLRLSCAASGFNIKDTYIHWVRQAPGKGLEWVARIYPTNGYTRYADSVKGRFTISADTSKNTAYLQMNSLRAEDTAVYYCARSWGQGTLVTVSS"
+        ],  # Short VH (Herceptin-like)
     ]
 
     # Create the Gradio interface
     iface = gr.Interface(
         fn=predict_sequence,
-        inputs=gr.Textbox(
-            lines=5,
+        inputs=gr.TextArea(
+            lines=7,
+            max_lines=20,
+            max_length=2000,
             label="Antibody Sequence (VH or VL)",
             placeholder="Paste amino acid sequence here (e.g., QVQL...)",
             info="Supported characters: Standard amino acids (ACDEFGHIKLMNPQRSTVWY).",
+            show_copy_button=True,
         ),
         outputs=[
-            gr.Textbox(label="Prediction"),
-            gr.Textbox(label="Probability of Non-Specificity"),
+            gr.Textbox(label="Prediction", show_copy_button=True),
+            gr.Textbox(label="Probability of Non-Specificity", show_copy_button=True),
         ],
         title="Antibody Non-Specificity Predictor",
         description=(
@@ -150,16 +179,25 @@ def launch_gradio_app(cfg: DictConfig) -> None:
         cache_examples=True,
         flagging_mode="never",
         analytics_enabled=False,
+        submit_btn="Predict Non-Specificity",
     )
 
     # Enable queueing for concurrency management
-    iface.queue(default_concurrency_limit=2, max_size=10)
+    """
+    Queue Configuration:
+    - concurrency_limit: Based on available VRAM (approx 3GB per ESM-1v inference).
+    - max_size: Prevents unbounded queue growth under load.
+    """
+    iface.queue(
+        default_concurrency_limit=cfg.gradio.queue.concurrency_limit,
+        max_size=cfg.gradio.queue.max_size,
+    )
 
     # Launch the app with hardened settings
     iface.launch(
-        server_name="0.0.0.0",
-        server_port=7860,
-        share=False,
+        server_name=cfg.gradio.server_name,
+        server_port=cfg.gradio.server_port,
+        share=cfg.gradio.share,
         show_api=False,
     )
 

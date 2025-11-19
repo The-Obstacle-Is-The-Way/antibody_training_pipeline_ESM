@@ -39,6 +39,10 @@ def test_launch_gradio_app(
     # Assert that Predictor was initialized
     mock_predictor_cls.assert_called_once()
 
+    # --- Verify Warm-up Call ---
+    # The app should have called predict_single("QVQL") immediately after init
+    mock_predictor.predict_single.assert_any_call("QVQL")
+
     # Assert that the Gradio interface was created
     mock_interface.assert_called_once()
     _, kwargs = mock_interface.call_args
@@ -46,9 +50,17 @@ def test_launch_gradio_app(
     assert "examples" in kwargs
     assert kwargs["analytics_enabled"] is False
 
+    # Verify Inputs are TextArea
+    inputs = kwargs["inputs"]
+    assert isinstance(inputs, gr.TextArea)
+    assert inputs.lines == 7
+    assert inputs.max_length == 2000
+
     # Verify queueing and launch parameters
     mock_iface_instance = mock_interface.return_value
     mock_iface_instance.queue.assert_called_once()
+
+    # Check launch args against config defaults (from predict.yaml)
     mock_iface_instance.launch.assert_called_once_with(
         server_name="0.0.0.0", server_port=7860, share=False, show_api=False
     )
@@ -59,7 +71,7 @@ def test_launch_gradio_app(
     # --- Test Valid Prediction ---
     prediction, probability = predict_fn("QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVR")
 
-    # Verify predictor call
+    # Verify predictor call (most recent)
     mock_predictor.predict_single.assert_called_with(
         "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVR"
     )
@@ -140,7 +152,6 @@ def test_launch_gradio_app_mac_mps_handling(
 ) -> None:
     """
     Test that the app forces CPU and single-threading on macOS when MPS is requested.
-    This prevents known OpenMP SegFaults in the Gradio environment.
     """
     # Simulate macOS environment
     mock_platform_system.return_value = "Darwin"
@@ -163,7 +174,6 @@ def test_launch_gradio_app_mac_mps_handling(
         launch_gradio_app(cfg)
 
     # Assert 1: Predictor initialized with 'cpu' (Safety downgrade)
-    # The actual call args are (model_name, classifier_path, device=...)
     _, kwargs = mock_predictor_cls.call_args
     assert kwargs["device"] == "cpu"
 
