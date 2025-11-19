@@ -197,11 +197,12 @@ Additional quick actions from preprocessing spec (safe to do anytime):
 - Document PYTHONPATH assumption in `preprocessing/README.md` (scripts run from repo root; `uv run` sets PYTHONPATH).
 - Optional: remove `sys.path.insert` hack in `preprocessing/harvey/test_psr_threshold.py` (low priority cleanup).
 
-### Fix #1: Remove sys.path Hack ⚠️
+### Fix #1: Remove sys.path Hack ✅ COMPLETE (Option A - Proper Implementation)
 
 **Priority:** P0 (CRITICAL)
 **Effort:** 5 minutes
-**Risk:** LOW
+**Status:** ✅ Implemented via Option A (Recommended)
+**Commits:** 004c08c (initial fix), cba7cac (proper relocation)
 
 **Problem:**
 ```python
@@ -212,44 +213,29 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 **What Karpathy Would Say:**
 > "This is a red flag that the package structure isn't working. If you need sys.path hacks, something is fundamentally wrong."
 
-**Fix Plan:**
+**Implementation: Option A - Move to tests/ directory (RECOMMENDED) ✅**
 
-**Option A: Move test to tests/ directory (RECOMMENDED)**
-```bash
-# Move test to proper location
-mv preprocessing/harvey/test_psr_threshold.py tests/integration/preprocessing/test_harvey_psr_threshold.py
+**What we did:**
+1. Removed sys.path hack (commit 004c08c)
+2. Moved file to proper location (commit cba7cac):
+   - FROM: `preprocessing/harvey/test_psr_threshold.py`
+   - TO: `tests/integration/preprocessing/test_harvey_psr_threshold.py`
+3. Created `tests/integration/preprocessing/` directory structure
+4. Updated docstring to clarify it's a standalone benchmark script (20-30 min runtime)
+5. Used `git mv` to preserve file history
 
-# Create directory structure
-mkdir -p tests/integration/preprocessing
-
-# Update imports in moved file
-# Change: from src.antibody_training_esm...
-# To: from antibody_training_esm...
-```
-
-**Option B: Use proper package imports**
-```python
-# Remove sys.path line entirely
-# Add at top:
-from antibody_training_esm.datasets.harvey import HarveyDataset
-from antibody_training_esm.core.classifier import BinaryClassifier
-
-# Run with: uv run python preprocessing/harvey/test_psr_threshold.py
-```
-
-**Downstream Impacts:**
-- [ ] Update any documentation referencing this test location
-- [ ] Update CI/CD if it runs this test directly
-- [ ] Add pytest marker if moving to tests/
+**Rationale for Option A:**
+- ✅ Tests belong in `tests/`, not in `preprocessing/` directories
+- ✅ Improves test discoverability and organization
+- ✅ Separates concerns: preprocessing/ for ETL, tests/ for validation
+- ✅ Follows pytest conventions
 
 **Verification:**
-```bash
-# Remove sys.path line
-grep -n "sys.path" preprocessing/harvey/test_psr_threshold.py  # Should be empty
-
-# Test still works
-uv run python preprocessing/harvey/test_psr_threshold.py
-```
+- [x] sys.path hack removed
+- [x] File moved to tests/integration/preprocessing/
+- [x] Test discovery unchanged (468 items)
+- [x] All quality gates pass (mypy, ruff, syntax check)
+- [x] File history preserved via `git mv`
 
 ---
 
