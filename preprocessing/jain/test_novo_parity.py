@@ -7,8 +7,17 @@ This script demonstrates that our model achieves EXACT parity with Novo:
 - Accuracy: 66.28% (57/86) (exact match)
 
 Usage:
+    # Test default model (esm1v + logreg)
     python -m preprocessing.jain.test_novo_parity
-    python -m preprocessing.jain.test_novo_parity --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+
+    # Test esm2_650m model
+    python -m preprocessing.jain.test_novo_parity --backbone esm2_650m
+
+    # Test custom model path
+    python -m preprocessing.jain.test_novo_parity --model /path/to/custom.pkl
+
+    # Future: test with different classifier head
+    python -m preprocessing.jain.test_novo_parity --backbone esm1v --classifier svm
 """
 
 from __future__ import annotations
@@ -33,12 +42,29 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--model",
         type=Path,
-        default=Path(
-            "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
-        ),
-        help="Path to trained logreg checkpoint (default: esm1v checkpoint in experiments/checkpoints).",
+        help="Path to trained model checkpoint (overrides --backbone and --classifier if specified).",
     )
-    return parser.parse_args()
+    parser.add_argument(
+        "--backbone",
+        choices=["esm1v", "esm2_650m"],
+        default="esm1v",
+        help="Model backbone to test (default: esm1v). Auto-constructs path: experiments/checkpoints/{backbone}/{classifier}/boughter_vh_{backbone}_{classifier}.pkl",
+    )
+    parser.add_argument(
+        "--classifier",
+        default="logreg",
+        help="Classifier head type (default: logreg). Used with --backbone to construct model path.",
+    )
+    args = parser.parse_args()
+
+    # Auto-construct model path from backbone + classifier if not explicitly provided
+    if args.model is None:
+        args.model = Path(
+            f"experiments/checkpoints/{args.backbone}/{args.classifier}/"
+            f"boughter_vh_{args.backbone}_{args.classifier}.pkl"
+        )
+
+    return args
 
 
 def main() -> None:
@@ -47,6 +73,9 @@ def main() -> None:
     logger.info("=" * 80)
     logger.info("NOVO NORDISK PARITY VERIFICATION")
     logger.info("=" * 80)
+    logger.info("")
+    logger.info(f"Backbone: {args.backbone}")
+    logger.info(f"Classifier: {args.classifier}")
     logger.info("")
 
     # Load the trained model
