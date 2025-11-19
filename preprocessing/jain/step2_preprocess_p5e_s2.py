@@ -52,7 +52,7 @@ OUTPUT_VH = (
 )  # VH-only benchmark
 
 # P5e-S2 Method Constants
-PSR_THRESHOLD = 0.4
+PSR_THRESHOLD = 0.5495  # Aligned with classifier.py ASSAY_THRESHOLDS["PSR"]
 
 # Reclassification tiers
 TIER_A_PSR = ["bimagrumab", "bavituximab", "ganitumab"]  # PSR >0.4

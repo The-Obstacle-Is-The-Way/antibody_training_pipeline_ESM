@@ -5,33 +5,20 @@ Professional training pipeline for antibody classification models.
 Includes cross-validation, embedding caching, and comprehensive evaluation.
 """
 
-import hashlib
-import json
 import logging
-import os
-import pickle  # nosec B403 - Used only for local trusted data (models, caches)
 from pathlib import Path
 from typing import Any, cast
 
 import hydra
 import numpy as np
-import sklearn  # For sklearn.__version__
 import yaml
 from omegaconf import DictConfig, OmegaConf
-from sklearn.metrics import (
-    accuracy_score,
-    classification_report,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
-)
-from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
-from antibody_training_esm.core.directory_utils import get_hierarchical_model_dir
-from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
+from antibody_training_esm.core.training.cache import CacheManager
+from antibody_training_esm.core.training.evaluation import Evaluator
+from antibody_training_esm.core.training.serialization import ModelSerializer
 from antibody_training_esm.data.loaders import load_data
 
 
@@ -222,184 +209,29 @@ def load_config(config_path: str) -> dict[str, Any]:
         raise ValueError(f"Invalid YAML in config file {config_path}: {e}") from e
 
 
+# Backward compatibility exports for tests that import these functions directly
+# These delegate to the new class-based implementations
 def validate_embeddings(
     embeddings: np.ndarray,
     num_sequences: int,
     logger: logging.Logger,
     source: str = "cache",
 ) -> None:
-    """
-    Validate embeddings are not corrupted.
-
-    Args:
-        embeddings: Embedding array to validate
-        num_sequences: Expected number of sequences
-        logger: Logger instance
-        source: Where embeddings came from (for error messages)
-
-    Raises:
-        ValueError: If embeddings are invalid (wrong shape, NaN, all zeros)
-    """
-    # Check shape
-    if embeddings.shape[0] != num_sequences:
-        raise ValueError(
-            f"Embeddings from {source} have wrong shape: expected {num_sequences} sequences, "
-            f"got {embeddings.shape[0]}"
-        )
-
-    if len(embeddings.shape) != 2:
-        raise ValueError(
-            f"Embeddings from {source} must be 2D array, got shape {embeddings.shape}"
-        )
-
-    # Check for NaN values
-    if np.isnan(embeddings).any():
-        nan_count = np.isnan(embeddings).sum()
-        raise ValueError(
-            f"Embeddings from {source} contain {nan_count} NaN values. "
-            "This indicates corrupted embeddings - cannot train on invalid data."
-        )
-
-    # Check for all-zero rows (corrupted/failed embeddings)
-    zero_rows = np.all(embeddings == 0, axis=1)
-    if zero_rows.any():
-        zero_count = zero_rows.sum()
-        raise ValueError(
-            f"Embeddings from {source} contain {zero_count} all-zero rows. "
-            "This indicates corrupted embeddings from failed batch processing. "
-            "Delete the cache file and recompute."
-        )
-
-    logger.debug(
-        f"Embeddings validation passed: shape={embeddings.shape}, no NaN, no zero rows"
-    )
+    """Legacy wrapper for CacheManager.validate_embeddings"""
+    CacheManager(logger).validate_embeddings(embeddings, num_sequences, source)
 
 
 def get_or_create_embeddings(
     sequences: list[str],
-    embedding_extractor: ESMEmbeddingExtractor,
+    embedding_extractor: Any,
     cache_path: str,
     dataset_name: str,
     logger: logging.Logger,
 ) -> np.ndarray:
-    """
-    Get embeddings from cache or create them
-
-    Args:
-        sequences: List of protein sequences
-        embedding_extractor: ESM embedding extractor
-        cache_path: Directory for caching embeddings
-        dataset_name: Name of dataset (for cache filename)
-        logger: Logger instance
-
-    Returns:
-        Array of embeddings
-
-    Raises:
-        ValueError: If cached or computed embeddings are invalid
-    """
-    # Create a hash that includes model metadata to prevent cache collisions
-    # between different backbones (ESM-1v, ESM2, AntiBERTa, etc.)
-    sequences_str = "|".join(sequences)
-    cache_key_components = (
-        f"{embedding_extractor.model_name}|"
-        f"{embedding_extractor.revision}|"
-        f"{embedding_extractor.max_length}|"
-        f"{sequences_str}"
+    """Legacy wrapper for CacheManager.get_or_create_embeddings"""
+    return CacheManager(logger).get_or_create_embeddings(
+        sequences, embedding_extractor, cache_path, dataset_name
     )
-    # Use SHA-256 (non-cryptographic usage) to satisfy security scanners and
-    # prevent weak-hash findings while keeping deterministic cache keys.
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
-    cache_file = os.path.join(
-        cache_path, f"{dataset_name}_{sequences_hash}_embeddings.pkl"
-    )
-
-    if os.path.exists(cache_file):
-        logger.info(f"Loading cached embeddings from {cache_file}")
-        with open(cache_file, "rb") as f:
-            cached_data_raw = pickle.load(f)  # nosec B301 - Hash-validated local cache
-
-        # Validate loaded data type and structure
-        if not isinstance(cached_data_raw, dict):
-            logger.warning(
-                f"Invalid cache file format (expected dict, got {type(cached_data_raw).__name__}). "
-                "Recomputing embeddings..."
-            )
-        elif (
-            "embeddings" not in cached_data_raw
-            or "sequences_hash" not in cached_data_raw
-        ):
-            missing_keys = {"embeddings", "sequences_hash"} - set(
-                cached_data_raw.keys()
-            )
-            logger.warning(
-                f"Corrupt cache file (missing keys: {missing_keys}). "
-                "Recomputing embeddings..."
-            )
-        else:
-            cached_data: dict[str, Any] = cached_data_raw
-
-            # Verify the cached sequences and model metadata match exactly
-            # This prevents ESM2 from reusing ESM-1v embeddings, etc.
-            model_metadata_matches = (
-                cached_data.get("model_name") == embedding_extractor.model_name
-                and cached_data.get("revision") == embedding_extractor.revision
-                and cached_data.get("max_length") == embedding_extractor.max_length
-            )
-
-            if (
-                len(cached_data["embeddings"]) == len(sequences)
-                and cached_data["sequences_hash"] == sequences_hash
-                and model_metadata_matches
-            ):
-                logger.info(
-                    f"Using cached embeddings for {len(sequences)} sequences "
-                    f"(model: {embedding_extractor.model_name}, hash: {sequences_hash})"
-                )
-                embeddings_result: np.ndarray = cached_data["embeddings"]
-
-                # Validate cached embeddings before using them
-                validate_embeddings(
-                    embeddings_result, len(sequences), logger, source="cache"
-                )
-
-                return embeddings_result
-            elif not model_metadata_matches:
-                logger.warning(
-                    f"Cached embeddings model mismatch "
-                    f"(cached: {cached_data.get('model_name')}, "
-                    f"current: {embedding_extractor.model_name}). "
-                    "Recomputing..."
-                )
-            else:
-                logger.warning("Cached embeddings hash mismatch, recomputing...")
-
-    logger.info(f"Computing embeddings for {len(sequences)} sequences...")
-    embeddings = embedding_extractor.extract_batch_embeddings(sequences)
-
-    # Validate newly computed embeddings before caching
-    validate_embeddings(embeddings, len(sequences), logger, source="computed")
-
-    # Cache the embeddings with metadata for verification
-    # Include model metadata to prevent cache collisions between different backbones
-    os.makedirs(cache_path, exist_ok=True)
-    cache_data = {
-        "embeddings": embeddings,
-        "sequences_hash": sequences_hash,
-        "num_sequences": len(sequences),
-        "dataset_name": dataset_name,
-        "model_name": embedding_extractor.model_name,
-        "revision": embedding_extractor.revision,
-        "max_length": embedding_extractor.max_length,
-    }
-    with open(cache_file, "wb") as f:
-        pickle.dump(cache_data, f)
-    logger.info(
-        f"Cached embeddings to {cache_file} "
-        f"(model: {embedding_extractor.model_name}, hash: {sequences_hash})"
-    )
-
-    return embeddings
 
 
 def evaluate_model(
@@ -410,54 +242,8 @@ def evaluate_model(
     metrics: list[str],
     logger: logging.Logger,
 ) -> dict[str, float]:
-    """
-    Evaluate model performance
-
-    Args:
-        classifier: Trained classifier
-        X: Embeddings array
-        y: Labels array
-        dataset_name: Name of dataset being evaluated
-        metrics: List of metrics to compute
-        logger: Logger instance
-
-    Returns:
-        Dictionary of metric results
-    """
-    logger.info(f"Evaluating model on {dataset_name} set")
-
-    # Get predictions
-    y_pred = classifier.predict(X)
-    y_pred_proba = classifier.predict_proba(X)[:, 1]  # Probability of positive class
-
-    # Calculate metrics
-    results = {}
-
-    if "accuracy" in metrics:
-        results["accuracy"] = accuracy_score(y, y_pred)
-
-    if "precision" in metrics:
-        results["precision"] = precision_score(y, y_pred, average="binary")
-
-    if "recall" in metrics:
-        results["recall"] = recall_score(y, y_pred, average="binary")
-
-    if "f1" in metrics:
-        results["f1"] = f1_score(y, y_pred, average="binary")
-
-    if "roc_auc" in metrics:
-        results["roc_auc"] = roc_auc_score(y, y_pred_proba)
-
-    # Log results
-    logger.info(f"{dataset_name} Results:")
-    for metric, value in results.items():
-        logger.info(f"  {metric}: {value:.4f}")
-
-    # Log classification report
-    logger.info(f"\n{dataset_name} Classification Report:")
-    logger.info(f"\n{classification_report(y, y_pred)}")
-
-    return results
+    """Legacy wrapper for Evaluator.evaluate_model"""
+    return Evaluator(logger).evaluate_model(classifier, X, y, dataset_name, metrics)
 
 
 def perform_cross_validation(
@@ -466,63 +252,8 @@ def perform_cross_validation(
     config: dict[str, Any],
     logger: logging.Logger,
 ) -> dict[str, dict[str, float]]:
-    """
-    Perform cross-validation
-
-    Args:
-        X: Embeddings array
-        y: Labels array
-        config: Configuration dictionary
-        logger: Logger instance
-
-    Returns:
-        Dictionary of cross-validation results
-    """
-    cv_config = config["classifier"]
-    cv_folds = cv_config["cv_folds"]
-    random_state = cv_config["random_state"]
-    stratify = cv_config["stratify"]
-
-    logger.info(f"Performing {cv_folds}-fold cross-validation")
-
-    # Setup cross-validation
-    if stratify:
-        cv = StratifiedKFold(n_splits=cv_folds, shuffle=True, random_state=random_state)
-    else:
-        from sklearn.model_selection import KFold
-
-        cv = KFold(n_splits=cv_folds, shuffle=True, random_state=random_state)
-
-    # Perform cross-validation for different metrics
-    cv_results = {}
-
-    # Create a new classifier instance for CV (to avoid fitting on full data)
-    cv_params = config["classifier"].copy()
-    cv_params["model_name"] = config["model"]["name"]
-    cv_params["device"] = config["model"]["device"]
-    cv_params["batch_size"] = config["training"].get("batch_size", DEFAULT_BATCH_SIZE)
-    cv_classifier = BinaryClassifier(cv_params)
-
-    # Use full BinaryClassifier for CV (no StandardScaler - matches Novo methodology)
-
-    # Accuracy
-    scores = cross_val_score(cv_classifier, X, y, cv=cv, scoring="accuracy")
-    cv_results["cv_accuracy"] = {"mean": scores.mean(), "std": scores.std()}
-
-    # F1 score
-    scores = cross_val_score(cv_classifier, X, y, cv=cv, scoring="f1")
-    cv_results["cv_f1"] = {"mean": scores.mean(), "std": scores.std()}
-
-    # ROC AUC
-    scores = cross_val_score(cv_classifier, X, y, cv=cv, scoring="roc_auc")
-    cv_results["cv_roc_auc"] = {"mean": scores.mean(), "std": scores.std()}
-
-    # Log results
-    logger.info("Cross-validation Results:")
-    for metric, values in cv_results.items():
-        logger.info(f"  {metric}: {values['mean']:.4f} (+/- {values['std'] * 2:.4f})")
-
-    return cv_results
+    """Legacy wrapper for Evaluator.perform_cross_validation"""
+    return Evaluator(logger).perform_cross_validation(X, y, config)
 
 
 def save_cv_results(
@@ -531,243 +262,22 @@ def save_cv_results(
     experiment_name: str,
     logger: logging.Logger,
 ) -> None:
-    """
-    Save cross-validation results to structured YAML file.
-
-    Args:
-        cv_results: Dictionary of CV metrics with mean/std
-        output_dir: Directory to save CV results file
-        experiment_name: Name of the experiment
-        logger: Logger instance
-
-    Example output:
-        experiment: novo_replication
-        timestamp: 2025-11-15T17:30:00
-        cv_metrics:
-          cv_accuracy:
-            mean: 0.6413
-            std: 0.0972
-          cv_f1:
-            mean: 0.6604
-            std: 0.0994
-    """
-    from datetime import datetime
-
-    # Ensure output directory exists
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    cv_file = output_dir / "cv_results.yaml"
-
-    # Convert numpy types to native Python floats for clean YAML
-    cv_results_clean = {}
-    for metric, values in cv_results.items():
-        cv_results_clean[metric] = {
-            "mean": float(values["mean"]),
-            "std": float(values["std"]),
-        }
-
-    with open(cv_file, "w") as f:
-        yaml.dump(
-            {
-                "experiment": experiment_name,
-                "timestamp": datetime.now().isoformat(),
-                "cv_metrics": cv_results_clean,
-            },
-            f,
-            default_flow_style=False,
-        )
-
-    logger.info(f"CV results saved to {cv_file}")
+    """Legacy wrapper for Evaluator.save_cv_results"""
+    Evaluator(logger).save_cv_results(cv_results, output_dir, experiment_name)
 
 
 def save_model(
     classifier: BinaryClassifier, config: dict[str, Any], logger: logging.Logger
 ) -> dict[str, str]:
-    """
-    Save trained model in dual format (pickle + NPZ+JSON)
-
-    Models are saved in hierarchical directory structure:
-        {model_save_dir}/{model_shortname}/{classifier_type}/{model_name}.*
-
-    Example:
-        experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
-
-    Args:
-        classifier: Trained classifier
-        config: Configuration dictionary
-        logger: Logger instance
-
-    Returns:
-        Dictionary with paths to saved files:
-        {
-            "pickle": "experiments/checkpoints/esm1v/logreg/model.pkl",
-            "npz": "experiments/checkpoints/esm1v/logreg/model.npz",
-            "config": "experiments/checkpoints/esm1v/logreg/model_config.json"
-        }
-        Empty dict if saving is disabled.
-    """
-    if not config["training"]["save_model"]:
-        return {}
-
-    model_name = config["training"]["model_name"]
-    base_save_dir = config["training"]["model_save_dir"]
-
-    # Generate hierarchical directory path
-    hierarchical_dir = get_hierarchical_model_dir(
-        base_save_dir,
-        config["model"]["name"],
-        config["classifier"],
-    )
-    hierarchical_dir.mkdir(parents=True, exist_ok=True)
-    logger.info(f"Using hierarchical model directory: {hierarchical_dir}")
-
-    base_path = hierarchical_dir / model_name
-
-    # Format 1: Pickle checkpoint (research/debugging)
-    pickle_path = f"{base_path}.pkl"
-    with open(pickle_path, "wb") as f:
-        pickle.dump(classifier, f)
-    logger.info(f"Saved pickle checkpoint: {pickle_path}")
-
-    # Format 2: Strategy-specific production serialization
-    # Use duck typing to detect serialization method
-    saved_paths = {"pickle": str(pickle_path)}
-
-    if hasattr(classifier.classifier, "save_model"):
-        # XGBoost native .xgb format (pickle-free)
-        xgb_path = f"{base_path}.xgb"
-        classifier.classifier.save_model(str(xgb_path))
-        logger.info(f"Saved XGBoost native model: {xgb_path}")
-        saved_paths["xgb"] = str(xgb_path)
-    elif hasattr(classifier.classifier, "to_arrays"):
-        # LogReg NPZ format (sklearn arrays)
-        npz_path = f"{base_path}.npz"
-        arrays = classifier.classifier.to_arrays()
-        np.savez(npz_path, **cast(dict[str, Any], arrays))
-        logger.info(f"Saved NPZ arrays: {npz_path}")
-        saved_paths["npz"] = str(npz_path)
-    else:
-        # Fallback: legacy LogReg direct attribute access
-        # Cast to Any because protocol doesn't enforce LogReg attributes
-        inner_clf = cast(Any, classifier.classifier)
-        npz_path = f"{base_path}.npz"
-        np.savez(
-            npz_path,
-            coef=inner_clf.coef_,
-            intercept=inner_clf.intercept_,
-            classes=inner_clf.classes_,
-            n_features_in=np.array([inner_clf.n_features_in_]),
-            n_iter=inner_clf.n_iter_,
-        )
-        logger.info(f"Saved NPZ arrays (legacy): {npz_path}")
-        saved_paths["npz"] = str(npz_path)
-
-    # Format 3: JSON metadata (universal across all strategies)
-    json_path = f"{base_path}_config.json"
-
-    # Get strategy config via to_dict() method (all strategies implement this)
-    strategy_config = classifier.classifier.to_dict()
-    classifier_type = strategy_config.get("type", "logistic_regression")
-
-    metadata = {
-        # Model architecture
-        "model_name": classifier.model_name,  # HuggingFace model ID
-        "model_type": classifier_type,  # Dynamic: logistic_regression, xgboost, etc.
-        "sklearn_version": sklearn.__version__,
-        # Classifier configuration block (from strategy's to_dict())
-        "classifier": strategy_config,
-        # ESM embedding extractor params
-        "esm_model": classifier.model_name,
-        "esm_revision": classifier.revision,
-        "batch_size": classifier.batch_size,
-        "device": classifier.device,
-    }
-
-    # Legacy flat fields for backward compatibility (LogReg only)
-    if classifier_type == "logistic_regression":
-        metadata.update(
-            {
-                "C": classifier.C,
-                "penalty": classifier.penalty,
-                "solver": classifier.solver,
-                "class_weight": classifier.class_weight,
-                "max_iter": classifier.max_iter,
-                "random_state": classifier.random_state,
-            }
-        )
-
-    with open(json_path, "w") as f:
-        json.dump(metadata, f, indent=2)
-    logger.info(f"Saved JSON config: {json_path}")
-
-    saved_paths["config"] = str(json_path)
-    logger.info(f"Model saved successfully ({classifier_type} format)")
-    return saved_paths
+    """Legacy wrapper for ModelSerializer.save_model"""
+    return ModelSerializer(logger).save_model(classifier, config)
 
 
 def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
-    """
-    Load model from NPZ+JSON format (production deployment)
-
-    Args:
-        npz_path: Path to .npz file with arrays
-        json_path: Path to .json file with metadata
-
-    Returns:
-        Reconstructed BinaryClassifier instance
-
-    Notes:
-        This function enables production deployment without pickle files.
-        It reconstructs a fully functional BinaryClassifier from NPZ+JSON format.
-    """
-    # Load arrays
-    arrays = np.load(npz_path)
-    coef = arrays["coef"]
-    intercept = arrays["intercept"]
-    classes = arrays["classes"]
-    n_features_in = int(arrays["n_features_in"][0])
-    n_iter = arrays["n_iter"]
-
-    # Load metadata
-    with open(json_path) as f:
-        metadata = json.load(f)
-
-    # Handle class_weight: JSON converts int keys to strings, convert back
-    class_weight = metadata["class_weight"]
-    if isinstance(class_weight, dict):
-        # Convert string keys back to int keys (JSON forces keys to strings)
-        class_weight = {int(k): v for k, v in class_weight.items()}
-
-    # Reconstruct BinaryClassifier with ALL required params
-    params = {
-        # ESM params
-        "model_name": metadata["esm_model"],
-        "device": metadata.get("device", "cpu"),  # Use saved device or default to CPU
-        "batch_size": metadata["batch_size"],
-        "revision": metadata["esm_revision"],
-        # LogisticRegression hyperparameters
-        "C": metadata["C"],
-        "penalty": metadata["penalty"],
-        "solver": metadata["solver"],
-        "max_iter": metadata["max_iter"],
-        "random_state": metadata["random_state"],
-        "class_weight": class_weight,  # Restored with int keys (if dict)
-    }
-
-    # Create classifier (initializes with unfitted LogisticRegression)
-    classifier = BinaryClassifier(params)
-
-    # Restore fitted LogisticRegression state
-    # Cast to Any because protocol doesn't enforce LogReg attributes
-    inner_clf = cast(Any, classifier.classifier)
-    inner_clf.classifier.coef_ = coef
-    inner_clf.classifier.intercept_ = intercept
-    inner_clf.classifier.classes_ = classes
-    inner_clf.classifier.n_features_in_ = n_features_in
-    inner_clf.classifier.n_iter_ = n_iter
-    classifier.is_fitted = True
-
-    return classifier
+    """Legacy wrapper for ModelSerializer.load_model_from_npz"""
+    # Use temporary logger
+    logger = logging.getLogger(__name__)
+    return ModelSerializer(logger).load_model_from_npz(npz_path, json_path)
 
 
 def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
@@ -806,6 +316,11 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
     # Setup logging (Hydra-aware, accepts DictConfig)
     logger = setup_logging(cfg)
 
+    # Initialize helper classes
+    cache_manager = CacheManager(logger)
+    model_serializer = ModelSerializer(logger)
+    evaluator = Evaluator(logger)
+
     # Convert to dict for legacy code that requires dict access
     # Keep DictConfig as long as possible to preserve type safety and validation
     config: dict[str, Any] = cast(
@@ -833,8 +348,8 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
         # Get or create embeddings
         cache_dir = config["data"]["embeddings_cache_dir"]
 
-        X_train_embedded = get_or_create_embeddings(
-            X_train, classifier.embedding_extractor, cache_dir, "train", logger
+        X_train_embedded = cache_manager.get_or_create_embeddings(
+            X_train, classifier.embedding_extractor, cache_dir, "train"
         )
 
         # Convert labels to numpy array
@@ -842,8 +357,8 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
 
         # Perform cross-validation on full training data
         logger.info("Performing cross-validation on training data...")
-        cv_results = perform_cross_validation(
-            X_train_embedded, y_train_array, config, logger
+        cv_results = evaluator.perform_cross_validation(
+            X_train_embedded, y_train_array, config
         )
 
         # Save CV results to file (with Hydra/legacy mode fallback)
@@ -866,7 +381,7 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
             logger.info(f"Running without Hydra, saving CV results to: {cv_output_dir}")
 
         # Save CV results (both Hydra and legacy modes)
-        save_cv_results(cv_results, cv_output_dir, experiment_name, logger)
+        evaluator.save_cv_results(cv_results, cv_output_dir, experiment_name)
 
         # Train final model on full training set
         logger.info("Training final model on full training set...")
@@ -875,12 +390,12 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
 
         # Evaluate final model on training set
         metrics = config["training"]["metrics"]
-        train_results = evaluate_model(
-            classifier, X_train_embedded, y_train_array, "Training", metrics, logger
+        train_results = evaluator.evaluate_model(
+            classifier, X_train_embedded, y_train_array, "Training", metrics
         )
 
         # Save model
-        model_paths = save_model(classifier, config, logger)
+        model_paths = model_serializer.save_model(classifier, config)
 
         # Compile results
         results = {
