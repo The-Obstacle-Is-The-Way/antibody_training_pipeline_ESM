@@ -34,12 +34,16 @@ from typing import Any
 
 import pandas as pd
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 
 def validate_stage1_output() -> dict[str, Any]:
     """Validate Stage 1 output (boughter.csv)."""
-    print("\n" + "=" * 70)
-    print("Stage 1 Validation: DNA Translation & Novo Flagging")
-    print("=" * 70)
+    logger.info("\n" + "=" * 70)
+    logger.info("Stage 1 Validation: DNA Translation & Novo Flagging")
+    logger.info("=" * 70)
 
     csv_path = Path("data/train/boughter/processed/boughter.csv")
 
@@ -57,19 +61,19 @@ def validate_stage1_output() -> dict[str, Any]:
     loss = expected_total - actual_total
     loss_pct = (loss / expected_total) * 100
 
-    print(f"\n✓ Stage 1 Output: {csv_path}")
-    print(f"  Expected sequences: {expected_total}")
-    print(f"  Actual sequences:   {actual_total}")
-    print(f"  Loss:               {loss} ({loss_pct:.2f}%)")
+    logger.info(f"\n✓ Stage 1 Output: {csv_path}")
+    logger.info(f"  Expected sequences: {expected_total}")
+    logger.info(f"  Actual sequences:   {actual_total}")
+    logger.info(f"  Loss:               {loss} ({loss_pct:.2f}%)")
 
     # Check for sequence quality issues
-    print("\n✓ Sequence Quality Checks:")
+    logger.info("\n✓ Sequence Quality Checks:")
 
     # Stop codons
     heavy_stops = df["heavy_seq"].str.contains("\\*", regex=True).sum()
     light_stops = df["light_seq"].str.contains("\\*", regex=True).sum()
-    print(f"  Stop codons (*) in heavy: {heavy_stops}")
-    print(f"  Stop codons (*) in light: {light_stops}")
+    logger.info(f"  Stop codons (*) in heavy: {heavy_stops}")
+    logger.info(f"  Stop codons (*) in light: {light_stops}")
 
     # Excessive X's (>5%)
     def check_x_ratio(seq: str | float | None) -> bool:
@@ -82,43 +86,45 @@ def validate_stage1_output() -> dict[str, Any]:
 
     heavy_x = df["heavy_seq"].apply(check_x_ratio).sum()
     light_x = df["light_seq"].apply(check_x_ratio).sum()
-    print(f"  Excessive X's (>5%) in heavy: {heavy_x}")
-    print(f"  Excessive X's (>5%) in light: {light_x}")
+    logger.info(f"  Excessive X's (>5%) in heavy: {heavy_x}")
+    logger.info(f"  Excessive X's (>5%) in light: {light_x}")
 
     # Length distribution
     heavy_len = df["heavy_seq"].str.len()
     light_len = df["light_seq"].str.len()
-    print("\n✓ Sequence Length Ranges:")
-    print(
+    logger.info("\n✓ Sequence Length Ranges:")
+    logger.info(
         f"  Heavy: {heavy_len.min()}-{heavy_len.max()} aa "
         f"(mean: {heavy_len.mean():.1f})"
     )
-    print(
+    logger.info(
         f"  Light: {light_len.min()}-{light_len.max()} aa "
         f"(mean: {light_len.mean():.1f})"
     )
 
     # Check Novo flagging distribution
-    print("\n✓ Novo Flagging Strategy:")
+    logger.info("\n✓ Novo Flagging Strategy:")
     for category in ["specific", "mild", "non_specific"]:
         count = len(df[df["flag_category"] == category])
         pct = count / len(df) * 100
         included = len(
             df[(df["flag_category"] == category) & df["include_in_training"]]
         )
-        print(f"  {category:15s}: {count:4d} ({pct:5.2f}%) - {included} in training")
+        logger.info(
+            f"  {category:15s}: {count:4d} ({pct:5.2f}%) - {included} in training"
+        )
 
     # Training set balance
     training_df = df[df["include_in_training"]]
-    print("\n✓ Training Set Balance:")
-    print(f"  Total training:    {len(training_df)}")
+    logger.info("\n✓ Training Set Balance:")
+    logger.info(f"  Total training:    {len(training_df)}")
     if len(training_df) > 0:
         label_counts = training_df["label"].value_counts()
         for label in sorted(label_counts.index):
             count = label_counts[label]
             pct = count / len(training_df) * 100
             label_name = "Specific (0)" if label == 0 else "Non-specific (1)"
-            print(f"  {label_name}: {count} ({pct:.1f}%)")
+            logger.info(f"  {label_name}: {count} ({pct:.1f}%)")
 
     return {
         "success": True,
@@ -132,9 +138,9 @@ def validate_stage1_output() -> dict[str, Any]:
 
 def validate_stage2_output() -> dict[str, Any]:
     """Validate Stage 2 output (fragment CSVs + annotation)."""
-    print("\n" + "=" * 70)
-    print("Stage 2 Validation: ANARCI Annotation & Fragment Extraction")
-    print("=" * 70)
+    logger.info("\n" + "=" * 70)
+    logger.info("Stage 2 Validation: ANARCI Annotation & Fragment Extraction")
+    logger.info("=" * 70)
 
     # Check if Stage 2 has been run
     output_dir = Path("data/train/boughter/annotated")
@@ -164,15 +170,15 @@ def validate_stage2_output() -> dict[str, Any]:
     stage2_annotated = stage1_count - stage2_failures
     stage2_success_rate = (stage2_annotated / stage1_count) * 100
 
-    print("\n✓ ANARCI Annotation Success:")
-    print(f"  Stage 1 input:          {stage1_count} sequences")
-    print(f"  Stage 2 annotated:      {stage2_annotated} sequences")
-    print(
+    logger.info("\n✓ ANARCI Annotation Success:")
+    logger.info(f"  Stage 1 input:          {stage1_count} sequences")
+    logger.info(f"  Stage 2 annotated:      {stage2_annotated} sequences")
+    logger.info(
         f"  Stage 2 failures:       {stage2_failures} ({stage2_failures / stage1_count * 100:.2f}%)"
     )
     target_met = stage2_success_rate >= 95.0
     status = "✅ PASS" if target_met else "❌ FAIL"
-    print(f"  Success rate:           {stage2_success_rate:.2f}%  ({status})")
+    logger.info(f"  Success rate:           {stage2_success_rate:.2f}%  ({status})")
 
     # Stage 3 QC removals
     qc_log_path = output_dir / "qc_filtered_sequences.txt"
@@ -187,24 +193,24 @@ def validate_stage2_output() -> dict[str, Any]:
         (stage3_retained / stage2_annotated) * 100 if stage2_annotated else 0.0
     )
 
-    print("\n✓ Stage 3 (Post-Annotation QC):")
-    print(f"  Sequences entering Stage 3: {stage2_annotated}")
-    print(f"  Filtered (X/empty CDRs):    {stage3_removed}")
-    print(
+    logger.info("\n✓ Stage 3 (Post-Annotation QC):")
+    logger.info(f"  Sequences entering Stage 3: {stage2_annotated}")
+    logger.info(f"  Filtered (X/empty CDRs):    {stage3_removed}")
+    logger.info(
         f"  Final clean sequences:      {stage3_retained} ({stage3_retention:.2f}% retention)"
     )
 
     # Load final fragment (VH) to confirm counts
     df_vh = pd.read_csv(vh_file, comment="#")
     if len(df_vh) != stage3_retained:
-        print(
+        logger.info(
             f"\n⚠️  Warning: Final VH count ({len(df_vh)}) does not match "
             f"Stage 3 retained count ({stage3_retained})."
         )
 
     # Report failures by subset (Stage 2)
     if failure_ids:
-        print("\n✓ Stage 2 Failures by Subset:")
+        logger.info("\n✓ Stage 2 Failures by Subset:")
         from collections import Counter
 
         subset_counts: Counter[str] = Counter()
@@ -229,13 +235,13 @@ def validate_stage2_output() -> dict[str, Any]:
             subset_total = len(df_stage1[df_stage1["subset"] == subset])
             subset_failures = subset_counts[subset]
             subset_fail_pct = (subset_failures / subset_total) * 100
-            print(
+            logger.info(
                 f"  {subset:12s}: {subset_failures:3d}/{subset_total:3d} "
                 f"({subset_fail_pct:5.1f}%)"
             )
 
     # Check CDR length distributions
-    print("\n✓ CDR Length Distributions (from VH_only):")
+    logger.info("\n✓ CDR Length Distributions (from VH_only):")
     h_cdr1_file = output_dir / "H-CDR1_boughter.csv"
     h_cdr2_file = output_dir / "H-CDR2_boughter.csv"
     h_cdr3_file = output_dir / "H-CDR3_boughter.csv"
@@ -247,19 +253,19 @@ def validate_stage2_output() -> dict[str, Any]:
 
         for name, df_cdr in [("H-CDR1", cdr1), ("H-CDR2", cdr2), ("H-CDR3", cdr3)]:
             lengths = df_cdr["sequence_length"]
-            print(
+            logger.info(
                 f"  {name}: {lengths.min()}-{lengths.max()} aa "
                 f"(mean: {lengths.mean():.1f}, median: {lengths.median():.0f})"
             )
 
     # Check fragment file count
     fragment_files = list(output_dir.glob("*_boughter.csv"))
-    print(f"\n✓ Fragment Files: {len(fragment_files)} files found")
+    logger.info(f"\n✓ Fragment Files: {len(fragment_files)} files found")
     expected_fragments = 16
     if len(fragment_files) == expected_fragments:
-        print(f"  Status: ✅ All {expected_fragments} fragments present")
+        logger.info(f"  Status: ✅ All {expected_fragments} fragments present")
     else:
-        print(
+        logger.info(
             f"  Status: ❌ Expected {expected_fragments}, found {len(fragment_files)}"
         )
 
@@ -280,8 +286,8 @@ def generate_report(
     stage1_results: dict[str, Any], stage2_results: dict[str, Any]
 ) -> None:
     """Generate validation report."""
-    print("\n" + "=" * 70)
-    print("Validation Summary")
+    logger.info("\n" + "=" * 70)
+    logger.info("Validation Summary")
     print("=" * 70)
 
     report_lines = [
@@ -354,18 +360,18 @@ def generate_report(
     report_lines.append("")
 
     report_text = "\n".join(report_lines)
-    print(report_text)
+    logger.info(report_text)
 
     # Save report
     report_path = Path("data/train/boughter/annotated/validation_report.txt")
     report_path.write_text(report_text)
-    print(f"\n✓ Validation report saved to: {report_path}")
+    logger.info(f"\n✓ Validation report saved to: {report_path}")
 
 
 def main() -> int:
     """Main validation pipeline."""
-    print("=" * 70)
-    print("Boughter Dataset Validation")
+    logger.info("=" * 70)
+    logger.info("Boughter Dataset Validation")
     print("=" * 70)
 
     # Validate Stage 1

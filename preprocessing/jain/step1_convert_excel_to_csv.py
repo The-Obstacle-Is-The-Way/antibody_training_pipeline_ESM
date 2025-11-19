@@ -29,6 +29,10 @@ from typing import Any
 
 import pandas as pd
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 # Valid amino acids for sequence validation
 VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
 
@@ -38,14 +42,14 @@ ASSAY_CLUSTERS: dict[str, Any] = {}
 
 def load_data() -> pd.DataFrame:
     """Load private ELISA + public SD files."""
-    print("Loading data files...")
+    logger.info("Loading data files...")
 
     # Private ELISA (6 individual antigens)
     private = pd.read_excel(
         "data/test/jain/raw/Private_Jain2017_ELISA_indiv.xlsx",
         sheet_name="Individual-ELISA",
     )
-    print(f"  Private ELISA: {len(private)} antibodies")
+    logger.info(f"  Private ELISA: {len(private)} antibodies")
 
     # Public SD files
     sd01 = pd.read_excel("data/test/jain/raw/jain-pnas.1616408114.sd01.xlsx")
@@ -55,19 +59,19 @@ def load_data() -> pd.DataFrame:
         sheet_name="Results-12-assays",
     )
 
-    print(f"  SD01 (metadata): {len(sd01)} antibodies")
-    print(f"  SD02 (sequences): {len(sd02)} antibodies")
-    print(f"  SD03 (assays): {len(sd03)} rows")
+    logger.info(f"  SD01 (metadata): {len(sd01)} antibodies")
+    logger.info(f"  SD02 (sequences): {len(sd02)} antibodies")
+    logger.info(f"  SD03 (assays): {len(sd03)} rows")
 
     # Merge all on 'Name'
     df = sd01.merge(sd02[["Name", "VH", "VL"]], on="Name", how="inner")
     df = df.merge(sd03, on="Name", how="inner")
     df = df.merge(private, on="Name", how="inner")
 
-    print(f"  Merged: {len(df)} antibodies\n")
+    logger.info(f"  Merged: {len(df)} antibodies\n")
 
     if len(df) != 137:
-        print(f"  WARNING: Expected 137 antibodies, got {len(df)}")
+        logger.info(f"  WARNING: Expected 137 antibodies, got {len(df)}")
 
     return df
 
@@ -90,7 +94,7 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
       - Mild (EXCLUDED): ELISA 1-3
       - Non-specific: ELISA >= 4
     """
-    print("Calculating flags (CORRECTED: ELISA-ONLY methodology)...")
+    logger.info("Calculating flags (CORRECTED: ELISA-ONLY methodology)...")
 
     # === ELISA FLAGS (0-6 range) ===
     elisa_threshold = 1.9
@@ -162,33 +166,35 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
     )
 
     # Print distribution
-    print("\n  ELISA flag distribution (0-6 range):")
+    logger.info("\n  ELISA flag distribution (0-6 range):")
     for flag_count in range(7):  # 0-6 inclusive
         count = (df["elisa_flags"] == flag_count).sum()
         pct = count / len(df) * 100
-        print(f"    {flag_count} ELISA flags: {count:3d} antibodies ({pct:5.1f}%)")
+        logger.info(
+            f"    {flag_count} ELISA flags: {count:3d} antibodies ({pct:5.1f}%)"
+        )
 
-    print("\n  Category distribution (ELISA-ONLY):")
+    logger.info("\n  Category distribution (ELISA-ONLY):")
     for cat in ["specific", "mild", "non_specific"]:
         count = (df["flag_category"] == cat).sum()
         pct = count / len(df) * 100
-        print(f"    {cat}: {count:3d} antibodies ({pct:5.1f}%)")
+        logger.info(f"    {cat}: {count:3d} antibodies ({pct:5.1f}%)")
 
-    print("\n  Label distribution (ELISA-ONLY test set):")
+    logger.info("\n  Label distribution (ELISA-ONLY test set):")
     label_counts = df["label"].value_counts()
     n_specific = label_counts.get(0, 0)
     n_nonspec = label_counts.get(1, 0)
-    print(f"    Specific (ELISA=0): {n_specific}")
-    print(f"    Non-specific (ELISA>=4): {n_nonspec}")
-    print(f"    Test set size: {n_specific + n_nonspec} (target: 116)")
+    logger.info(f"    Specific (ELISA=0): {n_specific}")
+    logger.info(f"    Non-specific (ELISA>=4): {n_nonspec}")
+    logger.info(f"    Test set size: {n_specific + n_nonspec} (target: 116)")
 
     # Show comparison to total flags
-    print("\n  Comparison: ELISA-only vs Total flags:")
+    logger.info("\n  Comparison: ELISA-only vs Total flags:")
     elisa_mild = (df["elisa_flags"].between(1, 3)).sum()
     total_mild = (df["total_flags"].between(1, 3)).sum()
-    print(f"    Mild by ELISA (1-3): {elisa_mild} antibodies")
-    print(f"    Mild by Total (1-3): {total_mild} antibodies")
-    print(f"    Difference: {total_mild - elisa_mild} antibodies")
+    logger.info(f"    Mild by ELISA (1-3): {elisa_mild} antibodies")
+    logger.info(f"    Mild by Total (1-3): {total_mild} antibodies")
+    logger.info(f"    Difference: {total_mild - elisa_mild} antibodies")
 
     return df
 
@@ -198,7 +204,7 @@ def save_outputs(df: pd.DataFrame) -> None:
     output_dir = Path("data/test/jain/processed")
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    print("\nSaving outputs...")
+    logger.info("\nSaving outputs...")
 
     # 1. FULL 137-antibody dataset
     full_output = df[
@@ -228,8 +234,8 @@ def save_outputs(df: pd.DataFrame) -> None:
     )
     full_path = output_dir / "jain_with_private_elisa_FULL.csv"
     full_output.to_csv(full_path, index=False)
-    print(f"  ✓ Saved: {full_path}")
-    print(f"    Total: {len(full_output)} antibodies (all 137)")
+    logger.info(f"  ✓ Saved: {full_path}")
+    logger.info(f"    Total: {len(full_output)} antibodies (all 137)")
 
     # 2. 116-antibody ELISA-ONLY test set (exclude ELISA mild 1-3)
     test_df = df[df["label"].notna()].copy()
@@ -242,8 +248,8 @@ def save_outputs(df: pd.DataFrame) -> None:
     )
     test_path = output_dir / "jain_ELISA_ONLY_116.csv"
     test_output.to_csv(test_path, index=False)
-    print(f"  ✓ Saved: {test_path}")
-    print(f"    Total: {len(test_output)} antibodies (ELISA-only test set)")
+    logger.info(f"  ✓ Saved: {test_path}")
+    logger.info(f"    Total: {len(test_output)} antibodies (ELISA-only test set)")
     print(
         f"    Distribution: {(test_output['label'] == 0).sum()} specific / {(test_output['label'] == 1).sum()} non-specific"
     )
@@ -273,13 +279,13 @@ def prepare_output(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> int:
+    logger.info("=" * 80)
+    logger.info("Jain Dataset Conversion - CORRECTED ELISA-ONLY Methodology")
     print("=" * 80)
-    print("Jain Dataset Conversion - CORRECTED ELISA-ONLY Methodology")
-    print("=" * 80)
-    print("Using ELISA-ONLY flags (6 antigens, 0-6 range)")
-    print("Threshold: >=4 ELISA flags for non-specific")
-    print("Exclude: ELISA 1-3 as 'mild' (NOT total_flags 1-3!)")
-    print("=" * 80)
+    logger.info("Using ELISA-ONLY flags (6 antigens, 0-6 range)")
+    logger.info("Threshold: >=4 ELISA flags for non-specific")
+    logger.info("Exclude: ELISA 1-3 as 'mild' (NOT total_flags 1-3!)")
+    logger.info("=" * 80)
     print()
 
     # Load data
@@ -292,13 +298,13 @@ def main() -> int:
     save_outputs(df)
 
     print("\n" + "=" * 80)
-    print("✓ Conversion Complete!")
-    print("=" * 80)
-    print("\nFiles generated:")
-    print("  1. jain_with_private_elisa_FULL.csv - All 137 antibodies")
-    print("  2. jain_ELISA_ONLY_116.csv - ELISA-only test set (116 antibodies)")
-    print("\nNext step:")
-    print("  Investigate what QC Novo applied to get from 116 → 86")
+    logger.info("✓ Conversion Complete!")
+    logger.info("=" * 80)
+    logger.info("\nFiles generated:")
+    logger.info("  1. jain_with_private_elisa_FULL.csv - All 137 antibodies")
+    logger.info("  2. jain_ELISA_ONLY_116.csv - ELISA-only test set (116 antibodies)")
+    logger.info("\nNext step:")
+    logger.info("  Investigate what QC Novo applied to get from 116 → 86")
     return 0
 
 

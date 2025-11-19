@@ -37,6 +37,10 @@ from typing import Any
 
 import pandas as pd
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 
 def validate_fragment_directory(
     dataset_dir: Path, expected_fragments: int = 16
@@ -168,30 +172,30 @@ def print_validation_report(
     dataset_name: str, dataset_dir: Path, expected_fragments: int = 16
 ) -> bool:
     """Print comprehensive validation report."""
-    print("=" * 60)
-    print(f"{dataset_name.upper()} Dataset Validation")
+    logger.info("=" * 60)
+    logger.info(f"{dataset_name.upper()} Dataset Validation")
     print("=" * 60)
 
     results = validate_fragment_directory(dataset_dir, expected_fragments)
 
     # Print file count
-    print(f"\nFragment files: {results['stats'].get('num_files', 0)}")
-    print(f"Antibodies per file: {results['stats'].get('row_count', 0)}")
-    print(
+    logger.info(f"\nFragment files: {results['stats'].get('num_files', 0)}")
+    logger.info(f"Antibodies per file: {results['stats'].get('row_count', 0)}")
+    logger.info(
         f"Consistent row counts: {'✓ YES' if results['stats'].get('consistent_rows') else '✗ NO'}"
     )
 
     # Print errors
     if results["errors"]:
-        print(f"\n✗ ERRORS ({len(results['errors'])}):")
+        logger.info(f"\n✗ ERRORS ({len(results['errors'])}):")
         for error in results["errors"]:
-            print(f"  - {error}")
+            logger.info(f"  - {error}")
 
     # Print warnings
     if results["warnings"]:
-        print(f"\n⚠ WARNINGS ({len(results['warnings'])}):")
+        logger.info(f"\n⚠ WARNINGS ({len(results['warnings'])}):")
         for warning in results["warnings"]:
-            print(f"  - {warning}")
+            logger.info(f"  - {warning}")
 
     # Label distribution (from VH_only fragment, excluding training subset)
     csv_files = [
@@ -202,21 +206,21 @@ def print_validation_report(
         vh_file = dataset_dir / "VH_only_boughter.csv"
         label_file = vh_file if vh_file.exists() else csv_files[0]
         label_stats = validate_label_distribution(label_file)
-        print(f"\nLabel distribution (from {label_file.name}):")
-        print(
+        logger.info(f"\nLabel distribution (from {label_file.name}):")
+        logger.info(
             f"  Specific (0): {label_stats['specific']} ({label_stats['specific_pct']:.1f}%)"
         )
-        print(
+        logger.info(
             f"  Non-specific (1): {label_stats['non_specific']} ({label_stats['non_specific_pct']:.1f}%)"
         )
 
     # Final verdict
-    print("\n" + "=" * 60)
+    logger.info("\n" + "=" * 60)
     if results["valid"]:
-        print("✓ VALIDATION PASSED")
+        logger.info("✓ VALIDATION PASSED")
     else:
-        print("✗ VALIDATION FAILED")
-    print("=" * 60)
+        logger.info("✗ VALIDATION FAILED")
+    logger.info("=" * 60)
 
     return bool(results["valid"])
 
@@ -227,7 +231,7 @@ def main() -> int:
     boughter_canonical_dir = Path("data/train/boughter/canonical")
 
     if not boughter_annotated_dir.exists():
-        print(
+        logger.info(
             f"✗ Error: Boughter annotated directory not found: {boughter_annotated_dir}"
         )
         return 1
@@ -237,20 +241,20 @@ def main() -> int:
     )
 
     # Additional Boughter-specific checks
-    print("\n" + "=" * 60)
-    print("BOUGHTER-SPECIFIC VALIDATION")
+    logger.info("\n" + "=" * 60)
+    logger.info("BOUGHTER-SPECIFIC VALIDATION")
     print("=" * 60)
 
     # Check training subset file
     training_file = boughter_canonical_dir / "VH_only_boughter_training.csv"
     if training_file.exists():
         df = pd.read_csv(training_file, comment="#")
-        print(f"\n✓ Training subset file exists: {training_file.name}")
-        print(f"  Rows: {len(df)}")
-        print(f"  Specific (0): {(df['label'] == 0).sum()}")
-        print(f"  Non-specific (1): {(df['label'] == 1).sum()}")
+        logger.info(f"\n✓ Training subset file exists: {training_file.name}")
+        logger.info(f"  Rows: {len(df)}")
+        logger.info(f"  Specific (0): {(df['label'] == 0).sum()}")
+        logger.info(f"  Non-specific (1): {(df['label'] == 1).sum()}")
     else:
-        print(f"\n✗ Training subset file not found: {training_file.name}")
+        logger.info(f"\n✗ Training subset file not found: {training_file.name}")
         valid = False
 
     # Check for include_in_training flag in fragment files
@@ -258,11 +262,13 @@ def main() -> int:
     if vh_only.exists():
         df = pd.read_csv(vh_only, comment="#")
         if "include_in_training" in df.columns:
-            print("\n✓ include_in_training flag present")
-            print(f"  Training eligible: {df['include_in_training'].sum()}")
-            print(f"  Excluded (mild 1-3 flags): {(~df['include_in_training']).sum()}")
+            logger.info("\n✓ include_in_training flag present")
+            logger.info(f"  Training eligible: {df['include_in_training'].sum()}")
+            logger.info(
+                f"  Excluded (mild 1-3 flags): {(~df['include_in_training']).sum()}"
+            )
         else:
-            print("\n⚠ include_in_training flag missing (may be older format)")
+            logger.info("\n⚠ include_in_training flag missing (may be older format)")
 
     print("\n" + "=" * 60)
 

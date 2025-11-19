@@ -37,6 +37,10 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 # Canonical framework-1 motifs for human/mouse VH/VL domains
 VDOMAIN_MOTIFS: Sequence[str] = (
     # Heavy-chain FR1 motifs
@@ -281,7 +285,7 @@ def translate_dna_to_protein(dna_seq: str) -> str | None:
         return str(protein)
 
     except Exception as e:
-        print(f"Translation failed: {e}")
+        logger.info(f"Translation failed: {e}")
         return None
 
 
@@ -378,7 +382,7 @@ def process_subset(
     Returns:
         List of dictionaries with processed antibody data
     """
-    print(f"\nProcessing subset: {subset_name}")
+    logger.info(f"\nProcessing subset: {subset_name}")
 
     # Parse input files
     heavy_dna = parse_fasta_dna(heavy_path)
@@ -399,7 +403,7 @@ def process_subset(
             f"Heavy: {counts[0]}, Light: {counts[1]}, Flags: {counts[2]}"
         )
 
-    print(f"  Sequences: {len(heavy_dna)}")
+    logger.info(f"  Sequences: {len(heavy_dna)}")
 
     results = []
     failures = []
@@ -441,59 +445,61 @@ def process_subset(
             }
         )
 
-    print(f"  Successful: {len(results)}")
-    print(f"  Failures: {len(failures)}")
+    logger.info(f"  Successful: {len(results)}")
+    logger.info(f"  Failures: {len(failures)}")
 
     if failures:
-        print(f"  Failed IDs: {', '.join(failures[:5])}")
+        logger.info(f"  Failed IDs: {', '.join(failures[:5])}")
         if len(failures) > 5:
-            print(f"    ... and {len(failures) - 5} more")
+            logger.info(f"    ... and {len(failures) - 5} more")
 
     return results, failures
 
 
 def print_dataset_stats(df: pd.DataFrame) -> None:
     """Print comprehensive dataset statistics."""
-    print("\n" + "=" * 70)
-    print("Boughter Dataset - Stage 1 Complete")
-    print("=" * 70)
+    logger.info("\n" + "=" * 70)
+    logger.info("Boughter Dataset - Stage 1 Complete")
+    logger.info("=" * 70)
 
-    print(f"\nTotal sequences across all subsets: {len(df)}")
+    logger.info(f"\nTotal sequences across all subsets: {len(df)}")
 
-    print("\nBreakdown by subset:")
+    logger.info("\nBreakdown by subset:")
     for subset in sorted(df["subset"].unique()):
         subset_df = df[df["subset"] == subset]
-        print(f"  {subset:12s}: {len(subset_df):4d} sequences")
+        logger.info(f"  {subset:12s}: {len(subset_df):4d} sequences")
 
-    print("\nFlag distribution:")
+    logger.info("\nFlag distribution:")
     for flag in sorted(df["num_flags"].unique()):
         count = len(df[df["num_flags"] == flag])
         pct = count / len(df) * 100
-        print(f"  {flag} flags: {count:4d} ({pct:5.2f}%)")
+        logger.info(f"  {flag} flags: {count:4d} ({pct:5.2f}%)")
 
-    print("\nNovo flagging strategy results:")
+    logger.info("\nNovo flagging strategy results:")
     for category in ["specific", "mild", "non_specific"]:
         cat_df = df[df["flag_category"] == category]
         count = len(cat_df)
         pct = count / len(df) * 100
         included = len(cat_df[cat_df["include_in_training"]])
-        print(
+        logger.info(
             f"  {category:15s}: {count:4d} ({pct:5.2f}%) - "
             f"{included} included in training"
         )
 
     training_df = df[df["include_in_training"]]
-    print(f"\nTraining set size: {len(training_df)} sequences")
-    print(f"Excluded (mild 1-3 flags): {len(df[~df['include_in_training']])} sequences")
+    logger.info(f"\nTraining set size: {len(training_df)} sequences")
+    logger.info(
+        f"Excluded (mild 1-3 flags): {len(df[~df['include_in_training']])} sequences"
+    )
 
     if len(training_df) > 0:
         label_dist = training_df["label"].value_counts()
-        print("\nTraining set label balance:")
+        logger.info("\nTraining set label balance:")
         for label in sorted(label_dist.index):
             count = label_dist[label]
             label_name = "Specific (0)" if label == 0 else "Non-specific (1)"
             pct = count / len(training_df) * 100
-            print(f"  {label_name}: {count:4d} ({pct:5.2f}%)")
+            logger.info(f"  {label_name}: {count:4d} ({pct:5.2f}%)")
 
 
 class SubsetPaths(TypedDict):
@@ -572,16 +578,16 @@ def main() -> int:
     # Save output
     output_path = Path("data/train/boughter/processed/boughter.csv")
     df.to_csv(output_path, index=False)
-    print(f"\n✓ Output saved to: {output_path}")
+    logger.info(f"\n✓ Output saved to: {output_path}")
 
     # Save failure log if any
     if all_failures:
         failure_log = Path("data/train/boughter/raw/translation_failures.log")
         failure_log.write_text("\n".join(all_failures))
-        print(f"✓ Failure log saved to: {failure_log}")
+        logger.info(f"✓ Failure log saved to: {failure_log}")
 
-    print("\n" + "=" * 70)
-    print("Stage 1 Complete - Ready for Stage 2 (ANARCI annotation)")
+    logger.info("\n" + "=" * 70)
+    logger.info("Stage 1 Complete - Ready for Stage 2 (ANARCI annotation)")
     print("=" * 70)
     return 0
 

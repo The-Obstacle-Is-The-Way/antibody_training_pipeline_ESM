@@ -21,6 +21,10 @@ from pathlib import Path
 import openpyxl
 import pandas as pd
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 
 def sanitize_sequence(seq: str) -> str:
     """Remove gap characters and normalise amino acid strings."""
@@ -48,16 +52,16 @@ def clean_excel_df(df: pd.DataFrame) -> pd.DataFrame:
 
 def method1_pandas_openpyxl(excel_path: str) -> pd.DataFrame:
     """Read Excel using pandas with openpyxl engine."""
-    print("Method 1: pandas.read_excel (openpyxl engine)")
+    logger.info("Method 1: pandas.read_excel (openpyxl engine)")
     df = pd.read_excel(excel_path, engine="openpyxl")
     df = clean_excel_df(df)
-    print(f"  Rows: {len(df)}, Columns: {len(df.columns)}")
+    logger.info(f"  Rows: {len(df)}, Columns: {len(df.columns)}")
     return df
 
 
 def method2_openpyxl_direct(excel_path: str) -> pd.DataFrame:
     """Read Excel using openpyxl directly."""
-    print("\nMethod 2: openpyxl direct reading")
+    logger.info("\nMethod 2: openpyxl direct reading")
     wb = openpyxl.load_workbook(excel_path)
     ws = wb.active
 
@@ -72,15 +76,15 @@ def method2_openpyxl_direct(excel_path: str) -> pd.DataFrame:
 
     df = pd.DataFrame(data, columns=headers)
     df = clean_excel_df(df)
-    print(f"  Rows: {len(df)}, Columns: {len(df.columns)}")
+    logger.info(f"  Rows: {len(df)}, Columns: {len(df.columns)}")
     return df
 
 
 def method3_csv_direct(csv_path: str) -> pd.DataFrame:
     """Read the generated CSV."""
-    print("\nMethod 3: Reading generated CSV")
+    logger.info("\nMethod 3: Reading generated CSV")
     df = pd.read_csv(csv_path)
-    print(f"  Rows: {len(df)}, Columns: {len(df.columns)}")
+    logger.info(f"  Rows: {len(df)}, Columns: {len(df.columns)}")
     return df
 
 
@@ -92,11 +96,11 @@ def compare_sequences(
 
     Properly handles NaN values (NaN == NaN for comparison purposes).
     """
-    print(f"\n  Comparing {name}:")
+    logger.info(f"\n  Comparing {name}:")
 
     # Check lengths
     if len(df1) != len(df2):
-        print(f"    ✗ Row count mismatch: {len(df1)} vs {len(df2)}")
+        logger.info(f"    ✗ Row count mismatch: {len(df1)} vs {len(df2)}")
         return False
 
     # Compare each sequence
@@ -112,14 +116,14 @@ def compare_sequences(
         if not (both_nan or both_equal):
             mismatches += 1
             if mismatches <= 3:  # Show first 3 mismatches
-                print(f"    ✗ Row {i} mismatch:")
-                print(f"      Source: {str(seq1)[:60]}...")
-                print(f"      CSV:    {str(seq2)[:60]}...")
+                logger.info(f"    ✗ Row {i} mismatch:")
+                logger.info(f"      Source: {str(seq1)[:60]}...")
+                logger.info(f"      CSV:    {str(seq2)[:60]}...")
 
     if mismatches == 0:
-        print(f"    ✓ All {len(df1)} sequences match!")
+        logger.info(f"    ✓ All {len(df1)} sequences match!")
         return True
-    print(f"    ✗ {mismatches} mismatches found")
+    logger.info(f"    ✗ {mismatches} mismatches found")
     return False
 
 
@@ -145,23 +149,25 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
     Returns:
         True if all files are gap-free, False otherwise
     """
-    print("\n" + "=" * 60)
-    print("Fragment CSV Gap Validation (P0 Blocker Check)")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("Fragment CSV Gap Validation (P0 Blocker Check)")
+    logger.info("=" * 60)
 
     if not fragments_dir.exists():
-        print(f"  ℹ Fragment directory not found: {fragments_dir}")
-        print(
+        logger.info(f"  ℹ Fragment directory not found: {fragments_dir}")
+        logger.info(
             "  (Run preprocessing/shehata/step2_extract_fragments.py to generate fragments)"
         )
         return True  # Not an error if fragments haven't been generated yet
 
     fragment_files = list(fragments_dir.glob("*.csv"))
     if not fragment_files:
-        print(f"  ℹ No fragment CSV files found in {fragments_dir}")
+        logger.info(f"  ℹ No fragment CSV files found in {fragments_dir}")
         return True
 
-    print(f"\n  Checking {len(fragment_files)} fragment files for gap characters...")
+    logger.info(
+        f"\n  Checking {len(fragment_files)} fragment files for gap characters..."
+    )
 
     all_clean = True
     gap_files = []
@@ -173,23 +179,25 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
         if gap_count > 0:
             all_clean = False
             gap_files.append((file.name, gap_count))
-            print(f"    ✗ {file.name}: {gap_count} sequences with gaps")
+            logger.info(f"    ✗ {file.name}: {gap_count} sequences with gaps")
         else:
-            print(f"    ✓ {file.name}: gap-free")
+            logger.info(f"    ✓ {file.name}: gap-free")
 
-    print()
+    logger.info("")
     if all_clean:
-        print("  ✓ SUCCESS: All fragment files are gap-free")
-        print("  ✓ ESM-1v embedding compatibility confirmed")
+        logger.info("  ✓ SUCCESS: All fragment files are gap-free")
+        logger.info("  ✓ ESM-1v embedding compatibility confirmed")
         return True
     else:
-        print("  ✗ FAILURE: Gap characters detected in fragment files")
-        print("  ✗ This is a P0 blocker - ESM-1v will fail validation")
-        print("\n  Affected files:")
+        logger.info("  ✗ FAILURE: Gap characters detected in fragment files")
+        logger.info("  ✗ This is a P0 blocker - ESM-1v will fail validation")
+        logger.info("\n  Affected files:")
         for filename, count in gap_files:
-            print(f"    - {filename}: {count} sequences")
-        print("\n  Fix: Use annotation.sequence_aa instead of sequence_alignment_aa")
-        print("  See: docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md")
+            logger.info(f"    - {filename}: {count} sequences")
+        logger.info(
+            "\n  Fix: Use annotation.sequence_aa instead of sequence_alignment_aa"
+        )
+        logger.info("  See: docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md")
         return False
 
 
@@ -197,47 +205,47 @@ def main() -> int:
     excel_path = Path("data/test/shehata/raw/shehata-mmc2.xlsx")
     csv_path = Path("data/test/shehata/processed/shehata.csv")
 
-    print("=" * 60)
-    print("Multi-Method Validation of Shehata Conversion")
-    print("=" * 60)
+    logger.info("=" * 60)
+    logger.info("Multi-Method Validation of Shehata Conversion")
+    logger.info("=" * 60)
 
     if not excel_path.exists():
-        print(f"✗ Excel file not found: {excel_path}")
+        logger.info(f"✗ Excel file not found: {excel_path}")
         return 1
 
     if not csv_path.exists():
-        print(f"✗ CSV file not found: {csv_path}")
-        print("  Run preprocessing/shehata/step1_convert_excel_to_csv.py first!")
+        logger.info(f"✗ CSV file not found: {csv_path}")
+        logger.info("  Run preprocessing/shehata/step1_convert_excel_to_csv.py first!")
         return 1
 
-    print("\nReading files with multiple methods...\n")
+    logger.info("\nReading files with multiple methods...\n")
 
     # Read with different methods
     try:
         df_pandas = method1_pandas_openpyxl(str(excel_path))
     except Exception as e:
-        print(f"  Error: {e}")
+        logger.info(f"  Error: {e}")
         df_pandas = None
 
     try:
         df_openpyxl = method2_openpyxl_direct(str(excel_path))
     except Exception as e:
-        print(f"  Error: {e}")
+        logger.info(f"  Error: {e}")
         df_openpyxl = None
 
     try:
         df_csv = method3_csv_direct(str(csv_path))
     except Exception as e:
-        print(f"  Error: {e}")
+        logger.info(f"  Error: {e}")
         df_csv = None
 
     # Cross-validate
-    print("\n" + "=" * 60)
-    print("Cross-Validation Results")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("Cross-Validation Results")
+    logger.info("=" * 60)
 
     if df_pandas is not None and df_openpyxl is not None:
-        print("\n1. Pandas vs Direct openpyxl (Excel reading consistency)")
+        logger.info("\n1. Pandas vs Direct openpyxl (Excel reading consistency)")
         compare_sequences(
             df_pandas, df_openpyxl, "VH Protein", "VH Protein", "VH sequences"
         )
@@ -246,7 +254,7 @@ def main() -> int:
         )
 
     if df_pandas is not None and df_csv is not None:
-        print("\n2. Excel (pandas) vs Generated CSV (conversion accuracy)")
+        logger.info("\n2. Excel (pandas) vs Generated CSV (conversion accuracy)")
         compare_sequences(
             df_pandas, df_csv, "VH Protein", "heavy_seq", "VH → heavy_seq"
         )
@@ -255,46 +263,46 @@ def main() -> int:
         )
 
         # Check ID mapping
-        print("\n  Comparing IDs:")
+        logger.info("\n  Comparing IDs:")
         id_match = (df_pandas["Clone name"] == df_csv["id"]).all()
-        print(f"    {'✓' if id_match else '✗'} Clone name → id mapping")
+        logger.info(f"    {'✓' if id_match else '✗'} Clone name → id mapping")
 
     # File integrity
-    print("\n" + "=" * 60)
-    print("File Integrity")
-    print("=" * 60)
-    print(f"\nExcel checksum: {calculate_checksum(excel_path)}")
-    print(f"CSV checksum:   {calculate_checksum(csv_path)}")
-    print("\n(These checksums are stored for future verification)")
+    logger.info("\n" + "=" * 60)
+    logger.info("File Integrity")
+    logger.info("=" * 60)
+    logger.info(f"\nExcel checksum: {calculate_checksum(excel_path)}")
+    logger.info(f"CSV checksum:   {calculate_checksum(csv_path)}")
+    logger.info("\n(These checksums are stored for future verification)")
 
     # Summary statistics
-    print("\n" + "=" * 60)
-    print("Summary Statistics")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("Summary Statistics")
+    logger.info("=" * 60)
 
     if df_csv is not None:
-        print(f"\nGenerated CSV ({csv_path.name}):")
-        print(f"  Total rows: {len(df_csv)}")
-        print(f"  Columns: {list(df_csv.columns)}")
-        print("\n  Label distribution:")
+        logger.info(f"\nGenerated CSV ({csv_path.name}):")
+        logger.info(f"  Total rows: {len(df_csv)}")
+        logger.info(f"  Columns: {list(df_csv.columns)}")
+        logger.info("\n  Label distribution:")
         for label, count in df_csv["label"].value_counts().sort_index().items():
             label_name = "Specific" if label == 0 else "Non-specific"
-            print(f"    {label_name}: {count} ({count / len(df_csv) * 100:.1f}%)")
+            logger.info(f"    {label_name}: {count} ({count / len(df_csv) * 100:.1f}%)")
 
-        print("\n  Missing data:")
-        print(f"    Missing heavy_seq: {df_csv['heavy_seq'].isna().sum()}")
-        print(f"    Missing light_seq: {df_csv['light_seq'].isna().sum()}")
-        print(f"    Missing labels: {df_csv['label'].isna().sum()}")
+        logger.info("\n  Missing data:")
+        logger.info(f"    Missing heavy_seq: {df_csv['heavy_seq'].isna().sum()}")
+        logger.info(f"    Missing light_seq: {df_csv['light_seq'].isna().sum()}")
+        logger.info(f"    Missing labels: {df_csv['label'].isna().sum()}")
 
     # Validate fragment CSVs (P0 blocker check)
     fragments_dir = Path("data/test/shehata/fragments")
     fragments_valid = validate_fragment_csvs(fragments_dir)
 
-    print("\n" + "=" * 60)
+    logger.info("\n" + "=" * 60)
     if fragments_valid:
-        print("✓ Validation Complete - All Checks Passed")
+        logger.info("✓ Validation Complete - All Checks Passed")
     else:
-        print("✗ Validation Failed - P0 Blocker Detected")
+        logger.info("✗ Validation Failed - P0 Blocker Detected")
     print("=" * 60)
     return 0 if fragments_valid else 1
 

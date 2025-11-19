@@ -19,6 +19,10 @@ from typing import Any, cast
 
 import pandas as pd
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 
 def sanitize_sequence(seq: str | float | None) -> str | float | None:
     """
@@ -109,14 +113,14 @@ def convert_excel_to_csv(
     Returns:
         DataFrame with converted data
     """
-    print(f"Reading Excel file: {excel_path}")
+    logger.info(f"Reading Excel file: {excel_path}")
     df_excel = pd.read_excel(excel_path)
 
-    print(f"  Rows: {len(df_excel)}")
-    print(f"  Columns: {len(df_excel.columns)}")
+    logger.info(f"  Rows: {len(df_excel)}")
+    logger.info(f"  Columns: {len(df_excel.columns)}")
 
     # Sanitize sequences BEFORE any analysis
-    print("\nSanitizing sequences (removing gaps and invalid characters)...")
+    logger.info("\nSanitizing sequences (removing gaps and invalid characters)...")
     vh_original = df_excel["VH Protein"].copy()
     vl_original = df_excel["VL Protein"].copy()
 
@@ -128,15 +132,17 @@ def convert_excel_to_csv(
     gaps_vl = sum(str(s).count("-") if pd.notna(s) else 0 for s in vl_original)
 
     if gaps_vh > 0 or gaps_vl > 0:
-        print(f"  Removed {gaps_vh} gap characters from VH sequences")
-        print(f"  Removed {gaps_vl} gap characters from VL sequences")
+        logger.info(f"  Removed {gaps_vh} gap characters from VH sequences")
+        logger.info(f"  Removed {gaps_vl} gap characters from VL sequences")
 
     # Drop rows without sequence information (Excel footnotes / metadata)
     before_drop = len(df_excel)
     df_excel = df_excel.dropna(subset=["VH Protein", "VL Protein"], how="all")
     dropped = before_drop - len(df_excel)
     if dropped:
-        print(f"  Dropped {dropped} rows without VH/VL sequences (metadata/footnotes)")
+        logger.info(
+            f"  Dropped {dropped} rows without VH/VL sequences (metadata/footnotes)"
+        )
 
     # Convert PSR scores to numeric and drop entries without measurements
     psr_numeric = pd.to_numeric(df_excel["PSR Score"], errors="coerce")
@@ -144,7 +150,7 @@ def convert_excel_to_csv(
     if invalid_psr_mask.any():
         dropped_ids = df_excel.loc[invalid_psr_mask, "Clone name"].tolist()
         dropped_list = ", ".join(dropped_ids)
-        print(
+        logger.info(
             f"  Dropping {invalid_psr_mask.sum()} antibodies without numeric PSR scores: "
             f"{dropped_list}"
         )
@@ -153,22 +159,24 @@ def convert_excel_to_csv(
 
     # Analyze PSR scores if threshold not provided
     if psr_threshold is None:
-        print("\nAnalyzing PSR score distribution:")
-        print(f"  Valid PSR scores: {psr_numeric.notna().sum()}")
-        print(f"  Missing PSR scores: {psr_numeric.isna().sum()}")
-        print(f"  Mean: {psr_numeric.mean():.4f}")
-        print(f"  Median: {psr_numeric.median():.4f}")
-        print(f"  75th percentile: {psr_numeric.quantile(0.75):.4f}")
-        print(f"  95th percentile: {psr_numeric.quantile(0.95):.4f}")
-        print(f"  Max: {psr_numeric.max():.4f}")
-        print(f"\n  PSR = 0: {(psr_numeric == 0).sum()} antibodies")
-        print(f"  PSR > 0: {(psr_numeric > 0).sum()} antibodies")
+        logger.info("\nAnalyzing PSR score distribution:")
+        logger.info(f"  Valid PSR scores: {psr_numeric.notna().sum()}")
+        logger.info(f"  Missing PSR scores: {psr_numeric.isna().sum()}")
+        logger.info(f"  Mean: {psr_numeric.mean():.4f}")
+        logger.info(f"  Median: {psr_numeric.median():.4f}")
+        logger.info(f"  75th percentile: {psr_numeric.quantile(0.75):.4f}")
+        logger.info(f"  95th percentile: {psr_numeric.quantile(0.95):.4f}")
+        logger.info(f"  Max: {psr_numeric.max():.4f}")
+        logger.info(f"\n  PSR = 0: {(psr_numeric == 0).sum()} antibodies")
+        logger.info(f"  PSR > 0: {(psr_numeric > 0).sum()} antibodies")
 
         # Based on paper: "7 out of 398 antibodies characterised as non-specific"
         # This is roughly 1.76% = 98.24th percentile
         suggested_threshold = psr_numeric.quantile(0.9824)
-        print("\n  Paper reports: 7/398 non-specific (~1.76%)")
-        print(f"  Suggested threshold (98.24th percentile): {suggested_threshold:.4f}")
+        logger.info("\n  Paper reports: 7/398 non-specific (~1.76%)")
+        logger.info(
+            f"  Suggested threshold (98.24th percentile): {suggested_threshold:.4f}"
+        )
 
         if interactive:
             # Ask user to confirm
@@ -182,16 +190,16 @@ def convert_excel_to_csv(
             elif response == "custom":
                 psr_threshold = float(input("  Enter custom threshold: "))
             else:
-                print("  Using PSR > 0 as threshold (any polyreactivity)")
+                logger.info("  Using PSR > 0 as threshold (any polyreactivity)")
                 psr_threshold = 0
         else:
             # Non-interactive mode: use suggested threshold
             psr_threshold = suggested_threshold
-            print(
+            logger.info(
                 f"\n  Using suggested threshold (non-interactive mode): {suggested_threshold:.4f}"
             )
 
-    print(f"\nUsing PSR threshold: {psr_threshold}")
+    logger.info(f"\nUsing PSR threshold: {psr_threshold}")
 
     # Create DataFrame matching jain.csv format
     df_csv = pd.DataFrame(
@@ -207,23 +215,23 @@ def convert_excel_to_csv(
     )
 
     # Validate
-    print("\nValidating sequences...")
+    logger.info("\nValidating sequences...")
     validation = validate_sequences(df_csv)
 
-    print(f"  Total sequences: {validation['total_sequences']}")
-    print(f"  Missing VH: {validation['missing_vh']}")
-    print(f"  Missing VL: {validation['missing_vl']}")
-    print(f"  Invalid VH (after sanitization): {validation['invalid_vh']}")
-    print(f"  Invalid VL (after sanitization): {validation['invalid_vl']}")
-    print(f"  VH length range: {validation['vh_length_range']}")
-    print(f"  VL length range: {validation['vl_length_range']}")
+    logger.info(f"  Total sequences: {validation['total_sequences']}")
+    logger.info(f"  Missing VH: {validation['missing_vh']}")
+    logger.info(f"  Missing VL: {validation['missing_vl']}")
+    logger.info(f"  Invalid VH (after sanitization): {validation['invalid_vh']}")
+    logger.info(f"  Invalid VL (after sanitization): {validation['invalid_vl']}")
+    logger.info(f"  VH length range: {validation['vh_length_range']}")
+    logger.info(f"  VL length range: {validation['vl_length_range']}")
 
     if validation["invalid_vh"] > 0 or validation["invalid_vl"] > 0:
-        print("\n  ⚠️  WARNING: Some sequences still invalid after sanitization!")
-        print("  This may indicate non-standard amino acids or other issues.")
+        logger.info("\n  ⚠️  WARNING: Some sequences still invalid after sanitization!")
+        logger.info("  This may indicate non-standard amino acids or other issues.")
 
     # Label distribution
-    print("\nLabel distribution:")
+    logger.info("\nLabel distribution:")
     label_dist = df_csv["label"].value_counts().sort_index()
     for label, count in label_dist.items():
         label_name = "Specific" if label == 0 else "Non-specific"
@@ -232,23 +240,23 @@ def convert_excel_to_csv(
         )
 
     # B cell subset distribution
-    print("\nB cell subset distribution:")
+    logger.info("\nB cell subset distribution:")
     subset_dist = df_csv["b_cell_subset"].value_counts()
     for subset, count in subset_dist.items():
-        print(f"  {subset}: {count}")
+        logger.info(f"  {subset}: {count}")
 
     # Save
-    print(f"\nSaving to: {output_path}")
+    logger.info(f"\nSaving to: {output_path}")
     df_csv.to_csv(output_path, index=False)
-    print(f"  Saved {len(df_csv)} rows")
+    logger.info(f"  Saved {len(df_csv)} rows")
 
     return df_csv
 
 
 def compare_with_original(csv_df: pd.DataFrame, excel_path: str) -> None:
     """Compare CSV output with original Excel for validation."""
-    print("\n" + "=" * 60)
-    print("VALIDATION: Comparing CSV with original Excel")
+    logger.info("\n" + "=" * 60)
+    logger.info("VALIDATION: Comparing CSV with original Excel")
     print("=" * 60)
 
     df_excel = pd.read_excel(excel_path)
@@ -259,25 +267,25 @@ def compare_with_original(csv_df: pd.DataFrame, excel_path: str) -> None:
     ).reset_index(drop=True)
 
     # Check row counts
-    print("\nRow count check:")
-    print(f"  Excel: {len(df_excel)}")
-    print(f"  CSV: {len(csv_df)}")
-    print(f"  Match: {'✓ YES' if len(df_excel) == len(csv_df) else '✗ NO'}")
+    logger.info("\nRow count check:")
+    logger.info(f"  Excel: {len(df_excel)}")
+    logger.info(f"  CSV: {len(csv_df)}")
+    logger.info(f"  Match: {'✓ YES' if len(df_excel) == len(csv_df) else '✗ NO'}")
 
     # Spot check sequences
-    print("\nSpot checking first 3 sequences...")
+    logger.info("\nSpot checking first 3 sequences...")
     for i in range(min(3, len(csv_df))):
         excel_vh = df_excel.loc[i, "VH Protein"]
         csv_vh = csv_df.loc[i, "heavy_seq"]
         match = excel_vh == csv_vh
-        print(f"  Row {i}: {'✓' if match else '✗'} VH match")
+        logger.info(f"  Row {i}: {'✓' if match else '✗'} VH match")
         if not match:
             excel_vh_str = cast(str, excel_vh)
             csv_vh_str = cast(str, csv_vh)
-            print(f"    Excel: {excel_vh_str[:50]}...")
-            print(f"    CSV:   {csv_vh_str[:50]}...")
+            logger.info(f"    Excel: {excel_vh_str[:50]}...")
+            logger.info(f"    CSV:   {csv_vh_str[:50]}...")
 
-    print("\nConversion validation complete!")
+    logger.info("\nConversion validation complete!")
 
 
 def main() -> int:
@@ -286,15 +294,15 @@ def main() -> int:
     output_path = Path("data/test/shehata/processed/shehata.csv")
 
     if not excel_path.exists():
-        print(f"Error: {excel_path} not found!")
-        print("Please run this script from the repository root.")
+        logger.info(f"Error: {excel_path} not found!")
+        logger.info("Please run this script from the repository root.")
         return 1
 
-    print("=" * 60)
-    print("Shehata Dataset: Excel → CSV Conversion")
-    print("=" * 60)
-    print(f"\nInput:  {excel_path}")
-    print(f"Output: {output_path}")
+    logger.info("=" * 60)
+    logger.info("Shehata Dataset: Excel → CSV Conversion")
+    logger.info("=" * 60)
+    logger.info(f"\nInput:  {excel_path}")
+    logger.info(f"Output: {output_path}")
 
     # Convert (non-interactive: uses suggested threshold automatically)
     df_csv = convert_excel_to_csv(
@@ -307,13 +315,13 @@ def main() -> int:
     # Validate
     compare_with_original(df_csv, str(excel_path))
 
-    print("\n" + "=" * 60)
-    print("✓ Conversion complete!")
-    print("=" * 60)
-    print("\nNext steps:")
-    print(f"  1. Review {output_path}")
-    print("  2. Compare with data/test/jain.csv format")
-    print("  3. Test loading with data.load_local_data()")
+    logger.info("\n" + "=" * 60)
+    logger.info("✓ Conversion complete!")
+    logger.info("=" * 60)
+    logger.info("\nNext steps:")
+    logger.info(f"  1. Review {output_path}")
+    logger.info("  2. Compare with data/test/jain.csv format")
+    logger.info("  3. Test loading with data.load_local_data()")
     return 0
 
 

@@ -29,12 +29,15 @@ Issue: #3 - Shehata dataset preprocessing (Phase 2)
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pandas as pd
 import riot_na
 from tqdm.auto import tqdm
+
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
 
 # Initialize ANARCI for amino acid annotation (IMGT scheme)
 annotator = riot_na.create_riot_aa()
@@ -90,7 +93,7 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] 
         return fragments
 
     except Exception as e:
-        print(f"Warning: Failed to annotate {seq_id} ({chain}): {e}", file=sys.stderr)
+        logger.warning(f"Warning: Failed to annotate {seq_id} ({chain}): {e}")
         return None
 
 
@@ -104,11 +107,11 @@ def process_shehata_dataset(csv_path: str) -> pd.DataFrame:
     Returns:
         DataFrame with all fragments and metadata
     """
-    print(f"Reading {csv_path}...")
+    logger.info(f"Reading {csv_path}...")
     df = pd.read_csv(csv_path)
 
-    print(f"  Total antibodies: {len(df)}")
-    print("  Annotating sequences with ANARCI (IMGT scheme)...")
+    logger.info(f"  Total antibodies: {len(df)}")
+    logger.info("  Annotating sequences with ANARCI (IMGT scheme)...")
 
     results = []
 
@@ -120,7 +123,7 @@ def process_shehata_dataset(csv_path: str) -> pd.DataFrame:
         light_frags = annotate_sequence(f"{row['id']}_VL", row["light_seq"], "L")
 
         if heavy_frags is None or light_frags is None:
-            print(f"  Skipping {row['id']} - annotation failed")
+            logger.info(f"  Skipping {row['id']} - annotation failed")
             continue
 
         # Combine all fragments and metadata
@@ -144,7 +147,7 @@ def process_shehata_dataset(csv_path: str) -> pd.DataFrame:
 
     df_annotated = pd.DataFrame(results)
 
-    print(f"\n  Successfully annotated: {len(df_annotated)}/{len(df)} antibodies")
+    logger.info(f"\n  Successfully annotated: {len(df_annotated)}/{len(df)} antibodies")
 
     return df_annotated
 
@@ -189,7 +192,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
         "Full": ("vh_vl", "full_sequence"),
     }
 
-    print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
+    logger.info(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
     for fragment_name, (column_name, _sequence_alias) in fragments.items():
         output_path = output_dir / f"{fragment_name}_shehata.csv"
@@ -208,9 +211,9 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
 
         fragment_df.to_csv(output_path, index=False)
 
-        print(f"  ✓ {fragment_name:12s} → {output_path.name}")
+        logger.info(f"  ✓ {fragment_name:12s} → {output_path.name}")
 
-    print(f"\n✓ All fragments saved to: {output_dir}/")
+    logger.info(f"\n✓ All fragments saved to: {output_dir}/")
 
 
 def main() -> int:
@@ -220,16 +223,18 @@ def main() -> int:
     output_dir = Path("data/test/shehata/fragments")
 
     if not csv_path.exists():
-        print(f"Error: {csv_path} not found!")
-        print("Please run preprocessing/shehata/step1_convert_excel_to_csv.py first.")
+        logger.info(f"Error: {csv_path} not found!")
+        logger.info(
+            "Please run preprocessing/shehata/step1_convert_excel_to_csv.py first."
+        )
         return 1
 
-    print("=" * 60)
-    print("Shehata Dataset: Fragment Extraction (Phase 2)")
-    print("=" * 60)
-    print(f"\nInput:  {csv_path}")
-    print(f"Output: {output_dir}/")
-    print("Method: ANARCI (IMGT numbering scheme)")
+    logger.info("=" * 60)
+    logger.info("Shehata Dataset: Fragment Extraction (Phase 2)")
+    logger.info("=" * 60)
+    logger.info(f"\nInput:  {csv_path}")
+    logger.info(f"Output: {output_dir}/")
+    logger.info("Method: ANARCI (IMGT numbering scheme)")
     print()
 
     # Process dataset
@@ -239,28 +244,28 @@ def main() -> int:
     create_fragment_csvs(df_annotated, output_dir)
 
     # Validation summary
-    print("\n" + "=" * 60)
-    print("Fragment Extraction Summary")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("Fragment Extraction Summary")
+    logger.info("=" * 60)
 
-    print(f"\nAnnotated antibodies: {len(df_annotated)}")
-    print("Label distribution:")
+    logger.info(f"\nAnnotated antibodies: {len(df_annotated)}")
+    logger.info("Label distribution:")
     for label, count in df_annotated["label"].value_counts().sort_index().items():
         label_name = "Specific" if label == 0 else "Non-specific"
-        print(f"  {label_name}: {count} ({count / len(df_annotated) * 100:.1f}%)")
+        logger.info(f"  {label_name}: {count} ({count / len(df_annotated) * 100:.1f}%)")
 
-    print("\nFragment files created: 16")
-    print(f"Output directory: {output_dir.absolute()}")
+    logger.info("\nFragment files created: 16")
+    logger.info(f"Output directory: {output_dir.absolute()}")
 
-    print("\n" + "=" * 60)
-    print("✓ Phase 2 Complete!")
-    print("=" * 60)
+    logger.info("\n" + "=" * 60)
+    logger.info("✓ Phase 2 Complete!")
+    logger.info("=" * 60)
 
-    print("\nNext steps:")
-    print("  1. Test loading fragments with data.load_local_data()")
-    print("  2. Run model inference on fragment-specific CSVs")
-    print("  3. Compare results with paper (Sakhnini et al. 2025)")
-    print("  4. Create PR to close Issue #3")
+    logger.info("\nNext steps:")
+    logger.info("  1. Test loading fragments with data.load_local_data()")
+    logger.info("  2. Run model inference on fragment-specific CSVs")
+    logger.info("  3. Compare results with paper (Sakhnini et al. 2025)")
+    logger.info("  4. Create PR to close Issue #3")
     return 0
 
 
