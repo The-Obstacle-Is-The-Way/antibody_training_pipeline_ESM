@@ -5,6 +5,8 @@
 **Goal:** Transform codebase from "B+ (Jekyll & Hyde)" to "A+ (Pristine)"
 **Author:** Claude Code (Deep Architectural Audit)
 
+**Note on preprocessing location:** Preprocessing stays at project root. Moving it under `src/` is optional (not required) and should only be considered if packaging/deployment requires it. See `PREPROCESSING_STRUCTURE.md` for the rationale.
+
 ---
 
 ## Executive Summary
@@ -1256,71 +1258,13 @@ uv run antibody-train --help
 
 ## Phase 3: P2 Refactoring
 
-### Fix #13: Consolidate Duplicate Constants 🔢
+### Fix #13: VALID_AA Constant (status update)
 
-**Priority:** P2 (MEDIUM)
-**Effort:** 30 minutes
-**Risk:** LOW
+**Priority:** P3 (LOW) or skip
+**Effort:** Optional
+**Current State:** Only one definition exists now (`preprocessing/jain/step1_convert_excel_to_csv.py`). The earlier “6+ copies” note was stale.
 
-**Problem:**
-`VALID_AA` constant defined 6+ times with variations.
-
-**Locations:**
-- `preprocessing/jain/step1_convert_excel_to_csv.py:33`: `VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")`
-- `preprocessing/boughter/audit_training_qc.py:35`: `STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")`
-- `src/antibody_training_esm/core/embeddings.py:85`: `valid_aas = set("ACDEFGHIKLMNPQRSTVWYX")`
-- `tests/integration/test_*_embedding_compatibility.py`: `VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWYX")`
-
-**Fix Plan:**
-
-**Create canonical definition:**
-```python
-# src/antibody_training_esm/utils/amino_acids.py (reuse utils/ from Fix #11)
-"""Canonical amino acid constants."""
-
-# 20 standard amino acids
-STANDARD_AMINO_ACIDS = frozenset("ACDEFGHIKLMNPQRSTVWY")
-
-# Extended set including unknown (X)
-EXTENDED_AMINO_ACIDS = STANDARD_AMINO_ACIDS | {"X"}
-
-# Validation functions
-def validate_sequence(seq: str, allow_unknown: bool = False) -> bool:
-    """Check if sequence contains only valid amino acids."""
-    valid_set = EXTENDED_AMINO_ACIDS if allow_unknown else STANDARD_AMINO_ACIDS
-    return set(seq.upper()).issubset(valid_set)
-
-def invalid_residues(seq: str, allow_unknown: bool = False) -> set[str]:
-    """Return set of invalid residues in sequence."""
-    valid_set = EXTENDED_AMINO_ACIDS if allow_unknown else STANDARD_AMINO_ACIDS
-    return set(seq.upper()) - valid_set
-```
-
-**Update all files to import:**
-```python
-# BEFORE:
-VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
-
-# AFTER:
-from antibody_training_esm.utils.amino_acids import STANDARD_AMINO_ACIDS
-
-# Use STANDARD_AMINO_ACIDS instead
-```
-
-**Files to update (6+):**
-- All preprocessing scripts using VALID_AA
-- All test files using VALID_AMINO_ACIDS
-- embeddings.py
-
-**Verification:**
-```bash
-# No more local VALID_AA definitions
-grep -r "VALID_AA = set" src/ preprocessing/ tests/
-# Should only show the one in utils/amino_acids.py
-```
-
----
-
+**Optional improvement:** If we later want a shared amino acid utility, introduce `utils/amino_acids.py` and import from there. Otherwise, no action needed.
 ### Fix #14: Document PSR Threshold Differences 📊
 
 **Priority:** P2 (MEDIUM)
@@ -1722,7 +1666,7 @@ uv run pytest -m integration
 | Files >500 lines | 4 | C |
 | Hardcoded paths | 50+ | D |
 | Missing __init__.py | 2 | C |
-| Bare except Exception | 2 | C |
+| Bare except Exception | 4 | C |
 | type: ignore comments | 2 | B+ |
 | Code duplication (fragment extraction) | 200+ lines | D |
 | Code duplication (validation) | 150+ lines | D |
