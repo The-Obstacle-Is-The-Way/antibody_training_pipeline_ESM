@@ -7,12 +7,15 @@ This script demonstrates that our model achieves EXACT parity with Novo:
 - Accuracy: 66.28% (57/86) (exact match)
 
 Usage:
-    python preprocessing/jain/test_novo_parity.py
+    python -m preprocessing.jain.test_novo_parity
+    python -m preprocessing.jain.test_novo_parity --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
 """
 
 from __future__ import annotations
 
+import argparse
 import pickle
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -23,15 +26,37 @@ from preprocessing.logging_config import setup_logger
 logger = setup_logger(__name__)
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Verify Novo Nordisk parity on the Jain 86-antibody benchmark.",
+    )
+    parser.add_argument(
+        "--model",
+        type=Path,
+        default=Path(
+            "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
+        ),
+        help="Path to trained logreg checkpoint (default: esm1v checkpoint in experiments/checkpoints).",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
+
     logger.info("=" * 80)
     logger.info("NOVO NORDISK PARITY VERIFICATION")
     logger.info("=" * 80)
     logger.info("")
 
     # Load the trained model
-    logger.info("Loading model: models/boughter_vh_esm1v_logreg.pkl")
-    with open("models/boughter_vh_esm1v_logreg.pkl", "rb") as f:
+    logger.info(f"Loading model: {args.model}")
+    if not args.model.exists():
+        raise FileNotFoundError(
+            f"Model checkpoint not found at {args.model}. "
+            "Use --model to point to a valid pickle (e.g., experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl)."
+        )
+    with args.model.open("rb") as f:
         classifier = pickle.load(f)
 
     # Verify model configuration
@@ -44,7 +69,7 @@ def main() -> None:
     # Load Novo parity test set (86 antibodies)
     logger.info("Loading test set: data/test/jain/canonical/jain_86_novo_parity.csv")
     df = pd.read_csv("data/test/jain/canonical/jain_86_novo_parity.csv")
-    logger.info("Test set loaded: {len(df)} antibodies")
+    logger.info(f"Test set loaded: {len(df)} antibodies")
     logger.info(f"   - Specific (label=0): {(df['label'] == 0).sum()}")
     logger.info(f"   - Non-specific (label=1): {(df['label'] == 1).sum()}")
     logger.info("")
@@ -56,7 +81,7 @@ def main() -> None:
     # Generate embeddings
     logger.info("Generating ESM-1v embeddings...")
     X_test = classifier.embedding_extractor.extract_batch_embeddings(sequences)
-    logger.info("Embeddings generated: shape {X_test.shape}")
+    logger.info(f"Embeddings generated: shape {X_test.shape}")
     logger.info("")
 
     # Make predictions
