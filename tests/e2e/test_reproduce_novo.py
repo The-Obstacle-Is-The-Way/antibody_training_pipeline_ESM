@@ -166,6 +166,10 @@ def test_psr_threshold_calibration(mock_transformers_model: tuple[Any, Any]) -> 
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(X_train, y_train)
 
@@ -199,6 +203,10 @@ def test_elisa_threshold_default(mock_transformers_model: tuple[Any, Any]) -> No
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(X_train, y_train)
 
@@ -317,6 +325,10 @@ def test_cross_dataset_predictions_are_valid(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(X_train, y_train)
 
@@ -351,6 +363,10 @@ def test_training_is_reproducible_with_same_seed(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier1.fit(X, y)
     pred1 = classifier1.predict(X_test)
@@ -361,6 +377,10 @@ def test_training_is_reproducible_with_same_seed(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier2.fit(X, y)
     pred2 = classifier2.predict(X_test)
@@ -382,6 +402,10 @@ def test_novo_parameters_documented_correctly() -> None:
         random_state=42,
         max_iter=100,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     # Assert: PSR threshold documented

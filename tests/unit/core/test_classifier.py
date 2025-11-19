@@ -40,6 +40,10 @@ def test_classifier_initializes_with_default_params(
         "device": "cpu",
         "random_state": 42,
         "max_iter": 1000,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
 
     # Act
@@ -93,6 +97,8 @@ def test_classifier_initializes_with_kwargs(mock_transformers_model: Any) -> Non
         max_iter=1000,
         C=0.5,
         penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     # Assert
@@ -110,6 +116,10 @@ def test_classifier_stores_embedding_extractor(mock_transformers_model: Any) -> 
         "device": "cpu",
         "random_state": 42,
         "max_iter": 1000,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
 
     # Act
@@ -137,6 +147,8 @@ def test_classifier_implements_get_params(mock_transformers_model: Any) -> None:
         "max_iter": 1000,
         "C": 0.5,
         "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
 
@@ -163,6 +175,9 @@ def test_classifier_implements_set_params(mock_transformers_model: Any) -> None:
         "random_state": 42,
         "max_iter": 1000,
         "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
 
@@ -185,6 +200,10 @@ def test_get_params_returns_only_valid_constructor_params(
         "device": "cpu",
         "random_state": 42,
         "max_iter": 1000,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
         "cv_folds": 5,  # Not a constructor param
         "stratify": True,  # Not a constructor param
     }
@@ -214,6 +233,9 @@ def test_set_params_updates_penalty(mock_transformers_model: Any) -> None:
         "random_state": 42,
         "max_iter": 1000,
         "penalty": "l2",
+        "C": 1.0,
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
     old_extractor_id = id(classifier.embedding_extractor)
@@ -241,6 +263,9 @@ def test_set_params_updates_solver(mock_transformers_model: Any) -> None:
         "random_state": 42,
         "max_iter": 1000,
         "solver": "lbfgs",
+        "C": 1.0,
+        "penalty": "l2",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
     old_extractor_id = id(classifier.embedding_extractor)
@@ -268,6 +293,9 @@ def test_set_params_updates_class_weight(mock_transformers_model: Any) -> None:
         "random_state": 42,
         "max_iter": 1000,
         "class_weight": None,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
     }
     classifier = BinaryClassifier(params=params)
     old_extractor_id = id(classifier.embedding_extractor)
@@ -297,6 +325,9 @@ def test_set_params_updates_C_no_extractor_reload(
         "random_state": 42,
         "max_iter": 1000,
         "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
     old_extractor_id = id(classifier.embedding_extractor)
@@ -327,6 +358,10 @@ def test_set_params_recreates_extractor_on_batch_size_change(
         "random_state": 42,
         "max_iter": 1000,
         "batch_size": 8,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
     old_extractor_id = id(classifier.embedding_extractor)
@@ -360,6 +395,10 @@ def test_set_params_recreates_extractor_on_model_name_change(
         "device": "cpu",
         "random_state": 42,
         "max_iter": 1000,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
     old_extractor_id = id(classifier.embedding_extractor)
@@ -393,6 +432,10 @@ def test_set_params_recreates_extractor_on_device_change(
         "device": "cpu",
         "random_state": 42,
         "max_iter": 1000,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
     old_extractor_id = id(classifier.embedding_extractor)
@@ -427,6 +470,10 @@ def test_set_params_recreates_extractor_on_revision_change(
         "random_state": 42,
         "max_iter": 1000,
         "revision": "main",
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
     old_extractor_id = id(classifier.embedding_extractor)
@@ -541,6 +588,9 @@ def test_fit_with_class_weight_balanced(mock_transformers_model: Any) -> None:
         "random_state": 42,
         "max_iter": 1000,
         "class_weight": "balanced",
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
     }
     classifier = BinaryClassifier(params=params)
     X = np.random.rand(100, 1280).astype(np.float32)
@@ -978,6 +1028,10 @@ def test_readme_example_workflow(mock_transformers_model: Any) -> None:
         "device": "cpu",
         "random_state": 42,
         "max_iter": 1000,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=params)
 
