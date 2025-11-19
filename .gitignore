@@ -84,6 +84,7 @@ Thumbs.db
 # Project specific (root level only)
 /logs/
 /outputs/
+.gradio/
 
 # Literature PDFs and markdown conversions (for personal reference only)
 literature/
