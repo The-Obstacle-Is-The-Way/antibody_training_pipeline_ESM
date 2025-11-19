@@ -641,6 +641,11 @@ def test_device_mismatch_recreates_extractor(
         "batch_size": 8,
         "random_state": 42,
         "max_iter": 1000,
+        # ADDED defaults
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=config)
 
@@ -929,6 +934,11 @@ def test_compute_embeddings_handles_corrupt_cache(
         "batch_size": 8,
         "random_state": 42,
         "max_iter": 1000,
+        # ADDED defaults
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
     }
     classifier = BinaryClassifier(params=config)
 

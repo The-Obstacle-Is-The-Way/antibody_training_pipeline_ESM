@@ -56,6 +56,10 @@ def trained_classifier(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(X_train, y_train)
 
@@ -324,6 +328,10 @@ def test_run_comprehensive_test_multiple_models(
         random_state=43,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier2.fit(X_train, y_train)
 
@@ -551,6 +559,10 @@ def test_run_comprehensive_test_no_model_collision(
         random_state=99,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier2.fit(X_train, y_train)
 
@@ -616,6 +628,10 @@ def test_run_comprehensive_test_generates_aggregated_reports(
         random_state=100,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier2.fit(X_train, y_train)
 

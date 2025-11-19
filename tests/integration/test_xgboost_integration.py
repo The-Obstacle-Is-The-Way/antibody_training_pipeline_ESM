@@ -24,7 +24,14 @@ def test_factory_creates_xgboost_strategy() -> None:
     config = {
         "type": "xgboost",
         "n_estimators": 50,
+        "max_depth": 6,
+        "learning_rate": 0.3,
+        "subsample": 1.0,
+        "colsample_bytree": 1.0,
+        "reg_alpha": 0.0,
+        "reg_lambda": 1.0,
         "random_state": 42,
+        "objective": "binary:logistic",
     }
 
     # Act
@@ -49,7 +56,14 @@ def test_xgboost_strategy_end_to_end() -> None:
     config = {
         "type": "xgboost",
         "n_estimators": 50,
+        "max_depth": 6,
+        "learning_rate": 0.3,
+        "subsample": 1.0,
+        "colsample_bytree": 1.0,
+        "reg_alpha": 0.0,
+        "reg_lambda": 1.0,
         "random_state": 42,
+        "objective": "binary:logistic",
     }
 
     # Act

@@ -31,6 +31,13 @@ def test_xgboost_e2e_with_mock_embeddings() -> None:
         "random_state": 42,
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",  # Required but won't load
         "device": "cpu",
+        # ADDED defaults for strict config
+        "learning_rate": 0.3,
+        "subsample": 1.0,
+        "colsample_bytree": 1.0,
+        "reg_alpha": 0.0,
+        "reg_lambda": 1.0,
+        "objective": "binary:logistic",
     }
 
     classifier = BinaryClassifier(config)
@@ -83,6 +90,14 @@ def test_xgboost_vs_logreg_on_same_data() -> None:
         "random_state": 42,
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",
         "device": "cpu",
+        # ADDED defaults
+        "max_depth": 6,
+        "learning_rate": 0.3,
+        "subsample": 1.0,
+        "colsample_bytree": 1.0,
+        "reg_alpha": 0.0,
+        "reg_lambda": 1.0,
+        "objective": "binary:logistic",
     }
 
     logreg_config = {
@@ -94,6 +109,8 @@ def test_xgboost_vs_logreg_on_same_data() -> None:
         "random_state": 42,
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",
         "device": "cpu",
+        # ADDED defaults
+        "class_weight": None,
     }
 
     # Act: Train both
@@ -131,6 +148,14 @@ def test_xgboost_deterministic_with_seed() -> None:
         "random_state": 42,
         "model_name": "facebook/esm1v_t33_650M_UR90S_1",
         "device": "cpu",
+        # ADDED defaults
+        "max_depth": 6,
+        "learning_rate": 0.3,
+        "subsample": 1.0,
+        "colsample_bytree": 1.0,
+        "reg_alpha": 0.0,
+        "reg_lambda": 1.0,
+        "objective": "binary:logistic",
     }
 
     # Train twice with same seed
