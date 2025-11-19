@@ -7,13 +7,8 @@ using the PSR-specific threshold (0.5495) discovered from Shehata analysis.
 
 from __future__ import annotations
 
-import os
-import sys
-
-# Add project root to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-
 import pickle
+import sys
 import time
 from typing import TypedDict
 
