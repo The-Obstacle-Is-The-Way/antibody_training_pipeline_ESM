@@ -3,6 +3,7 @@
 defaults:
   - /model: esm1v
   - /classifier: logreg
+  - /hardware: default
   - _self_
 
 input_file: null

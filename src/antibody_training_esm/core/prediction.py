@@ -1,3 +1,4 @@
+import logging
 from typing import Any
 
 import joblib
@@ -6,7 +7,10 @@ import pandas as pd
 import torch
 from omegaconf import DictConfig
 
+from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
+
+logger = logging.getLogger(__name__)
 
 
 class Predictor:
@@ -18,7 +22,10 @@ class Predictor:
     """
 
     def __init__(
-        self, model_name: str, classifier_path: str, device: str | None = None
+        self,
+        model_name: str,
+        classifier_path: str,
+        device: str | None = None,
     ):
         """
         Initialize the Predictor with model configurations.
@@ -28,7 +35,7 @@ class Predictor:
             classifier_path: Path to the trained scikit-learn classifier (pickle/joblib file).
             device: The device to run the model on ('cpu' or 'cuda'). If None, auto-detects.
         """
-        self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = self._select_device(device)
         self.model_name = model_name
         self.classifier_path = classifier_path
 
@@ -61,7 +68,26 @@ class Predictor:
                 hasattr(clf, "embedding_extractor")
                 and clf.embedding_extractor is not None
             ):
-                self._embedder = clf.embedding_extractor
+                embedder = clf.embedding_extractor
+
+                # If the persisted embedder device doesn't match requested device,
+                # recreate it to avoid MPS/CUDA mismatches (common segfault source on macOS).
+                if self.device and str(embedder.device) != self.device:
+                    batch_size = getattr(embedder, "batch_size", DEFAULT_BATCH_SIZE)
+                    revision = getattr(embedder, "revision", "main")
+                    logger.info(
+                        "Recreating embedder on requested device %s (was %s)",
+                        self.device,
+                        embedder.device,
+                    )
+                    embedder = ESMEmbeddingExtractor(
+                        model_name=self.model_name,
+                        device=self.device,
+                        batch_size=batch_size,
+                        revision=revision,
+                    )
+
+                self._embedder = embedder
             else:
                 # Fallback: Create a new one (e.g., if using raw sklearn model)
                 self._embedder = ESMEmbeddingExtractor(
@@ -175,6 +201,22 @@ class Predictor:
             "prediction": results["prediction"].iloc[0],
             "probability": float(results["probability"].iloc[0]),
         }
+
+    @staticmethod
+    def _select_device(device: str | None) -> str:
+        """
+        Select the best available device.
+
+        Prioritizes CUDA, then MPS (macOS), then CPU.
+        """
+        if device:
+            return device
+
+        if torch.cuda.is_available():
+            return "cuda"
+        if torch.backends.mps.is_available():
+            return "mps"
+        return "cpu"
 
 
 def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:

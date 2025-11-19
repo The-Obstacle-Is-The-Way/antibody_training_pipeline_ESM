@@ -2,10 +2,12 @@
 This module contains the Gradio app for the antibody non-specificity prediction pipeline.
 """
 
+import platform
 from pathlib import Path
 
 import gradio as gr
 import hydra
+import torch
 from omegaconf import DictConfig
 
 from antibody_training_esm.core.prediction import Predictor
@@ -21,6 +23,30 @@ def launch_gradio_app(cfg: DictConfig) -> None:
     Args:
         cfg: The Hydra configuration object.
     """
+    # Robust Device & Threading Configuration
+    # -------------------------------------------------------------------------
+    # 1. Determine the optimal device for inference
+    #    - Prefer CUDA if available (Linux/Windows GPU boxes)
+    #    - Force CPU on macOS if MPS is detected to avoid Gradio+MPS SegFaults
+    #    - Default to configured value otherwise
+    device = cfg.model.get("device", "cpu")
+
+    if platform.system() == "Darwin" and device == "mps":
+        print(
+            "WARNING: macOS detected. Forcing CPU for Gradio app stability (MPS workaround)."
+        )
+        device = "cpu"
+
+    # 2. Configure Threading to prevent OpenMP SegFaults on macOS
+    #    - On macOS/CPU, PyTorch's OpenMP runtime can crash inside Gradio threads.
+    #    - We restrict it to 1 thread to ensure stability.
+    #    - Linux/CUDA systems remain untouched and can use full parallelism.
+    if platform.system() == "Darwin" and device == "cpu":
+        print(
+            "WARNING: macOS/CPU detected. Setting torch.set_num_threads(1) to prevent OpenMP crashes."
+        )
+        torch.set_num_threads(1)
+
     if cfg.classifier.path is None:
         raise ValueError(
             "Classifier path must be specified via command-line override:\n"
@@ -37,6 +63,7 @@ def launch_gradio_app(cfg: DictConfig) -> None:
     predictor = Predictor(
         model_name=cfg.model.name,
         classifier_path=cfg.classifier.path,
+        device=device,
     )
 
     def validate_input(sequence: str) -> None:
