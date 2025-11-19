@@ -5,6 +5,181 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-11-19
+
+### 🚀 Production Inference Pipeline - Complete Predict → Test → Train Workflow
+
+Major release delivering production-ready inference capabilities with comprehensive CLI tooling, modular architecture refactoring, and massive documentation improvements. This completes the full antibody prediction workflow from training to deployment.
+
+**Highlights:**
+- ✅ **antibody-predict CLI** - Production inference with 100% test coverage
+- ✅ **Modular Testing Pipeline** - 872-line monolith → 6 focused modules (83.8% reduction)
+- ✅ **Column Name Flexibility** - Custom sequence/label columns across all CLIs
+- ✅ **90.42% Test Coverage** - Up from 89.01% (+1.41%)
+- ✅ **256 Commits** - 31 features, 20 fixes, 15 refactors, 99 docs
+- ✅ **476 Tests Passing** - Up from 468 (+8 tests)
+
+### ✨ Features
+
+**Production Inference CLI (`antibody-predict`)**
+- Complete CLI for predicting antibody non-specificity from sequences
+- Input validation: missing files, invalid columns, classifier paths
+- Flexible column names: `sequence_column` override for custom CSV formats
+- Assay-specific thresholds: PSR (0.5495) and ELISA (0.5) calibration via `assay_type`
+- Manual threshold override: `threshold` parameter (0.0-1.0)
+- CSV I/O: Preserves all original columns + adds `prediction` and `probability`
+- Resource optimization: Reuses embedder from classifier (avoids 2x 650MB model loading)
+- Clear error messages with usage examples
+- New files:
+  - `src/antibody_training_esm/cli/predict.py` (57 lines, 100% coverage)
+  - `src/antibody_training_esm/core/prediction.py` (203 lines, 87.5% coverage)
+  - `src/antibody_training_esm/conf/predict.yaml` (16 lines)
+  - `INFERENCE_GUIDE.md` (111-line comprehensive user guide)
+
+**Modular Testing Pipeline Refactor**
+- Transformed `test.py` from 872-line monolith → clean 6-module architecture
+- 83.8% size reduction in main file (872 → 141 lines)
+- Single Responsibility Principle: each module has one clear purpose
+- Zero circular dependencies (clean acyclic DAG)
+- 100% backward compatible (all 34 CLI tests pass)
+- New modules:
+  - `testing/config.py` (62 lines) - TestConfig dataclass + YAML loading
+  - `testing/data.py` (73 lines) - Dataset loading + validation
+  - `testing/evaluation.py` (141 lines) - Metrics + assay detection
+  - `testing/tester.py` (383 lines) - Model orchestration
+  - `testing/visualization.py` (127 lines) - Plotting + serialization
+
+**Column Name Flexibility**
+- All CLIs now support custom sequence/label column names
+- Testing CLI: `--sequence-column` and `--label-column` flags
+- Prediction CLI: `sequence_column` config parameter
+- Solves canonical vs fragment file column naming (vh_sequence vs sequence)
+- Enables CLI usage with research-quality canonical datasets
+
+**Logging Migration**
+- Complete migration from `print()` to `logging` module
+- Preprocessing scripts use proper log levels (INFO, DEBUG, WARNING, ERROR)
+- Mypy/ruff compliance maintained
+- Better production observability
+
+### 🐛 Bug Fixes
+
+**Critical Fixes**
+- Fixed inference CLI crash when `classifier.path=None` (now raises clear error with usage example)
+- Fixed double ESM loading (Predictor reuses classifier's embedder, saves 650MB memory)
+- Fixed E2E test downloading 2.5GB ESM model in CI (now gated behind `RUN_PREDICT_CLI_E2E=1`)
+- Fixed documentation claiming gap character support (gaps NOT supported, docs corrected)
+- Fixed Hydra CWD switching breaking relative paths (added `hydra.job.chdir: False`)
+
+**Other Fixes**
+- Fixed missing test markers (@pytest.mark.e2e, @pytest.mark.slow)
+- Fixed .gitignore to exclude coverage.json (build artifact)
+- Fixed sys.path hacks removed from tests (proper package imports)
+- Fixed integration test markers added to embedding compatibility tests
+
+### 🔧 Improvements
+
+**Test Coverage**
+- Overall: 89.01% → 90.42% (+1.41%)
+- predict.py: 0% → 100%
+- prediction.py: 87.5%
+- **New tests:** 10 (6 CLI unit + 4 core logic tests)
+- **Test files added:**
+  - `tests/unit/cli/test_predict.py` (122 lines, 6 tests)
+  - `tests/unit/core/test_prediction.py` (136 lines, 4 tests)
+  - `tests/e2e/test_predict_cli.py` (124 lines, gated E2E)
+
+**Documentation (99 Updates!)**
+- **New guides:**
+  - `INFERENCE_GUIDE.md` - 111-line comprehensive prediction CLI guide
+  - `RELEASE_NOTES_v0.5.0.md` - Full release documentation
+  - `docs/needs_integration/INFERENCE_COMPLETION_REPORT.md` - Validation report
+  - `docs/needs_integration/CLI_TEST_REFACTOR_VALIDATION.md` - 328-line refactor audit
+  - `docs/needs_integration/DATASET_COLUMN_NAMING_INVESTIGATION.md` - 402-line design analysis
+  - `docs/needs_integration/SPEC_SHEET.md` - Feature specification
+- **Updated:**
+  - `README.md` - Prediction CLI section, updated usage examples
+  - `CLAUDE.md` - Inference CLI patterns
+  - `USAGE.md` - Prediction examples
+  - `GEMINI.md` - Agent guidance
+  - `AGENTS.md` - Multi-agent workflows
+
+**Developer Experience**
+- Proper test markers for selective test runs (@slow, @e2e, @integration)
+- 100% mypy --strict compliance maintained
+- Zero ruff warnings across all new code
+- Modular CLI design (easier testing, debugging, extension)
+
+### 🔄 Migration Notes
+
+**100% Backward Compatible** - No breaking changes!
+
+**New CLI Available:**
+```bash
+# Prediction (NEW in v0.5.0)
+uv run antibody-predict \
+    input_file=sequences.csv \
+    output_file=predictions.csv \
+    classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+
+# Enhanced testing (column name overrides)
+uv run antibody-test \
+    --model model.pkl \
+    --data data.csv \
+    --sequence-column vh_sequence \  # NEW
+    --label-column label              # NEW
+```
+
+**No Changes Required:**
+- Existing workflows continue to work
+- Training CLI unchanged
+- Testing CLI backward compatible (new flags optional)
+
+### 📊 Stats
+
+- **256 commits** since v0.4.0
+- **473 files changed** (+820,059/-230,640 lines)
+- **31 features**, 20 fixes, 15 refactors, 12 tests, 99 docs
+- **476 tests passing** (up from 468)
+- **90.42% coverage** (up from 89.01%)
+- **100% type safety** (mypy --strict clean)
+
+### ✅ Validation
+
+**Quality Gates:**
+```bash
+$ uv run pytest
+===== 476 passed, 4 skipped in 83.57s =====
+
+$ make typecheck
+✅ Success: no issues found in 97 source files
+
+$ make lint
+✅ All checks passed!
+
+$ uv run bandit -r src/
+✅ No issues identified
+```
+
+### 🎯 What's Next?
+
+**Immediate (Post-v0.5.0):**
+- Deploy to HuggingFace Spaces (Gradio wrapper)
+- Model registry (auto-download checkpoints from GitHub Releases)
+- Docker image with cached ESM models
+
+**Short-term (v0.6.0):**
+- Batch prediction API
+- Confidence intervals (bootstrap uncertainty)
+- Feature importance (SHAP values)
+
+**Long-term (v1.0.0):**
+- Biophysical features (pI, net charge, hydrophobicity)
+- Multi-model ensembles (ESM-1v + ESM-2 + AntiBERTy)
+- Web dashboard
+
+---
+
 ## [0.4.0] - 2025-11-11
 
 ### 🎛️ Hydra Configuration System - Enterprise-Grade Experiment Management
