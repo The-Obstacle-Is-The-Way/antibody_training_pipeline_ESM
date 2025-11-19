@@ -1,15 +1,15 @@
+from unittest.mock import MagicMock, patch
 
+import numpy as np
 import pandas as pd
 import pytest
-from unittest.mock import MagicMock, patch
-import numpy as np
 from omegaconf import OmegaConf
 
 from antibody_training_esm.core.prediction import run_prediction
 
 
 @pytest.fixture
-def sample_input_df():
+def sample_input_df() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "sequence": [
@@ -20,10 +20,13 @@ def sample_input_df():
     )
 
 
-def test_run_prediction(sample_input_df):
-    with patch("joblib.load") as mock_joblib_load, patch(
-        "antibody_training_esm.core.prediction.ESMEmbeddingExtractor"
-    ) as mock_embedder:
+def test_run_prediction(sample_input_df: pd.DataFrame) -> None:
+    with (
+        patch("joblib.load") as mock_joblib_load,
+        patch(
+            "antibody_training_esm.core.prediction.ESMEmbeddingExtractor"
+        ) as mock_embedder,
+    ):
         # Mocking the classifier
         mock_classifier = MagicMock()
         mock_classifier.predict.return_value = np.array([1, 0])
@@ -33,8 +36,8 @@ def test_run_prediction(sample_input_df):
         mock_joblib_load.return_value = mock_classifier
 
         # Mocking the ESMEmbeddingExtractor
-        mock_embedder.return_value.extract_batch_embeddings.return_value = np.random.rand(
-            2, 1280
+        mock_embedder.return_value.extract_batch_embeddings.return_value = (
+            np.random.rand(2, 1280)
         )  # dummy embeddings
 
         # Create a mock config object

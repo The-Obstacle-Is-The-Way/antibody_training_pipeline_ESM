@@ -1,17 +1,17 @@
-
 import subprocess
 from pathlib import Path
+from typing import Any
 
+import joblib
+import numpy as np
 import pandas as pd
 import pytest
-import joblib
-from sklearn.linear_model import LogisticRegression
-import numpy as np
 from omegaconf import OmegaConf
+from sklearn.linear_model import LogisticRegression
 
 
 @pytest.fixture
-def isolated_predict_test_env(tmp_path):
+def isolated_predict_test_env(tmp_path: Path) -> dict[str, Any]:
     """Creates a self-contained environment for the prediction CLI test."""
     test_dir = tmp_path / "predict_test"
     test_dir.mkdir()
@@ -42,8 +42,12 @@ def isolated_predict_test_env(tmp_path):
         OmegaConf.save(
             config=OmegaConf.create(
                 {
-                    "defaults": ["_self_", {"override /model": "esm1v"}, {"override /classifier": "logreg"}],
-                    "output_file": str(output_file), # Default output
+                    "defaults": [
+                        "_self_",
+                        {"override /model": "esm1v"},
+                        {"override /classifier": "logreg"},
+                    ],
+                    "output_file": str(output_file),  # Default output
                 }
             ),
             f=f,
@@ -51,7 +55,9 @@ def isolated_predict_test_env(tmp_path):
     # Model config
     (conf_dir / "model").mkdir()
     with open(conf_dir / "model" / "esm1v.yaml", "w") as f:
-        OmegaConf.save(config=OmegaConf.create({"name": "facebook/esm1v_t33_650M_UR90S_1"}), f=f)
+        OmegaConf.save(
+            config=OmegaConf.create({"name": "facebook/esm1v_t33_650M_UR90S_1"}), f=f
+        )
     # Classifier config
     (conf_dir / "classifier").mkdir()
     with open(conf_dir / "classifier" / "logreg.yaml", "w") as f:
@@ -65,7 +71,7 @@ def isolated_predict_test_env(tmp_path):
     }
 
 
-def test_predict_cli_end_to_end(isolated_predict_test_env):
+def test_predict_cli_end_to_end(isolated_predict_test_env: dict[str, Any]) -> None:
     """Tests the predict CLI end-to-end in an isolated environment."""
     env = isolated_predict_test_env
     input_file = env["input_file"]
@@ -73,14 +79,13 @@ def test_predict_cli_end_to_end(isolated_predict_test_env):
     conf_dir = env["conf_dir"]
     classifier_path = env["classifier_path"]
 
-
     # Command to run using the predict entrypoint, pointing to the isolated config
     cmd = [
         "uv",
         "run",
         "antibody-predict",
         f"--config-dir={conf_dir}",
-        f"--config-name=predict",
+        "--config-name=predict",
         f"input_file={input_file}",
         f"output_file={output_file}",
         f"classifier.path={classifier_path}",
@@ -97,4 +102,6 @@ def test_predict_cli_end_to_end(isolated_predict_test_env):
     output_df = pd.read_csv(output_file)
     assert "prediction" in output_df.columns
     assert "probability" in output_df.columns
-    assert len(output_df) == 2, "Output file does not contain the expected number of rows."
+    assert len(output_df) == 2, (
+        "Output file does not contain the expected number of rows."
+    )
