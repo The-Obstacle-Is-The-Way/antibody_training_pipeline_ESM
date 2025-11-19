@@ -78,6 +78,7 @@ dev = [
 antibody-train = "antibody_training_esm.core.trainer:main"
 antibody-test = "antibody_training_esm.cli.test:main"
 antibody-preprocess = "antibody_training_esm.cli.preprocess:main"
+antibody-predict = "antibody_training_esm.cli.predict:main"
 
 [tool.ruff]
 target-version = "py312"

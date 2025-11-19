@@ -1,0 +1,16 @@
+# @package _global_
+
+defaults:
+  - /model: esm1v
+  - /classifier: logreg
+  - _self_
+
+input_file: null
+output_file: "predictions.csv"
+sequence_column: "sequence"
+assay_type: null  # Options: "PSR", "ELISA", or null
+threshold: 0.5    # Ignored if assay_type is set
+
+hydra:
+  job:
+    chdir: False

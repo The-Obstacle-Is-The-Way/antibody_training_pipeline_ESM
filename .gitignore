@@ -144,3 +144,6 @@ experiments/cache/*
 
 # Benchmarks are versioned
 !experiments/benchmarks/
+
+# Coverage reports (JSON format)
+coverage.json
