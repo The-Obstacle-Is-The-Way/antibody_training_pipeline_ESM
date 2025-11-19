@@ -3,6 +3,11 @@ Test Harvey Dataset with PSR Threshold
 
 This tests our trained model on the Harvey dataset (141,021 nanobodies)
 using the PSR-specific threshold (0.5495) discovered from Shehata analysis.
+
+NOTE: This is a standalone integration/benchmark script, not a pytest test.
+Run directly: python tests/integration/preprocessing/test_harvey_psr_threshold.py
+
+WARNING: This takes 20-30 minutes to run (processes 141k sequences).
 """
 
 from __future__ import annotations
