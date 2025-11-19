@@ -588,7 +588,9 @@ def main() -> int:
 
     logger.info("\n" + "=" * 70)
     logger.info("Stage 1 Complete - Ready for Stage 2 (ANARCI annotation)")
-    print("=" * 70)
+    logger.info("=" * 70)
+    logger.info("Boughter Stage 1: DNA Translation & Filtering")
+    logger.info("=" * 70)
     return 0
 
 

@@ -30,7 +30,7 @@ def main() -> None:
     logger.info("")
 
     # Load the trained model
-    print("Loading model: models/boughter_vh_esm1v_logreg.pkl")
+    logger.info("Loading model: models/boughter_vh_esm1v_logreg.pkl")
     with open("models/boughter_vh_esm1v_logreg.pkl", "rb") as f:
         classifier = pickle.load(f)
 
@@ -47,7 +47,7 @@ def main() -> None:
     logger.info("Test set loaded: {len(df)} antibodies")
     logger.info(f"   - Specific (label=0): {(df['label'] == 0).sum()}")
     logger.info(f"   - Non-specific (label=1): {(df['label'] == 1).sum()}")
-    print()
+    logger.info("")
 
     # Extract sequences and labels
     sequences = df["vh_sequence"].tolist()
@@ -64,7 +64,7 @@ def main() -> None:
     y_pred = classifier.predict(X_test)
     classifier.predict_proba(X_test)
     logger.info("Predictions complete")
-    print()
+    logger.info("")
 
     # Calculate confusion matrix
     cm = confusion_matrix(y_true, y_pred)

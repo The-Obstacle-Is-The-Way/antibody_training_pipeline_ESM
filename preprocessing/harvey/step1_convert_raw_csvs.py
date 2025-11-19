@@ -107,7 +107,7 @@ def convert_harvey_csvs(
     logger.info(f"\nCombined dataset: {len(df_combined)} sequences")
     logger.info(f"  High polyreactivity (label=1): {(df_combined['label'] == 1).sum()}")
     logger.info(f"  Low polyreactivity (label=0): {(df_combined['label'] == 0).sum()}")
-    print(
+    logger.info(
         f"  Balance: {(df_combined['label'] == 1).sum() / len(df_combined) * 100:.1f}% high"
     )
 
@@ -143,7 +143,6 @@ def main() -> int:
     logger.info(f"\nInput (high):  {high_csv}")
     logger.info(f"Input (low):   {low_csv}")
     logger.info(f"Output:        {output_csv}")
-    print()
 
     # Convert
     df = convert_harvey_csvs(str(high_csv), str(low_csv), str(output_csv))

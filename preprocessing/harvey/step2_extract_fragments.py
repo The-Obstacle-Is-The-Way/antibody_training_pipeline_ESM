@@ -19,7 +19,6 @@ Issue: #4 - Harvey dataset preprocessing
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pandas as pd
@@ -81,7 +80,7 @@ def annotate_sequence(seq_id: str, sequence: str) -> dict[str, str] | None:
         return fragments
 
     except Exception as e:
-        print(f"Warning: Failed to annotate {seq_id}: {e}", file=sys.stderr)
+        logger.warning(f"Warning: Failed to annotate {seq_id}: {e}")
         return None
 
 
@@ -222,7 +221,6 @@ def main() -> int:
     logger.info(f"Output: {output_dir}/")
     logger.info("Method: ANARCI (IMGT numbering scheme)")
     logger.info("Note:   Nanobodies (VHH) - no light chain fragments")
-    print()
 
     # Process dataset
     df_annotated = process_harvey_dataset(str(csv_path))

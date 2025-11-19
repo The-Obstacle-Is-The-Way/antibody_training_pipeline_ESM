@@ -127,7 +127,7 @@ def main() -> None:
     # High-level stats
     logger.info("=" * 60)
     logger.info("Jain Conversion Validation (ELISA-only SSOT)")
-    print("=" * 60)
+    logger.info("=" * 60)
     logger.info(f"Rows: {len(csv_df)}, Columns: {len(csv_df.columns)}")
 
     logger.info("\nELISA flag distribution (0-6 range):")
@@ -140,7 +140,7 @@ def main() -> None:
     logger.info(csv_df["flag_category"].value_counts().sort_index())
 
     logger.info("\nLabel distribution (ELISA-based, nullable):")
-    print(csv_df["label"].value_counts(dropna=False))
+    logger.info(str(csv_df["label"].value_counts(dropna=False)))
 
     # Expected counts
     expected = {"specific": 94, "nonspecific": 22, "mild": 21}

@@ -356,11 +356,8 @@ def audit_dataset(file_path: Path, dataset_name: str) -> dict[str, Any]:
 
 def main() -> int:
     logger.info("=" * 80)
-    logger.info("BOUGHTER TRAINING SET QC AUDIT")
-    logger.info(
-        "Searching for any QC issues that might explain Novo's 3.5% accuracy gap"
-    )
-    print("=" * 80)
+    logger.info("AUDIT: Boughter Training Set QC Logic")
+    logger.info("=" * 80)
 
     # Audit training set (914 sequences)
     training_results = audit_dataset(

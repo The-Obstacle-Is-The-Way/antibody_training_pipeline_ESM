@@ -168,13 +168,11 @@ def validate_label_distribution(csv_path: Path) -> dict[str, float | int]:
     return stats
 
 
-def print_validation_report(
-    dataset_name: str, dataset_dir: Path, expected_fragments: int = 16
-) -> bool:
+def print_validation_report(dataset_dir: Path, expected_fragments: int = 16) -> bool:
     """Print comprehensive validation report."""
     logger.info("=" * 60)
-    logger.info(f"{dataset_name.upper()} Dataset Validation")
-    print("=" * 60)
+    logger.info("Boughter Stages 2 & 3 Validation")
+    logger.info("=" * 60)
 
     results = validate_fragment_directory(dataset_dir, expected_fragments)
 
@@ -236,14 +234,12 @@ def main() -> int:
         )
         return 1
 
-    valid = print_validation_report(
-        "boughter", boughter_annotated_dir, expected_fragments=16
-    )
+    valid = print_validation_report(boughter_annotated_dir, expected_fragments=16)
 
     # Additional Boughter-specific checks
     logger.info("\n" + "=" * 60)
     logger.info("BOUGHTER-SPECIFIC VALIDATION")
-    print("=" * 60)
+    logger.info("=" * 60)
 
     # Check training subset file
     training_file = boughter_canonical_dir / "VH_only_boughter_training.csv"
@@ -270,7 +266,7 @@ def main() -> int:
         else:
             logger.info("\n⚠ include_in_training flag missing (may be older format)")
 
-    print("\n" + "=" * 60)
+    logger.info("\n" + "=" * 60)
 
     return 0 if valid else 1
 

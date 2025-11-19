@@ -172,20 +172,19 @@ This requires the project root to be in PYTHONPATH.
 
 ### How to Run:
 ```bash
-# ✅ CORRECT (from project root with uv):
+# ✅ RECOMMENDED (run as module):
+uv run python -m preprocessing.jain.validate_conversion
+
+# ✅ ALTERNATIVE (from project root):
 uv run python preprocessing/jain/validate_conversion.py
 
-# ✅ CORRECT (from project root, Python adds current dir):
-python3 preprocessing/jain/validate_conversion.py
-
 # ❌ WRONG (from subdirectory):
-cd preprocessing/jain && python3 validate_conversion.py  # ModuleNotFoundError
+cd preprocessing/jain && python validate_conversion.py  # ModuleNotFoundError
 ```
 
 ### Technical Details:
-- `uv run` automatically adds project root to PYTHONPATH
-- Running directly from project root works (Python adds current directory)
-- Running from subdirectories fails (preprocessing package not found)
+- Running as a module (`-m`) ensures `preprocessing` is treated as a package, allowing absolute imports to work correctly.
+- `uv run` automatically adds project root to PYTHONPATH.
 
 ### Affected Scripts:
 - `preprocessing/jain/validate_conversion.py` (imports from step1)

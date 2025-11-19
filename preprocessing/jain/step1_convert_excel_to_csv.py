@@ -250,7 +250,7 @@ def save_outputs(df: pd.DataFrame) -> None:
     test_output.to_csv(test_path, index=False)
     logger.info(f"  ✓ Saved: {test_path}")
     logger.info(f"    Total: {len(test_output)} antibodies (ELISA-only test set)")
-    print(
+    logger.info(
         f"    Distribution: {(test_output['label'] == 0).sum()} specific / {(test_output['label'] == 1).sum()} non-specific"
     )
 
@@ -281,12 +281,10 @@ def prepare_output(df: pd.DataFrame) -> pd.DataFrame:
 def main() -> int:
     logger.info("=" * 80)
     logger.info("Jain Dataset Conversion - CORRECTED ELISA-ONLY Methodology")
-    print("=" * 80)
     logger.info("Using ELISA-ONLY flags (6 antigens, 0-6 range)")
     logger.info("Threshold: >=4 ELISA flags for non-specific")
     logger.info("Exclude: ELISA 1-3 as 'mild' (NOT total_flags 1-3!)")
     logger.info("=" * 80)
-    print()
 
     # Load data
     df = load_data()
@@ -297,7 +295,7 @@ def main() -> int:
     # Save outputs
     save_outputs(df)
 
-    print("\n" + "=" * 80)
+    logger.info("\n" + "=" * 80)
     logger.info("✓ Conversion Complete!")
     logger.info("=" * 80)
     logger.info("\nFiles generated:")

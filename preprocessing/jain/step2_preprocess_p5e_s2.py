@@ -92,7 +92,7 @@ def step1_remove_elisa_1to3(df: pd.DataFrame) -> pd.DataFrame:
     """
     logger.info("\n" + "=" * 80)
     logger.info("STEP 1: Remove ELISA 1-3 (mild aggregators)")
-    print("=" * 80)
+    logger.info("=" * 80)
 
     initial_count = len(df)
 
@@ -197,7 +197,13 @@ def step3_reclassify_5_antibodies(df: pd.DataFrame) -> pd.DataFrame:
     df["reclassification_reason"] = ""
 
     # Tier A: PSR >0.4
-    print("\n  Tier A: PSR >0.4 (polyreactivity despite ELISA=0)")
+    # Tier A: High PSR but low ELISA (Specific -> Non-specific)
+    # This catches "sticky" antibodies that ELISA misses
+    logger.info("=" * 80)
+    logger.info("\n  Tier A: PSR >0.4 (polyreactivity despite ELISA=0)")
+    logger.info("  Reclassification: Specific -> Non-specific (3 antibodies)")
+    logger.info("  Rationale: PSR aligns better with clinical clearance for these")
+    logger.info("=" * 80)
     for ab_id in TIER_A_PSR:
         idx = df[df["id"] == ab_id].index
         if len(idx) > 0:
@@ -275,7 +281,7 @@ def step4_remove_30_by_psr_acsins(df: pd.DataFrame) -> pd.DataFrame:
     to_remove = specific_sorted.head(30)
 
     logger.info("\n  Top 30 by PSR/AC-SINS (to remove)")
-    print(
+    logger.info(
         to_remove[["id", "psr", "ac_sins"]]
         .rename(columns={"id": "antibody_id"})
         .to_string(index=False)

@@ -371,8 +371,8 @@ def generate_report(
 def main() -> int:
     """Main validation pipeline."""
     logger.info("=" * 70)
-    logger.info("Boughter Dataset Validation")
-    print("=" * 70)
+    logger.info("Boughter Stage 1 Validation")
+    logger.info("=" * 70)
 
     # Validate Stage 1
     stage1_results = validate_stage1_output()

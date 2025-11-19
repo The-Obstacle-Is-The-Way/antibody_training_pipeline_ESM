@@ -383,7 +383,6 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     logger.info("Stage 3: Post-annotation Quality Control")
     logger.info("=" * 70)
     logger.info(f"Input sequences: {len(df)}")
-    print()
 
     cdr_columns = [
         "cdr1_aa_H",
@@ -434,9 +433,9 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
 
 def print_annotation_stats(df: pd.DataFrame) -> None:
     """Print CDR length distributions and annotation statistics."""
-    logger.info("\n" + "=" * 70)
-    logger.info("CDR Length Distributions (Strict IMGT)")
-    print("=" * 70)
+    logger.info("=" * 70)
+    logger.info("Boughter Stage 2 & 3: ANARCI Annotation & QC")
+    logger.info("=" * 70)
 
     cdr_columns = {
         "H-CDR1": "cdr1_aa_H",
@@ -449,7 +448,7 @@ def print_annotation_stats(df: pd.DataFrame) -> None:
 
     for cdr_name, col_name in cdr_columns.items():
         lengths = df[col_name].str.len()
-        print(
+        logger.info(
             f"\n{cdr_name}: min={lengths.min()}, max={lengths.max()}, "
             f"mean={lengths.mean():.1f}, median={lengths.median():.0f}"
         )

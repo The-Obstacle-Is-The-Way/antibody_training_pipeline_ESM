@@ -235,7 +235,7 @@ def convert_excel_to_csv(
     label_dist = df_csv["label"].value_counts().sort_index()
     for label, count in label_dist.items():
         label_name = "Specific" if label == 0 else "Non-specific"
-        print(
+        logger.info(
             f"  {label_name} (label={label}): {count} ({count / len(df_csv) * 100:.1f}%)"
         )
 
