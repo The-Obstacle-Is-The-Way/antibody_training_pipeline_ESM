@@ -54,8 +54,24 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 
 - **Model Evaluation**: Standard evaluation metrics, including k-fold cross-validation, accuracy, sensitivity, and specificity, are implemented to assess model performance.
 
+- **Prediction CLI**: Get predictions for new antibody sequences from trained models.
+
+  1. **Obtain a pretrained classifier** (one of):
+     - Run `make train` (see [`docs/user-guide/training.md`](docs/user-guide/training.md); artifacts saved to `experiments/checkpoints/esm1v/logreg/...`), or
+     - Download a published checkpoint from the project releases page and place it under `experiments/checkpoints/esm1v/logreg/`.
+
+  ```bash
+  uv run antibody-predict \
+      input_file=path/to/your/input.csv \
+      output_file=path/to/your/predictions.csv \
+      classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+  ```
+
+  The input CSV must contain a column named `sequence` (or specify a custom column with `sequence_column=your_column`). The output CSV will contain the original data with two new columns: `prediction` and `probability`.
+
+  For detailed usage, see [`INFERENCE_GUIDE.md`](INFERENCE_GUIDE.md).
+
 ## To-Be Implemented
-- **Prediction Script**: A user-friendly script to quickly get non-specificity predictions for new antibody sequences.
 
 - **Biophysical Descriptor Module**: A feature to calculate and incorporate key biophysical parameters, such as the isoelectric point (pI), which was identified as a major driver of non-specificity.
 
@@ -343,4 +359,3 @@ This repository uses training and test datasets from multiple published studies:
 - **Test**: Shehata et al. 2019 (398 antibodies, PSR cross-assay validation)
 
 **For complete citations, BibTeX entries, and data attribution details**, see [`CITATIONS.md`](CITATIONS.md).
-
