@@ -182,7 +182,7 @@ Migrated all `print()` statements to proper `logging` module usage.
 
 ### Other Fixes
 
-- Fixed test markers (@pytest.mark.e2e, @pytest.mark.slow) for proper test selection
+- Fixed test markers (`@pytest.mark.e2e`, `@pytest.mark.slow`) for proper test selection
 - Fixed .gitignore to exclude coverage.json (build artifact)
 - Fixed sys.path hacks removed from tests
 - Fixed integration test markers added to embedding compatibility tests
@@ -191,7 +191,7 @@ Migrated all `print()` statements to proper `logging` module usage.
 - `43b5281` - docs: update README with classifier setup instructions and improve error handling in prediction CLI
 - `182ce96` - chore: remove coverage.json from git tracking and add to .gitignore
 - `004c08c` - fix: remove sys.path hack from Harvey PSR threshold test
-- `580af5e` - test: add missing @pytest.mark.integration to embedding compatibility tests
+- `580af5e` - test: add missing `@pytest.mark.integration` to embedding compatibility tests
 
 ---
 
@@ -199,7 +199,7 @@ Migrated all `print()` statements to proper `logging` module usage.
 
 ### Developer Experience
 
-1. **Test Hygiene** - Proper markers (@slow, @e2e, @integration) for selective test runs
+1. **Test Hygiene** - Proper markers (`@slow`, `@e2e`, `@integration`) for selective test runs
 2. **Type Safety** - 100% mypy --strict compliance maintained
 3. **Code Quality** - Zero ruff warnings across all new code
 4. **Modular Design** - CLI components split into focused modules
