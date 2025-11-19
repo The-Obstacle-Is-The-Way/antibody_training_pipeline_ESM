@@ -332,9 +332,24 @@ Remaining high-impact improvements (10-12 hours estimated):
 - **Verdict:** Harmless artifact regeneration (file is programmatically generated SSOT)
 - **Details:** See "CSV Investigation Report" below for full analysis
 
-#### Pending Fixes:
-- [ ] Fix #6: Split overly long files
-- [ ] Fix #7: Centralize hardcoded paths
+#### Fix #6: Split Overly Long Files 📝 (IN PROGRESS)
+**Priority:** P1 (HIGH)
+**Effort:** 3-4 hours
+**Status:** ⚠️ PARTIAL (1/4 files completed)
+**Files Refactored:**
+- [x] `src/antibody_training_esm/cli/test.py` → `src/antibody_training_esm/cli/testing/` (Completed 2025-11-18)
+    - Split into `config`, `data`, `evaluation`, `visualization`, `tester`
+    - Tests updated and passing (Verified with `make all`)
+    - Linting/Mypy clean (Verified with `make all`)
+- [x] **P2 Enhancement:** Added `--sequence-column` and `--label-column` flags to CLI (Completed 2025-11-18)
+    - Implemented in `cli/test.py`
+    - Verified via unit test `test_test_cli_overrides_columns_from_config`
+    - Solves canonical/fragment schema friction
+- [ ] `src/antibody_training_esm/core/trainer.py` (Pending)
+- [ ] `preprocessing/boughter/stage1_dna_translation.py` (Pending)
+- [ ] `preprocessing/boughter/stage2_stage3_annotation_qc.py` (Pending)
+
+#### Fix #7: Centralize Hardcoded Paths 📂
 - [ ] Fix #8: Standardize file permissions
 - [ ] Fix #9: Bare except blocks
 - [ ] Fix #10: Type ignores

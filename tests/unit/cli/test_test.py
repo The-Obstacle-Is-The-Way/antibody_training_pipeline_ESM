@@ -35,7 +35,13 @@ from unittest.mock import MagicMock, Mock, patch
 import pytest
 import yaml
 
-from antibody_training_esm.cli.test import TestConfig, create_sample_test_config, main
+from antibody_training_esm.cli.test import main
+from antibody_training_esm.cli.testing.config import (
+    TestConfig,
+    create_sample_test_config,
+)
+from antibody_training_esm.cli.testing.data import load_dataset
+from antibody_training_esm.cli.testing.tester import ModelTester
 
 # ==================== Fixtures ====================
 
@@ -625,7 +631,6 @@ def test_device_mismatch_recreates_extractor(
     """
     import pickle
 
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
     from antibody_training_esm.core.classifier import BinaryClassifier
 
     # Arrange - Create model trained on CPU
@@ -678,8 +683,6 @@ def test_jain_test_set_size_validation_fails_on_invalid_size(
     """
     import pandas as pd
 
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
-
     # Arrange - Create Jain test CSV with WRONG size (not 86 or 94)
     jain_test_path = tmp_path / "jain_test_WRONG.csv"
     wrong_size_df = pd.DataFrame(
@@ -696,14 +699,14 @@ def test_jain_test_set_size_validation_fails_on_invalid_size(
         data_paths=[str(jain_test_path)],  # Contains "jain" and "test"
         output_dir=str(tmp_path / "output"),
     )
-    tester = ModelTester(config)
+    # tester = ModelTester(config)  <-- Removed
 
     # Act & Assert - REAL validation executes (lines 223-225)
     with pytest.raises(
         ValueError,
         match=r"Jain test set has 50 antibodies but expected one of",
     ):
-        tester.load_dataset(str(jain_test_path))
+        load_dataset(str(jain_test_path), config)
 
 
 @pytest.mark.unit
@@ -712,8 +715,6 @@ def test_jain_test_set_size_validation_passes_canonical_86(
 ) -> None:
     """Test Jain validation accepts canonical 86-antibody set (lines 223-225)."""
     import pandas as pd
-
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
 
     # Arrange - Create Jain test CSV with CORRECT size (86)
     jain_test_path = tmp_path / "VH_only_jain_86_p5e_s2.csv"
@@ -733,10 +734,10 @@ def test_jain_test_set_size_validation_passes_canonical_86(
         output_dir=str(tmp_path / "output"),
         sequence_column="vh_sequence",
     )
-    tester = ModelTester(config)
+    # tester = ModelTester(config) <-- Removed
 
     # Act - NO exception raised
-    sequences, labels = tester.load_dataset(str(jain_test_path))
+    sequences, labels = load_dataset(str(jain_test_path), config)
 
     # Assert
     assert len(sequences) == 86
@@ -749,8 +750,6 @@ def test_jain_test_set_size_validation_passes_legacy_94(
 ) -> None:
     """Test Jain validation accepts legacy 94-antibody set (lines 223-225)."""
     import pandas as pd
-
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
 
     # Arrange - Create Jain test CSV with legacy size (94)
     jain_test_path = tmp_path / "VH_only_jain_test_legacy_94.csv"
@@ -768,10 +767,10 @@ def test_jain_test_set_size_validation_passes_legacy_94(
         data_paths=[str(jain_test_path)],
         output_dir=str(tmp_path / "output"),
     )
-    tester = ModelTester(config)
+    # tester = ModelTester(config) <-- Removed
 
     # Act - NO exception raised
-    sequences, labels = tester.load_dataset(str(jain_test_path))
+    sequences, labels = load_dataset(str(jain_test_path), config)
 
     # Assert
     assert len(sequences) == 94
@@ -787,7 +786,6 @@ def test_determine_output_dir_falls_back_when_config_missing(
 
     DO NOT mock the file existence check - use REAL tmp_path without config.
     """
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
 
     # Arrange - Model path without config file
     model_path = tmp_path / "model.pkl"
@@ -817,7 +815,6 @@ def test_determine_output_dir_handles_corrupt_json(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     """Test fallback when model config has corrupt JSON (lines 518-520)."""
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
 
     # Arrange - Create model with CORRUPT config
     model_path = tmp_path / "model.pkl"
@@ -851,8 +848,6 @@ def test_determine_output_dir_handles_missing_model_name(
     """Test fallback when model config missing 'model_name' key (lines 495-496, 518-520)."""
     import json
 
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
-
     # Arrange - Create model with config missing model_name
     model_path = tmp_path / "model.pkl"
     config_path = tmp_path / "model_config.json"
@@ -883,8 +878,6 @@ def test_determine_output_dir_handles_missing_classifier_key(
 ) -> None:
     """Test fallback when model config missing 'classifier' key (Issue #14)."""
     import json
-
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
 
     # Arrange - Create model with config missing classifier
     model_path = tmp_path / "model.pkl"
@@ -926,7 +919,6 @@ def test_compute_embeddings_handles_corrupt_cache(
     """Test recomputation when embedding cache is corrupt (Issue #14)."""
     import pickle
 
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
     from antibody_training_esm.core.classifier import BinaryClassifier
 
     # Arrange - Create valid model
@@ -986,8 +978,6 @@ def test_determine_output_dir_uses_hierarchical_structure_with_valid_config(
     """Test hierarchical path generation with valid config (lines 487-516)."""
     import json
 
-    from antibody_training_esm.cli.test import ModelTester, TestConfig
-
     # Arrange - Create model with VALID config
     model_path = tmp_path / "model.pkl"
     config_path = tmp_path / "model_config.json"
@@ -1019,3 +1009,39 @@ def test_determine_output_dir_uses_hierarchical_structure_with_valid_config(
     assert "esm1v" in output_dir  # Model shortname
     assert "logreg" in output_dir  # Classifier shortname
     assert "jain" in output_dir  # Dataset name
+
+
+@pytest.mark.unit
+def test_test_cli_overrides_columns_from_config(
+    mock_model_tester: MagicMock, tmp_path: Path
+) -> None:
+    """Verify CLI --sequence-column and --label-column override config file"""
+    # Arrange
+    config_file = tmp_path / "test_config.yaml"
+    config_data = {
+        "model_paths": ["model.pkl"],
+        "data_paths": ["data.csv"],
+        "sequence_column": "seq",
+        "label_column": "target",
+    }
+    config_file.write_text(yaml.dump(config_data))
+
+    with patch(
+        "sys.argv",
+        [
+            "antibody-test",
+            "--config",
+            str(config_file),
+            "--sequence-column",
+            "my_seq",
+            "--label-column",
+            "my_label",
+        ],
+    ):
+        # Act
+        main()
+
+        # Assert
+        call_args = mock_model_tester.call_args[0][0]
+        assert call_args.sequence_column == "my_seq"
+        assert call_args.label_column == "my_label"
