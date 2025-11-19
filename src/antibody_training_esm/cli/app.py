@@ -60,10 +60,12 @@ def launch_gradio_app(cfg: DictConfig) -> None:
         )
 
     # Instantiate the predictor
+    config_path = getattr(cfg.classifier, "config_path", None)
     predictor = Predictor(
         model_name=cfg.model.name,
         classifier_path=cfg.classifier.path,
         device=device,
+        config_path=config_path,
     )
 
     def validate_input(sequence: str) -> None:

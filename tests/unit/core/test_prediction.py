@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import numpy as np
@@ -131,9 +132,65 @@ def test_run_prediction_wrapper(sample_input_df: pd.DataFrame) -> None:
 
         run_prediction(sample_input_df, cfg)
 
-        mock_predictor_cls.assert_called_with(
-            model_name="test_model", classifier_path="test_path"
-        )
+        # Argument check needs to be loose since we added config_path=None by default in wrapper
+        # or strict if we know the defaults.
+        # The wrapper passes cfg.classifier.path, so we check calls.
+        # However, mock_predictor_cls call args will now include config_path=None.
+        # Let's update the assertion to reflect reality or just check kwargs.
+        call_args = mock_predictor_cls.call_args
+        assert call_args.kwargs["model_name"] == "test_model"
+        assert call_args.kwargs["classifier_path"] == "test_path"
+
         mock_instance.predict_dataframe.assert_called_with(
             sample_input_df, sequence_col="sequence", threshold=0.5, assay_type=None
         )
+
+
+def test_predictor_loads_from_npz_with_implicit_config(tmp_path: Path) -> None:
+    """Test loading from .npz infers the json config path."""
+    npz_path = tmp_path / "model.npz"
+    json_path = tmp_path / "model_config.json"
+    npz_path.touch()
+    json_path.touch()
+
+    with patch(
+        "antibody_training_esm.core.prediction.load_model_from_npz"
+    ) as mock_load:
+        predictor = Predictor(model_name="model", classifier_path=str(npz_path))
+        # Trigger lazy load
+        _ = predictor.classifier
+
+        mock_load.assert_called_once_with(str(npz_path), str(json_path))
+
+
+def test_predictor_loads_from_npz_with_explicit_config(tmp_path: Path) -> None:
+    """Test loading from .npz uses the provided config path."""
+    npz_path = tmp_path / "model.npz"
+    custom_json = tmp_path / "custom.json"
+    npz_path.touch()
+    custom_json.touch()
+
+    with patch(
+        "antibody_training_esm.core.prediction.load_model_from_npz"
+    ) as mock_load:
+        predictor = Predictor(
+            model_name="model",
+            classifier_path=str(npz_path),
+            config_path=str(custom_json),
+        )
+        # Trigger lazy load
+        _ = predictor.classifier
+
+        mock_load.assert_called_once_with(str(npz_path), str(custom_json))
+
+
+def test_predictor_raises_error_if_json_missing_for_npz(tmp_path: Path) -> None:
+    """Test FileNotFoundError if the JSON config is missing for .npz."""
+    npz_path = tmp_path / "model.npz"
+    npz_path.touch()
+    # json config NOT created
+
+    predictor = Predictor(model_name="model", classifier_path=str(npz_path))
+
+    with pytest.raises(FileNotFoundError, match="JSON config not found"):
+        _ = predictor.classifier

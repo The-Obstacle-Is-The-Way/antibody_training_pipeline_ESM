@@ -8,3 +8,5 @@ class_weight: null
 cv_folds: 10
 stratify: true
 path: null
+# Optional path to the JSON config file (for .npz models)
+config_path: null

@@ -151,3 +151,32 @@ def test_launch_gradio_app_mac_mps_handling(
 
     # Assert 2: Threading restricted to 1 (OpenMP crash prevention)
     mock_set_num_threads.assert_called_with(1)
+
+
+@patch("gradio.Interface")
+@patch("antibody_training_esm.cli.app.Predictor")
+def test_launch_gradio_app_with_npz_config(
+    mock_predictor_cls: MagicMock, mock_interface: MagicMock, tmp_path: Path
+) -> None:
+    """
+    Tests that the Gradio app passes the config_path correctly to the Predictor.
+    """
+    classifier_path = tmp_path / "model.npz"
+    config_path = tmp_path / "model_config.json"
+    classifier_path.touch()
+    config_path.touch()
+
+    with initialize(config_path="../../../src/antibody_training_esm/conf"):
+        cfg = compose(
+            config_name="predict",
+            overrides=[
+                f"classifier.path={classifier_path}",
+                f"classifier.config_path={config_path}",
+            ],
+        )
+        launch_gradio_app(cfg)
+
+    # Assert that Predictor was initialized with config_path
+    _, kwargs = mock_predictor_cls.call_args
+    assert kwargs["classifier_path"] == str(classifier_path)
+    assert kwargs["config_path"] == str(config_path)

@@ -57,27 +57,41 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 - **Prediction CLI**: Get predictions for new antibody sequences from trained models.
 
   1. **Obtain a pretrained classifier** (one of):
-     - Run `make train` (see [`docs/user-guide/training.md`](docs/user-guide/training.md); artifacts saved to `experiments/checkpoints/esm1v/logreg/...`), or
-     - Download a published checkpoint from the project releases page and place it under `experiments/checkpoints/esm1v/logreg/`.
+     - Run `make train` (see [`docs/user-guide/training.md`](docs/user-guide/training.md)).
+     - Download a published checkpoint.
+     
+     *Supported formats:* 
+     - **Development**: `.pkl` (Pickle)
+     - **Production**: `.npz` (NumPy arrays) + `_config.json` (Metadata)
 
   ```bash
+  # Option A: Using Pickle (Development)
   uv run antibody-predict \
-      input_file=path/to/your/input.csv \
-      output_file=path/to/your/predictions.csv \
-      classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+      input_file=data/test.csv \
+      output_file=predictions.csv \
+      classifier.path=experiments/checkpoints/esm1v/logreg/model.pkl
+
+  # Option B: Using NPZ (Production/Secure)
+  uv run antibody-predict \
+      input_file=data/test.csv \
+      output_file=predictions.csv \
+      classifier.path=experiments/checkpoints/esm1v/logreg/model.npz \
+      classifier.config_path=experiments/checkpoints/esm1v/logreg/model_config.json
   ```
 
-  The input CSV must contain a column named `sequence` (or specify a custom column with `sequence_column=your_column`). The output CSV will contain the original data with two new columns: `prediction` and `probability`.
+- **Web Application Interface**: A simple Gradio-based frontend for interactive prediction.
 
-  For detailed usage, see [`INFERENCE_GUIDE.md`](INFERENCE_GUIDE.md).
+  ```bash
+  # Launch the web UI
+  uv run antibody-app classifier.path=experiments/checkpoints/esm1v/logreg/model.pkl
+  ```
+  *Automatically handles macOS optimization (forces CPU/Single-thread) to prevent crashes.*
 
 ## To-Be Implemented
 
 - **Biophysical Descriptor Module**: A feature to calculate and incorporate key biophysical parameters, such as the isoelectric point (pI), which was identified as a major driver of non-specificity.
 
 - **Support for Other PLMs**: Integration of other antibody-specific language models like AbLang or AntiBERTy for performance comparison.
-
-- **Web Application Interface**: A simple frontend application to make the prediction tool accessible to users without a programming background.
 
 ---
 # Installation & Setup
