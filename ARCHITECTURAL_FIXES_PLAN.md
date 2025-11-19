@@ -72,7 +72,7 @@
 | 6 | Overly long files (900+ lines) | `cli/test.py`, `trainer.py`, preprocessing scripts | Maintenance nightmare | 3-4 hours |
 | 7 | Hardcoded paths (50+ instances) | 17 preprocessing scripts | Changing structure breaks everything | 2 hours |
 | 8 | File permission inconsistency | 6 random executable files | Confusing conventions | 10 min |
-| 9 | Bare except Exception | `trainer.py:176, 831` | Catches too much | 10 min |
+| 9 | Bare except Exception | `trainer.py:176, 831, 875, 927` | Catches too much | 10 min |
 | 10 | type: ignore comments | `embeddings.py:60`, `test_base.py:265` | Incomplete type safety | 30 min |
 | 11 | Empty utils/ directory | `src/antibody_training_esm/utils/` | Misleading structure | 5 min |
 | 12 | Duplicate config directories | `configs/` and `src/antibody_training_esm/conf/` | Two sources of truth | 15 min |
@@ -85,7 +85,7 @@
 
 | # | Issue | Location | Impact | Effort |
 |---|-------|----------|--------|--------|
-| 13 | Duplicated VALID_AA constant | 6+ files | Inconsistency risk | 30 min |
+| 13 | Duplicated VALID_AA constant | (obsolete) single definition today | — | — |
 | 14 | PSR threshold magic numbers | 2 different values | Confusing | 20 min |
 | 15 | Duplicated validation logic | 4 validation scripts | Code duplication | 2 hours |
 | 16 | Fragment extraction duplication | 3 scripts, ~200 lines | Violates DRY | 3 hours |
@@ -136,6 +136,10 @@
 ---
 
 ## Phase 1: P0 Fixes
+
+Additional quick actions from preprocessing spec (safe to do anytime):
+- Document PYTHONPATH assumption in `preprocessing/README.md` (scripts run from repo root; `uv run` sets PYTHONPATH).
+- Optional: remove `sys.path.insert` hack in `preprocessing/harvey/test_psr_threshold.py` (low priority cleanup).
 
 ### Fix #1: Remove sys.path Hack ⚠️
 
@@ -1016,11 +1020,13 @@ find preprocessing -name "*.py" ! -name "__init__.py" -exec stat -c "%a %n" {} \
 **Risk:** LOW
 
 **Problem:**
-2 bare `except Exception:` in trainer.py catch too much.
+Four bare `except Exception:` blocks in trainer.py catch too much.
 
 **Locations:**
 - `src/antibody_training_esm/core/trainer.py:176`
 - `src/antibody_training_esm/core/trainer.py:831`
+- `src/antibody_training_esm/core/trainer.py:875`
+- `src/antibody_training_esm/core/trainer.py:927`
 
 **What DeepMind Would Say:**
 > "Be specific. What exceptions are you actually expecting?"

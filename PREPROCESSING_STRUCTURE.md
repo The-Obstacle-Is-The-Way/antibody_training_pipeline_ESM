@@ -264,6 +264,13 @@ uv run python -m antibody_training_esm.preprocessing.jain.step2_preprocess_p5e_s
    For rationale, see `PREPROCESSING_STRUCTURE.md` in project root.
    ```
 
+---
+
+## Quick Actions Kept from Earlier Spec (can be done anytime)
+
+- Document PYTHONPATH assumption in `preprocessing/README.md` (run scripts from project root; `uv run` already sets PYTHONPATH accordingly).
+- Optional: remove `sys.path.insert` hack in `preprocessing/harvey/test_psr_threshold.py` (low priority cleanup).
+
 2. Add to `CLAUDE.md`:
    ```markdown
    ## Preprocessing Directory Location
