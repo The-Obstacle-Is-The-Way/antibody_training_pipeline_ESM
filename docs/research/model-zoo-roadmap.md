@@ -1,8 +1,9 @@
-# Pending Model Validation Roadmap
+# Model Zoo Expansion Roadmap
 
-**Status**: Planning
+**Status**: Planning (Active Roadmap)
 **Created**: 2025-11-17
-**Purpose**: Document validation roadmap for expanding model zoo beyond ESM1v/LogReg baseline
+**Last Updated**: 2025-11-19
+**Purpose**: Roadmap for expanding model zoo beyond ESM1v + LogisticRegression baseline
 
 ---
 

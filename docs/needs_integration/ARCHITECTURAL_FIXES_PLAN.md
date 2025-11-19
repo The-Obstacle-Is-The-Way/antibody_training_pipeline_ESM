@@ -7,7 +7,7 @@
 **Branch:** `claude/plan-preprocessing-refactor`
 **Merge Status:** Ready for dev → leroy-jenkins/full-send
 
-**Note on preprocessing location:** Preprocessing stays at project root. Moving it under `src/` is optional (not required) and should only be considered if packaging/deployment requires it. See `docs/needs_integration/PREPROCESSING_STRUCTURE.md` for the rationale.
+**Note on preprocessing location:** Preprocessing stays at project root. Moving it under `src/` is optional (not required) and should only be considered if packaging/deployment requires it. See `docs/archive/decisions/preprocessing-location-decision-2025-11-18.md` for the full rationale.
 
 ---
 

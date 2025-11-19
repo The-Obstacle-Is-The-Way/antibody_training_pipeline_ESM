@@ -1,5 +1,7 @@
 # Antibody Non-Specificity Prediction: Inference Guide
 
+> **📚 Comprehensive Guide:** For detailed CLI options, advanced usage, batch processing, troubleshooting, and performance tuning, see [`docs/user-guide/inference.md`](docs/user-guide/inference.md)
+
 ## Overview
 This guide details how to use the `antibody-predict` CLI to screen antibody sequences for non-specificity (polyreactivity). It explains input requirements, command usage, and how to interpret the results.
 

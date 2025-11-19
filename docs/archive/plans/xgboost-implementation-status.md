@@ -19,9 +19,9 @@ Implementing **XGBoost classifier support** as the highest-priority item from th
 ### 1. Specification Documents (100% Complete)
 
 **Files Created:**
-- `docs/developer-guide/xgboost-integration-spec.md` (Technical Specification)
-- `docs/developer-guide/xgboost-api-design.md` (API Design Document)
-- `docs/developer-guide/xgboost-test-plan.md` (Test Plan)
+- `docs/archive/plans/xgboost-integration-spec.md` (Technical Specification)
+- `docs/archive/plans/xgboost-api-design.md` (API Design Document)
+- `docs/archive/plans/xgboost-test-plan.md` (Test Plan)
 
 **Key Design Decisions:**
 - **Strategy Pattern:** ClassifierStrategy protocol for swapping classifier backends
@@ -244,10 +244,10 @@ uv run pytest tests/unit/core/strategies/test_logistic_regression.py -v
 ## Files Modified
 
 **New Files:**
-- `docs/developer-guide/xgboost-integration-spec.md`
-- `docs/developer-guide/xgboost-api-design.md`
-- `docs/developer-guide/xgboost-test-plan.md`
-- `docs/developer-guide/xgboost-implementation-status.md` (this file)
+- `docs/archive/plans/xgboost-integration-spec.md`
+- `docs/archive/plans/xgboost-api-design.md`
+- `docs/archive/plans/xgboost-test-plan.md`
+- `docs/archive/plans/xgboost-implementation-status.md` (this file)
 - `src/antibody_training_esm/core/classifier_strategy.py`
 - `src/antibody_training_esm/core/strategies/__init__.py`
 - `src/antibody_training_esm/core/strategies/logistic_regression.py`

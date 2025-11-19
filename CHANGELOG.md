@@ -117,11 +117,13 @@ antibody-train --multirun classifier.type=xgboost classifier.n_estimators=50,100
 
 ### 📚 Documentation
 
-**New Developer Guides (3,026 lines):**
-- `docs/developer-guide/xgboost-api-design.md` (1,085 lines)
-- `docs/developer-guide/xgboost-integration-spec.md` (655 lines)
-- `docs/developer-guide/xgboost-test-plan.md` (1,013 lines)
-- `docs/developer-guide/xgboost-implementation-status.md` (273 lines)
+**New Developer Guides (3,026 lines, now archived under `docs/archive/plans/`):**
+- `archive/plans/xgboost-api-design.md` (1,085 lines)
+- `archive/plans/xgboost-integration-spec.md` (655 lines)
+- `archive/plans/xgboost-test-plan.md` (1,013 lines)
+- `archive/plans/xgboost-implementation-status.md` (273 lines)
+
+> **Live reference:** Use `docs/developer-guide/xgboost.md` for the maintained summary of the shipped classifier.
 
 **Audit Report:**
 - `XGBOOST_BRANCH_AUDIT_REPORT.md` - Comprehensive technical review

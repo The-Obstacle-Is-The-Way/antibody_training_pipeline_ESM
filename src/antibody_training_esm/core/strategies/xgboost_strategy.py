@@ -69,7 +69,7 @@ class XGBoostStrategy:
 
     See Also:
         - xgboost.XGBClassifier
-        - docs/developer-guide/xgboost-integration-spec.md
+        - docs/developer-guide/xgboost.md
     """
 
     def __init__(self, config: dict[str, Any]) -> None:

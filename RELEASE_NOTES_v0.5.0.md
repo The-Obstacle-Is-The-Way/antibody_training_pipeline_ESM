@@ -50,7 +50,7 @@ uv run antibody-predict \
 **Documentation:**
 - `INFERENCE_GUIDE.md` - Comprehensive 112-line user guide
 - `README.md` - Updated with prediction CLI section
-- `docs/needs_integration/INFERENCE_COMPLETION_REPORT.md` - Full validation report
+- `docs/archive/summaries/inference-completion-2025-11-19.md` - Full validation report
 
 **Test Coverage:**
 - ✅ **10 new tests** (6 unit + 4 core logic)
@@ -108,7 +108,7 @@ src/antibody_training_esm/cli/
 - Cleaner imports (no 872-line file in diffs)
 
 **Documentation:**
-- `docs/needs_integration/CLI_TEST_REFACTOR_VALIDATION.md` - 328-line validation report
+- `docs/archive/investigations/cli-test-refactor-2025-11-18.md` - 328-line validation report
 
 **Commits:**
 - `5414b3a` - refactor: modularize testing pipeline by splitting test.py into multiple components
@@ -144,7 +144,7 @@ uv run antibody-predict \
 ```
 
 **Documentation:**
-- `docs/needs_integration/DATASET_COLUMN_NAMING_INVESTIGATION.md` - 402-line design analysis
+- `docs/archive/investigations/dataset-column-naming-2025-11-18.md` - 402-line design analysis
 
 **Commits:**
 - `5515795` - feat: add sequence and label column arguments to CLI test
@@ -208,10 +208,10 @@ Migrated all `print()` statements to proper `logging` module usage.
 
 **New Documentation:**
 - `INFERENCE_GUIDE.md` - 111-line user guide for prediction CLI
-- `docs/needs_integration/INFERENCE_COMPLETION_REPORT.md` - 44-line validation report
-- `docs/needs_integration/CLI_TEST_REFACTOR_VALIDATION.md` - 328-line refactor validation
-- `docs/needs_integration/DATASET_COLUMN_NAMING_INVESTIGATION.md` - 402-line design analysis
-- `docs/needs_integration/SPEC_SHEET.md` - 79-line specification
+- `docs/archive/summaries/inference-completion-2025-11-19.md` - 44-line validation report
+- `docs/archive/investigations/cli-test-refactor-2025-11-18.md` - 328-line refactor validation
+- `docs/archive/investigations/dataset-column-naming-2025-11-18.md` - 402-line design analysis
+- `docs/archive/trash/spec-sheet.md` - 79-line specification
 
 **Updated Documentation:**
 - `README.md` - Prediction CLI section added, updated installation/usage

@@ -275,6 +275,6 @@ See [CITATIONS.md](../CITATIONS.md) for full references.
 
 ---
 
-**Last Updated:** 2025-11-09
-**Branch:** `docs/canonical-structure`
-**Version:** 2.0.0
+**Last Updated:** 2025-11-19
+**Branch:** `dev`
+**Version:** v0.6.0+ (XGBoost classifier support)
