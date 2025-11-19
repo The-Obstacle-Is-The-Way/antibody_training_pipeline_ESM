@@ -1,9 +1,6 @@
-
-from pathlib import Path
-
 import hydra
-from omegaconf import DictConfig, OmegaConf
 import pandas as pd
+from omegaconf import DictConfig
 
 from antibody_training_esm.core.prediction import run_prediction
 
@@ -12,7 +9,9 @@ from antibody_training_esm.core.prediction import run_prediction
 def main(cfg: DictConfig) -> None:
     """Main function to run the prediction CLI."""
     if cfg.input_file is None:
-        raise ValueError("Input file must be specified via command-line override: `input_file=...`")
+        raise ValueError(
+            "Input file must be specified via command-line override: `input_file=...`"
+        )
 
     try:
         # Load input data

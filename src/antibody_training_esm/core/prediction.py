@@ -1,12 +1,8 @@
-
-from pathlib import Path
-
-import hydra
+import joblib
+import numpy as np
 import pandas as pd
 import torch
 from omegaconf import DictConfig
-import joblib
-import numpy as np
 
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
@@ -47,7 +43,9 @@ def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
         probabilities = np.array(probabilities)
 
     output_df = input_df.copy()
-    output_df["prediction"] = ["non-specific" if p == 1 else "specific" for p in predictions]
+    output_df["prediction"] = [
+        "non-specific" if p == 1 else "specific" for p in predictions
+    ]
     output_df["probability"] = probabilities[:, 1]
 
     return output_df
