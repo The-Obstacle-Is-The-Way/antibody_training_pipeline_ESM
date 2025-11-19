@@ -42,7 +42,7 @@ The `antibody-predict` CLI provides production-ready inference for screening ant
 
 ### 1. Trained Model Checkpoint
 
-Obtain a trained classifier (`.pkl` file) via:
+Obtain a trained classifier via:
 
 **Option A: Train Your Own Model**
 ```bash
@@ -51,6 +51,10 @@ make train  # Saves to experiments/checkpoints/esm1v/logreg/
 See [`training.md`](training.md) for detailed instructions.
 
 **Option B: Download Published Checkpoint**
+Supported formats:
+- **Development:** `.pkl` (Pickle) - Standard single-file checkpoint
+- **Production:** `.npz` + `.json` - Secure, pickle-free checkpoint (requires both files)
+
 ```bash
 # Download from GitHub releases
 wget https://github.com/the-obstacle-is-the-way/antibody_training_pipeline_ESM/releases/download/v0.6.0/boughter_vh_esm1v_logreg.pkl
@@ -138,7 +142,8 @@ uv run antibody-predict \
 |----------|------|-----------|---------|-------------|
 | `input_file` | Path | **YES** | — | Input CSV path |
 | `output_file` | Path | No | `predictions.csv` | Output CSV path |
-| `classifier.path` | Path | **YES** | — | Trained model checkpoint |
+| `classifier.path` | Path | **YES** | — | Trained model checkpoint (.pkl or .npz) |
+| `classifier.config_path` | Path | No | Auto | JSON config for .npz models |
 | `sequence_column` | String | No | `sequence` | Column name for sequences |
 | `assay_type` | String | No | — | `ELISA` or `PSR` (calibrated thresholds) |
 | `threshold` | Float | No | `0.5` | Manual probability threshold (0.0-1.0) |
@@ -148,19 +153,27 @@ uv run antibody-predict \
 
 ### Example Commands
 
-**1. Basic prediction:**
+**1. Basic prediction (Pickle):**
 ```bash
 uv run antibody-predict \
     input_file=data/candidates.csv \
-    classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+    classifier.path=experiments/checkpoints/esm1v/logreg/model.pkl
 ```
 
-**2. Custom sequence column:**
+**2. Production prediction (NPZ):**
+```bash
+uv run antibody-predict \
+    input_file=data/candidates.csv \
+    classifier.path=experiments/checkpoints/esm1v/logreg/model.npz \
+    classifier.config_path=experiments/checkpoints/esm1v/logreg/model_config.json
+```
+
+**3. Custom sequence column:**
 ```bash
 uv run antibody-predict \
     input_file=data/canonical.csv \
     sequence_column="vh_sequence" \
-    classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+    classifier.path=experiments/checkpoints/esm1v/logreg/model.pkl
 ```
 
 **3. PSR assay-specific threshold:**

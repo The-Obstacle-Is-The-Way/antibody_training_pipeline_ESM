@@ -8,3 +8,5 @@ reg_alpha: 0.0
 reg_lambda: 1.0
 random_state: ${training.random_state}
 objective: binary:logistic
+path: null
+config_path: null

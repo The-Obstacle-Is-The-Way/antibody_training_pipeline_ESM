@@ -1,14 +1,18 @@
 # Antibody Non-Specificity Prediction: Inference Guide
 
 > **📚 Comprehensive Guide:** For detailed CLI options, advanced usage, batch processing, troubleshooting, and performance tuning, see [`docs/user-guide/inference.md`](docs/user-guide/inference.md)
+>
+> **🌐 Web App Guide:** For interactive usage via the Gradio web interface, see [`docs/user-guide/web-app.md`](docs/user-guide/web-app.md)
 
 ## Overview
 This guide details how to use the `antibody-predict` CLI to screen antibody sequences for non-specificity (polyreactivity). It explains input requirements, command usage, and how to interpret the results.
 
 ## 0. Prerequisites
-- A trained classifier checkpoint (`.pkl`/`.joblib`) saved under `experiments/checkpoints/esm1v/logreg/…`.  
-  - Create one with `make train` (see [`docs/user-guide/training.md`](docs/user-guide/training.md)) or download a published checkpoint from the project releases page.
-- Python environment set up via `make install` (includes transformers/torch dependencies).
+- A trained classifier checkpoint saved under `experiments/checkpoints/esm1v/logreg/…`.
+  - **Development Format:** `.pkl` (Pickle)
+  - **Production Format:** `.npz` (Weights) + `_config.json` (Metadata)
+  - Create one with `make train` (see [`docs/user-guide/training.md`](docs/user-guide/training.md)) or download a published checkpoint.
+- Python environment set up via `make install`.
 
 ## 1. Input Specification
 

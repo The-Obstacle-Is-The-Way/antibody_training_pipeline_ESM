@@ -2,6 +2,7 @@ defaults:
   - model: esm1v
   - classifier: logreg
   - data: boughter_jain
+  - hardware: default
   - hydra: default
   - _self_
 
@@ -27,12 +28,6 @@ training:
   # Performance optimization
   batch_size: 8
   num_workers: 4
-
-# Hardware
-hardware:
-  device: mps  # auto-detect in code
-  gpu_memory_fraction: 0.8
-  clear_cache_frequency: 100
 
 # Experiment metadata (Hydra manages output dirs)
 experiment:
