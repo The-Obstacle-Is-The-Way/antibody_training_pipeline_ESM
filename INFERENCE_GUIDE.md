@@ -12,7 +12,8 @@ The tool requires a **CSV file** as input.
 *   **Location:** The file can exist anywhere on your filesystem (relative or absolute paths are accepted).
 
 ### Column Requirements
-*   **`sequence` (Required):** You **must** have a column named `sequence`.
+*   **`sequence` (Default):** By default, the tool looks for a column named `sequence`.
+    *   **Customizable:** If your column is named differently (e.g., `vh_sequence`, `heavy_chain`), you can specify this using the `sequence_column` argument (see below).
     *   **Content:** The amino acid sequence of the antibody (Variable Heavy domain / VH).
     *   **Case:** Case-insensitive (sequences are automatically normalized to uppercase).
     *   **Cleaning:** Whitespace and standard gaps are handled, but pure amino acid sequences are preferred.
@@ -39,6 +40,25 @@ uv run antibody-predict \
     classifier.path="path/to/trained_model.pkl"
 ```
 
+### Custom Sequence Column
+If your CSV uses a different name for the sequence column (e.g., `vh_sequence`):
+```bash
+uv run antibody-predict \
+    input_file="data/my_data.csv" \
+    sequence_column="vh_sequence" \
+    classifier.path="..."
+```
+
+### Assay-Specific Thresholds
+You can optimize the decision threshold for specific assays (improving accuracy):
+```bash
+# For PSR (Polyspecificity Reagent) assays (Threshold = 0.5495)
+uv run antibody-predict ... assay_type="PSR"
+
+# For ELISA assays (Threshold = 0.5)
+uv run antibody-predict ... assay_type="ELISA"
+```
+
 ### Arguments Breakdown
 
 | Argument | Description | Required? | Example |
@@ -46,6 +66,9 @@ uv run antibody-predict \
 | `input_file` | Path to the CSV containing sequences. | **Yes** | `data/batch_1.csv` |
 | `output_file` | Path where the predictions will be written. | No | `results/batch_1_pred.csv` |
 | `classifier.path` | Path to the trained model checkpoint (`.pkl` or `.joblib`). | **Yes** | `experiments/checkpoints/model.pkl` |
+| `sequence_column` | Name of the column containing sequences. | No (Default: `sequence`) | `vh_seq` |
+| `assay_type` | `PSR` or `ELISA` to use calibrated thresholds. | No | `PSR` |
+| `threshold` | Manual probability threshold (0.0 - 1.0). | No (Default: 0.5) | `0.8` |
 | `model.name` | The ESM model architecture to use. | No | `facebook/esm1v_t33_650M_UR90S_1` |
 
 ### File System Flexibility
