@@ -49,6 +49,18 @@ cd experiments/benchmarks/novo_parity/
 - **Investigations**
   - ~~`P0_P1_P2_P3_BLOCKERS.md`~~ → `archive/investigations/p0-blockers.md`
 
+### 📁 User Guide (`user-guide/`)
+
+End-user documentation:
+
+- `getting-started.md` - Quick start guide
+- `installation.md` - Environment setup
+- `training.md` - Model training guide
+- `inference.md` - **Comprehensive prediction guide** (NEW)
+- `testing.md` - Model evaluation
+- `preprocessing.md` - Dataset preparation
+- `troubleshooting.md` - Common issues and solutions
+
 ### 📁 Research Documentation (`research/`)
 
 Scientific methodology and validation:
@@ -57,39 +69,51 @@ Scientific methodology and validation:
 - `methodology.md` - Implementation details, dataset analysis, divergences
 - `assay-thresholds.md` - ELISA vs PSR thresholds
 - `benchmark-results.md` - Cross-dataset validation results (Boughter, Jain, Harvey, Shehata)
+- `model-zoo-roadmap.md` - **Future model expansion roadmap** (NEW)
 
 ### 📁 Archive (`archive/`)
 
 Historical documentation, fully organized under `docs/archive/`:
 
-- **Audits**
+- **Audits** (3 files)
+  - `archive/audits/2025-11-19-xgboost-branch-audit.md` (NEW)
   - `archive/audits/2025-11-11-production-readiness-audit.md`
   - `archive/audits/2025-11-05-scripts-audit.md`
 
-- **Investigations**
+- **Investigations** (7 files)
+  - `archive/investigations/cli-test-refactor-2025-11-18.md` (NEW)
+  - `archive/investigations/dataset-column-naming-2025-11-18.md` (NEW)
   - `archive/investigations/2025-11-03-mps-memory-leak.md`
   - `archive/investigations/2025-11-06-p0-semaphore-leak.md`
   - `archive/investigations/2025-11-11-cli-override-bug.md`
   - `archive/investigations/2025-11-11-training-pipeline-fixes.md`
   - `archive/investigations/p0-blockers.md`
 
-- **Migrations**
-  - `archive/migrations/2025-11-05-codebase-reorganization.md`
-  - `archive/migrations/2025-11-06-repository-modernization.md`
-  - `archive/migrations/v2-structure-migration.md`
-
-- **Plans**
-  - `archive/plans/2025-11-11-output-pipeline-architecture.md`
-  - `archive/plans/DOCUMENTATION_STRUCTURE_PLAN.md`
-
-- **Summaries**
+- **Summaries** (6 files)
+  - `archive/summaries/inference-completion-2025-11-19.md` (NEW)
   - `archive/summaries/2025-11-02-fixes-applied.md`
   - `archive/summaries/2025-11-02-phase1-test-results.md`
   - `archive/summaries/2025-11-02-training-setup-status.md`
   - `archive/summaries/2025-11-06-type-checking-complete.md`
   - `archive/summaries/2025-11-12-esm2-feature.md`
 
-> Trash is currently empty; see `docs/archive/README.md` for archive policy.
+- **Decisions** (1 file)
+  - `archive/decisions/preprocessing-location-decision-2025-11-18.md` (NEW)
+
+- **Migrations** (3 files)
+  - `archive/migrations/2025-11-05-codebase-reorganization.md`
+  - `archive/migrations/2025-11-06-repository-modernization.md`
+  - `archive/migrations/v2-structure-migration.md`
+
+- **Plans** (2 files)
+  - `archive/plans/2025-11-11-output-pipeline-architecture.md`
+  - `archive/plans/DOCUMENTATION_STRUCTURE_PLAN.md`
+
+- **Trash** (2 files)
+  - `archive/trash/refactor-test-cli-plan.md` (NEW)
+  - `archive/trash/spec-sheet.md` (NEW)
+
+> See `docs/archive/README.md` for archive policy and full listing.
 
 ### 📁 Dataset Documentation (`datasets/`)
 
@@ -104,5 +128,13 @@ Each dataset directory contains preprocessing scripts, validation reports, and d
 
 ---
 
-**Last Updated**: 2025-11-17
-**Branch**: `leroy-jenkins/full-send`
+### 📁 Needs Integration (`needs_integration/`)
+
+Active tracking documents (work in progress):
+
+- `ARCHITECTURAL_FIXES_PLAN.md` - Ongoing refactoring roadmap (P1-P3 tasks)
+
+---
+
+**Last Updated**: 2025-11-19
+**Branch**: `dev`

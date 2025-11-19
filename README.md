@@ -250,6 +250,8 @@ This codebase uses Python's `pickle` module for:
 
 ## For Users
 
+- **Quick Start - Inference**: [`INFERENCE_GUIDE.md`](INFERENCE_GUIDE.md) (root - fast reference)
+- **Comprehensive Inference Guide**: [docs/user-guide/inference.md](docs/user-guide/inference.md)
 - **Installation & Setup**: See [Installation](#installation--setup) above
 - **Training Models**: [docs/user-guide/training.md](docs/user-guide/training.md)
 - **Testing Models**: [docs/user-guide/testing.md](docs/user-guide/testing.md)
@@ -272,6 +274,7 @@ This codebase uses Python's `pickle` module for:
 - **Methodology & Divergences**: [docs/research/methodology.md](docs/research/methodology.md)
 - **Assay Thresholds**: [docs/research/assay-thresholds.md](docs/research/assay-thresholds.md)
 - **Benchmark Results**: [docs/research/benchmark-results.md](docs/research/benchmark-results.md)
+- **Model Zoo Roadmap**: [docs/research/model-zoo-roadmap.md](docs/research/model-zoo-roadmap.md)
 
 ## Dataset Documentation
 

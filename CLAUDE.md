@@ -217,6 +217,19 @@ tests/                       # Test suite
 - **Validation**: Each preprocessing step has validation script (e.g., `validate_stages2_3.py`)
 - **Intermediate outputs**: Staged outputs (raw → processed → canonical/fragments)
 
+### Preprocessing Directory Location
+**Decision (2025-11-18):** Preprocessing stays at **root** (`preprocessing/`), not inside `src/`.
+
+**Rationale:** Factory vs Product Separation
+- **`src/antibody_training_esm/`** = Product (runtime code: training, inference)
+- **`preprocessing/`** = Factory (one-time ETL: Excel parsers, QC filters)
+
+**Key principle:** Separate "data creation" (run once) from "data usage" (run repeatedly).
+
+Moving preprocessing to `src/` would bundle ETL scripts (dead code in production) with runtime code, bloating pip packages with dependencies like `openpyxl`. This violates separation of concerns.
+
+**See:** `docs/developer-guide/architecture.md` (Preprocessing Directory Design section) and `docs/archive/decisions/preprocessing-location-decision-2025-11-18.md` for full analysis.
+
 ### Fragment Types
 Standard fragments across all datasets:
 - **VH/VL**: Variable heavy/light chains

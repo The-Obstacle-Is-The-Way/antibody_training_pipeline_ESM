@@ -131,6 +131,50 @@ tests/                       # Test suite
 
 ---
 
+## Preprocessing Directory Design
+
+### Why Preprocessing Lives at Project Root
+
+**Decision (2025-11-18):** Preprocessing stays at root (`preprocessing/`), **not** inside `src/`.
+
+**Rationale - Factory vs Product Separation:**
+
+- **`src/antibody_training_esm/`** = **Product** (Runtime Code)
+  - Training and inference library
+  - What you would `pip install` and import at runtime
+  - Contains: Models, data loaders, classifiers, evaluation
+
+- **`preprocessing/`** = **Factory** (One-Time ETL)
+  - Data manufacturing scripts (run once to create datasets)
+  - Converts raw paper data (Excel, PDFs) → canonical CSVs
+  - **Never needed at runtime or in production**
+  - Contains: Dataset-specific ETL pipelines (Excel parsers, QC filters)
+
+**Key Principle:** Separate "data creation" (Factory) from "data usage" (Product)
+
+**If preprocessing moved to `src/`:**
+- ❌ Bundles construction equipment (ETL scripts) inside the finished product
+- ❌ Bloats pip package with dependencies like `openpyxl` (Excel parsing) - dead code in production
+- ❌ Mixes "data creation" (run once) with "data usage" (run repeatedly)
+
+**Distinction:**
+- **One-time ETL** (preprocessing/) → Parse Jain Excel file, translate DNA to protein (ONCE)
+- **Runtime data loading** (src/data/) → Load CSVs during training (REPEATEDLY)
+
+**Research Reproducibility:**
+- Top-level visibility signals scientific importance
+- Data transformation methodology is part of the scientific contribution
+- Makes ETL logic discoverable for peer review
+
+**When to Reconsider (RARE):**
+- Only if publishing as PyPI library where preprocessing utilities are imported by other projects
+- Only if preprocessing evolves from one-time ETL to runtime utilities
+- NOT for "production deployment" - current structure is architecturally correct
+
+**See Also:** `docs/archive/decisions/preprocessing-location-decision-2025-11-18.md` for detailed analysis
+
+---
+
 ## Important Patterns & Conventions
 
 ### Configuration System
