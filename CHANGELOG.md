@@ -27,6 +27,30 @@ Major architectural release introducing the Strategy Pattern for classifier back
 - Nonlinear decision boundaries for complex polyreactivity patterns
 - Complete test coverage with XOR dataset validation
 
+**Gradio Web UI** 🚀
+- Web-based prediction interface (`antibody-app` command)
+- Interactive sequence input with real-time validation
+- Warm-up predictions for faster cold starts (pre-loads ESM model)
+- Device optimization (CPU, CUDA, macOS MPS with threading tuning)
+- Configurable server settings (host, port, share via CLI args)
+- Queue management for concurrent requests
+- Full test coverage (unit + integration tests)
+
+**XGBoost Baseline Evaluation** 📊
+- Comprehensive cross-dataset testing on Jain, Harvey, Shehata
+- **Finding:** LogReg outperforms XGBoost by ~13pp average across all datasets
+  - Jain: XGBoost 47.67% vs LogReg 58.8% (-11pp gap)
+  - Harvey: XGBoost 56.04% vs LogReg ~71% (-15pp gap)
+  - Shehata: XGBoost 45.48% vs LogReg 58.29% (-13pp gap)
+- **Root cause:** Small dataset (914 samples) + high-dim embeddings (1280-D) favor linear models
+- All benchmarks, models, and predictions committed for reproducibility
+
+**Benchmark Organization**
+- Hierarchical directory structure: `experiments/benchmarks/esm1v/{classifier}/{dataset}/`
+- Cleaned 22 duplicate files from root directory
+- Auto-generated logs moved to gitignore (ephemeral artifacts)
+- Clear separation: single-model results (hierarchical) vs aggregated reports (root)
+
 **Configuration System**
 - New `conf/classifier/xgboost.yaml` config group
 - Single Source of Truth (SSOT): Hydra YAML is authoritative for all hyperparameters
@@ -78,6 +102,7 @@ Major architectural release introducing the Strategy Pattern for classifier back
 
 **New Requirements:**
 - `xgboost>=2.0.0` - Gradient boosting classifier backend
+- `gradio>=5.14.0` - Web UI for interactive predictions
 
 ### ✅ Verification
 
@@ -113,6 +138,20 @@ antibody-train classifier.type=xgboost classifier.n_estimators=200 classifier.ma
 
 # Hyperparameter sweep
 antibody-train --multirun classifier.type=xgboost classifier.n_estimators=50,100,200
+```
+
+**New Gradio Web UI:**
+```bash
+# Launch web app (default: http://localhost:7860)
+uv run antibody-app
+
+# Custom configuration
+uv run antibody-app --host 0.0.0.0 --port 7860 --share
+
+# Test with XGBoost model
+uv run antibody-test \
+  --model experiments/checkpoints/esm1v/xgboost/boughter_vh_esm1v_xgboost.pkl \
+  --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 ```
 
 ### 📚 Documentation
