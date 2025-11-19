@@ -382,7 +382,7 @@ uv run antibody-train  # Uses conf/data/boughter_jain.yaml
 **What should be fixed:**
 1. ✅ **Documentation** - Add file types guide to READMEs
 2. ✅ **Error messages** - Detect canonical files and suggest config approach
-3. 🔄 **CLI enhancement** - Add `--sequence-column` override flag (P1)
+3. ✅ **CLI enhancement** - Added `--sequence-column` override flag (Completed 2025-11-18)
 
 **What should NOT be changed:**
 1. ❌ Column naming in canonical files (preserve research integrity)
@@ -393,9 +393,9 @@ uv run antibody-train  # Uses conf/data/boughter_jain.yaml
 
 **Validated by:** Claude Code (Sonnet 4.5)
 **Investigation Date:** 2025-11-18
-**Verdict:** Design is sound, documentation needs improvement
+**Verdict:** Design is sound, documentation improved, CLI enhanced.
 **Next Steps:**
-1. Delete temporary fragment file: `VH_only_jain_86_novo_parity_fragment.csv`
-2. Add file types guide to dataset READMEs
-3. Improve error messages in CLI data loader
-4. Consider adding `--sequence-column` CLI flag for convenience
+1. Delete temporary fragment file: `VH_only_jain_86_novo_parity_fragment.csv` (Done)
+2. Add file types guide to dataset READMEs (Done)
+3. Improve error messages in CLI data loader (Done)
+4. Added `--sequence-column` CLI flag for convenience (Done)
