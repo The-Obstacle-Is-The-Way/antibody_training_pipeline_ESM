@@ -69,6 +69,7 @@ def test_predictor_reuses_embedder(sample_input_df: pd.DataFrame) -> None:
         patch(
             "antibody_training_esm.core.prediction.ESMEmbeddingExtractor"
         ) as mock_embedder_cls,
+        patch("torch.backends.mps.is_available", return_value=True),
     ):
         # Setup mock classifier WITH an embedding_extractor
         mock_classifier = MagicMock()
@@ -88,8 +89,10 @@ def test_predictor_reuses_embedder(sample_input_df: pd.DataFrame) -> None:
         # The classifier's embedded extractor
         existing_embedder = mock_classifier.embedding_extractor
         existing_embedder.extract_batch_embeddings.return_value = np.zeros((2, 1280))
+        # CRITICAL: Match the device so Predictor doesn't recreate it
+        existing_embedder.device = "mps"
 
-        # Initialize
+        # Initialize (will auto-detect "mps" because we mocked is_available=True)
         predictor = Predictor("model", "path")
 
         # Run
