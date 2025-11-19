@@ -1043,19 +1043,14 @@ def test_save_model_npz_arrays_match_pickle(
     npz_arrays = np.load(model_paths["npz"])
 
     # Assert: NPZ arrays match pickle model
-    np.testing.assert_array_equal(pkl_classifier.classifier.coef_, npz_arrays["coef"])
-    np.testing.assert_array_equal(
-        pkl_classifier.classifier.intercept_, npz_arrays["intercept"]
-    )
-    np.testing.assert_array_equal(
-        pkl_classifier.classifier.classes_, npz_arrays["classes"]
-    )
-    assert pkl_classifier.classifier.n_features_in_ == int(
-        npz_arrays["n_features_in"][0]
-    )
-    np.testing.assert_array_equal(
-        pkl_classifier.classifier.n_iter_, npz_arrays["n_iter"]
-    )
+    # Note: pkl_classifier.classifier is LogisticRegressionStrategy wrapper
+    # We need to access the internal sklearn classifier for coef_
+    sklearn_clf = pkl_classifier.classifier.classifier
+    np.testing.assert_array_equal(sklearn_clf.coef_, npz_arrays["coef"])
+    np.testing.assert_array_equal(sklearn_clf.intercept_, npz_arrays["intercept"])
+    np.testing.assert_array_equal(sklearn_clf.classes_, npz_arrays["classes"])
+    assert sklearn_clf.n_features_in_ == int(npz_arrays["n_features_in"][0])
+    np.testing.assert_array_equal(sklearn_clf.n_iter_, npz_arrays["n_iter"])
 
 
 def test_save_model_json_metadata_complete(
@@ -1096,7 +1091,7 @@ def test_save_model_json_metadata_complete(
         metadata = json.load(f)
 
     # Assert: All required fields present
-    assert metadata["model_type"] == "LogisticRegression"
+    assert metadata["model_type"] == "logistic_regression"
     assert "sklearn_version" in metadata
 
     # LogisticRegression params
