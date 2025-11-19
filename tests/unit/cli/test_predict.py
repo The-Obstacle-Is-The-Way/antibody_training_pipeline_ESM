@@ -1,3 +1,11 @@
+"""
+Unit Tests for Prediction CLI
+
+This module contains unit tests for the antibody-predict CLI command.
+It tests the command-line interface validation, error handling, and main execution flow,
+ensuring that the CLI correctly processes arguments and handles missing files or configurations.
+"""
+
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
