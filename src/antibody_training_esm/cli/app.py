@@ -113,7 +113,7 @@ def launch_gradio_app(cfg: DictConfig) -> None:
             "to predict its non-specificity (polyreactivity)."
         ),
         examples=examples,
-        allow_flagging="never",
+        flagging_mode="never",
     )
 
     # Launch the app
