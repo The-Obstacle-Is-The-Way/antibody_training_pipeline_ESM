@@ -170,7 +170,7 @@ Created fragment-compatible canonical file:
 # 86 antibodies (Novo parity test set)
 ```
 
-**Long-term Solution:** Add CLI flags for column name override:
+**Long-term Solution:** Added CLI flags for column name override:
 ```bash
 antibody-test --model model.pkl --data data.csv \
   --sequence-column vh_sequence \
@@ -290,8 +290,8 @@ Refs: ARCHITECTURAL_FIXES_PLAN.md Phase 2 Fix #6
 2. ✅ **Commit dataset fix** - Add fragment-compatible canonical file
 
 ### Short-term (P1)
-1. **Add CLI flags for column names:**
-   ```python
+1. ✅ **Added CLI flags for column names** (Completed 2025-11-18)
+   ```bash
    parser.add_argument('--sequence-column', default='sequence')
    parser.add_argument('--label-column', default='label')
    ```

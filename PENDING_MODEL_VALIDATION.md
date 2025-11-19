@@ -158,7 +158,7 @@ uv run antibody-train --multirun \
 
 ### Prerequisites
 - [x] Hydra config system validated (ESM1v/LogReg)
-- [x] Directory routing working (`directory_utils.py`)
+- [x] Directory routing working (`directory_utils.py` handles new `{model}/{classifier}` paths)
 - [x] Checkpoint metadata system (`model_name` + `classifier`)
 - [x] Testing pipeline (`antibody-test`)
 - [x] Fresh clone validation protocol
