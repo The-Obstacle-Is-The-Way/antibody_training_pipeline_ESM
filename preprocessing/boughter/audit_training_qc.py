@@ -26,6 +26,10 @@ from typing import Any
 
 import pandas as pd
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 # Paths
 BOUGHTER_DIR = Path("data/train/boughter")
 TRAINING_FILE = BOUGHTER_DIR / "canonical" / "VH_only_boughter_training.csv"
@@ -157,23 +161,23 @@ def check_cdr_lengths(df: pd.DataFrame) -> list[tuple[str, pd.DataFrame, int]]:
 
 def audit_dataset(file_path: Path, dataset_name: str) -> dict[str, Any]:
     """Run comprehensive QC audit on a dataset"""
-    print(f"\n{'=' * 80}")
-    print(f"QC AUDIT: {dataset_name}")
-    print(f"File: {file_path}")
-    print(f"{'=' * 80}\n")
+    logger.info(f"\n{'=' * 80}")
+    logger.info(f"QC AUDIT: {dataset_name}")
+    logger.info(f"File: {file_path}")
+    logger.info(f"{'=' * 80}\n")
 
     # Load data
     df = pd.read_csv(file_path, comment="#")
-    print(f"Total sequences: {len(df)}")
+    logger.info(f"Total sequences: {len(df)}")
 
     # Determine sequence column
     seq_col = "sequence" if "sequence" in df.columns else "heavy_seq"
-    print(f"Sequence column: {seq_col}\n")
+    logger.info(f"Sequence column: {seq_col}\n")
 
     # Check if 'id' column exists, if not use index
     has_id = "id" in df.columns
     if not has_id:
-        print("Note: No 'id' column found, using row index\n")
+        logger.info("Note: No 'id' column found, using row index\n")
         df["_index"] = df.index
 
     # Track all issues
@@ -184,152 +188,156 @@ def audit_dataset(file_path: Path, dataset_name: str) -> dict[str, Any]:
     id_col = "id" if has_id else "_index"
 
     # 1. Stop codons
-    print("1. Checking for stop codons (*)...")
+    logger.info("1. Checking for stop codons (*)...")
     stop_df, stop_count = check_stop_codons(df, seq_col)
     if stop_count > 0:
-        print(f"   ❌ FOUND {stop_count} sequences with stop codons")
+        logger.info(f"   ❌ FOUND {stop_count} sequences with stop codons")
         flagged_sequences.update(stop_df[id_col].tolist())
         total_issues += stop_count
-        print(f"   Examples (row indices): {stop_df[id_col].head(3).tolist()}")
+        logger.info(f"   Examples (row indices): {stop_df[id_col].head(3).tolist()}")
     else:
-        print("   ✅ No stop codons found")
+        logger.info("   ✅ No stop codons found")
 
     # 2. Gap characters
-    print("\n2. Checking for gap characters (-)...")
+    logger.info("\n2. Checking for gap characters (-)...")
     gap_df, gap_count = check_gap_characters(df, seq_col)
     if gap_count > 0:
-        print(f"   ❌ FOUND {gap_count} sequences with gap characters")
+        logger.info(f"   ❌ FOUND {gap_count} sequences with gap characters")
         flagged_sequences.update(gap_df[id_col].tolist())
         total_issues += gap_count
-        print(f"   Examples (row indices): {gap_df[id_col].head(3).tolist()}")
+        logger.info(f"   Examples (row indices): {gap_df[id_col].head(3).tolist()}")
     else:
-        print("   ✅ No gap characters found")
+        logger.info("   ✅ No gap characters found")
 
     # 3. Unknown amino acids (X)
-    print("\n3. Checking for unknown amino acids (X)...")
+    logger.info("\n3. Checking for unknown amino acids (X)...")
     x_df, x_count = check_unknown_aa(df, seq_col)
     if x_count > 0:
-        print(f"   ❌ FOUND {x_count} sequences with X")
+        logger.info(f"   ❌ FOUND {x_count} sequences with X")
         flagged_sequences.update(x_df[id_col].tolist())
         total_issues += x_count
-        print(f"   Examples (row indices): {x_df[id_col].head(3).tolist()}")
+        logger.info(f"   Examples (row indices): {x_df[id_col].head(3).tolist()}")
         # Show first 10 with X positions
-        print("\n   First 10 sequences with X:")
+        logger.info("\n   First 10 sequences with X:")
         for _idx, row in x_df.head(10).iterrows():
             seq = str(row[seq_col])
             x_positions = [i for i, c in enumerate(seq) if c == "X"]
-            print(
+            logger.info(
                 f"      Row {row[id_col]}: X at positions {x_positions[:5]}... (seq preview: {seq[:50]}...)"
             )
     else:
-        print("   ✅ No X amino acids found")
+        logger.info("   ✅ No X amino acids found")
 
     # 4. Non-standard amino acids
-    print("\n4. Checking for non-standard amino acids...")
+    logger.info("\n4. Checking for non-standard amino acids...")
     non_std_df, non_std_count = check_non_standard_aa(df, seq_col)
     if non_std_count > 0:
-        print(f"   ❌ FOUND {non_std_count} sequences with non-standard amino acids")
+        logger.info(
+            f"   ❌ FOUND {non_std_count} sequences with non-standard amino acids"
+        )
         flagged_sequences.update(non_std_df[id_col].tolist())
         total_issues += non_std_count
-        print(f"   Examples (row indices): {non_std_df[id_col].head(3).tolist()}")
+        logger.info(f"   Examples (row indices): {non_std_df[id_col].head(3).tolist()}")
         # Show what characters
         for _idx, row in non_std_df.head(3).iterrows():
             seq = str(row[seq_col])
             bad_chars = [c for c in seq if c not in EXTENDED_AA]
-            print(f"      Row {row[id_col]}: {set(bad_chars)}")
+            logger.info(f"      Row {row[id_col]}: {set(bad_chars)}")
     else:
-        print("   ✅ All amino acids are standard")
+        logger.info("   ✅ All amino acids are standard")
 
     # 5. Empty sequences
-    print("\n5. Checking for empty sequences...")
+    logger.info("\n5. Checking for empty sequences...")
     empty_df, empty_count = check_empty_sequences(df, seq_col)
     if empty_count > 0:
-        print(f"   ❌ FOUND {empty_count} empty sequences")
+        logger.info(f"   ❌ FOUND {empty_count} empty sequences")
         flagged_sequences.update(empty_df[id_col].tolist())
         total_issues += empty_count
     else:
-        print("   ✅ No empty sequences found")
+        logger.info("   ✅ No empty sequences found")
 
     # 6. Sequence lengths
-    print("\n6. Checking sequence lengths...")
+    logger.info("\n6. Checking sequence lengths...")
     length_results = check_sequence_lengths(df, seq_col, min_len=95, max_len=500)
-    print("   Length statistics:")
-    print(f"   {length_results['length_stats']}")
+    logger.info("   Length statistics:")
+    logger.info(f"   {length_results['length_stats']}")
 
     too_short_df, too_short_count = length_results["too_short"]
     too_long_df, too_long_count = length_results["too_long"]
 
     if too_short_count > 0:
-        print(f"\n   ❌ FOUND {too_short_count} sequences too short (<95 aa)")
+        logger.info(f"\n   ❌ FOUND {too_short_count} sequences too short (<95 aa)")
         flagged_sequences.update(too_short_df[id_col].tolist())
         total_issues += too_short_count
-        print(f"   Examples (row indices): {too_short_df[id_col].head(3).tolist()}")
+        logger.info(
+            f"   Examples (row indices): {too_short_df[id_col].head(3).tolist()}"
+        )
     else:
-        print("   ✅ No sequences too short (<95 aa)")
+        logger.info("   ✅ No sequences too short (<95 aa)")
 
     if too_long_count > 0:
-        print(f"\n   ❌ FOUND {too_long_count} sequences too long (>500 aa)")
+        logger.info(f"\n   ❌ FOUND {too_long_count} sequences too long (>500 aa)")
         flagged_sequences.update(too_long_df[id_col].tolist())
         total_issues += too_long_count
     else:
-        print("   ✅ No sequences too long (>500 aa)")
+        logger.info("   ✅ No sequences too long (>500 aa)")
 
     # 7. Homopolymers
-    print("\n7. Checking for homopolymers (7+ repeated amino acids)...")
+    logger.info("\n7. Checking for homopolymers (7+ repeated amino acids)...")
     homo_df, homo_count = check_homopolymers(df, seq_col, min_repeat=7)
     if homo_count > 0:
-        print(f"   ⚠️  FOUND {homo_count} sequences with homopolymers")
+        logger.info(f"   ⚠️  FOUND {homo_count} sequences with homopolymers")
         flagged_sequences.update(homo_df[id_col].tolist())
-        print(f"   Examples (row indices): {homo_df[id_col].head(3).tolist()}")
+        logger.info(f"   Examples (row indices): {homo_df[id_col].head(3).tolist()}")
         # Show the homopolymers
         for _idx, row in homo_df.head(3).iterrows():
             seq = str(row[seq_col])
             for aa in STANDARD_AA:
                 if aa * 7 in seq:
-                    print(f"      Row {row[id_col]}: contains {aa}×7+")
+                    logger.info(f"      Row {row[id_col]}: contains {aa}×7+")
     else:
-        print("   ✅ No long homopolymers found")
+        logger.info("   ✅ No long homopolymers found")
 
     # 8. CDR lengths (if CDR columns exist)
-    print("\n8. Checking CDR lengths...")
+    logger.info("\n8. Checking CDR lengths...")
     cdr_issues = check_cdr_lengths(df)
     if cdr_issues:
         for issue_type, issue_df, issue_count in cdr_issues:
-            print(f"   ⚠️  FOUND {issue_count} sequences: {issue_type}")
-            print(
+            logger.info(f"   ⚠️  FOUND {issue_count} sequences: {issue_type}")
+            logger.info(
                 f"   Examples (row indices): {issue_df[id_col].head(3).tolist() if id_col in issue_df.columns else 'N/A'}"
             )
     else:
-        print("   ✅ All CDR lengths look normal")
+        logger.info("   ✅ All CDR lengths look normal")
 
     # Summary
-    print(f"\n{'=' * 80}")
-    print("SUMMARY")
-    print(f"{'=' * 80}")
-    print(f"Total sequences: {len(df)}")
-    print(f"Unique sequences with issues: {len(flagged_sequences)}")
-    print(f"Total issue count: {total_issues}")
+    logger.info(f"\n{'=' * 80}")
+    logger.info("SUMMARY")
+    logger.info(f"{'=' * 80}")
+    logger.info(f"Total sequences: {len(df)}")
+    logger.info(f"Unique sequences with issues: {len(flagged_sequences)}")
+    logger.info(f"Total issue count: {total_issues}")
 
     if len(flagged_sequences) > 0:
-        print("\n❌ QC ISSUES FOUND - Novo may have filtered these sequences!")
-        print(f"\nFlagged sequence {'IDs' if has_id else 'row indices'}:")
+        logger.info("\n❌ QC ISSUES FOUND - Novo may have filtered these sequences!")
+        logger.info(f"\nFlagged sequence {'IDs' if has_id else 'row indices'}:")
         for seq_id in sorted(flagged_sequences)[:20]:  # Show first 20
             if has_id:
-                print(f"   - {seq_id}")
+                logger.info(f"   - {seq_id}")
             else:
-                print(f"   - Row {seq_id}")
+                logger.info(f"   - Row {seq_id}")
         if len(flagged_sequences) > 20:
-            print(f"   ... and {len(flagged_sequences) - 20} more")
+            logger.info(f"   ... and {len(flagged_sequences) - 20} more")
 
         # Calculate potential impact
         impact_pct = (len(flagged_sequences) / len(df)) * 100
-        print(
+        logger.info(
             f"\nPotential impact: {len(flagged_sequences)}/{len(df)} ({impact_pct:.1f}%)"
         )
-        print("If Novo filtered these, their training set would be:")
-        print(f"   {len(df) - len(flagged_sequences)} sequences")
+        logger.info("If Novo filtered these, their training set would be:")
+        logger.info(f"   {len(df) - len(flagged_sequences)} sequences")
     else:
-        print("\n✅ NO QC ISSUES FOUND - Dataset is clean!")
+        logger.info("\n✅ NO QC ISSUES FOUND - Dataset is clean!")
 
     return {
         "total_sequences": len(df),
@@ -347,10 +355,9 @@ def audit_dataset(file_path: Path, dataset_name: str) -> dict[str, Any]:
 
 
 def main() -> int:
-    print("=" * 80)
-    print("BOUGHTER TRAINING SET QC AUDIT")
-    print("Searching for any QC issues that might explain Novo's 3.5% accuracy gap")
-    print("=" * 80)
+    logger.info("=" * 80)
+    logger.info("AUDIT: Boughter Training Set QC Logic")
+    logger.info("=" * 80)
 
     # Audit training set (914 sequences)
     training_results = audit_dataset(
@@ -358,38 +365,40 @@ def main() -> int:
     )
 
     # Also audit full set for comparison (1,065 sequences)
-    print("\n\n")
+    logger.info("\n\n")
     full_results = audit_dataset(FULL_FILE, "Boughter Full Set (1,065 sequences)")
 
     # Final comparison
-    print(f"\n\n{'=' * 80}")
-    print("FINAL COMPARISON")
-    print(f"{'=' * 80}")
-    print("\nTraining Set (914 sequences):")
-    print(
+    logger.info(f"\n\n{'=' * 80}")
+    logger.info("FINAL COMPARISON")
+    logger.info(f"{'=' * 80}")
+    logger.info("\nTraining Set (914 sequences):")
+    logger.info(
         f"   Flagged: {len(training_results['flagged_sequences'])} ({len(training_results['flagged_sequences']) / training_results['total_sequences'] * 100:.1f}%)"
     )
-    print("\nFull Set (1,065 sequences):")
-    print(
+    logger.info("\nFull Set (1,065 sequences):")
+    logger.info(
         f"   Flagged: {len(full_results['flagged_sequences'])} ({len(full_results['flagged_sequences']) / full_results['total_sequences'] * 100:.1f}%)"
     )
 
-    print(f"\n{'=' * 80}")
-    print("CONCLUSION")
-    print(f"{'=' * 80}")
+    logger.info(f"\n{'=' * 80}")
+    logger.info("CONCLUSION")
+    logger.info(f"{'=' * 80}")
 
     if len(training_results["flagged_sequences"]) == 0:
-        print("✅ Our training set is CLEAN - no QC issues found")
-        print("✅ The 3.5% gap is NOT due to missing QC filtering")
-        print(
+        logger.info("Our training set is CLEAN - no QC issues found")
+        logger.info("The 3.5% gap is NOT due to missing QC filtering")
+        logger.info(
             "✅ Gap is likely due to hyperparameters, random seed, or ESM embedding differences"
         )
     else:
-        print(
+        logger.info(
             f"❌ Found {len(training_results['flagged_sequences'])} sequences with potential QC issues"
         )
-        print("❌ Novo may have filtered these, explaining part of the accuracy gap")
-        print("❌ Recommend additional QC filtering to match Novo's methodology")
+        logger.error(
+            "Novo may have filtered these, explaining part of the accuracy gap"
+        )
+        logger.error("Recommend additional QC filtering to match Novo's methodology")
     return 0
 
 

@@ -37,6 +37,10 @@ from pathlib import Path
 
 import pandas as pd
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 # File paths
 BASE_DIR = Path(__file__).parent.parent.parent  # Project root
 INPUT_137 = BASE_DIR / "data/test/jain/processed/jain_with_private_elisa_FULL.csv"
@@ -60,10 +64,10 @@ ALL_RECLASSIFIED = TIER_A_PSR + [TIER_B_EXTREME_TM, TIER_C_CLINICAL]
 
 def load_data() -> pd.DataFrame:
     """Load 137-antibody FULL dataset with all metadata"""
-    print("=" * 80)
-    print("Jain Dataset Preprocessing: P5e-S2 Novo Nordisk Parity Method")
-    print("=" * 80)
-    print("\nStep 0: Loading data...")
+    logger.info("=" * 80)
+    logger.info("Jain Dataset Preprocessing: P5e-S2 Novo Nordisk Parity Method")
+    logger.info("=" * 80)
+    logger.info("\nStep 0: Loading data...")
 
     if not INPUT_137.exists():
         raise FileNotFoundError(
@@ -71,9 +75,9 @@ def load_data() -> pd.DataFrame:
         )
 
     df = pd.read_csv(INPUT_137)
-    print(f"  ✓ Loaded {len(df)} antibodies from FULL dataset")
-    print(f"    Specific: {(df['label'] == 0).sum()}")
-    print(f"    Non-specific: {(df['label'] == 1).sum()}")
+    logger.info(f"  ✓ Loaded {len(df)} antibodies from FULL dataset")
+    logger.info(f"    Specific: {(df['label'] == 0).sum()}")
+    logger.info(f"    Non-specific: {(df['label'] == 1).sum()}")
 
     return df
 
@@ -86,9 +90,9 @@ def step1_remove_elisa_1to3(df: pd.DataFrame) -> pd.DataFrame:
     Novo Nordisk filtered these out as they don't represent strong enough
     polyreactivity signal for training.
     """
-    print("\n" + "=" * 80)
-    print("STEP 1: Remove ELISA 1-3 (mild aggregators)")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("STEP 1: Remove ELISA 1-3 (mild aggregators)")
+    logger.info("=" * 80)
 
     initial_count = len(df)
 
@@ -97,16 +101,16 @@ def step1_remove_elisa_1to3(df: pd.DataFrame) -> pd.DataFrame:
 
     removed_count = initial_count - len(df_116)
 
-    print(f"\n  Initial: {initial_count} antibodies")
-    print(f"  Removed ELISA 1-3: {removed_count} antibodies")
-    print(f"  Remaining: {len(df_116)} antibodies")
-    print(f"    Specific: {(df_116['label'] == 0).sum()}")
-    print(f"    Non-specific: {(df_116['label'] == 1).sum()}")
+    logger.info(f"\n  Initial: {initial_count} antibodies")
+    logger.info(f"  Removed ELISA 1-3: {removed_count} antibodies")
+    logger.info(f"  Remaining: {len(df_116)} antibodies")
+    logger.info(f"    Specific: {(df_116['label'] == 0).sum()}")
+    logger.info(f"    Non-specific: {(df_116['label'] == 1).sum()}")
 
     # Save 116 SSOT
-    print(f"\n  Saving 116 SSOT → {OUTPUT_116.relative_to(BASE_DIR)}")
+    logger.info(f"\n  Saving 116 SSOT → {OUTPUT_116.relative_to(BASE_DIR)}")
     df_116.to_csv(OUTPUT_116, index=False)
-    print("  ✅ Saved 116-antibody SSOT")
+    logger.info("  ✅ Saved 116-antibody SSOT")
 
     assert len(df_116) == 116, f"Expected 116 antibodies, got {len(df_116)}"
 
@@ -119,15 +123,15 @@ def step2_merge_biophysical_data(df: pd.DataFrame) -> pd.DataFrame:
 
     These metrics are used for reclassification and removal decisions.
     """
-    print("\n" + "=" * 80)
-    print("STEP 2: Merge biophysical data from SD03")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("STEP 2: Merge biophysical data from SD03")
+    logger.info("=" * 80)
 
     if not INPUT_SD03.exists():
         raise FileNotFoundError(f"{INPUT_SD03} not found!")
 
     sd03 = pd.read_csv(INPUT_SD03)
-    print(f"  ✓ Loaded SD03: {len(sd03)} rows")
+    logger.info(f"  ✓ Loaded SD03: {len(sd03)} rows")
 
     # Merge biophysical columns
     merged = df.merge(
@@ -158,9 +162,9 @@ def step2_merge_biophysical_data(df: pd.DataFrame) -> pd.DataFrame:
     # Drop duplicate Name column
     merged = merged.drop(columns=["Name"])
 
-    print("  ✓ Merged biophysical data")
-    print(f"    Missing PSR: {merged['psr'].isna().sum()}")
-    print(f"    Missing AC-SINS: {merged['ac_sins'].isna().sum()}")
+    logger.info("  ✓ Merged biophysical data")
+    logger.info(f"    Missing PSR: {merged['psr'].isna().sum()}")
+    logger.info(f"    Missing AC-SINS: {merged['ac_sins'].isna().sum()}")
 
     return merged
 
@@ -183,9 +187,9 @@ def step3_reclassify_5_antibodies(df: pd.DataFrame) -> pd.DataFrame:
 
     Result: 94 specific → 89 specific, 22 non-specific → 27 non-specific
     """
-    print("\n" + "=" * 80)
-    print("STEP 3: Reclassify 5 specific → non-specific")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("STEP 3: Reclassify 5 specific → non-specific")
+    logger.info("=" * 80)
 
     df = df.copy()
     df["label_original"] = df["label"]
@@ -193,7 +197,13 @@ def step3_reclassify_5_antibodies(df: pd.DataFrame) -> pd.DataFrame:
     df["reclassification_reason"] = ""
 
     # Tier A: PSR >0.4
-    print("\n  Tier A: PSR >0.4 (polyreactivity despite ELISA=0)")
+    # Tier A: High PSR but low ELISA (Specific -> Non-specific)
+    # This catches "sticky" antibodies that ELISA misses
+    logger.info("=" * 80)
+    logger.info("\n  Tier A: PSR >0.4 (polyreactivity despite ELISA=0)")
+    logger.info("  Reclassification: Specific -> Non-specific (3 antibodies)")
+    logger.info("  Rationale: PSR aligns better with clinical clearance for these")
+    logger.info("=" * 80)
     for ab_id in TIER_A_PSR:
         idx = df[df["id"] == ab_id].index
         if len(idx) > 0:
@@ -201,36 +211,36 @@ def step3_reclassify_5_antibodies(df: pd.DataFrame) -> pd.DataFrame:
             df.loc[idx, "label"] = 1
             df.loc[idx, "reclassified"] = True
             df.loc[idx, "reclassification_reason"] = "Tier A: PSR >0.4"
-            print(f"    ✅ {ab_id:20s} PSR={psr_val:.3f}")
+            logger.info(f"    ✅ {ab_id:20s} PSR={psr_val:.3f}")
 
     # Tier B: Extreme Tm
-    print("\n  Tier B: Extreme thermal instability")
+    logger.info("\n  Tier B: Extreme thermal instability")
     idx = df[df["id"] == TIER_B_EXTREME_TM].index
     if len(idx) > 0:
         tm_val = df.loc[idx[0], "fab_tm"]
         df.loc[idx, "label"] = 1
         df.loc[idx, "reclassified"] = True
         df.loc[idx, "reclassification_reason"] = f"Tier B: Extreme Tm ({tm_val:.2f}°C)"
-        print(f"    ✅ {TIER_B_EXTREME_TM:20s} Tm={tm_val:.2f}°C (lowest)")
+        logger.info(f"    ✅ {TIER_B_EXTREME_TM:20s} Tm={tm_val:.2f}°C (lowest)")
 
     # Tier C: Clinical evidence
-    print("\n  Tier C: Clinical evidence")
+    logger.info("\n  Tier C: Clinical evidence")
     idx = df[df["id"] == TIER_C_CLINICAL].index
     if len(idx) > 0:
         df.loc[idx, "label"] = 1
         df.loc[idx, "reclassified"] = True
         df.loc[idx, "reclassification_reason"] = "Tier C: Clinical (61% ADA)"
-        print(f"    ✅ {TIER_C_CLINICAL:20s} 61% ADA (NEJM) + chimeric")
+        logger.info(f"    ✅ {TIER_C_CLINICAL:20s} 61% ADA (NEJM) + chimeric")
 
     # Verify counts
     spec_count = (df["label"] == 0).sum()
     nonspec_count = (df["label"] == 1).sum()
 
-    print("\n  After reclassification:")
-    print(f"    Specific: {spec_count}")
-    print(f"    Non-specific: {nonspec_count}")
-    print(f"    Total: {len(df)}")
-    print("    Expected: 89 spec / 27 nonspec / 116 total")
+    logger.info("\n  After reclassification:")
+    logger.info(f"    Specific: {spec_count}")
+    logger.info(f"    Non-specific: {nonspec_count}")
+    logger.info(f"    Total: {len(df)}")
+    logger.info("    Expected: 89 spec / 27 nonspec / 116 total")
 
     assert spec_count == 89, f"Expected 89 specific, got {spec_count}"
     assert nonspec_count == 27, f"Expected 27 non-specific, got {nonspec_count}"
@@ -250,15 +260,15 @@ def step4_remove_30_by_psr_acsins(df: pd.DataFrame) -> pd.DataFrame:
     Result: 89 specific → 59 specific (27 non-specific unchanged)
     Final: 59 specific + 27 non-specific = 86 total
     """
-    print("\n" + "=" * 80)
-    print("STEP 4: Remove 30 specific by PSR/AC-SINS")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("STEP 4: Remove 30 specific by PSR/AC-SINS")
+    logger.info("=" * 80)
 
     # Get remaining specific antibodies
     specific = df[df["label"] == 0].copy()
     nonspecific = df[df["label"] == 1].copy()
 
-    print(f"\n  Remaining specific antibodies: {len(specific)}")
+    logger.info(f"\n  Remaining specific antibodies: {len(specific)}")
 
     # Sort by PSR (descending), then AC-SINS (descending), then id (alphabetical)
     # This ensures PSR is primary, AC-SINS is tiebreaker for PSR=0
@@ -270,8 +280,8 @@ def step4_remove_30_by_psr_acsins(df: pd.DataFrame) -> pd.DataFrame:
     # Top 30 to remove
     to_remove = specific_sorted.head(30)
 
-    print("\n  Top 30 by PSR/AC-SINS (to remove)")
-    print(
+    logger.info("\n  Top 30 by PSR/AC-SINS (to remove)")
+    logger.info(
         to_remove[["id", "psr", "ac_sins"]]
         .rename(columns={"id": "antibody_id"})
         .to_string(index=False)
@@ -290,11 +300,11 @@ def step4_remove_30_by_psr_acsins(df: pd.DataFrame) -> pd.DataFrame:
     spec_count = (df_86["label"] == 0).sum()
     nonspec_count = (df_86["label"] == 1).sum()
 
-    print("\n  Final 86-antibody dataset:")
-    print(f"    Specific: {spec_count}")
-    print(f"    Non-specific: {nonspec_count}")
-    print(f"    Total: {len(df_86)}")
-    print("    Expected: 59 spec / 27 nonspec / 86 total")
+    logger.info("\n  Final 86-antibody dataset:")
+    logger.info(f"    Specific: {spec_count}")
+    logger.info(f"    Non-specific: {nonspec_count}")
+    logger.info(f"    Total: {len(df_86)}")
+    logger.info("    Expected: 59 spec / 27 nonspec / 86 total")
 
     assert spec_count == 59, f"Expected 59 specific, got {spec_count}"
     assert nonspec_count == 27, f"Expected 27 non-specific, got {nonspec_count}"
@@ -305,8 +315,8 @@ def step4_remove_30_by_psr_acsins(df: pd.DataFrame) -> pd.DataFrame:
 
 def save_86_dataset(df: pd.DataFrame) -> Path:
     """Save final 86-antibody Novo parity dataset"""
-    print("\n" + "=" * 80)
-    print("SAVING OUTPUTS")
+    logger.info("\n" + "=" * 80)
+    logger.info("SAVING OUTPUTS")
     print("=" * 80)
 
     # Ensure output directory exists
@@ -314,22 +324,22 @@ def save_86_dataset(df: pd.DataFrame) -> Path:
 
     # Save full canonical version
     df.to_csv(OUTPUT_86, index=False)
-    print(f"\n  ✅ Saved 86-antibody dataset → {OUTPUT_86.relative_to(BASE_DIR)}")
-    print("     Format: VH+VL+metadata (24 columns)")
-    print("     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
-    print()
+    logger.info(f"\n  ✅ Saved 86-antibody dataset → {OUTPUT_86.relative_to(BASE_DIR)}")
+    logger.info("     Format: VH+VL+metadata (24 columns)")
+    logger.info("     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
+    logger.info("")
 
     # Save VH-only benchmark version
     # NOTE: Column must be 'vh_sequence' not 'sequence' for JainDataset.load_data() compatibility
     df_vh = df[["id", "vh_sequence", "label"]].copy()
     df_vh.to_csv(OUTPUT_VH, index=False)
-    print(f"  ✅ Saved VH-only benchmark → {OUTPUT_VH.relative_to(BASE_DIR)}")
-    print("     Format: [id, vh_sequence, label] for model inference")
-    print("     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
-    print()
+    logger.info(f"  ✅ Saved VH-only benchmark → {OUTPUT_VH.relative_to(BASE_DIR)}")
+    logger.info("     Format: [id, vh_sequence, label] for model inference")
+    logger.info("     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
+    logger.info("")
 
     print("  📊 Confusion matrix: [[40, 19], [10, 17]]")
-    print("  📈 Accuracy: 66.28%")
+    logger.info("  📈 Accuracy: 66.28%")
 
     return OUTPUT_86
 
@@ -341,7 +351,7 @@ def main() -> int:
     try:
         df_137 = load_data()
     except FileNotFoundError as exc:
-        print(f"ERROR: {exc}")
+        logger.info(f"ERROR: {exc}")
         return 1
 
     # Step 1: Remove ELISA 1-3 → 116 SSOT
@@ -351,7 +361,7 @@ def main() -> int:
     try:
         df_116 = step2_merge_biophysical_data(df_116)
     except FileNotFoundError as exc:
-        print(f"ERROR: {exc}")
+        logger.info(f"ERROR: {exc}")
         return 1
 
     # Step 3: Reclassify 5 specific → non-specific
@@ -364,23 +374,23 @@ def main() -> int:
     save_86_dataset(df_86)
 
     # Summary
-    print("\n" + "=" * 80)
-    print("✓ Jain Preprocessing Complete!")
-    print("=" * 80)
+    logger.info("\n" + "=" * 80)
+    logger.info("✓ Jain Preprocessing Complete!")
+    logger.info("=" * 80)
 
-    print("\n  Outputs:")
-    print(f"    1. SSOT (116 antibodies): {OUTPUT_116.relative_to(BASE_DIR)}")
-    print(f"    2. Parity (86 antibodies): {OUTPUT_86.relative_to(BASE_DIR)}")
+    logger.info("\n  Outputs:")
+    logger.info(f"    1. SSOT (116 antibodies): {OUTPUT_116.relative_to(BASE_DIR)}")
+    logger.info(f"    2. Parity (86 antibodies): {OUTPUT_86.relative_to(BASE_DIR)}")
 
-    print("\n  Method: P5e-S2 (PSR reclassification + PSR/AC-SINS removal)")
-    print("  Result: EXACT MATCH to Novo Nordisk confusion matrix")
-    print("  Confusion matrix: [[40, 19], [10, 17]]")
-    print("  Accuracy: 66.28%")
+    logger.info("\n  Method: P5e-S2 (PSR reclassification + PSR/AC-SINS removal)")
+    logger.info("  Result: EXACT MATCH to Novo Nordisk confusion matrix")
+    logger.info("  Confusion matrix: [[40, 19], [10, 17]]")
+    logger.info("  Accuracy: 66.28%")
 
-    print("\n  Next steps:")
-    print("    1. Run inference: preprocessing/jain/test_novo_parity.py")
-    print("    2. Verify confusion matrix matches Novo exactly")
-    print("    3. Document any findings")
+    logger.info("\n  Next steps:")
+    logger.info("    1. Run inference: preprocessing/jain/test_novo_parity.py")
+    logger.info("    2. Verify confusion matrix matches Novo exactly")
+    logger.info("    3. Document any findings")
 
     print("\n" + "=" * 80)
 

@@ -19,12 +19,15 @@ Issue: #4 - Harvey dataset preprocessing
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import pandas as pd
 import riot_na
 from tqdm.auto import tqdm
+
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
 
 # Initialize ANARCI for amino acid annotation (IMGT scheme)
 annotator = riot_na.create_riot_aa()
@@ -77,7 +80,7 @@ def annotate_sequence(seq_id: str, sequence: str) -> dict[str, str] | None:
         return fragments
 
     except Exception as e:
-        print(f"Warning: Failed to annotate {seq_id}: {e}", file=sys.stderr)
+        logger.warning(f"Warning: Failed to annotate {seq_id}: {e}")
         return None
 
 
@@ -91,11 +94,11 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
     Returns:
         DataFrame with all fragments and metadata
     """
-    print(f"Reading {csv_path}...")
+    logger.info(f"Reading {csv_path}...")
     df = pd.read_csv(csv_path)
 
-    print(f"  Total nanobodies: {len(df)}")
-    print("  Annotating sequences with ANARCI (IMGT scheme)...")
+    logger.info(f"  Total nanobodies: {len(df)}")
+    logger.info("  Annotating sequences with ANARCI (IMGT scheme)...")
 
     results = []
     failures = []
@@ -125,17 +128,17 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
 
     df_annotated = pd.DataFrame(results)
 
-    print(f"\n  Successfully annotated: {len(df_annotated)}/{len(df)} nanobodies")
+    logger.info(f"\n  Successfully annotated: {len(df_annotated)}/{len(df)} nanobodies")
     if failures:
-        print(f"  Failures: {len(failures)}")
-        print(f"  Failed IDs (first 10): {failures[:10]}")
+        logger.info(f"  Failures: {len(failures)}")
+        logger.info(f"  Failed IDs (first 10): {failures[:10]}")
 
         # Write all failed IDs to log file
         failure_log = Path("data/test/harvey/fragments/failed_sequences.txt")
         failure_log.parent.mkdir(parents=True, exist_ok=True)
         with open(failure_log, "w") as f:
             f.write("\n".join(failures))
-        print(f"  All failed IDs written to: {failure_log}")
+        logger.info(f"  All failed IDs written to: {failure_log}")
 
     return df_annotated
 
@@ -166,7 +169,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
         "H-FWRs": ("fwrs_H", "h_fwrs"),
     }
 
-    print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
+    logger.info(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
     for fragment_name, (column_name, _sequence_alias) in fragments.items():
         output_path = output_dir / f"{fragment_name}_harvey.csv"
@@ -189,12 +192,12 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
         min_len = fragment_df["sequence"].str.len().min()
         max_len = fragment_df["sequence"].str.len().max()
 
-        print(
+        logger.info(
             f"  [OK] {fragment_name:12s} -> {output_path.name:30s} "
             f"(len: {min_len}-{max_len} aa, mean: {mean_len:.1f})"
         )
 
-    print(f"\n[OK] All fragments saved to: {output_dir}/")
+    logger.info(f"\n[OK] All fragments saved to: {output_dir}/")
 
 
 def main() -> int:
@@ -204,21 +207,20 @@ def main() -> int:
     output_dir = Path("data/test/harvey/fragments")
 
     if not csv_path.exists():
-        print(f"Error: {csv_path} not found!")
-        print(
+        logger.info(f"Error: {csv_path} not found!")
+        logger.info(
             "Please run preprocessing/harvey/step1_convert_raw_csvs.py to generate from raw Harvey CSVs."
         )
-        print("Raw CSVs should be in: data/test/harvey/raw/")
+        logger.info("Raw CSVs should be in: data/test/harvey/raw/")
         return 1
 
-    print("=" * 70)
-    print("Harvey Dataset: VHH Fragment Extraction")
-    print("=" * 70)
-    print(f"\nInput:  {csv_path}")
-    print(f"Output: {output_dir}/")
-    print("Method: ANARCI (IMGT numbering scheme)")
-    print("Note:   Nanobodies (VHH) - no light chain fragments")
-    print()
+    logger.info("=" * 70)
+    logger.info("Harvey Dataset: VHH Fragment Extraction")
+    logger.info("=" * 70)
+    logger.info(f"\nInput:  {csv_path}")
+    logger.info(f"Output: {output_dir}/")
+    logger.info("Method: ANARCI (IMGT numbering scheme)")
+    logger.info("Note:   Nanobodies (VHH) - no light chain fragments")
 
     # Process dataset
     df_annotated = process_harvey_dataset(str(csv_path))
@@ -227,28 +229,28 @@ def main() -> int:
     create_fragment_csvs(df_annotated, output_dir)
 
     # Validation summary
-    print("\n" + "=" * 70)
-    print("Fragment Extraction Summary")
-    print("=" * 70)
+    logger.info("\n" + "=" * 70)
+    logger.info("Fragment Extraction Summary")
+    logger.info("=" * 70)
 
-    print(f"\nAnnotated nanobodies: {len(df_annotated)}")
-    print("Label distribution:")
+    logger.info(f"\nAnnotated nanobodies: {len(df_annotated)}")
+    logger.info("Label distribution:")
     for label, count in df_annotated["label"].value_counts().sort_index().items():
         label_name = "Low polyreactivity" if label == 0 else "High polyreactivity"
-        print(f"  {label_name}: {count} ({count / len(df_annotated) * 100:.1f}%)")
+        logger.info(f"  {label_name}: {count} ({count / len(df_annotated) * 100:.1f}%)")
 
-    print("\nFragment files created: 6 (VHH-specific)")
-    print(f"Output directory: {output_dir.absolute()}")
+    logger.info("\nFragment files created: 6 (VHH-specific)")
+    logger.info(f"Output directory: {output_dir.absolute()}")
 
-    print("\n" + "=" * 70)
-    print("[DONE] Harvey Preprocessing Complete!")
-    print("=" * 70)
+    logger.info("\n" + "=" * 70)
+    logger.info("[DONE] Harvey Preprocessing Complete!")
+    logger.info("=" * 70)
 
-    print("\nNext steps:")
-    print("  1. Test loading fragments with data.load_local_data()")
-    print("  2. Run model inference on fragment-specific CSVs")
-    print("  3. Compare results with paper (Sakhnini et al. 2025)")
-    print("  4. Create PR to close Issue #4")
+    logger.info("\nNext steps:")
+    logger.info("  1. Test loading fragments with data.load_local_data()")
+    logger.info("  2. Run model inference on fragment-specific CSVs")
+    logger.info("  3. Compare results with paper (Sakhnini et al. 2025)")
+    logger.info("  4. Create PR to close Issue #4")
     return 0
 
 

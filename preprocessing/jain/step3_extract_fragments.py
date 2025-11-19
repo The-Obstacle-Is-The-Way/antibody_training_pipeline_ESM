@@ -42,6 +42,10 @@ import pandas as pd
 import riot_na
 from tqdm.auto import tqdm
 
+from preprocessing.logging_config import setup_logger
+
+logger = setup_logger(__name__)
+
 # Initialize ANARCI for amino acid annotation (IMGT scheme)
 annotator = riot_na.create_riot_aa()
 
@@ -124,7 +128,7 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] 
         return fragments
 
     except Exception as e:
-        print(f"Warning: Failed to annotate {seq_id} ({chain}): {e}", file=sys.stderr)
+        logger.warning(f"Warning: Failed to annotate {seq_id} ({chain}): {e}")
         return None
 
 
@@ -138,16 +142,16 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
     Returns:
         DataFrame with all fragments and metadata
     """
-    print(f"Reading {csv_path}...")
+    logger.info(f"Reading {csv_path}...")
     df = pd.read_csv(csv_path)
 
-    print(f"  Total antibodies: {len(df)}")
-    print("  Annotating sequences with ANARCI (IMGT scheme)...")
+    logger.info(f"  Total antibodies: {len(df)}")
+    logger.info("  Annotating sequences with ANARCI (IMGT scheme)...")
 
     # Verify source file is correct
     if "elisa_flags" not in df.columns:
-        print("ERROR: Source file missing 'elisa_flags' column!")
-        print("This script requires jain_with_private_elisa_FULL.csv as input.")
+        logger.info("ERROR: Source file missing 'elisa_flags' column!")
+        logger.info("This script requires jain_with_private_elisa_FULL.csv as input.")
         sys.exit(1)
 
     results = []
@@ -161,7 +165,7 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
         light_frags = annotate_sequence(f"{row['id']}_VL", row["vl_sequence"], "L")
 
         if heavy_frags is None or light_frags is None:
-            print(f"  Skipping {row['id']} - annotation failed")
+            logger.info(f"  Skipping {row['id']} - annotation failed")
             failures.append(row["id"])
             continue
 
@@ -188,17 +192,17 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
 
     df_annotated = pd.DataFrame(results)
 
-    print(f"\n  Successfully annotated: {len(df_annotated)}/{len(df)} antibodies")
+    logger.info(f"\n  Successfully annotated: {len(df_annotated)}/{len(df)} antibodies")
 
     if failures:
-        print(f"  Failures: {len(failures)}")
-        print(f"  Failed IDs: {failures}")
+        logger.info(f"  Failures: {len(failures)}")
+        logger.info(f"  Failed IDs: {failures}")
 
     # Verify label distribution matches SSOT
-    print("\n  Label distribution (ELISA-based):")
-    print(f"    Specific (0):     {(df_annotated['label'] == 0).sum()}")
-    print(f"    Non-specific (1): {(df_annotated['label'] == 1).sum()}")
-    print(f"    Mild (NaN):       {df_annotated['label'].isna().sum()}")
+    logger.info("\n  Label distribution (ELISA-based):")
+    logger.info(f"    Specific (0):     {(df_annotated['label'] == 0).sum()}")
+    logger.info(f"    Non-specific (1): {(df_annotated['label'] == 1).sum()}")
+    logger.info(f"    Mild (NaN):       {df_annotated['label'].isna().sum()}")
 
     expected = {"specific": 94, "nonspecific": 22, "mild": 21}
     actual_specific = (df_annotated["label"] == 0).sum()
@@ -210,9 +214,9 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
         and actual_nonspecific == expected["nonspecific"]
         and actual_mild == expected["mild"]
     ):
-        print("    ✓ Distribution matches SSOT expectations!")
+        logger.info("    ✓ Distribution matches SSOT expectations!")
     else:
-        print(
+        logger.info(
             f"    ⚠ WARNING: Expected {expected['specific']}/{expected['nonspecific']}/{expected['mild']}"
         )
 
@@ -259,7 +263,7 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
         "Full": ("vh_vl", "full_sequence"),
     }
 
-    print(f"\nCreating {len(fragments)} fragment-specific CSV files...")
+    logger.info(f"\nCreating {len(fragments)} fragment-specific CSV files...")
 
     # NOTE: Metadata moved to manifest.yml to maintain CSV compatibility
     # All fragments are standard CSVs (no comment headers) for HuggingFace compatibility
@@ -289,12 +293,12 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
         nonspecific = (fragment_df["label"] == 1).sum()
         mild = fragment_df["label"].isna().sum()
 
-        print(
+        logger.info(
             f"  ✓ {fragment_name:12s} → {output_path.name:30s} "
             f"(len: {min_len:3d}-{max_len:3d} aa, {specific}/{nonspecific}/{mild})"
         )
 
-    print(f"\n✓ All fragments saved to: {output_dir}/")
+    logger.info(f"\n✓ All fragments saved to: {output_dir}/")
 
 
 def create_manifest(output_dir: Path, source_path: Path, script_path: Path) -> None:
@@ -377,7 +381,7 @@ note: |
     with open(manifest_path, "w") as f:
         f.write(manifest_content)
 
-    print(f"\n✓ Manifest created: {manifest_path}")
+    logger.info(f"\n✓ Manifest created: {manifest_path}")
 
 
 def main() -> int:
@@ -388,20 +392,20 @@ def main() -> int:
     script_path = Path(__file__)
 
     if not csv_path.exists():
-        print(f"Error: {csv_path} not found!")
-        print(
+        logger.info(f"Error: {csv_path} not found!")
+        logger.info(
             "This script requires jain_with_private_elisa_FULL.csv (ELISA-based SSOT)."
         )
         return 1
 
-    print("=" * 70)
-    print("Jain Dataset: Fragment Extraction (ELISA-based SSOT)")
-    print("=" * 70)
-    print(f"\nInput:  {csv_path}")
-    print(f"Output: {output_dir}/")
-    print("Method: ANARCI (IMGT numbering scheme)")
-    print("Labels: ELISA flags (0→specific, 1-3→mild, ≥4→non-specific)")
-    print()
+    logger.info("=" * 70)
+    logger.info("Jain Dataset: Fragment Extraction (ELISA-based SSOT)")
+    logger.info("=" * 70)
+    logger.info(f"\nInput:  {csv_path}")
+    logger.info(f"Output: {output_dir}/")
+    logger.info("Method: ANARCI (IMGT numbering scheme)")
+    logger.info("Labels: ELISA flags (0→specific, 1-3→mild, ≥4→non-specific)")
+    logger.info("")
     print(
         "⚠  This will REPLACE old fragments (67/27/43) with correct labels (94/22/21)"
     )
@@ -417,34 +421,36 @@ def main() -> int:
     create_manifest(output_dir, csv_path, script_path)
 
     # Validation summary
-    print("\n" + "=" * 70)
-    print("Fragment Extraction Summary")
-    print("=" * 70)
+    logger.info("\n" + "=" * 70)
+    logger.info("Fragment Extraction Summary")
+    logger.info("=" * 70)
 
-    print(f"\nAnnotated antibodies: {len(df_annotated)}")
-    print("Label distribution (ELISA-based SSOT):")
+    logger.info(f"\nAnnotated antibodies: {len(df_annotated)}")
+    logger.info("Label distribution (ELISA-based SSOT):")
 
     specific = (df_annotated["label"] == 0).sum()
     nonspecific = (df_annotated["label"] == 1).sum()
     mild = df_annotated["label"].isna().sum()
 
-    print(f"  Specific (0):     {specific} ({specific / len(df_annotated) * 100:.1f}%)")
-    print(
+    logger.info(
+        f"  Specific (0):     {specific} ({specific / len(df_annotated) * 100:.1f}%)"
+    )
+    logger.info(
         f"  Non-specific (1): {nonspecific} ({nonspecific / len(df_annotated) * 100:.1f}%)"
     )
-    print(f"  Mild (NaN):       {mild} ({mild / len(df_annotated) * 100:.1f}%)")
-    print(f"  Test set:         {specific + nonspecific} (excludes mild)")
+    logger.info(f"  Mild (NaN):       {mild} ({mild / len(df_annotated) * 100:.1f}%)")
+    logger.info(f"  Test set:         {specific + nonspecific} (excludes mild)")
 
-    print("\nFragment files created: 16")
-    print(f"Output directory: {output_dir.absolute()}")
+    logger.info("\nFragment files created: 16")
+    logger.info(f"Output directory: {output_dir.absolute()}")
 
-    print("\n" + "=" * 70)
-    print("✓ Jain Fragment Regeneration Complete!")
-    print("=" * 70)
+    logger.info("\n" + "=" * 70)
+    logger.info("✓ Jain Fragment Regeneration Complete!")
+    logger.info("=" * 70)
 
-    print("\nNext steps:")
-    print("  1. Run integration tests to verify the 94/22/21 distribution")
-    print(
+    logger.info("\nNext steps:")
+    logger.info("  1. Run integration tests to verify the 94/22/21 distribution")
+    logger.info(
         "  2. Commit changes with a clear provenance message "
         "(legacy 67/27/43 fragments remain available in git history at commit 09d6121)"
     )
