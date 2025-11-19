@@ -56,6 +56,8 @@ def nested_config(tmp_path: Path) -> dict[str, Any]:
             "random_state": 42,
             "cv_folds": 3,
             "stratify": True,
+            # ADDED default
+            "class_weight": None,
         },
         "model": {
             "name": "facebook/esm1v_t33_650M_UR90S_1",
@@ -385,7 +387,7 @@ def test_get_or_create_embeddings_recomputes_on_missing_embeddings_key(
 
     Lines tested: 329-339 in trainer.py
     Expected behavior:
-    1. Log warning: "Corrupt cache file (missing keys: {'embeddings'})"
+    1. Log warning: "Corrupt cache file (missing keys: {'embeddings'})
     2. Recompute embeddings
     """
     # Arrange
@@ -446,7 +448,7 @@ def test_get_or_create_embeddings_recomputes_on_missing_sequences_hash_key(
 
     Lines tested: 329-339 in trainer.py
     Expected behavior:
-    1. Log warning: "Corrupt cache file (missing keys: {'sequences_hash'})"
+    1. Log warning: "Corrupt cache file (missing keys: {'sequences_hash'})
     2. Recompute embeddings
     """
     # Arrange
@@ -696,6 +698,10 @@ def test_evaluate_model_computes_all_metrics(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(mock_embeddings, mock_labels)
 
@@ -732,6 +738,10 @@ def test_evaluate_model_computes_subset_of_metrics(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(mock_embeddings, mock_labels)
 
@@ -764,6 +774,10 @@ def test_evaluate_model_logs_results(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(mock_embeddings, mock_labels)
 
@@ -866,6 +880,10 @@ def test_save_model_saves_classifier_to_file(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     # Fit with dummy data
     X = np.random.rand(10, 1280)
@@ -908,6 +926,10 @@ def test_save_model_returns_none_when_save_disabled(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     nested_config["training"]["save_model"] = False
@@ -933,6 +955,10 @@ def test_save_model_creates_save_directory_if_missing(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     X = np.random.rand(10, 1280)
     y = np.array([0, 1] * 5)
@@ -972,6 +998,10 @@ def test_save_model_creates_dual_format_files(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     X = np.random.rand(10, 1280)
     y = np.array([0, 1] * 5)
@@ -1022,6 +1052,10 @@ def test_save_model_npz_arrays_match_pickle(
         max_iter=10,
         batch_size=8,
         class_weight="balanced",
+        # ADDED defaults
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
     )
     X = np.random.rand(10, 1280)
     y = np.array([0, 1] * 5)
@@ -1043,19 +1077,14 @@ def test_save_model_npz_arrays_match_pickle(
     npz_arrays = np.load(model_paths["npz"])
 
     # Assert: NPZ arrays match pickle model
-    np.testing.assert_array_equal(pkl_classifier.classifier.coef_, npz_arrays["coef"])
-    np.testing.assert_array_equal(
-        pkl_classifier.classifier.intercept_, npz_arrays["intercept"]
-    )
-    np.testing.assert_array_equal(
-        pkl_classifier.classifier.classes_, npz_arrays["classes"]
-    )
-    assert pkl_classifier.classifier.n_features_in_ == int(
-        npz_arrays["n_features_in"][0]
-    )
-    np.testing.assert_array_equal(
-        pkl_classifier.classifier.n_iter_, npz_arrays["n_iter"]
-    )
+    # Note: pkl_classifier.classifier is LogisticRegressionStrategy wrapper
+    # We need to access the internal sklearn classifier for coef_
+    sklearn_clf = pkl_classifier.classifier.classifier
+    np.testing.assert_array_equal(sklearn_clf.coef_, npz_arrays["coef"])
+    np.testing.assert_array_equal(sklearn_clf.intercept_, npz_arrays["intercept"])
+    np.testing.assert_array_equal(sklearn_clf.classes_, npz_arrays["classes"])
+    assert sklearn_clf.n_features_in_ == int(npz_arrays["n_features_in"][0])
+    np.testing.assert_array_equal(sklearn_clf.n_iter_, npz_arrays["n_iter"])
 
 
 def test_save_model_json_metadata_complete(
@@ -1096,7 +1125,7 @@ def test_save_model_json_metadata_complete(
         metadata = json.load(f)
 
     # Assert: All required fields present
-    assert metadata["model_type"] == "LogisticRegression"
+    assert metadata["model_type"] == "logistic_regression"
     assert "sklearn_version" in metadata
 
     # LogisticRegression params
@@ -1127,6 +1156,10 @@ def test_save_model_returns_empty_dict_when_disabled(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     nested_config["training"]["save_model"] = False
@@ -1218,6 +1251,10 @@ def test_load_model_from_npz_with_none_class_weight(
         max_iter=10,
         batch_size=8,
         class_weight=None,  # Explicitly None
+        # ADDED defaults
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
     )
     X = np.random.rand(10, 1280)
     y = np.array([0, 1] * 5)
@@ -1254,6 +1291,10 @@ def test_load_model_from_npz_with_dict_class_weight(
         max_iter=10,
         batch_size=8,
         class_weight=class_weight_dict,  # Dict with int keys
+        # ADDED defaults
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
     )
     X = np.random.rand(10, 1280)
     y = np.array([0, 1] * 5)
@@ -1317,6 +1358,8 @@ def test_train_pipeline_catches_and_logs_exceptions(tmp_path: Path) -> None:
             "random_state": 42,
             "cv_folds": 2,
             "stratify": False,
+            # ADDED default
+            "class_weight": None,
         },
         "training": {
             "log_level": "INFO",
@@ -1443,7 +1486,7 @@ def test_load_config_fails_with_missing_file(tmp_path: Path) -> None:
     # Act & Assert
     with pytest.raises(
         FileNotFoundError,
-        match=r"(Config file not found|nonexistent_config\.yaml|specify a valid path)",
+        match=r"(Config file not found|nonexistent_config.yaml|specify a valid path)",
     ):
         load_config(str(missing_file))
 
@@ -1464,7 +1507,7 @@ def test_load_config_fails_with_invalid_yaml(tmp_path: Path) -> None:
     invalid_yaml_file.write_text("model:\n  name: [unclosed\ndata: test\n")
 
     # Act & Assert
-    with pytest.raises(ValueError, match=r"(Invalid YAML|invalid\.yaml)"):
+    with pytest.raises(ValueError, match=r"(Invalid YAML|invalid.yaml)"):
         load_config(str(invalid_yaml_file))
 
 

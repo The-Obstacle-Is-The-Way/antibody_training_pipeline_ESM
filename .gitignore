@@ -147,3 +147,11 @@ experiments/cache/*
 
 # Coverage reports (JSON format)
 coverage.json
+
+# Exception: Commit canonical trained models (research artifacts, <50KB)
+!experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+!experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.npz
+!experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg_config.json
+!experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_650m_logreg.pkl
+!experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_650m_logreg.npz
+!experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_650m_logreg_config.json

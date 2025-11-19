@@ -49,6 +49,7 @@ def mock_training_config(tmp_path: Path) -> Path:
         "penalty": "l2",
         "solver": "lbfgs",
         "batch_size": 8,
+        "class_weight": None,
         "output_model_path": str(tmp_path / "trained_model.pkl"),
         "train_data_path": "data/test/boughter/boughter_translated.csv",
     }
@@ -168,6 +169,9 @@ def test_embeddings_to_training_pipeline(
         max_iter=10,
         C=1.0,
         batch_size=8,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     # Act: Train
@@ -197,6 +201,10 @@ def test_model_save_load_predict_workflow(
         random_state=42,
         max_iter=10,
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
     classifier.fit(X_train, y_train)
 
@@ -305,6 +313,9 @@ def test_multiple_classifiers_train_independently(
         max_iter=10,
         C=0.1,
         batch_size=8,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     classifier2 = BinaryClassifier(
@@ -314,6 +325,9 @@ def test_multiple_classifiers_train_independently(
         max_iter=10,
         C=10.0,
         batch_size=8,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     # Act
@@ -373,6 +387,10 @@ def test_training_completes_in_reasonable_time(
         random_state=42,
         max_iter=10,  # Small for fast test
         batch_size=8,
+        C=1.0,
+        penalty="l2",
+        solver="lbfgs",
+        class_weight=None,
     )
 
     # Act
