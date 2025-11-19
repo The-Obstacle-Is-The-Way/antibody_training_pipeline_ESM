@@ -33,6 +33,8 @@ import pandas as pd
 import pytest
 
 from antibody_training_esm.cli.test import ModelTester, TestConfig
+from antibody_training_esm.cli.testing.data import load_dataset
+from antibody_training_esm.cli.testing.evaluation import evaluate_pretrained
 from antibody_training_esm.core.classifier import BinaryClassifier
 
 # ==================== Fixtures ====================
@@ -185,7 +187,7 @@ def test_load_dataset_succeeds(test_config: TestConfig, test_dataset_csv: Path) 
     tester = ModelTester(test_config)
 
     # Act
-    sequences, labels = tester.load_dataset(str(test_dataset_csv))
+    sequences, labels = load_dataset(str(test_dataset_csv), tester.config)
 
     # Assert
     assert len(sequences) == 20
@@ -202,7 +204,7 @@ def test_load_dataset_raises_on_missing_file(test_config: TestConfig) -> None:
 
     # Act & Assert
     with pytest.raises(FileNotFoundError):
-        tester.load_dataset("nonexistent.csv")
+        load_dataset("nonexistent.csv", tester.config)
 
 
 @pytest.mark.integration
@@ -219,7 +221,7 @@ def test_load_dataset_raises_on_missing_column(
 
     # Act & Assert
     with pytest.raises(ValueError, match="Sequence column"):
-        tester.load_dataset(str(bad_csv))
+        load_dataset(str(bad_csv), tester.config)
 
 
 # ==================== embed_sequences Tests ====================
@@ -261,13 +263,13 @@ def test_evaluate_pretrained(
     # Arrange
     tester = ModelTester(test_config)
     model = tester.load_model(str(trained_classifier))
-    sequences, labels = tester.load_dataset(str(test_dataset_csv))
+    sequences, labels = load_dataset(str(test_dataset_csv), tester.config)
     embeddings = tester.embed_sequences(
         sequences, model, "test_data", test_config.output_dir
     )
 
     # Act
-    results = tester.evaluate_pretrained(
+    results = evaluate_pretrained(
         model, embeddings, np.array(labels), "test_model", "test_data"
     )
 
