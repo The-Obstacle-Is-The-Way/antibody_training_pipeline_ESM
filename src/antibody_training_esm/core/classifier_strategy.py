@@ -196,32 +196,18 @@ class ClassifierStrategy(Protocol):
         """
         ...
 
+    def score(self, X: np.ndarray, y: np.ndarray) -> float:
+        """
+        Return the mean accuracy on the given test data and labels.
 
-@runtime_checkable
-class SerializableClassifier(Protocol):
-    """
-    Extended protocol for classifiers that support production serialization.
+        Args:
+            X: Test samples.
+            y: True labels for X.
 
-    This is OPTIONAL - only needed for production deployment (NPZ+JSON format).
-    Pickle-based serialization works for any ClassifierStrategy.
-
-    The SerializableClassifier protocol enables pickle-free deployment to
-    production environments where loading untrusted pickle files is a security risk.
-
-    Design Rationale:
-        - to_dict(): Serialize hyperparameters to JSON (human-readable, safe)
-        - to_arrays(): Serialize fitted state to NPZ (efficient, NumPy-native)
-        - from_dict(): Deserialize from JSON+NPZ (production deployment)
-
-    Security:
-        - JSON is safe to load (no arbitrary code execution)
-        - NPZ is NumPy's native format (no pickle dependency)
-        - Enables HuggingFace Hub publishing (no pickle files)
-
-    See Also:
-        - docs/developer-guide/security.md
-        - SECURITY_REMEDIATION_PLAN.md
-    """
+        Returns:
+            Mean accuracy of self.predict(X) wrt. y.
+        """
+        ...
 
     def to_dict(self) -> dict[str, Any]:
         """
@@ -230,24 +216,6 @@ class SerializableClassifier(Protocol):
         Returns:
             Dictionary with all hyperparameters and metadata.
             Does NOT include fitted state (arrays) - use to_arrays() for that.
-
-        Examples:
-            >>> config = clf.to_dict()
-            >>> config
-            {
-                "type": "logistic_regression",
-                "C": 1.0,
-                "penalty": "l2",
-                "solver": "lbfgs",
-                "max_iter": 1000,
-                "random_state": 42,
-                "class_weight": None
-            }
-
-            >>> # Save to JSON
-            >>> import json
-            >>> with open("model_config.json", "w") as f:
-            ...     json.dump(config, f)
         """
         ...
 
@@ -260,22 +228,13 @@ class SerializableClassifier(Protocol):
 
         Raises:
             ValueError: If classifier not fitted (must call fit() first)
-
-        Examples:
-            >>> # LogisticRegression
-            >>> arrays = logreg.to_arrays()
-            >>> arrays.keys()
-            dict_keys(['coef', 'intercept', 'classes', 'n_features_in', 'n_iter'])
-
-            >>> # Save to NPZ
-            >>> np.savez("model.npz", **arrays)
         """
         ...
 
     @classmethod
     def from_dict(
         cls, config: dict[str, Any], arrays: dict[str, np.ndarray] | None = None
-    ) -> "SerializableClassifier":
+    ) -> "ClassifierStrategy":
         """
         Deserialize classifier from dict + arrays.
 
@@ -285,18 +244,5 @@ class SerializableClassifier(Protocol):
 
         Returns:
             Reconstructed classifier instance
-
-        Examples:
-            >>> # Load from JSON + NPZ
-            >>> import json
-            >>> import numpy as np
-            >>>
-            >>> with open("model_config.json") as f:
-            ...     config = json.load(f)
-            >>> arrays = dict(np.load("model.npz"))
-            >>>
-            >>> clf = LogisticRegressionStrategy.from_dict(config, arrays)
-            >>> clf.predict(X_test)  # Ready to use
-            array([0, 1, 0, ...])
         """
         ...

@@ -29,10 +29,13 @@ Examples:
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import xgboost as xgb
+
+if TYPE_CHECKING:
+    from antibody_training_esm.core.classifier_strategy import ClassifierStrategy
 
 
 class XGBoostStrategy:
@@ -293,6 +296,16 @@ class XGBoostStrategy:
             "objective": self.objective,
         }
 
+    def to_arrays(self) -> dict[str, np.ndarray]:
+        """
+        Extract fitted state as numpy arrays (for NPZ).
+
+        Returns:
+            Empty dict (XGBoost uses native .xgb format, not NPZ arrays).
+            Required for ClassifierStrategy protocol compliance.
+        """
+        return {}
+
     def save_model(self, path: str) -> None:
         """
         Save fitted model to XGBoost native .xgb format.
@@ -341,15 +354,18 @@ class XGBoostStrategy:
         return strategy
 
     @classmethod
-    def from_dict(cls, config: dict[str, Any]) -> XGBoostStrategy:
+    def from_dict(
+        cls, config: dict[str, Any], _arrays: dict[str, np.ndarray] | None = None
+    ) -> ClassifierStrategy:
         """
         Create XGBoostStrategy from configuration dictionary.
 
         Args:
             config: Configuration dictionary with hyperparameters
+            _arrays: Ignored for XGBoost (uses .xgb file instead)
 
         Returns:
-            Unfitted XGBoostStrategy instance
+            Unfitted XGBoostStrategy instance (load_model needed for fitted state)
 
         Examples:
             >>> config = {"type": "xgboost", "n_estimators": 50, "random_state": 42}

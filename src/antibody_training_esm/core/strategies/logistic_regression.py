@@ -102,7 +102,7 @@ class LogisticRegressionStrategy:
         self.solver = config.get("solver", "lbfgs")
         self.max_iter = config.get("max_iter", 1000)
         self.random_state = config.get("random_state", 42)
-        self.class_weight = config.get("class_weight", None)
+        self.class_weight = config.get("class_weight")
 
         # Create sklearn LogisticRegression estimator
         self.classifier = LogisticRegression(

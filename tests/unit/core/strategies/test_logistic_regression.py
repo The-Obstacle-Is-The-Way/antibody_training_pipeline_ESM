@@ -101,18 +101,22 @@ def test_logreg_strategy_creates_sklearn_classifier() -> None:
 def test_logreg_strategy_fits_and_predicts_on_simple_dataset() -> None:
     """Verify LogRegStrategy can fit and predict on linearly separable data."""
     # Arrange: Create simple 2D dataset (linearly separable)
-    X_train = np.array([
-        [0.0, 0.0],  # Class 0
-        [0.1, 0.1],  # Class 0
-        [1.0, 1.0],  # Class 1
-        [1.1, 1.1],  # Class 1
-    ])
+    X_train = np.array(
+        [
+            [0.0, 0.0],  # Class 0
+            [0.1, 0.1],  # Class 0
+            [1.0, 1.0],  # Class 1
+            [1.1, 1.1],  # Class 1
+        ]
+    )
     y_train = np.array([0, 0, 1, 1])
 
-    X_test = np.array([
-        [0.05, 0.05],  # Should predict 0
-        [1.05, 1.05],  # Should predict 1
-    ])
+    X_test = np.array(
+        [
+            [0.05, 0.05],  # Should predict 0
+            [1.05, 1.05],  # Should predict 1
+        ]
+    )
 
     config = {"random_state": 42}
     strategy = LogisticRegressionStrategy(config)
@@ -309,7 +313,7 @@ def test_logreg_strategy_serialization_roundtrip(tmp_path: Path) -> None:
 
     with open(json_path, "w") as f:
         json.dump(config_dict, f)
-    np.savez(npz_path, **arrays_dict)
+    np.savez(npz_path, **arrays_dict)  # type: ignore[arg-type]
 
     # Load from disk
     with open(json_path) as f:

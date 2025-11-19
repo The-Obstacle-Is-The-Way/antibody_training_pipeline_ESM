@@ -643,19 +643,21 @@ def save_model(
         # LogReg NPZ format (sklearn arrays)
         npz_path = f"{base_path}.npz"
         arrays = classifier.classifier.to_arrays()
-        np.savez(npz_path, **arrays)
+        np.savez(npz_path, **cast(dict[str, Any], arrays))
         logger.info(f"Saved NPZ arrays: {npz_path}")
         saved_paths["npz"] = str(npz_path)
     else:
         # Fallback: legacy LogReg direct attribute access
+        # Cast to Any because protocol doesn't enforce LogReg attributes
+        inner_clf = cast(Any, classifier.classifier)
         npz_path = f"{base_path}.npz"
         np.savez(
             npz_path,
-            coef=classifier.classifier.coef_,
-            intercept=classifier.classifier.intercept_,
-            classes=classifier.classifier.classes_,
-            n_features_in=np.array([classifier.classifier.n_features_in_]),
-            n_iter=classifier.classifier.n_iter_,
+            coef=inner_clf.coef_,
+            intercept=inner_clf.intercept_,
+            classes=inner_clf.classes_,
+            n_features_in=np.array([inner_clf.n_features_in_]),
+            n_iter=inner_clf.n_iter_,
         )
         logger.info(f"Saved NPZ arrays (legacy): {npz_path}")
         saved_paths["npz"] = str(npz_path)
@@ -683,14 +685,16 @@ def save_model(
 
     # Legacy flat fields for backward compatibility (LogReg only)
     if classifier_type == "logistic_regression":
-        metadata.update({
-            "C": classifier.C,
-            "penalty": classifier.penalty,
-            "solver": classifier.solver,
-            "class_weight": classifier.class_weight,
-            "max_iter": classifier.max_iter,
-            "random_state": classifier.random_state,
-        })
+        metadata.update(
+            {
+                "C": classifier.C,
+                "penalty": classifier.penalty,
+                "solver": classifier.solver,
+                "class_weight": classifier.class_weight,
+                "max_iter": classifier.max_iter,
+                "random_state": classifier.random_state,
+            }
+        )
 
     with open(json_path, "w") as f:
         json.dump(metadata, f, indent=2)
@@ -754,11 +758,13 @@ def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
     classifier = BinaryClassifier(params)
 
     # Restore fitted LogisticRegression state
-    classifier.classifier.coef_ = coef
-    classifier.classifier.intercept_ = intercept
-    classifier.classifier.classes_ = classes
-    classifier.classifier.n_features_in_ = n_features_in
-    classifier.classifier.n_iter_ = n_iter
+    # Cast to Any because protocol doesn't enforce LogReg attributes
+    inner_clf = cast(Any, classifier.classifier)
+    inner_clf.coef_ = coef
+    inner_clf.intercept_ = intercept
+    inner_clf.classes_ = classes
+    inner_clf.n_features_in_ = n_features_in
+    inner_clf.n_iter_ = n_iter
     classifier.is_fitted = True
 
     return classifier

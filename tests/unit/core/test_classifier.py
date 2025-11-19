@@ -16,7 +16,7 @@ Coverage Target: 90%+
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 import pytest
@@ -226,7 +226,7 @@ def test_set_params_updates_penalty(mock_transformers_model: Any) -> None:
 
     # Assert - penalty updated, extractor NOT recreated
     assert classifier.penalty == "l2"
-    assert classifier.classifier.penalty == "l2"
+    assert cast(Any, classifier.classifier).penalty == "l2"
     assert old_extractor_id == intermediate_extractor_id
     assert old_extractor_id == final_extractor_id
 
@@ -253,7 +253,7 @@ def test_set_params_updates_solver(mock_transformers_model: Any) -> None:
 
     # Assert - solver updated, extractor NOT recreated
     assert classifier.solver == "saga"
-    assert classifier.classifier.solver == "saga"
+    assert cast(Any, classifier.classifier).solver == "saga"
     assert old_extractor_id == intermediate_extractor_id
     assert old_extractor_id == final_extractor_id
 
@@ -280,7 +280,7 @@ def test_set_params_updates_class_weight(mock_transformers_model: Any) -> None:
 
     # Assert - class_weight updated, extractor NOT recreated
     assert classifier.class_weight is None
-    assert classifier.classifier.class_weight is None
+    assert cast(Any, classifier.classifier).class_weight is None
     assert old_extractor_id == intermediate_extractor_id
     assert old_extractor_id == final_extractor_id
 
@@ -306,7 +306,7 @@ def test_set_params_updates_C_no_extractor_reload(
 
     # Assert - C updated, extractor object ID unchanged
     assert classifier.C == 0.5
-    assert classifier.classifier.C == 0.5
+    assert cast(Any, classifier.classifier).C == 0.5
     assert id(classifier.embedding_extractor) == old_extractor_id
 
 

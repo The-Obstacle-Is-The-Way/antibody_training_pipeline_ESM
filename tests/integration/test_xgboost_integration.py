@@ -88,6 +88,7 @@ def test_xgboost_hydra_config_format() -> None:
     strategy = create_classifier(hydra_config)
 
     # Assert: All hyperparameters correctly loaded
+    assert isinstance(strategy, XGBoostStrategy)
     assert strategy.n_estimators == 100
     assert strategy.max_depth == 6
     assert strategy.learning_rate == 0.3

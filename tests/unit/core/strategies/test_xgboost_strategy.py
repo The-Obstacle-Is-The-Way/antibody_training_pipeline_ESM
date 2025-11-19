@@ -107,17 +107,24 @@ def test_xgboost_strategy_fits_and_predicts_on_simple_dataset() -> None:
     """Verify XGBoost can fit and predict on linearly separable data."""
     # Arrange: Create simple 2D dataset (linearly separable)
     # Use 20 samples (10 per class) for reliable learning
-    X_train = np.array([
-        [0.0 + i*0.01, 0.0 + i*0.01] for i in range(10)  # Class 0
-    ] + [
-        [1.0 + i*0.01, 1.0 + i*0.01] for i in range(10)  # Class 1
-    ])
+    X_train = np.array(
+        [
+            [0.0 + i * 0.01, 0.0 + i * 0.01]
+            for i in range(10)  # Class 0
+        ]
+        + [
+            [1.0 + i * 0.01, 1.0 + i * 0.01]
+            for i in range(10)  # Class 1
+        ]
+    )
     y_train = np.array([0] * 10 + [1] * 10)
 
-    X_test = np.array([
-        [0.05, 0.05],  # Should predict 0
-        [1.05, 1.05],  # Should predict 1
-    ])
+    X_test = np.array(
+        [
+            [0.05, 0.05],  # Should predict 0
+            [1.05, 1.05],  # Should predict 1
+        ]
+    )
 
     config = {"random_state": 42, "n_estimators": 20}
     strategy = XGBoostStrategy(config)
@@ -137,24 +144,33 @@ def test_xgboost_strategy_handles_nonlinear_data() -> None:
     # Arrange: XOR-like pattern (LogReg fails, XGBoost succeeds)
     np.random.seed(42)  # For reproducible noise
     # Create XOR pattern with slight noise for robustness
-    X_train = []
-    y_train = []
+    X_train_list = []
+    y_train_list = []
     for _ in range(50):
         for x1, x2, label in [(0, 0, 0), (0, 1, 1), (1, 0, 1), (1, 1, 0)]:
             noise = np.random.randn(2) * 0.05  # Small noise
-            X_train.append([x1 + noise[0], x2 + noise[1]])
-            y_train.append(label)
-    X_train = np.array(X_train)
-    y_train = np.array(y_train)
+            X_train_list.append([x1 + noise[0], x2 + noise[1]])
+            y_train_list.append(label)
 
-    X_test = np.array([
-        [0.1, 0.1],  # Should predict 0
-        [0.1, 0.9],  # Should predict 1
-        [0.9, 0.1],  # Should predict 1
-        [0.9, 0.9],  # Should predict 0
-    ])
+    # Convert to numpy arrays
+    X_train = np.array(X_train_list)
+    y_train = np.array(y_train_list)
 
-    config = {"random_state": 42, "n_estimators": 100, "max_depth": 5, "learning_rate": 0.1}
+    X_test = np.array(
+        [
+            [0.1, 0.1],  # Should predict 0
+            [0.1, 0.9],  # Should predict 1
+            [0.9, 0.1],  # Should predict 1
+            [0.9, 0.9],  # Should predict 0
+        ]
+    )
+
+    config = {
+        "random_state": 42,
+        "n_estimators": 100,
+        "max_depth": 5,
+        "learning_rate": 0.1,
+    }
     strategy = XGBoostStrategy(config)
 
     # Act
@@ -367,6 +383,8 @@ def test_xgboost_strategy_from_dict_creates_unfitted_classifier() -> None:
     strategy = XGBoostStrategy.from_dict(config)
 
     # Assert
+    # Cast to concrete type for attribute checks (from_dict returns ClassifierStrategy protocol)
+    assert isinstance(strategy, XGBoostStrategy)
     assert strategy.n_estimators == 50
     assert strategy.random_state == 42
 
@@ -408,8 +426,8 @@ def test_xgboost_strategy_deterministic_with_same_random_state() -> None:
 def test_xgboost_strategy_handles_small_n_estimators() -> None:
     """Verify XGBoost works with very small n_estimators."""
     # Arrange
-    X_train = np.array([[0, 0], [1, 1], [2, 2], [3, 3]])
-    y_train = np.array([0, 0, 1, 1])
+    X_train: np.ndarray[Any, Any] = np.array([[0, 0], [1, 1], [2, 2], [3, 3]])
+    y_train: np.ndarray[Any, Any] = np.array([0, 0, 1, 1])
 
     config = {"n_estimators": 1, "random_state": 42}  # Single tree
     strategy = XGBoostStrategy(config)
