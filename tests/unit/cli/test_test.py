@@ -1009,3 +1009,39 @@ def test_determine_output_dir_uses_hierarchical_structure_with_valid_config(
     assert "esm1v" in output_dir  # Model shortname
     assert "logreg" in output_dir  # Classifier shortname
     assert "jain" in output_dir  # Dataset name
+
+
+@pytest.mark.unit
+def test_test_cli_overrides_columns_from_config(
+    mock_model_tester: MagicMock, tmp_path: Path
+) -> None:
+    """Verify CLI --sequence-column and --label-column override config file"""
+    # Arrange
+    config_file = tmp_path / "test_config.yaml"
+    config_data = {
+        "model_paths": ["model.pkl"],
+        "data_paths": ["data.csv"],
+        "sequence_column": "seq",
+        "label_column": "target",
+    }
+    config_file.write_text(yaml.dump(config_data))
+
+    with patch(
+        "sys.argv",
+        [
+            "antibody-test",
+            "--config",
+            str(config_file),
+            "--sequence-column",
+            "my_seq",
+            "--label-column",
+            "my_label",
+        ],
+    ):
+        # Act
+        main()
+
+        # Assert
+        call_args = mock_model_tester.call_args[0][0]
+        assert call_args.sequence_column == "my_seq"
+        assert call_args.label_column == "my_label"

@@ -78,6 +78,16 @@ Examples:
         "Use 0.5 for ELISA datasets (Boughter, Jain) or 0.5495 for PSR datasets (Harvey, Shehata).",
     )
     parser.add_argument(
+        "--sequence-column",
+        type=str,
+        help="Column name for sequences in dataset (default: 'sequence', overrides config)",
+    )
+    parser.add_argument(
+        "--label-column",
+        type=str,
+        help="Column name for labels in dataset (default: 'label', overrides config)",
+    )
+    parser.add_argument(
         "--create-config", action="store_true", help="Create sample configuration file"
     )
 
@@ -106,6 +116,10 @@ Examples:
         config.batch_size = args.batch_size
     if args.threshold:
         config.threshold = args.threshold
+    if args.sequence_column:
+        config.sequence_column = args.sequence_column
+    if args.label_column:
+        config.label_column = args.label_column
 
     # Run testing
     try:
