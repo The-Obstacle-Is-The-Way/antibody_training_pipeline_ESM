@@ -270,7 +270,12 @@ def test_evaluate_pretrained(
 
     # Act
     results = evaluate_pretrained(
-        model, embeddings, np.array(labels), "test_model", "test_data"
+        model,
+        embeddings,
+        np.array(labels),
+        "test_model",
+        "test_data",
+        metrics_list=test_config.metrics,
     )
 
     # Assert
