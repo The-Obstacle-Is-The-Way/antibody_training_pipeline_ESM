@@ -31,6 +31,7 @@ import pandas as pd
 import pytest
 
 from antibody_training_esm.cli.test import ModelTester, TestConfig
+from antibody_training_esm.cli.testing.data import load_dataset
 from antibody_training_esm.core.classifier import BinaryClassifier
 
 # ==================== Fixtures ====================
@@ -202,10 +203,10 @@ def test_load_dataset_success(
 ) -> None:
     """Test successful dataset loading from CSV"""
     # Arrange
-    tester = ModelTester(test_config)
+    # tester = ModelTester(test_config)  <-- Removed
 
     # Act
-    sequences, labels = tester.load_dataset(str(sample_dataset_csv))
+    sequences, labels = load_dataset(str(sample_dataset_csv), test_config)
 
     # Assert
     assert len(sequences) == 4
@@ -218,12 +219,12 @@ def test_load_dataset_success(
 def test_load_dataset_file_not_found(test_config: TestConfig) -> None:
     """Test FileNotFoundError for non-existent dataset"""
     # Arrange
-    tester = ModelTester(test_config)
+    # tester = ModelTester(test_config)  <-- Removed
     nonexistent_path = "/tmp/nonexistent_dataset.csv"
 
     # Act & Assert
     with pytest.raises(FileNotFoundError, match="Dataset file not found"):
-        tester.load_dataset(nonexistent_path)
+        load_dataset(nonexistent_path, test_config)
 
 
 @pytest.mark.unit
@@ -232,10 +233,10 @@ def test_load_dataset_legacy_comment_headers(
 ) -> None:
     """Test backwards compatibility with # comment headers"""
     # Arrange
-    tester = ModelTester(test_config)
+    # tester = ModelTester(test_config)  <-- Removed
 
     # Act
-    sequences, labels = tester.load_dataset(str(sample_dataset_with_comments))
+    sequences, labels = load_dataset(str(sample_dataset_with_comments), test_config)
 
     # Assert - Should successfully parse despite comment lines
     assert len(sequences) == 2
@@ -262,10 +263,10 @@ def test_load_dataset_custom_column_names(
 
     test_config.sequence_column = "vh_sequence"
     test_config.label_column = "target"
-    tester = ModelTester(test_config)
+    # tester = ModelTester(test_config)  <-- Removed
 
     # Act
-    sequences, labels = tester.load_dataset(str(csv_path))
+    sequences, labels = load_dataset(str(csv_path), test_config)
 
     # Assert
     assert len(sequences) == 2
@@ -288,11 +289,11 @@ def test_load_dataset_missing_sequence_column(
     )
     df.to_csv(csv_path, index=False)
 
-    tester = ModelTester(test_config)
+    # tester = ModelTester(test_config)  <-- Removed
 
     # Act & Assert
     with pytest.raises(ValueError, match="Sequence column 'sequence' not found"):
-        tester.load_dataset(str(csv_path))
+        load_dataset(str(csv_path), test_config)
 
 
 @pytest.mark.unit
@@ -310,11 +311,11 @@ def test_load_dataset_missing_label_column(
     )
     df.to_csv(csv_path, index=False)
 
-    tester = ModelTester(test_config)
+    # tester = ModelTester(test_config)  <-- Removed
 
     # Act & Assert
     with pytest.raises(ValueError, match="Label column 'label' not found"):
-        tester.load_dataset(str(csv_path))
+        load_dataset(str(csv_path), test_config)
 
 
 @pytest.mark.unit
@@ -332,11 +333,11 @@ def test_load_dataset_nan_labels_rejected(
     )
     df.to_csv(csv_path, index=False)
 
-    tester = ModelTester(test_config)
+    # tester = ModelTester(test_config)  <-- Removed
 
     # Act & Assert
     with pytest.raises(ValueError, match="CRITICAL: Dataset contains .* NaN labels"):
-        tester.load_dataset(str(csv_path))
+        load_dataset(str(csv_path), test_config)
 
 
 # ==================== Metrics Calculation Tests ====================
