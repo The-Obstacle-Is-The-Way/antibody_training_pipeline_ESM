@@ -132,6 +132,8 @@ train_datasets/tessier/
 # Phase 5 Reorganization: Consolidated experiments/ structure
 experiments/runs/*
 experiments/checkpoints/*
+!experiments/checkpoints/esm1v/
+!experiments/checkpoints/esm2_650m/
 experiments/cache/*
 
 # Keep directory structure
