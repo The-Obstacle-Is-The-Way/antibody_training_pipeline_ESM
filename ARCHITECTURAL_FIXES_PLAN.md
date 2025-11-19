@@ -60,9 +60,9 @@
 | 1 | sys.path manipulation | `preprocessing/harvey/test_psr_threshold.py:14` | Breaks package isolation | 5 min |
 | 2 | Missing pytest markers | 4 integration test files | Cannot run selective tests | 10 min |
 | 3 | Missing __init__.py in scripts/ | `scripts/`, `scripts/testing/`, `scripts/validation/` | Cannot import utilities | 5 min |
-| 4 | Missing __init__.py in preprocessing/boughter/ | `preprocessing/boughter/` | Inconsistent package structure | 2 min |
+| 4 | [DONE] Missing __init__.py in boughter | `preprocessing/boughter/` | Inconsistent package structure | 2 min |
 
-**Total P0 Effort:** 22 minutes
+**Total P0 Effort:** 20 minutes
 
 ---
 
