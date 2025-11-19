@@ -158,6 +158,41 @@ uv sync
 
 ---
 
+## Running Preprocessing Scripts
+
+**IMPORTANT:** All preprocessing scripts must be run from the project root directory.
+
+### Why?
+Some scripts import from the `preprocessing` package (e.g., validation scripts):
+```python
+from preprocessing.jain.step1_convert_excel_to_csv import calculate_flags
+```
+
+This requires the project root to be in PYTHONPATH.
+
+### How to Run:
+```bash
+# ✅ CORRECT (from project root with uv):
+uv run python preprocessing/jain/validate_conversion.py
+
+# ✅ CORRECT (from project root, Python adds current dir):
+python3 preprocessing/jain/validate_conversion.py
+
+# ❌ WRONG (from subdirectory):
+cd preprocessing/jain && python3 validate_conversion.py  # ModuleNotFoundError
+```
+
+### Technical Details:
+- `uv run` automatically adds project root to PYTHONPATH
+- Running directly from project root works (Python adds current directory)
+- Running from subdirectories fails (preprocessing package not found)
+
+### Affected Scripts:
+- `preprocessing/jain/validate_conversion.py` (imports from step1)
+- Any future scripts that import from preprocessing package
+
+---
+
 ## References
 
 - **Sakhnini et al. (2025):** Prediction of Antibody Non-Specificity using Protein Language Models
