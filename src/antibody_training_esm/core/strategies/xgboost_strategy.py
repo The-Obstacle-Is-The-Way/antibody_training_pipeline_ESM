@@ -230,6 +230,7 @@ class XGBoostStrategy:
             100
         """
         return {
+            "type": "xgboost",
             "n_estimators": self.n_estimators,
             "max_depth": self.max_depth,
             "learning_rate": self.learning_rate,
