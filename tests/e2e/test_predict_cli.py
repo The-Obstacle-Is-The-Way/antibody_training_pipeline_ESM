@@ -1,3 +1,4 @@
+import os
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -85,6 +86,10 @@ def test_predict_cli_end_to_end(isolated_predict_test_env: dict[str, Any]) -> No
     Note: This test runs the actual CLI via subprocess and will load
     ESM models from HuggingFace cache. Marked as @slow and @e2e.
     """
+    if os.environ.get("RUN_PREDICT_CLI_E2E") != "1":
+        pytest.skip(
+            "Set RUN_PREDICT_CLI_E2E=1 to run this test (downloads real ESM weights)."
+        )
     env = isolated_predict_test_env
     input_file = env["input_file"]
     output_file = env["output_file"]

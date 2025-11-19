@@ -3,6 +3,11 @@
 ## Overview
 This guide details how to use the `antibody-predict` CLI to screen antibody sequences for non-specificity (polyreactivity). It explains input requirements, command usage, and how to interpret the results.
 
+## 0. Prerequisites
+- A trained classifier checkpoint (`.pkl`/`.joblib`) saved under `experiments/checkpoints/esm1v/logreg/…`.  
+  - Create one with `make train` (see [`docs/user-guide/training.md`](docs/user-guide/training.md)) or download a published checkpoint from the project releases page.
+- Python environment set up via `make install` (includes transformers/torch dependencies).
+
 ## 1. Input Specification
 
 The tool requires a **CSV file** as input.

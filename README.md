@@ -56,6 +56,10 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
 
 - **Prediction CLI**: Get predictions for new antibody sequences from trained models.
 
+  1. **Obtain a pretrained classifier** (one of):
+     - Run `make train` (see [`docs/user-guide/training.md`](docs/user-guide/training.md); artifacts saved to `experiments/checkpoints/esm1v/logreg/...`), or
+     - Download a published checkpoint from the project releases page and place it under `experiments/checkpoints/esm1v/logreg/`.
+
   ```bash
   uv run antibody-predict \
       input_file=path/to/your/input.csv \
@@ -355,4 +359,3 @@ This repository uses training and test datasets from multiple published studies:
 - **Test**: Shehata et al. 2019 (398 antibodies, PSR cross-assay validation)
 
 **For complete citations, BibTeX entries, and data attribution details**, see [`CITATIONS.md`](CITATIONS.md).
-

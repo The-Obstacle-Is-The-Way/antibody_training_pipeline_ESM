@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import hydra
 import pandas as pd
 from omegaconf import DictConfig
@@ -23,6 +25,12 @@ def main(cfg: DictConfig) -> None:
             "      input_file=data/test.csv \\\n"
             "      output_file=predictions.csv \\\n"
             "      classifier.path=path/to/model.pkl"
+        )
+    classifier_path = Path(cfg.classifier.path)
+    if not classifier_path.exists():
+        raise FileNotFoundError(
+            f"Classifier file not found at {classifier_path}. "
+            "Train a model (e.g., `make train`) or download a published checkpoint first."
         )
 
     try:
