@@ -339,8 +339,8 @@ Remaining high-impact improvements (10-12 hours estimated):
 **Files Refactored:**
 - [x] `src/antibody_training_esm/cli/test.py` → `src/antibody_training_esm/cli/testing/` (Completed 2025-11-18)
     - Split into `config`, `data`, `evaluation`, `visualization`, `tester`
-    - Tests updated and passing
-    - Linting clean (ruff/mypy)
+    - Tests updated and passing (Verified with `make all`)
+    - Linting/Mypy clean (Verified with `make all`)
 - [ ] `src/antibody_training_esm/core/trainer.py` (Pending)
 - [ ] `preprocessing/boughter/stage1_dna_translation.py` (Pending)
 - [ ] `preprocessing/boughter/stage2_stage3_annotation_qc.py` (Pending)
