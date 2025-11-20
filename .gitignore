@@ -72,6 +72,9 @@ test_config.yaml
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# Documentation (MkDocs generated site)
+site/
+
 # Environment variables
 .env
 .env.local

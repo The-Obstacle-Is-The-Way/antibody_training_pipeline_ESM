@@ -1,0 +1,203 @@
+# MkDocs Configuration for Antibody Training Pipeline ESM
+# Documentation: https://www.mkdocs.org/
+# Material Theme: https://squidfunk.github.io/mkdocs-material/
+
+site_name: Antibody Non-Specificity Prediction Pipeline
+site_description: Machine learning pipeline to predict antibody non-specificity using ESM protein language models
+site_author: The Obstacle Is The Way
+site_url: https://the-obstacle-is-the-way.github.io/antibody_training_pipeline_ESM/
+
+repo_name: antibody_training_pipeline_ESM
+repo_url: https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM
+edit_uri: edit/leroy-jenkins/full-send/docs/
+
+# Copyright
+copyright: Copyright &copy; 2025 The Obstacle Is The Way
+
+# Theme Configuration
+theme:
+  name: material
+  language: en
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.instant       # Instant loading (SPA-like)
+    - navigation.tracking      # URL updates on scroll
+    - navigation.tabs          # Top-level tabs
+    - navigation.sections      # Collapsible sections
+    - navigation.expand        # Expand all sections by default
+    - navigation.top           # Back to top button
+    - search.suggest           # Search suggestions
+    - search.highlight         # Highlight search terms
+    - content.code.copy        # Copy code button
+    - content.code.annotate    # Code annotations
+    - toc.follow               # TOC follows scroll
+    - toc.integrate            # Integrate TOC into nav
+
+# Plugins
+plugins:
+  - search:
+      separator: '[\s\-,:!=\[\]()"/]+|(?!\b)(?=[A-Z][a-z])|\.(?!\d)|&[lg]t;'
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py  # Auto-generate API reference
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            show_symbol_type_heading: true
+            show_symbol_type_toc: true
+            members_order: source
+            group_by_category: true
+            show_category_heading: true
+            show_if_no_docstring: false
+            inherited_members: false
+            filters:
+              - "!^_"  # Exclude private members
+
+# Markdown Extensions
+markdown_extensions:
+  # Python Markdown
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      title: On this page
+
+  # PyMdown Extensions
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Navigation Structure
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Overview: overview.md
+    - Installation: user-guide/installation.md
+    - Quick Start: user-guide/getting-started.md
+
+  - User Guide:
+    - Training Models: user-guide/training.md
+    - Testing Models: user-guide/testing.md
+    - Making Predictions: user-guide/inference.md
+    - Preprocessing Data: user-guide/preprocessing.md
+    - Troubleshooting: user-guide/troubleshooting.md
+
+  - Datasets:
+    - Boughter (Training): datasets/boughter/README.md
+    - Jain (Novo Parity): datasets/jain/README.md
+    - Harvey (Nanobodies): datasets/harvey/README.md
+    - Shehata (PSR): datasets/shehata/README.md
+
+  - Research:
+    - Novo Parity Analysis: research/novo-parity.md
+    - Methodology: research/methodology.md
+    - Assay Thresholds: research/assay-thresholds.md
+    - Benchmark Results: research/benchmark-results.md
+    - Model Zoo Roadmap: research/model-zoo-roadmap.md
+
+  - Developer Guide:
+    - Architecture: developer-guide/architecture.md
+    - Development Workflow: developer-guide/development-workflow.md
+    - Testing Strategy: developer-guide/testing-strategy.md
+    - CI/CD: developer-guide/ci-cd.md
+    - Type Checking: developer-guide/type-checking.md
+    - Security: developer-guide/security.md
+    - Preprocessing Internals: developer-guide/preprocessing-internals.md
+    - Docker: developer-guide/docker.md
+
+  - API Reference:
+    - Core:
+      - Trainer: api/core/trainer.md
+      - Embeddings: api/core/embeddings.md
+      - Classifier: api/core/classifier.md
+      - Prediction: api/core/prediction.md
+    - Datasets:
+      - Base: api/datasets/base.md
+      - Boughter: api/datasets/boughter.md
+      - Jain: api/datasets/jain.md
+      - Harvey: api/datasets/harvey.md
+      - Shehata: api/datasets/shehata.md
+    - CLI:
+      - Train: api/cli/train.md
+      - Test: api/cli/test.md
+      - Predict: api/cli/predict.md
+      - Preprocess: api/cli/preprocess.md
+      - App (Gradio): api/cli/app.md
+
+  - Archive:
+    - Migrations: archive/migrations/
+    - Investigations: archive/investigations/
+    - Plans: archive/plans/
+
+# Extra CSS/JS
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+# Social links
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM
+  version:
+    provider: mike
