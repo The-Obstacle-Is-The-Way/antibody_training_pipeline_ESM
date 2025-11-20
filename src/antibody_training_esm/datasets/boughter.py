@@ -137,7 +137,9 @@ class BoughterDataset(AntibodyDataset):
         # Apply Novo flagging strategy
         if not include_mild:
             # Exclude mild (1-3 flags) per Novo Nordisk methodology
-            df["include_in_training"] = ~df["flags"].isin(self.FLAG_MILD)
+            # Note: Preprocessing uses 'num_flags', legacy code might use 'flags'
+            flag_col = "num_flags" if "num_flags" in df.columns else "flags"
+            df["include_in_training"] = ~df[flag_col].isin(self.FLAG_MILD)
             df_training = df[df["include_in_training"]].copy()
 
             excluded = len(df) - len(df_training)
@@ -158,8 +160,9 @@ class BoughterDataset(AntibodyDataset):
         # Create binary labels from flags
         # 0 flags → specific (label=0)
         # 4+ flags → non-specific (label=1)
-        if "flags" in df.columns:
-            df["label"] = (df["flags"] >= 4).astype(int)
+        flag_col = "num_flags" if "num_flags" in df.columns else "flags"
+        if flag_col in df.columns:
+            df["label"] = (df[flag_col] >= 4).astype(int)
 
         self.logger.info("\nLabel distribution:")
         label_counts = df["label"].value_counts().sort_index()

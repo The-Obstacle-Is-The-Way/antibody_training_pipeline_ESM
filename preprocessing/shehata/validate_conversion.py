@@ -22,6 +22,11 @@ import openpyxl
 import pandas as pd
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import (
+    SHEHATA_FRAGMENTS_DIR,
+    SHEHATA_PROCESSED_CSV,
+    SHEHATA_RAW_EXCEL,
+)
 
 logger = setup_logger(__name__)
 
@@ -202,8 +207,8 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
 
 
 def main() -> int:
-    excel_path = Path("data/test/shehata/raw/shehata-mmc2.xlsx")
-    csv_path = Path("data/test/shehata/processed/shehata.csv")
+    excel_path = SHEHATA_RAW_EXCEL
+    csv_path = SHEHATA_PROCESSED_CSV
 
     logger.info("=" * 60)
     logger.info("Multi-Method Validation of Shehata Conversion")
@@ -295,7 +300,7 @@ def main() -> int:
         logger.info(f"    Missing labels: {df_csv['label'].isna().sum()}")
 
     # Validate fragment CSVs (P0 blocker check)
-    fragments_dir = Path("data/test/shehata/fragments")
+    fragments_dir = SHEHATA_FRAGMENTS_DIR
     fragments_valid = validate_fragment_csvs(fragments_dir)
 
     logger.info("\n" + "=" * 60)

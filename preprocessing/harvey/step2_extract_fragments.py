@@ -26,6 +26,7 @@ import riot_na
 from tqdm.auto import tqdm
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import HARVEY_FRAGMENTS_DIR, HARVEY_FULL_CSV
 
 logger = setup_logger(__name__)
 
@@ -134,7 +135,7 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
         logger.info(f"  Failed IDs (first 10): {failures[:10]}")
 
         # Write all failed IDs to log file
-        failure_log = Path("data/test/harvey/fragments/failed_sequences.txt")
+        failure_log = HARVEY_FRAGMENTS_DIR / "failed_sequences.txt"
         failure_log.parent.mkdir(parents=True, exist_ok=True)
         with open(failure_log, "w") as f:
             f.write("\n".join(failures))
@@ -203,8 +204,8 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
 def main() -> int:
     """Main processing pipeline."""
     # Paths
-    csv_path = Path("data/test/harvey/processed/harvey.csv")
-    output_dir = Path("data/test/harvey/fragments")
+    csv_path = HARVEY_FULL_CSV
+    output_dir = HARVEY_FRAGMENTS_DIR
 
     if not csv_path.exists():
         logger.info(f"Error: {csv_path} not found!")

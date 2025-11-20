@@ -25,8 +25,9 @@ import pandas as pd
 import pytest
 
 from antibody_training_esm.datasets.shehata import ShehataDataset
+from preprocessing.paths import PROJECT_ROOT, SHEHATA_FRAGMENTS_DIR
 
-# ==================== Fixtures ====================
+# ============================================================================
 
 
 @pytest.fixture
@@ -53,12 +54,13 @@ def shehata_sample_excel(shehata_sample_csv: Path, tmp_path: Path) -> Path:
 @pytest.mark.unit
 def test_shehata_dataset_initializes_with_default_output_dir() -> None:
     """Verify ShehataDataset initializes with default output directory."""
-    # Arrange & Act
+    # Act
     dataset = ShehataDataset()
 
     # Assert
     assert dataset.dataset_name == "shehata"
-    assert dataset.output_dir == Path("data/test/shehata/fragments")
+    assert dataset.output_dir == SHEHATA_FRAGMENTS_DIR.relative_to(PROJECT_ROOT)
+    assert dataset.output_dir.exists()
 
 
 @pytest.mark.unit

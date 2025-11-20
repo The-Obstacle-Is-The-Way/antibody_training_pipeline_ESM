@@ -33,6 +33,7 @@ from hydra import compose, initialize_config_dir
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.core.trainer import train_pipeline
+from preprocessing.paths import BOUGHTER_STAGE1_OUTPUT
 
 # ==================== Fixtures ====================
 
@@ -51,7 +52,7 @@ def mock_training_config(tmp_path: Path) -> Path:
         "batch_size": 8,
         "class_weight": None,
         "output_model_path": str(tmp_path / "trained_model.pkl"),
-        "train_data_path": "data/test/boughter/boughter_translated.csv",
+        "train_data_path": str(BOUGHTER_STAGE1_OUTPUT),
     }
 
     config_path = tmp_path / "train_config.yaml"

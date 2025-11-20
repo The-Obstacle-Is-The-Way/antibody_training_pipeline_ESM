@@ -38,6 +38,7 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import BOUGHTER_PROCESSED_DIR, BOUGHTER_RAW_DIR
 
 logger = setup_logger(__name__)
 
@@ -513,7 +514,7 @@ def main() -> int:
     """Main processing pipeline."""
     # Define dataset structure
     # Raw data is in boughter_raw/ (not committed to git)
-    base_dir = Path("data/train/boughter/raw")
+    base_dir = BOUGHTER_RAW_DIR
 
     subsets: dict[str, SubsetPaths] = {
         "flu": {
@@ -576,13 +577,13 @@ def main() -> int:
     print_dataset_stats(df)
 
     # Save output
-    output_path = Path("data/train/boughter/processed/boughter.csv")
+    output_path = BOUGHTER_PROCESSED_DIR / "boughter.csv"
     df.to_csv(output_path, index=False)
     logger.info(f"\n✓ Output saved to: {output_path}")
 
     # Save failure log if any
     if all_failures:
-        failure_log = Path("data/train/boughter/raw/translation_failures.log")
+        failure_log = BOUGHTER_RAW_DIR / "translation_failures.log"
         failure_log.write_text("\n".join(all_failures))
         logger.info(f"✓ Failure log saved to: {failure_log}")
 

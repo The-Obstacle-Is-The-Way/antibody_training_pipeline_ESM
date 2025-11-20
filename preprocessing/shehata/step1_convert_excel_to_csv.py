@@ -14,12 +14,12 @@ Issue: #3 - Shehata dataset preprocessing
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, cast
 
 import pandas as pd
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import SHEHATA_PROCESSED_CSV, SHEHATA_RAW_EXCEL
 
 logger = setup_logger(__name__)
 
@@ -290,8 +290,8 @@ def compare_with_original(csv_df: pd.DataFrame, excel_path: str) -> None:
 
 def main() -> int:
     """Main entry point for command-line execution."""
-    excel_path = Path("data/test/shehata/raw/shehata-mmc2.xlsx")
-    output_path = Path("data/test/shehata/processed/shehata.csv")
+    excel_path = SHEHATA_RAW_EXCEL
+    output_path = SHEHATA_PROCESSED_CSV
 
     if not excel_path.exists():
         logger.info(f"Error: {excel_path} not found!")

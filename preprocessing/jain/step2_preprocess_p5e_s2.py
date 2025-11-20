@@ -38,18 +38,24 @@ from pathlib import Path
 import pandas as pd
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import (
+    JAIN_86_PARITY_CSV,
+    JAIN_ELISA_116_CSV,
+    JAIN_FULL_CSV,
+    JAIN_SD03_CSV,
+    JAIN_VH_ONLY_86_CSV,
+    PROJECT_ROOT,
+)
 
 logger = setup_logger(__name__)
 
 # File paths
-BASE_DIR = Path(__file__).parent.parent.parent  # Project root
-INPUT_137 = BASE_DIR / "data/test/jain/processed/jain_with_private_elisa_FULL.csv"
-INPUT_SD03 = BASE_DIR / "data/test/jain/processed/jain_sd03.csv"
-OUTPUT_116 = BASE_DIR / "data/test/jain/processed/jain_ELISA_ONLY_116.csv"
-OUTPUT_86 = BASE_DIR / "data/test/jain/canonical/jain_86_novo_parity.csv"
-OUTPUT_VH = (
-    BASE_DIR / "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
-)  # VH-only benchmark
+BASE_DIR = PROJECT_ROOT
+INPUT_137 = JAIN_FULL_CSV
+INPUT_SD03 = JAIN_SD03_CSV
+OUTPUT_116 = JAIN_ELISA_116_CSV
+OUTPUT_86 = JAIN_86_PARITY_CSV
+OUTPUT_VH = JAIN_VH_ONLY_86_CSV
 
 # P5e-S2 Method Constants
 PSR_THRESHOLD = 0.4

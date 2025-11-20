@@ -36,6 +36,7 @@ import riot_na
 from tqdm.auto import tqdm
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import SHEHATA_FRAGMENTS_DIR, SHEHATA_PROCESSED_CSV
 
 logger = setup_logger(__name__)
 
@@ -219,8 +220,8 @@ def create_fragment_csvs(df: pd.DataFrame, output_dir: Path) -> None:
 def main() -> int:
     """Main processing pipeline."""
     # Paths
-    csv_path = Path("data/test/shehata/processed/shehata.csv")
-    output_dir = Path("data/test/shehata/fragments")
+    csv_path = SHEHATA_PROCESSED_CSV
+    output_dir = SHEHATA_FRAGMENTS_DIR
 
     if not csv_path.exists():
         logger.info(f"Error: {csv_path} not found!")

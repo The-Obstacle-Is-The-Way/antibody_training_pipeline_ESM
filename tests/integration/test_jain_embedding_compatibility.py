@@ -25,10 +25,11 @@ Expected: 137 antibodies (94 specific, 22 non-specific, 21 mild)
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 
 import pandas as pd
 import pytest
+
+from preprocessing.paths import JAIN_FRAGMENTS_DIR
 
 # Valid amino acids for ESM-1v model (from model.py:86)
 VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWYX")
@@ -46,7 +47,7 @@ def test_gap_characters() -> None:
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    jain_dir = Path("data/test/jain/fragments")
+    jain_dir = JAIN_FRAGMENTS_DIR
     fragment_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",
@@ -114,7 +115,7 @@ def test_amino_acid_validation() -> None:
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    jain_dir = Path("data/test/jain/fragments")
+    jain_dir = JAIN_FRAGMENTS_DIR
 
     # Check critical files for full antibody model
     test_files = [
@@ -177,7 +178,7 @@ def test_stop_codons() -> None:
     print("TEST 3: Stop Codon Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    jain_dir = Path("data/test/jain/fragments")
+    jain_dir = JAIN_FRAGMENTS_DIR
     fragment_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",
@@ -244,7 +245,7 @@ def test_model_validation_logic() -> None:
     total_validated = 0
 
     for file_name in test_files:
-        file_path = Path(f"data/test/jain/fragments/{file_name}")
+        file_path = JAIN_FRAGMENTS_DIR / file_name
 
         if not file_path.exists():
             print(f"  ✗ FAIL: {file_path} not found")
@@ -291,7 +292,7 @@ def test_data_integrity() -> None:
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    jain_dir = Path("data/test/jain/fragments")
+    jain_dir = JAIN_FRAGMENTS_DIR
     expected_files = [
         "VH_only_jain.csv",
         "VL_only_jain.csv",

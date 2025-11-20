@@ -25,8 +25,9 @@ import pandas as pd
 import pytest
 
 from antibody_training_esm.datasets.boughter import BoughterDataset
+from preprocessing.paths import BOUGHTER_ANNOTATED_DIR, PROJECT_ROOT
 
-# ==================== Fixtures ====================
+# ============================================================================
 
 
 @pytest.fixture
@@ -44,12 +45,13 @@ def boughter_sample_csv() -> Path:
 @pytest.mark.unit
 def test_boughter_dataset_initializes_with_default_output_dir() -> None:
     """Verify BoughterDataset initializes with default output directory."""
-    # Arrange & Act
+    # Act
     dataset = BoughterDataset()
 
     # Assert
     assert dataset.dataset_name == "boughter"
-    assert dataset.output_dir == Path("data/train/boughter/annotated")
+    assert dataset.output_dir == BOUGHTER_ANNOTATED_DIR.relative_to(PROJECT_ROOT)
+    assert dataset.output_dir.exists()
 
 
 @pytest.mark.unit

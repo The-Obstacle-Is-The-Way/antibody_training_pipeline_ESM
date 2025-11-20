@@ -25,10 +25,11 @@ P0 Fix: preprocessing/boughter/stage2_stage3_annotation_qc.py:93-147
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 
 import pandas as pd
 import pytest
+
+from preprocessing.paths import BOUGHTER_ANNOTATED_DIR
 
 # Valid amino acids for ESM-1v model (from model.py:86)
 VALID_AMINO_ACIDS = set("ACDEFGHIKLMNPQRSTVWYX")
@@ -46,7 +47,7 @@ def test_gap_characters() -> None:
     print("TEST 1: Gap Character Detection (P0 Blocker Check)")
     print("=" * 70)
 
-    boughter_dir = Path("data/train/boughter/annotated")
+    boughter_dir = BOUGHTER_ANNOTATED_DIR
     fragment_files = [
         "VH_only_boughter.csv",
         "VL_only_boughter.csv",
@@ -110,7 +111,7 @@ def test_amino_acid_validation() -> None:
     print("=" * 70)
     print(f"  Valid amino acids: {sorted(VALID_AMINO_ACIDS)}")
 
-    boughter_dir = Path("data/train/boughter/annotated")
+    boughter_dir = BOUGHTER_ANNOTATED_DIR
 
     # Check critical files for full antibody model
     test_files = [
@@ -174,13 +175,13 @@ def test_previously_affected_sequences() -> None:
     print("=" * 70)
 
     # Check VH_only
-    vh_file = Path("data/train/boughter/annotated/VH_only_boughter.csv")
+    vh_file = BOUGHTER_ANNOTATED_DIR / "VH_only_boughter.csv"
     assert vh_file.exists(), f"{vh_file} not found"
 
     vh_df = pd.read_csv(vh_file, comment="#")
 
     # Check VL_only
-    vl_file = Path("data/train/boughter/annotated/VL_only_boughter.csv")
+    vl_file = BOUGHTER_ANNOTATED_DIR / "VL_only_boughter.csv"
     assert vl_file.exists(), f"{vl_file} not found"
 
     vl_df = pd.read_csv(vl_file, comment="#")
@@ -253,7 +254,7 @@ def test_model_validation_logic() -> None:
     total_validated = 0
 
     for file_name in test_files:
-        file_path = Path(f"data/train/boughter/annotated/{file_name}")
+        file_path = BOUGHTER_ANNOTATED_DIR / file_name
 
         if not file_path.exists():
             print(f"  ✗ FAIL: {file_path} not found")
@@ -300,7 +301,7 @@ def test_data_integrity() -> None:
     print("TEST 5: Data Integrity Verification")
     print("=" * 70)
 
-    boughter_dir = Path("data/train/boughter/annotated")
+    boughter_dir = BOUGHTER_ANNOTATED_DIR
     expected_files = [
         "VH_only_boughter.csv",
         "VL_only_boughter.csv",

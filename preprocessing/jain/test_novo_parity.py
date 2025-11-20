@@ -31,6 +31,7 @@ import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import CHECKPOINTS_DIR, JAIN_86_PARITY_CSV
 
 logger = setup_logger(__name__)
 
@@ -59,9 +60,11 @@ def parse_args() -> argparse.Namespace:
 
     # Auto-construct model path from backbone + classifier if not explicitly provided
     if args.model is None:
-        args.model = Path(
-            f"experiments/checkpoints/{args.backbone}/{args.classifier}/"
-            f"boughter_vh_{args.backbone}_{args.classifier}.pkl"
+        args.model = (
+            CHECKPOINTS_DIR
+            / args.backbone
+            / args.classifier
+            / f"boughter_vh_{args.backbone}_{args.classifier}.pkl"
         )
 
     return args
@@ -96,8 +99,8 @@ def main() -> None:
     logger.info("")
 
     # Load Novo parity test set (86 antibodies)
-    logger.info("Loading test set: data/test/jain/canonical/jain_86_novo_parity.csv")
-    df = pd.read_csv("data/test/jain/canonical/jain_86_novo_parity.csv")
+    logger.info(f"Loading test set: {JAIN_86_PARITY_CSV}")
+    df = pd.read_csv(JAIN_86_PARITY_CSV)
     logger.info(f"Test set loaded: {len(df)} antibodies")
     logger.info(f"   - Specific (label=0): {(df['label'] == 0).sum()}")
     logger.info(f"   - Non-specific (label=1): {(df['label'] == 1).sum()}")

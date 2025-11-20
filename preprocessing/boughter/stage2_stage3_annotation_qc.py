@@ -45,6 +45,11 @@ import pandas as pd
 import riot_na
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import (
+    BOUGHTER_ANNOTATED_DIR,
+    BOUGHTER_STAGE1_OUTPUT,
+    BOUGHTER_TRAINING_SUBSET,
+)
 
 logger = setup_logger(__name__)
 
@@ -240,7 +245,8 @@ def annotate_all(df: pd.DataFrame) -> pd.DataFrame:
         logger.info(f"  Failure rate: {failure_rate:.2f}%")
 
         # Write failures to log
-        failure_log = Path("data/train/boughter/annotated/annotation_failures.log")
+        failure_log = BOUGHTER_ANNOTATED_DIR / "annotation_failures.log"
+        failure_log.parent.mkdir(parents=True, exist_ok=True)
         failure_log.write_text("\n".join(failures))
         logger.info(f"  Failed IDs written to: {failure_log}")
 
@@ -420,7 +426,8 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
     logger.info(f"Total unique sequences removed: {len(problematic_ids)}")
 
     if problematic_ids:
-        qc_log = Path("data/train/boughter/annotated/qc_filtered_sequences.txt")
+        qc_log = BOUGHTER_ANNOTATED_DIR / "qc_filtered_sequences.txt"
+        qc_log.parent.mkdir(parents=True, exist_ok=True)
         qc_log.write_text("\n".join(sorted(problematic_ids)))
         logger.info(f"Filtered IDs written to: {qc_log}")
 
@@ -463,7 +470,7 @@ def print_annotation_stats(df: pd.DataFrame) -> None:
 def main() -> int:
     """Main processing pipeline."""
     # Load Stage 1 output
-    input_csv = Path("data/train/boughter/processed/boughter.csv")
+    input_csv = BOUGHTER_STAGE1_OUTPUT
 
     if not input_csv.exists():
         logger.info(f"ERROR: {input_csv} not found!")
@@ -489,11 +496,11 @@ def main() -> int:
     print_annotation_stats(df_clean)
 
     # Create 16 fragment CSVs (from clean data)
-    output_dir = Path("data/train/boughter/annotated")
+    output_dir = BOUGHTER_ANNOTATED_DIR
     create_fragment_csvs(df_clean, output_dir)
 
     # Export canonical VH-only training subset
-    canonical_path = Path("data/train/boughter/canonical/VH_only_boughter_training.csv")
+    canonical_path = BOUGHTER_TRAINING_SUBSET
     export_training_subset(df_clean, canonical_path)
 
     logger.info("\n" + "=" * 70)

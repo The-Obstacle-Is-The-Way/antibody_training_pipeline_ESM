@@ -25,7 +25,6 @@ Phase: 4 (CLI & E2E Tests)
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any, cast
 
 import numpy as np
@@ -36,6 +35,7 @@ from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.datasets.boughter import BoughterDataset
 from antibody_training_esm.datasets.jain import JainDataset
+from preprocessing.paths import BOUGHTER_TRAINING_SUBSET, JAIN_VH_ONLY_86_CSV
 
 # ==================== Fixtures ====================
 
@@ -60,8 +60,8 @@ def novo_classifier_params() -> dict[str, Any]:
 def real_dataset_paths() -> dict[str, str]:
     """Paths to real preprocessed datasets"""
     return {
-        "boughter_train": "data/train/boughter/boughter_translated.csv",
-        "jain_parity": "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv",
+        "boughter_train": str(BOUGHTER_TRAINING_SUBSET),
+        "jain_parity": str(JAIN_VH_ONLY_86_CSV),
     }
 
 
@@ -71,15 +71,13 @@ def real_dataset_paths() -> dict[str, str]:
 @pytest.mark.e2e
 @pytest.mark.slow
 @pytest.mark.skipif(
-    not Path("data/train/boughter/boughter_translated.csv").exists()
-    or not Path("data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv").exists(),
+    not BOUGHTER_TRAINING_SUBSET.exists() or not JAIN_VH_ONLY_86_CSV.exists(),
     reason="Requires real preprocessed Boughter and Jain datasets. "
     "Run preprocessing scripts first: "
     "python preprocessing/boughter/stage2_stage3_annotation_qc.py && "
     "python preprocessing/jain/step2_preprocess_p5e_s2.py",
 )
 def test_reproduce_novo_jain_accuracy_with_real_data(
-    mock_transformers_model: tuple[Any, Any],
     novo_classifier_params: dict[str, Any],
     real_dataset_paths: dict[str, str],
 ) -> None:
@@ -93,11 +91,13 @@ def test_reproduce_novo_jain_accuracy_with_real_data(
           It is skipped by default and marked as @pytest.mark.slow.
     """
     # Arrange: Load Boughter training data (Novo methodology)
-    boughter = BoughterDataset()
-    df_train = boughter.load_data(
-        processed_csv=real_dataset_paths["boughter_train"],
-        include_mild=False,  # Novo excludes mild flags (1-3)
-    )
+    # Use canonical VH-only training set (already filtered for quality and flags)
+    import pandas as pd
+
+    df_train = pd.read_csv(real_dataset_paths["boughter_train"], comment="#")
+    # Canonical file uses 'sequence' column, rename to VH_sequence for consistency
+    if "sequence" in df_train.columns:
+        df_train = df_train.rename(columns={"sequence": "VH_sequence"})
 
     # Arrange: Load Jain parity test data
     jain = JainDataset()

@@ -29,6 +29,7 @@ from preprocessing.jain.step1_convert_excel_to_csv import (
     load_data,
 )
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import JAIN_FULL_CSV
 
 logger = setup_logger(__name__)
 
@@ -40,7 +41,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--csv",
         type=Path,
-        default=Path("data/test/jain/processed/jain_with_private_elisa_FULL.csv"),
+        default=JAIN_FULL_CSV,
         help="Path to the converted CSV file (ELISA SSOT).",
     )
     return parser.parse_args()

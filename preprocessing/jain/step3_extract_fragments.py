@@ -43,6 +43,7 @@ import riot_na
 from tqdm.auto import tqdm
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import JAIN_FRAGMENTS_DIR, JAIN_FULL_CSV
 
 logger = setup_logger(__name__)
 
@@ -387,8 +388,8 @@ note: |
 def main() -> int:
     """Main processing pipeline."""
     # Paths
-    csv_path = Path("data/test/jain/processed/jain_with_private_elisa_FULL.csv")
-    output_dir = Path("data/test/jain/fragments")
+    csv_path = JAIN_FULL_CSV
+    output_dir = JAIN_FRAGMENTS_DIR
     script_path = Path(__file__)
 
     if not csv_path.exists():

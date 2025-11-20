@@ -30,6 +30,14 @@ from typing import Any
 import pandas as pd
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import (
+    JAIN_ELISA_116_CSV,
+    JAIN_FULL_CSV,
+    JAIN_PRIVATE_ELISA_EXCEL,
+    JAIN_SD01_EXCEL,
+    JAIN_SD02_EXCEL,
+    JAIN_SD03_EXCEL,
+)
 
 logger = setup_logger(__name__)
 
@@ -46,16 +54,16 @@ def load_data() -> pd.DataFrame:
 
     # Private ELISA (6 individual antigens)
     private = pd.read_excel(
-        "data/test/jain/raw/Private_Jain2017_ELISA_indiv.xlsx",
+        JAIN_PRIVATE_ELISA_EXCEL,
         sheet_name="Individual-ELISA",
     )
     logger.info(f"  Private ELISA: {len(private)} antibodies")
 
     # Public SD files
-    sd01 = pd.read_excel("data/test/jain/raw/jain-pnas.1616408114.sd01.xlsx")
-    sd02 = pd.read_excel("data/test/jain/raw/jain-pnas.1616408114.sd02.xlsx")
+    sd01 = pd.read_excel(JAIN_SD01_EXCEL)
+    sd02 = pd.read_excel(JAIN_SD02_EXCEL)
     sd03 = pd.read_excel(
-        "data/test/jain/raw/jain-pnas.1616408114.sd03.xlsx",
+        JAIN_SD03_EXCEL,
         sheet_name="Results-12-assays",
     )
 
@@ -201,11 +209,6 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
 
 def save_outputs(df: pd.DataFrame) -> None:
     """Save conversion outputs."""
-    output_dir = Path("data/test/jain/processed")
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    logger.info("\nSaving outputs...")
-
     # 1. FULL 137-antibody dataset
     full_output = df[
         [
@@ -232,7 +235,8 @@ def save_outputs(df: pd.DataFrame) -> None:
     full_output = full_output.rename(
         columns={"Name": "id", "VH": "vh_sequence", "VL": "vl_sequence"}
     )
-    full_path = output_dir / "jain_with_private_elisa_FULL.csv"
+    full_path = JAIN_FULL_CSV
+    full_path.parent.mkdir(parents=True, exist_ok=True)
     full_output.to_csv(full_path, index=False)
     logger.info(f"  ✓ Saved: {full_path}")
     logger.info(f"    Total: {len(full_output)} antibodies (all 137)")
@@ -246,7 +250,7 @@ def save_outputs(df: pd.DataFrame) -> None:
     test_output = test_output.rename(
         columns={"Name": "id", "VH": "vh_sequence", "VL": "vl_sequence"}
     )
-    test_path = output_dir / "jain_ELISA_ONLY_116.csv"
+    test_path = JAIN_ELISA_116_CSV
     test_output.to_csv(test_path, index=False)
     logger.info(f"  ✓ Saved: {test_path}")
     logger.info(f"    Total: {len(test_output)} antibodies (ELISA-only test set)")

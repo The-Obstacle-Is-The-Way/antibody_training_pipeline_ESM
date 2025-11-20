@@ -24,11 +24,11 @@ Issue: #4 - Harvey dataset preprocessing
 from __future__ import annotations
 
 from collections.abc import Sequence
-from pathlib import Path
 
 import pandas as pd
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import HARVEY_FULL_CSV, HARVEY_HIGH_CSV, HARVEY_LOW_CSV
 
 logger = setup_logger(__name__)
 
@@ -122,9 +122,9 @@ def convert_harvey_csvs(
 def main() -> int:
     """Main conversion pipeline."""
     # Paths
-    high_csv = Path("data/test/harvey/raw/high_polyreactivity_high_throughput.csv")
-    low_csv = Path("data/test/harvey/raw/low_polyreactivity_high_throughput.csv")
-    output_csv = Path("data/test/harvey/processed/harvey.csv")
+    high_csv = HARVEY_HIGH_CSV
+    low_csv = HARVEY_LOW_CSV
+    output_csv = HARVEY_FULL_CSV
 
     # Validate inputs
     if not high_csv.exists():

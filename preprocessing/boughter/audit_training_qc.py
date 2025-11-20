@@ -27,13 +27,13 @@ from typing import Any
 import pandas as pd
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_TRAINING_SUBSET
 
 logger = setup_logger(__name__)
 
 # Paths
-BOUGHTER_DIR = Path("data/train/boughter")
-TRAINING_FILE = BOUGHTER_DIR / "canonical" / "VH_only_boughter_training.csv"
-FULL_FILE = BOUGHTER_DIR / "annotated" / "VH_only_boughter.csv"
+TRAINING_FILE = BOUGHTER_TRAINING_SUBSET
+FULL_FILE = BOUGHTER_ANNOTATED_DIR / "VH_only_boughter.csv"
 
 # Standard amino acids (20 standard + X for unknown)
 STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")

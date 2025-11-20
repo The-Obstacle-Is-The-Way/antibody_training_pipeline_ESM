@@ -22,6 +22,8 @@ import numpy.typing as npt
 import pandas as pd
 from sklearn.metrics import accuracy_score, confusion_matrix
 
+from preprocessing.paths import CHECKPOINTS_DIR, HARVEY_VHH_ONLY
+
 
 class MetricsResult(TypedDict):
     cm: npt.NDArray[np.int_]
@@ -59,7 +61,7 @@ def main() -> int:
     print()
 
     # Load model
-    model_path = "models/boughter_vh_esm1v_logreg.pkl"
+    model_path = CHECKPOINTS_DIR / "esm1v" / "logreg" / "boughter_vh_esm1v_logreg.pkl"
     print(f"Loading model from {model_path}...")
     sys.stdout.flush()
 
@@ -83,7 +85,7 @@ def main() -> int:
     print()
 
     # Load Harvey data
-    harvey_file = "data/test/harvey/fragments/VHH_only_harvey.csv"
+    harvey_file = HARVEY_VHH_ONLY
     print(f"Loading Harvey dataset from {harvey_file}...")
     sys.stdout.flush()
 

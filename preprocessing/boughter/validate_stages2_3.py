@@ -38,6 +38,7 @@ from typing import Any
 import pandas as pd
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_TRAINING_SUBSET
 
 logger = setup_logger(__name__)
 
@@ -225,8 +226,7 @@ def print_validation_report(dataset_dir: Path, expected_fragments: int = 16) -> 
 
 def main() -> int:
     """Validate Boughter dataset Stages 2+3 output."""
-    boughter_annotated_dir = Path("data/train/boughter/annotated")
-    boughter_canonical_dir = Path("data/train/boughter/canonical")
+    boughter_annotated_dir = BOUGHTER_ANNOTATED_DIR
 
     if not boughter_annotated_dir.exists():
         logger.info(
@@ -242,7 +242,7 @@ def main() -> int:
     logger.info("=" * 60)
 
     # Check training subset file
-    training_file = boughter_canonical_dir / "VH_only_boughter_training.csv"
+    training_file = BOUGHTER_TRAINING_SUBSET
     if training_file.exists():
         df = pd.read_csv(training_file, comment="#")
         logger.info(f"\n✓ Training subset file exists: {training_file.name}")

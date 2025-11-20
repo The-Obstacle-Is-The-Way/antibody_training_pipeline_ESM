@@ -29,12 +29,12 @@ Reference: See docs/boughter/boughter_data_sources.md for Stage 1 methodology
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
 from preprocessing.logging_config import setup_logger
+from preprocessing.paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_STAGE1_OUTPUT
 
 logger = setup_logger(__name__)
 
@@ -45,7 +45,7 @@ def validate_stage1_output() -> dict[str, Any]:
     logger.info("Stage 1 Validation: DNA Translation & Novo Flagging")
     logger.info("=" * 70)
 
-    csv_path = Path("data/train/boughter/processed/boughter.csv")
+    csv_path = BOUGHTER_STAGE1_OUTPUT
 
     if not csv_path.exists():
         return {
@@ -143,7 +143,7 @@ def validate_stage2_output() -> dict[str, Any]:
     logger.info("=" * 70)
 
     # Check if Stage 2 has been run
-    output_dir = Path("data/train/boughter/annotated")
+    output_dir = BOUGHTER_ANNOTATED_DIR
     vh_file = output_dir / "VH_only_boughter.csv"
 
     if not vh_file.exists():
@@ -153,7 +153,7 @@ def validate_stage2_output() -> dict[str, Any]:
         }
 
     # Load Stage 1 input
-    df_stage1 = pd.read_csv("data/train/boughter/processed/boughter.csv")
+    df_stage1 = pd.read_csv(BOUGHTER_STAGE1_OUTPUT)
 
     stage1_count = len(df_stage1)
     # Stage 2 failures from log (if present)
@@ -363,7 +363,8 @@ def generate_report(
     logger.info(report_text)
 
     # Save report
-    report_path = Path("data/train/boughter/annotated/validation_report.txt")
+    report_path = BOUGHTER_ANNOTATED_DIR / "validation_report.txt"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(report_text)
     logger.info(f"\n✓ Validation report saved to: {report_path}")
 
