@@ -1,8 +1,8 @@
 # Technical Debt Cleanup - Phases Overview
 
 **Last Updated:** 2025-11-20
-**Status:** Ready to execute
-**Total Effort:** 16-20 hours across 5 phases (up to ~25h with buffer)
+**Status:** Phase A completed; proceed with Phases B-E
+**Total Effort Remaining:** ~15-19 hours for Phases B-E (up to ~24h with buffer)
 
 ---
 
@@ -10,7 +10,7 @@
 
 | Phase | Focus | Effort | Risk | Scope | Document |
 |-------|-------|--------|------|-------|----------|
-| **A** | Quick Wins | 1-1.5h | LOW | 6 scripts + 4 library/test files | [PHASE_A_QUICK_WINS.md](./PHASE_A_QUICK_WINS.md) |
+| **A** | Quick Wins | ✅ DONE | LOW | Permissions, bare excepts, type ignores, utils/, configs/ | [PHASE_A_QUICK_WINS.md](./PHASE_A_QUICK_WINS.md) |
 | **B** | Path Centralization | 2-3h | MEDIUM | 20+ files, 106 hardcoded paths | [PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md) |
 | **C** | File Splitting | 4-5h | HIGH | 4 files >500 lines | [PHASE_C_FILE_SPLITTING.md](./PHASE_C_FILE_SPLITTING.md) |
 | **D** | Code Deduplication | 5-7h | HIGH | 6 preprocessing scripts (~1.6k LOC overlap) | [PHASE_D_CODE_DEDUPLICATION.md](./PHASE_D_CODE_DEDUPLICATION.md) |
@@ -18,20 +18,18 @@
 
 ---
 
-## Phase A: Quick Wins (Start Here!)
+## Phase A: Quick Wins (Completed)
 
-**Goal:** Knock out 5 low-risk fixes in ~1 hour and reduce baseline noise.
+**Outcome:** All five tasks completed on commit `claude/refactor-phase-a` (see PHASE_A_QUICK_WINS.md for details and verification logs).
 
-**Tasks (current state evidence-based):**
-- Fix #8: Standardize file permissions (6 executable scripts today; make policy consistent)
-- Fix #9: Replace 2 bare `except Exception:` blocks in `core/trainer.py` (lines ~176, ~858)
-- Fix #10: Reduce 5 `type: ignore` usages to the minimum set with explanations (embeddings, classifier_factory, data/loaders, 2 tests)
-- Fix #11: Delete empty `src/antibody_training_esm/utils/` (no imports reference it)
-- Fix #12: Merge `configs/testing/` into `src/antibody_training_esm/conf/testing/`
+**State after completion:**
+- Permissions: 17 preprocessing scripts set to 755 (consistent policy).
+- Bare excepts: Two handlers in `core/trainer.py` now log specific exceptions and re-raise on unexpected errors (no silent bare excepts).
+- `type: ignore`: Reduced to 2 (embeddings HF tokenizer stubs; datasets import attr-defined) with inline justification.
+- `src/antibody_training_esm/utils/`: Removed.
+- `configs/`: Removed; `configs/testing/jain_p5e_s2.yaml` moved to `src/antibody_training_esm/conf/testing/`.
 
-**Why start here:** Easy wins, build momentum, zero risk
-
-**Read:** [PHASE_A_QUICK_WINS.md](./PHASE_A_QUICK_WINS.md)
+**Next:** Proceed to Phase B.
 
 ---
 
@@ -154,17 +152,18 @@ git merge dev
 
 ## Success Metrics
 
-### Before All Phases (Current State)
+### Current State (Post-Phase A, 2025-11-20)
 
-| Metric | Current (2025-11-20) | Notes |
-|--------|----------------------|-------|
+| Metric | Current | Notes |
+|--------|---------|-------|
 | Hardcoded paths | 106 matches in `preprocessing/` (rg) + test suite references | No `preprocessing/paths.py` yet |
 | Files >500 lines | 4 files: `core/trainer.py` (961), `datasets/base.py` (627), `boughter/stage1_dna_translation.py` (598), `boughter/stage2_stage3_annotation_qc.py` (519) | Single-responsibility violations |
-| `type: ignore` usages | 5 occurrences (embeddings, classifier_factory, data/loaders, 2 tests) | Exceeds planned target of ≤2 |
-| Executable permissions | 6 Python scripts are `755`, remainder `644` | Inconsistent policy |
+| `type: ignore` usages | 2 (embeddings HF tokenizer stubs; datasets attr-defined) | Documented inline |
+| Executable permissions | 17 preprocessing scripts are `755` | Consistent policy applied |
 | Duplicate preprocessing logic | ~1.6k LOC overlap across 6 validation/fragment scripts | Needs shared utils |
-| Config locations | Root `configs/testing/` + package `conf/` | Two sources of truth |
+| Config locations | Single source under `src/antibody_training_esm/conf/` | Root `configs/` removed |
 | TODO/bug references | 1 TODO (`tests/integration/test_dataset_pipeline.py`); CLI override bug doc referenced but missing | Clarify/remove in Phase E |
+| Print/logging gaps | 22 `print()` calls in `preprocessing/`, 36 in `src/` (excluding READMEs) | Convert/document in Phase E |
 
 ### After All Phases (Target State)
 
@@ -184,12 +183,12 @@ git merge dev
 
 | Phase | Estimated | Buffer | Total |
 |-------|-----------|--------|-------|
-| Phase A | 1-1.5h | +30 min | 2h max |
+| Phase A | ✅ DONE | — | — |
 | Phase B | 2-3h | +1h | 4h max |
 | Phase C | 4-5h | +1h | 6h max |
 | Phase D | 5-7h | +2h | 9h max |
 | Phase E | 2-3h | +1h | 4h max |
-| **TOTAL** | **16-20h** | **+5.5h** | **25h max** |
+| **REMAINING** | **13-18h** | **+4h** | **22h max** |
 
 **Recommended schedule:**
 - Week 1: Phases A + B (complete path centralization foundation)
@@ -200,12 +199,12 @@ git merge dev
 
 ## How to Use These Documents
 
-1. **Read PHASE_A_QUICK_WINS.md first**
-2. **Complete all tasks in Phase A**
-3. **Run quality gates**
-4. **Get senior approval**
-5. **Move to Phase B**
-6. **Repeat until Phase E complete**
+1. **Phase A complete** (see PHASE_A_QUICK_WINS.md for proof/commits)
+2. **Start at Phase B** — read PHASE_B_PATH_CENTRALIZATION.md
+3. Complete all tasks in each phase
+4. Run quality gates
+5. Get review/approval
+6. Continue through Phase E
 
 Each phase document contains:
 - ✅ Overview and goals

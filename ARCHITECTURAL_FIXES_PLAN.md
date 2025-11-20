@@ -1,24 +1,21 @@
 # Remaining Technical Debt (Source of Truth)
 
 **Last Updated:** 2025-11-20  
-**Status:** Ready to kick off Phase A  
-**Goal:** Execute Phases A–E to clear remaining architectural debt.
+**Status:** Phase A completed; proceed with Phases B–E  
+**Goal:** Execute remaining phases to clear architectural debt.
 
 ---
 
-## Current Baseline (validated 2025-11-20)
+## Current Baseline (post-Phase A, validated 2025-11-20)
 
 - **Hardcoded paths:** 106 matches in `preprocessing/*.py` (`rg "data/(train|test)" preprocessing --no-heading | wc -l`) plus additional references in tests/e2e.
 - **Large files (>500 lines):** `core/trainer.py` (961), `datasets/base.py` (627), `boughter/stage1_dna_translation.py` (598), `boughter/stage2_stage3_annotation_qc.py` (519).
-- **`type: ignore` usages (5):**
-  - `src/antibody_training_esm/core/embeddings.py:60`
-  - `src/antibody_training_esm/core/classifier_factory.py:138`
-  - `src/antibody_training_esm/data/loaders.py:16`
-  - `tests/unit/datasets/test_base.py:265`
-  - `tests/unit/core/strategies/test_logistic_regression.py:344`
-- **Executable permissions:** 6 scripts are `755` (`train_hyperparameter_sweep.py`, `validate_stages2_3.py`, `step2_preprocess_p5e_s2.py`, `test_novo_parity.py`, `step2_extract_fragments.py`, `scripts/validation/validate_fragments.py`); others are `644`.
+- **`type: ignore` usages (2):**
+  - `src/antibody_training_esm/core/embeddings.py:60` (HF tokenizer stubs)
+  - `src/antibody_training_esm/data/loaders.py:16` (datasets attr-defined)
+- **Executable permissions:** 17 preprocessing scripts are `755` (consistent policy).
 - **Duplicate preprocessing logic:** ~1.6k LOC overlap across validation/fragment scripts (`preprocessing/boughter/validate_stages2_3.py`, `preprocessing/jain/validate_conversion.py`, `preprocessing/harvey/step1_convert_raw_csvs.py`, `preprocessing/shehata/validate_conversion.py`, `preprocessing/jain/step3_extract_fragments.py`, `preprocessing/harvey/step2_extract_fragments.py`, `preprocessing/shehata/step2_extract_fragments.py`).
-- **Config duplication:** `configs/testing/jain_p5e_s2.yaml` plus package configs under `src/antibody_training_esm/conf/`.
+- **Config duplication:** Resolved; single source under `src/antibody_training_esm/conf/` (`configs/` removed).
 - **Print/logging gaps:** ~22 `print()` calls in `preprocessing/`, ~36 in `src/` (excluding READMEs) that should be converted or documented.
 - **TODO/bug references:** 1 TODO in `tests/integration/test_dataset_pipeline.py`; `CLI_OVERRIDE_BUG` references in `config_schema.py` and `tests/unit/core/test_structured_configs.py` without a backing doc.
 - **Pytest config:** Single source in `pyproject.toml`; no `pytest.ini` (keep it that way).
@@ -35,10 +32,7 @@
 
 ---
 
-## Plan (Phases A–E)
-
-- **Phase A – Quick Wins** ([PHASE_A_QUICK_WINS.md](./PHASE_A_QUICK_WINS.md))  
-  Standardize permissions, replace 2 bare `except Exception:`, reduce `type: ignore` from 5 → ≤2 with justification, delete empty `utils/`, merge `configs/` into package `conf/testing/`.
+## Plan (Phases B–E)
 
 - **Phase B – Path Centralization** ([PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md))  
   Create `preprocessing/paths.py`; migrate all preprocessing scripts plus tests/e2e to path constants; eliminate inline `"data/...`" strings.

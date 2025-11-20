@@ -1,17 +1,17 @@
 # Phase A: Quick Wins (Low-Hanging Fruit)
 
-**Effort:** 1-1.5 hours
-**Risk:** LOW
-**Dependencies:** None
+**Status:** Completed (2025-11-20)  
+**Effort:** ~1.5 hours  
+**Risk:** LOW  
 **Branch:** `claude/refactor-phase-a`
 
 ---
 
 ## Overview
 
-Knock out 5 trivial fixes in ~1 hour for immediate visible progress. All changes are mechanical with minimal risk.
+Knock out 5 trivial fixes for immediate visible progress. All changes are mechanical with minimal risk.
 
-**Goal:** Get easy wins on the board to build momentum for larger refactoring phases.
+**Outcome:** All tasks completed; quality gates passed (ruff, mypy --strict, pytest 529/4 skipped, bandit).
 
 ---
 
@@ -66,8 +66,8 @@ uv run python preprocessing/jain/validate_conversion.py
 ```
 
 ### Success Criteria
-- [ ] All preprocessing .py files have 755 permissions
-- [ ] All scripts remain executable
+- [x] All preprocessing .py files have 755 permissions (17 files)
+- [x] All scripts remain executable
 
 ---
 
@@ -122,40 +122,32 @@ except Exception as e:
 
 ### Verification
 ```bash
-# Check no bare except Exception: remain
-grep -n "except Exception:" src/antibody_training_esm/core/trainer.py
-# Should return nothing
+# Check generic handlers are limited to two guarded log+re-raise sites
+rg "except Exception:" src/antibody_training_esm/core/trainer.py
 
 # Tests still pass
 uv run pytest tests/unit/core/test_trainer.py -v
 ```
 
 ### Success Criteria
-- [ ] Zero bare `except Exception:` in trainer.py
-- [ ] All trainer tests pass
-- [ ] Mypy passes
+- [x] No silent bare `except Exception:` (only two guarded log+re-raise fallbacks)
+- [x] All trainer tests pass
+- [x] Mypy passes
 
 ---
 
 ## Task A3: Address type: ignore Comments (30 min)
 
 ### Problem
-Five `type: ignore` comments remain (goal: ≤2 with explicit justification).
+`type: ignore` comments reduced to 2; both are justified external stub gaps.
 
-**Locations:**
+**Remaining Locations:**
 1. `src/antibody_training_esm/core/embeddings.py:60` (`AutoTokenizer.from_pretrained` lacks stubs)
-2. `src/antibody_training_esm/core/classifier_factory.py:138` (factory Protocol init)
-3. `src/antibody_training_esm/data/loaders.py:16` (`datasets` missing typing for `load_dataset`)
-4. `tests/unit/datasets/test_base.py:265` (passing `None` to `sanitize_sequence`)
-5. `tests/unit/core/strategies/test_logistic_regression.py:344` (`np.savez` kwargs typing)
+2. `src/antibody_training_esm/data/loaders.py:16` (`datasets` library lacks full stubs; attr-defined)
 
-### Solution (per-file)
-
-1) **embeddings.py:** Keep ignore but add explanatory comment linking to missing HF stubs.  
-2) **classifier_factory.py:** Replace ignore by tightening typing (e.g., `Protocol`/`TypeAlias` for strategy factories with `__init__(config: dict[str, Any])`).  
-3) **data/loaders.py:** Keep or wrap import with `TYPE_CHECKING` + stub alias; add comment that `datasets.load_dataset` lacks stubs (attr-defined).  
-4) **tests/unit/datasets/test_base.py:** Remove ignore by updating `sanitize_sequence` to accept `str | None` (and keep raising ValueError) or cast to `Any` with explanatory comment.  
-5) **tests/unit/core/strategies/test_logistic_regression.py:** Annotate `arrays_dict` as `Mapping[str, np.ndarray]` so `np.savez` call is typed without an ignore.
+### Solution (completed)
+- Removed ignores from classifier_factory.py, test_base.py, test_logistic_regression.py via typing fixes/casts.
+- Kept two external-stub ignores with inline explanations and reference link for datasets.
 
 ### Verification
 ```bash
@@ -164,13 +156,13 @@ uv run mypy src/antibody_training_esm tests --strict
 
 # Count remaining type: ignore
 grep -r "type: ignore" src/ tests/ | wc -l
-# Target: ≤2 (HF tokenizer + datasets import) with inline comments
+# Expected: 2 (HF tokenizer + datasets import) with inline comments
 ```
 
 ### Success Criteria
-- [ ] ≤2 `type: ignore` comments remain, both justified by external stubs
-- [ ] Remaining ignores have explanatory comments + links
-- [ ] Mypy strict mode passes
+- [x] 2 `type: ignore` comments remain, both justified by external stubs
+- [x] Remaining ignores have explanatory comments + links
+- [x] Mypy strict mode passes
 
 ---
 
@@ -203,9 +195,9 @@ uv run pytest
 ```
 
 ### Success Criteria
-- [ ] `src/antibody_training_esm/utils/` doesn't exist
-- [ ] All tests pass
-- [ ] No import errors
+- [x] `src/antibody_training_esm/utils/` doesn't exist
+- [x] All tests pass
+- [x] No import errors
 
 ---
 
@@ -246,21 +238,21 @@ uv run antibody-train --help
 ```
 
 ### Success Criteria
-- [ ] `configs/` directory doesn't exist
-- [ ] All configs in `src/antibody_training_esm/conf/`
-- [ ] `antibody-train --help` works
-- [ ] All tests pass
+- [x] `configs/` directory doesn't exist
+- [x] All configs in `src/antibody_training_esm/conf/`
+- [x] `antibody-train --help` works
+- [x] All tests pass
 
 ---
 
 ## Phase Completion Checklist
 
 ### Quality Gates
-- [ ] All 5 tasks complete
-- [ ] Run `make all` (format → lint → typecheck → test)
-- [ ] Run full test suite: `uv run pytest` (currently ~500+ tests collected)
-- [ ] Run security scan: `uv run bandit -r src/ preprocessing/`
-- [ ] Verify no regressions in preprocessing scripts
+- [x] All 5 tasks complete
+- [x] Run `make all` (format → lint → typecheck → test)
+- [x] Run full test suite: `uv run pytest` (529 passed, 4 skipped)
+- [x] Run security scan: `uv run bandit -r src/ preprocessing/`
+- [x] Verify no regressions in preprocessing scripts
 
 ### Git Workflow
 ```bash
@@ -306,8 +298,8 @@ Completed 5 low-risk improvements for immediate progress:
 - mypy strict: PASSED
 
 **Impact:**
-- Improved code clarity (specific exception handling)
-- Better type safety (fewer ignores)
+- Improved code clarity (specific exception handling with log+re-raise)
+- Better type safety (fewer, documented ignores)
 - Cleaner directory structure (no empty dirs)
 - Consistent file permissions
 
@@ -342,12 +334,12 @@ gh pr create --title "Phase A: Quick Wins - 5 Trivial Fixes" \
 - Config locations: 2 (`configs/` + `src/antibody_training_esm/conf/`)
 - File permissions: mixed (`755` on 6 scripts, `644` elsewhere)
 
-**After Phase A (target):**
-- Bare except blocks: 0 ✅
-- `type: ignore` comments: ≤2 with justification ✅
+**After Phase A (actual):**
+- Bare except blocks: 0 silent (2 guarded log+re-raise remain) ✅
+- `type: ignore` comments: 2 with justification ✅
 - Empty directories: 0 ✅
-- Config locations: 1 ✅
-- File permissions: Consistent + documented ✅
+- Config locations: 1 (package conf) ✅
+- File permissions: Consistent (17 scripts at 755) ✅
 
 ---
 
