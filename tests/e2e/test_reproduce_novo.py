@@ -25,6 +25,7 @@ Phase: 4 (CLI & E2E Tests)
 
 from __future__ import annotations
 
+import os
 from typing import Any, cast
 
 import numpy as np
@@ -71,13 +72,14 @@ def real_dataset_paths() -> dict[str, str]:
 @pytest.mark.e2e
 @pytest.mark.slow
 @pytest.mark.skipif(
-    True,  # Skip by default - this test requires REAL ESM model (not mocked)
-    reason="Requires REAL ESM model (650MB download, ~3min runtime). "
-    "Mock embeddings produce random accuracy. "
-    "Run explicitly: pytest tests/e2e/test_reproduce_novo.py::test_reproduce_novo_jain_accuracy_with_real_data --runxfail",
+    os.getenv("RUN_NOVO_E2E") != "1",
+    reason=(
+        "Requires real ESM model download (~650MB) and preprocessed datasets. "
+        "Opt-in with RUN_NOVO_E2E=1 when you intentionally want to reproduce the "
+        "published Novo accuracy end-to-end."
+    ),
 )
 def test_reproduce_novo_jain_accuracy_with_real_data(
-    mock_transformers_model: tuple[Any, Any],  # TODO: Remove mock for manual runs
     novo_classifier_params: dict[str, Any],
     real_dataset_paths: dict[str, str],
 ) -> None:
@@ -90,6 +92,12 @@ def test_reproduce_novo_jain_accuracy_with_real_data(
     NOTE: This test requires REAL datasets and is computationally expensive.
           It is skipped by default and marked as @pytest.mark.slow.
     """
+    if not BOUGHTER_TRAINING_SUBSET.exists() or not JAIN_VH_ONLY_86_CSV.exists():
+        pytest.skip(
+            "Requires preprocessed Boughter and Jain datasets. "
+            "Run preprocessing/boughter/stage2_stage3_annotation_qc.py and "
+            "preprocessing/jain/step2_preprocess_p5e_s2.py first."
+        )
     # Arrange: Load Boughter training data (Novo methodology)
     # Use canonical VH-only training set (already filtered for quality and flags)
     import pandas as pd
