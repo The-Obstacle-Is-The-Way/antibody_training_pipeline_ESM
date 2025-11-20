@@ -23,5 +23,5 @@
 ---
 
 <div align="center">
-  <img src="assets/fascinating.jpg" alt="Fascinating Behavior" width="400"/>
+  <img src="docs/assets/fascinating.jpg" alt="Fascinating Behavior" width="400"/>
 </div>

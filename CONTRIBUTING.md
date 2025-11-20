@@ -12,5 +12,5 @@
   <em>"Forking is a feature, not a bug."</em>
   <br>
   <br>
-  <img src="assets/ego.jpg" alt="Ego Distribution" width="400"/>
+  <img src="docs/assets/ego.jpg" alt="Ego Distribution" width="400"/>
 </div>
