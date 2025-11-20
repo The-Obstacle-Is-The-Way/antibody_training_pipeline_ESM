@@ -47,6 +47,9 @@ make install
 | Command | Description |
 | :--- | :--- |
 | `make all` | Run the full quality pipeline (Format -> Lint -> Typecheck -> Test). **Run this before committing.** |
+| `make test` | Run fast test suite (~95s, skips e2e/slow/gpu tests). |
+| `make test-e2e` | Run end-to-end tests (honors opt-in env vars like RUN_NOVO_E2E=1). |
+| `make test-all` | Run full test suite (env-gated tests may still skip without flags). |
 | `make train` | Launch the training pipeline using default Hydra config. |
 | `make test` | Run the full test suite. |
 | `make lint` | Run `ruff` linting. |

@@ -7,8 +7,12 @@
 
 ## Build, Test, and Development Commands
 - Environment: `uv venv && source .venv/bin/activate && uv sync --all-extras` (one-time), or simply `make install`.
-- Format/lint/typecheck/test pipeline: `make all` (runs ruff format → ruff lint → mypy → pytest).
-- Targeted commands: `make format`, `make lint`, `make typecheck`, `make test`. Coverage: `make coverage` (runs unit+integration with `--cov-fail-under=70`, HTML in `htmlcov/`).
+- Format/lint/typecheck/test pipeline: `make all` (runs ruff format → ruff lint → mypy → pytest fast suite).
+- Targeted test commands:
+  - `make test`: Fast suite (~95s, skips e2e/slow/gpu) - **use for development**
+  - `make test-e2e`: E2E suite (honors opt-in env vars like RUN_NOVO_E2E=1)
+  - `make test-all`: Full suite (env-gated tests may still skip without flags)
+- Coverage: `make coverage` (runs unit+integration with `--cov-fail-under=70`, HTML in `htmlcov/`).
 - Train locally: `make train` or `uv run antibody-train hardware.device=cuda training.batch_size=32` (Hydra overrides allowed). Clean caches: `make clean`.
 
 ## Coding Style & Naming Conventions
@@ -18,9 +22,13 @@
 - Name tests `test_*.py`; classes `TestSomething`; fixtures live under `tests/fixtures`.
 
 ## Testing Guidelines
-- Primary frameworks: pytest + pytest-cov. Run fast checks with markers, e.g., `uv run pytest -m "unit"`; skip GPU in CI with `-m "not gpu"`.
+- Primary frameworks: pytest + pytest-cov. Run fast checks with `make test` (~95s); skip e2e/slow/gpu tests automatically.
+- Test markers: `unit`, `integration`, `e2e`, `slow`, `gpu`. Register new markers in `pyproject.toml` before using.
 - Coverage target: `make coverage` enforces 70% minimum on unit+integration (`src/antibody_training_esm/` focus) and writes HTML to `htmlcov/`.
-- Register new markers in `pytest.ini`; place integration/e2e tests under `tests/integration` and `tests/e2e`.
+- Heavy e2e tests (real ESM model downloads ~650MB) are opt-in via env vars:
+  - `RUN_NOVO_E2E=1` for Novo accuracy reproduction test
+  - `RUN_PREDICT_CLI_E2E=1` for predict CLI test with real weights
+- Place integration/e2e tests under `tests/integration/` and `tests/e2e/`.
 
 ## Commit & Pull Request Guidelines
 - Follow existing convention: `<type>: <summary>` (lowercase type like `docs`, `feat`, `fix`, `chore`). Keep summaries imperative and scoped.

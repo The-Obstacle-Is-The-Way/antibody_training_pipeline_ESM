@@ -15,16 +15,32 @@ uv sync --all-extras     # Install all dependencies including dev tools
 
 ### Testing
 ```bash
-uv run pytest                                    # Run all tests
-uv run pytest -m unit                           # Run only unit tests (fast)
+# Fast feedback loop (recommended for development)
+make test                                        # Run fast suite (unit + integration; ~95s)
+make test-e2e                                   # Run e2e suite (honors opt-in env vars)
+make test-all                                   # Run full suite (env-gated tests may skip)
+
+# Direct pytest commands
+uv run pytest -m "not e2e and not slow"         # Fast tests only
+uv run pytest -m unit                           # Run only unit tests
 uv run pytest -m integration                    # Run integration tests
 uv run pytest -m e2e                           # Run end-to-end tests (expensive)
 uv run pytest tests/unit/core/test_trainer.py  # Run specific test file
 uv run pytest -k test_function_name            # Run specific test by name
 uv run pytest --cov=. --cov-report=html --cov-report=term-missing --cov-fail-under=70  # Coverage report
+
+# Opt-in for heavy e2e tests (download real ESM model ~650MB)
+RUN_NOVO_E2E=1 uv run pytest tests/e2e/test_reproduce_novo.py::test_reproduce_novo_jain_accuracy_with_real_data
+RUN_PREDICT_CLI_E2E=1 uv run pytest tests/e2e/test_predict_cli.py::test_predict_cli_end_to_end
 ```
 
-**Test markers:** All tests must be tagged with `unit`, `integration`, `e2e`, or `slow` markers. Register new markers in `pyproject.toml` before using.
+**Test markers:** All tests must be tagged with `unit`, `integration`, `e2e`, `slow`, or `gpu` markers. Register new markers in `pyproject.toml` before using.
+
+**Test strategy:**
+- `make test` runs fast loop (~95s) - use for development/CI
+- `make test-e2e` runs e2e tests - use for pre-release validation
+- `make test-all` runs everything - use for comprehensive checks
+- Heavy tests (real model downloads) are opt-in via env vars
 
 ### Code Quality
 ```bash
@@ -317,6 +333,7 @@ Standard fragments across all datasets:
 2. Show print statements: `uv run pytest -s`
 3. Drop into debugger: `uv run pytest --pdb`
 4. Check fixtures: `tests/fixtures/mock_datasets/` for test data
+5. Skip slow tests: `uv run pytest -m "not e2e and not slow"` for faster iteration
 
 ## Git Workflow
 
