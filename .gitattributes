@@ -124,16 +124,17 @@ docker-compose*.yml text eol=lf
 # Show function names in Python diffs
 *.py diff=python
 
+# Jupyter Notebooks - treat as binary (prevents Git text mangling)
+*.ipynb binary
+
 # Custom diff for Jupyter notebooks (if using nbdime)
 # *.ipynb diff=jupyternotebook
 
 # -----------------------------------------------------------------------------
 # Export-ignore (exclude from git archive / GitHub releases)
 # -----------------------------------------------------------------------------
-# Exclude development files from source distributions
+# Scientific reproducibility: ONLY exclude dev tooling, KEEP tests/docs/README
+# Users need tests to verify environment and docs to understand methodology
 .github export-ignore
 .pre-commit-config.yaml export-ignore
-tests/ export-ignore
-docs/ export-ignore
-*.md export-ignore
 Makefile export-ignore
