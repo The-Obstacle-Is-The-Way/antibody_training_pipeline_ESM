@@ -51,7 +51,6 @@ make install
 | `make test-e2e` | Run end-to-end tests (honors opt-in env vars like RUN_NOVO_E2E=1). |
 | `make test-all` | Run full test suite (env-gated tests may still skip without flags). |
 | `make train` | Launch the training pipeline using default Hydra config. |
-| `make test` | Run the full test suite. |
 | `make lint` | Run `ruff` linting. |
 | `make format` | Auto-format code with `ruff`. |
 | `make typecheck` | Run static type analysis with `mypy`. |
