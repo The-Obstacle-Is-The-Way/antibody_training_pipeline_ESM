@@ -78,6 +78,7 @@ def real_dataset_paths() -> dict[str, str]:
     "python preprocessing/jain/step2_preprocess_p5e_s2.py",
 )
 def test_reproduce_novo_jain_accuracy_with_real_data(
+    mock_transformers_model: tuple[Any, Any],
     novo_classifier_params: dict[str, Any],
     real_dataset_paths: dict[str, str],
 ) -> None:
