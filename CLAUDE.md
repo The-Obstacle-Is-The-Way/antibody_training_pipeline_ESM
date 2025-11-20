@@ -37,6 +37,32 @@ make all         # Run format → lint → typecheck → test
 
 **Critical:** This repo maintains 100% type safety. All functions must have complete type annotations. Mypy runs with `disallow_untyped_defs=true`.
 
+### Documentation
+
+```bash
+make docs-serve   # Serve docs locally with live reload (http://127.0.0.1:8000)
+make docs-build   # Build static site to site/ directory
+make docs-clean   # Remove generated site/
+```
+
+**MkDocs Material Stack:**
+- **MkDocs Material**: Modern, beautiful documentation theme (used by TensorFlow, FastAPI, Pydantic)
+- **mkdocstrings**: Auto-generates API reference from Python docstrings (Google style)
+- **mkdocs-gen-files**: Programmatic API page generation via `docs/gen_ref_pages.py`
+- **GitHub Pages**: Ready for deployment (see `.github/workflows/docs.yml` when created)
+
+**Documentation Structure:**
+- `docs/index.md` - Landing page (auto-generated from README content)
+- `docs/user-guide/` - Installation, training, testing, inference, troubleshooting
+- `docs/developer-guide/` - Architecture, workflows, testing, CI/CD
+- `docs/research/` - Novo parity, methodology, benchmarks
+- `docs/datasets/` - Dataset preprocessing and validation docs
+- `docs/api/` - Auto-generated API reference (140+ pages from source code)
+
+**Config:** `mkdocs.yml` - Nav structure, theme settings, plugins, markdown extensions
+
+**Live Preview:** Run `make docs-serve` and visit http://127.0.0.1:8000 to see docs with instant reload on file changes.
+
 ### Training & Testing
 
 **Basic Training:**
