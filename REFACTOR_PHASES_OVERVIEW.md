@@ -11,7 +11,7 @@
 | Phase | Focus | Effort | Risk | Scope | Document |
 |-------|-------|--------|------|-------|----------|
 | **A** | Quick Wins | ✅ DONE | LOW | Permissions, bare excepts, type ignores, utils/, configs/ | [PHASE_A_QUICK_WINS.md](./PHASE_A_QUICK_WINS.md) |
-| **B** | Path Centralization | 2-3h | MEDIUM | 20+ files, 106 hardcoded paths | [PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md) |
+| **B** | Path Centralization | ✅ DONE | MEDIUM | 20+ files, 106 hardcoded paths | [PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md) |
 | **C** | File Splitting | 4-5h | HIGH | 4 files >500 lines | [PHASE_C_FILE_SPLITTING.md](./PHASE_C_FILE_SPLITTING.md) |
 | **D** | Code Deduplication | 5-7h | HIGH | 6 preprocessing scripts (~1.6k LOC overlap) | [PHASE_D_CODE_DEDUPLICATION.md](./PHASE_D_CODE_DEDUPLICATION.md) |
 | **E** | Polish & Docs | 2-3h | LOW | Docs/comments/bug refs after refactors | [PHASE_E_POLISH.md](./PHASE_E_POLISH.md) |
@@ -200,9 +200,10 @@ git merge dev
 ## How to Use These Documents
 
 1. **Phase A complete** (see PHASE_A_QUICK_WINS.md for proof/commits)
-2. **Start at Phase B** — read PHASE_B_PATH_CENTRALIZATION.md
-3. Complete all tasks in each phase
-4. Run quality gates
+2. **Phase B complete** (see PHASE_B_PATH_CENTRALIZATION.md)
+3. **Start at Phase C** — read PHASE_C_FILE_SPLITTING.md
+4. Complete all tasks in each phase
+5. Run quality gates
 5. Get review/approval
 6. Continue through Phase E
 

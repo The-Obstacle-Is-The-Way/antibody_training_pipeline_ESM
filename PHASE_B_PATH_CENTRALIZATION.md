@@ -1,5 +1,6 @@
 # Phase B: Path Centralization
 
+**Status:** Completed (2025-11-20)
 **Effort:** 2-3 hours
 **Risk:** MEDIUM
 **Dependencies:** Phase A complete
@@ -11,14 +12,9 @@
 
 Eliminate 100+ hardcoded paths scattered across preprocessing scripts and tests by creating a single source of truth.
 
-**Current evidence:** `rg "data/(train|test)" preprocessing/ --no-heading | wc -l` → 106 matches across 20 preprocessing files; tests contain additional hardcoded paths for fixtures and e2e checks.
+**Outcome:** Created `preprocessing/paths.py`, migrated 17 scripts and 11 test files. Verified green build.
 
 **Goal:** Create `preprocessing/paths.py` and migrate all scripts/tests to use centralized path constants.
-
-**Why this matters:**
-- Changing directory structure currently breaks 17 scripts
-- Hardcoded paths violate DRY principle
-- Centralized paths make testing/deployment easier
 
 ---
 
@@ -63,13 +59,13 @@ DATA_TEST_DIR = DATA_DIR / "test"
 BOUGHTER_DIR = DATA_TRAIN_DIR / "boughter"
 BOUGHTER_RAW_DIR = BOUGHTER_DIR / "raw"
 BOUGHTER_PROCESSED_DIR = BOUGHTER_DIR / "processed"
+BOUGHTER_ANNOTATED_DIR = BOUGHTER_DIR / "annotated"
 BOUGHTER_CANONICAL_DIR = BOUGHTER_DIR / "canonical"
 
 # Specific files
-BOUGHTER_STAGE1_DNA = BOUGHTER_RAW_DIR / "Boughter_VH_DNA.csv"
-BOUGHTER_STAGE2_ANNOTATED = BOUGHTER_PROCESSED_DIR / "stage2_annotated.csv"
-BOUGHTER_STAGE3_QC = BOUGHTER_PROCESSED_DIR / "stage3_qc_passed.csv"
-BOUGHTER_CANONICAL_CSV = BOUGHTER_CANONICAL_DIR / "boughter_vh_914.csv"
+BOUGHTER_STAGE1_OUTPUT = BOUGHTER_PROCESSED_DIR / "boughter.csv"
+BOUGHTER_TRAINING_SUBSET = BOUGHTER_CANONICAL_DIR / "VH_only_boughter_training.csv"
+BOUGHTER_CANONICAL_CSV = BOUGHTER_CANONICAL_DIR / "boughter_vh_914.csv" # Alias or future name
 
 # ============================================================================
 # Jain (test set - Novo parity benchmark)
@@ -82,9 +78,17 @@ JAIN_CANONICAL_DIR = JAIN_DIR / "canonical"
 
 # Specific files
 JAIN_RAW_EXCEL = JAIN_RAW_DIR / "jain_clinical_antibodies_with_private_elisa.xlsx"
-JAIN_ELISA_116 = JAIN_PROCESSED_DIR / "jain_ELISA_ONLY_116.csv"
+JAIN_PRIVATE_ELISA_EXCEL = JAIN_RAW_DIR / "Private_Jain2017_ELISA_indiv.xlsx"
+JAIN_SD01_EXCEL = JAIN_RAW_DIR / "jain-pnas.1616408114.sd01.xlsx"
+JAIN_SD02_EXCEL = JAIN_RAW_DIR / "jain-pnas.1616408114.sd02.xlsx"
+JAIN_SD03_EXCEL = JAIN_RAW_DIR / "jain-pnas.1616408114.sd03.xlsx"
+
+JAIN_FULL_CSV = JAIN_PROCESSED_DIR / "jain_with_private_elisa_FULL.csv"
+JAIN_SD03_CSV = JAIN_PROCESSED_DIR / "jain_sd03.csv"
+JAIN_ELISA_116_CSV = JAIN_PROCESSED_DIR / "jain_ELISA_ONLY_116.csv"
 JAIN_P5E_S2 = JAIN_PROCESSED_DIR / "jain_p5e_s2_preprocessed.csv"
-JAIN_CANONICAL_CSV = JAIN_CANONICAL_DIR / "jain_86_novo_parity.csv"
+JAIN_86_PARITY_CSV = JAIN_CANONICAL_DIR / "jain_86_novo_parity.csv"
+JAIN_VH_ONLY_86_CSV = JAIN_CANONICAL_DIR / "VH_only_jain_86_p5e_s2.csv"
 
 # ============================================================================
 # Harvey (test set - nanobodies)
@@ -95,10 +99,14 @@ HARVEY_PROCESSED_DIR = HARVEY_DIR / "processed"
 HARVEY_FRAGMENTS_DIR = HARVEY_DIR / "fragments"
 
 # Specific files
-HARVEY_RAW_NS = HARVEY_RAW_DIR / "nanobody_nonspecific.csv"
-HARVEY_RAW_S = HARVEY_RAW_DIR / "nanobody_specific.csv"
-HARVEY_COMBINED = HARVEY_PROCESSED_DIR / "harvey_combined.csv"
+HARVEY_HIGH_CSV = HARVEY_RAW_DIR / "high_polyreactivity_high_throughput.csv"
+HARVEY_LOW_CSV = HARVEY_RAW_DIR / "low_polyreactivity_high_throughput.csv"
+HARVEY_FULL_CSV = HARVEY_PROCESSED_DIR / "harvey.csv"
 HARVEY_VHH_ONLY = HARVEY_FRAGMENTS_DIR / "VHH_only_harvey.csv"
+
+HARVEY_RAW_NS = HARVEY_RAW_DIR / "nanobody_nonspecific.csv" # Legacy?
+HARVEY_RAW_S = HARVEY_RAW_DIR / "nanobody_specific.csv" # Legacy?
+HARVEY_COMBINED = HARVEY_PROCESSED_DIR / "harvey_combined.csv" # Legacy?
 
 # ============================================================================
 # Shehata (test set - PSR assay)
@@ -110,8 +118,8 @@ SHEHATA_FRAGMENTS_DIR = SHEHATA_DIR / "fragments"
 SHEHATA_CANONICAL_DIR = SHEHATA_DIR / "canonical"
 
 # Specific files
-SHEHATA_RAW_EXCEL = SHEHATA_RAW_DIR / "shehata_antibody_data.xlsx"
-SHEHATA_PROCESSED_CSV = SHEHATA_PROCESSED_DIR / "shehata_processed.csv"
+SHEHATA_RAW_EXCEL = SHEHATA_RAW_DIR / "shehata-mmc2.xlsx"
+SHEHATA_PROCESSED_CSV = SHEHATA_PROCESSED_DIR / "shehata.csv"
 SHEHATA_CANONICAL_CSV = SHEHATA_CANONICAL_DIR / "shehata_398.csv"
 
 # ============================================================================
@@ -403,31 +411,31 @@ make all
 ```
 
 ### Success Criteria
-- [ ] `preprocessing/paths.py` exists
-- [ ] Zero hardcoded "data/" paths in preprocessing scripts (except paths.py)
-- [ ] All 17 scripts updated
-- [ ] All validation scripts pass
-- [ ] Full test suite passes (`uv run pytest`)
-- [ ] `make all` passes
+- [x] `preprocessing/paths.py` exists
+- [x] Zero hardcoded "data/" paths in preprocessing scripts (except paths.py)
+- [x] All 17 scripts updated
+- [x] All validation scripts pass
+- [x] Full test suite passes (`uv run pytest`)
+- [x] `make all` passes
 
 ---
 
 ## Phase Completion Checklist
 
 ### All Tasks Complete
-- [ ] Task B1: Created preprocessing/paths.py
-- [ ] Task B2: Migrated 4 Boughter scripts
-- [ ] Task B3: Migrated 5 Jain scripts
-- [ ] Task B4: Migrated 3 Harvey scripts
-- [ ] Task B5: Migrated 3 Shehata scripts
-- [ ] Task B6: Updated tests/e2e paths
-- [ ] Task B7: Final verification passed
+- [x] Task B1: Created preprocessing/paths.py
+- [x] Task B2: Migrated 4 Boughter scripts
+- [x] Task B3: Migrated 5 Jain scripts
+- [x] Task B4: Migrated 3 Harvey scripts
+- [x] Task B5: Migrated 3 Shehata scripts
+- [x] Task B6: Updated tests/e2e paths
+- [x] Task B7: Final verification passed
 
 ### Quality Gates
-- [ ] Run `make all` (format → lint → typecheck → test)
-- [ ] All preprocessing scripts run successfully
-- [ ] No hardcoded paths found (except paths.py)
-- [ ] Security scan: `uv run bandit -r src/ preprocessing/`
+- [x] Run `make all` (format → lint → typecheck → test)
+- [x] All preprocessing scripts run successfully
+- [x] No hardcoded paths found (except paths.py)
+- [x] Security scan: `uv run bandit -r src/ preprocessing/`
 
 ### Git Workflow
 ```bash

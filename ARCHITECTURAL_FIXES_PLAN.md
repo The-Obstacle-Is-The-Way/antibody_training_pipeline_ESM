@@ -6,9 +6,9 @@
 
 ---
 
-## Current Baseline (post-Phase A, validated 2025-11-20)
+## Current Baseline (post-Phase B, validated 2025-11-20)
 
-- **Hardcoded paths:** 106 matches in `preprocessing/*.py` (`rg "data/(train|test)" preprocessing --no-heading | wc -l`) plus additional references in tests/e2e.
+- **Hardcoded paths:** 0 matches (paths centralized in `preprocessing/paths.py`).
 - **Large files (>500 lines):** `core/trainer.py` (961), `datasets/base.py` (627), `boughter/stage1_dna_translation.py` (598), `boughter/stage2_stage3_annotation_qc.py` (519).
 - **`type: ignore` usages (2):**
   - `src/antibody_training_esm/core/embeddings.py:60` (HF tokenizer stubs)
@@ -29,22 +29,16 @@
 - Preprocessing scripts already carry `#!/usr/bin/env python3` shebangs.
 - Logging configuration exists for preprocessing (`preprocessing/logging_config.py`).
 - Pytest config consolidated in `pyproject.toml`.
+- **Paths Centralized:** All preprocessing scripts and tests use `preprocessing/paths.py`.
 
 ---
 
-## Plan (Phases B–E)
+## Plan (Phases C–E)
 
-- **Phase B – Path Centralization** ([PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md))  
-  Create `preprocessing/paths.py`; migrate all preprocessing scripts plus tests/e2e to path constants; eliminate inline `"data/...`" strings.
+- **Phase A – Quick Wins** ([PHASE_A_QUICK_WINS.md](./PHASE_A_QUICK_WINS.md)) - **DONE**
+- **Phase B – Path Centralization** ([PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md)) - **DONE**
 
-- **Phase C – File Splitting** ([PHASE_C_FILE_SPLITTING.md](./PHASE_C_FILE_SPLITTING.md))  
-  Split `core/trainer.py`, `datasets/base.py`, `boughter/stage1_dna_translation.py`, `boughter/stage2_stage3_annotation_qc.py` into focused modules/packages.
-
-- **Phase D – Code Deduplication** ([PHASE_D_CODE_DEDUPLICATION.md](./PHASE_D_CODE_DEDUPLICATION.md))  
-  Extract shared validation and fragment logic into `preprocessing/validation_utils.py` and `preprocessing/fragment_utils.py`; verify outputs byte-for-byte.
-
-- **Phase E – Polish** ([PHASE_E_POLISH.md](./PHASE_E_POLISH.md))  
-  Document PSR thresholds, clean/justify remaining `print()` calls, clear TODO/bug references, and add docstrings to new modules after splitting/deduplication.
+- **Phase C – File Splitting** ([PHASE_C_FILE_SPLITTING.md](./PHASE_C_FILE_SPLITTING.md))
 
 ---
 
