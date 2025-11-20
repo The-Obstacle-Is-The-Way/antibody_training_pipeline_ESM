@@ -1,7 +1,7 @@
 # Antibody Non-Specificity Prediction Pipeline using ESM
 
 <div align="center">
-  <img src="../assets/leeroy_jenkins.png" alt="Leeroy Jenkins" width="300"/>
+  <img src="assets/leeroy_jenkins.png" alt="Leeroy Jenkins" width="300"/>
   <br>
   <em>"⏰ Times up, let's do this." - Leeroy Jenkins</em>
 </div>
