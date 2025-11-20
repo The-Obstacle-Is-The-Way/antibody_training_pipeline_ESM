@@ -173,15 +173,19 @@ def setup_logging(config: dict[str, Any] | DictConfig) -> logging.Logger:
         log_file = output_dir / log_file_str  # log_file is relative to Hydra output dir
         # Create log directory if it doesn't exist (even in Hydra mode)
         log_file.parent.mkdir(parents=True, exist_ok=True)
-    except Exception:
-        # Running in legacy mode (no Hydra decorator)
-        # Fall back to absolute path from config
+    except (ValueError, AttributeError, OSError) as e:
+        logging.getLogger(__name__).warning(
+            "Hydra output dir not available, falling back to config log path: %s", e
+        )
         log_file = Path(log_file_str)
         if not log_file.is_absolute():
-            # If relative path, route to logs/ directory (not repo root!)
             log_file = Path.cwd() / log_file_str
-        # Create log directory if it doesn't exist
         log_file.parent.mkdir(parents=True, exist_ok=True)
+    except Exception:
+        logging.getLogger(__name__).exception(
+            "Unexpected error determining log file path"
+        )
+        raise
 
     # Configure logging
     # force=True prevents duplicate log lines when Hydra has already configured logging
@@ -855,15 +859,20 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
             cv_output_dir = Path(hydra_cfg.runtime.output_dir)
             experiment_name = cfg.experiment.name
             logger.info(f"Saving CV results to Hydra output dir: {cv_output_dir}")
-        except Exception:
-            # Fallback for non-Hydra mode (legacy train_model or direct calls)
-            # Use model_save_dir from config, or default to ./outputs
+        except (ImportError, AttributeError, OSError, ValueError) as e:
             model_save_dir = config.get("training", {}).get(
                 "model_save_dir", "./outputs"
             )
             cv_output_dir = Path(model_save_dir)
             experiment_name = config.get("experiment", {}).get("name", "training")
-            logger.info(f"Running without Hydra, saving CV results to: {cv_output_dir}")
+            logger.info(
+                "Running without Hydra, saving CV results to %s (reason: %s)",
+                cv_output_dir,
+                e,
+            )
+        except Exception:
+            logger.exception("Unexpected error determining CV output directory")
+            raise
 
         # Save CV results (both Hydra and legacy modes)
         save_cv_results(cv_results, cv_output_dir, experiment_name, logger)

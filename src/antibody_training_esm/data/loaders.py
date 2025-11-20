@@ -13,6 +13,8 @@ from typing import Any, Protocol, cast
 
 import numpy as np
 import pandas as pd
+
+# datasets library does not expose type stubs
 from datasets import load_dataset  # type: ignore[attr-defined]
 
 logger = logging.getLogger(__name__)

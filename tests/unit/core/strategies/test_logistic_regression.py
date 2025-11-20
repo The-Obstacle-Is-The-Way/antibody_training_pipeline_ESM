@@ -341,7 +341,12 @@ def test_logreg_strategy_serialization_roundtrip(
 
     with open(json_path, "w") as f:
         json.dump(config_dict, f)
-    np.savez(npz_path, **arrays_dict)  # type: ignore[arg-type]
+
+    # Cast arrays_dict to satisfy np.savez kwargs typing
+    from typing import cast
+
+    safe_arrays = cast(dict[str, Any], arrays_dict)
+    np.savez(npz_path, **safe_arrays)
 
     # Load from disk
     with open(json_path) as f:

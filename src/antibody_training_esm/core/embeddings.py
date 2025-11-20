@@ -57,10 +57,10 @@ class ESMEmbeddingExtractor:
         )
         self.model.to(device)
         self.model.eval()
-        self.tokenizer = AutoTokenizer.from_pretrained(  # type: ignore[no-untyped-call]
+        self.tokenizer = AutoTokenizer.from_pretrained(
             model_name,
             revision=revision,  # nosec B615 - Pinned to specific version for scientific reproducibility
-        )
+        )  # type: ignore[no-untyped-call]  # HuggingFace transformers lacks type stubs
         logger.info(
             f"ESM model {model_name} (revision={revision}) loaded on {device} "
             f"with batch_size={batch_size} and max_length={max_length}"

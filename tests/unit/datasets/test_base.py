@@ -262,7 +262,7 @@ def test_sanitize_sequence_rejects_none() -> None:
 
     # Act & Assert
     with pytest.raises(ValueError, match="non-empty string"):
-        dataset.sanitize_sequence(None)  # type: ignore
+        dataset.sanitize_sequence(cast(str, None))
 
 
 @pytest.mark.unit

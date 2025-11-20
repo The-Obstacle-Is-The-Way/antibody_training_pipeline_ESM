@@ -135,4 +135,6 @@ def create_classifier_from_registry(config: dict[str, Any]) -> ClassifierStrateg
     strategy_class = CLASSIFIER_REGISTRY[classifier_type]
     # Cast to Any to bypass protocol constructor checks
     # (Protocol doesn't strictly define __init__ signature)
-    return strategy_class(config)  # type: ignore[call-arg]
+    from typing import cast
+
+    return cast(ClassifierStrategy, cast(Any, strategy_class)(config))
