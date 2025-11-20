@@ -1,2 +1,140 @@
-# Auto detect text files and perform LF normalization
+# =============================================================================
+# Git Attributes - Cross-Platform Line Ending & Binary Handling
+# =============================================================================
+# Ensures consistent behavior across Windows/macOS/Linux contributors
+# Prevents CRLF/LF line ending hell and Git diffing binary files
+
+# -----------------------------------------------------------------------------
+# Auto-detect (fallback for unspecified files)
+# -----------------------------------------------------------------------------
 * text=auto
+
+# -----------------------------------------------------------------------------
+# Source Code - Enforce LF (Unix-style)
+# -----------------------------------------------------------------------------
+*.py text eol=lf
+*.pyi text eol=lf
+*.pyx text eol=lf
+
+# -----------------------------------------------------------------------------
+# Configuration Files - Enforce LF
+# -----------------------------------------------------------------------------
+*.yaml text eol=lf
+*.yml text eol=lf
+*.toml text eol=lf
+*.ini text eol=lf
+*.cfg text eol=lf
+*.json text eol=lf
+
+# -----------------------------------------------------------------------------
+# Documentation - Enforce LF
+# -----------------------------------------------------------------------------
+*.md text eol=lf
+*.rst text eol=lf
+*.txt text eol=lf
+LICENSE text eol=lf
+CITATION.cff text eol=lf
+
+# -----------------------------------------------------------------------------
+# Shell Scripts - Enforce LF (critical for Linux/macOS execution)
+# -----------------------------------------------------------------------------
+*.sh text eol=lf
+*.bash text eol=lf
+Makefile text eol=lf
+
+# -----------------------------------------------------------------------------
+# Docker - Enforce LF
+# -----------------------------------------------------------------------------
+Dockerfile* text eol=lf
+*.dockerfile text eol=lf
+docker-compose*.yml text eol=lf
+.dockerignore text eol=lf
+
+# -----------------------------------------------------------------------------
+# CI/CD - Enforce LF
+# -----------------------------------------------------------------------------
+.github/**/* text eol=lf
+.pre-commit-config.yaml text eol=lf
+
+# -----------------------------------------------------------------------------
+# Data Files (CSV, TSV) - Enforce LF
+# -----------------------------------------------------------------------------
+*.csv text eol=lf
+*.tsv text eol=lf
+
+# -----------------------------------------------------------------------------
+# Binary Files - NO text conversion (prevent corruption)
+# -----------------------------------------------------------------------------
+
+# Machine Learning Models
+*.pkl binary
+*.npz binary
+*.xgb binary
+*.h5 binary
+*.hdf5 binary
+*.pt binary
+*.pth binary
+*.onnx binary
+*.pb binary
+
+# Excel Files (binary format)
+*.xlsx binary
+*.xls binary
+*.xlsm binary
+
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+
+# PDFs
+*.pdf binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.bz2 binary
+*.7z binary
+
+# Fonts
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+
+# -----------------------------------------------------------------------------
+# Large File Storage (Git LFS) - Optional but recommended
+# -----------------------------------------------------------------------------
+# Uncomment if using Git LFS for large model files (>100MB)
+# See: https://git-lfs.github.com/
+
+# *.pkl filter=lfs diff=lfs merge=lfs -text
+# *.npz filter=lfs diff=lfs merge=lfs -text
+# *.xgb filter=lfs diff=lfs merge=lfs -text
+# *.h5 filter=lfs diff=lfs merge=lfs -text
+# *.pth filter=lfs diff=lfs merge=lfs -text
+
+# -----------------------------------------------------------------------------
+# Git Diff Settings
+# -----------------------------------------------------------------------------
+# Show function names in Python diffs
+*.py diff=python
+
+# Jupyter Notebooks - treat as binary (prevents Git text mangling)
+*.ipynb binary
+
+# Custom diff for Jupyter notebooks (if using nbdime)
+# *.ipynb diff=jupyternotebook
+
+# -----------------------------------------------------------------------------
+# Export-ignore (exclude from git archive / GitHub releases)
+# -----------------------------------------------------------------------------
+# Scientific reproducibility: ONLY exclude dev tooling, KEEP tests/docs/README
+# Users need tests to verify environment and docs to understand methodology
+.github export-ignore
+.pre-commit-config.yaml export-ignore
+Makefile export-ignore
