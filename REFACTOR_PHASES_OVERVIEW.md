@@ -156,27 +156,27 @@ git merge dev
 
 ### Before All Phases (Current State)
 
-| Metric | Value | Grade |
-|--------|-------|-------|
-| Overall Quality | B+ (Jekyll & Hyde) | 😐 |
-| Critical Issues | 8 | 🔴 |
-| High Priority Issues | 8 | 🟠 |
-| Duplicate Code | ~840 lines | 🔴 |
-| Hardcoded Paths | 50+ instances | 🔴 |
-| Files >500 lines | 3 files | 🟠 |
-| Type Coverage | 99% (2 ignores) | 🟡 |
+| Metric | Current (2025-11-20) | Notes |
+|--------|----------------------|-------|
+| Hardcoded paths | 106 matches in `preprocessing/` (rg) + test suite references | No `preprocessing/paths.py` yet |
+| Files >500 lines | 4 files: `core/trainer.py` (961), `datasets/base.py` (627), `boughter/stage1_dna_translation.py` (598), `boughter/stage2_stage3_annotation_qc.py` (519) | Single-responsibility violations |
+| `type: ignore` usages | 5 occurrences (embeddings, classifier_factory, data/loaders, 2 tests) | Exceeds planned target of ≤2 |
+| Executable permissions | 6 Python scripts are `755`, remainder `644` | Inconsistent policy |
+| Duplicate preprocessing logic | ~1.6k LOC overlap across 6 validation/fragment scripts | Needs shared utils |
+| Config locations | Root `configs/testing/` + package `conf/` | Two sources of truth |
+| TODO/bug references | 1 TODO (`tests/integration/test_dataset_pipeline.py`); CLI override bug doc referenced but missing | Clarify/remove in Phase E |
 
 ### After All Phases (Target State)
 
-| Metric | Value | Grade |
-|--------|-------|-------|
-| Overall Quality | A+ (Pristine) | ✅ |
-| Critical Issues | 0 | ✅ |
-| High Priority Issues | 0 | ✅ |
-| Duplicate Code | 0 | ✅ |
-| Hardcoded Paths | 0 (centralized) | ✅ |
-| Files >500 lines | 0 | ✅ |
-| Type Coverage | 100% (1 documented) | ✅ |
+| Metric | Target | Notes |
+|--------|--------|-------|
+| Hardcoded paths | Centralized via `preprocessing/paths.py` with overrides for tests | Zero inline `"data/..."` strings |
+| Files >500 lines | 0 | All four large files split into focused modules |
+| `type: ignore` usages | ≤2 with inline justification (external stubs only) | Documented in code |
+| Executable permissions | Consistent policy applied to preprocessing/scripts | Either all executable or none, documented |
+| Duplicate preprocessing logic | Shared validation/fragment utils, noop diffs on outputs | Byte-for-byte verification |
+| Config locations | Single source under `src/antibody_training_esm/conf/` | Tests updated accordingly |
+| TODO/bug references | Remaining references link to live docs or are removed | No stale breadcrumbs |
 
 ---
 
