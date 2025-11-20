@@ -9,7 +9,7 @@
 
 ## Overview
 
-Split 3 massive files (>500 lines) into modular components following Single Responsibility Principle.
+Split 4 massive files (>500 lines) into modular components following Single Responsibility Principle.
 
 **Goal:** Break monolithic files into maintainable modules while preserving all functionality.
 
@@ -24,18 +24,19 @@ Split 3 massive files (>500 lines) into modular components following Single Resp
 
 | File | Current Lines | Target Lines | New Modules |
 |------|---------------|--------------|-------------|
-| `core/trainer.py` | 934 | ~300 | 3 modules |
-| `boughter/stage1_dna_translation.py` | 590 | ~200 | 2 modules |
-| `boughter/stage2_stage3_annotation_qc.py` | 514 | ~200 | 2 modules |
+| `core/trainer.py` | 961 | ~350 | 3 modules |
+| `datasets/base.py` | 627 | ~350 | 2-3 modules/mixins |
+| `boughter/stage1_dna_translation.py` | 598 | ~250 | 2 modules |
+| `boughter/stage2_stage3_annotation_qc.py` | 519 | ~250 | 2 modules |
 
-**Total:** 3 files split into 7 new modules
+**Total:** 4 files split into ~10 focused modules
 
 ---
 
 ## Task C1: Split trainer.py (1.5 hours)
 
 ### Current State
-**File:** `src/antibody_training_esm/core/trainer.py` (934 lines)
+**File:** `src/antibody_training_esm/core/trainer.py` (961 lines)
 
 **What it does:**
 - Main `train_model()` function
@@ -395,7 +396,7 @@ uv run mypy src/antibody_training_esm/core --strict
 ## Task C2: Split stage1_dna_translation.py (1 hour)
 
 ### Current State
-**File:** `preprocessing/boughter/stage1_dna_translation.py` (590 lines)
+**File:** `preprocessing/boughter/stage1_dna_translation.py` (598 lines)
 
 **What it does:**
 - DNA → Protein translation
@@ -458,7 +459,7 @@ uv run python preprocessing/boughter/validate_stage1.py
 ## Task C3: Split stage2_stage3_annotation_qc.py (1 hour)
 
 ### Current State
-**File:** `preprocessing/boughter/stage2_stage3_annotation_qc.py` (514 lines)
+**File:** `preprocessing/boughter/stage2_stage3_annotation_qc.py` (519 lines)
 
 **What it does:**
 - ANARCI annotation
@@ -517,12 +518,70 @@ uv run python preprocessing/boughter/validate_stages2_3.py
 
 ---
 
+## Task C4: Split datasets/base.py (1 hour)
+
+### Current State
+**File:** `src/antibody_training_esm/datasets/base.py` (627 lines)
+
+**What it does:**
+- Base class definition + logger setup
+- Sequence validation utilities
+- ANARCI annotation helpers
+- Fragment construction and CSV writing
+
+### Target Structure
+
+```
+src/antibody_training_esm/datasets/
+├── base.py                   # Abstract interface + high-level helpers (~200 lines)
+└── base_components/
+    ├── __init__.py
+    ├── validation.py         # sanitize_sequence, validate_sequences, print_statistics
+    ├── annotation.py         # annotate_sequence, annotate_all
+    └── fragments.py          # create_fragments, create_fragment_csvs
+```
+
+### Implementation Steps
+
+**Step 1: Create base_components/ package (5 min)**
+```bash
+mkdir -p src/antibody_training_esm/datasets/base_components
+touch src/antibody_training_esm/datasets/base_components/__init__.py
+```
+
+**Step 2: Move utilities (30 min)**
+- `validation.py`: `VALID_AMINO_ACIDS`, `sanitize_sequence`, `validate_sequences`, `print_statistics`
+- `annotation.py`: `annotate_sequence`, `annotate_all`
+- `fragments.py`: `create_fragments`, `create_fragment_csvs`
+
+**Step 3: Keep abstract class lean (15 min)**
+- `AntibodyDataset` stays in `base.py` and imports helpers from `base_components`
+- Re-export helpers in `base_components/__init__.py` for tests
+
+**Step 4: Update imports/tests (10 min)**
+- Update dataset subclasses and tests to import from new locations if needed.
+
+### Verification
+```bash
+wc -l src/antibody_training_esm/datasets/base.py  # Target <300 lines
+uv run pytest tests/unit/datasets tests/integration/test_*embedding_compatibility.py
+uv run mypy src/antibody_training_esm/datasets --strict
+```
+
+### Success Criteria
+- [ ] `datasets/base.py` reduced to <300 lines
+- [ ] `base_components/` package created with validation/annotation/fragment helpers
+- [ ] Dataset unit/integration tests pass
+
+---
+
 ## Phase Completion Checklist
 
 ### All Tasks Complete
 - [ ] Task C1: Split trainer.py (3 modules)
 - [ ] Task C2: Split stage1_dna_translation.py (2 modules)
 - [ ] Task C3: Split stage2_stage3_annotation_qc.py (2 modules)
+- [ ] Task C4: Split datasets/base.py (3 modules)
 
 ### File Size Verification
 ```bash
@@ -551,29 +610,35 @@ git checkout -b claude/refactor-phase-c
 # Commit
 git add -A
 git commit -m "$(cat <<'EOF'
-refactor: Phase C - Split 3 overly long files into modules
+refactor: Phase C - Split oversized files into modules
 
-Split 3 massive files (>500 lines) into maintainable modular components.
+Split 4 massive files (>500 lines) into maintainable modular components.
 Follows Single Responsibility Principle while preserving all functionality.
 
-**Task C1: Split trainer.py (934 → ~300 lines)**
+**Task C1: Split trainer.py (961 → ~350 lines)**
 Created src/antibody_training_esm/core/training/ with 3 modules:
 - cache.py: CacheManager for embedding cache operations
 - metrics.py: MetricsLogger for evaluation metrics
 - serialization.py: ModelSerializer for .pkl save/load
 
-**Task C2: Split stage1_dna_translation.py (590 → ~200 lines)**
+**Task C2: Split stage1_dna_translation.py (598 → ~250 lines)**
 Created preprocessing/boughter/translation/ with 2 modules:
 - dna_translator.py: DNATranslator class and codon tables
 - validation.py: Translation validation logic
 
-**Task C3: Split stage2_stage3_annotation_qc.py (514 → ~200 lines)**
+**Task C3: Split stage2_stage3_annotation_qc.py (519 → ~250 lines)**
 Created preprocessing/boughter/annotation/ with 2 modules:
 - anarci.py: ANARCI annotation logic
 - qc.py: QC filtering and quality checks
 
+**Task C4: Split datasets/base.py (627 → ~300 lines)**
+Created datasets/base_components/ with 3 modules:
+- validation.py: sanitize/validate/print statistics
+- annotation.py: ANARCI helpers
+- fragments.py: fragment construction + CSV writers
+
 **Quality Gates: ✅ ALL PASSED**
-- pytest (468 tests): PASSED
+- pytest (full suite): PASSED
 - mypy strict: PASSED
 - ruff check: PASSED
 - CLI functionality: PASSED
@@ -587,8 +652,8 @@ Created preprocessing/boughter/annotation/ with 2 modules:
 - No functional changes (pure refactoring)
 
 **Files Changed:**
-- SPLIT: 3 files → 10 new modules
-- Line count: 2038 lines → same total, better organized
+- SPLIT: 4 files → ~10 focused modules
+- Line count: reduced per-file, better organized
 
 **Next:** Phase D - Code Deduplication
 EOF
@@ -605,18 +670,20 @@ gh pr create --title "Phase C: File Splitting - Split 3 Massive Files" \
 
 ## Success Metrics
 
-**Before Phase C:**
-- Files >500 lines: 3 files (1938 lines of monolithic code)
-- trainer.py: 934 lines
-- stage1_dna_translation.py: 590 lines
-- stage2_stage3_annotation_qc.py: 514 lines
+**Before Phase C (validated 2025-11-20):**
+- Files >500 lines: 4 files (2705 lines total)
+- trainer.py: 961 lines
+- datasets/base.py: 627 lines
+- stage1_dna_translation.py: 598 lines
+- stage2_stage3_annotation_qc.py: 519 lines
 
-**After Phase C:**
+**After Phase C (target):**
 - Files >500 lines: 0 ✅
-- trainer.py: ~300 lines ✅
-- stage1_dna_translation.py: ~200 lines ✅
-- stage2_stage3_annotation_qc.py: ~200 lines ✅
-- New modules: 7 well-organized files ✅
+- trainer.py: ~350 lines ✅
+- datasets/base.py: ~300 lines ✅
+- stage1_dna_translation.py: ~250 lines ✅
+- stage2_stage3_annotation_qc.py: ~250 lines ✅
+- New modules: ~10 focused files ✅
 
 ---
 

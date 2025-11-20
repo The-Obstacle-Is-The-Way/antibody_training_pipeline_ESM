@@ -32,7 +32,15 @@ Knock out 5 trivial fixes in ~1 hour for immediate visible progress. All changes
 ## Task A1: Standardize File Permissions (10 min)
 
 ### Problem
-Random subset of 6 scripts are executable with no clear pattern.
+Random subset of scripts are executable with no clear pattern.
+
+**Currently executable (755):**
+- `preprocessing/boughter/train_hyperparameter_sweep.py`
+- `preprocessing/boughter/validate_stages2_3.py`
+- `preprocessing/jain/step2_preprocess_p5e_s2.py`
+- `preprocessing/jain/test_novo_parity.py`
+- `preprocessing/shehata/step2_extract_fragments.py`
+- `scripts/validation/validate_fragments.py`
 
 ### Solution
 Make ALL preprocessing scripts executable (755 permissions).
@@ -66,38 +74,51 @@ uv run python preprocessing/jain/validate_conversion.py
 ## Task A2: Fix Bare Except Blocks (10 min)
 
 ### Problem
-Four bare `except Exception:` blocks in trainer.py catch too much.
-
-**Locations:**
-- `src/antibody_training_esm/core/trainer.py:176`
-- `src/antibody_training_esm/core/trainer.py:831`
-- `src/antibody_training_esm/core/trainer.py:875`
-- `src/antibody_training_esm/core/trainer.py:927`
+Two bare `except Exception:` blocks in `src/antibody_training_esm/core/trainer.py` swallow unexpected errors:
+- `setup_logging` Hydra fallback (~line 176)
+- `train_pipeline` Hydra/legacy output-dir fallback (~line 858)
 
 ### Solution
 Replace with specific exception types.
 
 ### Changes
 
-**Location 1 (Line 176) - Cache deletion:**
+**Location 1 (setup_logging fallback ~176):**
 ```python
-# BEFORE:
 try:
-    cache_path.unlink()
-    logger.info(f"Deleted cache file: {cache_path}")
-except Exception:  # ← TOO BROAD
-    logger.warning(f"Could not delete cache file {cache_path}: {e}")
-
-# AFTER:
-try:
-    cache_path.unlink()
-    logger.info(f"Deleted cache file: {cache_path}")
-except (OSError, PermissionError) as e:
-    logger.warning(f"Could not delete cache file {cache_path}: {e}")
+    hydra_cfg = HydraConfig.get()
+    output_dir = Path(hydra_cfg.runtime.output_dir)
+    log_file = output_dir / log_file_str
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+except (ValueError, AttributeError, OSError) as e:
+    logger.warning("Hydra output dir not available, falling back to config log path: %s", e)
+    log_file = Path(log_file_str)
+    if not log_file.is_absolute():
+        log_file = Path.cwd() / log_file_str
+    log_file.parent.mkdir(parents=True, exist_ok=True)
+except Exception as e:
+    logger.exception("Unexpected error determining log file path")
+    raise
 ```
 
-**Locations 2-4 (Lines 831, 875, 927):**
-Follow same pattern - identify specific exceptions that can be raised and catch those explicitly.
+**Location 2 (Hydra/legacy output-dir fallback ~858):**
+```python
+try:
+    from hydra.core.hydra_config import HydraConfig
+
+    hydra_cfg = HydraConfig.get()
+    cv_output_dir = Path(hydra_cfg.runtime.output_dir)
+    experiment_name = cfg.experiment.name
+    logger.info(f"Saving CV results to Hydra output dir: {cv_output_dir}")
+except (ImportError, AttributeError, OSError, ValueError) as e:
+    model_save_dir = config.get("training", {}).get("model_save_dir", "./outputs")
+    cv_output_dir = Path(model_save_dir)
+    experiment_name = config.get("experiment", {}).get("name", "training")
+    logger.info("Running without Hydra, saving CV results to %s (reason: %s)", cv_output_dir, e)
+except Exception as e:
+    logger.exception("Unexpected error determining CV output directory")
+    raise
+```
 
 ### Verification
 ```bash
@@ -119,40 +140,22 @@ uv run pytest tests/unit/core/test_trainer.py -v
 ## Task A3: Address type: ignore Comments (30 min)
 
 ### Problem
-2 `type: ignore` comments indicate incomplete type coverage.
+Five `type: ignore` comments remain (goal: ≤2 with explicit justification).
 
 **Locations:**
-1. `src/antibody_training_esm/core/embeddings.py:60`
-2. `tests/unit/datasets/test_base.py:265`
+1. `src/antibody_training_esm/core/embeddings.py:60` (`AutoTokenizer.from_pretrained` lacks stubs)
+2. `src/antibody_training_esm/core/classifier_factory.py:138` (factory Protocol init)
+3. `src/antibody_training_esm/data/loaders.py:16` (`datasets` missing typing for `load_dataset`)
+4. `tests/unit/datasets/test_base.py:265` (passing `None` to `sanitize_sequence`)
+5. `tests/unit/core/strategies/test_logistic_regression.py:344` (`np.savez` kwargs typing)
 
-### Solution
+### Solution (per-file)
 
-**Fix #1 - embeddings.py:60 (Add explanatory comment):**
-
-```python
-# BEFORE:
-self.tokenizer = AutoTokenizer.from_pretrained(  # type: ignore[no-untyped-call]
-    model_name, revision=revision
-)
-
-# AFTER:
-# Type ignore needed: transformers.AutoTokenizer lacks type stubs
-# This is a known limitation of the HuggingFace transformers library
-# See: https://github.com/huggingface/transformers/issues/
-self.tokenizer = AutoTokenizer.from_pretrained(  # type: ignore[no-untyped-call]
-    model_name, revision=revision
-)
-```
-
-**Fix #2 - test_base.py:265 (Add proper type annotation):**
-
-```python
-# BEFORE:
-mock_dataset = MockDataset()  # type: ignore
-
-# AFTER:
-mock_dataset: AntibodyDataset = MockDataset()  # Explicit type for mypy
-```
+1) **embeddings.py:** Keep ignore but add explanatory comment linking to missing HF stubs.  
+2) **classifier_factory.py:** Replace ignore by tightening typing (e.g., `Protocol`/`TypeAlias` for strategy factories with `__init__(config: dict[str, Any])`).  
+3) **data/loaders.py:** Keep or wrap import with `TYPE_CHECKING` + stub alias; add comment that `datasets.load_dataset` lacks stubs (attr-defined).  
+4) **tests/unit/datasets/test_base.py:** Remove ignore by updating `sanitize_sequence` to accept `str | None` (and keep raising ValueError) or cast to `Any` with explanatory comment.  
+5) **tests/unit/core/strategies/test_logistic_regression.py:** Annotate `arrays_dict` as `Mapping[str, np.ndarray]` so `np.savez` call is typed without an ignore.
 
 ### Verification
 ```bash
@@ -161,12 +164,12 @@ uv run mypy src/antibody_training_esm tests --strict
 
 # Count remaining type: ignore
 grep -r "type: ignore" src/ tests/ | wc -l
-# Should be 1 (only the HuggingFace one with explanation)
+# Target: ≤2 (HF tokenizer + datasets import) with inline comments
 ```
 
 ### Success Criteria
-- [ ] ≤1 `type: ignore` comments remain
-- [ ] Remaining ignore has explanatory comment
+- [ ] ≤2 `type: ignore` comments remain, both justified by external stubs
+- [ ] Remaining ignores have explanatory comments + links
 - [ ] Mypy strict mode passes
 
 ---
@@ -255,7 +258,7 @@ uv run antibody-train --help
 ### Quality Gates
 - [ ] All 5 tasks complete
 - [ ] Run `make all` (format → lint → typecheck → test)
-- [ ] Run full test suite: `uv run pytest` (all 468 tests pass)
+- [ ] Run full test suite: `uv run pytest` (currently ~500+ tests collected)
 - [ ] Run security scan: `uv run bandit -r src/ preprocessing/`
 - [ ] Verify no regressions in preprocessing scripts
 
@@ -276,17 +279,18 @@ refactor: Phase A - Quick wins (5 trivial fixes)
 Completed 5 low-risk improvements for immediate progress:
 
 **Task A1: Standardize file permissions**
-- Made all preprocessing scripts executable (755)
-- Consistent permissions across ~20 files
+- Applied a consistent execute policy across preprocessing scripts
+- Documented expected permission (`755` for runnable scripts)
 
 **Task A2: Fix bare except blocks**
-- Replaced 4 bare `except Exception:` with specific types
+- Replaced 2 bare `except Exception:` with specific handling + re-raise
 - File: src/antibody_training_esm/core/trainer.py
 
 **Task A3: Address type: ignore comments**
 - Added explanatory comment to embeddings.py (HuggingFace lacks stubs)
-- Fixed test_base.py with proper type annotation
-- Reduced type ignores from 2 to 1
+- Tightened typing around classifier_factory/data.loaders to drop ignores
+- Fixed failing tests by removing test-time ignores
+- Reduced ignores from 5 to ≤2 and documented remaining ones
 
 **Task A4: Delete empty utils/ directory**
 - Removed src/antibody_training_esm/utils/ (only contained __init__.py)
@@ -297,7 +301,7 @@ Completed 5 low-risk improvements for immediate progress:
 
 **Quality Gates: ✅ ALL PASSED**
 - make all: PASSED
-- pytest (468 tests): PASSED
+- pytest (full suite): PASSED
 - bandit security scan: PASSED
 - mypy strict: PASSED
 
@@ -331,19 +335,19 @@ gh pr create --title "Phase A: Quick Wins - 5 Trivial Fixes" \
 
 ## Success Metrics
 
-**Before Phase A:**
-- Bare except blocks: 4
-- type: ignore comments: 2
-- Empty directories: 1
-- Config locations: 2
-- File permission chaos: Yes
+**Before Phase A (validated 2025-11-20):**
+- Bare except blocks: 2 (`core/trainer.py`)
+- `type: ignore` comments: 5
+- Empty directories: 1 (`src/antibody_training_esm/utils/`)
+- Config locations: 2 (`configs/` + `src/antibody_training_esm/conf/`)
+- File permissions: mixed (`755` on 6 scripts, `644` elsewhere)
 
-**After Phase A:**
+**After Phase A (target):**
 - Bare except blocks: 0 ✅
-- type: ignore comments: 1 (with explanation) ✅
+- `type: ignore` comments: ≤2 with justification ✅
 - Empty directories: 0 ✅
 - Config locations: 1 ✅
-- File permissions: Consistent (755) ✅
+- File permissions: Consistent + documented ✅
 
 ---
 

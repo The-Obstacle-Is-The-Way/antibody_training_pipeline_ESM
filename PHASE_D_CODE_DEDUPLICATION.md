@@ -11,7 +11,7 @@
 
 Extract duplicated validation and fragment extraction logic into shared utility modules.
 
-**Goal:** Eliminate ~600 lines of duplicate code across 7 scripts by creating 2 shared modules.
+**Goal:** Eliminate ~1.6k lines of overlapping validation/fragment logic across 7 scripts by creating 2 shared modules.
 
 **Why this is HIGH risk:**
 - Creates new shared dependencies
@@ -22,12 +22,12 @@ Extract duplicated validation and fragment extraction logic into shared utility 
 
 ## Fixes Included
 
-| Fix | Duplicate Lines | Files Affected | New Module |
-|-----|-----------------|----------------|------------|
-| #15 | ~240 lines | 4 validation scripts | `validation_utils.py` |
-| #16 | ~600 lines | 3 fragment scripts | `fragment_utils.py` |
+| Fix | Duplicate Lines (est.) | Files Affected | New Module |
+|-----|------------------------|----------------|------------|
+| #15 | ~900 lines of validation overlap | 4 validation scripts | `validation_utils.py` |
+| #16 | ~700-800 lines of fragment overlap | 3 fragment scripts | `fragment_utils.py` |
 
-**Total:** ~840 lines of duplicate code → 2 shared modules (~350 lines total)
+**Total:** ~1.6k lines of duplicated preprocessing logic → 2 shared modules (~350 lines total)
 
 ---
 
@@ -633,7 +633,7 @@ git add -A
 git commit -m "$(cat <<'EOF'
 refactor: Phase D - Extract duplicated validation & fragment code
 
-Eliminated ~840 lines of duplicate code by creating 2 shared utility modules.
+Eliminated ~1.6k lines of duplicated preprocessing logic by creating 2 shared utility modules.
 All outputs verified byte-for-byte identical to originals.
 
 **Task D1: Create validation_utils.py (~150 lines)**
@@ -669,13 +669,13 @@ Refactored 3 fragment scripts (200+ lines → ~20 lines each):
 - Zero functional regressions
 
 **Quality Gates: ✅ ALL PASSED**
-- pytest (468 tests): PASSED
+- pytest (full suite): PASSED
 - mypy strict: PASSED
 - ruff check: PASSED
 - make all: PASSED
 
 **Impact:**
-- Code reduction: ~840 duplicate lines → 2 modules (~350 lines)
+- Code reduction: ~1.6k duplicate lines → 2 modules (~350 lines)
 - DRY principle restored: No duplicate validation or fragment logic
 - Easier maintenance: Bug fixes in one place benefit all datasets
 - Consistent behavior: All datasets use same validation/extraction
@@ -700,16 +700,16 @@ gh pr create --title "Phase D: Code Deduplication - Extract Shared Utils" \
 
 ## Success Metrics
 
-**Before Phase D:**
-- Duplicate validation code: ~240 lines across 4 scripts
-- Duplicate fragment code: ~600 lines across 3 scripts
-- Total duplicate code: ~840 lines
+**Before Phase D (validated 2025-11-20):**
+- Validation code overlap: ~900 LOC across 4 scripts
+- Fragment code overlap: ~1k LOC across 3 scripts
+- Total: ~1.6k LOC with substantial duplication
 
-**After Phase D:**
-- Duplicate validation code: 0 ✅
-- Duplicate fragment code: 0 ✅
+**After Phase D (target):**
+- Validation duplication: 0 ✅
+- Fragment duplication: 0 ✅
 - Shared modules: 2 (~350 lines total) ✅
-- Code reduction: ~490 lines eliminated ✅
+- Outputs verified byte-for-byte ✅
 
 ---
 

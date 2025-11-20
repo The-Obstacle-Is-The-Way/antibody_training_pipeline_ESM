@@ -25,11 +25,11 @@ Final touches to achieve pristine codebase: documentation improvements, standard
 | Fix # | Description | Effort | Risk |
 |-------|-------------|--------|------|
 | #14 | Document PSR threshold differences | 20 min | ZERO |
-| #17 | Standardize shebangs | 10 min | ZERO |
-| #18 | Delete pytest.ini | 10 min | LOW |
-| #21 | Remove stale TODOs | 5 min | ZERO |
-| #22 | Update bug references | 10 min | ZERO |
-| #24-25 | Docstring polish | 1-2 hours | LOW |
+| #17 (verify) | Pytest config single source (pytest.ini already removed) | 10 min | ZERO |
+| #5 follow-up | Replace/justify remaining `print()` diagnostics | 20-30 min | LOW |
+| #21 | Remove stale TODOs (currently 1) | 5 min | ZERO |
+| #22 | Update stale bug references (CLI override doc) | 10 min | ZERO |
+| #24-25 | Docstring polish after Phase C/D splits | 1-2 hours | LOW |
 
 **Total Time:** 2-3 hours
 
@@ -105,121 +105,54 @@ grep -A5 "PSR.*0.5495\|PSR_THRESHOLD.*0.4" src/antibody_training_esm/core/classi
 
 ---
 
-## Task E2: Standardize Shebangs (10 min)
+## Task E2: Pytest Config Single Source (10 min)
 
 ### Problem
-Inconsistent shebang usage across preprocessing scripts.
+Pytest configuration already lives in `pyproject.toml`; ensure no drift or stray `pytest.ini` reappears.
 
 ### Solution
-Add `#!/usr/bin/env python3` to ALL preprocessing .py files (except `__init__.py`).
-
-### Implementation
-
-**Automated approach:**
-
-```bash
-# Add shebang to all preprocessing scripts missing it
-for file in preprocessing/*/*.py; do
-    # Skip __init__.py files
-    if [[ $(basename "$file") == "__init__.py" ]]; then
-        continue
-    fi
-
-    # Check if file already has shebang
-    if ! head -1 "$file" | grep -q '^#!/'; then
-        # Add shebang at the top
-        echo '#!/usr/bin/env python3' | cat - "$file" > /tmp/tempfile
-        mv /tmp/tempfile "$file"
-        echo "Added shebang to $file"
-    fi
-done
-```
+- Verify `pyproject.toml` contains required pytest options (testpaths/markers/etc.).
+- Confirm `pytest.ini` is absent.
 
 ### Verification
 ```bash
-# Check all preprocessing scripts have shebangs
-for file in preprocessing/*/*.py; do
-    if [[ $(basename "$file") != "__init__.py" ]]; then
-        if ! head -1 "$file" | grep -q '^#!/'; then
-            echo "Missing shebang: $file"
-        fi
-    fi
-done
-
-# Should return NOTHING
+rg "\\[tool.pytest" -n -C 3 pyproject.toml
+ls pytest.ini  # Should error/no output
+uv run pytest -q --disable-warnings --maxfail=1
 ```
 
 ### Success Criteria
-- [ ] All preprocessing .py files have shebangs (except `__init__.py`)
-- [ ] Shebangs are consistent: `#!/usr/bin/env python3`
+- [ ] Pytest settings live only in `pyproject.toml`
+- [ ] No `pytest.ini` present
+- [ ] Tests still collect/run
 
 ---
 
-## Task E3: Consolidate Pytest Config (10 min)
+## Task E3: Replace/Justify Remaining `print()` Diagnostics (20-30 min)
 
 ### Problem
-Duplicate pytest configuration in `pytest.ini` AND `pyproject.toml`.
+`print()` calls remain in preprocessing and library code (e.g., 22 matches in `preprocessing/`, 36 in `src/`). Some are user-facing summaries; others duplicate logging.
 
 ### Solution
-Delete `pytest.ini`, keep all config in `pyproject.toml`.
-
-### Implementation
-
-**Step 1: Verify pyproject.toml has all pytest config**
-
-```bash
-# Check pytest config in pyproject.toml
-grep -A20 "\[tool.pytest" pyproject.toml
-```
-
-Should include:
-- `testpaths`
-- `markers`
-- `python_files`
-- `python_classes`
-- `python_functions`
-- `addopts`
-
-**Step 2: Delete pytest.ini**
-
-```bash
-# Backup first (just in case)
-cp pytest.ini pytest.ini.backup
-
-# Delete
-rm pytest.ini
-```
-
-**Step 3: Verify tests still work**
-
-```bash
-# Run tests
-uv run pytest
-
-# Should work without errors
-```
+- Convert non-user-facing diagnostics to `logger.info`/`logger.warning`.
+- If a `print()` is intentionally user-facing (CLI summary), add a brief comment documenting why it remains.
 
 ### Verification
 ```bash
-# Check pytest.ini doesn't exist
-ls pytest.ini
-# Should error: "No such file or directory"
-
-# Tests still pass
-uv run pytest
+rg "print\\(" src preprocessing | grep -v README | wc -l  # Track count reduction
+rg "print\\(" preprocessing | grep -v README
 ```
 
 ### Success Criteria
-- [ ] `pytest.ini` deleted
-- [ ] All pytest config in `pyproject.toml`
-- [ ] Tests still pass
+- [ ] All diagnostic output goes through logging
+- [ ] Remaining `print()` calls are documented as intentional UX output
 
 ---
 
 ## Task E4: Remove Stale TODOs (5 min)
 
 ### Problem
-Stale TODO comments that should either be implemented or deleted.
+Only one TODO remains: `tests/integration/test_dataset_pipeline.py` ("Create distinct mock CSVs..."). Decide whether to implement now or replace with a linked issue.
 
 ### Implementation
 
@@ -266,7 +199,7 @@ grep -rn "TODO" src/ preprocessing/ tests/ --include="*.py"
 ## Task E5: Update Bug References (10 min)
 
 ### Problem
-Code references old bugs (e.g., "CLI_OVERRIDE_BUG") that are now fixed.
+Two files reference `CLI_OVERRIDE_BUG` docs that are not present (`config_schema.py`, `tests/unit/core/test_structured_configs.py`). Clarify or link to an existing write-up.
 
 ### Implementation
 
@@ -318,7 +251,7 @@ Apply Google-style docstrings consistently, focusing on new modules from Phases 
 
 ### Target Files
 
-**Phase C modules (7 files):**
+**Phase C modules (expected after split):**
 - `src/antibody_training_esm/core/training/cache.py`
 - `src/antibody_training_esm/core/training/metrics.py`
 - `src/antibody_training_esm/core/training/serialization.py`
@@ -326,6 +259,9 @@ Apply Google-style docstrings consistently, focusing on new modules from Phases 
 - `preprocessing/boughter/translation/validation.py`
 - `preprocessing/boughter/annotation/anarci.py`
 - `preprocessing/boughter/annotation/qc.py`
+- `src/antibody_training_esm/datasets/base_components/validation.py`
+- `src/antibody_training_esm/datasets/base_components/annotation.py`
+- `src/antibody_training_esm/datasets/base_components/fragments.py`
 
 **Phase D modules (2 files):**
 - `preprocessing/validation_utils.py`
@@ -398,8 +334,8 @@ uv run mypy src/ preprocessing/ --strict
 
 ### All Tasks Complete
 - [ ] Task E1: PSR threshold comments added
-- [ ] Task E2: All scripts have shebangs
-- [ ] Task E3: pytest.ini deleted
+- [ ] Task E2: Pytest config verified (single source)
+- [ ] Task E3: `print()` diagnostics replaced/justified
 - [ ] Task E4: Stale TODOs removed
 - [ ] Task E5: Bug references updated
 - [ ] Task E6: Docstrings polished
@@ -435,32 +371,27 @@ Added explanatory comments to both PSR threshold locations:
 - step2_preprocess_p5e_s2.py: 0.4 (preprocessing threshold)
 Clarified WHY two different thresholds exist (different use cases)
 
-**Task E2: Standardize Shebangs (10 min)**
-Added #!/usr/bin/env python3 to all preprocessing scripts
-Consistent shebang across ~20 files
+**Task E2: Pytest Config Single Source (10 min)**
+Verified pytest config lives in pyproject.toml; ensured no stray pytest.ini
 
-**Task E3: Consolidate Pytest Config (10 min)**
-Deleted pytest.ini (duplicate configuration)
-All pytest config now in pyproject.toml only
+**Task E3: Replace/justify print() diagnostics (20-30 min)**
+Converted remaining diagnostics to logging; documented intentional CLI prints
 
 **Task E4: Remove Stale TODOs (5 min)**
-Removed X stale TODO comments
-Implemented Y trivial TODOs
-Kept Z valid TODOs
+Cleared remaining TODOs or linked to tracking issues
 
 **Task E5: Update Bug References (10 min)**
-Removed references to resolved bugs (CLI_OVERRIDE_BUG)
-Replaced with clear explanations of WHY code exists
+Updated CLI_OVERRIDE_BUG references with live links/explanations
 
 **Task E6: Docstring Polish (1-2 hours)**
 Applied Google-style docstrings to all new modules:
-- Phase C modules (7 files): cache, metrics, serialization, translation, annotation
-- Phase D modules (2 files): validation_utils, fragment_utils
+- Phase C modules (cache, metrics, serialization, translation, annotation, datasets/base_components)
+- Phase D modules (validation_utils, fragment_utils)
 Added missing docstrings to public functions
 Standardized formatting across all modules
 
 **Quality Gates: ✅ ALL PASSED**
-- pytest (468 tests): PASSED
+- pytest (full suite): PASSED
 - mypy strict: PASSED
 - ruff check: PASSED
 - ruff format: PASSED
@@ -474,8 +405,7 @@ Standardized formatting across all modules
 - Clearer intent: PSR thresholds explained
 
 **Files Changed:**
-- MODIFIED: ~30 files (docstrings, comments, shebangs)
-- DELETED: pytest.ini
+- MODIFIED: ~30 files (docstrings, comments, logging cleanups)
 
 **Next:** PRISTINE CODEBASE ACHIEVED! 🎉
 All 5 phases complete. Ready to merge to dev → leroy-jenkins/full-send.
@@ -493,21 +423,21 @@ gh pr create --title "Phase E: Polish & Documentation - Final Cleanup" \
 
 ## Success Metrics
 
-**Before Phase E:**
-- PSR threshold confusion: No explanation
-- Inconsistent shebangs: Random subset
-- Duplicate pytest config: pytest.ini + pyproject.toml
-- Stale TODOs: Multiple
-- Old bug references: Present
-- Missing docstrings: Many
+**Before Phase E (validated 2025-11-20):**
+- PSR thresholds: No inline explanation of 0.4 vs 0.5495
+- Pytest config: Already consolidated in `pyproject.toml` (no `pytest.ini`)
+- `print()` diagnostics: 20+ in preprocessing, 30+ in src
+- TODOs: 1 (tests/integration/test_dataset_pipeline.py)
+- Bug references: `CLI_OVERRIDE_BUG` mentioned but supporting doc missing
+- Docstrings: Will be missing in new modules after Phases C/D
 
-**After Phase E:**
+**After Phase E (target):**
 - PSR thresholds: Fully documented ✅
-- Shebangs: 100% consistent ✅
-- Pytest config: Single source (pyproject.toml) ✅
-- Stale TODOs: Removed ✅
-- Bug references: Updated with explanations ✅
-- Docstrings: Complete Google-style ✅
+- Pytest config: Verified single source ✅
+- `print()` diagnostics: Converted to logging or documented ✅
+- TODOs: Removed or linked to issues ✅
+- Bug references: Updated with explanations/links ✅
+- Docstrings: Complete Google-style for new modules ✅
 
 ---
 
@@ -515,33 +445,34 @@ gh pr create --title "Phase E: Polish & Documentation - Final Cleanup" \
 
 ### Checklist
 
-**Phase A: Quick Wins** ✅
-- [ ] File permissions standardized (755)
+**Phase A: Quick Wins**
+- [ ] File permissions standardized/documented
 - [ ] Bare except blocks fixed
-- [ ] Type ignores addressed
+- [ ] Type ignores reduced to ≤2 with justification
 - [ ] Empty utils/ deleted
 - [ ] Config directories merged
 
-**Phase B: Path Centralization** ✅
-- [ ] preprocessing/paths.py created
-- [ ] Zero hardcoded paths
-- [ ] All scripts use centralized paths
+**Phase B: Path Centralization**
+- [ ] `preprocessing/paths.py` created
+- [ ] Zero hardcoded paths in scripts/tests
+- [ ] All scripts/tests use centralized paths
 
-**Phase C: File Splitting** ✅
+**Phase C: File Splitting**
 - [ ] No files >500 lines
-- [ ] trainer.py split into 4 modules
-- [ ] 2 preprocessing scripts split
+- [ ] trainer.py split into training modules
+- [ ] datasets/base.py split into base_components
+- [ ] boughter stage1/stage2 scripts split
 
-**Phase D: Code Deduplication** ✅
+**Phase D: Code Deduplication**
 - [ ] validation_utils.py created
 - [ ] fragment_utils.py created
-- [ ] ~840 duplicate lines eliminated
+- [ ] Duplicate validation/fragment logic removed
 
-**Phase E: Polish** ✅
+**Phase E: Polish**
 - [ ] PSR thresholds documented
-- [ ] Shebangs standardized
-- [ ] pytest.ini deleted
-- [ ] TODOs cleaned up
+- [ ] `print()` diagnostics cleaned up
+- [ ] TODOs cleaned up or linked
+- [ ] Bug references updated
 - [ ] Docstrings complete
 
 ### Final Quality Gates
@@ -549,45 +480,38 @@ gh pr create --title "Phase E: Polish & Documentation - Final Cleanup" \
 ```bash
 # 1. All tests pass
 uv run pytest
-# Expected: 468 tests passed
 
 # 2. Type checking
 uv run mypy src/ preprocessing/ --strict
-# Expected: Success: no issues found
 
 # 3. Linting
 uv run ruff check src/ preprocessing/
-# Expected: All checks passed
 
 # 4. Formatting
 uv run ruff format --check src/ preprocessing/
-# Expected: All files formatted correctly
 
 # 5. Security
 uv run bandit -r src/ preprocessing/
-# Expected: No issues found
 
 # 6. Full quality suite
 make all
-# Expected: All gates pass
 ```
 
 ### Codebase Quality Score
 
-**Before Refactoring (Jekyll & Hyde):**
-- Grade: B+ (good src/, mediocre preprocessing/)
-- Issues: 26 total (8 critical, 8 high, 10 medium)
-- Duplicate code: ~840 lines
-- Hardcoded paths: 50+ instances
-- Files >500 lines: 3 files
-- Type coverage: 99% (2 ignores)
+**Before Refactoring (validated 2025-11-20):**
+- Hardcoded paths: 100+ across preprocessing + tests
+- Files >500 lines: 4 (`trainer.py`, `datasets/base.py`, `stage1_dna_translation.py`, `stage2_stage3_annotation_qc.py`)
+- `type: ignore`: 5 occurrences
+- Duplicate preprocessing logic: ~1.6k LOC overlap (validation + fragments)
+- Config sources: packages + root `configs/`
 
-**After All 5 Phases (Pristine):**
-- Grade: A+ (production-quality throughout) ✅
-- Issues: 0 ✅
-- Duplicate code: 0 ✅
-- Hardcoded paths: 0 (all in paths.py) ✅
-- Files >500 lines: 0 ✅
+**After All 5 Phases (target):**
+- Hardcoded paths: centralized (0 inline)
+- Files >500 lines: 0
+- `type: ignore`: ≤2 with justification
+- Duplicate preprocessing logic: 0 (shared utils with byte-for-byte parity)
+- Config sources: single package location
 - Type coverage: 100% (1 documented ignore) ✅
 
 ---

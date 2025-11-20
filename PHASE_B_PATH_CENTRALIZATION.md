@@ -9,9 +9,11 @@
 
 ## Overview
 
-Eliminate 50+ hardcoded paths scattered across 17 preprocessing scripts by creating a single source of truth.
+Eliminate 100+ hardcoded paths scattered across preprocessing scripts and tests by creating a single source of truth.
 
-**Goal:** Create `preprocessing/paths.py` and migrate all scripts to use centralized path constants.
+**Current evidence:** `rg "data/(train|test)" preprocessing/ --no-heading | wc -l` → 106 matches across 20 preprocessing files; tests contain additional hardcoded paths for fixtures and e2e checks.
+
+**Goal:** Create `preprocessing/paths.py` and migrate all scripts/tests to use centralized path constants.
 
 **Why this matters:**
 - Changing directory structure currently breaks 17 scripts
@@ -31,7 +33,7 @@ Eliminate 50+ hardcoded paths scattered across 17 preprocessing scripts by creat
 ## Task B1: Create preprocessing/paths.py (30 min)
 
 ### Deliverable
-New file with ~180 lines of path constants for all datasets and experiments.
+New file with path constants for all datasets/experiments and helpers usable by tests/e2e checks.
 
 ### Implementation
 
@@ -187,11 +189,12 @@ python -c "from preprocessing.paths import JAIN_RAW_DIR; print(JAIN_RAW_DIR)"
 
 ## Task B2: Migrate Boughter Scripts (30 min)
 
-### Files to Update (4 files)
+### Files to Update (5 files)
 1. `preprocessing/boughter/stage1_dna_translation.py`
 2. `preprocessing/boughter/stage2_stage3_annotation_qc.py`
 3. `preprocessing/boughter/validate_stage1.py`
 4. `preprocessing/boughter/validate_stages2_3.py`
+5. `preprocessing/boughter/audit_training_qc.py`
 
 ### Pattern
 
@@ -343,7 +346,34 @@ uv run python preprocessing/shehata/validate_conversion.py
 
 ---
 
-## Task B6: Final Verification (30 min)
+## Task B6: Update Tests and E2E References (30 min)
+
+### Files to Update (tests)
+- `tests/e2e/test_train_pipeline.py`
+- `tests/e2e/test_reproduce_novo.py`
+- `tests/integration/preprocessing/test_harvey_psr_threshold.py`
+- `tests/integration/test_jain_embedding_compatibility.py`
+- `tests/integration/test_harvey_embedding_compatibility.py`
+- `tests/integration/test_boughter_embedding_compatibility.py`
+- `tests/integration/test_shehata_embedding_compatibility.py`
+- `tests/unit/datasets/test_{boughter,harvey,jain,shehata}.py` (output_dir expectations)
+
+### Pattern
+- Import from `preprocessing.paths` (or a small test shim) instead of inline `"data/...`" strings.
+- For dataset unit tests, reuse the same constants used in scripts to avoid drift.
+
+### Verification
+```bash
+# 1. Check no hardcoded paths remain in tests (excluding fixtures/docs)
+rg "data/(train|test)" tests --glob "*.py" | grep -v paths.py
+
+# 2. Run affected tests
+uv run pytest tests/integration tests/e2e -k "harvey or jain or boughter or shehata"
+```
+
+---
+
+## Task B7: Final Verification (30 min)
 
 ### Comprehensive Testing
 
@@ -377,7 +407,7 @@ make all
 - [ ] Zero hardcoded "data/" paths in preprocessing scripts (except paths.py)
 - [ ] All 17 scripts updated
 - [ ] All validation scripts pass
-- [ ] All 468 tests pass
+- [ ] Full test suite passes (`uv run pytest`)
 - [ ] `make all` passes
 
 ---
@@ -390,7 +420,8 @@ make all
 - [ ] Task B3: Migrated 5 Jain scripts
 - [ ] Task B4: Migrated 3 Harvey scripts
 - [ ] Task B5: Migrated 3 Shehata scripts
-- [ ] Task B6: Final verification passed
+- [ ] Task B6: Updated tests/e2e paths
+- [ ] Task B7: Final verification passed
 
 ### Quality Gates
 - [ ] Run `make all` (format → lint → typecheck → test)
@@ -413,7 +444,7 @@ git commit -m "$(cat <<'EOF'
 refactor: Phase B - Centralize hardcoded paths
 
 Created preprocessing/paths.py as single source of truth for all data paths.
-Eliminated 50+ hardcoded path strings across 17 preprocessing scripts.
+Eliminated ~100 hardcoded path strings across preprocessing scripts and tests.
 
 **Task B1: Create preprocessing/paths.py**
 - Centralized path constants for all 4 datasets
@@ -431,14 +462,18 @@ Eliminated 50+ hardcoded path strings across 17 preprocessing scripts.
 BEFORE: Path("data/test/jain/raw")
 AFTER: from preprocessing.paths import JAIN_RAW_DIR
 
-**Task B6: Verification**
+**Task B6: Tests/e2e updates**
+- Updated integration/e2e tests to reuse centralized paths
+- Removed inline `"data/...`" strings from tests
+
+**Task B7: Verification**
 - All 17 scripts run successfully
 - Zero hardcoded paths remain (verified via grep)
 - All validation scripts pass
 
 **Quality Gates: ✅ ALL PASSED**
 - make all: PASSED
-- pytest (468 tests): PASSED
+- pytest (full suite): PASSED
 - bandit security scan: PASSED
 - All preprocessing scripts: PASSED
 
@@ -458,7 +493,7 @@ EOF
 
 # Push and create PR
 git push -u origin claude/refactor-phase-b
-gh pr create --title "Phase B: Path Centralization - Eliminate 50+ Hardcoded Paths" \
+gh pr create --title "Phase B: Path Centralization - Eliminate Hardcoded Paths" \
   --body "Completes Phase B of technical debt cleanup. See commit message for details." \
   --base dev
 ```
@@ -467,14 +502,14 @@ gh pr create --title "Phase B: Path Centralization - Eliminate 50+ Hardcoded Pat
 
 ## Success Metrics
 
-**Before Phase B:**
-- Hardcoded paths: 50+ instances across 17 files
-- Path sources: Scattered everywhere
-- Changing structure: Requires editing 17 files
+**Before Phase B (validated 2025-11-20):**
+- Hardcoded paths: 106 matches in preprocessing + additional test references
+- Path sources: Scattered across scripts and tests
+- Changing structure: Requires editing ~20 files
 
-**After Phase B:**
-- Hardcoded paths: 0 (all in paths.py) ✅
-- Path sources: Single file (preprocessing/paths.py) ✅
+**After Phase B (target):**
+- Hardcoded paths: 0 outside `preprocessing/paths.py` ✅
+- Path sources: Single module reused by scripts/tests ✅
 - Changing structure: Edit 1 file ✅
 
 ---

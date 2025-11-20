@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-11-20
 **Status:** Ready to execute
-**Total Effort:** 14-18 hours across 5 phases
+**Total Effort:** 16-20 hours across 5 phases (up to ~25h with buffer)
 
 ---
 
@@ -186,10 +186,10 @@ git merge dev
 |-------|-----------|--------|-------|
 | Phase A | 1-1.5h | +30 min | 2h max |
 | Phase B | 2-3h | +1h | 4h max |
-| Phase C | 3-4h | +1h | 5h max |
+| Phase C | 4-5h | +1h | 6h max |
 | Phase D | 5-7h | +2h | 9h max |
 | Phase E | 2-3h | +1h | 4h max |
-| **TOTAL** | **14-18h** | **+5.5h** | **24h max** |
+| **TOTAL** | **16-20h** | **+5.5h** | **25h max** |
 
 **Recommended schedule:**
 - Week 1: Phases A + B (complete path centralization foundation)
