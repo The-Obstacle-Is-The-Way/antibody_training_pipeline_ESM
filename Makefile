@@ -7,7 +7,9 @@ help:
 	@echo "  make lint         - Run ruff linting checks"
 	@echo "  make typecheck    - Run mypy type checking"
 	@echo "  make hooks        - Run pre-commit hooks on all files"
-	@echo "  make test         - Run pytest test suite"
+	@echo "  make test         - Run fast suite (unit + integration; skips e2e/slow/gpu)"
+	@echo "  make test-e2e     - Run e2e suite (honors opt-in env vars like RUN_NOVO_E2E)"
+	@echo "  make test-all     - Run full suite (e2e/slow included; env-gated tests may still skip)"
 	@echo "  make coverage     - Run tests with coverage report (requires unit tests)"
 	@echo "  make all          - Run format, lint, typecheck, and test"
 	@echo "  make train        - Run training pipeline"
@@ -20,6 +22,12 @@ install:
 	uv sync --all-extras
 
 test:
+	uv run pytest -m "not e2e and not slow and not gpu"
+
+test-e2e:
+	uv run pytest -m "e2e"
+
+test-all:
 	uv run pytest
 
 coverage:

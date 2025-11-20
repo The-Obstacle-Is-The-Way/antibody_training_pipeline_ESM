@@ -23,6 +23,16 @@ Use this guide if you're:
 - **Architecture:** [Architecture](architecture.md) - System design and components
 - **Type Checking:** [Type Checking Guide](type-checking.md) - Type safety requirements
 
+## Quick Commands (fast vs slow)
+
+- `make test` — Fast loop (unit + integration). Skips `e2e`, `slow`, and `gpu` markers.
+- `make test-e2e` — End-to-end suite. Honors opt-in env vars (e.g., `RUN_NOVO_E2E=1`, `RUN_PREDICT_CLI_E2E=1`).
+- `make test-all` — Full suite. Env-gated e2e tests still skip unless the required flags/data are present.
+
+Env flags for heavy tests:
+- `RUN_NOVO_E2E=1` to run the Novo accuracy reproduction test (downloads ~650MB ESM weights; needs preprocessed Boughter/Jain CSVs).
+- `RUN_PREDICT_CLI_E2E=1` to run the real-weights predict CLI e2e test.
+
 ---
 
 ## Testing Philosophy
