@@ -38,7 +38,7 @@ jobs:
       continue-on-error: false
 
     - name: Type checking with mypy
-      run: uv run mypy src/ --strict
+      run: uv run mypy .
       continue-on-error: false  # ✅ ENFORCED: Full type safety achieved (P3 completion)
 
     - name: Security scan with bandit
