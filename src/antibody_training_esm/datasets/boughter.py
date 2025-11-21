@@ -141,20 +141,31 @@ class BoughterDataset(AntibodyDataset):
             df = df[df["subset"] == subset].copy()
             self.logger.info(f"  Filtered to subset '{subset}': {len(df)} sequences")
 
-        # Apply Novo flagging strategy
+        # Apply Novo flagging strategy (only if flags column exists)
+        # Pre-filtered training files (e.g., *_training.csv) don't have flags column
         if not include_mild:
-            # Exclude mild (1-3 flags) per Novo Nordisk methodology
-            # Note: Preprocessing uses 'num_flags', legacy code might use 'flags'
-            flag_col = "num_flags" if "num_flags" in df.columns else "flags"
-            df["include_in_training"] = ~df[flag_col].isin(self.FLAG_MILD)
-            df_training = df[df["include_in_training"]].copy()
+            # Check if flags column exists (may be 'num_flags' or 'flags')
+            has_flags = "num_flags" in df.columns or "flags" in df.columns
 
-            excluded = len(df) - len(df_training)
-            self.logger.info("\nNovo flagging strategy:")
-            self.logger.info(f"  Excluded {excluded} sequences with mild flags (1-3)")
-            self.logger.info(f"  Training set: {len(df_training)} sequences")
+            if has_flags:
+                # Exclude mild (1-3 flags) per Novo Nordisk methodology
+                flag_col = "num_flags" if "num_flags" in df.columns else "flags"
+                df["include_in_training"] = ~df[flag_col].isin(self.FLAG_MILD)
+                df_training = df[df["include_in_training"]].copy()
 
-            df = df_training
+                excluded = len(df) - len(df_training)
+                self.logger.info("\nNovo flagging strategy:")
+                self.logger.info(
+                    f"  Excluded {excluded} sequences with mild flags (1-3)"
+                )
+                self.logger.info(f"  Training set: {len(df_training)} sequences")
+
+                df = df_training
+            else:
+                # File is pre-filtered (training subset) - no flags column
+                self.logger.info(
+                    "  No flags column found - assuming pre-filtered training data"
+                )
 
         # Standardize column names
         column_mapping = {
