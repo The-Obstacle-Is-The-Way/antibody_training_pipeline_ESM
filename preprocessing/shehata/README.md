@@ -68,10 +68,12 @@ python3 preprocessing/shehata/step2_extract_fragments.py
 ```
 
 **What it does:**
-1. Annotates VH and VL sequences with ANARCI (IMGT numbering)
-2. Extracts CDR and FWR regions using IMGT boundaries
-3. Creates 16 fragment-specific CSV files
+1. Annotates VH and VL sequences with ANARCI (IMGT numbering) via `preprocessing/fragment_utils.py`
+2. Extracts CDR and FWR regions using strict IMGT boundaries
+3. Creates 16 fragment-specific CSV files for downstream analysis
 4. Preserves PSR measurements and labels
+
+**Note:** Uses shared `fragment_utils.py` to ensure consistent ANARCI annotation across all datasets. See [preprocessing/README.md](../README.md#shared-utilities-phase-d-refactoring---nov-2025) for details on shared utilities.
 
 ---
 
@@ -127,5 +129,5 @@ See `docs/research/assay-thresholds.md` for details.
 
 ---
 
-**Last Updated:** 2025-11-05
+**Last Updated:** 2025-11-20 (added shared utilities documentation)
 **Status:** ✅ Production Ready

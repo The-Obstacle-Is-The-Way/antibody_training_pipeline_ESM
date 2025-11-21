@@ -64,10 +64,12 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 ```
 
 **What it does:**
-1. Annotates sequences with ANARCI (IMGT numbering scheme)
-2. Extracts CDR regions (CDR1, CDR2, CDR3) using IMGT boundaries
+1. Annotates sequences with ANARCI (IMGT numbering scheme) via `preprocessing/fragment_utils.py`
+2. Extracts CDR regions (CDR1, CDR2, CDR3) using strict IMGT boundaries
 3. Extracts framework regions (FWR1, FWR2, FWR3, FWR4)
-4. Creates fragment-specific CSV files
+4. Creates fragment-specific CSV files for downstream analysis
+
+**Note:** Uses shared `fragment_utils.py` to ensure consistent ANARCI annotation across all datasets. See [preprocessing/README.md](../README.md#shared-utilities-phase-d-refactoring---nov-2025) for details on shared utilities.
 
 ---
 
@@ -111,5 +113,5 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 
 ---
 
-**Last Updated:** 2025-11-05
+**Last Updated:** 2025-11-20 (added shared utilities documentation)
 **Status:** ✅ Production Ready

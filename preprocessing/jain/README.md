@@ -108,16 +108,59 @@ label: 0.0 = specific, 1.0 = non-specific
 
 ---
 
+## Step 3: Extract Fragments (Optional)
+
+**Script:** `step3_extract_fragments.py`
+
+**Purpose:** Extract CDR and FWR fragments from the canonical Jain dataset for fragment-level analysis.
+
+**Input:**
+- `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, VH-only)
+- `data/test/jain/canonical/jain_86_novo_parity.csv` (86 antibodies, VH+VL)
+
+**Output:**
+- `data/test/jain/fragments/*.csv` (16 fragment files)
+
+**Fragment types:**
+1. VH_only, VL_only (full variable domains)
+2. H-CDR1, H-CDR2, H-CDR3 (heavy chain CDRs)
+3. L-CDR1, L-CDR2, L-CDR3 (light chain CDRs)
+4. H-CDRs, L-CDRs (concatenated CDRs per chain)
+5. H-FWRs, L-FWRs (concatenated frameworks per chain)
+6. VH+VL (paired variable domains)
+7. All-CDRs, All-FWRs (all concatenated)
+8. Full (alias for VH+VL)
+
+**Run:**
+```bash
+python3 preprocessing/jain/step3_extract_fragments.py
+```
+
+**What it does:**
+1. Annotates VH and VL sequences with ANARCI (IMGT numbering) via `preprocessing/fragment_utils.py`
+2. Extracts CDR and FWR regions using strict IMGT boundaries
+3. Creates 16 fragment-specific CSV files for downstream analysis
+4. Preserves labels and metadata
+
+**Note:** Uses shared `fragment_utils.py` to ensure consistent ANARCI annotation across all datasets. See [preprocessing/README.md](../README.md#shared-utilities-phase-d-refactoring---nov-2025) for details on shared utilities.
+
+---
+
 ## Full Pipeline Execution
 
-**Run both steps sequentially:**
+**Run all three steps sequentially:**
 ```bash
 # Step 1: Convert Excel to CSV
 python3 preprocessing/jain/step1_convert_excel_to_csv.py
 
 # Step 2: Preprocess to Novo parity
 python3 preprocessing/jain/step2_preprocess_p5e_s2.py
+
+# Step 3: Extract fragments (optional)
+python3 preprocessing/jain/step3_extract_fragments.py
 ```
+
+**Note:** Step 3 is optional and only needed for fragment-level analysis (CDRs, FWRs).
 
 ---
 
@@ -150,6 +193,7 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 - pandas
 - numpy
 - openpyxl (for Excel reading)
+- riot_na (ANARCI wrapper - required for Step 3 fragment extraction)
 
 ---
 
@@ -160,5 +204,5 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 
 ---
 
-**Last Updated:** 2025-11-07
+**Last Updated:** 2025-11-20 (added Step 3 documentation, shared utilities)
 **Status:** ✅ Production Ready (Novo Parity Achieved)
