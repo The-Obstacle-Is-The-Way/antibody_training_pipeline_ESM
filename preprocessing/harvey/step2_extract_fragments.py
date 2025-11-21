@@ -22,67 +22,12 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
-import riot_na
-from tqdm.auto import tqdm
 
+from preprocessing.fragment_utils import process_sequences_to_fragments
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import HARVEY_FRAGMENTS_DIR, HARVEY_FULL_CSV
 
 logger = setup_logger(__name__)
-
-# Initialize ANARCI for amino acid annotation (IMGT scheme)
-annotator = riot_na.create_riot_aa()
-
-
-def annotate_sequence(seq_id: str, sequence: str) -> dict[str, str] | None:
-    """
-    Annotate a single VHH (nanobody) sequence using ANARCI (IMGT).
-
-    Args:
-        seq_id: Unique identifier for the sequence
-        sequence: VHH amino acid sequence string
-
-    Returns:
-        Dictionary with extracted fragments, or None if annotation fails
-    """
-    try:
-        annotation = annotator.run_on_sequence(seq_id, sequence)
-
-        # Extract all heavy chain fragments
-        fragments = {
-            "full_seq_H": annotation.sequence_aa,  # Gap-free sequence (P0 fix)
-            "fwr1_aa_H": annotation.fwr1_aa,
-            "cdr1_aa_H": annotation.cdr1_aa,
-            "fwr2_aa_H": annotation.fwr2_aa,
-            "cdr2_aa_H": annotation.cdr2_aa,
-            "fwr3_aa_H": annotation.fwr3_aa,
-            "cdr3_aa_H": annotation.cdr3_aa,
-            "fwr4_aa_H": annotation.fwr4_aa,
-        }
-
-        # Create concatenated fragments
-        fragments["cdrs_H"] = "".join(
-            [
-                fragments["cdr1_aa_H"],
-                fragments["cdr2_aa_H"],
-                fragments["cdr3_aa_H"],
-            ]
-        )
-
-        fragments["fwrs_H"] = "".join(
-            [
-                fragments["fwr1_aa_H"],
-                fragments["fwr2_aa_H"],
-                fragments["fwr3_aa_H"],
-                fragments["fwr4_aa_H"],
-            ]
-        )
-
-        return fragments
-
-    except Exception as e:
-        logger.warning(f"Warning: Failed to annotate {seq_id}: {e}")
-        return None
 
 
 def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
@@ -101,33 +46,15 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
     logger.info(f"  Total nanobodies: {len(df)}")
     logger.info("  Annotating sequences with ANARCI (IMGT scheme)...")
 
-    results = []
-    failures = []
-    seq_counter = 0
+    # Generate sequential IDs (harvey_000001, harvey_000002, etc.)
+    df["id"] = [f"harvey_{i + 1:06d}" for i in range(len(df))]
+    # Add source metadata
+    df["source"] = "harvey2022"
 
-    for _idx, row in tqdm(df.iterrows(), total=len(df), desc="Annotating"):
-        # Generate sequential ID (harvey_000001, harvey_000002, etc.)
-        seq_counter += 1
-        seq_id = f"harvey_{seq_counter:06d}"
-
-        # Annotate VHH sequence
-        frags = annotate_sequence(seq_id, row["seq"])
-
-        if frags is None:
-            failures.append(seq_id)
-            continue
-
-        # Combine fragments and metadata
-        result = {
-            "id": seq_id,
-            "label": row["label"],
-            "source": "harvey2022",
-        }
-
-        result.update(frags)
-        results.append(result)
-
-    df_annotated = pd.DataFrame(results)
+    # Process with shared utility (heavy chain only)
+    df_annotated, failures = process_sequences_to_fragments(
+        df, heavy_col="seq", light_col=None, id_col="id"
+    )
 
     logger.info(f"\n  Successfully annotated: {len(df_annotated)}/{len(df)} nanobodies")
     if failures:

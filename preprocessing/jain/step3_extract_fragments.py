@@ -39,16 +39,12 @@ import sys
 from pathlib import Path
 
 import pandas as pd
-import riot_na
-from tqdm.auto import tqdm
 
+from preprocessing.fragment_utils import process_sequences_to_fragments
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import JAIN_FRAGMENTS_DIR, JAIN_FULL_CSV
 
 logger = setup_logger(__name__)
-
-# Initialize ANARCI for amino acid annotation (IMGT scheme)
-annotator = riot_na.create_riot_aa()
 
 
 def jain_label_from_elisa(elisa_flags: int | float | None) -> int | None:
@@ -79,60 +75,6 @@ def jain_label_from_elisa(elisa_flags: int | float | None) -> int | None:
         return 1
 
 
-def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] | None:
-    """
-    Annotate a single amino acid sequence using ANARCI (IMGT).
-
-    Args:
-        seq_id: Unique identifier for the sequence
-        sequence: Amino acid sequence string
-        chain: 'H' for heavy or 'L' for light
-
-    Returns:
-        Dictionary with extracted fragments, or None if annotation fails
-    """
-    assert chain in ("H", "L"), "chain must be 'H' or 'L'"
-
-    try:
-        annotation = annotator.run_on_sequence(seq_id, sequence)
-
-        # Extract all fragments (gap-free sequences)
-        fragments = {
-            f"full_seq_{chain}": annotation.sequence_aa,
-            f"fwr1_aa_{chain}": annotation.fwr1_aa,
-            f"cdr1_aa_{chain}": annotation.cdr1_aa,
-            f"fwr2_aa_{chain}": annotation.fwr2_aa,
-            f"cdr2_aa_{chain}": annotation.cdr2_aa,
-            f"fwr3_aa_{chain}": annotation.fwr3_aa,
-            f"cdr3_aa_{chain}": annotation.cdr3_aa,
-            f"fwr4_aa_{chain}": annotation.fwr4_aa,
-        }
-
-        # Create concatenated fragments
-        fragments[f"cdrs_{chain}"] = "".join(
-            [
-                fragments[f"cdr1_aa_{chain}"],
-                fragments[f"cdr2_aa_{chain}"],
-                fragments[f"cdr3_aa_{chain}"],
-            ]
-        )
-
-        fragments[f"fwrs_{chain}"] = "".join(
-            [
-                fragments[f"fwr1_aa_{chain}"],
-                fragments[f"fwr2_aa_{chain}"],
-                fragments[f"fwr3_aa_{chain}"],
-                fragments[f"fwr4_aa_{chain}"],
-            ]
-        )
-
-        return fragments
-
-    except Exception as e:
-        logger.warning(f"Warning: Failed to annotate {seq_id} ({chain}): {e}")
-        return None
-
-
 def process_jain_dataset(csv_path: str) -> pd.DataFrame:
     """
     Process Jain ELISA-based CSV to extract all fragments.
@@ -155,43 +97,14 @@ def process_jain_dataset(csv_path: str) -> pd.DataFrame:
         logger.info("This script requires jain_with_private_elisa_FULL.csv as input.")
         sys.exit(1)
 
-    results = []
-    failures = []
+    # Apply ELISA-based labeling (SSOT)
+    df["label"] = df["elisa_flags"].apply(jain_label_from_elisa)
+    df["source"] = "jain2017_pnas"
 
-    for _idx, row in tqdm(df.iterrows(), total=len(df), desc="Annotating"):
-        # Annotate heavy chain
-        heavy_frags = annotate_sequence(f"{row['id']}_VH", row["vh_sequence"], "H")
-
-        # Annotate light chain
-        light_frags = annotate_sequence(f"{row['id']}_VL", row["vl_sequence"], "L")
-
-        if heavy_frags is None or light_frags is None:
-            logger.info(f"  Skipping {row['id']} - annotation failed")
-            failures.append(row["id"])
-            continue
-
-        # Apply ELISA-based labeling (SSOT)
-        label = jain_label_from_elisa(row["elisa_flags"])
-
-        # Combine all fragments and metadata
-        result = {
-            "id": row["id"],
-            "label": label,
-            "elisa_flags": row["elisa_flags"],
-            "source": "jain2017_pnas",
-        }
-
-        result.update(heavy_frags)
-        result.update(light_frags)
-
-        # Create paired/combined fragments
-        result["vh_vl"] = result["full_seq_H"] + result["full_seq_L"]
-        result["all_cdrs"] = result["cdrs_H"] + result["cdrs_L"]
-        result["all_fwrs"] = result["fwrs_H"] + result["fwrs_L"]
-
-        results.append(result)
-
-    df_annotated = pd.DataFrame(results)
+    # Process with shared utility
+    df_annotated, failures = process_sequences_to_fragments(
+        df, heavy_col="vh_sequence", light_col="vl_sequence", id_col="id"
+    )
 
     logger.info(f"\n  Successfully annotated: {len(df_annotated)}/{len(df)} antibodies")
 

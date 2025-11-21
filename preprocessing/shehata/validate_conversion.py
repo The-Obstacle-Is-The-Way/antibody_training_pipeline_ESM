@@ -15,7 +15,6 @@ Date: 2025-10-31
 
 from __future__ import annotations
 
-import hashlib
 from pathlib import Path
 
 import openpyxl
@@ -27,6 +26,7 @@ from preprocessing.paths import (
     SHEHATA_PROCESSED_CSV,
     SHEHATA_RAW_EXCEL,
 )
+from preprocessing.validation_utils import calculate_checksum, validate_no_gaps
 
 logger = setup_logger(__name__)
 
@@ -132,15 +132,6 @@ def compare_sequences(
     return False
 
 
-def calculate_checksum(filepath: str | Path) -> str:
-    """Calculate SHA256 checksum of file."""
-    sha256 = hashlib.sha256()
-    with open(filepath, "rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            sha256.update(chunk)
-    return sha256.hexdigest()
-
-
 def validate_fragment_csvs(fragments_dir: Path) -> bool:
     """
     Validate fragment CSV files for gap characters.
@@ -179,12 +170,16 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
 
     for file in sorted(fragment_files):
         df = pd.read_csv(file)
-        gap_count = df["sequence"].str.contains("-", na=False).sum()
 
-        if gap_count > 0:
+        # Use shared utility to check for gaps
+        errors = validate_no_gaps(df, "sequence", file.name)
+
+        if errors:
             all_clean = False
-            gap_files.append((file.name, gap_count))
-            logger.info(f"    ✗ {file.name}: {gap_count} sequences with gaps")
+            # Parse error message to get count if needed, or just use the list
+            # Expected error format: "filename: N sequences contain gaps..."
+            gap_files.append(file.name)
+            # validate_no_gaps logs errors automatically
         else:
             logger.info(f"    ✓ {file.name}: gap-free")
 
@@ -196,9 +191,7 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
     else:
         logger.info("  ✗ FAILURE: Gap characters detected in fragment files")
         logger.info("  ✗ This is a P0 blocker - ESM-1v will fail validation")
-        logger.info("\n  Affected files:")
-        for filename, count in gap_files:
-            logger.info(f"    - {filename}: {count} sequences")
+        logger.info("\n  Affected files: " + ", ".join(gap_files))
         logger.info(
             "\n  Fix: Use annotation.sequence_aa instead of sequence_alignment_aa"
         )
