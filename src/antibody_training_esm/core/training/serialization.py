@@ -8,7 +8,7 @@ Manages configuration loading and directory structure.
 import json
 import logging
 import pickle  # nosec B403
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
 import sklearn
@@ -16,6 +16,9 @@ import yaml
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.directory_utils import get_hierarchical_model_dir
+
+if TYPE_CHECKING:
+    from antibody_training_esm.models.config import TrainingPipelineConfig
 
 
 def load_config(config_path: str) -> dict[str, Any]:
@@ -46,7 +49,9 @@ def load_config(config_path: str) -> dict[str, Any]:
 
 
 def save_model(
-    classifier: BinaryClassifier, config: dict[str, Any], logger: logging.Logger
+    classifier: BinaryClassifier,
+    config: "TrainingPipelineConfig | dict[str, Any]",
+    logger: logging.Logger,
 ) -> dict[str, str]:
     """
     Save trained model in dual format (pickle + NPZ+JSON)
@@ -59,7 +64,7 @@ def save_model(
 
     Args:
         classifier: Trained classifier
-        config: Configuration dictionary
+        config: Configuration dictionary or Pydantic model
         logger: Logger instance
 
     Returns:
@@ -71,17 +76,30 @@ def save_model(
         }
         Empty dict if saving is disabled.
     """
-    if not config["training"]["save_model"]:
-        return {}
+    from antibody_training_esm.models.config import TrainingPipelineConfig
 
-    model_name = config["training"]["model_name"]
-    base_save_dir = config["training"]["model_save_dir"]
+    if isinstance(config, TrainingPipelineConfig):
+        # Pydantic path
+        if not config.training.save_model:
+            return {}
+        model_name = config.training.model_name
+        base_save_dir = config.training.model_save_dir
+        model_shortname = config.model.name
+        classifier_config = config.classifier.model_dump()
+    else:
+        # Legacy dict path
+        if not config["training"]["save_model"]:
+            return {}
+        model_name = config["training"]["model_name"]
+        base_save_dir = config["training"]["model_save_dir"]
+        model_shortname = config["model"]["name"]
+        classifier_config = config["classifier"]
 
     # Generate hierarchical directory path
     hierarchical_dir = get_hierarchical_model_dir(
-        base_save_dir,
-        config["model"]["name"],
-        config["classifier"],
+        str(base_save_dir),
+        model_shortname,
+        classifier_config,
     )
     hierarchical_dir.mkdir(parents=True, exist_ok=True)
     logger.info(f"Using hierarchical model directory: {hierarchical_dir}")

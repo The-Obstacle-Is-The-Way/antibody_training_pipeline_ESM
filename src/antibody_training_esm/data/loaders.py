@@ -9,7 +9,7 @@ import logging
 import pickle  # nosec B403 - Used only for local trusted data (preprocessed datasets)
 from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Protocol, cast
+from typing import TYPE_CHECKING, Any, Protocol, cast
 
 import numpy as np
 import pandas as pd
@@ -17,6 +17,9 @@ import pandas as pd
 # HuggingFace datasets library lacks complete type stubs
 # See: https://github.com/huggingface/datasets/issues/3426
 from datasets import load_dataset  # type: ignore[attr-defined]
+
+if TYPE_CHECKING:
+    from antibody_training_esm.models.config import TrainingPipelineConfig
 
 logger = logging.getLogger(__name__)
 type Label = int | float | bool | str
@@ -186,34 +189,50 @@ def load_local_data(
     return X_train, y_train
 
 
-def load_data(config: dict[str, Any]) -> tuple[list[str], list[Label]]:
+def load_data(
+    config: "dict[str, Any] | TrainingPipelineConfig",
+) -> tuple[list[str], list[Label]]:
     """
-    Load training data from either Hugging Face or local file based on config
+    Load training data from Pydantic config or legacy dict.
 
     Args:
-        config: Configuration dictionary containing data parameters
+        config: Validated TrainingPipelineConfig or dict (legacy)
 
     Returns:
-        X_train: List of training sequences
-        y_train: List of training labels
-
-    Raises:
-        ValueError: If data source is unknown
+        (sequences, labels)
     """
-    data_config = config["data"]
+    from antibody_training_esm.models.config import TrainingPipelineConfig
 
-    if data_config["source"] == "hf":
+    if isinstance(config, TrainingPipelineConfig):
+        train_file = config.data.train_file
+        return load_local_data(train_file, "sequence", "label")
+
+    # Handle Legacy Dict Config
+    data_config = config.get("data", {})
+
+    # Simplified logic: If 'train_file' exists, use local loader directly
+    # This matches the new schema which only supports local files via 'train_file'
+    if "train_file" in data_config:
+        # Legacy configs might specify columns, or we default to 'sequence'/'label'
+        # The new schema assumes 'sequence' and 'label' columns are present
+        # For backward compatibility, we check if keys exist, else default
+        seq_col = data_config.get("sequence_column", "sequence")
+        label_col = data_config.get("label_column", "label")
+        return load_local_data(data_config["train_file"], seq_col, label_col)
+
+    # Keep existing logic for "source" key if present (strictly legacy/HF support)
+    if data_config.get("source") == "hf":
         return load_hf_dataset(
             dataset_name=data_config["dataset_name"],
             split=data_config["train_split"],
             text_column=data_config["sequence_column"],
             label_column=data_config["label_column"],
         )
-    elif data_config["source"] == "local":
+    elif data_config.get("source") == "local":
         return load_local_data(
             data_config["train_file"],
             text_column=data_config["sequence_column"],
             label_column=data_config["label_column"],
         )
     else:
-        raise ValueError(f"Unknown data source: {data_config['source']}")
+        raise ValueError(f"Unknown data source configuration: {data_config}")

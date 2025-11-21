@@ -8,16 +8,30 @@ This package contains schema definitions for:
 - Model artifacts (Phase 4)
 """
 
+from antibody_training_esm.models.config import (
+    ClassifierConfig,
+    DataConfig,
+    ExperimentConfig,
+    ModelConfig,
+    TrainingConfig,
+    TrainingPipelineConfig,
+)
 from antibody_training_esm.models.prediction import (
-    AssayType,
     BatchPredictionRequest,
     PredictionRequest,
     PredictionResult,
 )
 
 __all__ = [
-    "AssayType",
+    # Prediction models
     "PredictionRequest",
     "BatchPredictionRequest",
     "PredictionResult",
+    # Config models
+    "ModelConfig",
+    "DataConfig",
+    "ClassifierConfig",
+    "TrainingConfig",
+    "ExperimentConfig",
+    "TrainingPipelineConfig",
 ]
