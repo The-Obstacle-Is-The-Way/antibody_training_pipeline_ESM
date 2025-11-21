@@ -179,7 +179,7 @@ python3 scripts/validation/validate_jain_conversion.py
 
 ```csv
 id,heavy_seq,light_seq,flags_total,flag_category,label,flag_self_interaction,flag_chromatography,flag_polyreactivity,flag_stability,source,smp,ova,bvp_elisa,...
-abituzumab,QVQLQQSGGELAKPGASVKVSCKASGYTFSSFWMHWVRQAPGQGLEWIGYINPRSGYTEYNEIFRDKATMTTDTSTSTAYMELSSLRSEDTAVYYCASFLGRGAMDYWGQGTTVTVSS,DIQMTQSPSSLSASVGDRVTITCRASQDISNYLAWYQQKPGKAPKLLIYYTSKIHSGVPSRFSGSGSGTDYTFTISSLQPEDIATYYCQQGNTFPYTFGQGTKVEIK,1,mild,,False,False,True,False,jain2017,0.166666,1.137375,2.720799,...
+abituzumab,QVQLQQSGGELAKPGASVKVSCKASGYTFSSFWMHWVRQAPGKGLEWIGYINPRSGYTEYNEIFRDKATMTTDTSTSTAYMELSSLRSEDTAVYYCASFLGRGAMDYWGQGTTVTVSS,DIQMTQSPSSLSASVGDRVTITCRASQDISNYLAWYQQKPGKAPKLLIYYTSKIHSGVPSRFSGSGSGTDYTFTISSLQPEDIATYYCQQGNTFPYTFGQGTKVEIK,1,mild,,False,False,True,False,jain2017,0.166666,1.137375,2.720799,...
 ```
 
 `label` uses pandas nullable integers: `0` for specific, `1` for ≥4 flags (non-specific), blank for mild (1–3 flags).
@@ -518,34 +518,47 @@ After conversion, document:
 
 ---
 
-## Next Steps
+# Sequence Handling & ANARCI Gotchas
 
-1. ✅ Scripts created (`preprocessing/shehata/step1_convert_excel_to_csv.py`, `scripts/validation/validate_shehata_conversion.py`)
-2. 🔲 Run conversion interactively
-3. 🔲 Review and approve PSR threshold
-4. 🔲 Run validation checks
-5. 🔲 Compare with jain.csv format
-6. 🔲 Test with existing pipeline
-7. 🔲 Document conversion in log file
-8. 🔲 Commit shehata.csv to repository
+**Important Lesson:** Always use the canonical source sequence for full V-domains. Do not reconstruct them from annotated fragments.
 
----
+### The "Data Cleaning" Trap
 
-## Conclusion
+A common pattern in bioinformatics pipelines is to "clean" sequence data by annotating it (e.g., with ANARCI) and then reconstructing the sequence from the identified regions (FWR1 + CDR1 + ... + FWR4).
 
-**Recommended approach:** Use Python scripts (Method 1) with multi-layer validation.
+**DO NOT DO THIS.**
 
-**Why:**
-- ✓ Transparent and reproducible
-- ✓ Built-in validation
-- ✓ Follows best practices for scientific data
-- ✓ Easy to review and audit
-- ✓ No manual steps
-- ✓ Generates comprehensive logs
+### Why Reconstruction Fails
 
-**Ready to run:** `python3 preprocessing/shehata/step1_convert_excel_to_csv.py`
+Reference numbering schemes like IMGT define strict boundaries for variable regions. However, real-world biological sequences (and canonical dataset records) often contain biologically relevant residues at the termini that fall just outside these strict boundaries.
 
----
+**Case Study: Pertuzumab (Jain Dataset)**
 
-**Last Updated:** 2025-11-18
-**Branch:** `leroy-jenkins/full-send`
+*   **Canonical Input:** `...YWGQGTLVTVSS` (Ends in 'SS')
+*   **ANARCI IMGT FWR4:** `...YWGQGTLVTVS` (Ends in 'S')
+*   **The Discrepancy:** ANARCI considers the final 'S' (position 119) to be part of the constant region start, excluding it from the FWR4 annotation.
+
+If you reconstruct the sequence from fragments (`"".join([fwr1, ..., fwr4])`), you lose the final 'S'. This modifies the sequence relative to the ground truth and invalidates benchmarks.
+
+### Best Practice
+
+When extracting fragments or processing sequences:
+
+1.  **Trust the Source:** Use the input sequence (`annotation.sequence_aa`) as the definitive full V-domain.
+2.  **Use Fragments for Features:** Use the annotated regions (CDRs, FWRs) for feature engineering or specific analysis.
+3.  **Validate Lengths:** Ensure your processed sequences match the length of the canonical input sequences.
+
+### Code Example (Correct)
+
+```python
+# preprocessing/fragment_utils.py
+
+def process_sequence(annotation):
+    # CORRECT: Use the full annotated sequence
+    full_seq = annotation.sequence_aa
+    
+    # INCORRECT: Reconstruct from fragments (RISK OF DATA LOSS)
+    # full_seq = "".join([annotation.fwr1_aa, annotation.cdr1_aa, ...])
+    
+    return full_seq
+```
