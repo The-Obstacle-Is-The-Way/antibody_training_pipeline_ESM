@@ -16,7 +16,6 @@ Expected output:
 from __future__ import annotations
 
 import argparse
-import hashlib
 from pathlib import Path
 
 import pandas as pd
@@ -24,12 +23,15 @@ import pandas.testing as pdt
 
 # Clean package import (no sys.path manipulation needed)
 from preprocessing.jain.step1_convert_excel_to_csv import (
-    VALID_AA,
     calculate_flags,
     load_data,
 )
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import JAIN_FULL_CSV
+from preprocessing.validation_utils import (
+    calculate_checksum,
+    validate_amino_acids,
+)
 
 logger = setup_logger(__name__)
 
@@ -45,26 +47,6 @@ def parse_args() -> argparse.Namespace:
         help="Path to the converted CSV file (ELISA SSOT).",
     )
     return parser.parse_args()
-
-
-def checksum(path: Path) -> str:
-    sha = hashlib.sha256()
-    with path.open("rb") as fh:
-        for chunk in iter(lambda: fh.read(8192), b""):
-            sha.update(chunk)
-    return sha.hexdigest()
-
-
-def validate_sequences(df: pd.DataFrame) -> dict[str, int]:
-    """Return counts of sequences containing invalid residues."""
-    invalid_counts = {"heavy": 0, "light": 0}
-    for seq in df["vh_sequence"].dropna():
-        if set(seq) - VALID_AA:
-            invalid_counts["heavy"] += 1
-    for seq in df["vl_sequence"].dropna():
-        if set(seq) - VALID_AA:
-            invalid_counts["light"] += 1
-    return invalid_counts
 
 
 def main() -> None:
@@ -165,17 +147,18 @@ def main() -> None:
     else:
         logger.warning("WARNING: Distribution mismatch!")
 
-    invalid = validate_sequences(csv_df)
-    if invalid["heavy"] == 0 and invalid["light"] == 0:
+    # Validate sequences using shared utility
+    errors_vh = validate_amino_acids(csv_df, "vh_sequence", "Jain (VH)")
+    errors_vl = validate_amino_acids(csv_df, "vl_sequence", "Jain (VL)")
+
+    if not errors_vh and not errors_vl:
         logger.info(
             "\nSequence validation: ✅ all VH/VL sequences contain only valid amino acids"
         )
     else:
-        logger.info("\nSequence validation: ⚠ issues detected")
-        logger.info(f"  Heavy chains with invalid residues: {invalid['heavy']}")
-        logger.info(f"  Light chains with invalid residues: {invalid['light']}")
+        logger.info("\nSequence validation: ⚠ issues detected (details logged above)")
 
-    logger.info(f"\nChecksum (SHA256): {checksum(args.csv)}")
+    logger.info(f"\nChecksum (SHA256): {calculate_checksum(args.csv)}")
     logger.info("\nValidation complete ✅")
 
 
