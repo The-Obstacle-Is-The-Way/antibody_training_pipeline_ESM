@@ -7,14 +7,13 @@ Includes cross-validation, embedding caching, and comprehensive evaluation.
 
 import logging
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import hydra
 import numpy as np
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 
 from antibody_training_esm.core.classifier import BinaryClassifier
-from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 
 # Import and re-export from submodules
 from antibody_training_esm.core.training.cache import (
@@ -49,233 +48,104 @@ __all__ = [
 ]
 
 
-def validate_config(config: dict[str, Any] | DictConfig) -> None:
-    """
-    Validate config structure and semantics (Hydra-aware).
+from antibody_training_esm.models.config import TrainingPipelineConfig
 
-    Performs two levels of validation:
-    1. Schema validation: Required keys exist (structural)
-    2. Semantic validation: Files exist, metrics/devices valid (semantic)
+
+def validate_config(config: dict[str, Any] | DictConfig) -> TrainingPipelineConfig:
+    """
+    Validate config with Pydantic models.
 
     Args:
-        config: Configuration dictionary or DictConfig to validate
+        config: Raw dict or Hydra DictConfig
+
+    Returns:
+        Validated TrainingPipelineConfig
 
     Raises:
-        ValueError: If any required keys are missing or invalid
-        FileNotFoundError: If required files don't exist
+        ValidationError: If config is invalid
     """
-    # Convert DictConfig to dict for uniform access
     if isinstance(config, DictConfig):
-        config_dict = cast(dict[str, Any], OmegaConf.to_container(config, resolve=True))
-    else:
-        config_dict = config
-
-    # Define required config structure
-    required_keys = {
-        "data": ["train_file", "test_file", "embeddings_cache_dir"],
-        "model": ["name", "device"],
-        "classifier": [],  # Nested validation happens in BinaryClassifier
-        "training": ["log_level", "metrics", "n_splits"],
-        "experiment": ["name"],
-    }
-
-    missing_sections = []
-    missing_keys = []
-
-    # Check top-level sections exist
-    for section in required_keys:
-        if section not in config_dict:
-            missing_sections.append(section)
-            continue
-
-        # Check keys within each section
-        if not isinstance(config_dict[section], dict):
-            raise ValueError(
-                f"Config section '{section}' must be a dictionary, "
-                f"got {type(config_dict[section]).__name__}"
-            )
-
-        for key in required_keys[section]:
-            if key not in config_dict[section]:
-                missing_keys.append(f"{section}.{key}")
-
-    # Construct helpful error message for structural errors
-    if missing_sections or missing_keys:
-        error_parts = []
-        if missing_sections:
-            error_parts.append(
-                f"Missing config sections: {', '.join(missing_sections)}"
-            )
-        if missing_keys:
-            error_parts.append(f"Missing config keys: {', '.join(missing_keys)}")
-        raise ValueError("Config validation failed:\n  - " + "\n  - ".join(error_parts))
-
-    # Semantic validation (beyond structure)
-    errors = []
-
-    # Validate files exist
-    train_file = Path(config_dict["data"]["train_file"])
-    if not train_file.exists():
-        errors.append(f"Training file not found: {train_file}")
-
-    test_file = Path(config_dict["data"]["test_file"])
-    if not test_file.exists():
-        errors.append(f"Test file not found: {test_file}")
-
-    # Validate metrics are valid
-    VALID_METRICS = {"accuracy", "precision", "recall", "f1", "roc_auc"}
-    metrics = set(config_dict["training"]["metrics"])
-    invalid_metrics = metrics - VALID_METRICS
-    if invalid_metrics:
-        errors.append(
-            f"Invalid metrics: {invalid_metrics}. Valid metrics: {VALID_METRICS}"
-        )
-
-    # Validate device is valid
-    VALID_DEVICES = {"cpu", "cuda", "mps", "auto"}
-    device = config_dict["model"]["device"]
-    if device not in VALID_DEVICES:
-        errors.append(f"Invalid device: {device}. Valid devices: {VALID_DEVICES}")
-
-    # Raise if any semantic validation failed
-    if errors:
-        raise ValueError(
-            "Config semantic validation failed:\n  - " + "\n  - ".join(errors)
-        )
+        return TrainingPipelineConfig.from_hydra(config)
+    result: TrainingPipelineConfig = TrainingPipelineConfig.model_validate(config)
+    return result
 
 
-def setup_logging(config: dict[str, Any] | DictConfig) -> logging.Logger:
+def setup_logging(config: TrainingPipelineConfig) -> logging.Logger:
     """
-    Setup logging configuration (Hydra-aware)
-
-    If running under Hydra (@hydra.main decorator), uses Hydra's output directory.
-    If running in legacy mode, uses absolute path from config.
+    Setup logging from Pydantic config.
 
     Args:
-        config: Configuration dictionary or DictConfig
+        config: Validated TrainingPipelineConfig
 
     Returns:
         Configured logger
-
-    Raises:
-        ValueError: If log_level is invalid
     """
     from hydra.core.hydra_config import HydraConfig
 
-    # Convert DictConfig to dict if needed for uniform access
-    if isinstance(config, DictConfig):
-        config_dict = cast(dict[str, Any], OmegaConf.to_container(config, resolve=True))
-    else:
-        config_dict = config
+    log_level = getattr(logging, config.training.log_level.upper())
+    log_file = config.training.log_file
 
-    # Validate log level
-    VALID_LEVELS = {"DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"}
-    level_str = config_dict["training"]["log_level"].upper()
-    if level_str not in VALID_LEVELS:
-        raise ValueError(
-            f"Invalid log_level '{level_str}' in config. Must be one of: {VALID_LEVELS}"
-        )
-
-    log_level = getattr(logging, level_str)
-    log_file_str = config_dict["training"]["log_file"]
-
-    # Determine log file path (Hydra-aware)
+    # Hydra-aware path resolution (same as before)
     try:
-        # Try to get Hydra's output directory (only works when @hydra.main is active)
         hydra_cfg = HydraConfig.get()
         output_dir = Path(hydra_cfg.runtime.output_dir)
-        log_file = output_dir / log_file_str  # log_file is relative to Hydra output dir
-        # Create log directory if it doesn't exist (even in Hydra mode)
-        log_file.parent.mkdir(parents=True, exist_ok=True)
-    except (ValueError, AttributeError, OSError) as e:
-        logging.getLogger(__name__).warning(
-            "Hydra output dir not available, falling back to config log path: %s", e
-        )
-        log_file = Path(log_file_str)
-        if not log_file.is_absolute():
-            log_file = Path.cwd() / log_file_str
-        log_file.parent.mkdir(parents=True, exist_ok=True)
-    except Exception:
-        logging.getLogger(__name__).exception(
-            "Unexpected error determining log file path"
-        )
-        raise
+        log_path = output_dir / log_file
+        log_path.parent.mkdir(parents=True, exist_ok=True)
+    except (ValueError, AttributeError):
+        log_path = Path(log_file)
+        if not log_path.is_absolute():
+            log_path = Path.cwd() / log_file
+        log_path.parent.mkdir(parents=True, exist_ok=True)
 
-    # Configure logging
-    # force=True prevents duplicate log lines when Hydra has already configured logging
     logging.basicConfig(
         level=log_level,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
-        force=True,  # Python 3.8+ - replaces existing handlers
+        handlers=[logging.FileHandler(log_path), logging.StreamHandler()],
+        force=True,
     )
 
     return logging.getLogger(__name__)
 
 
 def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
-    """
-    Core training pipeline - accepts Hydra DictConfig
+    """Core training pipeline with Pydantic validation."""
+    # Validate config (now returns Pydantic model)
+    config = validate_config(cfg)
 
-    This is the main entry point for Hydra-based training. It accepts a composed
-    DictConfig from Hydra and executes the full training pipeline.
+    # Setup logging (accepts Pydantic model now)
+    logger = setup_logging(config)
 
-    Args:
-        cfg: Hydra DictConfig (composed from YAML + overrides)
-
-    Returns:
-        Dictionary containing training results and metrics:
-        {
-            "train_metrics": {...},
-            "cv_metrics": {...},
-            "config": {...},
-            "model_paths": {...}
-        }
-
-    Raises:
-        Exception: If training fails
-
-    Examples:
-        >>> with initialize(config_path="conf"):
-        ...     cfg = compose(config_name="config")
-        ...     results = train_pipeline(cfg)
-    """
-    # Resolve all interpolations (e.g., ${hardware.device})
-    OmegaConf.resolve(cfg)
-
-    # Validate config structure (accepts DictConfig)
-    validate_config(cfg)
-
-    # Setup logging (Hydra-aware, accepts DictConfig)
-    logger = setup_logging(cfg)
-
-    # Convert to dict for legacy code that requires dict access
-    # Keep DictConfig as long as possible to preserve type safety and validation
-    config: dict[str, Any] = cast(
-        dict[str, Any], OmegaConf.to_container(cfg, resolve=True)
-    )
-    logger.info("Starting antibody classification training (Hydra pipeline)")
-    logger.info(f"Experiment: {config['experiment']['name']}")
+    logger.info("Starting antibody classification training")
+    logger.info(f"Experiment: {config.experiment.name}")
 
     try:
-        # Load data
         X_train, y_train = load_data(config)
 
         logger.info(f"Loaded {len(X_train)} training samples")
 
-        # Initialize embedding extractor and classifier
-        logger.info("Initializing ESM embedding extractor and classifier")
-        classifier_params = config["classifier"].copy()
-        classifier_params["model_name"] = config["model"]["name"]
-        classifier_params["device"] = config["model"]["device"]
-        classifier_params["batch_size"] = config["training"].get(
-            "batch_size", DEFAULT_BATCH_SIZE
-        )
+        # Initialize classifier
+        classifier_params = {
+            "model_name": config.model.name,
+            "device": config.model.device,
+            "batch_size": config.model.batch_size,
+            "revision": config.model.revision,
+            # Classifier strategy params
+            "strategy": config.classifier.strategy,
+            "C": config.classifier.C,
+            "penalty": config.classifier.penalty,
+            "solver": config.classifier.solver,
+            "class_weight": config.classifier.class_weight,
+            "max_iter": config.classifier.max_iter,
+            "random_state": config.classifier.random_state,
+            "n_estimators": config.classifier.n_estimators,
+            "max_depth": config.classifier.max_depth,
+            "learning_rate": config.classifier.learning_rate,
+        }
+
         classifier = BinaryClassifier(classifier_params)
 
-        # Get or create embeddings
-        cache_dir = config["data"]["embeddings_cache_dir"]
-
+        # Get embeddings (cache_dir from config)
+        cache_dir = config.data.embeddings_cache_dir
         X_train_embedded = get_or_create_embeddings(
             X_train, classifier.embedding_extractor, cache_dir, "train", logger
         )
@@ -283,72 +153,58 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
         # Convert labels to numpy array
         y_train_array: np.ndarray = np.array(y_train)
 
-        # Perform cross-validation on full training data
-        logger.info("Performing cross-validation on training data...")
         cv_results = perform_cross_validation(
-            X_train_embedded, y_train_array, config, logger
+            X_train_embedded,
+            y_train_array,
+            config,  # Passing Pydantic model
+            logger,
         )
 
-        # Save CV results to file (with Hydra/legacy mode fallback)
+        # Save CV results
         try:
-            # Try Hydra output directory first (production mode)
             from hydra.core.hydra_config import HydraConfig
 
             hydra_cfg = HydraConfig.get()
             cv_output_dir = Path(hydra_cfg.runtime.output_dir)
-            experiment_name = cfg.experiment.name
+            experiment_name = config.experiment.name
             logger.info(f"Saving CV results to Hydra output dir: {cv_output_dir}")
-        except (ImportError, AttributeError, OSError, ValueError) as e:
-            model_save_dir = config.get("training", {}).get(
-                "model_save_dir", "./outputs"
-            )
-            cv_output_dir = Path(model_save_dir)
-            experiment_name = config.get("experiment", {}).get("name", "training")
-            logger.info(
-                "Running without Hydra, saving CV results to %s (reason: %s)",
-                cv_output_dir,
-                e,
-            )
-        except Exception:
-            logger.exception("Unexpected error determining CV output directory")
-            raise
+        except (ValueError, AttributeError, ImportError):
+            cv_output_dir = config.training.model_save_dir
+            experiment_name = config.experiment.name
+            logger.info(f"Running without Hydra, saving CV results to {cv_output_dir}")
 
-        # Save CV results (both Hydra and legacy modes)
         save_cv_results(cv_results, cv_output_dir, experiment_name, logger)
 
-        # Train final model on full training set
-        logger.info("Training final model on full training set...")
+        # Train final model
         classifier.fit(X_train_embedded, y_train_array)
-        logger.info("Training completed")
 
-        # Evaluate final model on training set
-        metrics = config["training"]["metrics"]
+        # Evaluate
         train_results = evaluate_model(
-            classifier, X_train_embedded, y_train_array, "Training", metrics, logger
+            classifier,
+            X_train_embedded,
+            y_train_array,
+            "Training",
+            list(config.training.metrics),  # Cast to list for type safety
+            logger,
         )
 
         # Save model
-        model_paths = save_model(classifier, config, logger)
+        if config.training.save_model:
+            # save_model expects config dict or object.
+            # We'll pass Pydantic config.
+            model_paths = save_model(classifier, config, logger)
+        else:
+            model_paths = {}
 
-        # Compile results
-        results = {
+        return {
             "train_metrics": train_results,
             "cv_metrics": cv_results,
-            "config": config,
+            "config": config.model_dump(),  # Convert back to dict for serialization
             "model_paths": model_paths,
         }
 
-        logger.info("Training pipeline completed successfully")
-
-        # Cache preserved for reuse in hyperparameter sweeps
-        logger.info(
-            f"Embedding cache preserved at {cache_dir} for future training runs"
-        )
-
-        return results
-
     except Exception as e:
-        logger.error(f"Training failed with error: {str(e)}")
+        logger.error(f"Training failed: {e}")
         raise
 
 

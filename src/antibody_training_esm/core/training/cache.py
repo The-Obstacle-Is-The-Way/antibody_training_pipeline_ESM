@@ -9,6 +9,7 @@ import hashlib
 import logging
 import os
 import pickle  # nosec B403
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -72,7 +73,7 @@ def validate_embeddings(
 def get_or_create_embeddings(
     sequences: list[str],
     embedding_extractor: ESMEmbeddingExtractor,
-    cache_path: str,
+    cache_path: str | Path,
     dataset_name: str,
     logger: logging.Logger,
 ) -> np.ndarray:
@@ -92,6 +93,10 @@ def get_or_create_embeddings(
     Raises:
         ValueError: If cached or computed embeddings are invalid
     """
+    # Ensure cache_path is string for os.path.join/os.makedirs compatibility
+    # (os.path supports Path in 3.6+, but for safety/consistency with type hint)
+    cache_path_str = str(cache_path)
+
     # Create a hash that includes model metadata to prevent cache collisions
     # between different backbones (ESM-1v, ESM2, AntiBERTa, etc.)
     sequences_str = "|".join(sequences)
@@ -105,7 +110,7 @@ def get_or_create_embeddings(
     # prevent weak-hash findings while keeping deterministic cache keys.
     sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
     cache_file = os.path.join(
-        cache_path, f"{dataset_name}_{sequences_hash}_embeddings.pkl"
+        cache_path_str, f"{dataset_name}_{sequences_hash}_embeddings.pkl"
     )
 
     if os.path.exists(cache_file):
@@ -176,7 +181,7 @@ def get_or_create_embeddings(
 
     # Cache the embeddings with metadata for verification
     # Include model metadata to prevent cache collisions between different backbones
-    os.makedirs(cache_path, exist_ok=True)
+    os.makedirs(cache_path_str, exist_ok=True)
     cache_data = {
         "embeddings": embeddings,
         "sequences_hash": sequences_hash,

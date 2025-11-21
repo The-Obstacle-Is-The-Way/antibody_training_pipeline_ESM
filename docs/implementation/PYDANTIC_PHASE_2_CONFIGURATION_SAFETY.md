@@ -1,6 +1,6 @@
 # Pydantic Phase 2: Configuration Safety
 
-**Status:** Not Started
+**Status:** Completed (ruff + mypy + pytest ✅)
 **Priority:** HIGH (Developer Experience)
 **Risk:** MEDIUM (Touches core training loop)
 **Dependencies:** Phase 1 (Pydantic models package exists)
@@ -89,7 +89,7 @@ class ModelConfig(BaseModel):
     )
 
     batch_size: int = Field(
-        default=16,
+        default=8,
         ge=1,
         le=128,
         description="Batch size for embedding extraction",
@@ -225,6 +225,16 @@ class TrainingConfig(BaseModel):
         description="Number of cross-validation folds",
     )
 
+    random_state: int = Field(
+        default=42,
+        description="Random seed used for cross-validation splits",
+    )
+
+    stratify: bool = Field(
+        default=True,
+        description="Whether to use stratified folds during cross-validation",
+    )
+
     metrics: set[Literal["accuracy", "precision", "recall", "f1", "roc_auc"]] = Field(
         default={"accuracy", "precision", "recall", "f1", "roc_auc"},
         description="Metrics to compute during evaluation",
@@ -254,6 +264,19 @@ class TrainingConfig(BaseModel):
     log_file: str = Field(
         default="training.log",
         description="Log file name (relative to Hydra output dir)",
+    )
+
+    batch_size: int = Field(
+        default=8,
+        ge=1,
+        le=128,
+        description="Batch size for embedding extraction",
+    )
+
+    num_workers: int = Field(
+        default=4,
+        ge=0,
+        description="Number of workers for data loading or preprocessing",
     )
 
     @field_validator("model_save_dir")
@@ -336,6 +359,8 @@ class TrainingPipelineConfig(BaseModel):
         return cls.model_validate(config_dict)
 ```
 
+`from_hydra()` also copies `training.batch_size` into `model.batch_size` when the model block omits it, so existing Hydra overrides (`training.batch_size=32`) still drive the embedding extractor.
+
 ---
 
 ## Integration Steps (TDD)
@@ -371,7 +396,7 @@ class TestModelConfig:
             device="cuda",
         )
         assert cfg.device == "cuda"
-        assert cfg.batch_size == 16  # default
+        assert cfg.batch_size == 8  # default
 
     def test_invalid_device_rejected(self):
         """Non-enum device values are rejected."""
@@ -497,11 +522,11 @@ class TestTrainingPipelineConfig:
 
         # Simulate Hydra DictConfig
         hydra_cfg = DictConfig({
-            "model": {
-                "name": "facebook/esm1v_t33_650M_UR90S_1",
-                "device": "cpu",
-                "batch_size": 16,
-            },
+                "model": {
+                    "name": "facebook/esm1v_t33_650M_UR90S_1",
+                    "device": "cpu",
+                    "batch_size": 8,
+                },
             "data": {
                 "train_file": str(train_file),
                 "test_file": str(test_file),
@@ -769,7 +794,7 @@ model:
   revision: main
 
   # Batch size for embedding extraction (1-128)
-  batch_size: 16
+  batch_size: 8
 
 data:
   # Path to training CSV (must contain 'sequence' and 'label' columns)
