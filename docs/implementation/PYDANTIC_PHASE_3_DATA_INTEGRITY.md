@@ -75,6 +75,10 @@ uv sync --extra validation
    - Remove manual DataFrame validation functions
    - Keep checksum and file existence checks
    - Add Pandera schema validation wrappers
+   
+6. **Refactor:** `preprocessing/paths.py`
+    - Replace global constants with `DataSettings` class using `pydantic-settings` (as per Audit plan)
+    - This centralizes path management and allows environment variable overrides.
 
 ---
 
@@ -238,6 +242,59 @@ ShehataSchema = SequenceDatasetSchema.add_columns(
         ),
     }
 )
+```
+
+---
+
+## Data Settings Specification (Replacing `preprocessing/paths.py`)
+
+**Location:** `src/antibody_training_esm/settings.py`
+
+```python
+from pathlib import Path
+from pydantic import Field, computed_field
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+class DataSettings(BaseSettings):
+    """
+    Centralized data path configuration. 
+    
+    Replaces hardcoded paths in preprocessing/paths.py.
+    Allows override via env vars (e.g. DATA_DIR=/tmp/data).
+    """
+    # Project Root (inferred or explicit)
+    PROJECT_ROOT: Path = Field(
+        default_factory=lambda: Path(__file__).parent.parent.parent
+    )
+    
+    # Base Directories
+    DATA_DIR: Path = Field(default_factory=lambda: Path("data"))
+    EXPERIMENTS_DIR: Path = Field(default_factory=lambda: Path("experiments"))
+    
+    # Computed Paths
+    @computed_field
+    def DATA_TRAIN_DIR(self) -> Path:
+        return self.DATA_DIR / "train"
+        
+    @computed_field
+    def DATA_TEST_DIR(self) -> Path:
+        return self.DATA_DIR / "test"
+        
+    # Boughter
+    @computed_field
+    def BOUGHTER_DIR(self) -> Path:
+        return self.DATA_TRAIN_DIR / "boughter"
+    
+    # ... (Add all other computed properties for Boughter, Jain, Harvey, Shehata)
+    
+    model_config = SettingsConfigDict(
+        env_prefix="ANTIBODY_",
+        env_file=".env",
+        extra="ignore"
+    )
+
+# Global instance
+settings = DataSettings()
 ```
 
 ---
@@ -621,6 +678,11 @@ def validate_stage2_output():
 
 **Similarly update:** `preprocessing/jain/validate_conversion.py`, `preprocessing/shehata/validate_conversion.py`
 
+### Step 7: Implement Settings
+
+Create `src/antibody_training_esm/settings.py` with the `DataSettings` class.
+Update `preprocessing/paths.py` to import from `settings.py` (backward compatibility) or fully replace usage.
+
 ---
 
 ## Testing Strategy
@@ -633,6 +695,7 @@ def validate_stage2_output():
 - ✅ JainSchema validation (2 tests)
 - ✅ HarveySchema validation (2 tests)
 - ✅ ShehataSchema validation (3 tests)
+- ✅ DataSettings validation (3 tests)
 
 **Run:**
 ```bash
@@ -713,6 +776,7 @@ uv run pytest tests/integration/test_dataset_loading.py -v
 - [ ] Null sequences raise SchemaError
 - [ ] Extra columns allowed (strict=False)
 - [ ] Validation errors are actionable (show row/column)
+- [ ] Paths are managed via `DataSettings` with env var override support
 
 ### Quality Gates
 
@@ -737,8 +801,12 @@ uv run pytest tests/integration/test_dataset_loading.py -v
    - Update `datasets/base.py`
    - Update all dataset loaders
    - Maintain backward compatibility
+   
+3. **PR 3: Settings Migration**
+    - Create `src/antibody_training_esm/settings.py`
+    - Refactor `preprocessing/paths.py` to use settings
 
-3. **PR 3: Preprocessing Cleanup**
+4. **PR 4: Preprocessing Cleanup**
    - Remove manual validation from `validation_utils.py`
    - Update preprocessing validation scripts
 
