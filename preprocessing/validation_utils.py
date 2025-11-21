@@ -13,6 +13,7 @@ Functions:
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,19 @@ logger = setup_logger(__name__)
 
 # Standard valid amino acids (20 standard + X for unknown if permitted)
 VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
+
+
+def calculate_checksum(file_path: str | Path) -> str:
+    """Calculate SHA256 checksum of a file."""
+    sha = hashlib.sha256()
+    path = Path(file_path)
+    if not path.exists():
+        return ""
+
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(8192), b""):
+            sha.update(chunk)
+    return sha.hexdigest()
 
 
 def validate_directory_exists(path: Path, name: str = "Directory") -> bool:

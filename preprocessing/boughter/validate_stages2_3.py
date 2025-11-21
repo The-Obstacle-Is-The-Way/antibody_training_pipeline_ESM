@@ -39,6 +39,14 @@ import pandas as pd
 
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_TRAINING_SUBSET
+from preprocessing.validation_utils import (
+    calculate_label_stats,
+    log_label_stats,
+    validate_dataframe_columns,
+    validate_directory_exists,
+    validate_no_empty_sequences,
+    validate_no_nulls,
+)
 
 logger = setup_logger(__name__)
 
@@ -68,7 +76,7 @@ def validate_fragment_directory(
     }
 
     # Check directory exists
-    if not dataset_dir.exists():
+    if not validate_directory_exists(dataset_dir):
         results["valid"] = False
         errors_list.append(f"Directory not found: {dataset_dir}")
         return results
@@ -98,27 +106,22 @@ def validate_fragment_directory(
             df = pd.read_csv(csv_file, comment="#")
 
             # Check required columns
-            missing_cols = required_columns - set(df.columns)
-            if missing_cols:
-                errors_list.append(f"{csv_file.name}: Missing columns {missing_cols}")
+            col_errors = validate_dataframe_columns(df, required_columns, csv_file.name)
+            if col_errors:
+                errors_list.extend(col_errors)
                 results["valid"] = False
 
             # Check for empty sequences
-            if "sequence" in df.columns:
-                empty_seqs = (df["sequence"].str.len() == 0).sum()
-                if empty_seqs > 0:
-                    errors_list.append(f"{csv_file.name}: {empty_seqs} empty sequences")
-                    results["valid"] = False
+            empty_errors = validate_no_empty_sequences(df, "sequence", csv_file.name)
+            if empty_errors:
+                errors_list.extend(empty_errors)
+                results["valid"] = False
 
             # Check for null values in critical columns
-            for col in ["id", "sequence"]:
-                if col in df.columns:
-                    nulls = df[col].isna().sum()
-                    if nulls > 0:
-                        errors_list.append(
-                            f"{csv_file.name}: {nulls} null values in '{col}'"
-                        )
-                        results["valid"] = False
+            null_errors = validate_no_nulls(df, ["id", "sequence"], csv_file.name)
+            if null_errors:
+                errors_list.extend(null_errors)
+                results["valid"] = False
 
             # Check for null labels (warning only - valid for held-out sequences)
             if "label" in df.columns:
@@ -149,26 +152,6 @@ def validate_fragment_directory(
     return results
 
 
-def validate_label_distribution(csv_path: Path) -> dict[str, float | int]:
-    """Validate label distribution matches expected pattern."""
-    df = pd.read_csv(csv_path, comment="#")
-
-    total = len(df)
-    specific = int((df["label"] == 0).sum())
-    non_specific = int((df["label"] == 1).sum())
-
-    stats: dict[str, int | float] = {
-        "total": total,
-        "specific": specific,
-        "non_specific": non_specific,
-    }
-
-    stats["specific_pct"] = specific / total * 100
-    stats["non_specific_pct"] = non_specific / total * 100
-
-    return stats
-
-
 def print_validation_report(dataset_dir: Path, expected_fragments: int = 16) -> bool:
     """Print comprehensive validation report."""
     logger.info("=" * 60)
@@ -188,7 +171,11 @@ def print_validation_report(dataset_dir: Path, expected_fragments: int = 16) -> 
     if results["errors"]:
         logger.info(f"\n✗ ERRORS ({len(results['errors'])}):")
         for error in results["errors"]:
-            logger.info(f"  - {error}")
+            # Errors are already logged by validation_utils, but we list them here for summary
+            if "Missing required columns" in error:  # Only re-log if not detailed
+                pass  # Already logged detail
+            else:
+                pass  # Validation utils logs errors as they happen, no need to double log unless summary
 
     # Print warnings
     if results["warnings"]:
@@ -204,14 +191,13 @@ def print_validation_report(dataset_dir: Path, expected_fragments: int = 16) -> 
         # Prefer VH_only file for label distribution
         vh_file = dataset_dir / "VH_only_boughter.csv"
         label_file = vh_file if vh_file.exists() else csv_files[0]
-        label_stats = validate_label_distribution(label_file)
-        logger.info(f"\nLabel distribution (from {label_file.name}):")
-        logger.info(
-            f"  Specific (0): {label_stats['specific']} ({label_stats['specific_pct']:.1f}%)"
-        )
-        logger.info(
-            f"  Non-specific (1): {label_stats['non_specific']} ({label_stats['non_specific_pct']:.1f}%)"
-        )
+
+        try:
+            df = pd.read_csv(label_file, comment="#")
+            stats = calculate_label_stats(df)
+            log_label_stats(stats, f"Boughter ({label_file.name})")
+        except Exception as e:
+            logger.error(f"Failed to calculate label stats: {e}")
 
     # Final verdict
     logger.info("\n" + "=" * 60)
