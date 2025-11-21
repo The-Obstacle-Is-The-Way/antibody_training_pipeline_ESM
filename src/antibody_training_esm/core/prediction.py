@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import joblib
 import numpy as np
@@ -12,6 +12,7 @@ from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.core.trainer import load_model_from_npz
 from antibody_training_esm.models.prediction import (
+    AssayType,
     PredictionRequest,
     PredictionResult,
 )
@@ -139,7 +140,7 @@ class Predictor:
         self,
         sequences: list[str],
         threshold: float = 0.5,
-        assay_type: str | None = None,
+        assay_type: AssayType | None = None,
     ) -> pd.DataFrame:
         """
         Predict specificity for a list of sequences.
@@ -199,7 +200,7 @@ class Predictor:
         df: pd.DataFrame,
         sequence_col: str = "sequence",
         threshold: float = 0.5,
-        assay_type: str | None = None,
+        assay_type: AssayType | None = None,
     ) -> pd.DataFrame:
         """
         Predict specificity for sequences in a DataFrame and append results.
@@ -229,7 +230,7 @@ class Predictor:
         self,
         sequence: str | PredictionRequest,
         threshold: float = 0.5,
-        assay_type: str | None = None,
+        assay_type: AssayType | None = None,
     ) -> PredictionResult:
         """
         Predict single sequence with Pydantic validation.
@@ -310,7 +311,7 @@ def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
     # Extract config parameters with defaults
     sequence_col = getattr(cfg, "sequence_column", "sequence")
     threshold = getattr(cfg, "threshold", 0.5)
-    assay_type = getattr(cfg, "assay_type", None)
+    assay_type = cast(AssayType | None, getattr(cfg, "assay_type", None))
 
     return predictor.predict_dataframe(
         input_df, sequence_col=sequence_col, threshold=threshold, assay_type=assay_type

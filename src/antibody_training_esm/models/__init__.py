@@ -9,12 +9,14 @@ This package contains schema definitions for:
 """
 
 from antibody_training_esm.models.prediction import (
+    AssayType,
     BatchPredictionRequest,
     PredictionRequest,
     PredictionResult,
 )
 
 __all__ = [
+    "AssayType",
     "PredictionRequest",
     "BatchPredictionRequest",
     "PredictionResult",

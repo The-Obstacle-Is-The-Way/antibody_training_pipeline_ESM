@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+from typing import cast
 
 import hydra
 import pandas as pd
@@ -7,11 +8,11 @@ from omegaconf import DictConfig
 from pydantic import ValidationError
 
 from antibody_training_esm.core.prediction import Predictor, run_prediction
-from antibody_training_esm.models.prediction import PredictionRequest
+from antibody_training_esm.models.prediction import AssayType, PredictionRequest
 
 
 def predict_sequence_cli(
-    sequence: str, threshold: float, assay_type: str | None, cfg: DictConfig
+    sequence: str, threshold: float, assay_type: AssayType | None, cfg: DictConfig
 ) -> None:
     """CLI prediction with Pydantic validation."""
     config_path = getattr(cfg.classifier, "config_path", None)
@@ -61,7 +62,7 @@ def main(cfg: DictConfig) -> None:
     sequence = getattr(cfg, "sequence", None)
     if sequence:
         threshold = getattr(cfg, "threshold", 0.5)
-        assay_type = getattr(cfg, "assay_type", None)
+        assay_type = cast(AssayType | None, getattr(cfg, "assay_type", None))
         predict_sequence_cli(sequence, threshold, assay_type, cfg)
         return
 

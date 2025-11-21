@@ -2,6 +2,8 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+AssayType = Literal["ELISA", "PSR"]
+
 
 class PredictionRequest(BaseModel):
     """
@@ -25,7 +27,7 @@ class PredictionRequest(BaseModel):
         description="Classification threshold (0-1)",
     )
 
-    assay_type: Literal["ELISA", "PSR"] | None = Field(
+    assay_type: AssayType | None = Field(
         default=None,
         description="Assay type for calibrated thresholds",
     )
@@ -80,7 +82,7 @@ class BatchPredictionRequest(BaseModel):
     )
 
     threshold: float = Field(default=0.5, ge=0.0, le=1.0)
-    assay_type: Literal["ELISA", "PSR"] | None = None
+    assay_type: AssayType | None = None
 
     @field_validator("sequences")
     @classmethod
@@ -129,7 +131,7 @@ class PredictionResult(BaseModel):
         description="Threshold used for classification",
     )
 
-    assay_type: str | None = Field(
+    assay_type: AssayType | None = Field(
         default=None,
         description="Assay type if calibrated threshold was used",
     )
