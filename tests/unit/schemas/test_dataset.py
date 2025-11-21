@@ -61,10 +61,8 @@ class TestSequenceDatasetSchema:
         with pytest.raises(SchemaError) as exc_info:
             get_sequence_dataset_schema().validate(df)
 
-        # Pandera error message includes the check definition
-        # Matches: str_matches('^[ACDEFGHIKLMNPQRSTVWYX]+$')
-        assert "str_matches" in str(exc_info.value)
-        assert "ACDEFGHIKLMNPQRSTVWYX" in str(exc_info.value)
+        message = str(exc_info.value)
+        assert "valid_amino_acids" in message
 
     def test_gap_characters_rejected(self) -> None:
         """Gap characters (-, *, .) raise SchemaError."""

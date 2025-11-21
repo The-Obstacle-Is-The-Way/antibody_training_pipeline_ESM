@@ -34,23 +34,11 @@ def test_boughter_dataset_validates_on_load(tmp_path: Path) -> None:
 
     dataset = BoughterDataset()
 
-    try:
-        loaded_df = dataset.load_data(str(csv_path))
+    loaded_df = dataset.load_data(str(csv_path))
 
-        assert len(loaded_df) == 2
+    assert len(loaded_df) == 2
 
-        assert "sequence" in loaded_df.columns  # Created from VH_sequence
-
-    except ValueError as e:
-        # Known Pandera registry issue in some test environments
-
-        if "KeyError" in str(e) and "pandas.core.series.Series" in str(e):
-            pytest.skip(
-                "Skipping due to known Pandera registry flake in integration tests"
-            )
-
-        else:
-            raise e
+    assert "sequence" in loaded_df.columns  # Created from VH_sequence
 
 
 def test_invalid_boughter_csv_rejected(tmp_path: Path) -> None:

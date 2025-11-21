@@ -1,6 +1,6 @@
 # Pydantic Phase 3: Data Integrity (Pandera Schemas)
 
-**Status:** Not Started
+**Status:** Completed (ruff + mypy + pytest ✅)
 **Priority:** MEDIUM (Reliability)
 **Risk:** MEDIUM (Touches data loading paths)
 **Dependencies:** Phase 1 (Pydantic installed), Phase 2 (Config models exist)
@@ -22,6 +22,12 @@ Replace manual DataFrame validation in `preprocessing/validation_utils.py` and d
 - Pandera is purpose-built for DataFrame validation
 - Pandera integrates with pandas natively
 - Industry standard (used by Prefect, Dagster, MLflow)
+
+### Implementation Notes (current state)
+- Pandera schemas live in `src/antibody_training_esm/schemas/dataset.py` via factory helpers (`get_sequence_dataset_schema`, `get_boughter_schema`, etc.) with explicit regex/length/amino-acid/no-gap checks.
+- Pandera’s pandas backend is registered at import time to avoid order-dependent validation failures.
+- Dataset loaders call `validate_dataframe` on load; `preprocessing/validation_utils.py` now wraps schema validation instead of manual column checks.
+- `DataSettings` (`src/antibody_training_esm/settings.py`) centralizes paths with `pydantic-settings`, supports env overrides (`ANTIBODY_DATA_DIR`, etc.), and resolves relative paths against the project root.
 
 ---
 

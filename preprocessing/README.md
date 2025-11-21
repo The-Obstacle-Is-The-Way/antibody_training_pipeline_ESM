@@ -137,11 +137,10 @@ To eliminate code duplication across dataset preprocessing scripts, we extracted
 **Purpose:** Shared validation logic for preprocessing pipelines
 
 **Key Functions:**
-- `validate_schema(df, required_cols)` - Check DataFrame has required columns
-- `validate_no_gaps(df, sequence_cols)` - Ensure no gap characters in sequences
-- `validate_no_nulls(df, required_cols)` - Check for missing values
-- `report_label_distribution(df, label_col)` - Print label statistics
+- `validate_dataframe_with_schema(df, schema, dataset_name)` - Pandera-based DataFrame validation
+- `validate_file_exists(path)`, `validate_directory_exists(path)` - File system checks
 - `calculate_checksum(file_path)` - SHA256 integrity verification
+- `calculate_label_stats(df)`, `log_label_stats(stats, dataset_name)` - Label statistics helpers
 
 **Used by:**
 - `boughter/validate_stages2_3.py`

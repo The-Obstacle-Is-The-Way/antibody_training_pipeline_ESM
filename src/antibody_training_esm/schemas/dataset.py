@@ -1,4 +1,36 @@
+from __future__ import annotations
+
+import re
+
+import pandas as pd
+import pandera.backends.pandas  # noqa: F401  # registers pandas backend
 import pandera.pandas as pa
+
+VALID_AA = set("ACDEFGHIKLMNPQRSTVWYX")
+_UPPERCASE_PATTERN = re.compile(r"^[A-Z]+$")
+_NO_GAP_PATTERN = re.compile(r"^[^*.-]+$")
+
+
+def _regex_check(pattern: re.Pattern[str], name: str) -> pa.Check:
+    return pa.Check(
+        lambda series: bool(series.str.match(pattern).fillna(False).all()),
+        name=name,
+    )
+
+
+def _length_check(min_value: int, max_value: int, name: str) -> pa.Check:
+    return pa.Check(
+        lambda series: bool(series.str.len().between(min_value, max_value).all()),
+        name=name,
+    )
+
+
+def _amino_acid_check(series: pd.Series) -> bool:
+    return bool(series.dropna().map(lambda seq: set(str(seq)).issubset(VALID_AA)).all())
+
+
+def _no_gap_check(series: pd.Series) -> bool:
+    return bool(series.str.match(_NO_GAP_PATTERN).fillna(False).all())
 
 
 # Base schema for all antibody datasets
@@ -8,12 +40,10 @@ def get_sequence_dataset_schema() -> pa.DataFrameSchema:
             "sequence": pa.Column(
                 dtype="string",
                 checks=[
-                    pa.Check.str_matches(r"^[A-Z]+$", name="uppercase_letters"),
-                    pa.Check.str_length(min_value=1, max_value=2000),
-                    # Valid amino acids (20 standard + X for unknown)
-                    pa.Check.str_matches(
-                        r"^[ACDEFGHIKLMNPQRSTVWYX]+$", name="valid_amino_acids"
-                    ),
+                    _regex_check(_UPPERCASE_PATTERN, name="uppercase_letters"),
+                    _length_check(1, 2000, name="length_1_2000"),
+                    pa.Check(_amino_acid_check, name="valid_amino_acids"),
+                    pa.Check(_no_gap_check, name="no_gap_characters"),
                 ],
                 nullable=False,
                 coerce=True,  # Auto-convert to string
@@ -22,7 +52,10 @@ def get_sequence_dataset_schema() -> pa.DataFrameSchema:
             "label": pa.Column(
                 dtype="int64",
                 checks=[
-                    pa.Check.isin([0, 1], name="binary_label"),
+                    pa.Check(
+                        lambda series: series.isin([0, 1]).all(),
+                        name="binary_label",
+                    ),
                 ],
                 nullable=False,
                 description="Binary label: 0=specific, 1=non-specific",
@@ -90,11 +123,10 @@ def get_harvey_schema() -> pa.DataFrameSchema:
             "sequence": pa.Column(
                 dtype="string",
                 checks=[
-                    pa.Check.str_matches(r"^[A-Z]+$"),
-                    pa.Check.str_length(min_value=1, max_value=2000),
-                    pa.Check.str_matches(
-                        r"^[ACDEFGHIKLMNPQRSTVWYX]+$", name="valid_amino_acids"
-                    ),
+                    _regex_check(_UPPERCASE_PATTERN, name="uppercase_letters"),
+                    _length_check(1, 2000, name="length_1_2000"),
+                    pa.Check(_amino_acid_check, name="valid_amino_acids"),
+                    pa.Check(_no_gap_check, name="no_gap_characters"),
                 ],
                 nullable=False,
                 description="Nanobody VHH sequence",

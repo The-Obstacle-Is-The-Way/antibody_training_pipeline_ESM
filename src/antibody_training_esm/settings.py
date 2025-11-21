@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,30 +9,39 @@ class DataSettings(BaseSettings):
     Centralized data path configuration.
 
     Replaces hardcoded paths in preprocessing/paths.py.
-    Allows override via env vars (e.g. DATA_DIR=/tmp/data).
+    Allows override via env vars (e.g. ANTIBODY_DATA_DIR=/tmp/data).
     """
 
-    # Project Root (inferred or explicit)
-    # Default: ../../.. from this file (src/antibody_training_esm/settings.py)
-    PROJECT_ROOT: Path = Field(
-        default_factory=lambda: Path(__file__).parent.parent.parent.resolve()
+    model_config = SettingsConfigDict(
+        env_prefix="ANTIBODY_", env_file=".env", extra="ignore"
     )
 
-    # Base Directories
-    @property
-    def DATA_DIR(self) -> Path:
-        return self.PROJECT_ROOT / "data"
-
+    PROJECT_ROOT: Path = Field(
+        default_factory=lambda: Path(__file__).resolve().parents[2]
+    )
+    DATA_DIR: Path = Field(default_factory=lambda: Path("data"))
     EXPERIMENTS_DIR: Path = Field(default_factory=lambda: Path("experiments"))
 
-    # Computed Paths
+    def _resolve(self, path: Path) -> Path:
+        """Resolve relative paths against PROJECT_ROOT."""
+        return path if path.is_absolute() else self.PROJECT_ROOT / path
+
+    @model_validator(mode="after")
+    def _normalize_base_dirs(self) -> "DataSettings":
+        object.__setattr__(self, "DATA_DIR", self._resolve(self.DATA_DIR))
+        object.__setattr__(self, "EXPERIMENTS_DIR", self._resolve(self.EXPERIMENTS_DIR))
+        return self
+
+    # ============================================================================
+    # Base data directories
+    # ============================================================================
     @property
     def DATA_TRAIN_DIR(self) -> Path:
-        return self.DATA_DIR / "train"
+        return self._resolve(self.DATA_DIR) / "train"
 
     @property
     def DATA_TEST_DIR(self) -> Path:
-        return self.DATA_DIR / "test"
+        return self._resolve(self.DATA_DIR) / "test"
 
     # ============================================================================
     # Boughter (training set)
@@ -98,7 +107,7 @@ class DataSettings(BaseSettings):
 
     @property
     def JAIN_OUTPUT_DIR(self) -> Path:
-        return self.JAIN_FRAGMENTS_DIR  # Default output dir for Jain dataset loader
+        return self.JAIN_FRAGMENTS_DIR
 
     # ============================================================================
     # Harvey (test set)
@@ -161,10 +170,6 @@ class DataSettings(BaseSettings):
     @property
     def SHEHATA_OUTPUT_DIR(self) -> Path:
         return self.SHEHATA_FRAGMENTS_DIR
-
-    model_config = SettingsConfigDict(
-        env_prefix="ANTIBODY_", env_file=".env", extra="ignore"
-    )
 
 
 # Global instance
