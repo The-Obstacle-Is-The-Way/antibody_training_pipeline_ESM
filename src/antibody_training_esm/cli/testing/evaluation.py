@@ -5,17 +5,12 @@ from typing import Any
 
 import numpy as np
 from sklearn.metrics import (
-    accuracy_score,
-    average_precision_score,
     classification_report,
     confusion_matrix,
-    f1_score,
-    precision_score,
-    recall_score,
-    roc_auc_score,
 )
 
 from antibody_training_esm.core.classifier import BinaryClassifier
+from antibody_training_esm.models.artifact import EvaluationMetrics
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +55,7 @@ def evaluate_pretrained(
     y: np.ndarray,
     model_name: str,
     dataset_name: str,
-    metrics_list: list[str] | None = None,
+    _metrics_list: list[str] | None = None,
     threshold_override: float | None = None,
 ) -> dict[str, Any]:
     """
@@ -72,11 +67,12 @@ def evaluate_pretrained(
         y: True labels.
         model_name: Name of the model for logging.
         dataset_name: Name of the dataset for logging.
-        metrics_list: List of metrics to calculate (default: all).
+        _metrics_list: List of metrics to calculate (default: all).
         threshold_override: Optional manual threshold.
 
     Returns:
         Dictionary of results including scores, predictions, and reports.
+        Contains 'metrics' key with EvaluationMetrics object.
     """
     logger.info(f"Evaluating pretrained model {model_name} on {dataset_name}")
 
@@ -108,34 +104,31 @@ def evaluate_pretrained(
     )  # threshold already determined
     y_proba = model.predict_proba(X)[:, 1]
 
-    # Calculate metrics
+    # Create Pydantic metrics
+    eval_metrics = EvaluationMetrics.from_sklearn_metrics(
+        y,
+        y_pred,
+        y_proba.reshape(-1, 1) if y_proba.ndim == 1 else y_proba,
+        dataset_name=dataset_name,
+    )
+
+    # Calculate legacy results for compatibility with visualization tools
     results = {
-        "test_scores": {},
+        "metrics": eval_metrics,  # Store Pydantic model
+        "test_scores": eval_metrics.model_dump(
+            exclude={"confusion_matrix", "dataset_name", "n_samples"}
+        ),
         "predictions": {"y_true": y, "y_pred": y_pred, "y_proba": y_proba},
         "confusion_matrix": confusion_matrix(y, y_pred),
         "classification_report": classification_report(y, y_pred, output_dict=True),
     }
 
-    # Calculate all requested metrics
-    if metrics_list is not None:
-        if "accuracy" in metrics_list:
-            results["test_scores"]["accuracy"] = accuracy_score(y, y_pred)
-        if "precision" in metrics_list:
-            results["test_scores"]["precision"] = precision_score(
-                y, y_pred, zero_division=0
-            )
-        if "recall" in metrics_list:
-            results["test_scores"]["recall"] = recall_score(y, y_pred, zero_division=0)
-        if "f1" in metrics_list:
-            results["test_scores"]["f1"] = f1_score(y, y_pred, zero_division=0)
-        if "roc_auc" in metrics_list:
-            results["test_scores"]["roc_auc"] = roc_auc_score(y, y_proba)
-        if "pr_auc" in metrics_list:
-            results["test_scores"]["pr_auc"] = average_precision_score(y, y_proba)
-
     # Log results
     logger.info(f"Test results for {model_name} on {dataset_name}:")
-    for metric, value in results["test_scores"].items():
-        logger.info(f"  {metric}: {value:.4f}")
+    logger.info(f"  Accuracy:  {eval_metrics.accuracy:.4f}")
+    if eval_metrics.f1 is not None:
+        logger.info(f"  F1:        {eval_metrics.f1:.4f}")
+    if eval_metrics.roc_auc is not None:
+        logger.info(f"  ROC-AUC:   {eval_metrics.roc_auc:.4f}")
 
     return results

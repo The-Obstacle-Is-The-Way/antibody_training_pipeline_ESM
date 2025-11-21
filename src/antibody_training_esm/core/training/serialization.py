@@ -11,11 +11,11 @@ import pickle  # nosec B403
 from typing import TYPE_CHECKING, Any, cast
 
 import numpy as np
-import sklearn
 import yaml
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.directory_utils import get_hierarchical_model_dir
+from antibody_training_esm.models.artifact import ModelArtifactMetadata
 
 if TYPE_CHECKING:
     from antibody_training_esm.models.config import TrainingPipelineConfig
@@ -78,22 +78,23 @@ def save_model(
     """
     from antibody_training_esm.models.config import TrainingPipelineConfig
 
+    # Helper to extract config values regardless of type (Dict vs Pydantic)
     if isinstance(config, TrainingPipelineConfig):
-        # Pydantic path
         if not config.training.save_model:
             return {}
         model_name = config.training.model_name
         base_save_dir = config.training.model_save_dir
         model_shortname = config.model.name
         classifier_config = config.classifier.model_dump()
+        train_metrics = getattr(config, "train_metrics", None)
     else:
-        # Legacy dict path
         if not config["training"]["save_model"]:
             return {}
         model_name = config["training"]["model_name"]
         base_save_dir = config["training"]["model_save_dir"]
         model_shortname = config["model"]["name"]
         classifier_config = config["classifier"]
+        train_metrics = config.get("train_metrics")
 
     # Generate hierarchical directory path
     hierarchical_dir = get_hierarchical_model_dir(
@@ -145,46 +146,25 @@ def save_model(
         logger.info(f"Saved NPZ arrays (legacy): {npz_path}")
         saved_paths["npz"] = str(npz_path)
 
-    # Format 3: JSON metadata (universal across all strategies)
+    # Format 3: JSON metadata (Pydantic)
     json_path = f"{base_path}_config.json"
 
-    # Get strategy config via to_dict() method (all strategies implement this)
-    strategy_config = classifier.classifier.to_dict()
-    classifier_type = strategy_config.get("type", "logistic_regression")
+    # Construct metadata from classifier (Pydantic handles serialization)
+    metadata = ModelArtifactMetadata.from_classifier(classifier)
 
-    metadata = {
-        # Model architecture
-        "model_name": classifier.model_name,  # HuggingFace model ID
-        "model_type": classifier_type,  # Dynamic: logistic_regression, xgboost, etc.
-        "sklearn_version": sklearn.__version__,
-        # Classifier configuration block (from strategy's to_dict())
-        "classifier": strategy_config,
-        # ESM embedding extractor params
-        "esm_model": classifier.model_name,
-        "esm_revision": classifier.revision,
-        "batch_size": classifier.batch_size,
-        "device": classifier.device,
-    }
+    # Add training metrics if available
+    if train_metrics:
+        metadata.training_metrics = train_metrics
 
-    # Legacy flat fields for backward compatibility (LogReg only)
-    if classifier_type == "logistic_regression":
-        metadata.update(
-            {
-                "C": classifier.C,
-                "penalty": classifier.penalty,
-                "solver": classifier.solver,
-                "class_weight": classifier.class_weight,
-                "max_iter": classifier.max_iter,
-                "random_state": classifier.random_state,
-            }
-        )
-
+    # Save as JSON (Pydantic handles type conversion)
     with open(json_path, "w") as f:
-        json.dump(metadata, f, indent=2)
-    logger.info(f"Saved JSON config: {json_path}")
+        # model_dump(mode='json') handles decimal/float serialization
+        json.dump(metadata.model_dump(mode="json"), f, indent=2)
 
+    logger.info(f"Saved JSON config: {json_path}")
     saved_paths["config"] = str(json_path)
-    logger.info(f"Model saved successfully ({classifier_type} format)")
+
+    logger.info(f"Model saved successfully ({metadata.model_type} format)")
     return saved_paths
 
 
@@ -202,6 +182,7 @@ def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
     Notes:
         This function enables production deployment without pickle files.
         It reconstructs a fully functional BinaryClassifier from NPZ+JSON format.
+        Uses strict Pydantic validation for metadata.
     """
     # Load arrays
     arrays = np.load(npz_path)
@@ -211,33 +192,14 @@ def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
     n_features_in = int(arrays["n_features_in"][0])
     n_iter = arrays["n_iter"]
 
-    # Load metadata
+    # Load metadata (Pydantic validates)
     with open(json_path) as f:
-        metadata = json.load(f)
+        metadata_dict = json.load(f)
 
-    # Handle class_weight: JSON converts int keys to strings, convert back
-    class_weight = metadata["class_weight"]
-    if isinstance(class_weight, dict):
-        # Convert string keys back to int keys (JSON forces keys to strings)
-        class_weight = {int(k): v for k, v in class_weight.items()}
+    metadata = ModelArtifactMetadata.model_validate(metadata_dict)
 
-    # Reconstruct BinaryClassifier with ALL required params
-    params = {
-        # ESM params
-        "model_name": metadata["esm_model"],
-        "device": metadata.get("device", "cpu"),  # Use saved device or default to CPU
-        "batch_size": metadata["batch_size"],
-        "revision": metadata["esm_revision"],
-        # LogisticRegression hyperparameters
-        "C": metadata["C"],
-        "penalty": metadata["penalty"],
-        "solver": metadata["solver"],
-        "max_iter": metadata["max_iter"],
-        "random_state": metadata["random_state"],
-        "class_weight": class_weight,  # Restored with int keys (if dict)
-    }
-
-    # Create classifier (initializes with unfitted LogisticRegression)
+    # Construct BinaryClassifier from metadata (Pydantic handles types)
+    params = metadata.to_classifier_params()
     classifier = BinaryClassifier(params)
 
     # Restore fitted LogisticRegression state
