@@ -1,8 +1,8 @@
 # Technical Debt Cleanup - Phases Overview
 
 **Last Updated:** 2025-11-20
-**Status:** Phase A completed; proceed with Phases B-E
-**Total Effort Remaining:** ~15-19 hours for Phases B-E (up to ~24h with buffer)
+**Status:** Phases A-D completed; proceed with Phase E
+**Total Effort Remaining:** ~2-3 hours for Phase E
 
 ---
 
@@ -13,7 +13,7 @@
 | **A** | Quick Wins | ✅ DONE | LOW | Permissions, bare excepts, type ignores, utils/, configs/ | [PHASE_A_QUICK_WINS.md](./PHASE_A_QUICK_WINS.md) |
 | **B** | Path Centralization | ✅ DONE | MEDIUM | 20+ files, 106 hardcoded paths | [PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md) |
 | **C** | File Splitting | ✅ DONE | HIGH | 4 files >500 lines | [PHASE_C_FILE_SPLITTING.md](./PHASE_C_FILE_SPLITTING.md) |
-| **D** | Code Deduplication | 5-7h | HIGH | 6 preprocessing scripts (~1.6k LOC overlap) | [PHASE_D_CODE_DEDUPLICATION.md](./PHASE_D_CODE_DEDUPLICATION.md) |
+| **D** | Code Deduplication | ✅ DONE | HIGH | 6 preprocessing scripts (~1.6k LOC overlap) | [PHASE_D_CODE_DEDUPLICATION.md](./PHASE_D_CODE_DEDUPLICATION.md) |
 | **E** | Polish & Docs | 2-3h | LOW | Docs/comments/bug refs after refactors | [PHASE_E_POLISH.md](./PHASE_E_POLISH.md) |
 
 ---
@@ -33,52 +33,44 @@
 
 ---
 
-## Phase B: Path Centralization
+## Phase B: Path Centralization (Completed)
 
 **Goal:** Eliminate 100+ hardcoded paths (106 matches in preprocessing alone) and give tests a single source of truth.
 
-**Tasks:**
-- Create `preprocessing/paths.py`
-- Migrate all preprocessing scripts + supporting tests to use centralized constants
-
-**Why this is important:** Foundation for later phases, makes testing easier
-
-**Dependencies:** Phase A complete
+**Outcome:**
+- Created `preprocessing/paths.py`
+- Migrated all preprocessing scripts + supporting tests to use centralized constants
+- Zero hardcoded paths in preprocessing scripts
 
 **Read:** [PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md)
 
 ---
 
-## Phase C: File Splitting
+## Phase C: File Splitting (Completed)
 
 **Goal:** Split 4 oversized files (>500 lines) into focused modules
 
-**Tasks:**
-- Split `core/trainer.py` (961 → ~350 lines + cache/metrics/serialization modules)
-- Split `datasets/base.py` (627 → ~350 lines + mixins for validation/annotation/fragments)
-- Split `boughter/stage1_dna_translation.py` (598 → ~250 lines + translation/validation modules)
-- Split `boughter/stage2_stage3_annotation_qc.py` (519 → ~250 lines + annotation/qc modules)
-
-**Why this is HIGH risk:** Significant structural changes, extensive testing needed
-
-**Dependencies:** Phases A & B complete
+**Outcome:**
+- Split `core/trainer.py` into `core/training/{cache,metrics,serialization}.py` + main orchestrator.
+- Split `datasets/base.py` into `datasets/mixins/{annotation,fragment}_mixin.py` + base class.
+- Split `boughter/stage1_dna_translation.py` into `translation/{readers,translator}.py`.
+- Split `boughter/stage2_stage3_annotation_qc.py` into `annotation/{annotator,qc}.py`.
+- All tests passing (513 unit/integration + E2E).
 
 **Read:** [PHASE_C_FILE_SPLITTING.md](./PHASE_C_FILE_SPLITTING.md)
 
 ---
 
-## Phase D: Code Deduplication
+## Phase D: Code Deduplication (Completed)
 
 **Goal:** Extract duplicated validation/fragment code into shared modules (~1.6k LOC overlapping today)
 
-**Tasks:**
-- Create `validation_utils.py` (refactor 4 validation-heavy scripts)
-- Create `fragment_utils.py` (refactor 3 fragment extractors)
-- Verify byte-for-byte identical outputs
-
-**Why this is HIGH risk:** Must produce identical output, extensive verification
-
-**Dependencies:** Phases A, B, C complete
+**Outcome:**
+- Created `preprocessing/validation_utils.py` (shared validation logic).
+- Created `preprocessing/fragment_utils.py` (shared ANARCI/fragment logic).
+- Refactored 7 scripts across Boughter, Jain, Harvey, and Shehata datasets to use shared utils.
+- Removed ~600 lines of duplicate code.
+- Verified identical behavior and full test suite pass.
 
 **Read:** [PHASE_D_CODE_DEDUPLICATION.md](./PHASE_D_CODE_DEDUPLICATION.md)
 
