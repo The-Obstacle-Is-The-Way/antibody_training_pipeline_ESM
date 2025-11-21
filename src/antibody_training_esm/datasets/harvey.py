@@ -27,6 +27,9 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pandera.pandas as pa
+
+from antibody_training_esm.schemas.dataset import get_harvey_schema
 
 from .base import AntibodyDataset
 from .default_paths import (
@@ -63,6 +66,10 @@ class HarveyDataset(AntibodyDataset):
             output_dir=output_dir or HARVEY_OUTPUT_DIR,
             logger=logger,
         )
+
+    @classmethod
+    def get_schema(cls) -> pa.DataFrameSchema:
+        return get_harvey_schema()
 
     def get_fragment_types(self) -> list[str]:
         """
@@ -191,6 +198,13 @@ class HarveyDataset(AntibodyDataset):
             n_empty = empty_mask.sum()
             self.logger.warning(f"Removing {n_empty} sequences with zero length")
             df_output = df_output[~empty_mask].reset_index(drop=True)
+
+        # Create 'sequence' column for schema validation (use VH)
+        if "sequence" not in df_output.columns and "VH_sequence" in df_output.columns:
+            df_output["sequence"] = df_output["VH_sequence"]
+
+        # Validate with Pandera
+        df_output = self.validate_dataframe(df_output)
 
         self.logger.info(f"Combined dataset: {len(df_output)} sequences")
         self.logger.info(

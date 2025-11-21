@@ -27,6 +27,9 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pandera.pandas as pa
+
+from antibody_training_esm.schemas.dataset import get_shehata_schema
 
 from .base import AntibodyDataset
 from .default_paths import SHEHATA_EXCEL_PATH, SHEHATA_OUTPUT_DIR
@@ -62,6 +65,10 @@ class ShehataDataset(AntibodyDataset):
             output_dir=output_dir or SHEHATA_OUTPUT_DIR,
             logger=logger,
         )
+
+    @classmethod
+    def get_schema(cls) -> pa.DataFrameSchema:
+        return get_shehata_schema()
 
     def get_fragment_types(self) -> list[str]:
         """
@@ -128,7 +135,7 @@ class ShehataDataset(AntibodyDataset):
                           If None, calculates 98.24th percentile automatically.
 
         Returns:
-            DataFrame with columns: id, VH_sequence, VL_sequence, label, psr_score, b_cell_subset
+            DataFrame with columns: id, VH_sequence, VL_sequence, label, psr_measurement, b_cell_subset
 
         Raises:
             FileNotFoundError: If Excel file not found
@@ -213,10 +220,17 @@ class ShehataDataset(AntibodyDataset):
                 "VH_sequence": df["VH Protein"],
                 "VL_sequence": df["VL Protein"],
                 "label": (psr_numeric > psr_threshold).astype(int),
-                "psr_score": psr_numeric,
+                "psr_measurement": psr_numeric,  # Renamed from psr_score to match schema
                 "b_cell_subset": df["B cell subset"],
             }
         )
+
+        # Create 'sequence' column for schema validation (use VH)
+        if "sequence" not in df_output.columns and "VH_sequence" in df_output.columns:
+            df_output["sequence"] = df_output["VH_sequence"]
+
+        # Validate with Pandera
+        df_output = self.validate_dataframe(df_output)
 
         # Label distribution
         self.logger.info("\nLabel distribution:")

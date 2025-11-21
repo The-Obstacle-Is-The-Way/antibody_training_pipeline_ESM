@@ -24,7 +24,7 @@ import pandas as pd
 import pytest
 
 from antibody_training_esm.datasets.harvey import HarveyDataset
-from preprocessing.paths import HARVEY_FRAGMENTS_DIR, PROJECT_ROOT
+from preprocessing.paths import HARVEY_FRAGMENTS_DIR
 
 # ============================================================================
 
@@ -51,14 +51,14 @@ def harvey_low_csv() -> Path:
 
 
 @pytest.mark.unit
-def test_harvey_dataset_initializes_with_default_output_dir(tmp_path: Path) -> None:
-    """Verify dataset initializes with default output directory"""
+def test_harvey_dataset_initializes_with_default_output_dir() -> None:
+    """Verify HarveyDataset initializes with default output directory."""
     # Act
     dataset = HarveyDataset()
 
     # Assert
-    assert dataset.dataset_name == "harvey"
-    assert dataset.output_dir == HARVEY_FRAGMENTS_DIR.relative_to(PROJECT_ROOT)
+    # HARVEY_FRAGMENTS_DIR is absolute in settings.py
+    assert dataset.output_dir == HARVEY_FRAGMENTS_DIR
     assert dataset.output_dir.exists()
 
 

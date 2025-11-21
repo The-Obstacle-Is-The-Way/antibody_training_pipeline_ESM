@@ -2,43 +2,43 @@
 Centralized path configuration for preprocessing scripts.
 
 All data paths for preprocessing pipelines defined here for easy modification.
-Follows same pattern as src/antibody_training_esm/datasets/default_paths.py.
+Delegates to src/antibody_training_esm/settings.py for a Single Source of Truth.
 """
 
 from pathlib import Path
 
+from antibody_training_esm.settings import settings
+
 # Project root
-PROJECT_ROOT = Path(__file__).parent.parent
+PROJECT_ROOT = settings.PROJECT_ROOT
 
 # Base data directories
-DATA_DIR = PROJECT_ROOT / "data"
-DATA_TRAIN_DIR = DATA_DIR / "train"
-DATA_TEST_DIR = DATA_DIR / "test"
+DATA_DIR = settings.DATA_DIR
+DATA_TRAIN_DIR = settings.DATA_TRAIN_DIR
+DATA_TEST_DIR = settings.DATA_TEST_DIR
 
 # ============================================================================
 # Boughter (training set)
 # ============================================================================
-BOUGHTER_DIR = DATA_TRAIN_DIR / "boughter"
-BOUGHTER_RAW_DIR = BOUGHTER_DIR / "raw"
-BOUGHTER_PROCESSED_DIR = BOUGHTER_DIR / "processed"
-BOUGHTER_ANNOTATED_DIR = BOUGHTER_DIR / "annotated"
-BOUGHTER_CANONICAL_DIR = BOUGHTER_DIR / "canonical"
+BOUGHTER_DIR = settings.BOUGHTER_DIR
+BOUGHTER_RAW_DIR = settings.BOUGHTER_RAW_DIR
+BOUGHTER_PROCESSED_DIR = settings.BOUGHTER_PROCESSED_DIR
+BOUGHTER_ANNOTATED_DIR = settings.BOUGHTER_ANNOTATED_DIR
+BOUGHTER_CANONICAL_DIR = settings.BOUGHTER_CANONICAL_DIR
 
 # Specific files
-BOUGHTER_STAGE1_OUTPUT = BOUGHTER_PROCESSED_DIR / "boughter.csv"
+BOUGHTER_STAGE1_OUTPUT = settings.BOUGHTER_PROCESSED_CSV  # Note: Same path
 BOUGHTER_TRAINING_SUBSET = BOUGHTER_CANONICAL_DIR / "VH_only_boughter_training.csv"
-BOUGHTER_CANONICAL_CSV = (
-    BOUGHTER_CANONICAL_DIR / "boughter_vh_914.csv"
-)  # Alias or future name
+BOUGHTER_CANONICAL_CSV = settings.BOUGHTER_CANONICAL_CSV
 
 # ============================================================================
 # Jain (test set - Novo parity benchmark)
 # ============================================================================
-JAIN_DIR = DATA_TEST_DIR / "jain"
-JAIN_RAW_DIR = JAIN_DIR / "raw"
-JAIN_PROCESSED_DIR = JAIN_DIR / "processed"
-JAIN_FRAGMENTS_DIR = JAIN_DIR / "fragments"
-JAIN_CANONICAL_DIR = JAIN_DIR / "canonical"
+JAIN_DIR = settings.JAIN_DIR
+JAIN_RAW_DIR = settings.JAIN_RAW_DIR
+JAIN_PROCESSED_DIR = settings.JAIN_PROCESSED_DIR
+JAIN_FRAGMENTS_DIR = settings.JAIN_FRAGMENTS_DIR
+JAIN_CANONICAL_DIR = settings.JAIN_CANONICAL_DIR
 
 # Specific files
 JAIN_RAW_EXCEL = JAIN_RAW_DIR / "jain_clinical_antibodies_with_private_elisa.xlsx"
@@ -47,8 +47,8 @@ JAIN_SD01_EXCEL = JAIN_RAW_DIR / "jain-pnas.1616408114.sd01.xlsx"
 JAIN_SD02_EXCEL = JAIN_RAW_DIR / "jain-pnas.1616408114.sd02.xlsx"
 JAIN_SD03_EXCEL = JAIN_RAW_DIR / "jain-pnas.1616408114.sd03.xlsx"
 
-JAIN_FULL_CSV = JAIN_PROCESSED_DIR / "jain_with_private_elisa_FULL.csv"
-JAIN_SD03_CSV = JAIN_PROCESSED_DIR / "jain_sd03.csv"
+JAIN_FULL_CSV = settings.JAIN_FULL_CSV
+JAIN_SD03_CSV = settings.JAIN_SD03_CSV
 JAIN_ELISA_116_CSV = JAIN_PROCESSED_DIR / "jain_ELISA_ONLY_116.csv"
 JAIN_P5E_S2 = JAIN_PROCESSED_DIR / "jain_p5e_s2_preprocessed.csv"
 JAIN_86_PARITY_CSV = JAIN_CANONICAL_DIR / "jain_86_novo_parity.csv"
@@ -57,14 +57,14 @@ JAIN_VH_ONLY_86_CSV = JAIN_CANONICAL_DIR / "VH_only_jain_86_p5e_s2.csv"
 # ============================================================================
 # Harvey (test set - nanobodies)
 # ============================================================================
-HARVEY_DIR = DATA_TEST_DIR / "harvey"
-HARVEY_RAW_DIR = HARVEY_DIR / "raw"
-HARVEY_PROCESSED_DIR = HARVEY_DIR / "processed"
-HARVEY_FRAGMENTS_DIR = HARVEY_DIR / "fragments"
+HARVEY_DIR = settings.HARVEY_DIR
+HARVEY_RAW_DIR = settings.HARVEY_RAW_DIR
+HARVEY_PROCESSED_DIR = settings.HARVEY_PROCESSED_DIR
+HARVEY_FRAGMENTS_DIR = settings.HARVEY_FRAGMENTS_DIR
 
 # Specific files
-HARVEY_HIGH_CSV = HARVEY_RAW_DIR / "high_polyreactivity_high_throughput.csv"
-HARVEY_LOW_CSV = HARVEY_RAW_DIR / "low_polyreactivity_high_throughput.csv"
+HARVEY_HIGH_CSV = settings.HARVEY_HIGH_POLY_CSV
+HARVEY_LOW_CSV = settings.HARVEY_LOW_POLY_CSV
 HARVEY_FULL_CSV = HARVEY_PROCESSED_DIR / "harvey.csv"
 HARVEY_VHH_ONLY = HARVEY_FRAGMENTS_DIR / "VHH_only_harvey.csv"
 
@@ -75,21 +75,21 @@ HARVEY_COMBINED = HARVEY_PROCESSED_DIR / "harvey_combined.csv"  # Legacy?
 # ============================================================================
 # Shehata (test set - PSR assay)
 # ============================================================================
-SHEHATA_DIR = DATA_TEST_DIR / "shehata"
-SHEHATA_RAW_DIR = SHEHATA_DIR / "raw"
-SHEHATA_PROCESSED_DIR = SHEHATA_DIR / "processed"
-SHEHATA_FRAGMENTS_DIR = SHEHATA_DIR / "fragments"
-SHEHATA_CANONICAL_DIR = SHEHATA_DIR / "canonical"
+SHEHATA_DIR = settings.SHEHATA_DIR
+SHEHATA_RAW_DIR = settings.SHEHATA_RAW_DIR
+SHEHATA_PROCESSED_DIR = settings.SHEHATA_PROCESSED_DIR
+SHEHATA_FRAGMENTS_DIR = settings.SHEHATA_FRAGMENTS_DIR
+SHEHATA_CANONICAL_DIR = settings.SHEHATA_CANONICAL_DIR
 
 # Specific files
-SHEHATA_RAW_EXCEL = SHEHATA_RAW_DIR / "shehata-mmc2.xlsx"
+SHEHATA_RAW_EXCEL = settings.SHEHATA_EXCEL_PATH
 SHEHATA_PROCESSED_CSV = SHEHATA_PROCESSED_DIR / "shehata.csv"
 SHEHATA_CANONICAL_CSV = SHEHATA_CANONICAL_DIR / "shehata_398.csv"
 
 # ============================================================================
 # Experiments
 # ============================================================================
-EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
+EXPERIMENTS_DIR = settings.EXPERIMENTS_DIR
 CHECKPOINTS_DIR = EXPERIMENTS_DIR / "checkpoints"
 CACHE_DIR = EXPERIMENTS_DIR / "cache"
 BENCHMARKS_DIR = EXPERIMENTS_DIR / "benchmarks"

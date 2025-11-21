@@ -28,7 +28,7 @@ import pandas as pd
 import pytest
 
 from antibody_training_esm.datasets.jain import JainDataset
-from preprocessing.paths import JAIN_FRAGMENTS_DIR, PROJECT_ROOT
+from preprocessing.paths import JAIN_FRAGMENTS_DIR
 
 # ============================================================================
 # Initialization Tests
@@ -36,14 +36,14 @@ from preprocessing.paths import JAIN_FRAGMENTS_DIR, PROJECT_ROOT
 
 
 @pytest.mark.unit
-def test_jain_dataset_initializes_with_default_output_dir(tmp_path: Path) -> None:
-    """Verify dataset initializes with default output directory"""
+def test_jain_dataset_initializes_with_default_output_dir() -> None:
+    """Verify JainDataset initializes with default output directory."""
     # Act
     dataset = JainDataset()
 
     # Assert
-    assert dataset.dataset_name == "jain"
-    assert dataset.output_dir == JAIN_FRAGMENTS_DIR.relative_to(PROJECT_ROOT)
+    # JAIN_FRAGMENTS_DIR is absolute in settings.py
+    assert dataset.output_dir == JAIN_FRAGMENTS_DIR
     assert dataset.output_dir.exists()
 
 

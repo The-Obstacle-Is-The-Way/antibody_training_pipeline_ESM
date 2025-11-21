@@ -33,6 +33,9 @@ from pathlib import Path
 from typing import Any, NoReturn
 
 import pandas as pd
+import pandera.pandas as pa
+
+from antibody_training_esm.schemas.dataset import get_boughter_schema
 
 from .base import AntibodyDataset
 from .default_paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_PROCESSED_CSV
@@ -57,6 +60,10 @@ class BoughterDataset(AntibodyDataset):
 
     # Dataset subsets
     SUBSETS = ["flu", "hiv_nat", "hiv_cntrl", "hiv_plos", "gut_hiv", "mouse_iga"]
+
+    @classmethod
+    def get_schema(cls) -> pa.DataFrameSchema:
+        return get_boughter_schema()
 
     def __init__(
         self, output_dir: Path | None = None, logger: logging.Logger | None = None
@@ -163,6 +170,13 @@ class BoughterDataset(AntibodyDataset):
         flag_col = "num_flags" if "num_flags" in df.columns else "flags"
         if flag_col in df.columns:
             df["label"] = (df[flag_col] >= 4).astype(int)
+
+        # Create 'sequence' column for schema validation (use VH)
+        if "sequence" not in df.columns and "VH_sequence" in df.columns:
+            df["sequence"] = df["VH_sequence"]
+
+        # Validate with Pandera
+        df = self.validate_dataframe(df)
 
         self.logger.info("\nLabel distribution:")
         label_counts = df["label"].value_counts().sort_index()
