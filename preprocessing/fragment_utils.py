@@ -70,19 +70,12 @@ def annotate_sequence(seq_id: str, sequence: str, chain: str) -> dict[str, str] 
             f"fwr4_aa_{chain}": safe_str(annotation.fwr4_aa),
         }
 
-        # Reconstruct full V-domain from fragments (avoids constant region garbage)
-        # This is gap-free and clean (P0 fix + constant region removal)
-        fragments[f"full_seq_{chain}"] = "".join(
-            [
-                fragments[f"fwr1_aa_{chain}"],
-                fragments[f"cdr1_aa_{chain}"],
-                fragments[f"fwr2_aa_{chain}"],
-                fragments[f"cdr2_aa_{chain}"],
-                fragments[f"fwr3_aa_{chain}"],
-                fragments[f"cdr3_aa_{chain}"],
-                fragments[f"fwr4_aa_{chain}"],
-            ]
-        )
+        # Use the full input sequence (gap-free) as the V-domain.
+        # Critical for Pertuzumab (Jain dataset), where the C-terminal 'SS' is
+        # part of the canonical sequence but ANARCI's strict FWR4 definition
+        # might truncate the last 'S' (e.g. returning ...VTVS instead of ...VTVSS).
+        # Using sequence_aa ensures we preserve the exact input V-domain.
+        fragments[f"full_seq_{chain}"] = annotation.sequence_aa
 
         # Validate that we got at least SOME fragments
         # If all CDRs are empty, annotation failed
