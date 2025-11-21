@@ -21,6 +21,7 @@ from hydra import compose, initialize
 from hydra.core.global_hydra import GlobalHydra
 
 from antibody_training_esm.core.trainer import train_pipeline
+from antibody_training_esm.models.artifact import CVResults, EvaluationMetrics
 
 # ==================== Fixtures ====================
 
@@ -95,14 +96,17 @@ def test_train_pipeline_accepts_dictconfig(
     assert "cv_metrics" in results
     assert "config" in results
 
-    # Verify metrics computed
-    assert "accuracy" in results["train_metrics"]
-    assert results["train_metrics"]["accuracy"] >= 0.0
-    assert results["train_metrics"]["accuracy"] <= 1.0
+    # Verify metrics computed (Pydantic model access)
+    train_metrics = results["train_metrics"]
+    assert isinstance(train_metrics, EvaluationMetrics)
+    assert train_metrics.accuracy is not None
+    assert 0.0 <= train_metrics.accuracy <= 1.0
 
-    # Verify CV metrics
-    assert "cv_accuracy" in results["cv_metrics"]
-    assert "mean" in results["cv_metrics"]["cv_accuracy"]
+    # Verify CV metrics (Pydantic model access)
+    cv_metrics = results["cv_metrics"]
+    assert isinstance(cv_metrics, CVResults)
+    assert cv_metrics.cv_accuracy is not None
+    assert "mean" in cv_metrics.cv_accuracy
 
 
 @pytest.mark.unit
@@ -284,15 +288,18 @@ def test_train_pipeline_returns_structured_results(
     assert "cv_metrics" in results
     assert "config" in results
 
-    # Assert: Metrics structure correct
-    assert isinstance(results["train_metrics"], dict)
-    assert isinstance(results["cv_metrics"], dict)
+    # Assert: Metrics structure correct (Pydantic models)
+    assert isinstance(results["train_metrics"], EvaluationMetrics)
+    assert isinstance(results["cv_metrics"], CVResults)
 
     # Assert: All configured metrics computed
-    for metric in ["accuracy", "precision", "recall", "f1", "roc_auc"]:
-        assert metric in results["train_metrics"]
+    assert results["train_metrics"].accuracy is not None
+    assert results["train_metrics"].precision is not None
+    assert results["train_metrics"].recall is not None
+    assert results["train_metrics"].f1 is not None
+    assert results["train_metrics"].roc_auc is not None
 
     # Assert: CV metrics have mean and std
-    assert "cv_accuracy" in results["cv_metrics"]
-    assert "mean" in results["cv_metrics"]["cv_accuracy"]
-    assert "std" in results["cv_metrics"]["cv_accuracy"]
+    assert results["cv_metrics"].cv_accuracy is not None
+    assert "mean" in results["cv_metrics"].cv_accuracy
+    assert "std" in results["cv_metrics"].cv_accuracy

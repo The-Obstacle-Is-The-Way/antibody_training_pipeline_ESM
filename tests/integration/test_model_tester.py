@@ -279,7 +279,7 @@ def test_evaluate_pretrained(
         np.array(labels),
         "test_model",
         "test_data",
-        metrics_list=test_config.metrics,
+        _metrics_list=test_config.metrics,
     )
 
     # Assert
