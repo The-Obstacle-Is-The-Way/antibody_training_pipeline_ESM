@@ -159,7 +159,7 @@ echo "=== Capturing baseline preprocessed data ==="
 find data/train/boughter/canonical -name "*.csv" -type f -exec md5 {} + > validation/baseline/checksums/boughter_preprocessed.md5
 find data/test/jain/canonical -name "*.csv" -type f -exec md5 {} + > validation/baseline/checksums/jain_preprocessed.md5
 find data/test/harvey/fragments -name "*.csv" -type f -exec md5 {} + > validation/baseline/checksums/harvey_preprocessed.md5
-find data/test/shehata/canonical -name "*.csv" -type f -exec md5 {} + > validation/baseline/checksums/shehata_preprocessed.md5
+find data/test/shehata/processed -name "*.csv" -type f -exec md5 {} + > validation/baseline/checksums/shehata_preprocessed.md5
 
 # 2. Run full training pipeline (baseline model)
 echo "=== Training baseline model ==="
@@ -259,7 +259,7 @@ Test duration: ~95s
 # Data Structure
 boughter/canonical/VH_only_boughter_training.csv: 915 lines
 jain/canonical/VH_only_jain_86_p5e_s2.csv: 87 lines
-shehata/canonical/shehata_398.csv: 399 lines
+shehata/processed/shehata.csv: 399 lines
 
 # Metrics (Approximate)
 Jain accuracy: ~66.28%
