@@ -1,6 +1,13 @@
+"""
+Model serialization utilities.
+
+Handles saving/loading models in dual format (pickle for dev, NPZ+JSON for production).
+Manages configuration loading and directory structure.
+"""
+
 import json
 import logging
-import pickle
+import pickle  # nosec B403
 from typing import Any, cast
 
 import numpy as np

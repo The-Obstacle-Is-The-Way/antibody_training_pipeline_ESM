@@ -1,3 +1,7 @@
+"""
+Mixin for antibody sequence annotation using ANARCI/riot_na.
+"""
+
 import logging
 
 import pandas as pd

@@ -1,7 +1,14 @@
+"""
+Embedding cache management.
+
+Handles loading, saving, and validating ESM embeddings to disk to avoid
+redundant computation.
+"""
+
 import hashlib
 import logging
 import os
-import pickle
+import pickle  # nosec B403
 from typing import Any
 
 import numpy as np

@@ -128,8 +128,8 @@ class Config:
 # causes Hydra to prefer ConfigStore over YAML when using package-based config
 # loading (which the console script does). This breaks config group overrides.
 #
-# See: CLI_OVERRIDE_BUG_ROOT_CAUSE.md for full analysis
-# See: https://hydra.cc/docs/1.2/upgrades/1.0_to_1.1/automatic_schema_matching
+# Known issue: Hydra structured configs strictly validate keys.
+# Overrides adding new keys require proper schema definition or +key syntax with strict mode disabled.# See: https://hydra.cc/docs/1.2/upgrades/1.0_to_1.1/automatic_schema_matching
 #
 # The dataclasses above are kept for type hints and validation in code, but are
 # no longer registered with ConfigStore. This allows YAML files to be the single

@@ -1,3 +1,7 @@
+"""
+Mixin for fragment handling (statistics, CSV export).
+"""
+
 import logging
 from pathlib import Path
 from typing import Any

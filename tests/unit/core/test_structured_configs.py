@@ -25,7 +25,7 @@ def cleanup_hydra() -> Generator[None, None, None]:
 # Test removed: test_structured_config_loads
 # Reason: ConfigStore registrations removed to fix CLI override bug.
 # We now use pure YAML configs without structured config validation.
-# See: CLI_OVERRIDE_BUG_ROOT_CAUSE.md for details.
+# Known issue: Hydra structured configs strictly validate keys.
 
 
 @pytest.mark.unit
@@ -185,4 +185,4 @@ def test_structured_config_rejects_unknown_keys() -> None:
 # Test removed: test_structured_config_rejects_invalid_types
 # Reason: ConfigStore registrations removed to fix CLI override bug.
 # Without structured configs, Hydra doesn't enforce strict type validation.
-# See: CLI_OVERRIDE_BUG_ROOT_CAUSE.md for details.
+# Known issue: Hydra structured configs strictly validate keys.

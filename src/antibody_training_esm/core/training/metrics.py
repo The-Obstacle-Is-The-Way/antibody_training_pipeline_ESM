@@ -1,3 +1,10 @@
+"""
+Evaluation metrics and cross-validation logic.
+
+Computes accuracy, F1, ROC-AUC, and other classification metrics.
+Handles logging and result storage.
+"""
+
 import logging
 from datetime import datetime
 from pathlib import Path
