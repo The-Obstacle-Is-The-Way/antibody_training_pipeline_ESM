@@ -18,10 +18,8 @@ Validation Checks:
     2. Each fragment has 1,065 rows (95.9% retention from Stage 1)
     3. All rows have include_in_training flag (True/False)
     4. Training subset has 914 rows (443 specific + 471 non-specific)
-    5. Required columns present: id, sequence, label, subset, num_flags, etc.
-    6. No empty sequences
-    7. No null values in critical columns
-    8. Label distribution matches expected (0=specific, 1=non-specific)
+    5. Schema validation using Pandera (via BoughterSchema)
+    6. Label distribution matches expected (0=specific, 1=non-specific)
 
 Outputs:
     - Console validation report for each fragment
@@ -37,15 +35,14 @@ from typing import Any
 
 import pandas as pd
 
+from antibody_training_esm.schemas.dataset import get_boughter_schema
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_TRAINING_SUBSET
 from preprocessing.validation_utils import (
     calculate_label_stats,
     log_label_stats,
-    validate_dataframe_columns,
+    validate_dataframe_with_schema,
     validate_directory_exists,
-    validate_no_empty_sequences,
-    validate_no_nulls,
 )
 
 logger = setup_logger(__name__)
@@ -97,30 +94,18 @@ def validate_fragment_directory(
 
     stats_dict["num_files"] = len(csv_files)
 
-    # Validate each CSV file
-    required_columns = {"id", "sequence", "label", "source"}
+    # Validate each CSV file using Pandera schema
     all_row_counts = []
+    schema = get_boughter_schema()
 
     for csv_file in csv_files:
         try:
             df = pd.read_csv(csv_file, comment="#")
 
-            # Check required columns
-            col_errors = validate_dataframe_columns(df, required_columns, csv_file.name)
-            if col_errors:
-                errors_list.extend(col_errors)
-                results["valid"] = False
-
-            # Check for empty sequences
-            empty_errors = validate_no_empty_sequences(df, "sequence", csv_file.name)
-            if empty_errors:
-                errors_list.extend(empty_errors)
-                results["valid"] = False
-
-            # Check for null values in critical columns
-            null_errors = validate_no_nulls(df, ["id", "sequence"], csv_file.name)
-            if null_errors:
-                errors_list.extend(null_errors)
+            # Validate with schema
+            schema_errors = validate_dataframe_with_schema(df, schema, csv_file.name)
+            if schema_errors:
+                errors_list.extend(schema_errors)
                 results["valid"] = False
 
             # Check for null labels (warning only - valid for held-out sequences)
@@ -170,12 +155,9 @@ def print_validation_report(dataset_dir: Path, expected_fragments: int = 16) -> 
     # Print errors
     if results["errors"]:
         logger.info(f"\n✗ ERRORS ({len(results['errors'])}):")
-        for error in results["errors"]:
-            # Errors are already logged by validation_utils, but we list them here for summary
-            if "Missing required columns" in error:  # Only re-log if not detailed
-                pass  # Already logged detail
-            else:
-                pass  # Validation utils logs errors as they happen, no need to double log unless summary
+        for _error in results["errors"]:
+            # Validation utils logs errors as they happen, no need to double log unless summary
+            pass
 
     # Print warnings
     if results["warnings"]:

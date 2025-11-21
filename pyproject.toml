@@ -56,6 +56,7 @@ dependencies = [
 validation = [
     "pydantic>=2.10.0",           # Stable v2 release
     "pydantic-settings>=2.6.0",   # For future config management
+    "pandera>=0.20.0",            # Phase 3: Data Integrity
 ]
 dev = [
     # Testing

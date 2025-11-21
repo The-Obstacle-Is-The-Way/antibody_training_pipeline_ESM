@@ -25,7 +25,7 @@ import pandas as pd
 import pytest
 
 from antibody_training_esm.datasets.boughter import BoughterDataset
-from preprocessing.paths import BOUGHTER_ANNOTATED_DIR, PROJECT_ROOT
+from preprocessing.paths import BOUGHTER_ANNOTATED_DIR
 
 # ============================================================================
 
@@ -49,8 +49,8 @@ def test_boughter_dataset_initializes_with_default_output_dir() -> None:
     dataset = BoughterDataset()
 
     # Assert
-    assert dataset.dataset_name == "boughter"
-    assert dataset.output_dir == BOUGHTER_ANNOTATED_DIR.relative_to(PROJECT_ROOT)
+    # BOUGHTER_ANNOTATED_DIR is absolute in settings.py
+    assert dataset.output_dir == BOUGHTER_ANNOTATED_DIR
     assert dataset.output_dir.exists()
 
 

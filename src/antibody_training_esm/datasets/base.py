@@ -1,19 +1,15 @@
-"""
-Abstract Base Class for Dataset Preprocessing
-
-Defines the common interface and shared logic for all antibody datasets.
-Follows Open/Closed Principle - datasets extend this without modifying it.
-"""
-
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, cast
 
 import pandas as pd
+import pandera.pandas as pa
+from pandera.errors import SchemaError
 
 from antibody_training_esm.datasets.mixins.annotation_mixin import AnnotationMixin
 from antibody_training_esm.datasets.mixins.fragment_mixin import FragmentMixin
+from antibody_training_esm.schemas.dataset import get_sequence_dataset_schema
 
 
 class AntibodyDataset(ABC, AnnotationMixin, FragmentMixin):
@@ -86,6 +82,41 @@ class AntibodyDataset(ABC, AnnotationMixin, FragmentMixin):
 
         # Create output directory if it doesn't exist
         self.output_dir.mkdir(parents=True, exist_ok=True)
+
+    @classmethod
+    def get_schema(cls) -> pa.DataFrameSchema:
+        """
+        Get the Pandera schema for this dataset.
+        Subclasses should override this method.
+        """
+        return get_sequence_dataset_schema()
+
+    @classmethod
+    def validate_dataframe(cls, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Validate DataFrame against Pandera schema.
+
+        Args:
+            df: Raw DataFrame from CSV
+
+        Returns:
+            Validated DataFrame (possibly coerced types)
+
+        Raises:
+            ValueError: If validation fails (wraps SchemaError)
+        """
+        try:
+            import pandera.backends.pandas  # noqa: F401
+
+            # Use lazy=False to fail fast (default behavior)
+            # Note: SequenceDatasetSchema uses lazy=False in its definition implicitly
+            validated_df = cast(pd.DataFrame, cls.get_schema().validate(df, lazy=False))
+            return validated_df
+        except SchemaError as e:
+            # Enhance error message with dataset context
+            raise ValueError(
+                f"Schema validation failed for {cls.__name__}:\n{e}"
+            ) from e
 
     def _create_default_logger(self) -> logging.Logger:
         """Create a default logger if none provided"""

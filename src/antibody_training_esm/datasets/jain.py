@@ -36,6 +36,9 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+import pandera.pandas as pa
+
+from antibody_training_esm.schemas.dataset import get_jain_schema
 
 from .base import AntibodyDataset
 from .default_paths import JAIN_FULL_CSV, JAIN_OUTPUT_DIR, JAIN_SD03_CSV
@@ -59,6 +62,10 @@ class JainDataset(AntibodyDataset):
     TIER_A_PSR = ["bimagrumab", "bavituximab", "ganitumab"]  # PSR >0.4
     TIER_B_EXTREME_TM = "eldelumab"  # Extreme Tm outlier (59.50°C)
     TIER_C_CLINICAL = "infliximab"  # 61% ADA rate + chimeric
+
+    @classmethod
+    def get_schema(cls) -> pa.DataFrameSchema:
+        return get_jain_schema()
 
     def __init__(
         self, output_dir: Path | None = None, logger: logging.Logger | None = None
@@ -194,6 +201,13 @@ class JainDataset(AntibodyDataset):
             df = self.filter_elisa_1to3(df)
             df = self.reclassify_5_antibodies(df)
             df = self.remove_30_by_psr_acsins(df)
+
+        # Create 'sequence' column for schema validation (use VH)
+        if "sequence" not in df.columns and "VH_sequence" in df.columns:
+            df["sequence"] = df["VH_sequence"]
+
+        # Validate with Pandera
+        df = self.validate_dataframe(df)
 
         return df
 

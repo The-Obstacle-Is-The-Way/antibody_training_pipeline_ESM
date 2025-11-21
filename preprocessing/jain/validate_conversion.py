@@ -5,7 +5,7 @@ Validation harness for the Jain Excel->CSV conversion (ELISA-only SSOT).
 Checks performed:
 1. Re-runs the conversion pipeline in-memory and compares against SSOT CSV
 2. Verifies ELISA flag counts, label distribution, and column integrity
-3. Confirms amino acid sequences contain only valid residues
+3. Confirms schema validity using Pandera (JainSchema)
 4. Prints SHA256 checksum for provenance tracking
 
 Expected output:
@@ -21,7 +21,7 @@ from pathlib import Path
 import pandas as pd
 import pandas.testing as pdt
 
-# Clean package import (no sys.path manipulation needed)
+from antibody_training_esm.schemas.dataset import get_jain_schema
 from preprocessing.jain.step1_convert_excel_to_csv import (
     calculate_flags,
     load_data,
@@ -30,7 +30,7 @@ from preprocessing.logging_config import setup_logger
 from preprocessing.paths import JAIN_FULL_CSV
 from preprocessing.validation_utils import (
     calculate_checksum,
-    validate_amino_acids,
+    validate_dataframe_with_schema,
 )
 
 logger = setup_logger(__name__)
@@ -147,16 +147,26 @@ def main() -> None:
     else:
         logger.warning("WARNING: Distribution mismatch!")
 
-    # Validate sequences using shared utility
-    errors_vh = validate_amino_acids(csv_df, "vh_sequence", "Jain (VH)")
-    errors_vl = validate_amino_acids(csv_df, "vl_sequence", "Jain (VL)")
+    # Prepare for validation - creating 'sequence' column from VH
+    validation_df = csv_df.copy()
+    validation_df["sequence"] = validation_df["vh_sequence"]
+    # Temporarily drop rows with NaN label for validation if schema requires non-null label
+    # JainSchema requires label to be int64 (not nullable Int64) and checks for 0/1
+    # But our CSV has nullable labels for 'mild' cases.
+    # We'll filter to valid labels for schema check.
+    validation_df_labeled = validation_df.dropna(subset=["label"]).copy()
+    validation_df_labeled["label"] = validation_df_labeled["label"].astype(int)
 
-    if not errors_vh and not errors_vl:
-        logger.info(
-            "\nSequence validation: ✅ all VH/VL sequences contain only valid amino acids"
-        )
+    # Validate using Pandera schema
+    schema = get_jain_schema()
+    errors = validate_dataframe_with_schema(
+        validation_df_labeled, schema, "Jain (ELISA SSOT)"
+    )
+
+    if not errors:
+        logger.info("\nSchema validation: ✅ Passed")
     else:
-        logger.info("\nSequence validation: ⚠ issues detected (details logged above)")
+        logger.info("\nSchema validation: ⚠ Failed (see logs)")
 
     logger.info(f"\nChecksum (SHA256): {calculate_checksum(args.csv)}")
     logger.info("\nValidation complete ✅")

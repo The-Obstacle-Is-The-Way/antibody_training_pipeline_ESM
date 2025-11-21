@@ -9,6 +9,7 @@ Methods:
 1. pandas (openpyxl engine)
 2. Direct openpyxl reading
 3. CSV checksum validation
+4. Schema validation via Pandera
 
 Date: 2025-10-31
 """
@@ -20,13 +21,20 @@ from pathlib import Path
 import openpyxl
 import pandas as pd
 
+from antibody_training_esm.schemas.dataset import (
+    get_sequence_dataset_schema,
+    get_shehata_schema,
+)
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import (
     SHEHATA_FRAGMENTS_DIR,
     SHEHATA_PROCESSED_CSV,
     SHEHATA_RAW_EXCEL,
 )
-from preprocessing.validation_utils import calculate_checksum, validate_no_gaps
+from preprocessing.validation_utils import (
+    calculate_checksum,
+    validate_dataframe_with_schema,
+)
 
 logger = setup_logger(__name__)
 
@@ -134,7 +142,7 @@ def compare_sequences(
 
 def validate_fragment_csvs(fragments_dir: Path) -> bool:
     """
-    Validate fragment CSV files for gap characters.
+    Validate fragment CSV files using Pandera schema.
 
     Critical check: ESM-1v cannot handle gap characters.
     This prevents P0 blocker regression.
@@ -143,10 +151,10 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
         fragments_dir: Path to directory containing fragment CSVs
 
     Returns:
-        True if all files are gap-free, False otherwise
+        True if all files are valid, False otherwise
     """
     logger.info("\n" + "=" * 60)
-    logger.info("Fragment CSV Gap Validation (P0 Blocker Check)")
+    logger.info("Fragment CSV Schema Validation (P0 Blocker Check)")
     logger.info("=" * 60)
 
     if not fragments_dir.exists():
@@ -161,41 +169,36 @@ def validate_fragment_csvs(fragments_dir: Path) -> bool:
         logger.info(f"  ℹ No fragment CSV files found in {fragments_dir}")
         return True
 
-    logger.info(
-        f"\n  Checking {len(fragment_files)} fragment files for gap characters..."
-    )
+    logger.info(f"\n  Checking {len(fragment_files)} fragment files against schema...")
 
     all_clean = True
-    gap_files = []
+    error_files = []
+
+    # Use base sequence schema for fragments
+    schema = get_sequence_dataset_schema()
 
     for file in sorted(fragment_files):
         df = pd.read_csv(file)
 
-        # Use shared utility to check for gaps
-        errors = validate_no_gaps(df, "sequence", file.name)
+        # Use Pandera validation
+        errors = validate_dataframe_with_schema(df, schema, file.name)
 
         if errors:
             all_clean = False
-            # Parse error message to get count if needed, or just use the list
-            # Expected error format: "filename: N sequences contain gaps..."
-            gap_files.append(file.name)
-            # validate_no_gaps logs errors automatically
+            error_files.append(file.name)
+            # validate_dataframe_with_schema logs errors automatically
         else:
-            logger.info(f"    ✓ {file.name}: gap-free")
+            logger.info(f"    ✓ {file.name}: valid")
 
     logger.info("")
     if all_clean:
-        logger.info("  ✓ SUCCESS: All fragment files are gap-free")
+        logger.info("  ✓ SUCCESS: All fragment files pass validation")
         logger.info("  ✓ ESM-1v embedding compatibility confirmed")
         return True
     else:
-        logger.info("  ✗ FAILURE: Gap characters detected in fragment files")
+        logger.info("  ✗ FAILURE: Validation errors detected in fragment files")
         logger.info("  ✗ This is a P0 blocker - ESM-1v will fail validation")
-        logger.info("\n  Affected files: " + ", ".join(gap_files))
-        logger.info(
-            "\n  Fix: Use annotation.sequence_aa instead of sequence_alignment_aa"
-        )
-        logger.info("  See: docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md")
+        logger.info("\n  Affected files: " + ", ".join(error_files))
         return False
 
 
@@ -291,6 +294,26 @@ def main() -> int:
         logger.info(f"    Missing heavy_seq: {df_csv['heavy_seq'].isna().sum()}")
         logger.info(f"    Missing light_seq: {df_csv['light_seq'].isna().sum()}")
         logger.info(f"    Missing labels: {df_csv['label'].isna().sum()}")
+
+        # Validate generated CSV with Schema
+        logger.info("\nSchema Validation:")
+        # Create sequence column for validation (using heavy chain)
+        val_df = df_csv.copy()
+        val_df["sequence"] = val_df["heavy_seq"]
+        val_df = val_df.rename(
+            columns={
+                "heavy_seq": "vh_sequence",
+                "light_seq": "vl_sequence",
+                "psr_score": "psr_measurement",
+            }
+        )
+
+        schema = get_shehata_schema()
+        errors = validate_dataframe_with_schema(val_df, schema, "Generated CSV")
+        if not errors:
+            logger.info("  ✓ Schema validation passed")
+        else:
+            logger.info("  ✗ Schema validation failed")
 
     # Validate fragment CSVs (P0 blocker check)
     fragments_dir = SHEHATA_FRAGMENTS_DIR
