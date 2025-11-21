@@ -95,51 +95,49 @@ uv sync --extra validation
 **Location:** `src/antibody_training_esm/schemas/dataset.py`
 
 ```python
-import pandera as pa
-from pandera import Column, DataFrameSchema, Check
+import re
+import pandas as pd
+import pandera.pandas as pa
 
-# Valid amino acids (20 standard + X for unknown)
 VALID_AA = set("ACDEFGHIKLMNPQRSTVWYX")
+_UPPERCASE_PATTERN = re.compile(r"^[A-Z]+$")
+_NO_GAP_PATTERN = re.compile(r"^[^*.-]+$")
 
 
-def validate_amino_acids(seq: str) -> bool:
-    """Check if sequence contains only valid amino acids."""
-    return set(seq.upper()).issubset(VALID_AA)
-
-
-def no_gaps(seq: str) -> bool:
-    """Check for gap characters (-, *, .)."""
-    return not any(char in seq for char in ["-", "*", "."])
-
-
-# Base schema for all antibody datasets
-SequenceDatasetSchema = DataFrameSchema(
-    columns={
-        "sequence": Column(
-            dtype="string",
-            checks=[
-                Check.str_matches(r"^[A-Z]+$", name="uppercase_letters"),
-                Check.str_length(min_value=1, max_value=2000),
-                Check(validate_amino_acids, name="valid_amino_acids"),
-                Check(no_gaps, name="no_gap_characters"),
-            ],
-            nullable=False,
-            coerce=True,  # Auto-convert to string
-            description="Antibody amino acid sequence (VH, VL, or VHH)",
-        ),
-        "label": Column(
-            dtype="int64",
-            checks=[
-                Check.isin([0, 1], name="binary_label"),
-            ],
-            nullable=False,
-            description="Binary label: 0=specific, 1=non-specific",
-        ),
-    },
-    strict=False,  # Allow extra columns (e.g., id, metadata)
-    coerce=True,   # Auto-coerce types when possible
-    name="SequenceDataset",
-)
+def get_sequence_dataset_schema() -> pa.DataFrameSchema:
+    return pa.DataFrameSchema(
+        columns={
+            "sequence": pa.Column(
+                dtype="string",
+                checks=[
+                    pa.Check(lambda s: bool(s.str.match(_UPPERCASE_PATTERN).all())),
+                    pa.Check(lambda s: bool(s.str.len().between(1, 2000).all())),
+                    pa.Check(
+                        lambda s: bool(
+                            s.dropna().map(lambda seq: set(str(seq)).issubset(VALID_AA)).all()
+                        ),
+                        name="valid_amino_acids",
+                    ),
+                    pa.Check(
+                        lambda s: bool(s.str.match(_NO_GAP_PATTERN).fillna(False).all()),
+                        name="no_gap_characters",
+                    ),
+                ],
+                nullable=False,
+                coerce=True,
+                description="Antibody amino acid sequence (VH, VL, or VHH)",
+            ),
+            "label": pa.Column(
+                dtype="int64",
+                checks=[pa.Check(lambda s: s.isin([0, 1]).all(), name="binary_label")],
+                nullable=False,
+                description="Binary label: 0=specific, 1=non-specific",
+            ),
+        },
+        strict=False,
+        coerce=True,
+        name="SequenceDataset",
+    )
 ```
 
 ### 2. Boughter Training Set Schema
@@ -774,25 +772,25 @@ uv run pytest tests/integration/test_dataset_loading.py -v
 
 ### Functional Requirements
 
-- [ ] All datasets validate with Pandera on load
-- [ ] Invalid amino acids raise SchemaError
-- [ ] Gap characters raise SchemaError
-- [ ] Missing required columns raise SchemaError
-- [ ] Invalid labels (not 0/1) raise SchemaError
-- [ ] Null sequences raise SchemaError
-- [ ] Extra columns allowed (strict=False)
-- [ ] Validation errors are actionable (show row/column)
-- [ ] Paths are managed via `DataSettings` with env var override support
+- [x] All datasets validate with Pandera on load
+- [x] Invalid amino acids raise SchemaError
+- [x] Gap characters raise SchemaError
+- [x] Missing required columns raise SchemaError
+- [x] Invalid labels (not 0/1) raise SchemaError
+- [x] Null sequences raise SchemaError
+- [x] Extra columns allowed (strict=False)
+- [x] Validation errors are actionable (show row/column)
+- [x] Paths are managed via `DataSettings` with env var override support
 
 ### Quality Gates
 
-- [ ] All unit tests pass (≥16 tests)
-- [ ] Integration tests pass
-- [ ] `make test` passes
-- [ ] `make lint` passes
-- [ ] `make typecheck` passes
-- [ ] Code coverage ≥70%
-- [ ] Manual validation functions removed from `validation_utils.py`
+- [x] All unit tests pass (≥16 tests)
+- [x] Integration tests pass
+- [x] `make test` passes
+- [x] `make lint` passes
+- [x] `make typecheck` passes
+- [x] Code coverage ≥70% (`make coverage` → 82.38%)
+- [x] Manual validation functions removed from `validation_utils.py`
 
 ---
 
@@ -841,5 +839,5 @@ uv run pytest tests/integration/test_dataset_loading.py -v
 
 ---
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-21
 **Next Phase:** [Phase 4: Artifacts & Metrics](PYDANTIC_PHASE_4_ARTIFACTS_METRICS.md)

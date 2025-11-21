@@ -261,6 +261,13 @@ class TrainingPipelineConfig(BaseModel):
         description="Hardware-specific overrides (device, num_threads)",
     )
 
+    # Runtime metrics (attached after training)
+    train_metrics: dict[str, Any] | None = Field(
+        default=None,
+        description="Metrics from final training run (attached at runtime)",
+        exclude=True,  # Do not expect this in input config
+    )
+
     model_config = {
         "json_schema_extra": {
             "title": "Antibody Training Pipeline Configuration",

@@ -153,6 +153,7 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
         # Convert labels to numpy array
         y_train_array: np.ndarray = np.array(y_train)
 
+        # Perform CV (returns CVResults Pydantic model)
         cv_results = perform_cross_validation(
             X_train_embedded,
             y_train_array,
@@ -178,7 +179,7 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
         # Train final model
         classifier.fit(X_train_embedded, y_train_array)
 
-        # Evaluate
+        # Evaluate (returns EvaluationMetrics Pydantic model)
         train_results = evaluate_model(
             classifier,
             X_train_embedded,
@@ -192,6 +193,10 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
         if config.training.save_model:
             # save_model expects config dict or object.
             # We'll pass Pydantic config.
+            # Attach metrics to config for metadata saving
+            config.train_metrics = train_results.model_dump(
+                mode="json", exclude_none=True
+            )
             model_paths = save_model(classifier, config, logger)
         else:
             model_paths = {}
@@ -240,14 +245,17 @@ def main(cfg: DictConfig) -> None:
         # Call core training pipeline
         results = train_pipeline(cfg)
 
-        # Log final results
+        # Log final results (access Pydantic fields)
+        train_metrics = results["train_metrics"]
+        cv_metrics = results["cv_metrics"]
+
         logger.info("=" * 60)
         logger.info("TRAINING COMPLETE")
         logger.info("=" * 60)
-        logger.info(f"Train Accuracy: {results['train_metrics']['accuracy']:.4f}")
+        logger.info(f"Train Accuracy: {train_metrics.accuracy:.4f}")
         logger.info(
-            f"CV Accuracy: {results['cv_metrics']['cv_accuracy']['mean']:.4f} "
-            f"(+/- {results['cv_metrics']['cv_accuracy']['std'] * 2:.4f})"
+            f"CV Accuracy: {cv_metrics.cv_accuracy['mean']:.4f} "
+            f"(+/- {cv_metrics.cv_accuracy['std'] * 2:.4f})"
         )
 
         if results.get("model_paths"):

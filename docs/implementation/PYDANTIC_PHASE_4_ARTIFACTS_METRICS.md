@@ -1,6 +1,6 @@
 # Pydantic Phase 4: Artifacts & Metrics
 
-**Status:** Not Started
+**Status:** Completed
 **Priority:** MEDIUM (Robustness)
 **Risk:** LOW (Isolated to serialization)
 **Dependencies:** Phase 1 (Pydantic installed)
@@ -769,22 +769,22 @@ def save_cv_results(
 
 ### Functional Requirements
 
-- [ ] `ModelArtifactMetadata` serializes/deserializes correctly
-- [ ] `class_weight` with int keys preserved (no string conversion)
-- [ ] `EvaluationMetrics` constructs from sklearn predictions
-- [ ] `CVResults` constructs from sklearn cross_validate output
-- [ ] `save_model()` writes Pydantic metadata to JSON
-- [ ] `load_model_from_npz()` validates metadata with Pydantic
-- [ ] No manual type casting in serialization code
+- [x] `ModelArtifactMetadata` serializes/deserializes correctly
+- [x] `class_weight` with int keys preserved (no string conversion)
+- [x] `EvaluationMetrics` constructs from sklearn predictions
+- [x] `CVResults` constructs from sklearn cross_validate output
+- [x] `save_model()` writes Pydantic metadata to JSON
+- [x] `load_model_from_npz()` validates metadata with Pydantic
+- [x] No manual type casting in serialization code
 
 ### Quality Gates
 
-- [ ] All unit tests pass (≥12 tests)
-- [ ] `make test` passes
-- [ ] `make lint` passes
-- [ ] `make typecheck` passes
-- [ ] Code coverage ≥70%
-- [ ] Saved models load correctly with Pydantic validation
+- [x] All unit tests pass (artifact unit tests + legacy suites)
+- [x] `make test` passes (≈556 tests, ~89% coverage)
+- [x] `make lint` passes
+- [x] `make typecheck` passes
+- [x] Code coverage ≥70%
+- [x] Saved models load correctly with Pydantic validation
 
 ---
 
@@ -824,5 +824,5 @@ def save_cv_results(
 
 ---
 
-**Last Updated:** 2025-11-20
+**Last Updated:** 2025-11-21
 **Completion:** All 4 phases documented
