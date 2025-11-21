@@ -6,9 +6,10 @@ Handles logging and result storage.
 """
 
 import logging
+from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import yaml
@@ -25,13 +26,16 @@ from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 
+if TYPE_CHECKING:
+    from antibody_training_esm.models.config import TrainingPipelineConfig
+
 
 def evaluate_model(
     classifier: BinaryClassifier,
     X: np.ndarray,
     y: np.ndarray,
     dataset_name: str,
-    metrics: list[str],
+    metrics: Sequence[str] | set[str],
     logger: logging.Logger,
 ) -> dict[str, float]:
     """
@@ -42,7 +46,7 @@ def evaluate_model(
         X: Embeddings array
         y: Labels array
         dataset_name: Name of dataset being evaluated
-        metrics: List of metrics to compute
+        metrics: List/Set of metrics to compute
         logger: Logger instance
 
     Returns:
@@ -57,19 +61,22 @@ def evaluate_model(
     # Calculate metrics
     results = {}
 
-    if "accuracy" in metrics:
+    # Convert metrics to set for fast lookups if not already
+    metrics_set = set(metrics)
+
+    if "accuracy" in metrics_set:
         results["accuracy"] = accuracy_score(y, y_pred)
 
-    if "precision" in metrics:
+    if "precision" in metrics_set:
         results["precision"] = precision_score(y, y_pred, average="binary")
 
-    if "recall" in metrics:
+    if "recall" in metrics_set:
         results["recall"] = recall_score(y, y_pred, average="binary")
 
-    if "f1" in metrics:
+    if "f1" in metrics_set:
         results["f1"] = f1_score(y, y_pred, average="binary")
 
-    if "roc_auc" in metrics:
+    if "roc_auc" in metrics_set:
         results["roc_auc"] = roc_auc_score(y, y_pred_proba)
 
     # Log results
@@ -87,7 +94,7 @@ def evaluate_model(
 def perform_cross_validation(
     X: np.ndarray,
     y: np.ndarray,
-    config: dict[str, Any],
+    config: "TrainingPipelineConfig | dict[str, Any]",
     logger: logging.Logger,
 ) -> dict[str, dict[str, float]]:
     """
@@ -96,16 +103,41 @@ def perform_cross_validation(
     Args:
         X: Embeddings array
         y: Labels array
-        config: Configuration dictionary
+        config: Configuration (Pydantic object or legacy dict)
         logger: Logger instance
 
     Returns:
         Dictionary of cross-validation results
     """
-    cv_config = config["classifier"]
-    cv_folds = cv_config["cv_folds"]
-    random_state = cv_config["random_state"]
-    stratify = cv_config["stratify"]
+    from antibody_training_esm.models.config import TrainingPipelineConfig
+
+    # Extract parameters based on config type
+    if isinstance(config, TrainingPipelineConfig):
+        cv_folds = config.training.n_splits
+        random_state = config.training.random_state
+        stratify = config.training.stratify
+        model_name = config.model.name
+        device = config.model.device
+        batch_size = config.model.batch_size
+
+        clf_params = config.classifier.model_dump()
+    else:
+        training_conf = config.get("training", {})
+        classifier_conf = config.get("classifier", {})
+
+        cv_folds = training_conf.get("n_splits", classifier_conf.get("cv_folds", 10))
+        stratify = training_conf.get("stratify", True)
+        random_state = training_conf.get(
+            "random_state", classifier_conf.get("random_state", 42)
+        )
+
+        model_cfg = config.get("model", {})
+        model_name = model_cfg.get("name", "")
+        device = model_cfg.get("device", "cpu")
+        batch_size = training_conf.get(
+            "batch_size", model_cfg.get("batch_size", DEFAULT_BATCH_SIZE)
+        )
+        clf_params = classifier_conf.copy()
 
     logger.info(f"Performing {cv_folds}-fold cross-validation")
 
@@ -119,10 +151,11 @@ def perform_cross_validation(
     cv_results = {}
 
     # Create a new classifier instance for CV (to avoid fitting on full data)
-    cv_params = config["classifier"].copy()
-    cv_params["model_name"] = config["model"]["name"]
-    cv_params["device"] = config["model"]["device"]
-    cv_params["batch_size"] = config["training"].get("batch_size", DEFAULT_BATCH_SIZE)
+    cv_params = clf_params.copy()
+    cv_params["model_name"] = model_name
+    cv_params["device"] = device
+    cv_params["batch_size"] = batch_size
+
     cv_classifier = BinaryClassifier(cv_params)
 
     # Use full BinaryClassifier for CV (no StandardScaler - matches Novo methodology)

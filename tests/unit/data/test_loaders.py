@@ -365,9 +365,8 @@ def test_load_data_dispatches_to_local(mock_load_local: Mock) -> None:
     X, y = load_data(config)
 
     # Assert
-    mock_load_local.assert_called_once_with(
-        "train.csv", text_column="seq", label_column="label"
-    )
+    # The new load_data calls load_local_data(file, col, col) positionally
+    mock_load_local.assert_called_once_with("train.csv", "seq", "label")
     assert X == ["GHIKL"]
     assert y == [1]
 
@@ -379,7 +378,8 @@ def test_load_data_raises_on_unknown_source() -> None:
     config = {"data": {"source": "unknown"}}
 
     # Act & Assert
-    with pytest.raises(ValueError, match="Unknown data source: unknown"):
+    # Match broader pattern since the error message includes the whole config dict
+    with pytest.raises(ValueError, match="Unknown data source configuration"):
         load_data(config)
 
 
