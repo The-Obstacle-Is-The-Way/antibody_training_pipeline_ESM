@@ -1,24 +1,24 @@
 {
   "model_name": "facebook/esm1v_t33_650M_UR90S_1",
-  "model_type": "LogisticRegression",
+  "model_type": "logistic_regression",
   "sklearn_version": "1.7.2",
   "classifier": {
     "type": "logistic_regression",
     "C": 1.0,
     "penalty": "l2",
     "solver": "lbfgs",
-    "class_weight": null,
     "max_iter": 1000,
-    "random_state": 42
+    "random_state": 42,
+    "class_weight": null
   },
+  "esm_model": "facebook/esm1v_t33_650M_UR90S_1",
+  "esm_revision": "main",
+  "batch_size": 8,
+  "device": "mps",
   "C": 1.0,
   "penalty": "l2",
   "solver": "lbfgs",
   "class_weight": null,
   "max_iter": 1000,
-  "random_state": 42,
-  "esm_model": "facebook/esm1v_t33_650M_UR90S_1",
-  "esm_revision": "main",
-  "batch_size": 8,
-  "device": "cpu"
+  "random_state": 42
 }

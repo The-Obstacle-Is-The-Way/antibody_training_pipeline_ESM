@@ -1,0 +1,15 @@
+Dataset: VHH_only_harvey
+  accuracy: 0.6133
+  precision: 0.5718
+  recall: 0.9551
+  f1: 0.7154
+Dataset: VH_only_jain_86_p5e_s2
+  accuracy: 0.6628
+  precision: 0.4722
+  recall: 0.6296
+  f1: 0.5397
+Dataset: shehata
+  accuracy: 0.5829
+  precision: 0.0296
+  recall: 0.7143
+  f1: 0.0568

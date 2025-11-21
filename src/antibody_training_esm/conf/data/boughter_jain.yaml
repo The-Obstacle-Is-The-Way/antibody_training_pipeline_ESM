@@ -8,7 +8,7 @@ test_file: data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
 
 # Data format options (required by loaders.py)
 # Jain canonical parity file uses 'vh_sequence'; align config to avoid column errors
-sequence_column: vh_sequence
+sequence_column: sequence
 label_column: label
 max_sequence_length: 1024
 
