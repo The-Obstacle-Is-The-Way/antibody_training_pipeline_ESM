@@ -1,5 +1,7 @@
 # Pydantic Integration Audit (Refined)
 
+**Status:** Phases 1-4 implemented (see phase docs); audit retained for future hardening
+
 Purpose: identify where runtime schema validation (Pydantic v2 + optional `pydantic-settings`, and Pandera for DataFrames) would harden the pipeline. This is an audit of current boundaries, reflecting the post-refactor codebase structure.
 
 ## Guiding Principles
