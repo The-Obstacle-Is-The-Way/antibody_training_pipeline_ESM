@@ -25,7 +25,9 @@ Use this guide if you're:
 make format      # Auto-format code with ruff
 make lint        # Check linting with ruff
 make typecheck   # Type check with mypy (strict mode)
-make test        # Run tests with pytest
+make test        # Fast tests (unit + integration; skips e2e/slow/gpu)
+make test-e2e    # End-to-end suite (honors env flags, e.g., RUN_NOVO_E2E=1)
+make test-all    # Full pytest suite (env-gated e2e may still skip if data/flags absent)
 make all         # Run format → lint → typecheck → test (full quality gate)
 ```
 
@@ -92,16 +94,22 @@ make hooks
 
 ### Testing
 
-**Run all tests:**
+**Run fast suite (unit + integration):**
 ```bash
-uv run pytest
+make test
 ```
 
-**Run specific test types:**
+**Run end-to-end suite (opt-in flags honored):**
 ```bash
-uv run pytest -m unit           # Unit tests only (fast, < 1s each)
-uv run pytest -m integration    # Integration tests (multi-component)
-uv run pytest -m e2e           # End-to-end tests (expensive, full pipeline)
+make test-e2e
+# Heavy tests:
+#   RUN_NOVO_E2E=1 make test-e2e          # Novo accuracy reproduction (~650MB download)
+#   RUN_PREDICT_CLI_E2E=1 make test-e2e   # Real-weights predict CLI test
+```
+
+**Run full pytest (all markers; env-gated tests may still skip):**
+```bash
+make test-all
 ```
 
 **Run specific test file:**

@@ -165,8 +165,10 @@ make all
 | `make lint` | Check code quality with ruff linting |
 | `make typecheck` | Run static type checking with mypy |
 | `make hooks` | Run pre-commit hooks on all files |
-| `make test` | Run the full test suite with pytest |
-| `make all` | Run complete quality pipeline (format → lint → typecheck → test) |
+| `make test` | Fast suite (unit + integration; skips `e2e`, `slow`, `gpu`) |
+| `make test-e2e` | End-to-end suite (honors env flags like `RUN_NOVO_E2E`) |
+| `make test-all` | Full pytest suite (env-gated e2e may still skip) |
+| `make all` | Run complete quality pipeline (format → lint → typecheck → fast tests) |
 | `make train` | Run the ML training pipeline |
 | `make clean` | Remove cache directories and temporary files |
 | `make help` | Show all available commands |
