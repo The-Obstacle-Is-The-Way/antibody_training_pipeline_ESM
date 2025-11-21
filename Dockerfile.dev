@@ -23,6 +23,7 @@ WORKDIR /app
 # Copy dependency files AND source code (hatchling needs src/ for editable install)
 COPY pyproject.toml uv.lock ./
 COPY src/ ./src/
+COPY preprocessing/ ./preprocessing/
 
 # Create virtual environment and install dependencies (including dev extras for pytest)
 # uv sync installs to .venv/ and includes editable install automatically

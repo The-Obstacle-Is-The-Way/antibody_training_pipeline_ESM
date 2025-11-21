@@ -27,6 +27,7 @@ WORKDIR /app
 # Copy dependency files AND source code (hatchling needs src/ for editable install)
 COPY pyproject.toml uv.lock ./
 COPY src/ ./src/
+COPY preprocessing/ ./preprocessing/
 
 # Install exact versions with frozen lock file (no updates, includes editable install)
 # --frozen ensures we use exact versions from uv.lock for reproducibility
