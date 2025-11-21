@@ -12,7 +12,7 @@
 |-------|-------|--------|------|-------|----------|
 | **A** | Quick Wins | ✅ DONE | LOW | Permissions, bare excepts, type ignores, utils/, configs/ | [PHASE_A_QUICK_WINS.md](./PHASE_A_QUICK_WINS.md) |
 | **B** | Path Centralization | ✅ DONE | MEDIUM | 20+ files, 106 hardcoded paths | [PHASE_B_PATH_CENTRALIZATION.md](./PHASE_B_PATH_CENTRALIZATION.md) |
-| **C** | File Splitting | 4-5h | HIGH | 4 files >500 lines | [PHASE_C_FILE_SPLITTING.md](./PHASE_C_FILE_SPLITTING.md) |
+| **C** | File Splitting | ✅ DONE | HIGH | 4 files >500 lines | [PHASE_C_FILE_SPLITTING.md](./PHASE_C_FILE_SPLITTING.md) |
 | **D** | Code Deduplication | 5-7h | HIGH | 6 preprocessing scripts (~1.6k LOC overlap) | [PHASE_D_CODE_DEDUPLICATION.md](./PHASE_D_CODE_DEDUPLICATION.md) |
 | **E** | Polish & Docs | 2-3h | LOW | Docs/comments/bug refs after refactors | [PHASE_E_POLISH.md](./PHASE_E_POLISH.md) |
 
