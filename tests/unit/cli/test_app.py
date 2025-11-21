@@ -6,6 +6,7 @@ import pytest
 from hydra import compose, initialize
 
 from antibody_training_esm.cli.app import launch_gradio_app, main
+from antibody_training_esm.models.prediction import PredictionRequest, PredictionResult
 
 
 @patch("gradio.Interface")
@@ -18,10 +19,13 @@ def test_launch_gradio_app(
     """
     # Setup mock predictor
     mock_predictor = mock_predictor_cls.return_value
-    mock_predictor.predict_single.return_value = {
-        "prediction": "non-specific",
-        "probability": 0.875,
-    }
+    # Return a proper PredictionResult object
+    mock_predictor.predict_single.return_value = PredictionResult(
+        sequence="QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVR",
+        prediction="non-specific",
+        probability=0.875,
+        threshold=0.5,
+    )
 
     # Create a dummy classifier file
     classifier_path = tmp_path / "model.pkl"
@@ -72,9 +76,11 @@ def test_launch_gradio_app(
     prediction, probability = predict_fn("QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVR")
 
     # Verify predictor call (most recent)
-    mock_predictor.predict_single.assert_called_with(
-        "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVR"
-    )
+    # It should now be called with a PredictionRequest object
+    call_args = mock_predictor.predict_single.call_args
+    arg = call_args[0][0]
+    assert isinstance(arg, PredictionRequest)
+    assert arg.sequence == "QVQLVQSGAEVKKPGASVKVSCKASGYTFTSYNMHWVR"
 
     # Verify output formatting
     assert prediction == "non-specific"
@@ -88,7 +94,8 @@ def test_launch_gradio_app(
     # --- Test Input Validation (Empty) ---
     with pytest.raises(gr.Error) as excinfo:
         predict_fn("")
-    assert "Input sequence cannot be empty" in str(excinfo.value)
+    # Pydantic v2 error for min_length
+    assert "at least 1 character" in str(excinfo.value)
 
 
 @patch("antibody_training_esm.cli.app.launch_gradio_app")

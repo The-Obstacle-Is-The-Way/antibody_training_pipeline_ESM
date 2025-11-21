@@ -1,16 +1,71 @@
+import sys
 from pathlib import Path
 
 import hydra
 import pandas as pd
 from omegaconf import DictConfig
+from pydantic import ValidationError
 
-from antibody_training_esm.core.prediction import run_prediction
+from antibody_training_esm.core.prediction import Predictor, run_prediction
+from antibody_training_esm.models.prediction import PredictionRequest
+
+
+def predict_sequence_cli(
+    sequence: str, threshold: float, assay_type: str | None, cfg: DictConfig
+) -> None:
+    """CLI prediction with Pydantic validation."""
+    config_path = getattr(cfg.classifier, "config_path", None)
+
+    # Instantiate predictor (loading model)
+    try:
+        predictor = Predictor(
+            model_name=cfg.model.name,
+            classifier_path=cfg.classifier.path,
+            config_path=config_path,
+        )
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        sys.exit(1)
+
+    try:
+        request = PredictionRequest(
+            sequence=sequence,
+            threshold=threshold,
+            assay_type=assay_type,
+        )
+        result = predictor.predict_single(request)
+
+        # Print formatted output
+        print(
+            f"Sequence: {result.sequence[:50]}..."
+            if len(result.sequence) > 50
+            else f"Sequence: {result.sequence}"
+        )
+        print(f"Prediction: {result.prediction}")
+        print(f"Probability: {result.probability:.2%}")
+
+    except ValidationError as e:
+        print("❌ Validation Error:")
+        for error in e.errors():
+            # loc is a tuple, e.g. ('sequence',)
+            loc = error["loc"][0] if error["loc"] else "root"
+            print(f"  - {loc}: {error['msg']}")
+        sys.exit(1)
 
 
 @hydra.main(config_path="../conf", config_name="predict", version_base=None)
 def main(cfg: DictConfig) -> None:
     """Main function to run the prediction CLI."""
-    # Validate required arguments
+
+    # Check for single sequence prediction mode
+    sequence = getattr(cfg, "sequence", None)
+    if sequence:
+        threshold = getattr(cfg, "threshold", 0.5)
+        assay_type = getattr(cfg, "assay_type", None)
+        predict_sequence_cli(sequence, threshold, assay_type, cfg)
+        return
+
+    # Validate required arguments for batch mode
     if cfg.input_file is None:
         raise ValueError(
             "Input file must be specified via command-line override: `input_file=...`"

@@ -11,6 +11,10 @@ from omegaconf import DictConfig
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.core.trainer import load_model_from_npz
+from antibody_training_esm.models.prediction import (
+    PredictionRequest,
+    PredictionResult,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -221,21 +225,51 @@ class Predictor:
 
         return output_df
 
-    def predict_single(self, sequence: str) -> dict[str, Any]:
+    def predict_single(
+        self,
+        sequence: str | PredictionRequest,
+        threshold: float = 0.5,
+        assay_type: str | None = None,
+    ) -> PredictionResult:
         """
-        Convenience method for single sequence prediction (e.g., for Gradio/API).
+        Predict single sequence with Pydantic validation.
 
         Args:
-            sequence: Amino acid sequence string.
+            sequence: Raw string OR PredictionRequest model
+            threshold: Decision threshold (ignored if PredictionRequest passed)
+            assay_type: Assay type (ignored if PredictionRequest passed)
 
         Returns:
-            Dictionary with keys 'prediction' and 'probability'.
+            PredictionResult model
         """
-        results = self.predict([sequence])
-        return {
-            "prediction": results["prediction"].iloc[0],
-            "probability": float(results["probability"].iloc[0]),
-        }
+        # Normalize input to PredictionRequest
+        if isinstance(sequence, str):
+            request = PredictionRequest(
+                sequence=sequence,
+                threshold=threshold,
+                assay_type=assay_type,
+            )
+        else:
+            request = sequence
+
+        # Extract validated sequence
+        cleaned_seq = request.sequence
+
+        # Run prediction (existing logic)
+        results_df = self.predict(
+            [cleaned_seq],
+            threshold=request.threshold,
+            assay_type=request.assay_type,
+        )
+
+        # Convert to PredictionResult
+        return PredictionResult(
+            sequence=cleaned_seq,
+            prediction=results_df["prediction"].iloc[0],
+            probability=float(results_df["probability"].iloc[0]),
+            threshold=request.threshold,
+            assay_type=request.assay_type,
+        )
 
     @staticmethod
     def _select_device(device: str | None) -> str:

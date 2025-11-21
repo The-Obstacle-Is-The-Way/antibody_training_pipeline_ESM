@@ -53,6 +53,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+validation = [
+    "pydantic>=2.10.0",           # Stable v2 release
+    "pydantic-settings>=2.6.0",   # For future config management
+]
 dev = [
     # Testing
     "pytest>=8.3.0",

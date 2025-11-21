@@ -10,8 +10,10 @@ import gradio as gr
 import hydra
 import torch
 from omegaconf import DictConfig
+from pydantic import ValidationError
 
 from antibody_training_esm.core.prediction import Predictor
+from antibody_training_esm.models.prediction import PredictionRequest
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -85,22 +87,6 @@ def launch_gradio_app(cfg: DictConfig) -> None:
     except Exception as e:
         logger.warning(f"Model warm-up failed (non-fatal): {e}")
 
-    def validate_input(sequence: str) -> None:
-        """
-        Validates that the input sequence contains only valid amino acids.
-        """
-        if not sequence:
-            raise ValueError("Input sequence cannot be empty.")
-
-        # Standard 20 amino acids + X (unknown)
-        valid_chars = set("ACDEFGHIKLMNPQRSTVWYX")
-        invalid_chars = set(sequence) - valid_chars
-
-        if invalid_chars:
-            raise ValueError(
-                f"Invalid characters found: {', '.join(sorted(invalid_chars))}"
-            )
-
     def predict_sequence(sequence: str) -> tuple[str, str]:
         """
         Prediction function for the Gradio interface.
@@ -112,25 +98,24 @@ def launch_gradio_app(cfg: DictConfig) -> None:
             A tuple containing the prediction string and the formatted probability.
         """
         try:
-            # Clean input
-            cleaned_seq = sequence.strip().upper()
-
-            # Validate
-            validate_input(cleaned_seq)
+            # Validate with Pydantic (replaces old validate_input)
+            request = PredictionRequest(sequence=sequence)
 
             # Log request (observability)
-            logger.info(f"Processing sequence: length={len(cleaned_seq)}")
+            logger.info(f"Processing: length={len(request.sequence)}")
 
-            # Predict
-            result = predictor.predict_single(cleaned_seq)
+            # Predict (returns PydanticResult)
+            result = predictor.predict_single(request)
 
             # Format probability
-            prob_percent = f"{result['probability']:.1%}"
+            prob_percent = f"{result.probability:.1%}"
 
-            return result["prediction"], prob_percent
+            return result.prediction, prob_percent
 
-        except ValueError as e:
-            raise gr.Error(str(e)) from e
+        except ValidationError as e:
+            # Extract first error message for user-friendly display
+            error_msg = e.errors()[0]["msg"]
+            raise gr.Error(error_msg) from e
         except torch.cuda.OutOfMemoryError as e:
             logger.error("GPU OOM during inference")
             raise gr.Error(
