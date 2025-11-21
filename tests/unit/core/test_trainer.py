@@ -22,14 +22,15 @@ import pytest
 import yaml
 
 from antibody_training_esm.core.trainer import (
-    evaluate_model,
-    get_or_create_embeddings,
-    load_config,
-    perform_cross_validation,
-    save_model,
     setup_logging,  # NEW: Core logic function that accepts DictConfig
     validate_config,
 )
+from antibody_training_esm.core.training.cache import get_or_create_embeddings
+from antibody_training_esm.core.training.metrics import (
+    evaluate_model,
+    perform_cross_validation,
+)
+from antibody_training_esm.core.training.serialization import load_config, save_model
 
 # ==================== Fixtures ====================
 
@@ -1178,7 +1179,7 @@ def test_load_model_from_npz_reconstructs_classifier(
     """Verify load_model_from_npz() reconstructs a working BinaryClassifier (TDD)"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
-    from antibody_training_esm.core.trainer import load_model_from_npz
+    from antibody_training_esm.core.training.serialization import load_model_from_npz
 
     # Train and save original model
     classifier = BinaryClassifier(
@@ -1241,7 +1242,7 @@ def test_load_model_from_npz_with_none_class_weight(
     """Verify load_model_from_npz() handles None class_weight correctly (TDD)"""
     # Arrange
     from antibody_training_esm.core.classifier import BinaryClassifier
-    from antibody_training_esm.core.trainer import load_model_from_npz
+    from antibody_training_esm.core.training.serialization import load_model_from_npz
 
     # Train model with class_weight=None
     classifier = BinaryClassifier(
@@ -1280,7 +1281,7 @@ def test_load_model_from_npz_with_dict_class_weight(
 ) -> None:
     """Verify load_model_from_npz() handles dict-based class_weight with int keys (TDD)"""
     from antibody_training_esm.core.classifier import BinaryClassifier
-    from antibody_training_esm.core.trainer import load_model_from_npz
+    from antibody_training_esm.core.training.serialization import load_model_from_npz
 
     # Train model with class_weight as dict with int keys
     class_weight_dict = {0: 1.0, 1: 2.5}  # int keys (sklearn format)
@@ -1479,7 +1480,7 @@ def test_load_config_fails_with_missing_file(tmp_path: Path) -> None:
     Expected: Raise FileNotFoundError with helpful message about missing file
     """
     # Arrange
-    from antibody_training_esm.core.trainer import load_config
+    from antibody_training_esm.core.training.serialization import load_config
 
     missing_file = tmp_path / "nonexistent_config.yaml"
 
@@ -1500,7 +1501,7 @@ def test_load_config_fails_with_invalid_yaml(tmp_path: Path) -> None:
     Expected: Raise ValueError with helpful message about invalid YAML
     """
     # Arrange
-    from antibody_training_esm.core.trainer import load_config
+    from antibody_training_esm.core.training.serialization import load_config
 
     invalid_yaml_file = tmp_path / "invalid.yaml"
     # Create truly invalid YAML with unclosed bracket
@@ -1524,7 +1525,7 @@ def test_perform_cross_validation_with_non_stratified_kfold(
     Expected: Cross-validation completes successfully with non-stratified KFold
     """
     # Arrange
-    from antibody_training_esm.core.trainer import perform_cross_validation
+    from antibody_training_esm.core.training.metrics import perform_cross_validation
 
     # Use subset of data for faster test
     X = mock_embeddings[:20]
