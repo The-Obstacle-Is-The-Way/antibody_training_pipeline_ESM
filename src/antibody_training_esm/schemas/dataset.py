@@ -33,7 +33,7 @@ def _no_gap_check(series: pd.Series) -> bool:
     return bool(series.str.match(_NO_GAP_PATTERN).fillna(False).all())
 
 
-# Base schema for all antibody datasets
+# Base schema for all antibody datasets (production: strict, no NaN labels)
 def get_sequence_dataset_schema() -> pa.DataFrameSchema:
     return pa.DataFrameSchema(
         columns={
@@ -64,6 +64,48 @@ def get_sequence_dataset_schema() -> pa.DataFrameSchema:
         strict=False,  # Allow extra columns (e.g., id, metadata)
         coerce=True,  # Auto-coerce types when possible
         name="SequenceDataset",
+    )
+
+
+# Preprocessing schema (allows nullable labels for held-out/intermediate data)
+def get_preprocessing_schema() -> pa.DataFrameSchema:
+    """
+    Schema for preprocessing intermediate files (e.g., Boughter annotated/).
+
+    Allows nullable labels for sequences held out due to quality flags.
+    For production training/testing, use get_sequence_dataset_schema() instead.
+    """
+    return pa.DataFrameSchema(
+        columns={
+            "sequence": pa.Column(
+                dtype="string",
+                checks=[
+                    _regex_check(_UPPERCASE_PATTERN, name="uppercase_letters"),
+                    _length_check(1, 2000, name="length_1_2000"),
+                    pa.Check(_amino_acid_check, name="valid_amino_acids"),
+                    pa.Check(_no_gap_check, name="no_gap_characters"),
+                ],
+                nullable=False,
+                coerce=True,
+                description="Antibody amino acid sequence (VH, VL, or VHH)",
+            ),
+            "label": pa.Column(
+                dtype="float64",  # float64 to handle NaN
+                checks=[
+                    # Only check non-null values are 0 or 1
+                    pa.Check(
+                        lambda series: series.dropna().isin([0, 1, 0.0, 1.0]).all(),
+                        name="binary_label_when_present",
+                    ),
+                ],
+                nullable=True,  # Allow NaN for held-out sequences
+                coerce=True,
+                description="Binary label: 0=specific, 1=non-specific (nullable for held-out)",
+            ),
+        },
+        strict=False,
+        coerce=True,
+        name="PreprocessingDataset",
     )
 
 

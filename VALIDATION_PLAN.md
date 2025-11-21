@@ -1,10 +1,10 @@
 # Validation Plan (Post-Pydantic Integration)
 
-**Purpose:** Ensure Pydantic integration (Phases 1-3) and future changes preserve functionality without introducing regressions.
+**Purpose:** Ensure Pydantic integration (Phases 1-4) and future changes preserve functionality without introducing regressions.
 
 **Philosophy:** "Trust, but verify" - Run tests, but also validate real outputs against known benchmarks.
 
-**Status:** 🟢 ACTIVE - **Updated for Post-Pydantic Integration** (Phases 1-3 complete)
+**Status:** 🟢 ACTIVE - **Updated for Post-Pydantic Integration** (Phases 1-4 complete)
 
 **Last Updated:** 2025-11-21
 
@@ -55,6 +55,11 @@ from antibody_training_esm.schemas.dataset import (
     get_shehata_schema,
 )
 from antibody_training_esm.settings import settings
+from antibody_training_esm.models.artifact import (
+    ModelArtifactMetadata,
+    EvaluationMetrics,
+    CVResults
+)
 print('✅ All imports OK')
 "
 
@@ -477,7 +482,7 @@ Harvey accuracy: 61.33% (baseline)
 Phase 1 (Prediction Hardening): ✅ COMPLETE
 Phase 2 (Configuration Safety): ✅ COMPLETE
 Phase 3 (Data Integrity): ✅ COMPLETE
-Phase 4 (Artifacts & Metrics): 🟡 PLANNED
+Phase 4 (Artifacts & Metrics): ✅ COMPLETE
 ```
 
 ---
@@ -522,7 +527,7 @@ Phase 4 (Artifacts & Metrics): 🟡 PLANNED
 
 ## Validation Checklist
 
-**After completing Pydantic Phases 1-3:**
+**After completing Pydantic Phases 1-4:**
 
 - [ ] Run **Quick Validation** (5 min)
 - [ ] Run **Full Validation** (30 min)
@@ -547,10 +552,11 @@ Phase 4 (Artifacts & Metrics): 🟡 PLANNED
 **THIS DOCUMENT IS YOUR SAFETY NET. USE IT. 🛡️**
 
 **Key Changes from Pre-Pydantic Plan:**
-1. ✅ Updated for Pydantic Phases 1-3 completion
+1. ✅ Updated for Pydantic Phases 1-4 completion
 2. ✅ Added batch size independence test (your concern!)
 3. ✅ Added dtype verification (Pandera coercion check)
 4. ✅ Added benchmark validation (gold standard comparison)
 5. ✅ Updated test counts (~556 tests, ~89% coverage)
 6. ✅ Added Pydantic-specific validation sections
 7. ✅ Removed outdated pre-Pydantic baseline references
+8. ✅ Added Phase 4 artifact imports to smoke tests

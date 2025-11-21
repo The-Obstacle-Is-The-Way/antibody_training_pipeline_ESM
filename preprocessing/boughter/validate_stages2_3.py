@@ -35,7 +35,7 @@ from typing import Any
 
 import pandas as pd
 
-from antibody_training_esm.schemas.dataset import get_boughter_schema
+from antibody_training_esm.schemas.dataset import get_preprocessing_schema
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_TRAINING_SUBSET
 from preprocessing.validation_utils import (
@@ -95,8 +95,9 @@ def validate_fragment_directory(
     stats_dict["num_files"] = len(csv_files)
 
     # Validate each CSV file using Pandera schema
+    # Use preprocessing schema (allows nullable labels for held-out sequences)
     all_row_counts = []
-    schema = get_boughter_schema()
+    schema = get_preprocessing_schema()
 
     for csv_file in csv_files:
         try:
