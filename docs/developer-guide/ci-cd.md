@@ -401,13 +401,15 @@ git push origin test/branch-protection
 ```bash
 # Run all quality gates
 make all
-# Equivalent to: make format lint typecheck test
+# Equivalent to: make format lint typecheck test (fast suite)
 
 # Individual commands
 make format      # Ruff format
 make lint        # Ruff lint
 make typecheck   # Mypy strict
-make test        # Pytest all tests
+make test        # Fast suite (unit + integration; skips e2e/slow/gpu)
+make test-e2e    # End-to-end suite (honors env flags for heavy tests)
+make test-all    # Full pytest (env-gated e2e may still skip without data/flags)
 make coverage    # Pytest with coverage report
 ```
 
