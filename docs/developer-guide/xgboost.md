@@ -111,7 +111,8 @@ uv run pytest tests/unit/core/strategies/test_xgboost_strategy.py
 uv run pytest tests/integration/test_xgboost_integration.py -m "not gpu"
 ```
 
-All suites run inside `make test` / `make all`, so no special CI wiring is required.
+XGBoost unit/integration suites run inside `make test` / `make all`. Use
+`make test-all` if you need the full pytest run in one command.
 
 ---
 
