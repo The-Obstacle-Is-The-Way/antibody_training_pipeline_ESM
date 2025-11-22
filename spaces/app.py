@@ -174,7 +174,22 @@ examples = [
 ]
 
 # --- Gradio Blocks App ---
-with gr.Blocks(theme=gr.themes.Soft(), title="Antibody Predictor") as app:
+# Force Light Theme to prevent "Dark Mode" components on White Background
+theme = gr.themes.Soft(
+    primary_hue="blue",
+    secondary_hue="slate",
+).set(
+    body_background_fill="#FFFFFF",
+    body_text_color="#111827",
+    background_fill_primary="#FFFFFF",
+    block_background_fill="#F9FAFB",
+    block_label_text_color="#374151",
+    block_title_text_color="#374151",
+    input_background_fill="#FFFFFF",
+    input_text_color="#111827",
+)
+
+with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
     # Header (inline styles to survive HF Spaces stripping)
     gr.HTML(
         """
