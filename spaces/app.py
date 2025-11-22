@@ -11,7 +11,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # Add src to Python path for local imports (HF Spaces doesn't install package)
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -21,7 +21,7 @@ import torch
 from pydantic import ValidationError
 
 from antibody_training_esm.core.prediction import Predictor
-from antibody_training_esm.models.prediction import PredictionRequest
+from antibody_training_esm.models.prediction import AssayType, PredictionRequest
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -73,12 +73,14 @@ def predict_sequence(
     """
     try:
         # Handle "None" string from dropdown
-        if assay_type == "None" or assay_type == "":
-            assay_type = None
+        validated_assay: AssayType | None = None
+        if assay_type and assay_type not in ("None", ""):
+            # Gradio dropdown guarantees value is "ELISA" or "PSR"
+            validated_assay = cast(AssayType, assay_type)
 
         # Validate with Pydantic
         request = PredictionRequest(
-            sequence=sequence, threshold=threshold, assay_type=assay_type
+            sequence=sequence, threshold=threshold, assay_type=validated_assay
         )
 
         # Log request
