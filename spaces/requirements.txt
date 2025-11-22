@@ -19,7 +19,7 @@ omegaconf>=2.3.0
 pydantic>=2.0.0
 
 # Gradio UI (downgraded from 5.x due to CSS rendering bugs on HF Spaces)
-gradio==4.44.0
+gradio==5.31.0
 
 # Progress bars
 tqdm>=4.65.0
