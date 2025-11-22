@@ -124,7 +124,7 @@ class ESMEmbeddingExtractor:
                 if sum_mask.item() == 0:
                     raise ValueError(
                         f"Attention mask is all zeros for sequence (length: {len(sequence)}). "
-                        f"Sequence preview: '{sequence[:50]}...'. "
+                        f"Sequence preview: '{sequence[:SEQUENCE_PREVIEW_LENGTH]}...'. "
                         "This typically indicates an empty or invalid sequence after masking."
                     )
 
