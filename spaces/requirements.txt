@@ -23,9 +23,3 @@ gradio>=5.0.0
 
 # Progress bars
 tqdm>=4.65.0
-
-# Build backend (needed for local package install)
-hatchling>=1.18.0
-
-# Install local package (antibody_training_esm)
-.

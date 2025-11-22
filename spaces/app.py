@@ -9,6 +9,11 @@ Local app (src/antibody_training_esm/cli/app.py) remains unchanged.
 
 import logging
 import os
+import sys
+from pathlib import Path
+
+# Add src to Python path for local imports (HF Spaces doesn't install package)
+sys.path.insert(0, str(Path(__file__).parent / "src"))
 
 import gradio as gr
 import torch
