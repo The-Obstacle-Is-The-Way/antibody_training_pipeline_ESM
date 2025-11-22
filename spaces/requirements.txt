@@ -1,0 +1,23 @@
+# Hugging Face Spaces Requirements
+# Minimal dependencies for antibody prediction demo
+
+# Core ML
+torch>=2.0.0
+transformers>=4.30.0
+scikit-learn>=1.3.0
+
+# Data handling
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Validation
+pydantic>=2.0.0
+
+# Gradio UI
+gradio>=5.0.0
+
+# Progress bars
+tqdm>=4.65.0
+
+# Install local package (antibody_training_esm)
+# HF Spaces will run: pip install -e .
