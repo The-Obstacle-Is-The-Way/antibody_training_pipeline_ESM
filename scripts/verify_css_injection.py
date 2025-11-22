@@ -1,4 +1,4 @@
-"""Verify if inline CSS injection worked on HF Spaces."""
+"""Verify live HF Space styling (checks inline styles and captures screenshot)."""
 
 import asyncio
 
@@ -10,27 +10,45 @@ async def verify_css_injection() -> None:
         browser = await p.chromium.launch(headless=False, slow_mo=500)
         page = await browser.new_page(viewport={"width": 1920, "height": 1080})
 
-        url = "https://huggingface.co/spaces/VibecoderMcSwaggins/antibody-predictor"
+        url = "https://VibecoderMcSwaggins-antibody-predictor.hf.space"
         print(f"🌐 Navigating to {url}...")
         await page.goto(url, wait_until="domcontentloaded", timeout=60000)
 
         print("⏳ Waiting 10s for Gradio...")
         await page.wait_for_timeout(10000)
 
-        print("\n🎨 Checking for <style> tags...")
-        style_tags = await page.query_selector_all("style")
-        print(f"Found {len(style_tags)} <style> tags")
+        print("\n🎨 Checking inline styles...")
+        title = await page.query_selector("text=Antibody Non-Specificity Predictor")
+        if title:
+            title_color = await title.evaluate("el => getComputedStyle(el).color")
+            print(f"  ✅ Title color: {title_color}")
+        else:
+            print("  ❌ Title not found")
 
-        if style_tags:
-            for i, tag in enumerate(style_tags[:5]):
-                content = await tag.inner_text()
-                if "gradio-container" in content or "status-card" in content:
-                    print(f"  ✅ Tag {i + 1} has our CSS! Preview: {content[:80]}...")
-
-        print("\n🔍 Checking custom classes...")
-        for cls in [".status-card", ".header-title", ".gradio-container"]:
-            elem = await page.query_selector(cls)
-            print(f"  {'✅' if elem else '❌'} {cls}")
+        status_text = await page.query_selector("text=Ready to Predict")
+        if status_text:
+            style_info = await status_text.evaluate(
+                """
+                el => {
+                    let node = el;
+                    while (node && node !== document.body) {
+                        const style = getComputedStyle(node);
+                        if (style.backgroundColor && style.borderRadius) {
+                            return {
+                                bg: style.backgroundColor,
+                                color: style.color,
+                                border: style.border,
+                            };
+                        }
+                        node = node.parentElement;
+                    }
+                    return null;
+                }
+                """
+            )
+            print(f"  ✅ Status card styles: {style_info}")
+        else:
+            print("  ❌ Status card not found")
 
         await page.screenshot(
             path="experiments/debug_screenshots/mcp_verification.png", full_page=True

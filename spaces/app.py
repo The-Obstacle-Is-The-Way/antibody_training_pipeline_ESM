@@ -89,25 +89,39 @@ def predict_sequence(
         # Predict
         result = predictor.predict_single(request)
 
-        # --- Generate HTML Card ---
+        # --- Generate HTML Card (inline styles survive HF Spaces iframe stripping) ---
         is_specific = result.prediction == "specific"
 
+        base_style = (
+            "padding:30px;border-radius:16px;text-align:center;"
+            "margin-bottom:20px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);"
+            "transition:all 0.3s ease;"
+        )
+
         if is_specific:
-            color_class = "status-safe"
+            card_style = (
+                base_style
+                + "background-color:#ecfdf5;border:2px solid #10b981;color:#065f46;"
+            )
             icon = "✅"
             title = "Specific (Safe)"
             msg = "Low risk of polyreactivity"
         else:
-            color_class = "status-danger"
+            card_style = (
+                base_style
+                + "background-color:#fef2f2;border:2px solid #ef4444;color:#991b1b;"
+            )
             icon = "⚠️"
             title = "Non-Specific (Risk)"
             msg = "High risk of polyreactivity"
 
         html_card = f"""
-        <div class="status-card {color_class}">
-            <span class="status-icon">{icon}</span>
-            <div class="status-text">{title}</div>
-            <div class="status-subtext">{msg}</div>
+        <div style="{card_style}">
+            <span style="font-size:48px;display:block;margin-bottom:15px;">{icon}</span>
+            <div style="font-size:28px;font-weight:800;letter-spacing:-0.025em;margin-bottom:5px;">
+                {title}
+            </div>
+            <div style="font-size:16px;opacity:0.9;">{msg}</div>
         </div>
         """
 
@@ -140,82 +154,6 @@ def predict_sequence(
         raise gr.Error(f"Prediction failed: {str(e)}") from e
 
 
-# --- Custom CSS (with !important to override Gradio defaults) ---
-css = """
-.gradio-container {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-}
-.header-text {
-    text-align: center !important;
-    margin-bottom: 20px !important;
-}
-.header-title {
-    font-size: 2.5rem !important;
-    font-weight: 700 !important;
-    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
-    -webkit-background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    margin-bottom: 0.5rem !important;
-}
-.header-subtitle {
-    font-size: 1.1rem !important;
-    color: #6b7280 !important;
-}
-.status-card {
-    padding: 30px !important;
-    border-radius: 16px !important;
-    text-align: center !important;
-    margin-bottom: 20px !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
-    transition: all 0.3s ease !important;
-}
-.status-safe {
-    background-color: #ecfdf5 !important;
-    border: 2px solid #10b981 !important;
-    color: #065f46 !important;
-}
-.status-danger {
-    background-color: #fef2f2 !important;
-    border: 2px solid #ef4444 !important;
-    color: #991b1b !important;
-}
-.status-icon {
-    font-size: 48px !important;
-    display: block !important;
-    margin-bottom: 15px !important;
-}
-.status-text {
-    font-size: 28px !important;
-    font-weight: 800 !important;
-    letter-spacing: -0.025em !important;
-    margin-bottom: 5px !important;
-}
-.status-subtext {
-    font-size: 16px !important;
-    opacity: 0.9 !important;
-}
-.footer-links {
-    text-align: center !important;
-    margin-top: 40px !important;
-    padding-top: 20px !important;
-    border-top: 1px solid #e5e7eb !important;
-    color: #9ca3af !important;
-    font-size: 0.9rem !important;
-}
-.footer-links a {
-    color: #6b7280 !important;
-    text-decoration: none !important;
-    margin: 0 10px !important;
-}
-.footer-links a:hover {
-    color: #3b82f6 !important;
-    text-decoration: underline !important;
-}
-"""
-
-# Inline CSS injection via HTML to survive HF Spaces iframe stripping
-inline_style = f"<style>{css}</style>"
-
 # --- Example Sequences ---
 examples = [
     [
@@ -237,19 +175,19 @@ examples = [
 
 # --- Gradio Blocks App ---
 with gr.Blocks(theme=gr.themes.Soft(), title="Antibody Predictor") as app:
-    # Inject CSS via gr.HTML() to bypass HF Spaces iframe stripping of css parameter
-    gr.HTML(inline_style)
-
-    # Header
-    with gr.Column(elem_classes="header-text"):
-        gr.Markdown(
-            """
-            <div class="header-title">🧬 Antibody Non-Specificity Predictor</div>
-            <div class="header-subtitle">
+    # Header (inline styles to survive HF Spaces stripping)
+    gr.HTML(
+        """
+        <div style="text-align:center;margin-bottom:20px;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;">
+            <div style="font-size:2.4rem;font-weight:700;color:#3b82f6;margin-bottom:8px;">
+                🧬 Antibody Non-Specificity Predictor
+            </div>
+            <div style="font-size:1.1rem;color:#6b7280;">
                 Assess polyreactivity risk using ESM-1v Protein Language Models
             </div>
-            """
-        )
+        </div>
+        """
+    )
 
     # Main Content
     with gr.Row(equal_height=False):
@@ -297,10 +235,10 @@ with gr.Blocks(theme=gr.themes.Soft(), title="Antibody Predictor") as app:
             result_html = gr.HTML(
                 label="Prediction Status",
                 value="""
-                <div class="status-card" style="background-color: #f3f4f6; border: 2px dashed #d1d5db; color: #6b7280;">
-                    <span class="status-icon">⏳</span>
-                    <div class="status-text">Ready to Predict</div>
-                    <div class="status-subtext">Enter a sequence to begin analysis</div>
+                <div style="padding:30px;border-radius:16px;text-align:center;margin-bottom:20px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);background-color:#f3f4f6;border:2px dashed #d1d5db;color:#374151;">
+                    <span style="font-size:48px;display:block;margin-bottom:15px;">⏳</span>
+                    <div style="font-size:28px;font-weight:800;letter-spacing:-0.025em;margin-bottom:5px;">Ready to Predict</div>
+                    <div style="font-size:16px;opacity:0.9;">Enter a sequence to begin analysis</div>
                 </div>
                 """,
             )
@@ -315,13 +253,13 @@ with gr.Blocks(theme=gr.themes.Soft(), title="Antibody Predictor") as app:
                 json_output = gr.JSON(label="Raw Result")
 
     # Footer
-    gr.Markdown(
+    gr.HTML(
         """
-        <div class="footer-links">
+        <div style="text-align:center;margin-top:32px;padding-top:16px;border-top:1px solid #e5e7eb;color:#6b7280;font-size:0.95rem;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;">
             Model: ESM-1v (650M) + Logistic Regression • Training: Boughter et al. (914 sequences)
             <br>
-            <a href="https://huggingface.co/facebook/esm1v_t33_650M_UR90S_1" target="_blank">ESM-1v Model</a> •
-            <a href="#" target="_blank">Paper Citation (Sakhnini et al. 2025)</a>
+            <a style="color:#6b7280;text-decoration:none;margin:0 10px;" href="https://huggingface.co/facebook/esm1v_t33_650M_UR90S_1" target="_blank">ESM-1v Model</a> •
+            <a style="color:#6b7280;text-decoration:none;margin:0 10px;" href="#" target="_blank">Paper Citation (Sakhnini et al. 2025)</a>
         </div>
         """
     )

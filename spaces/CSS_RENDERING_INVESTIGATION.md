@@ -1,16 +1,17 @@
 # CSS Rendering Issue - First Principles Investigation
 
 **Date**: 2025-11-22
-**Status**: ✅ RESOLVED - Inline CSS injection restores styling on HF Spaces
-**Deployment**: HF Spaces (Gradio 5.0.0)
+**Status**: ✅ RESOLVED - HF Spaces strips `<style>`; inline element styles only
+**Deployment**: HF Spaces (Gradio 4.44.0)
 
 ---
 
 ## ✅ Resolution (2025-11-22)
 
-- Implemented inline CSS injection via `gr.HTML("<style>...</style>")` in `spaces/app.py` to bypass HF Spaces iframe stripping of `gr.Blocks(css=...)`.
-- Verified locally: custom gradients, status cards, and typography render; no black rectangles.
-- Action: redeploy Spaces using `./spaces/deploy_cli.sh` (or HF UI) to propagate the fix.
+- HF Spaces strips all `<style>` tags (including `gr.Blocks(css=...)` and `gr.HTML(<style>...)`). Final solution: move critical styles inline on each element.
+- Downgraded Gradio to `4.44.0` (removes black rectangles seen on 5.x).
+- Updated `spaces/app.py` to use inline `style` attributes for header, status card, and footer; no reliance on classes or `<style>` tags.
+- Action: deploy via `./spaces/deploy_cli.sh` and verify visually (Playwright will still report 0 `<style>` tags by design).
 
 ---
 
