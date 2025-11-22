@@ -140,76 +140,76 @@ def predict_sequence(
         raise gr.Error(f"Prediction failed: {str(e)}") from e
 
 
-# --- Custom CSS ---
+# --- Custom CSS (with !important to override Gradio defaults) ---
 css = """
 .gradio-container {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 .header-text {
-    text-align: center;
-    margin-bottom: 20px;
+    text-align: center !important;
+    margin-bottom: 20px !important;
 }
 .header-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    margin-bottom: 0.5rem !important;
 }
 .header-subtitle {
-    font-size: 1.1rem;
-    color: #6b7280;
+    font-size: 1.1rem !important;
+    color: #6b7280 !important;
 }
 .status-card {
-    padding: 30px;
-    border-radius: 16px;
-    text-align: center;
-    margin-bottom: 20px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    padding: 30px !important;
+    border-radius: 16px !important;
+    text-align: center !important;
+    margin-bottom: 20px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease !important;
 }
 .status-safe {
-    background-color: #ecfdf5;
-    border: 2px solid #10b981;
-    color: #065f46;
+    background-color: #ecfdf5 !important;
+    border: 2px solid #10b981 !important;
+    color: #065f46 !important;
 }
 .status-danger {
-    background-color: #fef2f2;
-    border: 2px solid #ef4444;
-    color: #991b1b;
+    background-color: #fef2f2 !important;
+    border: 2px solid #ef4444 !important;
+    color: #991b1b !important;
 }
 .status-icon {
-    font-size: 48px;
-    display: block;
-    margin-bottom: 15px;
+    font-size: 48px !important;
+    display: block !important;
+    margin-bottom: 15px !important;
 }
 .status-text {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    margin-bottom: 5px;
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em !important;
+    margin-bottom: 5px !important;
 }
 .status-subtext {
-    font-size: 16px;
-    opacity: 0.9;
+    font-size: 16px !important;
+    opacity: 0.9 !important;
 }
 .footer-links {
-    text-align: center;
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #e5e7eb;
-    color: #9ca3af;
-    font-size: 0.9rem;
+    text-align: center !important;
+    margin-top: 40px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid #e5e7eb !important;
+    color: #9ca3af !important;
+    font-size: 0.9rem !important;
 }
 .footer-links a {
-    color: #6b7280;
-    text-decoration: none;
-    margin: 0 10px;
+    color: #6b7280 !important;
+    text-decoration: none !important;
+    margin: 0 10px !important;
 }
 .footer-links a:hover {
-    color: #3b82f6;
-    text-decoration: underline;
+    color: #3b82f6 !important;
+    text-decoration: underline !important;
 }
 """
 
@@ -236,8 +236,9 @@ examples = [
 ]
 
 # --- Gradio Blocks App ---
-with gr.Blocks(theme=gr.themes.Soft(), css=css, title="Antibody Predictor") as app:
-    # Gradio 4.x may support css parameter on HF Spaces (unlike 5.x)
+with gr.Blocks(theme=gr.themes.Soft(), title="Antibody Predictor") as app:
+    # Inject CSS via gr.HTML() to bypass HF Spaces iframe stripping of css parameter
+    gr.HTML(inline_style)
 
     # Header
     with gr.Column(elem_classes="header-text"):
