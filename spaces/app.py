@@ -196,6 +196,11 @@ theme = gr.themes.Soft(
     # Force white text on ALL blue/primary colored elements
     button_primary_text_color="#FFFFFF",
     button_primary_text_color_dark="#FFFFFF",
+    # Align button background with labels (#3B82F6) and define standard hover (#2563EB)
+    button_primary_background_fill="#3B82F6",
+    button_primary_background_fill_dark="#3B82F6",
+    button_primary_background_fill_hover="#2563EB",
+    button_primary_background_fill_hover_dark="#2563EB",
     slider_color="#3B82F6",
     slider_color_dark="#3B82F6",
     block_title_text_color="#374151",
