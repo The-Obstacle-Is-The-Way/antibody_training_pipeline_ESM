@@ -9,3 +9,4 @@ DEFAULT_BATCH_SIZE = 32
 DEFAULT_MAX_SEQ_LENGTH = 1024
 GPU_CACHE_CLEAR_INTERVAL = 10  # Clear GPU cache every N batches to prevent OOM
 ERROR_PREVIEW_LIMIT = 10  # Show first N errors in validation messages
+SEQUENCE_PREVIEW_LENGTH = 50  # Max chars for sequence previews in logs/errors

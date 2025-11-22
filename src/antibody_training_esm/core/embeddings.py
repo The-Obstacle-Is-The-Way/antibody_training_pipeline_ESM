@@ -17,6 +17,7 @@ from .config import (
     DEFAULT_MAX_SEQ_LENGTH,
     ERROR_PREVIEW_LIMIT,
     GPU_CACHE_CLEAR_INTERVAL,
+    SEQUENCE_PREVIEW_LENGTH,
 )
 
 logger = logging.getLogger(__name__)
@@ -134,7 +135,11 @@ class ESMEmbeddingExtractor:
 
         except Exception as e:
             # Add sequence context to error message (truncate for readability)
-            seq_preview = sequence[:50] + "..." if len(sequence) > 50 else sequence
+            seq_preview = (
+                sequence[:SEQUENCE_PREVIEW_LENGTH] + "..."
+                if len(sequence) > SEQUENCE_PREVIEW_LENGTH
+                else sequence
+            )
             logger.error(
                 f"Error getting embeddings for sequence (length={len(sequence)}): {seq_preview}"
             )
@@ -189,7 +194,9 @@ class ESMEmbeddingExtractor:
                     invalid_chars = [aa for aa in seq if aa not in valid_aas]
                     if invalid_chars:
                         reason = f"invalid characters: {set(invalid_chars)}"
-                        invalid_sequences.append((global_idx, seq[:50], reason))
+                        invalid_sequences.append(
+                            (global_idx, seq[:SEQUENCE_PREVIEW_LENGTH], reason)
+                        )
                         continue
 
                     cleaned_sequences.append(seq)
@@ -252,7 +259,7 @@ class ESMEmbeddingExtractor:
                     )
                     if len(zero_mask_indices) > 0:
                         bad_seqs = [
-                            cleaned_sequences[i.item()][:50]
+                            cleaned_sequences[i.item()][:SEQUENCE_PREVIEW_LENGTH]
                             for i in zero_mask_indices[:3]
                         ]
                         raise ValueError(

@@ -119,10 +119,10 @@ self._classifier: BinaryClassifier | LogisticRegression | None = None
 ### 3. Magic Numbers - Sequence Preview Length
 
 **Locations:**
-- `src/antibody_training_esm/core/embeddings.py:109` (error context)
+- `src/antibody_training_esm/core/embeddings.py:126` (error context)
 - `src/antibody_training_esm/core/embeddings.py:137` (seq_preview variable)
-- `src/antibody_training_esm/core/embeddings.py:199` (invalid sequence context)
-- `src/antibody_training_esm/core/embeddings.py:260` (zero mask context)
+- `src/antibody_training_esm/core/embeddings.py:192` (invalid sequence context)
+- `src/antibody_training_esm/core/embeddings.py:255` (zero mask context)
 - `src/antibody_training_esm/cli/predict.py:41` (CLI output)
 
 ```python

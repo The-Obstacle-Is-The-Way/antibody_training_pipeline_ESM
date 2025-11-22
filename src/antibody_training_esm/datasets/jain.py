@@ -39,9 +39,22 @@ import pandas as pd
 import pandera.pandas as pa
 
 from antibody_training_esm.schemas.dataset import get_jain_schema
+from antibody_training_esm.settings import settings
 
 from .base import AntibodyDataset
-from .default_paths import JAIN_FULL_CSV, JAIN_OUTPUT_DIR, JAIN_SD03_CSV
+
+JAIN_FULL_CSV = settings.JAIN_FULL_CSV
+JAIN_OUTPUT_DIR = settings.JAIN_OUTPUT_DIR
+JAIN_SD03_CSV = settings.JAIN_SD03_CSV
+
+
+# Novo Nordisk Parity Constants (from Sakhnini et al. 2025)
+# Paper benchmark: 86 antibodies with [[40, 19], [10, 17]] confusion matrix
+NOVO_PARITY_SPECIFIC_COUNT = 59  # Specific antibodies in parity set
+NOVO_PARITY_NONSPECIFIC_COUNT = 27  # Non-specific antibodies in parity set
+NOVO_PARITY_TOTAL = 86  # Total parity set size (59 + 27)
+NOVO_PARITY_EXPECTED_CORRECT = 57  # Expected correct predictions (40 + 17)
+NOVO_PARITY_ACCURACY = 66.28  # Expected accuracy (57/86 = 0.6628)
 
 
 class JainDataset(AntibodyDataset):
@@ -318,7 +331,7 @@ class JainDataset(AntibodyDataset):
         )
 
         # Keep bottom 59 specific + all 27 non-specific
-        specific_keep = specific_sorted.tail(59)
+        specific_keep = specific_sorted.tail(NOVO_PARITY_SPECIFIC_COUNT)
         df_86 = pd.concat([specific_keep, nonspecific], ignore_index=True)
 
         # Sort by id for consistency
@@ -329,8 +342,12 @@ class JainDataset(AntibodyDataset):
 
         self.logger.info("\nRemoved 30 specific by PSR/AC-SINS:")
         self.logger.info(f"  Final: {len(df_86)} antibodies")
-        self.logger.info(f"  Specific: {spec_count} (expected 59)")
-        self.logger.info(f"  Non-specific: {nonspec_count} (expected 27)")
+        self.logger.info(
+            f"  Specific: {spec_count} (expected {NOVO_PARITY_SPECIFIC_COUNT})"
+        )
+        self.logger.info(
+            f"  Non-specific: {nonspec_count} (expected {NOVO_PARITY_NONSPECIFIC_COUNT})"
+        )
 
         return df_86
 

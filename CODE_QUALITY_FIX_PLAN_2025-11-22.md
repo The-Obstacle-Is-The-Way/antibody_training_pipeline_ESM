@@ -139,11 +139,11 @@ sequence[:SEQUENCE_PREVIEW_LENGTH]
 ```
 
 **Locations to update:**
-- `src/antibody_training_esm/core/embeddings.py:109` (error log)
+- `src/antibody_training_esm/core/embeddings.py:126` (error log)
 - `src/antibody_training_esm/core/embeddings.py:137` (seq_preview variable)
-- `src/antibody_training_esm/core/embeddings.py:199` (invalid seq context)
-- `src/antibody_training_esm/core/embeddings.py:260` (zero mask context)
-- `src/antibody_training_esm/cli/predict.py:41` (result output)
+- `src/antibody_training_esm/core/embeddings.py:192` (invalid seq context)
+- `src/antibody_training_esm/core/embeddings.py:255` (zero mask context)
+- `src/antibody_training_esm/cli/predict.py:41` (CLI output)
 
 **Impact:** Single source of truth for formatting constant
 

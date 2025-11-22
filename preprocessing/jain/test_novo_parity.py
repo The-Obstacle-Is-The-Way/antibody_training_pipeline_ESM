@@ -30,6 +30,10 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
+from antibody_training_esm.datasets.jain import (
+    NOVO_PARITY_EXPECTED_CORRECT,
+    NOVO_PARITY_TOTAL,
+)
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import CHECKPOINTS_DIR, JAIN_86_PARITY_CSV
 
@@ -162,7 +166,7 @@ def main() -> None:
 
     # Check for exact match
     novo_cm = np.array([[40, 19], [10, 17]])
-    novo_accuracy = 57 / 86
+    novo_accuracy = NOVO_PARITY_EXPECTED_CORRECT / NOVO_PARITY_TOTAL
 
     if np.array_equal(cm, novo_cm):
         logger.info("✅✅ PERFECT MATCH! Confusion matrix is IDENTICAL to Novo!")

@@ -17,9 +17,6 @@ from pathlib import Path
 import yaml
 from pydantic import ValidationError
 
-# Ensure src is in path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-
 from antibody_training_esm.models.artifact import (
     CVResults,
     ModelArtifactMetadata,

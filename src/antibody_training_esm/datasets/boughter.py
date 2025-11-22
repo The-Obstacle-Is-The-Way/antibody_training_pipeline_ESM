@@ -36,9 +36,12 @@ import pandas as pd
 import pandera.pandas as pa
 
 from antibody_training_esm.schemas.dataset import get_boughter_schema
+from antibody_training_esm.settings import settings
 
 from .base import AntibodyDataset
-from .default_paths import BOUGHTER_ANNOTATED_DIR, BOUGHTER_PROCESSED_CSV
+
+BOUGHTER_ANNOTATED_DIR = settings.BOUGHTER_ANNOTATED_DIR
+BOUGHTER_PROCESSED_CSV = settings.BOUGHTER_PROCESSED_CSV
 
 
 class BoughterDataset(AntibodyDataset):
