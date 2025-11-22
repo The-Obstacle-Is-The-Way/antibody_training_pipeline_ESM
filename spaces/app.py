@@ -193,6 +193,13 @@ theme = gr.themes.Soft(
     block_label_background_fill_dark="#3B82F6",
     block_label_text_color="#FFFFFF",
     block_label_text_color_dark="#FFFFFF",
+    # Force white text on ALL blue/primary colored elements
+    button_primary_text_color="#FFFFFF",
+    button_primary_text_color_dark="#FFFFFF",
+    checkbox_label_text_color="#FFFFFF",
+    checkbox_label_text_color_dark="#FFFFFF",
+    slider_color="#3B82F6",
+    slider_color_dark="#3B82F6",
     block_title_text_color="#374151",
     block_title_text_color_dark="#374151",
     input_background_fill="#FFFFFF",
