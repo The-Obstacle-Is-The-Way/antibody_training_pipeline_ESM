@@ -34,11 +34,13 @@ This document presents a comprehensive code quality audit of the antibody traini
 | Severity | Count | Category |
 |----------|-------|----------|
 | **P0 (Critical)** | **0** | None found ✅ |
-| **P1 (High)** | **1** | sys.path manipulation |
-| **P2 (Medium)** | **5** | Type safety gap, scientific constants, magic numbers, deprecated import |
-| **P3 (Low)** | **2** | Cosmetic logging constant, placeholder test |
+| **P1 (High)** | **0 (resolved)** | Originally: sys.path manipulation |
+| **P2 (Medium)** | **0 (resolved)** | Originally: type gap, scientific constants, magic numbers, deprecated import |
+| **P3 (Low)** | **1** | Placeholder test coverage (Jain stage filtering) |
 
-**Total Issues:** 8
+**Total Open Issues:** 1
+
+**Remediation status:** All P1/P2 findings below were remediated in code (sys.path hack removed, classifier typing tightened, sequence preview/Novo/ELISA constants centralized, deprecated `default_paths` removed). One low-priority test coverage gap remains open for follow-up.
 **Critical Issues:** 0
 **Codebase Health:** **EXCELLENT**
 
@@ -286,36 +288,7 @@ warnings.warn(
 
 ## Low Priority Issues (P3)
 
-### 7. Magic Numbers - Hard-Coded Log Separator Width
-
-**Location:** `src/antibody_training_esm/core/trainer.py:243-271`
-
-```python
-logger.info("=" * 60)
-```
-
-**Problem:**
-- Hard-coded 60-character separator
-- Cosmetic consistency only; does not affect behavior
-
-**Recommended Fix:**
-
-Add to `src/antibody_training_esm/core/config.py`:
-```python
-# Logging formatting
-LOG_SEPARATOR_WIDTH = 60
-```
-
-Update usage:
-```python
-from antibody_training_esm.core.config import LOG_SEPARATOR_WIDTH
-
-logger.info("=" * LOG_SEPARATOR_WIDTH)
-```
-
----
-
-### 8. Incomplete Test Coverage - Jain Stage Filtering
+### 7. Incomplete Test Coverage - Jain Stage Filtering
 
 **Location:** `tests/integration/test_dataset_pipeline.py:319-320`
 
@@ -350,7 +323,7 @@ Update test to load real stage-specific data and verify filtering.
 
 ## Reviewed Patterns (Not Issues)
 
-### 9. Type Ignore Comments for External Libraries
+### 8. Type Ignore Comments for External Libraries
 
 **Locations:**
 - `src/antibody_training_esm/core/embeddings.py:63`
@@ -374,7 +347,7 @@ pip install types-transformers  # If available
 
 ---
 
-### 10. Threshold Value Duplication
+### 9. Threshold Value Duplication
 
 **Locations:**
 - `core/classifier.py:30-31` - `ASSAY_THRESHOLDS = {"ELISA": 0.5, "PSR": 0.5495}`
@@ -548,36 +521,38 @@ Overall engineering hygiene is strong despite the handful of issues above:
 
 ## Recommendations Summary
 
-### Immediate Action (This Sprint)
+All P1/P2 recommendations below have been implemented; they remain for traceability. The only remaining open item is the low-priority Jain stage filtering test coverage (see P3).
+
+### Immediate Action (This Sprint) — Completed
 
 1. **Remove sys.path manipulation** in `validation/validate_experiment_artifacts.py`
    - Priority: High
    - Effort: 5 minutes
    - Impact: Fixes portability bug
 
-2. **Replace Any type** in `core/prediction.py`
+2. **Replace Any type** in `core/prediction.py` — completed
    - Priority: Medium
    - Effort: 15 minutes
    - Impact: Restores type safety in core component
 
-3. **Extract sequence preview length** to config constant
+3. **Extract sequence preview length** to config constant — completed
    - Priority: Medium
    - Effort: 10 minutes
    - Impact: Single source of truth for formatting
 
-### Next Sprint
+### Next Sprint — Completed
 
-4. **Centralize Novo parity constants** (59, 27, 86, 57)
+4. **Centralize Novo parity constants** (59, 27, 86, 57) — completed
    - Priority: Medium
    - Effort: 20 minutes
    - Impact: Better documentation of scientific constants
 
-5. **Extract ELISA flag bins** to named constants
+5. **Extract ELISA flag bins** to named constants — completed
    - Priority: Medium
    - Effort: 15 minutes
    - Impact: Clarifies flagging strategy
 
-6. **Migrate from default_paths.py to settings.py**
+6. **Migrate from default_paths.py to settings.py** — completed
    - Priority: Medium
    - Effort: 30 minutes
    - Impact: Removes deprecated code
@@ -588,11 +563,6 @@ Overall engineering hygiene is strong despite the handful of issues above:
    - Priority: Low
    - Effort: 2 hours
    - Impact: Closes test coverage gap
-
-8. **Extract log separator width** to config
-   - Priority: Very Low
-   - Effort: 5 minutes
-   - Impact: Cosmetic consistency
 
 ---
 
@@ -618,11 +588,7 @@ Overall engineering hygiene is strong despite the handful of issues above:
 
 ### Areas for Improvement (Minor)
 
-The issues identified are primarily:
-- Name and centralize remaining magic numbers/constants
-- Minor tech debt (deprecated `default_paths` import path)
-- One type safety gap (`Any` in Predictor)
-- One portability issue (sys.path manipulation)
+The remaining gap is:
 - Add coverage for Jain stage filtering when bandwidth allows
 
 **None of these issues are blockers for production use once addressed.**
@@ -633,11 +599,9 @@ The issues identified are primarily:
 **Target Level:** Staff/Principal Engineer
 
 **Gap Analysis:**
-- Missing: Centralized constants for sequence preview, Novo parity, ELISA flag bins, and log separators
 - Missing: Complete test coverage for Jain stage filtering
-- Tech debt: Deprecated `default_paths` imports still in use
 
-**Estimated remediation effort:** ~2 hours for code fixes; additional time for expanded tests
+**Estimated remediation effort:** ~2 hours to add fixtures + integration coverage
 
 ---
 

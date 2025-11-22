@@ -7,36 +7,25 @@
 
 ## 🎯 Executive Summary
 
-**Audit Baseline (corrected):** 8 issues (1 P1, 5 P2, 2 P3)
-**Verification Status:** ✅ **Issues confirmed; counts corrected (sequence preview appears in 5 places)**
-**Critical Finding:** The sys.path hack and type gap are real; remaining items are quality polish/tech debt
+**Audit Baseline (corrected):** All P1/P2 issues fixed; 1 P3 backlog item remains (Jain stage filtering test coverage).
+**Verification Status:** ✅ Completed Tier 1 and Tier 2 fixes; codebase matches SSOT.
+**Critical Finding:** No remaining portability/type/magic-number/deprecated-path issues; only low-priority test coverage remains.
 
-**Action Required:** Fix 3 high-impact issues immediately, defer the low-impact backlog items
+**Action Required:** Optionally add Jain stage filtering fixtures/tests (backlog).
 
 ---
 
 ## ✅ Verification Results
 
-### P1 Issue - VERIFIED ✓
-**sys.path manipulation:** CONFIRMED unnecessary
-- ✅ `validation/validate_experiment_artifacts.py` inserts repo `/src` on sys.path
-- ✅ With the project installed (uv/editable), imports resolve without the hack
-- ✅ This is a **legitimate portability risk**
+### P1 Issue — RESOLVED
+**sys.path manipulation:** Removed from `validation/validate_experiment_artifacts.py`; imports rely on installed package.
 
-### P2 Issues - All VERIFIED ✓
-**Magic numbers:** CONFIRMED scattered
-- ✅ `50` for sequence preview (5 locations: embeddings x4, CLI output x1)
-- ✅ `59, 27, 86, 57` Novo parity constants (multiple files)
-- ✅ `[-0.5, 0.5, 3.5, 6.5]` ELISA flag bins (preprocessing)
-- ✅ `60` for log separator width
+### P2 Issues — RESOLVED
+**Magic numbers:** Centralized sequence preview length, Novo parity constants, ELISA flag bins, and log separator width (now in `core.config`).
 
-**Type safety gap:** CONFIRMED real
-- ✅ `self._classifier: Any = None` in prediction.py:53
-- ✅ Defeats type checking in core component
+**Type safety gap:** `_classifier` now typed as `BinaryClassifier | LogisticRegression` with no `Any`.
 
-**Deprecated module:** CONFIRMED still imported
-- ✅ `default_paths.py` marked DEPRECATED but still used by 4 dataset loaders
-- ✅ Creates indirection through settings.py
+**Deprecated module:** `default_paths.py` removed; dataset loaders import paths from `settings`.
 
 ---
 
@@ -286,19 +275,18 @@ These are nice-to-haves that don't significantly impact quality.
 
 ## 📋 Implementation Order
 
-### Sprint 1 (Immediate - ~30 minutes)
+### Sprint 1 (Immediate - ~30 minutes) — Completed
 1. Remove sys.path hack (2 min) → **FIXES PORTABILITY BUG**
 2. Fix type safety gap (15 min) → **RESTORES TYPE SAFETY IN PREDICTOR**
 3. Extract sequence preview constant (10 min) → **SINGLE SOURCE OF TRUTH**
 
-### Sprint 2 (Next - ~1 hour)
+### Sprint 2 (Next - ~1 hour) — Completed
 4. Centralize Novo constants (20 min) → **SELF-DOCUMENTING SCIENCE**
 5. Extract ELISA flag bins (15 min) → **DOCUMENTS METHODOLOGY**
 6. Migrate from default_paths.py (30 min) → **REMOVES TECH DEBT**
 
 ### Backlog (Defer)
-7. Log separator width (cosmetic)
-8. Jain stage filtering tests (low ROI)
+7. Jain stage filtering tests (low ROI)
 
 ---
 
@@ -317,7 +305,7 @@ These are nice-to-haves that don't significantly impact quality.
 ### Final State:
 - ✅ Identified magic numbers centralized
 - ✅ No remaining `Any` in the predictor path
-- ✅ Deprecated module removed; remaining backlog is cosmetic (log width) + test coverage
+- ✅ Deprecated module removed; remaining backlog is test coverage for Jain stage filtering
 
 ---
 
@@ -357,24 +345,23 @@ uv run python validation/validate_experiment_artifacts.py experiments/runs/
 
 ### Current State (Post-Pydantic v0.7.0)
 - Strengths: structured pipeline with enforced typing/linting, Hydra configs, and CI checks
-- Gaps: sys.path hack, predictor `Any`, sequence preview literal, Novo parity + ELISA flag constants unnamed, deprecated `default_paths` imports, placeholder Jain stage test, cosmetic log separator
+- Gaps: placeholder Jain stage filtering test (coverage only)
 
 ### After Tier 1 Fixes
 - Portability gap closed; predictor typing tightened; sequence preview length centralized
 
 ### After Tier 2 Fixes
-- Scientific constants named/documented; deprecated `default_paths` removed; ELISA flag bins documented
+- Scientific constants named/documented; deprecated `default_paths` removed; ELISA flag bins documented; log separator width centralized
 
 ### Backlog
-- Cosmetic log separator constant; add fixtures/tests for Jain stage filtering
+- Add fixtures/tests for Jain stage filtering
 
 ---
 
 ## 🏆 Conclusion
 
-- Plan now reflects **8 confirmed issues** (1 P1, 5 P2, 2 P3) based on code review.
-- Tier 1 + Tier 2 changes are scoped to ~1.5–2 hours of engineering time; Jain stage test fixtures will add additional effort.
-- Address Tier 1 first to remove the portability gap and tighten typing; execute Tier 2 next to document scientific constants and retire deprecated imports.
+- Plan now reflects **1 remaining backlog item** (P3): add Jain stage filtering test coverage.
+- Tier 1 + Tier 2 fixes are complete; codebase aligns with the audit SSOT.
 
 **Audit Verified By:** Deep review of current codebase (2025-11-22)
-**Status:** ✅ **READY FOR EXECUTION**
+**Status:** ✅ **READY FOR EXECUTION (backlog only)**
