@@ -35,9 +35,10 @@ This document presents a comprehensive code quality audit of the antibody traini
 |----------|-------|----------|
 | **P0 (Critical)** | **0** | None found ✅ |
 | **P1 (High)** | **1** | sys.path manipulation |
-| **P2 (Medium)** | **17** | Magic numbers, tech debt, type safety gaps |
+| **P2 (Medium)** | **5** | Type safety gap, scientific constants, magic numbers, deprecated import |
+| **P3 (Low)** | **2** | Cosmetic logging constant, placeholder test |
 
-**Total Issues:** 18
+**Total Issues:** 8
 **Critical Issues:** 0
 **Codebase Health:** **EXCELLENT**
 
@@ -118,13 +119,17 @@ self._classifier: BinaryClassifier | LogisticRegression | None = None
 ### 3. Magic Numbers - Sequence Preview Length
 
 **Locations:**
-- `src/antibody_training_esm/core/embeddings.py:126, 137, 192, 255`
+- `src/antibody_training_esm/core/embeddings.py:125-138` (error context)
+- `src/antibody_training_esm/cli/predict.py:39-44` (CLI output)
 
 ```python
 f"Sequence preview: '{sequence[:50]}...'"
 seq_preview = sequence[:50] + "..." if len(sequence) > 50 else sequence
-invalid_sequences.append((global_idx, seq[:50], reason))
-cleaned_sequences[i.item()][:50]
+print(
+    f"Sequence: {result.sequence[:50]}..."
+    if len(result.sequence) > 50
+    else f"Sequence: {result.sequence}"
+)
 ```
 
 **Problem:**
@@ -145,6 +150,7 @@ Update usage:
 from antibody_training_esm.core.config import SEQUENCE_PREVIEW_LENGTH
 
 f"Sequence preview: '{sequence[:SEQUENCE_PREVIEW_LENGTH]}...'"
+# Apply everywhere the preview length is used (embeddings and CLI output)
 ```
 
 ---
@@ -229,38 +235,7 @@ df["flag_category"] = pd.cut(
 
 ---
 
-### 6. Magic Numbers - Hard-Coded Log Separator Width
-
-**Location:** `src/antibody_training_esm/core/trainer.py:252, 254, 264`
-
-```python
-logger.info("=" * 60)
-```
-
-**Problem:**
-- Hard-coded 60-character separator
-- Cosmetic but inconsistent if changed in one place
-
-**Recommended Fix:**
-
-Add to `src/antibody_training_esm/core/config.py`:
-```python
-# Logging formatting
-LOG_SEPARATOR_WIDTH = 60
-```
-
-Update usage:
-```python
-from antibody_training_esm.core.config import LOG_SEPARATOR_WIDTH
-
-logger.info("=" * LOG_SEPARATOR_WIDTH)
-```
-
-**Priority:** Very low - cosmetic issue only
-
----
-
-### 7. Deprecated Module Still Imported
+### 6. Deprecated Module Still Imported
 
 **Location:** `src/antibody_training_esm/datasets/default_paths.py:1-26`
 
@@ -308,6 +283,37 @@ warnings.warn(
 
 ---
 
+## Low Priority Issues (P3)
+
+### 7. Magic Numbers - Hard-Coded Log Separator Width
+
+**Location:** `src/antibody_training_esm/core/trainer.py:243-271`
+
+```python
+logger.info("=" * 60)
+```
+
+**Problem:**
+- Hard-coded 60-character separator
+- Cosmetic consistency only; does not affect behavior
+
+**Recommended Fix:**
+
+Add to `src/antibody_training_esm/core/config.py`:
+```python
+# Logging formatting
+LOG_SEPARATOR_WIDTH = 60
+```
+
+Update usage:
+```python
+from antibody_training_esm.core.config import LOG_SEPARATOR_WIDTH
+
+logger.info("=" * LOG_SEPARATOR_WIDTH)
+```
+
+---
+
 ### 8. Incomplete Test Coverage - Jain Stage Filtering
 
 **Location:** `tests/integration/test_dataset_pipeline.py:319-320`
@@ -340,6 +346,8 @@ Update test to load real stage-specific data and verify filtering.
 **Reference:** See backlog item in `TEST_SUITE_REVIEW_CHECKLIST.md` Section 8
 
 ---
+
+## Reviewed Patterns (Not Issues)
 
 ### 9. Type Ignore Comments for External Libraries
 
@@ -485,11 +493,7 @@ with open(cache_path, "rb") as f:
 
 **Status:** ✅ Acceptable for research code
 
-From `CLAUDE.md`:
-> **Threat model**: No internet-exposed API, no untrusted pickle loading
-> Production deployment should migrate to JSON + NPZ
-
-Security team is aware and has documented mitigation path in `SECURITY_REMEDIATION_PLAN.md`.
+Threat model and pickle guidance are documented in `docs/developer-guide/security.md`.
 
 ---
 
@@ -505,55 +509,39 @@ Using `print()` for direct user interaction in CLI is standard practice. Logging
 
 ## Positive Findings
 
-This audit identified **excellent engineering practices** across the codebase:
+Overall engineering hygiene is strong despite the handful of issues above:
 
-### Type Safety ⭐⭐⭐⭐⭐
-- 100% type coverage with strict mypy configuration
-- `disallow_untyped_defs=true` enforced
-- Comprehensive type annotations
-- Protocol-based interfaces where needed
+### Type Safety
+- `disallow_untyped_defs=true` enforced and most functions annotated
+- Third-party stub gaps are handled with targeted `type: ignore` comments
+- Remaining gap is tracked explicitly (`Predictor._classifier` uses `Any`)
 
-### Documentation ⭐⭐⭐⭐⭐
-- Comprehensive docstrings (Google style)
-- Inline comments explaining non-obvious logic
-- 140+ page auto-generated API reference
-- Clear architectural documentation
+### Documentation
+- Docstrings present across core modules; MkDocs configuration and `docs/gen_ref_pages.py` exist for API docs
+- Developer, user, and research guides live under `docs/`
 
-### Error Handling ⭐⭐⭐⭐⭐
-- Detailed error messages with context
-- Sequence previews in error logs
-- Column name hints for data issues
-- No silent failures
+### Error Handling
+- Clear error messages with sequence previews and column/shape hints
+- Invalid inputs raise immediately rather than silently continuing
 
-### Testing ⭐⭐⭐⭐⭐
-- Well-organized test suite (unit/integration/e2e)
-- Proper test marker usage
-- 70%+ coverage requirement
-- Fast feedback loop (~95s for unit+integration)
+### Testing
+- Suite organized with unit/integration/e2e markers; heavy tests are opt-in via environment flags
+- Coverage gate set to 70% in `make coverage` (actual coverage not measured in this audit)
 
-### Configuration Management ⭐⭐⭐⭐⭐
-- Proper use of Hydra for config
-- Pydantic v2 validation
-- No config in code - all externalized
-- Environment-specific overrides
+### Configuration Management
+- Hydra configs under `src/antibody_training_esm/conf/` with Pydantic schemas in `conf/config_schema.py`
+- CLI entry points consistently use Hydra overrides
 
-### Logging ⭐⭐⭐⭐⭐
-- Consistent use of logging framework
-- Structured log messages
-- Appropriate log levels
-- Contextual information in logs
+### Logging
+- Logging used across training/prediction paths with contextual details
 
-### Security Awareness ⭐⭐⭐⭐
-- All pickle usage documented with threat model
-- `# nosec` comments for approved patterns
-- Bandit security scanning in CI
-- Security remediation plan on file
+### Security Awareness
+- Bandit job present in CI (`.github/workflows/ci.yml`)
+- Pickle usage limited to trusted, local artifacts and marked with `nosec`; threat model captured in `docs/developer-guide/security.md`
 
-### Separation of Concerns ⭐⭐⭐⭐⭐
-- Clear boundaries between preprocessing and loading
-- `NotImplementedError` for architectural boundaries
-- Factory vs Product separation (preprocessing/ vs src/)
-- Dataset-centric organization
+### Separation of Concerns
+- Preprocessing scripts live outside the runtime package
+- Dataset loaders enforce boundaries with `NotImplementedError` where appropriate
 
 ---
 
@@ -613,30 +601,30 @@ This audit identified **excellent engineering practices** across the codebase:
 
 ### Summary Statistics
 - **Critical Bugs:** 0 ✅
-- **Type Safety:** 100% coverage ✅
-- **Documentation:** Comprehensive ✅
-- **Test Coverage:** >70% ✅
-- **Security:** Documented threat model ✅
+- **High Priority:** 1 (sys.path hack)
+- **Medium Priority:** 5 (type gap, sequence preview constant, Novo constants, ELISA flag bins, deprecated default_paths import)
+- **Low Priority:** 2 (log separator cosmetic, Jain stage test placeholder)
 
 ### What Makes This Codebase Excellent
 
-1. **No critical bugs found** - Despite deep investigation
-2. **Strong type safety** - Strict mypy with 100% coverage
-3. **Comprehensive documentation** - Code, architecture, and research docs
-4. **Intentional design** - Clear architectural boundaries
-5. **Security awareness** - Documented threat models
-6. **Test quality** - Fast feedback loop with proper test organization
-7. **Modern tooling** - uv, Hydra, Pydantic v2, MkDocs Material
+1. **No critical bugs found** in the reviewed paths
+2. **Strong typing and validation discipline** with a few clearly scoped gaps
+3. **Documentation pipeline** (MkDocs + generated API pages) and in-line docstrings
+4. **Intentional design** with clear preprocessing/runtime boundaries
+5. **Security awareness** via CI Bandit job and documented threat model
+6. **Test organization** with markers and coverage gate
+7. **Modern tooling** (uv, Hydra, Pydantic v2, MkDocs Material)
 
 ### Areas for Improvement (Minor)
 
-The 18 issues identified are primarily:
-- Magic numbers that should be named constants (low priority)
-- Minor tech debt (deprecated module)
+The issues identified are primarily:
+- Name and centralize remaining magic numbers/constants
+- Minor tech debt (deprecated `default_paths` import path)
 - One type safety gap (`Any` in Predictor)
 - One portability issue (sys.path manipulation)
+- Add coverage for Jain stage filtering when bandwidth allows
 
-**None of these issues are blockers for production use.**
+**None of these issues are blockers for production use once addressed.**
 
 ### Engineering Standards Assessment
 
@@ -644,11 +632,11 @@ The 18 issues identified are primarily:
 **Target Level:** Staff/Principal Engineer
 
 **Gap Analysis:**
-- Missing: ~10 named constants for magic numbers
+- Missing: Centralized constants for sequence preview, Novo parity, ELISA flag bins, and log separators
 - Missing: Complete test coverage for Jain stage filtering
-- Tech debt: 1 deprecated module still in use
+- Tech debt: Deprecated `default_paths` imports still in use
 
-**Estimated remediation effort:** 4-6 hours total
+**Estimated remediation effort:** ~2 hours for code fixes; additional time for expanded tests
 
 ---
 
