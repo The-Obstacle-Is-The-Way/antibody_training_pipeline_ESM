@@ -119,7 +119,8 @@ def test_setup_logging_creates_logger(
     mock_config = MagicMock(spec=TrainingPipelineConfig)
     mock_config.training = MagicMock(spec=TrainingConfig)
     mock_config.training.log_level = "INFO"
-    mock_config.training.log_file = "test.log"
+    # Use tmp_path to avoid creating artifacts in repo root
+    mock_config.training.log_file = str(tmp_path / "test.log")
 
     logger = setup_logging(mock_config)
 
