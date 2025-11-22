@@ -1,8 +1,24 @@
-# Gradio App Validation (Post-Pydantic Integration)
+# Gradio App Guide
 
 **Date**: 2025-11-22
-**Context**: Validated Gradio UI after Phase 1-4 Pydantic v2 integration
-**Result**: ✅ All systems operational - no bugs found
+**Purpose**: Local development guide and Hugging Face Spaces deployment reference
+**Status**: ✅ Validated post-Pydantic v2 integration (Phases 1-4)
+
+---
+
+## Overview
+
+This app runs in **two environments**:
+
+1. **Local Development** (full functionality, full model)
+   - Run on your machine for testing/demos
+   - Uses full pipeline with all features
+   - Hydra config, all models supported
+
+2. **Hugging Face Spaces** (public demo, simplified)
+   - Free public hosting at `https://huggingface.co/spaces/yourname/antibody-predictor`
+   - Simplified `app.py` (no Hydra, pre-loaded model)
+   - Both can coexist - local stays unchanged
 
 ---
 
@@ -142,6 +158,101 @@ Before merging Pydantic-related PRs, validate Gradio still works:
 
 ---
 
-## Status: ✅ Production Ready
+---
 
-No friction points found. Pydantic integration enhances validation without breaking UX.
+## Deployment Options
+
+### Local Use (Current Setup)
+
+**Perfect for:**
+- Development and testing
+- Local demos
+- Research experiments
+
+**How to run:**
+```bash
+uv run python -m antibody_training_esm.cli.app \
+  classifier.path=experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
+```
+
+**Access at:** `http://localhost:7860`
+
+### Hugging Face Spaces (Public Demo)
+
+**Perfect for:**
+- Sharing with collaborators worldwide
+- Public demos and portfolio
+- No server management
+
+**What's different from local:**
+- Simplified `app.py` (no Hydra, direct Gradio code)
+- Pre-trained model file committed to repo
+- Environment variables for secrets
+- Free hosting (CPU) or paid GPU
+
+**Setup guide:** See branch `feat/huggingface-spaces-deployment` (coming soon)
+
+### Temporary Public Sharing (ngrok)
+
+**Perfect for:**
+- Quick demos without deploying
+- Temporary public access
+
+```bash
+# Start local app
+uv run python -m antibody_training_esm.cli.app classifier.path=...
+
+# In another terminal
+ngrok http 7860
+# Gives: https://abc123.ngrok.io (share this URL)
+```
+
+---
+
+## Hugging Face Spaces Best Practices (2025)
+
+**From official Gradio 5 + HF documentation:**
+
+### Required Files
+1. **app.py** - Entry point (HF looks for this file)
+2. **requirements.txt** or **pyproject.toml** - Dependencies
+3. **README.md** - Space description (displays on HF)
+4. **Model files** - Committed to repo or loaded from HF Hub
+
+### Security
+- Never hardcode API keys/secrets in code
+- Use HF Spaces **Secrets** (Settings → Repository secrets)
+- Access via `os.getenv("HF_TOKEN")`
+
+### Performance
+- Use `queue=True` for concurrency (handles multiple users)
+- Move model loading to global scope (not inside predict function)
+- Consider GPU hardware for ESM models (paid tier)
+
+### Discoverability
+- Add tags: `gradio`, `antibody`, `protein`, `ESM`
+- Upload thumbnail: `thumbnail.png` in repo root
+- Set visibility to Public
+
+---
+
+## Status
+
+**Local Development:** ✅ Production ready
+- All Pydantic integration validated
+- No friction points found
+- macOS stability patches applied
+
+**HF Spaces Deployment:** 🚧 In progress
+- Branch: `feat/huggingface-spaces-deployment`
+- Simplified app.py needed (no Hydra dependency)
+- Model file needs to be committed or loaded from HF Hub
+
+---
+
+## Next Steps
+
+1. ✅ Keep local app as-is (full functionality)
+2. 🚧 Create HF Spaces branch with simplified `app.py`
+3. 🚧 Test deployment on HF Spaces
+4. ✅ Both environments coexist independently
