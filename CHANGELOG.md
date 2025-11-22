@@ -5,6 +5,158 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2025-11-21
+
+### 🛡️ Pydantic v2 Integration - Type-Safe Validation Layer
+
+Major robustness release introducing comprehensive runtime validation using Pydantic v2 and Pandera across the entire pipeline. This 4-phase integration adds a type-safe validation layer to predictions, configurations, data integrity, and model artifacts, preventing silent failures and improving production reliability.
+
+### ✨ Features
+
+**Phase 1: Prediction Hardening**
+- Pydantic `AntibodySequence` model for input validation
+- `AssayType` enum for type-safe assay handling
+- Runtime validation of amino acid sequences (20 canonical AAs + special handling)
+- Immediate feedback on invalid sequences before expensive embedding extraction
+- Dual API support: raw strings and Pydantic models
+
+**Phase 2: Configuration Safety**
+- Pydantic models for all Hydra configuration sections
+- `TrainingPipelineConfig`, `ModelConfig`, `ClassifierConfig`, `DataConfig`, `ExperimentConfig`, `HardwareConfig`
+- Runtime validation of config values before training starts
+- Type-safe config handling throughout pipeline
+- Fail-fast on invalid configurations (prevents expensive GPU allocation waste)
+
+**Phase 3: Data Integrity (Pandera Integration)**
+- `get_sequence_dataset_schema()` for production training/testing data
+- `get_preprocessing_schema()` for intermediate preprocessing files
+- `get_boughter_schema()`, `get_jain_schema()`, `get_harvey_schema()`, `get_shehata_schema()`
+- Amino acid validation (uppercase letters only, no gaps, valid AAs)
+- Sequence length validation (1-2000 characters)
+- Label validation (binary 0/1, nullable for preprocessing intermediates)
+- DataFrame validation on dataset load (immediate failure on corrupt data)
+
+**Phase 4: Artifacts & Metrics**
+- `ModelArtifactMetadata` for self-describing model JSON sidecars
+- `EvaluationMetrics` for type-safe metrics reporting
+- `CVResults` for cross-validation result serialization
+- Version-compatible model loading (detect incompatible models at load time)
+- No manual type casting (Pydantic handles complex types like `class_weight` with int keys)
+
+### 🐛 Bug Fixes
+
+**Critical Regressions Fixed (Post-Pydantic Phase 4)**
+- **Preprocessing Schema Bug**: Fixed Phase 3 regression where production schemas were too strict for preprocessing intermediate files (151 held-out sequences with NaN labels)
+  - Created `get_preprocessing_schema()` with `nullable=True` for labels (dtype=float64)
+  - Production schemas remain strict (nullable=False, dtype=int64)
+  - Boughter preprocessing validation now passes
+- **BoughterDataset KeyError**: Fixed crash when loading pre-filtered training files without flags column
+  - Added defensive check: `has_flags = "num_flags" in df.columns or "flags" in df.columns`
+  - Only apply flagging logic if flags column exists
+  - Added informative logging for pre-filtered files
+
+**Test Infrastructure**
+- Fixed `test.log` artifact creation in repo root (now uses `tmp_path` in test fixtures)
+- Improved test isolation with proper temporary directory usage
+
+### 🔧 Improvements
+
+**Validation Coverage**
+- 567 tests passing (up from 520 in v0.6.0)
+- ~90% test coverage maintained
+- Comprehensive end-to-end validation suite
+- Data integrity checksums verified (Pandera validation doesn't modify data)
+
+**Developer Experience**
+- Clear, actionable error messages on validation failures
+- Fail-fast validation before expensive operations
+- Type-safe configuration handling
+- Self-documenting Pydantic models with field descriptions
+
+**Production Reliability**
+- No silent data corruption (all validation explicit)
+- Early detection of invalid inputs
+- Self-describing model artifacts
+- Version compatibility checking
+
+### 📦 Dependencies
+
+**New Requirements (Added to `validation` optional dependency group):**
+- `pydantic>=2.10.0` - Runtime validation framework
+- `pydantic-settings>=2.6.0` - Future config management support
+- `pandera>=0.20.0` - DataFrame schema validation
+
+Install with: `uv sync --all-extras`
+
+### ✅ Verification
+
+**End-to-End Validation Results:**
+- ✅ 567 tests passing (~90% coverage)
+- ✅ All preprocessing pipelines validated (Boughter, Jain, Harvey, Shehata)
+- ✅ Data integrity checksums verified (no corruption)
+- ✅ Full training pipeline smoke test passed (66.84% ± 8.69% 10-fold CV)
+- ✅ **Novo parity maintained:**
+  - Jain: 66.28% accuracy (exact parity)
+  - Shehata: 58.29% accuracy (exact parity)
+- ✅ Type safety: mypy --strict clean (148 files)
+- ✅ Code quality: ruff format + ruff check clean
+
+**Validation Dossier:**
+- Comprehensive validation report: `docs/archive/investigations/PYDANTIC_VALIDATION_DOSSIER_2025-11-21.md`
+- 2 critical bugs fixed, 2 false alarms (intentional design) documented
+- Senior approval checklist completed
+
+### 🔄 Migration Notes
+
+**100% Backward Compatible** - No breaking changes!
+
+**Existing Usage (Still Works):**
+```bash
+# All existing workflows unchanged
+antibody-train
+antibody-test --model experiments/checkpoints/esm1v/logreg/model.pkl --data data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
+antibody-predict --input sequences.csv --classifier-path model.pkl
+```
+
+**New Validation Features (Automatic):**
+- Pydantic validation runs automatically on all inputs
+- Invalid sequences/configs immediately rejected with clear error messages
+- No code changes needed to benefit from validation
+
+**For Developers:**
+```python
+# Use Pydantic models for type-safe inputs
+from antibody_training_esm.models.prediction import AntibodySequence, AssayType
+
+seq = AntibodySequence(sequence="QVQLVQSGAEVK", assay_type=AssayType.ELISA)
+# Validation happens automatically - invalid sequences raise ValidationError
+```
+
+### 📚 Documentation
+
+**Implementation Docs (Archived in `docs/implementation/`):**
+- `PYDANTIC_INTEGRATION_AUDIT.md` - Master plan and audit
+- `PYDANTIC_PHASE_1_PREDICTION_HARDENING.md` - Phase 1 spec
+- `PYDANTIC_PHASE_2_CONFIGURATION_SAFETY.md` - Phase 2 spec
+- `PYDANTIC_PHASE_3_DATA_INTEGRITY.md` - Phase 3 spec (Pandera)
+- `PYDANTIC_PHASE_4_ARTIFACTS_METRICS.md` - Phase 4 spec
+
+**Validation Reports:**
+- `docs/archive/investigations/PYDANTIC_VALIDATION_DOSSIER_2025-11-21.md` - Comprehensive validation report
+
+**Updated User Docs:**
+- `VALIDATION_PLAN.md` - Updated for Phase 4 completion
+
+### 🎯 What's Next?
+
+With comprehensive validation in place, we can now:
+- Deploy to production with confidence (fail-fast validation prevents silent failures)
+- Add new models/datasets with schema validation guarantees
+- Extend validation to additional pipeline components
+- Consider Pydantic v2 for API endpoints (future web service)
+
+---
+
 ## [0.6.0] - 2025-11-19
 
 ### 🏗️ Multi-Classifier Support - Strategy Pattern Architecture
@@ -714,6 +866,9 @@ For now, we maintain this changelog manually to ensure high-quality release note
 
 ---
 
+[0.7.0]: https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/releases/tag/v0.7.0
+[0.6.0]: https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/releases/tag/v0.6.0
+[0.5.0]: https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/releases/tag/v0.5.0
 [0.4.0]: https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/releases/tag/v0.4.0
 [0.3.0]: https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/releases/tag/v0.3.0
 [0.2.0]: https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/releases/tag/v0.2.0
