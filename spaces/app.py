@@ -236,41 +236,40 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
     with gr.Row(equal_height=False):
         # Left Column: Inputs
         with gr.Column(scale=1):
-            with gr.Group():
-                gr.HTML(
-                    '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Antibody Sequence (VH or VL)</div>'
-                )
-                sequence_input = gr.TextArea(
-                    placeholder="Paste amino acid sequence here (e.g., QVQL...)",
-                    lines=5,
-                    max_lines=15,
-                    show_copy_button=True,
-                    show_label=False,  # Disable built-in label
-                )
+            gr.HTML(
+                '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Antibody Sequence (VH or VL)</div>'
+            )
+            sequence_input = gr.TextArea(
+                placeholder="Paste amino acid sequence here (e.g., QVQL...)",
+                lines=5,
+                max_lines=15,
+                show_copy_button=True,
+                show_label=False,  # Disable built-in label
+            )
 
-                with gr.Accordion("⚙️ Advanced Settings", open=False), gr.Row():
-                    with gr.Column():
-                        gr.HTML(
-                            '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Calibrated Assay</div>'
-                        )
-                        assay_input = gr.Dropdown(
-                            choices=["ELISA", "PSR", "None"],
-                            value="None",
-                            show_label=False,
-                            info="Use threshold calibrated for specific assay",
-                        )
-                    with gr.Column():
-                        gr.HTML(
-                            '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Decision Threshold</div>'
-                        )
-                        threshold_input = gr.Slider(
-                            minimum=0.0,
-                            maximum=1.0,
-                            value=0.5,
-                            step=0.05,
-                            show_label=False,
-                            info="Probability cutoff for non-specificity",
-                        )
+            with gr.Accordion("⚙️ Advanced Settings", open=False), gr.Row():
+                with gr.Column():
+                    gr.HTML(
+                        '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Calibrated Assay</div>'
+                    )
+                    assay_input = gr.Dropdown(
+                        choices=["ELISA", "PSR", "None"],
+                        value="None",
+                        show_label=False,
+                        info="Use threshold calibrated for specific assay",
+                    )
+                with gr.Column():
+                    gr.HTML(
+                        '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Decision Threshold</div>'
+                    )
+                    threshold_input = gr.Slider(
+                        minimum=0.0,
+                        maximum=1.0,
+                        value=0.5,
+                        step=0.05,
+                        show_label=False,
+                        info="Probability cutoff for non-specificity",
+                    )
 
             submit_btn = gr.Button(
                 "🔬 Predict Non-Specificity", variant="primary", size="lg"
