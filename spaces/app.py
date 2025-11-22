@@ -188,8 +188,11 @@ theme = gr.themes.Soft(
     background_fill_primary_dark="#FFFFFF",
     block_background_fill="#F9FAFB",
     block_background_fill_dark="#F9FAFB",
-    block_label_text_color="#374151",
-    block_label_text_color_dark="#374151",
+    # Label clarity improvements - lighter blue bg, crisp white text
+    block_label_background_fill="#3B82F6",
+    block_label_background_fill_dark="#3B82F6",
+    block_label_text_color="#FFFFFF",
+    block_label_text_color_dark="#FFFFFF",
     block_title_text_color="#374151",
     block_title_text_color_dark="#374151",
     input_background_fill="#FFFFFF",
