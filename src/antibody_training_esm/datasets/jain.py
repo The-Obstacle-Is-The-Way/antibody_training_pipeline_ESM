@@ -33,12 +33,16 @@ Reference:
 
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pandas as pd
 import pandera.pandas as pa
+from pandera.errors import SchemaError
 
-from antibody_training_esm.schemas.dataset import get_jain_schema
+from antibody_training_esm.schemas.dataset import (
+    get_jain_preprocessing_schema,
+    get_jain_schema,
+)
 from antibody_training_esm.settings import settings
 
 from .base import AntibodyDataset
@@ -130,7 +134,13 @@ class JainDataset(AntibodyDataset):
 
         Raises:
             FileNotFoundError: If input CSV files not found
+            ValueError: If stage is invalid
         """
+        # Validate stage
+        valid_stages = {"full", "ssot", "parity"}
+        if stage not in valid_stages:
+            raise ValueError(f"Invalid stage '{stage}'. Must be one of: {valid_stages}")
+
         # Default paths
         if full_csv_path is None:
             full_csv_path = JAIN_FULL_CSV
@@ -220,7 +230,18 @@ class JainDataset(AntibodyDataset):
             df["sequence"] = df["VH_sequence"]
 
         # Validate with Pandera
-        df = self.validate_dataframe(df)
+        if stage == "full":
+            # Use preprocessing schema (allows NaN labels) for full stage
+            try:
+                validated_df = get_jain_preprocessing_schema().validate(df, lazy=False)
+                df = cast(pd.DataFrame, validated_df)
+            except SchemaError as e:
+                raise ValueError(
+                    f"Schema validation failed for JainDataset (stage='full'):\n{e}"
+                ) from e
+        else:
+            # Use strict schema (no NaN labels) for filtered stages
+            df = self.validate_dataframe(df)
 
         return df
 

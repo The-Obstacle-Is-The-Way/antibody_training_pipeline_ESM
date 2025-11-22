@@ -27,7 +27,7 @@ class TestJainStageFiltering:
     @pytest.fixture
     def jain_full_csv(self) -> str:
         """Path to Jain full dataset."""
-        path = Path("data/test/jain/processed/Therapeutics_VH_VL_with_ELISA_labels.csv")
+        path = Path("data/test/jain/processed/jain_with_private_elisa_FULL.csv")
         if not path.exists():
             pytest.skip(f"Jain full CSV not found: {path}")
         return str(path)
@@ -35,7 +35,7 @@ class TestJainStageFiltering:
     @pytest.fixture
     def jain_sd03_csv(self) -> str | None:
         """Path to Jain biophysical data."""
-        path = Path("data/test/jain/processed/Therapeutics_SD03.csv")
+        path = Path("data/test/jain/processed/jain_sd03.csv")
         # SD03 is optional - don't skip if missing
         return str(path) if path.exists() else None
 
