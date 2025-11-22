@@ -30,13 +30,13 @@ import pandas as pd
 import pandera.pandas as pa
 
 from antibody_training_esm.schemas.dataset import get_harvey_schema
+from antibody_training_esm.settings import settings
 
 from .base import AntibodyDataset
-from .default_paths import (
-    HARVEY_HIGH_POLY_CSV,
-    HARVEY_LOW_POLY_CSV,
-    HARVEY_OUTPUT_DIR,
-)
+
+HARVEY_HIGH_POLY_CSV = settings.HARVEY_HIGH_POLY_CSV
+HARVEY_LOW_POLY_CSV = settings.HARVEY_LOW_POLY_CSV
+HARVEY_OUTPUT_DIR = settings.HARVEY_OUTPUT_DIR
 
 
 class HarveyDataset(AntibodyDataset):

@@ -14,6 +14,7 @@ import numpy as np
 from omegaconf import DictConfig
 
 from antibody_training_esm.core.classifier import BinaryClassifier
+from antibody_training_esm.core.config import LOG_SEPARATOR_WIDTH
 
 # Import and re-export from submodules
 from antibody_training_esm.core.training.cache import (
@@ -249,9 +250,9 @@ def main(cfg: DictConfig) -> None:
         train_metrics = results["train_metrics"]
         cv_metrics = results["cv_metrics"]
 
-        logger.info("=" * 60)
+        logger.info("=" * LOG_SEPARATOR_WIDTH)
         logger.info("TRAINING COMPLETE")
-        logger.info("=" * 60)
+        logger.info("=" * LOG_SEPARATOR_WIDTH)
         logger.info(f"Train Accuracy: {train_metrics.accuracy:.4f}")
         logger.info(
             f"CV Accuracy: {cv_metrics.cv_accuracy['mean']:.4f} "
@@ -261,7 +262,7 @@ def main(cfg: DictConfig) -> None:
         if results.get("model_paths"):
             logger.info(f"Model saved to: {results['model_paths']['pickle']}")
 
-        logger.info("=" * 60)
+        logger.info("=" * LOG_SEPARATOR_WIDTH)
 
     except Exception as e:
         logger.error(f"Training failed: {str(e)}")

@@ -30,9 +30,12 @@ import pandas as pd
 import pandera.pandas as pa
 
 from antibody_training_esm.schemas.dataset import get_shehata_schema
+from antibody_training_esm.settings import settings
 
 from .base import AntibodyDataset
-from .default_paths import SHEHATA_EXCEL_PATH, SHEHATA_OUTPUT_DIR
+
+SHEHATA_EXCEL_PATH = settings.SHEHATA_EXCEL_PATH
+SHEHATA_OUTPUT_DIR = settings.SHEHATA_OUTPUT_DIR
 
 
 class ShehataDataset(AntibodyDataset):

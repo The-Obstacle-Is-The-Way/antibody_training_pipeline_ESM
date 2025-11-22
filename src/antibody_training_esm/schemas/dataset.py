@@ -158,6 +158,34 @@ def get_jain_schema() -> pa.DataFrameSchema:
     )
 
 
+# Jain preprocessing schema (allows nullable labels for full stage)
+def get_jain_preprocessing_schema() -> pa.DataFrameSchema:
+    return get_preprocessing_schema().add_columns(
+        {
+            "id": pa.Column(
+                dtype="string",
+                nullable=False,
+                checks=[
+                    pa.Check.str_length(min_value=1),
+                ],
+                description="Antibody INN name (required for Jain)",
+            ),
+            "vh_sequence": pa.Column(
+                dtype="string",
+                nullable=True,
+                required=False,
+                description="VH sequence (Jain has full paired data)",
+            ),
+            "vl_sequence": pa.Column(
+                dtype="string",
+                nullable=True,
+                required=False,
+                description="VL sequence",
+            ),
+        }
+    )
+
+
 # Harvey-specific schema (VHH only, no light chain)
 def get_harvey_schema() -> pa.DataFrameSchema:
     return pa.DataFrameSchema(

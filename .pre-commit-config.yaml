@@ -11,5 +11,10 @@ repos:
     hooks:
       - id: mypy
         args: [--config-file=pyproject.toml]
-        additional_dependencies: [pandas-stubs, types-PyYAML, pydantic>=2.10.0, numpy]
+        additional_dependencies:
+          - pandas-stubs
+          - types-PyYAML
+          - pydantic>=2.10.0
+          - numpy
+          - jinja2
         exclude: ^(experiments/|reference_repos/|tests/unit/cli/test_train\.py)
