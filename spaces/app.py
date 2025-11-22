@@ -194,6 +194,15 @@ theme = gr.themes.Soft(
     block_title_text_color_dark="#374151",
     input_background_fill="#FFFFFF",
     input_background_fill_dark="#FFFFFF",
+    # Table-specific overrides to fix dark mode tables
+    table_border_color="#E5E7EB",
+    table_border_color_dark="#E5E7EB",
+    table_even_background_fill="#F9FAFB",
+    table_even_background_fill_dark="#F9FAFB",
+    table_odd_background_fill="#FFFFFF",
+    table_odd_background_fill_dark="#FFFFFF",
+    table_row_focus="#DBEAFE",
+    table_row_focus_dark="#DBEAFE",
 )
 with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
     # Header (inline styles to survive HF Spaces stripping)
