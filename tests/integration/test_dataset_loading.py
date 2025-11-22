@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import pandas as pd
-import pandera.backends.pandas  # noqa: F401
 import pytest
 
 from antibody_training_esm.datasets.boughter import BoughterDataset

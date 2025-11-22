@@ -3,7 +3,6 @@ from __future__ import annotations
 import re
 
 import pandas as pd
-import pandera.backends.pandas  # noqa: F401  # registers pandas backend
 import pandera.pandas as pa
 
 VALID_AA = set("ACDEFGHIKLMNPQRSTVWYX")
