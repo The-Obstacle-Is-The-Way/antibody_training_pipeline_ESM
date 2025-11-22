@@ -7,11 +7,11 @@
 
 ## 🎯 Executive Summary
 
-**Audit Claim:** 18 issues (1 P1, 17 P2)
-**Deep Verification Status:** ✅ **ALL CLAIMS VERIFIED**
-**Critical Finding:** The audit is **100% accurate** - every issue is legitimate
+**Audit Baseline (corrected):** 8 issues (1 P1, 5 P2, 2 P3)
+**Verification Status:** ✅ **Issues confirmed; counts corrected (sequence preview appears in 3 places, not 4)**
+**Critical Finding:** The sys.path hack and type gap are real; remaining items are quality polish/tech debt
 
-**Action Required:** Fix 3 high-impact issues immediately, defer 6 low-impact to backlog
+**Action Required:** Fix 3 high-impact issues immediately, defer the low-impact backlog items
 
 ---
 
@@ -19,13 +19,13 @@
 
 ### P1 Issue - VERIFIED ✓
 **sys.path manipulation:** CONFIRMED unnecessary
-- ✅ Tested: `uv run python` works without sys.path hack
-- ✅ Package is properly installed in editable mode
-- ✅ This is a **legitimate portability bug**
+- ✅ `validation/validate_experiment_artifacts.py` inserts repo `/src` on sys.path
+- ✅ With the project installed (uv/editable), imports resolve without the hack
+- ✅ This is a **legitimate portability risk**
 
 ### P2 Issues - All VERIFIED ✓
 **Magic numbers:** CONFIRMED scattered
-- ✅ `50` for sequence preview (3 locations)
+- ✅ `50` for sequence preview (3 locations: embeddings x2, CLI output)
 - ✅ `59, 27, 86, 57` Novo parity constants (multiple files)
 - ✅ `[-0.5, 0.5, 3.5, 6.5]` ELISA flag bins (preprocessing)
 - ✅ `60` for log separator width
@@ -284,39 +284,38 @@ These are nice-to-haves that don't significantly impact quality.
 
 ## 📋 Implementation Order
 
-### Sprint 1 (Immediate - 30 minutes total)
-1. ✅ Remove sys.path hack (2 min) → **FIXES PORTABILITY BUG**
-2. ✅ Fix type safety gap (15 min) → **RESTORES TYPE SAFETY**
-3. ✅ Extract sequence preview constant (10 min) → **SINGLE SOURCE OF TRUTH**
+### Sprint 1 (Immediate - ~30 minutes)
+1. Remove sys.path hack (2 min) → **FIXES PORTABILITY BUG**
+2. Fix type safety gap (15 min) → **RESTORES TYPE SAFETY IN PREDICTOR**
+3. Extract sequence preview constant (10 min) → **SINGLE SOURCE OF TRUTH**
 
-### Sprint 2 (Next - 1 hour total)
-4. ✅ Centralize Novo constants (20 min) → **SELF-DOCUMENTING SCIENCE**
-5. ✅ Extract ELISA flag bins (15 min) → **DOCUMENTS METHODOLOGY**
-6. ✅ Migrate from default_paths.py (30 min) → **REMOVES TECH DEBT**
+### Sprint 2 (Next - ~1 hour)
+4. Centralize Novo constants (20 min) → **SELF-DOCUMENTING SCIENCE**
+5. Extract ELISA flag bins (15 min) → **DOCUMENTS METHODOLOGY**
+6. Migrate from default_paths.py (30 min) → **REMOVES TECH DEBT**
 
 ### Backlog (Defer)
-7. ⏸️ Log separator width (cosmetic)
-8. ⏸️ Jain stage filtering tests (low ROI)
+7. Log separator width (cosmetic)
+8. Jain stage filtering tests (low ROI)
 
 ---
 
 ## 🎯 Expected Outcomes
 
 ### After Tier 1 (30 minutes):
-- ✅ Zero portability bugs
-- ✅ 100% type safety in prediction path
-- ✅ All formatting constants centralized
+- ✅ sys.path hack removed
+- ✅ Predictor classifier types explicit instead of `Any`
+- ✅ Sequence preview length centralized across embeddings and CLI
 
 ### After Tier 2 (1.5 hours total):
-- ✅ All scientific constants documented and named
-- ✅ Zero deprecated code
-- ✅ Self-documenting preprocessing logic
+- ✅ Novo parity and ELISA flag constants named with provenance
+- ✅ Deprecated `default_paths` removed in favor of `settings`
+- ✅ Preprocessing logic for ELISA flags documented
 
 ### Final State:
-- ✅ **Zero magic numbers** in production code
-- ✅ **100% type safety** (no `Any` in core paths)
-- ✅ **Zero tech debt** (no deprecated modules)
-- ✅ **Production-ready** (no portability bugs)
+- ✅ Identified magic numbers centralized
+- ✅ No remaining `Any` in the predictor path
+- ✅ Deprecated module removed; remaining backlog is cosmetic (log width) + test coverage
 
 ---
 
@@ -355,40 +354,25 @@ uv run python validation/validate_experiment_artifacts.py experiments/runs/
 ## 💯 Quality Assessment
 
 ### Current State (Post-Pydantic v0.7.0)
-**Rating:** ⭐⭐⭐⭐⭐ (93/100)
-**Gaps:**
-- 1 portability bug (sys.path)
-- 1 type safety gap (Any)
-- ~10 magic numbers
-- 1 deprecated module
+- Strengths: structured pipeline with enforced typing/linting, Hydra configs, and CI checks
+- Gaps: sys.path hack, predictor `Any`, sequence preview literal, Novo parity + ELISA flag constants unnamed, deprecated `default_paths` imports, placeholder Jain stage test, cosmetic log separator
 
 ### After Tier 1 Fixes
-**Rating:** ⭐⭐⭐⭐⭐ (97/100)
-**Remaining:** Minor magic numbers, cosmetic issues
+- Portability gap closed; predictor typing tightened; sequence preview length centralized
 
 ### After Tier 2 Fixes
-**Rating:** ⭐⭐⭐⭐⭐ (99/100)
-**Remaining:** Only cosmetic backlog items
+- Scientific constants named/documented; deprecated `default_paths` removed; ELISA flag bins documented
+
+### Backlog
+- Cosmetic log separator constant; add fixtures/tests for Jain stage filtering
 
 ---
 
 ## 🏆 Conclusion
 
-**The audit was 100% accurate.** All 18 issues are legitimate and worth fixing.
+- Plan now reflects **8 confirmed issues** (1 P1, 5 P2, 2 P3) based on code review.
+- Tier 1 + Tier 2 changes are scoped to ~1.5–2 hours of engineering time; Jain stage test fixtures will add additional effort.
+- Address Tier 1 first to remove the portability gap and tighten typing; execute Tier 2 next to document scientific constants and retire deprecated imports.
 
-### What This Audit Proves:
-1. ✅ The codebase is **excellent** (only minor issues found)
-2. ✅ The async agent did a **thorough job** (found real issues, no false positives)
-3. ✅ All issues are **fixable in < 2 hours** (well-scoped, actionable)
-
-### Recommendation:
-**Fix Tier 1 immediately (30 min)**, then **Tier 2 next sprint (1 hour)**. Defer Tier 3 to backlog.
-
-**Total remediation effort:** 1.5 hours to reach 99/100 code quality.
-
----
-
-**Audit Verified By:** Deep first-principles analysis
-**Verification Date:** 2025-11-22
+**Audit Verified By:** Deep review of current codebase (2025-11-22)
 **Status:** ✅ **READY FOR EXECUTION**
-**Expected Completion:** Sprint 1 + Sprint 2 = 1.5 hours total
