@@ -12,7 +12,7 @@ from sklearn.linear_model import LogisticRegression
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
-from antibody_training_esm.core.trainer import load_model_from_npz
+from antibody_training_esm.core.training.serialization import load_model_from_npz
 from antibody_training_esm.models.prediction import (
     AssayType,
     PredictionRequest,
