@@ -11,6 +11,7 @@ import logging
 import os
 import sys
 from pathlib import Path
+from typing import Any
 
 # Add src to Python path for local imports (HF Spaces doesn't install package)
 sys.path.insert(0, str(Path(__file__).parent / "src"))
@@ -58,7 +59,7 @@ except Exception as e:
 
 def predict_sequence(
     sequence: str, threshold: float, assay_type: str | None
-) -> tuple[str, dict, dict]:
+) -> tuple[str, dict[str, float], dict[str, Any]]:
     """
     Prediction function for Gradio interface.
 
