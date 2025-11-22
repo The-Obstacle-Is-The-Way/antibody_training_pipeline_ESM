@@ -213,6 +213,9 @@ css = """
 }
 """
 
+# Inline CSS injection via HTML to survive HF Spaces iframe stripping
+inline_style = f"<style>{css}</style>"
+
 # --- Example Sequences ---
 examples = [
     [
@@ -233,7 +236,10 @@ examples = [
 ]
 
 # --- Gradio Blocks App ---
-with gr.Blocks(theme=gr.themes.Soft(), css=css, title="Antibody Predictor") as app:
+with gr.Blocks(theme=gr.themes.Soft(), title="Antibody Predictor") as app:
+    # Inject CSS early; HF Spaces strips gr.Blocks(css=...) in iframes
+    gr.HTML(inline_style)
+
     # Header
     with gr.Column(elem_classes="header-text"):
         gr.Markdown(

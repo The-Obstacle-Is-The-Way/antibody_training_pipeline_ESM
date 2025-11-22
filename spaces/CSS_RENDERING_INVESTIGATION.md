@@ -1,8 +1,16 @@
 # CSS Rendering Issue - First Principles Investigation
 
 **Date**: 2025-11-22
-**Status**: 🚨 CRITICAL - Black rectangles, CSS not loading
+**Status**: ✅ RESOLVED - Inline CSS injection restores styling on HF Spaces
 **Deployment**: HF Spaces (Gradio 5.0.0)
+
+---
+
+## ✅ Resolution (2025-11-22)
+
+- Implemented inline CSS injection via `gr.HTML("<style>...</style>")` in `spaces/app.py` to bypass HF Spaces iframe stripping of `gr.Blocks(css=...)`.
+- Verified locally: custom gradients, status cards, and typography render; no black rectangles.
+- Action: redeploy Spaces using `./spaces/deploy_cli.sh` (or HF UI) to propagate the fix.
 
 ---
 
