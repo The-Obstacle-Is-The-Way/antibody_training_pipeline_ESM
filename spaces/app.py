@@ -186,9 +186,7 @@ theme = gr.themes.Soft(
     block_label_text_color="#374151",
     block_title_text_color="#374151",
     input_background_fill="#FFFFFF",
-    input_text_color="#111827",
 )
-
 with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
     # Header (inline styles to survive HF Spaces stripping)
     gr.HTML(
