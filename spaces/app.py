@@ -14,7 +14,6 @@ import gradio as gr
 import torch
 from pydantic import ValidationError
 
-# Import core prediction components
 from antibody_training_esm.core.prediction import Predictor
 from antibody_training_esm.models.prediction import PredictionRequest
 
