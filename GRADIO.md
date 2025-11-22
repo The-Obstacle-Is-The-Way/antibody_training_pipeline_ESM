@@ -46,9 +46,11 @@ def validate_amino_acids(cls, v: str) -> str:
 
 ### 2. **Gradio API Testing Gotcha**
 
-**Friction encountered**: Direct HTTP POST to `/api/predict` returns 404
+**Friction encountered**: Direct HTTP POST to `/api/predict` returns 404.
 
-**Solution**: Use `gradio_client` library instead:
+**Root cause (intentional)**: The app is launched with `show_api=False` (`src/antibody_training_esm/cli/app.py:187`), so REST endpoints are hidden for safety. Only the queued Gradio client flow is exposed.
+
+**Solution**: Use `gradio_client` (it reads the app config and hits the queue endpoints):
 ```python
 from gradio_client import Client
 
@@ -56,7 +58,7 @@ client = Client("http://localhost:7860")
 result = client.predict("QVQL...", api_name="/predict")
 ```
 
-**Why**: Gradio 5.x uses a different API structure than older versions. The `gradio_client` library handles this automatically.
+**Why**: With `show_api=False` in Gradio 5.x, `/api/*` routes are disabled. `gradio_client` is the supported way to exercise the interface without re-enabling the public API.
 
 ---
 
