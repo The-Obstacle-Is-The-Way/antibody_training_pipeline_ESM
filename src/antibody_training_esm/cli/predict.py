@@ -7,6 +7,7 @@ import pandas as pd
 from omegaconf import DictConfig
 from pydantic import ValidationError
 
+from antibody_training_esm.core.config import SEQUENCE_PREVIEW_LENGTH
 from antibody_training_esm.core.prediction import Predictor, run_prediction
 from antibody_training_esm.models.prediction import AssayType, PredictionRequest
 
@@ -38,8 +39,8 @@ def predict_sequence_cli(
 
         # Print formatted output
         print(
-            f"Sequence: {result.sequence[:50]}..."
-            if len(result.sequence) > 50
+            f"Sequence: {result.sequence[:SEQUENCE_PREVIEW_LENGTH]}..."
+            if len(result.sequence) > SEQUENCE_PREVIEW_LENGTH
             else f"Sequence: {result.sequence}"
         )
         print(f"Prediction: {result.prediction}")

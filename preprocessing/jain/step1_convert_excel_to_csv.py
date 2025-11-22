@@ -44,6 +44,11 @@ logger = setup_logger(__name__)
 # Valid amino acids for sequence validation
 VALID_AA = set("ACDEFGHIKLMNPQRSTVWY")
 
+# Novo Nordisk ELISA Flagging Strategy
+# Paper methodology: 0 flags = specific, 1-3 = mild, 4-6 = non-specific
+FLAG_BINS = [-0.5, 0.5, 3.5, 6.5]  # Bin edges for pd.cut
+FLAG_CATEGORIES = ["specific", "mild", "non_specific"]
+
 # Assay cluster definitions (placeholder for validation script compatibility)
 ASSAY_CLUSTERS: dict[str, Any] = {}
 
@@ -160,8 +165,8 @@ def calculate_flags(df: pd.DataFrame) -> pd.DataFrame:
     # CRITICAL: Use ELISA flags for categorization, NOT total flags!
     df["flag_category"] = pd.cut(
         df["elisa_flags"],  # <-- ELISA-ONLY!
-        bins=[-0.5, 0.5, 3.5, 6.5],
-        labels=["specific", "mild", "non_specific"],
+        bins=FLAG_BINS,
+        labels=FLAG_CATEGORIES,
     )
 
     # Binary label: 0 = specific, 1 = non-specific, NaN = mild (excluded)

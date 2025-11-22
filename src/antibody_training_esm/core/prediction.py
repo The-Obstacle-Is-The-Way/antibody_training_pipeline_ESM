@@ -1,13 +1,15 @@
 import logging
 from pathlib import Path
-from typing import Any, cast
+from typing import cast
 
 import joblib
 import numpy as np
 import pandas as pd
 import torch
 from omegaconf import DictConfig
+from sklearn.linear_model import LogisticRegression
 
+from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.core.trainer import load_model_from_npz
@@ -50,10 +52,10 @@ class Predictor:
         self.config_path = config_path
 
         self._embedder: ESMEmbeddingExtractor | None = None
-        self._classifier: Any = None
+        self._classifier: BinaryClassifier | LogisticRegression | None = None
 
     @property
-    def classifier(self) -> Any:
+    def classifier(self) -> BinaryClassifier | LogisticRegression:
         """
         Lazy loads the classifier.
 
