@@ -196,6 +196,9 @@ theme = gr.themes.Soft(
     # Force white text on ALL blue/primary colored elements
     button_primary_text_color="#FFFFFF",
     button_primary_text_color_dark="#FFFFFF",
+    # CRITICAL: Override input label text color (for Dropdown, Slider, etc labels)
+    input_border_color_focus="#3B82F6",  # Blue border when focused
+    input_border_color_focus_dark="#3B82F6",
     # Align button background with labels (#3B82F6) and define standard hover (#2563EB)
     button_primary_background_fill="#3B82F6",
     button_primary_background_fill_dark="#3B82F6",
@@ -218,6 +221,21 @@ theme = gr.themes.Soft(
     table_row_focus_dark="#DBEAFE",
 )
 with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
+    # CRITICAL CSS FIX: Force white text on ALL blue label backgrounds
+    gr.HTML(
+        """
+        <style>
+            /* Force white text on all Gradio labels with blue backgrounds */
+            label, .label, [class*="label"] {
+                color: white !important;
+            }
+            /* But keep accordion titles dark */
+            .accordion button {
+                color: #374151 !important;
+            }
+        </style>
+        """
+    )
     # Header (inline styles to survive HF Spaces stripping)
     gr.HTML(
         """
