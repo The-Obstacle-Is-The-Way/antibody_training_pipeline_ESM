@@ -237,12 +237,15 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
         # Left Column: Inputs
         with gr.Column(scale=1):
             with gr.Group():
+                gr.HTML(
+                    '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Antibody Sequence (VH or VL)</div>'
+                )
                 sequence_input = gr.TextArea(
-                    label="Antibody Sequence (VH or VL)",
                     placeholder="Paste amino acid sequence here (e.g., QVQL...)",
                     lines=5,
                     max_lines=15,
                     show_copy_button=True,
+                    show_label=False,  # Disable built-in label
                 )
 
                 with gr.Accordion("⚙️ Advanced Settings", open=False), gr.Row():
