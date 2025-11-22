@@ -8,17 +8,14 @@ What the data shows:
 - When loaded with `JainDataset.load_data(stage="parity", sd03_csv_path=...)`, the pipeline removes ELISA 1–3 → reclassifies 5 → removes 30 by PSR/AC-SINS, yielding **86 rows (59 specific / 27 non-specific)**, matching the canonical Novo parity files.
 - `stage="ssot"` yields the expected **116 rows (94 / 22)** after ELISA 1–3 removal.
 
-Current mismatch:
-- `JainDataset.get_schema()` returns the strict production schema (`get_sequence_dataset_schema`) which forbids null labels. Calling `load_data()` with the default `stage="full"` on the 137-row file triggers Pandera validation errors because of the intentional NaNs.
-- The new integration test draft (`tests/integration/test_jain_stage_filtering.py`) will currently **skip** most checks because it points at non-existent file names (`Therapeutics_*.csv`). If those paths are corrected, the default `stage="full"` call will hit the Pandera error unless the schema handling is adjusted.
+Resolution (2025-11-22):
+- `JainDataset.load_data` now validates `stage` eagerly and selects schemas contextually:
+  - `stage="full"` → `get_jain_preprocessing_schema()` (nullable labels allowed).
+  - `stage="ssot"` / `stage="parity"` → strict `get_jain_schema()` (no nulls).
+- Integration test `tests/integration/test_jain_stage_filtering.py` now targets the real files and asserts the canonical counts: 137 (full), 116 (ssot), 86 (parity), plus the Novo class split (59/27) and invalid-stage error handling.
 
-Implications:
-- Training/inference paths that use `stage="ssot"` or `stage="parity"` are fine today (labels are non-null post-filtering).
-- Developer workflows that naively load the 137-row file with the default stage will fail validation, even though the NaNs are intentional and documented.
+Implications (post-fix):
+- Training/inference paths remain strict and safe.
+- Exploratory/full-stage loads succeed without Pandera crashes while preserving NaN labels for the mild ELISA rows.
 
-Recommended fixes (for the coding pass, not applied yet):
-1) Treat `stage="full"` as a preprocessing view: validate with a nullable schema (e.g., `get_preprocessing_schema()` plus Jain-specific columns) or skip validation until after ELISA filtering. Alternatively, change the default stage to `"ssot"` to avoid accidental validation on the NaN-bearing file.
-2) Align the integration test paths to the actual files (`jain_with_private_elisa_FULL.csv`, `jain_sd03.csv`, `VH_only_jain_86_p5e_s2.csv`) and explicitly set `stage` per expectation. This will surface the schema issue in CI and prevent silent skips.
-3) Document in the Jain dataset README that `stage="full"` contains NaNs by design and is not a training set; consumers should use `ssot` or `parity` unless they intentionally need the mild-flag rows.
-
-Status: No code changes made. NaNs are expected for ELISA 1–3. The only gap is the strict schema validation when loading the 137-row file with `stage="full"`.
+Status: Fixed. The NaN-bearing full stage is now handled explicitly; filtered stages remain strict. Keep using `ssot` or `parity` for modeling; use `full` only when you intentionally need the mild ELISA rows present as NaN.
