@@ -175,17 +175,25 @@ examples = [
 
 # --- Gradio Blocks App ---
 # Force Light Theme to prevent "Dark Mode" components on White Background
+# We explicitly set *_dark variables to match light variables to disable dark mode
 theme = gr.themes.Soft(
     primary_hue="blue",
     secondary_hue="slate",
 ).set(
     body_background_fill="#FFFFFF",
+    body_background_fill_dark="#FFFFFF",
     body_text_color="#111827",
+    body_text_color_dark="#111827",
     background_fill_primary="#FFFFFF",
+    background_fill_primary_dark="#FFFFFF",
     block_background_fill="#F9FAFB",
+    block_background_fill_dark="#F9FAFB",
     block_label_text_color="#374151",
+    block_label_text_color_dark="#374151",
     block_title_text_color="#374151",
+    block_title_text_color_dark="#374151",
     input_background_fill="#FFFFFF",
+    input_background_fill_dark="#FFFFFF",
 )
 with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
     # Header (inline styles to survive HF Spaces stripping)
