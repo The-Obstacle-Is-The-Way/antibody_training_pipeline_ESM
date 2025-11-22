@@ -246,20 +246,28 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
                 )
 
                 with gr.Accordion("⚙️ Advanced Settings", open=False), gr.Row():
-                    assay_input = gr.Dropdown(
-                        choices=["ELISA", "PSR", "None"],
-                        value="None",
-                        label="Calibrated Assay",
-                        info="Use threshold calibrated for specific assay",
-                    )
-                    threshold_input = gr.Slider(
-                        minimum=0.0,
-                        maximum=1.0,
-                        value=0.5,
-                        step=0.05,
-                        label="Decision Threshold",
-                        info="Probability cutoff for non-specificity",
-                    )
+                    with gr.Column():
+                        gr.HTML(
+                            '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Calibrated Assay</div>'
+                        )
+                        assay_input = gr.Dropdown(
+                            choices=["ELISA", "PSR", "None"],
+                            value="None",
+                            show_label=False,
+                            info="Use threshold calibrated for specific assay",
+                        )
+                    with gr.Column():
+                        gr.HTML(
+                            '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Decision Threshold</div>'
+                        )
+                        threshold_input = gr.Slider(
+                            minimum=0.0,
+                            maximum=1.0,
+                            value=0.5,
+                            step=0.05,
+                            show_label=False,
+                            info="Probability cutoff for non-specificity",
+                        )
 
             submit_btn = gr.Button(
                 "🔬 Predict Non-Specificity", variant="primary", size="lg"
@@ -287,13 +295,17 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
             )
 
             # Confidence Bar
-            confidence_output = gr.Label(
-                label="Model Confidence", num_top_classes=2, show_label=True
+            gr.HTML(
+                '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Model Confidence</div>'
             )
+            confidence_output = gr.Label(num_top_classes=2, show_label=False)
 
             # Detailed JSON
             with gr.Accordion("📋 Detailed JSON Output", open=False):
-                json_output = gr.JSON(label="Raw Result")
+                gr.HTML(
+                    '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Raw Result</div>'
+                )
+                json_output = gr.JSON(show_label=False)
 
     # Footer
     gr.HTML(
