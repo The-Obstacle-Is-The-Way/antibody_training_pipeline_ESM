@@ -28,11 +28,11 @@
 ```bash
 # 1. Test suite
 make test
-# Expected: ~556 passed, 20 deselected in ~90s
+# Expected: ~567 passed, 20 deselected in ~90s (coverage ~90%)
 
 # 2. Type checking
 make typecheck
-# Expected: Success: no issues found in 144 source files
+# Expected: Success: no issues found in 148 source files
 
 # 3. Lint
 make lint
@@ -93,14 +93,14 @@ print('✅ Pandera validation OK')
 make test-all
 
 # Expected output:
-# - ~556 tests passed
+# - ~567 tests passed
 # - ~20 deselected (e2e/slow/gpu)
 # - No failures or errors
-# - Coverage ≥ 70%
+# - Coverage ≥ 70% (current ~90%)
 
 # Run coverage report (if needed)
 make coverage
-# Expected: Coverage ≥ 70% (current: ~89%)
+# Expected: Coverage ≥ 70% (current: ~90%)
 ```
 
 ### Step 2: Preprocessing Pipeline Validation (10 min)
@@ -166,7 +166,7 @@ uv run antibody-train \
 ## Deep Validation (2 hours)
 
 **When to run:**
-- After completing Pydantic integration (Phases 1-3)
+- After completing Pydantic integration (Phases 1-4)
 - Before major releases
 - After significant refactoring of data loading/training pipelines
 
@@ -325,7 +325,7 @@ cat /tmp/production_run_metrics.txt
 
 ## Pydantic-Specific Validation
 
-**New checks introduced by Pydantic Phases 1-3:**
+**Checks introduced by Pydantic Phases 1-4:**
 
 ### Phase 1: Prediction Hardening
 ```bash
@@ -458,20 +458,20 @@ echo "If any FAIL → Investigate regression 🚨"
 
 ## Baseline Snapshots
 
-**Current Known-Good State (Post-Pydantic Phase 3):**
+**Current Known-Good State (Post-Pydantic Phase 4):**
 
 ```bash
 # Test Results (as of 2025-11-21)
-Tests passing: 556
+Tests passing: 567
 Tests deselected: 20
 Test duration: ~90s
-Coverage: 89.20% (make test)
+Coverage: ~90% (make test)
 
 # Data Structure
-boughter/canonical/VH_only_boughter_training.csv: 915 lines
-jain/canonical/VH_only_jain_86_p5e_s2.csv: 87 lines
-shehata/processed/shehata.csv: 399 lines
-harvey/fragments/VHH_only_harvey.csv: ~141,000 lines
+boughter/canonical/VH_only_boughter_training.csv: 915 lines (914 sequences)
+jain/canonical/VH_only_jain_86_p5e_s2.csv: 87 lines (86 antibodies)
+shehata/processed/shehata.csv: 399 lines (398 antibodies)
+harvey/fragments/VHH_only_harvey.csv: 141,022 lines
 
 # Benchmark Metrics (Authoritative)
 Jain accuracy: 66.28% (Novo parity)
@@ -556,7 +556,7 @@ Phase 4 (Artifacts & Metrics): ✅ COMPLETE
 2. ✅ Added batch size independence test (your concern!)
 3. ✅ Added dtype verification (Pandera coercion check)
 4. ✅ Added benchmark validation (gold standard comparison)
-5. ✅ Updated test counts (~556 tests, ~89% coverage)
+5. ✅ Updated test counts (~567 tests, ~90% coverage)
 6. ✅ Added Pydantic-specific validation sections
 7. ✅ Removed outdated pre-Pydantic baseline references
 8. ✅ Added Phase 4 artifact imports to smoke tests
