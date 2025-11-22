@@ -8,7 +8,7 @@
 ## 🎯 Executive Summary
 
 **Audit Baseline (corrected):** 8 issues (1 P1, 5 P2, 2 P3)
-**Verification Status:** ✅ **Issues confirmed; counts corrected (sequence preview appears in 3 places, not 4)**
+**Verification Status:** ✅ **Issues confirmed; counts corrected (sequence preview appears in 5 places)**
 **Critical Finding:** The sys.path hack and type gap are real; remaining items are quality polish/tech debt
 
 **Action Required:** Fix 3 high-impact issues immediately, defer the low-impact backlog items
@@ -25,7 +25,7 @@
 
 ### P2 Issues - All VERIFIED ✓
 **Magic numbers:** CONFIRMED scattered
-- ✅ `50` for sequence preview (3 locations: embeddings x2, CLI output)
+- ✅ `50` for sequence preview (5 locations: embeddings x4, CLI output x1)
 - ✅ `59, 27, 86, 57` Novo parity constants (multiple files)
 - ✅ `[-0.5, 0.5, 3.5, 6.5]` ELISA flag bins (preprocessing)
 - ✅ `60` for log separator width
@@ -115,7 +115,7 @@ def classifier(self) -> BinaryClassifier | LogisticRegression:
 ---
 
 #### 3. Extract Sequence Preview Constant 📐 MEDIUM
-**Files:** `src/antibody_training_esm/core/embeddings.py:126,137` + `cli/predict.py:41`
+**Files:** `src/antibody_training_esm/core/embeddings.py` (4 places) + `cli/predict.py:41`
 **Issue:** Magic number `50` scattered across codebase
 **Priority:** P2
 **Effort:** 10 minutes
@@ -139,8 +139,10 @@ sequence[:SEQUENCE_PREVIEW_LENGTH]
 ```
 
 **Locations to update:**
-- `src/antibody_training_esm/core/embeddings.py:126` (error log)
+- `src/antibody_training_esm/core/embeddings.py:109` (error log)
 - `src/antibody_training_esm/core/embeddings.py:137` (seq_preview variable)
+- `src/antibody_training_esm/core/embeddings.py:199` (invalid seq context)
+- `src/antibody_training_esm/core/embeddings.py:260` (zero mask context)
 - `src/antibody_training_esm/cli/predict.py:41` (result output)
 
 **Impact:** Single source of truth for formatting constant

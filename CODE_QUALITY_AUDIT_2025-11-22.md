@@ -119,21 +119,22 @@ self._classifier: BinaryClassifier | LogisticRegression | None = None
 ### 3. Magic Numbers - Sequence Preview Length
 
 **Locations:**
-- `src/antibody_training_esm/core/embeddings.py:125-138` (error context)
-- `src/antibody_training_esm/cli/predict.py:39-44` (CLI output)
+- `src/antibody_training_esm/core/embeddings.py:109` (error context)
+- `src/antibody_training_esm/core/embeddings.py:137` (seq_preview variable)
+- `src/antibody_training_esm/core/embeddings.py:199` (invalid sequence context)
+- `src/antibody_training_esm/core/embeddings.py:260` (zero mask context)
+- `src/antibody_training_esm/cli/predict.py:41` (CLI output)
 
 ```python
 f"Sequence preview: '{sequence[:50]}...'"
 seq_preview = sequence[:50] + "..." if len(sequence) > 50 else sequence
-print(
-    f"Sequence: {result.sequence[:50]}..."
-    if len(result.sequence) > 50
-    else f"Sequence: {result.sequence}"
-)
+invalid_sequences.append((global_idx, seq[:50], reason))
+bad_seqs = [cleaned_sequences[i.item()][:50] for i in zero_mask_indices[:3]]
+print(f"Sequence: {result.sequence[:50]}..." ...)
 ```
 
 **Problem:**
-- Hard-coded `50` scattered across error messages
+- Hard-coded `50` scattered across 5 locations in error messages and outputs
 - Inconsistent if different values used elsewhere
 - No central source of truth
 
