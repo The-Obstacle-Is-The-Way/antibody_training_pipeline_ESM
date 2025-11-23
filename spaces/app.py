@@ -217,7 +217,11 @@ theme = gr.themes.Soft(
     table_row_focus="#DBEAFE",
     table_row_focus_dark="#DBEAFE",
 )
-with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
+with gr.Blocks(
+    theme=theme,
+    title="Antibody Predictor",
+    css="#examples-table .label { display: none !important; } #examples-table { margin-top: 0 !important; }",
+) as app:
     # Header (inline styles to survive HF Spaces stripping)
     gr.HTML(
         """
@@ -282,6 +286,7 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
                 examples=examples,
                 inputs=[sequence_input, threshold_input, assay_input],
                 label=None,
+                elem_id="examples-table",
             )
 
         # Right Column: Outputs
