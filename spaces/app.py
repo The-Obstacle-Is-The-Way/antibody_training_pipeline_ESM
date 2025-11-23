@@ -275,10 +275,12 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
             )
 
             # Examples
+            gr.HTML(
+                '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: block; margin-bottom: 4px;">Load Example Data</div>'
+            )
             gr.Examples(
                 examples=examples,
                 inputs=[sequence_input, threshold_input, assay_input],
-                label="Load Example Data",
             )
 
         # Right Column: Outputs
