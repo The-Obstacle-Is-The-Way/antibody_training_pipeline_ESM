@@ -281,6 +281,7 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
             gr.Examples(
                 examples=examples,
                 inputs=[sequence_input, threshold_input, assay_input],
+                label=None,
             )
 
         # Right Column: Outputs
