@@ -276,7 +276,7 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
 
             # Examples
             gr.HTML(
-                '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: block; margin-bottom: 4px;">Load Example Data</div>'
+                '<div style="background-color: #1E40AF; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: block; margin-bottom: 4px;">Load Example Data</div>'
             )
             gr.Examples(
                 examples=examples,
@@ -299,14 +299,14 @@ with gr.Blocks(theme=theme, title="Antibody Predictor") as app:
 
             # Confidence Bar
             gr.HTML(
-                '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Model Confidence</div>'
+                '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: block; margin-bottom: 4px;">Model Confidence</div>'
             )
             confidence_output = gr.Label(num_top_classes=2, show_label=False)
 
             # Detailed JSON
             with gr.Accordion("📋 Detailed JSON Output", open=False):
                 gr.HTML(
-                    '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: inline-block; margin-bottom: 4px;">Raw Result</div>'
+                    '<div style="background-color: #3B82F6; color: white; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.875rem; display: block; margin-bottom: 4px;">Raw Result</div>'
                 )
                 json_output = gr.JSON(show_label=False)
 
