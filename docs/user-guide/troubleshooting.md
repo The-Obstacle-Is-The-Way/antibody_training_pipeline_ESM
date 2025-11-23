@@ -78,6 +78,48 @@ sudo chown -R $USER:$USER .venv
 
 ---
 
+### HuggingFace Cache Permission Denied (Linux/WSL2)
+
+**Symptoms:**
+
+```bash
+OSError: PermissionError at /home/user/.cache/huggingface/hub when downloading facebook/esm1v_t33_650M_UR90S_1
+```
+
+Or test failures with:
+
+```bash
+E   PermissionError: [Errno 13] Permission denied: '/home/user/.cache/huggingface/hub'
+```
+
+**Root Cause:**
+
+The HuggingFace cache directory was created by a different user (often `root`) or has incorrect permissions.
+
+**Solution:**
+
+```bash
+# Fix cache ownership (replace 'user' with your username)
+sudo chown -R $USER:$USER ~/.cache/huggingface
+
+# OR - Delete and recreate the cache directory
+rm -rf ~/.cache/huggingface
+mkdir -p ~/.cache/huggingface
+```
+
+**Verify:**
+
+```bash
+ls -la ~/.cache/huggingface
+# Should show your username, not 'root'
+```
+
+**Prevention:**
+
+Never run model downloads with `sudo`. Use `uv run` commands as your regular user.
+
+---
+
 ## GPU / Hardware Issues
 
 ### MPS Memory Issues (Apple Silicon)

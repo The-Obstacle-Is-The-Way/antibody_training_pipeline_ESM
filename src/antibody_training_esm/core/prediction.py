@@ -280,10 +280,12 @@ class Predictor:
         Select the best available device.
 
         Prioritizes CUDA, then MPS (macOS), then CPU.
+        Handles "auto" as explicit device resolution request.
         """
-        if device:
+        if device and device != "auto":
             return device
 
+        # Auto-detect best available device
         if torch.cuda.is_available():
             return "cuda"
         if torch.backends.mps.is_available():

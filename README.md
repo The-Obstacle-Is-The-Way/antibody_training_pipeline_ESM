@@ -125,20 +125,28 @@ pip install uv
 ```
 3. Set up the project
 
+**Recommended (all platforms):**
+```bash
+# This runs 'uv sync --all-extras' to install ALL dependencies (including dev tools)
+make install
+```
+
+**Manual setup:**
+
 - *On Linux/macOS*
 ```bash
 uv venv
 source .venv/bin/activate
-
-uv sync --all-extras
+uv sync --all-extras  # Install all dependencies
 ```
 - *On Windows*
 ```bash
 uv venv
 venv\Scripts\activate
-
-uv sync --all-extras
+uv sync --all-extras  # Install all dependencies
 ```
+
+**Important:** Always use `make install` or `uv sync --all-extras` to ensure dev dependencies (pytest, mypy, etc.) are installed. Plain `uv sync` will skip them.
 
 ---
 

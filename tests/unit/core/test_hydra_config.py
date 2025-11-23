@@ -66,7 +66,7 @@ def test_config_loads() -> None:
         assert cfg.training.batch_size == 8
 
         # Verify hardware config
-        assert cfg.hardware.device == "mps"
+        assert cfg.hardware.device == "auto"  # Auto-detect: CUDA > MPS > CPU
         assert cfg.hardware.gpu_memory_fraction == 0.8
 
         # Verify experiment config
