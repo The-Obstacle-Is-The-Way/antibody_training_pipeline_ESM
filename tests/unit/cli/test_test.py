@@ -660,11 +660,13 @@ def test_device_mismatch_recreates_extractor(
         device="cuda",  # Different from model's CPU
     )
 
-    tester = ModelTester(test_config)
+    # MOCK CUDA availability so resolve_device doesn't fail
+    with patch("torch.cuda.is_available", return_value=True):
+        tester = ModelTester(test_config)
 
-    # Act - Load model (triggers device mismatch check)
-    caplog.set_level(logging.INFO)
-    model = tester.load_model(str(model_path))
+        # Act - Load model (triggers device mismatch check)
+        caplog.set_level(logging.INFO)
+        model = tester.load_model(str(model_path))
 
     # Assert - REAL cleanup executed (lines 146-171)
     assert "Device mismatch" in caplog.text

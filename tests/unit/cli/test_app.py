@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import gradio as gr
 import pytest
-from hydra import compose, initialize
+from hydra import compose, initialize_config_module
 
 from antibody_training_esm.cli.app import launch_gradio_app, main
 from antibody_training_esm.models.prediction import PredictionRequest, PredictionResult
@@ -31,8 +31,8 @@ def test_launch_gradio_app(
     classifier_path = tmp_path / "model.pkl"
     classifier_path.touch()
 
-    with initialize(
-        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    with initialize_config_module(
+        config_module="antibody_training_esm.conf", version_base=None
     ):
         cfg = compose(
             config_name="predict",
@@ -107,8 +107,8 @@ def test_main(mock_launch_gradio_app: MagicMock, tmp_path: Path) -> None:
     classifier_path = tmp_path / "model.pkl"
     classifier_path.touch()
 
-    with initialize(
-        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    with initialize_config_module(
+        config_module="antibody_training_esm.conf", version_base=None
     ):
         cfg = compose(
             config_name="predict",
@@ -123,8 +123,8 @@ def test_launch_gradio_app_no_classifier_path() -> None:
     """
     Tests that the Gradio app raises a ValueError when no classifier path is provided.
     """
-    with initialize(
-        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    with initialize_config_module(
+        config_module="antibody_training_esm.conf", version_base=None
     ):
         cfg = compose(config_name="predict")
         with pytest.raises(ValueError):
@@ -135,8 +135,8 @@ def test_launch_gradio_app_classifier_not_found(tmp_path: Path) -> None:
     """
     Tests that the Gradio app raises a FileNotFoundError when the classifier is not found.
     """
-    with initialize(
-        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    with initialize_config_module(
+        config_module="antibody_training_esm.conf", version_base=None
     ):
         cfg = compose(
             config_name="predict",
@@ -168,8 +168,8 @@ def test_launch_gradio_app_mac_mps_handling(
     classifier_path.touch()
 
     # Load config requesting MPS
-    with initialize(
-        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    with initialize_config_module(
+        config_module="antibody_training_esm.conf", version_base=None
     ):
         cfg = compose(
             config_name="predict",
@@ -201,8 +201,8 @@ def test_launch_gradio_app_with_npz_config(
     classifier_path.touch()
     config_path.touch()
 
-    with initialize(
-        config_path="../../../src/antibody_training_esm/conf", version_base=None
+    with initialize_config_module(
+        config_module="antibody_training_esm.conf", version_base=None
     ):
         cfg = compose(
             config_name="predict",

@@ -1,7 +1,7 @@
 """Integration tests for Pydantic config + trainer."""
 
 import pytest
-from hydra import compose, initialize
+from hydra import compose, initialize_config_module
 from pydantic import ValidationError
 
 from antibody_training_esm.core.trainer import validate_config
@@ -11,8 +11,8 @@ from antibody_training_esm.models.config import TrainingPipelineConfig
 def test_hydra_config_validates_with_pydantic() -> None:
     """Actual Hydra config.yaml validates successfully."""
 
-    with initialize(
-        config_path="../../src/antibody_training_esm/conf", version_base=None
+    with initialize_config_module(
+        config_module="antibody_training_esm.conf", version_base=None
     ):
         cfg = compose(config_name="config")
 
@@ -32,8 +32,8 @@ def test_hydra_config_validates_with_pydantic() -> None:
 def test_invalid_hydra_override_caught() -> None:
     """Invalid Hydra override raises ValidationError."""
 
-    with initialize(
-        config_path="../../src/antibody_training_esm/conf", version_base=None
+    with initialize_config_module(
+        config_module="antibody_training_esm.conf", version_base=None
     ):
         cfg = compose(
             config_name="config",
