@@ -63,8 +63,8 @@ Examples:
     )
     parser.add_argument(
         "--device",
-        choices=["cpu", "cuda", "mps"],
-        help="Device to use for inference (overrides config)",
+        choices=["cpu", "cuda", "mps", "auto"],
+        help="Device to use for inference: auto (CUDA > MPS > CPU), or explicit (overrides config)",
     )
     parser.add_argument(
         "--batch-size",
