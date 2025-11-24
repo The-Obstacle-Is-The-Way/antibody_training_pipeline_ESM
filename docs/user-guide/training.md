@@ -73,7 +73,7 @@ experiment:
   name: "boughter_novo_reproduction"
 
 hardware:
-  device: "mps"               # Default (auto-detects CUDA/MPS in code)
+  device: "auto"              # Auto-detects CUDA > MPS > CPU
 ```
 
 **Note:** With Hydra, you can override any parameter from CLI without editing files:

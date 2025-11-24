@@ -17,12 +17,14 @@ def predict_sequence_cli(
 ) -> None:
     """CLI prediction with Pydantic validation."""
     config_path = getattr(cfg.classifier, "config_path", None)
+    requested_device = getattr(getattr(cfg, "hardware", None), "device", None)
 
     # Instantiate predictor (loading model)
     try:
         predictor = Predictor(
             model_name=cfg.model.name,
             classifier_path=cfg.classifier.path,
+            device=requested_device,
             config_path=config_path,
         )
     except Exception as e:

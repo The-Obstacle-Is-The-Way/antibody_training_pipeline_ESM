@@ -18,6 +18,7 @@ from sklearn.model_selection import KFold, StratifiedKFold, cross_validate
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
+from antibody_training_esm.core.device import resolve_device
 from antibody_training_esm.models.artifact import CVResults, EvaluationMetrics
 
 if TYPE_CHECKING:
@@ -105,7 +106,7 @@ def perform_cross_validation(
         random_state = config.training.random_state
         stratify = config.training.stratify
         model_name = config.model.name
-        device = config.model.device
+        device = resolve_device(config.model.device)
         batch_size = config.model.batch_size
 
         clf_params = config.classifier.model_dump()
@@ -121,7 +122,7 @@ def perform_cross_validation(
 
         model_cfg = config.get("model", {})
         model_name = model_cfg.get("name", "")
-        device = model_cfg.get("device", "cpu")
+        device = resolve_device(model_cfg.get("device", "cpu"))
         batch_size = training_conf.get(
             "batch_size", model_cfg.get("batch_size", DEFAULT_BATCH_SIZE)
         )

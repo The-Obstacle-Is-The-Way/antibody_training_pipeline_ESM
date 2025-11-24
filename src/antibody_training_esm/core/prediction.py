@@ -5,12 +5,12 @@ from typing import cast
 import joblib
 import numpy as np
 import pandas as pd
-import torch
 from omegaconf import DictConfig
 from sklearn.linear_model import LogisticRegression
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
+from antibody_training_esm.core.device import resolve_device
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.core.training.serialization import load_model_from_npz
 from antibody_training_esm.models.prediction import (
@@ -282,15 +282,7 @@ class Predictor:
         Prioritizes CUDA, then MPS (macOS), then CPU.
         Handles "auto" as explicit device resolution request.
         """
-        if device and device != "auto":
-            return device
-
-        # Auto-detect best available device
-        if torch.cuda.is_available():
-            return "cuda"
-        if torch.backends.mps.is_available():
-            return "mps"
-        return "cpu"
+        return resolve_device(device)
 
 
 def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
@@ -306,9 +298,12 @@ def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
     """
     config_path = getattr(cfg.classifier, "config_path", None)
 
+    requested_device = getattr(getattr(cfg, "hardware", None), "device", None)
+
     predictor = Predictor(
         model_name=cfg.model.name,
         classifier_path=cfg.classifier.path,
+        device=requested_device,
         config_path=config_path,
     )
 

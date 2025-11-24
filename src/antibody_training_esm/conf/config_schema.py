@@ -96,7 +96,7 @@ class TrainingConfig:
 class HardwareConfig:
     """Hardware settings"""
 
-    device: str = "mps"
+    device: str = "auto"
     gpu_memory_fraction: float = 0.8
     clear_cache_frequency: int = 100
 
