@@ -7,7 +7,7 @@ Tests type safety, schema validation, and MISSING field enforcement.
 from collections.abc import Generator
 
 import pytest
-from hydra import compose, initialize
+from hydra import compose, initialize_config_module
 from hydra.core.global_hydra import GlobalHydra
 from hydra.errors import ConfigCompositionException
 
@@ -31,8 +31,8 @@ def cleanup_hydra() -> Generator[None, None, None]:
 @pytest.mark.unit
 def test_structured_config_type_validation() -> None:
     """Test that type validation works"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         # This should work (correct type)
         cfg = compose(
@@ -52,8 +52,8 @@ def test_structured_config_type_validation() -> None:
 @pytest.mark.unit
 def test_structured_config_missing_fields_have_defaults() -> None:
     """Test that all required fields have defaults or are marked MISSING"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(config_name="config")
 
@@ -71,8 +71,8 @@ def test_structured_config_missing_fields_have_defaults() -> None:
 @pytest.mark.unit
 def test_structured_config_field_completeness() -> None:
     """Test that all fields from current codebase are present in schema"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(config_name="config")
 
@@ -99,8 +99,8 @@ def test_structured_config_field_completeness() -> None:
 @pytest.mark.unit
 def test_structured_config_interpolation_works() -> None:
     """Test that config interpolation still works with structured configs"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(
             config_name="config",
@@ -127,8 +127,8 @@ def test_structured_config_schema_registration() -> None:
 @pytest.mark.unit
 def test_structured_config_preserves_yaml_values() -> None:
     """Test that structured configs don't override YAML values"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(config_name="config")
 
@@ -143,8 +143,8 @@ def test_structured_config_enforces_types() -> None:
     """Test that configs provide correct types from YAML"""
     from omegaconf import ListConfig
 
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(config_name="config")
 
@@ -170,8 +170,8 @@ def test_structured_config_enforces_types() -> None:
 def test_structured_config_rejects_unknown_keys() -> None:
     """Test that struct mode rejects unknown fields (NEGATIVE TEST)"""
     with (
-        initialize(
-            version_base=None, config_path="../../../src/antibody_training_esm/conf"
+        initialize_config_module(
+            version_base=None, config_module="antibody_training_esm.conf"
         ),
         pytest.raises(ConfigCompositionException),
     ):
