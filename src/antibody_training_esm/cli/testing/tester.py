@@ -20,6 +20,7 @@ from antibody_training_esm.cli.testing.visualization import (
 )
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
+from antibody_training_esm.core.device import resolve_device
 from antibody_training_esm.core.directory_utils import (
     extract_classifier_shortname,
     extract_model_shortname,
@@ -33,6 +34,10 @@ class ModelTester:
 
     def __init__(self, config: TestConfig):
         self.config = config
+
+        # Resolve device (handles "auto" and validates explicit devices)
+        self.config.device = resolve_device(self.config.device)
+
         self.logger = self._setup_logging()
         self.results: dict[str, Any] = {}
         self.cached_embedding_files: list[str] = []  # Track cached files for cleanup

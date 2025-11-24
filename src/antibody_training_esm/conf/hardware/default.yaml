@@ -1,5 +1,6 @@
 # Hardware configuration
-# Default to MPS for macOS performance (training/testing); Gradio app handles stability fallback
-device: mps
+# Auto-detect best available device: CUDA (NVIDIA) > MPS (Apple Silicon) > CPU
+# Override with: antibody-train hardware.device=cuda (or cpu/mps)
+device: auto
 gpu_memory_fraction: 0.8
 clear_cache_frequency: 100

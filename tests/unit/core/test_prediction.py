@@ -70,6 +70,7 @@ def test_predictor_reuses_embedder(sample_input_df: pd.DataFrame) -> None:
         patch(
             "antibody_training_esm.core.prediction.ESMEmbeddingExtractor"
         ) as mock_embedder_cls,
+        patch("torch.cuda.is_available", return_value=False),
         patch("torch.backends.mps.is_available", return_value=True),
     ):
         # Setup mock classifier WITH an embedding_extractor

@@ -7,7 +7,7 @@ Tests Hydra config loading, composition, and overrides.
 from collections.abc import Generator
 
 import pytest
-from hydra import compose, initialize
+from hydra import compose, initialize_config_module
 from hydra.core.global_hydra import GlobalHydra
 
 
@@ -21,10 +21,9 @@ def cleanup_hydra() -> Generator[None, None, None]:
 @pytest.mark.unit
 def test_config_loads() -> None:
     """Test that Hydra config loads without errors"""
-    # Use relative path from test file location to config directory
-    # tests/unit/core/test_hydra_config.py -> src/antibody_training_esm/conf
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    # Use absolute module path instead of relative file path
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(config_name="config")
 
@@ -66,7 +65,7 @@ def test_config_loads() -> None:
         assert cfg.training.batch_size == 8
 
         # Verify hardware config
-        assert cfg.hardware.device == "mps"
+        assert cfg.hardware.device == "auto"  # Auto-detect: CUDA > MPS > CPU
         assert cfg.hardware.gpu_memory_fraction == 0.8
 
         # Verify experiment config
@@ -77,8 +76,8 @@ def test_config_loads() -> None:
 @pytest.mark.unit
 def test_config_overrides() -> None:
     """Test that Hydra overrides work"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(
             config_name="config",
@@ -97,8 +96,8 @@ def test_config_overrides() -> None:
 @pytest.mark.unit
 def test_config_interpolation() -> None:
     """Test that config interpolation works"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(
             config_name="config",
@@ -115,8 +114,8 @@ def test_config_interpolation() -> None:
 @pytest.mark.unit
 def test_config_completeness() -> None:
     """Test that all required fields from current trainer.py are present"""
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(config_name="config")
 

@@ -17,7 +17,7 @@ from unittest.mock import patch
 
 import pandas as pd
 import pytest
-from hydra import compose, initialize
+from hydra import compose, initialize_config_module
 from hydra.core.global_hydra import GlobalHydra
 
 from antibody_training_esm.core.trainer import train_pipeline
@@ -62,8 +62,8 @@ def test_train_pipeline_accepts_dictconfig(
     train_csv, df = mock_training_data
 
     # Initialize Hydra and compose config (relative path required)
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(
             config_name="config",
@@ -121,8 +121,8 @@ def test_train_pipeline_uses_hydra_output_dir_for_logging(
     hydra_output_dir = tmp_path / "experiments/runs"
 
     # Initialize Hydra with custom output dir
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(
             config_name="config",
@@ -166,8 +166,8 @@ def test_train_pipeline_preserves_embeddings_cache(
     train_csv, df = mock_training_data
     cache_dir = tmp_path / "cache"
 
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(
             config_name="config",
@@ -210,8 +210,8 @@ def test_train_pipeline_with_model_saving_enabled(
     train_csv, df = mock_training_data
     model_dir = tmp_path / "models"
 
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(
             config_name="config",
@@ -256,8 +256,8 @@ def test_train_pipeline_returns_structured_results(
     # Arrange
     train_csv, df = mock_training_data
 
-    with initialize(
-        version_base=None, config_path="../../../src/antibody_training_esm/conf"
+    with initialize_config_module(
+        version_base=None, config_module="antibody_training_esm.conf"
     ):
         cfg = compose(
             config_name="config",

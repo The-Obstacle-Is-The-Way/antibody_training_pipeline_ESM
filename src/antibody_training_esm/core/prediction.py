@@ -5,12 +5,12 @@ from typing import cast
 import joblib
 import numpy as np
 import pandas as pd
-import torch
 from omegaconf import DictConfig
 from sklearn.linear_model import LogisticRegression
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
+from antibody_training_esm.core.device import resolve_device
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 from antibody_training_esm.core.training.serialization import load_model_from_npz
 from antibody_training_esm.models.prediction import (
@@ -43,7 +43,9 @@ class Predictor:
         Args:
             model_name: The name of the ESM model to use (e.g. 'facebook/esm1v_t33_650M_UR90S_1').
             classifier_path: Path to the trained scikit-learn classifier (pickle/joblib file) or NPZ weights.
-            device: The device to run the model on ('cpu' or 'cuda'). If None, auto-detects.
+            device: Requested device ('cpu', 'cuda', 'mps', or 'auto').
+                If None or 'auto', the best available device is selected
+                (preferring CUDA, then MPS, else CPU).
             config_path: Path to the JSON config file (required if classifier_path is .npz).
         """
         self.device = self._select_device(device)
@@ -280,15 +282,9 @@ class Predictor:
         Select the best available device.
 
         Prioritizes CUDA, then MPS (macOS), then CPU.
+        Handles "auto" as explicit device resolution request.
         """
-        if device:
-            return device
-
-        if torch.cuda.is_available():
-            return "cuda"
-        if torch.backends.mps.is_available():
-            return "mps"
-        return "cpu"
+        return resolve_device(device)
 
 
 def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
@@ -304,9 +300,15 @@ def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
     """
     config_path = getattr(cfg.classifier, "config_path", None)
 
+    # Respect explicit model.device override; fall back to hardware.device
+    requested_device = getattr(cfg.model, "device", None) or getattr(
+        getattr(cfg, "hardware", None), "device", None
+    )
+
     predictor = Predictor(
         model_name=cfg.model.name,
         classifier_path=cfg.classifier.path,
+        device=requested_device,
         config_path=config_path,
     )
 

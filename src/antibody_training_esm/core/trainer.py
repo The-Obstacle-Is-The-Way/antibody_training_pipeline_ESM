@@ -7,7 +7,7 @@ Includes cross-validation, embedding caching, and comprehensive evaluation.
 
 import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, cast
 
 import hydra
 import numpy as np
@@ -15,6 +15,7 @@ from omegaconf import DictConfig
 
 from antibody_training_esm.core.classifier import BinaryClassifier
 from antibody_training_esm.core.config import LOG_SEPARATOR_WIDTH
+from antibody_training_esm.core.device import resolve_device
 
 # Import and re-export from submodules
 from antibody_training_esm.core.training.cache import (
@@ -124,10 +125,20 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
 
         logger.info(f"Loaded {len(X_train)} training samples")
 
+        # Resolve device (handles auto + explicit availability validation)
+        device = resolve_device(config.model.device)
+        config.model.device = cast(
+            Literal["cpu", "cuda", "mps", "auto"], device
+        )  # Persist resolved device
+        if config.hardware and isinstance(config.hardware, dict):
+            # Keep hardware section in sync when present
+            config.hardware["device"] = device
+        logger.info(f"Using device: {device}")
+
         # Initialize classifier
         classifier_params = {
             "model_name": config.model.name,
-            "device": config.model.device,
+            "device": device,  # Use resolved device
             "batch_size": config.model.batch_size,
             "revision": config.model.revision,
             # Classifier strategy params

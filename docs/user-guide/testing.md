@@ -73,7 +73,7 @@ data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"  # Fragment file
 
 output_dir: "./experiments/benchmarks"
-device: "mps"   # Default; override with "cpu" or "cuda" as needed
+device: "auto"  # Auto-detects CUDA > MPS > CPU; override if needed
 batch_size: 32  # Default embedding batch size
 ```
 
@@ -233,7 +233,7 @@ data_paths:
 sequence_column: "vh_sequence"  # Override for canonical file
 label_column: "label"
 output_dir: "./experiments/benchmarks"
-device: "mps"
+device: "auto"
 batch_size: 32
 ```
 
@@ -375,7 +375,7 @@ data_paths:
   - "data/test/shehata/fragments/VH_only_shehata.csv"
 
 output_dir: "./experiments/benchmarks"
-device: "mps"
+device: "auto"
 batch_size: 32
 
 # PSR assay-specific threshold

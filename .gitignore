@@ -33,6 +33,7 @@ venv.bak/
 # IDE
 .vscode/
 .idea/
+.claude/
 *.swp
 *.swo
 *~
@@ -44,6 +45,9 @@ htmlcov/
 .tox/
 .nox/
 *.cover  # Coverage annotation files
+
+# Docker
+docker-compose.override.yml
 
 # Test results (TRACKED - convenience for research repo)
 # test_results/*

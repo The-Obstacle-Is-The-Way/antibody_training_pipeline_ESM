@@ -1,4 +1,4 @@
-.PHONY: install test coverage lint format typecheck hooks all clean help train docs docs-serve docs-build docs-clean
+.PHONY: install test coverage lint format typecheck hooks all clean help train docs docs-serve docs-build docs-clean docker-dev docker-prod
 
 help:
 	@echo "Available commands:"
@@ -13,6 +13,8 @@ help:
 	@echo "  make coverage     - Run tests with coverage report (requires unit tests)"
 	@echo "  make all          - Run format, lint, typecheck, and test"
 	@echo "  make train        - Run training pipeline"
+	@echo "  make docker-dev   - Start dev container (auto-detects GPU)"
+	@echo "  make docker-prod  - Start prod container (auto-detects GPU)"
 	@echo "  make docs-serve   - Serve documentation locally with live reload"
 	@echo "  make docs-build   - Build documentation to site/ directory"
 	@echo "  make docs-clean   - Remove generated documentation"
@@ -49,6 +51,27 @@ all: format lint typecheck test
 
 train:
 	uv run antibody-train
+
+# Docker Smart Launchers
+docker-dev:
+	@if command -v nvidia-smi >/dev/null 2>&1; then \
+		echo "🚀 NVIDIA GPU detected! Launching with GPU support..."; \
+		docker compose -f docker-compose.yml -f docker-compose.gpu.yml run --rm dev; \
+	else \
+		echo "💻 No NVIDIA GPU detected (or macOS). Launching in CPU mode..."; \
+		docker compose run --rm dev; \
+	fi
+
+
+docker-prod:
+	@if command -v nvidia-smi >/dev/null 2>&1; then \
+		echo "🚀 NVIDIA GPU detected! Launching with GPU support..."; \
+		docker compose -f docker-compose.yml -f docker-compose.gpu.yml run --rm prod; \
+	else \
+		echo "💻 No NVIDIA GPU detected (or macOS). Launching in CPU mode..."; \
+		docker compose run --rm prod; \
+	fi
+
 
 docs-serve:
 	uv run mkdocs serve

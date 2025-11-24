@@ -12,6 +12,7 @@ import torch
 from omegaconf import DictConfig
 from pydantic import ValidationError
 
+from antibody_training_esm.core.device import resolve_device
 from antibody_training_esm.core.prediction import Predictor
 from antibody_training_esm.models.prediction import PredictionRequest
 
@@ -39,14 +40,14 @@ def launch_gradio_app(cfg: DictConfig) -> None:
     # 1. Determine the optimal device for inference
     #    - Prefer CUDA if available (Linux/Windows GPU boxes)
     #    - Force CPU on macOS if MPS is detected to avoid Gradio+MPS SegFaults
-    #    - Default to configured value otherwise
-    device = cfg.model.get("device", "cpu")
-
-    if platform.system() == "Darwin" and device == "mps":
-        logger.warning(
-            "macOS detected. Forcing CPU for Gradio app stability (MPS workaround)."
-        )
-        device = "cpu"
+    # Respect explicit model.device override; fall back to hardware.device
+    requested_device = getattr(cfg.model, "device", None) or getattr(
+        getattr(cfg, "hardware", None), "device", None
+    )
+    # Force CPU when macOS + mps requested to avoid Gradio+MPS crashes
+    if platform.system() == "Darwin" and requested_device == "mps":
+        requested_device = "cpu"
+    device = resolve_device(requested_device)
 
     # 2. Configure Threading to prevent OpenMP SegFaults on macOS
     #    - On macOS/CPU, PyTorch's OpenMP runtime can crash inside Gradio threads.

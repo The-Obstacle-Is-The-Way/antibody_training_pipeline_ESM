@@ -26,7 +26,7 @@
 
 <div style="color: white;">
 
-This repository provides a machine learning pipeline to predict the non-specificity of antibodies using embeddings from the ESM-1v Protein Language Model(PLM). The project is an implementation of the methods described in the paper *"Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters"* by Sakhnini et al.
+This repository provides a machine learning pipeline to predict the non-specificity of antibodies using embeddings from the ESM-1v Protein Language Model(PLM). The project is an implementation of the methods described in the paper "*Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters*" by Sakhnini et al.
 
 </div>
 
@@ -67,7 +67,7 @@ This hybrid approach combines the deep contextual understanding of a PLM with th
      - Run `make train` (see [`docs/user-guide/training.md`](docs/user-guide/training.md)).
      - Download a published checkpoint.
      
-     *Supported formats:* 
+     *Supported formats:*
      - **Development**: `.pkl` (Pickle)
      - **Production**: `.npz` (NumPy arrays) + `_config.json` (Metadata)
 
@@ -125,20 +125,28 @@ pip install uv
 ```
 3. Set up the project
 
+**Recommended (all platforms):**
+```bash
+# This runs 'uv sync --all-extras' to install ALL dependencies (including dev tools)
+make install
+```
+
+**Manual setup:**
+
 - *On Linux/macOS*
 ```bash
 uv venv
 source .venv/bin/activate
-
-uv sync --all-extras
+uv sync --all-extras  # Install all dependencies
 ```
 - *On Windows*
 ```bash
 uv venv
 venv\Scripts\activate
-
-uv sync --all-extras
+uv sync --all-extras  # Install all dependencies
 ```
+
+**Important:** Always use `make install` or `uv sync --all-extras` to ensure dev dependencies (pytest, mypy, etc.) are installed. Plain `uv sync` will skip them.
 
 ---
 
@@ -262,6 +270,42 @@ This codebase uses Python's `pickle` module for:
 **Threat Model**: All pickle files are generated and consumed locally by trusted code. There is no internet-exposed API and no loading of untrusted pickle files.
 
 **For Production Deployment**: If deploying this pipeline to a production environment with external access, consider migrating to JSON + NPZ format for artifact serialization. See `SECURITY_REMEDIATION_PLAN.md` for details.
+
+---
+
+# Docker Support (Frictionless)
+
+This project uses an intelligent `Makefile` workflow to automatically detect GPU availability and launch the correct Docker configuration.
+
+**Works out-of-the-box on:**
+*   **macOS** (Apple Silicon/Intel) → Launches in CPU mode
+*   **Linux/Windows** (with NVIDIA GPU) → Launches with CUDA support
+*   **Linux/Windows** (CPU only) → Launches in CPU mode
+
+## Commands
+
+### 1. Development Environment
+Includes all dev tools, tests, and hot-reloading source code.
+
+```bash
+# Auto-detects GPU/CPU and starts the dev shell
+make docker-dev
+```
+
+### 2. Production Environment
+Optimized, secure image with pre-cached model weights (~650MB).
+
+```bash
+# Auto-detects GPU/CPU and runs the training pipeline
+make docker-prod
+```
+
+## Manual Usage (Optional)
+
+If you prefer using `docker compose` directly:
+
+*   **CPU (macOS/Linux):** `docker compose up`
+*   **GPU (Linux/Windows):** `docker compose -f docker-compose.yml -f docker-compose.gpu.yml up`
 
 ---
 
