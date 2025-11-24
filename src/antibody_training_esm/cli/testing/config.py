@@ -19,7 +19,9 @@ class TestConfig:
     metrics: list[str] | None = None
     save_predictions: bool = True
     batch_size: int = DEFAULT_BATCH_SIZE  # Batch size for embedding extraction
-    device: str = "auto"  # Device: auto (CUDA > MPS > CPU), or explicit [cuda, cpu, mps]
+    device: str = (
+        "auto"  # Device: auto (CUDA > MPS > CPU), or explicit [cuda, cpu, mps]
+    )
     threshold: float | None = (
         None  # Manual threshold override (None = auto-detect from dataset name)
     )
