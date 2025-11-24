@@ -11,13 +11,6 @@ services:
       - PYTHONUNBUFFERED=1
       - HF_HOME=/app/.cache/huggingface  # Cache model downloads
     command: bash
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
 
   prod:
     build:
@@ -28,12 +21,5 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - HF_HOME=/app/.cache/huggingface  # Use cached model weights
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
     # Default entrypoint is antibody-train, override as needed
     # Example: docker-compose run prod --dataset boughter --output /app/data/model.pkl
