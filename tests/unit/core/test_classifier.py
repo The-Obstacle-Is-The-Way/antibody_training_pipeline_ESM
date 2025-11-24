@@ -1047,3 +1047,159 @@ def test_readme_example_workflow(mock_transformers_model: Any) -> None:
     # Assert
     assert len(predictions) == 10
     assert all(pred in [0, 1] for pred in predictions)
+
+
+# ============================================================================
+# AMPLIFY Integration Tests (Phase B)
+# ============================================================================
+
+
+@pytest.mark.unit
+def test_binary_classifier_uses_amplify_when_model_type_amplify(
+    mock_transformers_model: Any,
+) -> None:
+    """Verify BinaryClassifier selects AMPLIFYEmbeddingExtractor for model_type=amplify"""
+    from antibody_training_esm.core.embeddings_amplify import AMPLIFYEmbeddingExtractor
+
+    params = {
+        "model_name": "chandar-lab/AMPLIFY_350M",
+        "model_type": "amplify",  # NEW: triggers AMPLIFY extractor
+        "device": "cpu",
+        "random_state": 42,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
+        "max_iter": 1000,  # REQUIRED
+    }
+
+    classifier = BinaryClassifier(params=params)
+
+    assert isinstance(classifier.embedding_extractor, AMPLIFYEmbeddingExtractor)
+    # Access via attribute to verify
+    assert classifier.embedding_extractor.batch_size == 1  # Forced to 1
+
+
+@pytest.mark.unit
+def test_binary_classifier_uses_esm_when_model_type_missing(
+    mock_transformers_model: Any,
+) -> None:
+    """Verify BinaryClassifier defaults to ESM when model_type not specified (backward compat)"""
+    from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
+    from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
+
+    params = {
+        "model_name": "facebook/esm1v_t33_650M_UR90S_1",
+        # No model_type specified (legacy config)
+        "device": "cpu",
+        "random_state": 42,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
+        "max_iter": 1000,  # REQUIRED
+    }
+
+    classifier = BinaryClassifier(params=params)
+
+    assert isinstance(classifier.embedding_extractor, ESMEmbeddingExtractor)
+    # Default ESM batch size is DEFAULT_BATCH_SIZE (32), or whatever passed.
+    assert classifier.embedding_extractor.batch_size == DEFAULT_BATCH_SIZE
+
+
+@pytest.mark.unit
+def test_binary_classifier_uses_esm_when_model_type_esm(
+    mock_transformers_model: Any,
+) -> None:
+    """Verify BinaryClassifier uses ESM when model_type=esm (explicit)"""
+    from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
+
+    params = {
+        "model_name": "facebook/esm2_t33_650M_UR50D",
+        "model_type": "esm",  # Explicit ESM
+        "device": "cpu",
+        "random_state": 42,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
+        "max_iter": 1000,  # REQUIRED
+    }
+
+    classifier = BinaryClassifier(params=params)
+
+    assert isinstance(classifier.embedding_extractor, ESMEmbeddingExtractor)
+
+
+@pytest.mark.unit
+def test_binary_classifier_raises_on_invalid_model_type(
+    mock_transformers_model: Any,
+) -> None:
+    """Verify BinaryClassifier raises ValueError for unknown model_type"""
+    params = {
+        "model_name": "some/model",
+        "model_type": "invalid_type",
+        "device": "cpu",
+        "random_state": 42,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
+        "max_iter": 1000,  # REQUIRED
+    }
+
+    with pytest.raises(ValueError, match="Unknown model_type"):
+        BinaryClassifier(params=params)
+
+
+@pytest.mark.unit
+def test_binary_classifier_get_params_includes_model_type(
+    mock_transformers_model: Any,
+) -> None:
+    """Verify get_params() includes model_type for sklearn compatibility"""
+    params = {
+        "model_name": "chandar-lab/AMPLIFY_350M",
+        "model_type": "amplify",
+        "device": "cpu",
+        "random_state": 42,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
+        "max_iter": 1000,  # REQUIRED
+    }
+
+    classifier = BinaryClassifier(params=params)
+    retrieved_params = classifier.get_params()
+
+    assert "model_type" in retrieved_params
+    assert retrieved_params["model_type"] == "amplify"
+
+
+@pytest.mark.unit
+def test_binary_classifier_set_params_can_change_model_type(
+    mock_transformers_model: Any,
+) -> None:
+    """Verify set_params() can switch between ESM and AMPLIFY"""
+    from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
+    from antibody_training_esm.core.embeddings_amplify import AMPLIFYEmbeddingExtractor
+
+    # Start with ESM
+    params = {
+        "model_name": "facebook/esm1v_t33_650M_UR90S_1",
+        "model_type": "esm",
+        "device": "cpu",
+        "random_state": 42,
+        "C": 1.0,
+        "penalty": "l2",
+        "solver": "lbfgs",
+        "class_weight": None,
+        "max_iter": 1000,  # REQUIRED
+    }
+    classifier = BinaryClassifier(params=params)
+    assert isinstance(classifier.embedding_extractor, ESMEmbeddingExtractor)
+
+    # Switch to AMPLIFY
+    # Note: We need to update model_name too when switching types usually
+    classifier.set_params(model_type="amplify", model_name="chandar-lab/AMPLIFY_350M")
+    assert isinstance(classifier.embedding_extractor, AMPLIFYEmbeddingExtractor)
