@@ -1,12 +1,16 @@
 """
 Binary Classifier Module
 
-Professional binary classifier for antibody sequences using ESM-1V embeddings.
+Professional binary classifier for antibody sequences using ESM-1V or AMPLIFY embeddings.
 Includes sklearn compatibility, assay-specific thresholds, and model serialization.
+
+Supported model types:
+    - "esm" (default): ESM-1v/ESM-2 models (facebook/esm1v_*, facebook/esm2_*)
+    - "amplify": AMPLIFY 350M model (chandar-lab/AMPLIFY_350M)
 """
 
 import logging
-from typing import Any
+from typing import Any, Protocol
 
 import numpy as np
 
@@ -17,9 +21,30 @@ from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 
 logger = logging.getLogger(__name__)
 
+# Supported model types for embedding extraction
+SUPPORTED_MODEL_TYPES = {"esm", "amplify"}
+
+
+class EmbeddingExtractorProtocol(Protocol):
+    """Protocol for embedding extractors (ESM, AMPLIFY, etc.)"""
+
+    model_name: str
+    device: str
+    batch_size: int
+    revision: str
+    max_length: int
+
+    def embed_sequence(self, sequence: str) -> np.ndarray:
+        """Extract embedding for a single sequence"""
+        ...
+
+    def extract_batch_embeddings(self, sequences: list[str]) -> np.ndarray:
+        """Extract embeddings for multiple sequences"""
+        ...
+
 
 class BinaryClassifier:
-    """Binary classifier for protein sequences using ESM-1V embeddings"""
+    """Binary classifier for protein sequences using ESM-1V or AMPLIFY embeddings"""
 
     # sklearn 1.7+ requires explicit estimator type for cross_val_score
     # This tells sklearn's validation logic that we're a classifier, not a regressor
@@ -30,6 +55,9 @@ class BinaryClassifier:
         "ELISA": 0.5,  # Training data type (Boughter, Jain)
         "PSR": 0.5495,  # PSR assay type (Shehata, Harvey) - EXACT Novo parity
     }
+
+    # Type annotation for embedding extractor (ESM or AMPLIFY)
+    embedding_extractor: EmbeddingExtractorProtocol
 
     def __init__(self, params: dict[str, Any] | None = None, **kwargs: Any):
         """
@@ -62,9 +90,35 @@ class BinaryClassifier:
         )  # Default if not provided
         revision = params.get("revision", "main")  # HF model revision (default: "main")
 
-        self.embedding_extractor = ESMEmbeddingExtractor(
-            params["model_name"], params["device"], batch_size, revision=revision
-        )
+        # Select embedding extractor based on model_type (default: "esm" for backward compat)
+        model_type = params.get("model_type", "esm")
+
+        if model_type not in SUPPORTED_MODEL_TYPES:
+            raise ValueError(
+                f"Unknown model_type: '{model_type}'. "
+                f"Supported types: {sorted(SUPPORTED_MODEL_TYPES)}"
+            )
+
+        if model_type == "amplify":
+            # AMPLIFY requires special handling (batch_size=1, trust_remote_code, etc.)
+            from antibody_training_esm.core.embeddings_amplify import (
+                AMPLIFYEmbeddingExtractor,
+            )
+
+            self.embedding_extractor = AMPLIFYEmbeddingExtractor(
+                params["model_name"],
+                params["device"],
+                batch_size,  # Will be forced to 1 by AMPLIFYEmbeddingExtractor
+                revision=revision,
+            )
+        else:
+            # ESM-1v, ESM-2 (default)
+            self.embedding_extractor = ESMEmbeddingExtractor(
+                params["model_name"], params["device"], batch_size, revision=revision
+            )
+
+        # Store model_type for get_params/set_params
+        self._model_type = model_type
 
         # Use factory to create classifier strategy (supports LogReg, XGBoost, etc.)
         self.classifier: ClassifierStrategy = create_classifier(params)
@@ -103,6 +157,7 @@ class BinaryClassifier:
             "device": self.device,
             "batch_size": self.batch_size,
             "revision": self.revision,
+            "model_type": self._model_type,
         }
         # Add classifier-specific params from strategy
         params.update(self.classifier.get_params(deep=deep))
@@ -131,7 +186,13 @@ class BinaryClassifier:
         needs_classifier_reload = False
 
         # Check which components need reloading
-        embedding_params = {"model_name", "device", "batch_size", "revision"}
+        embedding_params = {
+            "model_name",
+            "device",
+            "batch_size",
+            "revision",
+            "model_type",
+        }
         if any(key in params for key in embedding_params):
             needs_extractor_reload = True
             # Update instance attributes
@@ -139,6 +200,7 @@ class BinaryClassifier:
             self.device = self._params.get("device", self.device)
             self.batch_size = self._params.get("batch_size", self.batch_size)
             self.revision = self._params.get("revision", self.revision)
+            self._model_type = self._params.get("model_type", self._model_type)
 
         if "type" in params:
             needs_classifier_reload = True
@@ -151,11 +213,26 @@ class BinaryClassifier:
         if needs_extractor_reload:
             logger.info(
                 f"Recreating embedding extractor: model_name={self.model_name}, "
-                f"device={self.device}, batch_size={self.batch_size}"
+                f"device={self.device}, batch_size={self.batch_size}, model_type={self._model_type}"
             )
-            self.embedding_extractor = ESMEmbeddingExtractor(
-                self.model_name, self.device, self.batch_size, revision=self.revision
-            )
+            if self._model_type == "amplify":
+                from antibody_training_esm.core.embeddings_amplify import (
+                    AMPLIFYEmbeddingExtractor,
+                )
+
+                self.embedding_extractor = AMPLIFYEmbeddingExtractor(
+                    self.model_name,
+                    self.device,
+                    self.batch_size,
+                    revision=self.revision,
+                )
+            else:
+                self.embedding_extractor = ESMEmbeddingExtractor(
+                    self.model_name,
+                    self.device,
+                    self.batch_size,
+                    revision=self.revision,
+                )
 
         # Recreate classifier strategy if type changed
         if needs_classifier_reload:
@@ -318,7 +395,7 @@ class BinaryClassifier:
         return state
 
     def __setstate__(self, state: dict[str, Any]) -> None:
-        """Custom unpickle method - recreate ESM model with correct config"""
+        """Custom unpickle method - recreate ESM/AMPLIFY model with correct config"""
         self.__dict__.update(state)
 
         # Check for missing attributes from old model versions
@@ -327,6 +404,8 @@ class BinaryClassifier:
             warnings_issued.append(f"batch_size (using default: {DEFAULT_BATCH_SIZE})")
         if not hasattr(self, "revision"):
             warnings_issued.append("revision (using default: 'main')")
+        if not hasattr(self, "_model_type"):
+            warnings_issued.append("_model_type (using default: 'esm')")
 
         if warnings_issued:
             import warnings
@@ -345,6 +424,19 @@ class BinaryClassifier:
         revision = getattr(
             self, "revision", "main"
         )  # Default if not stored (backwards compatibility)
-        self.embedding_extractor = ESMEmbeddingExtractor(
-            self.model_name, self.device, batch_size, revision=revision
-        )
+        model_type = getattr(
+            self, "_model_type", "esm"
+        )  # Default if not stored (backwards compatibility)
+
+        if model_type == "amplify":
+            from antibody_training_esm.core.embeddings_amplify import (
+                AMPLIFYEmbeddingExtractor,
+            )
+
+            self.embedding_extractor = AMPLIFYEmbeddingExtractor(
+                self.model_name, self.device, batch_size, revision=revision
+            )
+        else:
+            self.embedding_extractor = ESMEmbeddingExtractor(
+                self.model_name, self.device, batch_size, revision=revision
+            )

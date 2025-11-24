@@ -31,6 +31,7 @@ import antibody_training_esm.conf  # noqa: F401  # lgtm[py/unused-import]
 # If running tests without uv, use: uv run pytest
 # sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 from tests.fixtures.mock_models import (
+    MockAMPLIFYModel,
     MockClassifier,
     MockESMModel,
     MockTokenizer,
@@ -60,10 +61,12 @@ def mock_transformers_model(
     monkeypatch: pytest.MonkeyPatch,
 ) -> tuple[Any, Any]:
     """
-    Mock Hugging Face transformers ESM-1v model and tokenizer.
+    Mock Hugging Face transformers ESM-1v/ESM-2/AMPLIFY model and tokenizer.
 
-    Avoids downloading 650MB model weights during testing.
-    Returns mock outputs with correct shape (1280-d embeddings).
+    Avoids downloading model weights during testing.
+    Automatically detects model type and returns correct embedding dimension:
+        - ESM-1v/ESM-2: 1280-d embeddings
+        - AMPLIFY: 960-d embeddings
 
     Usage:
         def test_something(mock_transformers_model):
@@ -71,16 +74,25 @@ def mock_transformers_model(
             embedding = extractor.embed_sequence("QVQLVQSG")
             assert embedding.shape == (1280,)
 
+        def test_amplify(mock_transformers_model):
+            extractor = AMPLIFYEmbeddingExtractor(...)
+            embedding = extractor.embed_sequence("QVQLVQSG")
+            assert embedding.shape == (960,)
+
     Mocked methods:
         - transformers.AutoModel.from_pretrained()
         - transformers.AutoTokenizer.from_pretrained()
     """
 
-    # Mock model
-    def mock_automodel(*args: Any, **kwargs: Any) -> MockESMModel:
+    # Mock model - detect AMPLIFY vs ESM based on model name
+    def mock_automodel(*args: Any, **kwargs: Any) -> MockESMModel | MockAMPLIFYModel:
+        model_name = args[0] if args else kwargs.get("model_name", "")
+        # AMPLIFY models use chandar-lab namespace
+        if "amplify" in model_name.lower() or "chandar" in model_name.lower():
+            return MockAMPLIFYModel(*args, **kwargs)
         return MockESMModel(*args, **kwargs)
 
-    # Mock tokenizer
+    # Mock tokenizer (same for both ESM and AMPLIFY)
     def mock_autotokenizer(*args: Any, **kwargs: Any) -> MockTokenizer:
         return MockTokenizer(*args, **kwargs)
 

@@ -1,7 +1,7 @@
 """
 Embedding cache management.
 
-Handles loading, saving, and validating ESM embeddings to disk to avoid
+Handles loading, saving, and validating ESM/AMPLIFY embeddings to disk to avoid
 redundant computation.
 """
 
@@ -10,11 +10,12 @@ import logging
 import os
 import pickle  # nosec B403
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
+if TYPE_CHECKING:
+    from antibody_training_esm.core.classifier import EmbeddingExtractorProtocol
 
 
 def validate_embeddings(
@@ -72,7 +73,7 @@ def validate_embeddings(
 
 def get_or_create_embeddings(
     sequences: list[str],
-    embedding_extractor: ESMEmbeddingExtractor,
+    embedding_extractor: "EmbeddingExtractorProtocol",
     cache_path: str | Path,
     dataset_name: str,
     logger: logging.Logger,
@@ -82,7 +83,7 @@ def get_or_create_embeddings(
 
     Args:
         sequences: List of protein sequences
-        embedding_extractor: ESM embedding extractor
+        embedding_extractor: ESM or AMPLIFY embedding extractor
         cache_path: Directory for caching embeddings
         dataset_name: Name of dataset (for cache filename)
         logger: Logger instance

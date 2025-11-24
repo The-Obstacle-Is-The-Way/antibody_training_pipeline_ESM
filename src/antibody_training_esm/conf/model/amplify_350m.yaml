@@ -1,0 +1,28 @@
+# AMPLIFY 350M Model Configuration
+#
+# CRITICAL WARNING: AMPLIFY has a padding/batching bug requiring batch_size=1
+# Source: https://www.nature.com/articles/s41598-025-05674-x
+#
+# Key differences from ESM-1v/ESM-2:
+#   - Returns 960-d embeddings (not 1280-d)
+#   - Requires trust_remote_code=True
+#   - MUST use batch_size=1 (padding bug causes non-reproducible embeddings)
+#   - Trained on OAS (Observed Antibody Space) data
+#
+# Usage:
+#   uv run antibody-train model=amplify_350m
+#   uv run antibody-train model=amplify_350m hardware.device=mps
+#
+# Date: 2025-11-24
+
+name: chandar-lab/AMPLIFY_350M
+revision: main
+device: ${hardware.device}
+
+# AMPLIFY-specific configuration
+model_type: amplify  # Triggers AMPLIFYEmbeddingExtractor in BinaryClassifier
+trust_remote_code: true  # Required for AMPLIFY (custom modeling code)
+batch_size: 1  # CRITICAL: Must be 1 due to padding bug (do not change!)
+
+# Note: Unlike ESM configs, we do NOT inherit batch_size from training.batch_size
+# because AMPLIFY MUST use batch_size=1 regardless of training config
