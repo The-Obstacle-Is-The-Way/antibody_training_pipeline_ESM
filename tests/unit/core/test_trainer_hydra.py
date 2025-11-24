@@ -303,4 +303,3 @@ def test_train_pipeline_returns_structured_results(
     assert results["cv_metrics"].cv_accuracy is not None
     assert "mean" in results["cv_metrics"].cv_accuracy
     assert "std" in results["cv_metrics"].cv_accuracy
-
