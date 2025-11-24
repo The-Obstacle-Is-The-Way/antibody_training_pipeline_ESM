@@ -36,7 +36,7 @@ class TestMpsAvailable:
 
 
 class TestResolveDeviceAuto:
-    """Test resolve_device with 'auto' mode."""
+    """Test resolve_device with 'auto' mode (and priority logic)."""
 
     @pytest.mark.unit
     def test_auto_detects_cuda_first(self) -> None:
@@ -98,38 +98,12 @@ class TestResolveDeviceExplicit:
             assert resolve_device("cuda") == "cuda"
 
     @pytest.mark.unit
-    def test_cuda_raises_when_unavailable(self) -> None:
-        """Test CUDA device raises RuntimeError when unavailable."""
-        with (
-            patch("torch.cuda.is_available", return_value=False),
-            pytest.raises(
-                RuntimeError,
-                match="Requested device 'cuda' but torch.cuda.is_available\\(\\) is False",
-            ),
-        ):
-            resolve_device("cuda")
-
-    @pytest.mark.unit
     def test_mps_succeeds_when_available(self) -> None:
         """Test MPS device succeeds when available."""
         with patch(
             "antibody_training_esm.core.device._mps_available", return_value=True
         ):
             assert resolve_device("mps") == "mps"
-
-    @pytest.mark.unit
-    def test_mps_raises_when_unavailable(self) -> None:
-        """Test MPS device raises RuntimeError when unavailable."""
-        with (
-            patch(
-                "antibody_training_esm.core.device._mps_available", return_value=False
-            ),
-            pytest.raises(
-                RuntimeError,
-                match="Requested device 'mps' but torch.backends.mps.is_available\\(\\) is False",
-            ),
-        ):
-            resolve_device("mps")
 
 
 class TestResolveDeviceErrors:
@@ -150,46 +124,41 @@ class TestResolveDeviceErrors:
             resolve_device("tpu")
 
     @pytest.mark.unit
-    def test_cuda_error_message_suggests_cpu(self) -> None:
-        """Test CUDA error message suggests using CPU."""
+    def test_cuda_error_message_provides_guidance(self) -> None:
+        """Test CUDA error message provides actionable guidance."""
         with (
             patch("torch.cuda.is_available", return_value=False),
-            pytest.raises(RuntimeError, match="choose hardware.device=cpu"),
-        ):
-            resolve_device("cuda")
-
-    @pytest.mark.unit
-    def test_cuda_error_message_suggests_cuda_build(self) -> None:
-        """Test CUDA error message suggests installing CUDA PyTorch."""
-        with (
-            patch("torch.cuda.is_available", return_value=False),
-            pytest.raises(RuntimeError, match="Install a CUDA-enabled PyTorch build"),
-        ):
-            resolve_device("cuda")
-
-    @pytest.mark.unit
-    def test_mps_error_message_suggests_cpu(self) -> None:
-        """Test MPS error message suggests using CPU."""
-        with (
-            patch(
-                "antibody_training_esm.core.device._mps_available", return_value=False
+            pytest.raises(
+                RuntimeError,
+                match=r"Install a CUDA-enabled PyTorch build.*choose hardware\.device=cpu",
             ),
-            pytest.raises(RuntimeError, match="Use hardware.device=cpu"),
         ):
-            resolve_device("mps")
+            resolve_device("cuda")
 
     @pytest.mark.unit
-    def test_mps_error_message_suggests_mps_support(self) -> None:
-        """Test MPS error message suggests installing MPS-enabled PyTorch."""
+    def test_mps_error_message_provides_guidance(self) -> None:
+        """Test MPS error message provides actionable guidance."""
         with (
             patch(
                 "antibody_training_esm.core.device._mps_available", return_value=False
             ),
             pytest.raises(
-                RuntimeError, match="install a PyTorch build with MPS support"
+                RuntimeError,
+                match=r"Use hardware\.device=cpu.*install a PyTorch build with MPS support",
             ),
         ):
             resolve_device("mps")
+
+    @pytest.mark.unit
+    def test_malformed_input_raises_value_error(self) -> None:
+        """Test malformed input (empty string, whitespace) raises ValueError."""
+        # Empty string
+        with pytest.raises(ValueError, match="Unknown device ''"):
+            resolve_device("")
+
+        # Whitespace
+        with pytest.raises(ValueError, match="Unknown device ' cuda '"):
+            resolve_device(" cuda ")
 
 
 class TestResolveDeviceRealWorld:
@@ -212,43 +181,3 @@ class TestResolveDeviceRealWorld:
     def test_auto_and_none_equivalent_real(self) -> None:
         """Test 'auto' and None produce same result with real PyTorch."""
         assert resolve_device("auto") == resolve_device(None)
-
-
-class TestResolveDevicePriority:
-    """Test device resolution priority order."""
-
-    @pytest.mark.unit
-    def test_priority_order_cuda_over_mps(self) -> None:
-        """Test CUDA is preferred over MPS in auto mode."""
-        with (
-            patch("torch.cuda.is_available", return_value=True),
-            patch(
-                "antibody_training_esm.core.device._mps_available", return_value=True
-            ),
-        ):
-            # Both available, CUDA should win
-            assert resolve_device("auto") == "cuda"
-
-    @pytest.mark.unit
-    def test_priority_order_mps_over_cpu(self) -> None:
-        """Test MPS is preferred over CPU in auto mode."""
-        with (
-            patch("torch.cuda.is_available", return_value=False),
-            patch(
-                "antibody_training_esm.core.device._mps_available", return_value=True
-            ),
-        ):
-            # Only MPS available, should use MPS not CPU
-            assert resolve_device("auto") == "mps"
-
-    @pytest.mark.unit
-    def test_priority_order_cpu_as_fallback(self) -> None:
-        """Test CPU is used as final fallback in auto mode."""
-        with (
-            patch("torch.cuda.is_available", return_value=False),
-            patch(
-                "antibody_training_esm.core.device._mps_available", return_value=False
-            ),
-        ):
-            # No GPUs available, should fall back to CPU
-            assert resolve_device("auto") == "cpu"

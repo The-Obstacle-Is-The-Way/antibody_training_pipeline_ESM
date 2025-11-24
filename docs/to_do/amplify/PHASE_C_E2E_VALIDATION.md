@@ -76,7 +76,7 @@ uv run antibody-train \
 ```
 
 **Expected Output**:
-```
+```text
 INFO - Extracting AMPLIFY embeddings for 914 sequences (batch_size=1)...
 INFO - Processed 100/914 sequences...
 INFO - Processed 200/914 sequences...
@@ -114,7 +114,7 @@ uv run antibody-train \
 ```
 
 **Expected Output**:
-```
+```text
 INFO - Using SDPA attention for MPS (Flash Attention not supported)
 INFO - Extracting AMPLIFY embeddings for 914 sequences (batch_size=1)...
 ...
@@ -177,12 +177,16 @@ def load_embeddings(cache_path: Path) -> np.ndarray:
 
 
 def find_cache_file(cache_dir: Path, pattern: str) -> Path:
-    """Find cache file matching pattern"""
-    matches = list(cache_dir.glob(pattern))
+    """Find cache file matching pattern (prefers newest by mtime)"""
+    matches = sorted(
+        cache_dir.glob(pattern),
+        key=lambda p: p.stat().st_mtime,
+    )
 
-    if len(matches) == 0:
+    if not matches:
         raise FileNotFoundError(f"No cache files matching pattern: {pattern}")
     elif len(matches) > 1:
+        # Log still refers to matches[-1], now guaranteed to be newest by mtime
         print(f"⚠️  Multiple cache files found, using most recent: {matches[-1]}")
 
     return matches[-1]
@@ -291,7 +295,7 @@ uv run antibody-test \
 ```
 
 **Expected Output**:
-```
+```text
 INFO - Loading model from: experiments/checkpoints/amplify_350m/logreg/amplify_mps.pkl
 INFO - Testing on dataset: jain
 INFO - Extracting embeddings for 86 test sequences...
@@ -325,7 +329,7 @@ uv run antibody-test \
 ```
 
 **Expected Output**:
-```
+```text
 INFO - Test Results:
 INFO -   Accuracy:  71.0%  (Novo Nordisk baseline)
 INFO -   ROC-AUC:   0.79

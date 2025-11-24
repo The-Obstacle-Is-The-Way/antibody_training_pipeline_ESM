@@ -43,7 +43,9 @@ class Predictor:
         Args:
             model_name: The name of the ESM model to use (e.g. 'facebook/esm1v_t33_650M_UR90S_1').
             classifier_path: Path to the trained scikit-learn classifier (pickle/joblib file) or NPZ weights.
-            device: The device to run the model on ('cpu' or 'cuda'). If None, auto-detects.
+            device: Requested device ('cpu', 'cuda', 'mps', or 'auto').
+                If None or 'auto', the best available device is selected
+                (preferring CUDA, then MPS, else CPU).
             config_path: Path to the JSON config file (required if classifier_path is .npz).
         """
         self.device = self._select_device(device)

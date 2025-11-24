@@ -32,7 +32,7 @@
 
 ### 1.1 Current State (ESM-1v/ESM-2)
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ BinaryClassifier (classifier.py)                            │
 │  ├─ embedding_extractor: ESMEmbeddingExtractor              │
@@ -49,7 +49,7 @@
 
 ### 1.2 Target State (With AMPLIFY)
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │ BinaryClassifier (classifier.py)                            │
 │  ├─ embedding_extractor: ESMEmbeddingExtractor OR           │
@@ -779,6 +779,7 @@ Expected Output:
 """
 
 import pickle
+import sys
 import numpy as np
 from pathlib import Path
 
@@ -789,11 +790,31 @@ def load_embeddings(cache_path: Path) -> np.ndarray:
     return cache["embeddings"]
 
 
+def find_cache_file(cache_dir: Path, pattern: str) -> Path:
+    """Find cache file matching pattern (prefers newest by mtime)"""
+    matches = sorted(
+        cache_dir.glob(pattern),
+        key=lambda p: p.stat().st_mtime,
+    )
+
+    if not matches:
+        raise FileNotFoundError(f"No cache files matching pattern: {pattern}")
+    elif len(matches) > 1:
+        print(f"⚠️  Multiple cache files found, using most recent: {matches[-1]}")
+
+    return matches[-1]
+
+
 def main():
     # Find cache files
     cache_dir = Path("experiments/cache")
-    cpu_cache = list(cache_dir.glob("*amplify*cpu*.pkl"))[0]
-    mps_cache = list(cache_dir.glob("*amplify*mps*.pkl"))[0]
+    
+    try:
+        cpu_cache = find_cache_file(cache_dir, "*amplify*cpu*.pkl")
+        mps_cache = find_cache_file(cache_dir, "*amplify*mps*.pkl")
+    except FileNotFoundError as e:
+        print(f"❌ ERROR: {e}")
+        sys.exit(1)
 
     print(f"CPU cache: {cpu_cache}")
     print(f"MPS cache: {mps_cache}")
@@ -803,7 +824,9 @@ def main():
     mps_emb = load_embeddings(mps_cache)
 
     # Compare
-    assert cpu_emb.shape == mps_emb.shape, f"Shape mismatch: {cpu_emb.shape} vs {mps_emb.shape}"
+    if cpu_emb.shape != mps_emb.shape:
+        print(f"Shape mismatch: {cpu_emb.shape} vs {mps_emb.shape}")
+        sys.exit(1)
 
     mae = np.mean(np.abs(cpu_emb - mps_emb))
     max_diff = np.max(np.abs(cpu_emb - mps_emb))
@@ -825,7 +848,7 @@ def main():
     else:
         print(f"\n❌ PROBLEMATIC: Large differences detected (MAE > 1e-4)")
         print(f"   MPS is NOT reliable for AMPLIFY. Use CPU only.")
-        exit(1)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
@@ -961,7 +984,7 @@ uv run antibody-test --model experiments/checkpoints/amplify_350m/logreg/amplify
 
 ## 9. Implementation Timeline (Gantt Chart)
 
-```
+```text
 Day 1 (4 hours):
 ├─ Phase A: AMPLIFYEmbeddingExtractor (2 hours)
 │   ├─ Write tests (TDD)
@@ -1007,6 +1030,6 @@ Day 2 (3 hours):
 
 ---
 
-**END OF SPECIFICATIONS**
+## End of specifications
 
 **Status**: 🔴 **AWAITING SENIOR APPROVAL** - Do NOT implement until reviewed and approved.
