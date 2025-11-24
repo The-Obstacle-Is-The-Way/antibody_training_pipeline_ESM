@@ -17,7 +17,10 @@ def predict_sequence_cli(
 ) -> None:
     """CLI prediction with Pydantic validation."""
     config_path = getattr(cfg.classifier, "config_path", None)
-    requested_device = getattr(getattr(cfg, "hardware", None), "device", None)
+    # Respect explicit model.device override; fall back to hardware.device
+    requested_device = getattr(cfg.model, "device", None) or getattr(
+        getattr(cfg, "hardware", None), "device", None
+    )
 
     # Instantiate predictor (loading model)
     try:

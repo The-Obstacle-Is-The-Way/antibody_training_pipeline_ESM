@@ -298,7 +298,10 @@ def run_prediction(input_df: pd.DataFrame, cfg: DictConfig) -> pd.DataFrame:
     """
     config_path = getattr(cfg.classifier, "config_path", None)
 
-    requested_device = getattr(getattr(cfg, "hardware", None), "device", None)
+    # Respect explicit model.device override; fall back to hardware.device
+    requested_device = getattr(cfg.model, "device", None) or getattr(
+        getattr(cfg, "hardware", None), "device", None
+    )
 
     predictor = Predictor(
         model_name=cfg.model.name,
