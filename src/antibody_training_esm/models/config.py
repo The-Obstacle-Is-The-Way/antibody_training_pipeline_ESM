@@ -7,15 +7,20 @@ from pydantic import BaseModel, Field, field_validator
 
 class ModelConfig(BaseModel):
     """
-    ESM protein language model configuration.
+    Protein language model configuration.
 
     Controls which HuggingFace model to load and execution device.
+    Supports ESM-1v, ESM-2, and AMPLIFY models.
     """
 
     name: str = Field(
         ...,
         description="HuggingFace model ID (e.g., facebook/esm1v_t33_650M_UR90S_1)",
-        examples=["facebook/esm1v_t33_650M_UR90S_1", "facebook/esm2_t33_650M_UR50D"],
+        examples=[
+            "facebook/esm1v_t33_650M_UR90S_1",
+            "facebook/esm2_t33_650M_UR50D",
+            "chandar-lab/AMPLIFY_350M",
+        ],
     )
 
     device: Literal["cpu", "cuda", "mps", "auto"] = Field(
@@ -32,7 +37,17 @@ class ModelConfig(BaseModel):
         default=8,
         ge=1,
         le=128,
-        description="Batch size for embedding extraction",
+        description="Batch size for embedding extraction (AMPLIFY requires 1)",
+    )
+
+    model_type: Literal["esm", "amplify"] = Field(
+        default="esm",
+        description="Model type: 'esm' for ESM-1v/ESM-2, 'amplify' for AMPLIFY 350M",
+    )
+
+    trust_remote_code: bool = Field(
+        default=False,
+        description="Allow executing remote code from HuggingFace (required for AMPLIFY)",
     )
 
 
