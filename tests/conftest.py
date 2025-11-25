@@ -91,8 +91,9 @@ def mock_transformers_model(
 
     # Mock xformers module so AMPLIFY tests can run without NVIDIA GPU
     # This simulates xformers being available (Issue #24 workaround for testing)
+    # Using monkeypatch.setitem ensures automatic cleanup after fixture scope
     mock_xformers = MagicMock()
-    sys.modules["xformers"] = mock_xformers
+    monkeypatch.setitem(sys.modules, "xformers", mock_xformers)
 
     # Mock model - detect AMPLIFY vs ESM based on model name
     def mock_automodel(*args: Any, **kwargs: Any) -> MockESMModel | MockAMPLIFYModel:
