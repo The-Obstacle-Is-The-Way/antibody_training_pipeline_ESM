@@ -2,20 +2,25 @@ from pathlib import Path
 from typing import Any, Literal
 
 from omegaconf import DictConfig, OmegaConf
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class ModelConfig(BaseModel):
     """
-    ESM protein language model configuration.
+    Protein language model configuration.
 
     Controls which HuggingFace model to load and execution device.
+    Supports ESM-1v, ESM-2, and AMPLIFY models.
     """
 
     name: str = Field(
         ...,
         description="HuggingFace model ID (e.g., facebook/esm1v_t33_650M_UR90S_1)",
-        examples=["facebook/esm1v_t33_650M_UR90S_1", "facebook/esm2_t33_650M_UR50D"],
+        examples=[
+            "facebook/esm1v_t33_650M_UR90S_1",
+            "facebook/esm2_t33_650M_UR50D",
+            "chandar-lab/AMPLIFY_350M",
+        ],
     )
 
     device: Literal["cpu", "cuda", "mps", "auto"] = Field(
@@ -32,8 +37,41 @@ class ModelConfig(BaseModel):
         default=8,
         ge=1,
         le=128,
-        description="Batch size for embedding extraction",
+        description="Batch size for embedding extraction (AMPLIFY requires 1)",
     )
+
+    model_type: Literal["esm", "amplify"] = Field(
+        default="esm",
+        description="Model type: 'esm' for ESM-1v/ESM-2, 'amplify' for AMPLIFY 350M",
+    )
+
+    trust_remote_code: bool = Field(
+        default=False,
+        description="Allow executing remote code from HuggingFace (required for AMPLIFY)",
+    )
+
+    @model_validator(mode="after")
+    def validate_amplify_constraints(self) -> "ModelConfig":
+        """
+        Enforce AMPLIFY-specific requirements at config validation time.
+
+        AMPLIFY has strict requirements due to a known padding/batching bug
+        (see https://www.nature.com/articles/s41598-025-05674-x):
+        - batch_size must be 1 (padding bug causes non-reproducible embeddings)
+        - trust_remote_code must be True (AMPLIFY uses custom HuggingFace code)
+        """
+        if self.model_type == "amplify":
+            if self.batch_size != 1:
+                raise ValueError(
+                    f"AMPLIFY models require batch_size=1 due to padding bug, got {self.batch_size}. "
+                    "See: https://www.nature.com/articles/s41598-025-05674-x"
+                )
+            if not self.trust_remote_code:
+                raise ValueError(
+                    "AMPLIFY models require trust_remote_code=True "
+                    "(AMPLIFY uses custom HuggingFace modeling code)"
+                )
+        return self
 
 
 class DataConfig(BaseModel):

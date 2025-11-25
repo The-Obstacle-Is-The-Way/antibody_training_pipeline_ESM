@@ -48,6 +48,49 @@ class TestModelConfig:
                 batch_size=200,  # too high
             )
 
+    def test_amplify_valid_config(self) -> None:
+        """AMPLIFY config with correct constraints passes."""
+        cfg = ModelConfig(
+            name="chandar-lab/AMPLIFY_350M",
+            model_type="amplify",
+            batch_size=1,
+            trust_remote_code=True,
+        )
+        assert cfg.model_type == "amplify"
+        assert cfg.batch_size == 1
+        assert cfg.trust_remote_code is True
+
+    def test_amplify_rejects_batch_size_not_one(self) -> None:
+        """AMPLIFY rejects batch_size != 1 due to padding bug."""
+        with pytest.raises(ValidationError, match="batch_size=1"):
+            ModelConfig(
+                name="chandar-lab/AMPLIFY_350M",
+                model_type="amplify",
+                batch_size=8,  # Invalid for AMPLIFY
+                trust_remote_code=True,
+            )
+
+    def test_amplify_rejects_trust_remote_code_false(self) -> None:
+        """AMPLIFY rejects trust_remote_code=False."""
+        with pytest.raises(ValidationError, match="trust_remote_code=True"):
+            ModelConfig(
+                name="chandar-lab/AMPLIFY_350M",
+                model_type="amplify",
+                batch_size=1,
+                trust_remote_code=False,  # Invalid for AMPLIFY
+            )
+
+    def test_esm_allows_any_batch_size(self) -> None:
+        """ESM models allow any valid batch_size (1-128)."""
+        cfg = ModelConfig(
+            name="facebook/esm1v_t33_650M_UR90S_1",
+            model_type="esm",
+            batch_size=32,
+            trust_remote_code=False,
+        )
+        assert cfg.batch_size == 32
+        assert cfg.trust_remote_code is False
+
 
 class TestDataConfig:
     """Test DataConfig validation."""

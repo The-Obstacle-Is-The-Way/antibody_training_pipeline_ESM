@@ -141,6 +141,7 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
             "device": device,  # Use resolved device
             "batch_size": config.model.batch_size,
             "revision": config.model.revision,
+            "model_type": config.model.model_type,  # ESM or AMPLIFY
             # Classifier strategy params
             "strategy": config.classifier.strategy,
             "C": config.classifier.C,
