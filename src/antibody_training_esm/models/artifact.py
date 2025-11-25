@@ -7,7 +7,7 @@ This module defines the schema for:
 3. Cross-validation results
 """
 
-from typing import Any, Literal, cast
+from typing import Any, Literal
 
 import numpy as np
 from pydantic import BaseModel, Field
@@ -420,4 +420,4 @@ class CVResults(BaseModel):
                         "std": 0.0,
                     }
 
-        return cast(CVResults, cls.model_validate(results_dict))
+        return cls.model_validate(results_dict)

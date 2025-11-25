@@ -8,7 +8,10 @@ import pandas as pd
 from omegaconf import DictConfig
 from sklearn.linear_model import LogisticRegression
 
-from antibody_training_esm.core.classifier import BinaryClassifier
+from antibody_training_esm.core.classifier import (
+    BinaryClassifier,
+    EmbeddingExtractorProtocol,
+)
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.device import resolve_device
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
@@ -53,7 +56,7 @@ class Predictor:
         self.classifier_path = classifier_path
         self.config_path = config_path
 
-        self._embedder: ESMEmbeddingExtractor | None = None
+        self._embedder: EmbeddingExtractorProtocol | None = None
         self._classifier: BinaryClassifier | LogisticRegression | None = None
 
     @property
@@ -94,9 +97,9 @@ class Predictor:
         return self._classifier
 
     @property
-    def embedder(self) -> ESMEmbeddingExtractor:
+    def embedder(self) -> "EmbeddingExtractorProtocol":
         """
-        Lazy loads the ESM embedding extractor.
+        Lazy loads the ESM or AMPLIFY embedding extractor.
 
         Optimization:
             If the loaded classifier is a BinaryClassifier instance (which contains
@@ -119,21 +122,35 @@ class Predictor:
                 if self.device and str(embedder.device) != self.device:
                     batch_size = getattr(embedder, "batch_size", DEFAULT_BATCH_SIZE)
                     revision = getattr(embedder, "revision", "main")
+                    model_type = getattr(clf, "_model_type", "esm")
                     logger.info(
                         "Recreating embedder on requested device %s (was %s)",
                         self.device,
                         embedder.device,
                     )
-                    embedder = ESMEmbeddingExtractor(
-                        model_name=self.model_name,
-                        device=self.device,
-                        batch_size=batch_size,
-                        revision=revision,
-                    )
+                    if model_type == "amplify":
+                        from antibody_training_esm.core.embeddings_amplify import (
+                            AMPLIFYEmbeddingExtractor,
+                        )
+
+                        embedder = AMPLIFYEmbeddingExtractor(
+                            model_name=self.model_name,
+                            device=self.device,
+                            batch_size=batch_size,
+                            revision=revision,
+                        )
+                    else:
+                        embedder = ESMEmbeddingExtractor(
+                            model_name=self.model_name,
+                            device=self.device,
+                            batch_size=batch_size,
+                            revision=revision,
+                        )
 
                 self._embedder = embedder
             else:
                 # Fallback: Create a new one (e.g., if using raw sklearn model)
+                # Default to ESM for backward compatibility
                 self._embedder = ESMEmbeddingExtractor(
                     model_name=self.model_name,
                     device=self.device,

@@ -110,8 +110,9 @@ class AntibodyDataset(ABC, AnnotationMixin, FragmentMixin):
 
             # Use lazy=False to fail fast (default behavior)
             # Note: SequenceDatasetSchema uses lazy=False in its definition implicitly
-            validated_df = cast(pd.DataFrame, cls.get_schema().validate(df, lazy=False))
-            return validated_df
+            # pandera's validate() returns Any in type stubs, but always returns DataFrame
+            validated: pd.DataFrame = cls.get_schema().validate(df, lazy=False)
+            return validated
         except SchemaError as e:
             # Enhance error message with dataset context
             raise ValueError(

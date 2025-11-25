@@ -245,6 +245,89 @@ class MockClassifier:
         return self
 
 
+class MockAMPLIFYModel:
+    """
+    Mock Hugging Face transformers AMPLIFY 350M model.
+
+    Mimics the interface of AutoModel.from_pretrained() for AMPLIFY models.
+    Returns random embeddings of correct shape (960-d, not 1280-d like ESM).
+
+    Key Differences from MockESMModel:
+        - Returns 960-d embeddings (not 1280-d)
+        - Records trust_remote_code and attn_implementation kwargs
+
+    Usage:
+        model = MockAMPLIFYModel("chandar-lab/AMPLIFY_350M", trust_remote_code=True)
+        outputs = model(input_ids, attention_mask, output_hidden_states=True)
+        embeddings = outputs.hidden_states[-1]  # Shape: (batch, seq_len, 960)
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        """
+        Initialize mock AMPLIFY model.
+
+        Args:
+            *args: Positional args (ignored)
+            **kwargs: Keyword args (stored for verification)
+                - trust_remote_code: Should be True for AMPLIFY
+                - attn_implementation: "sdpa" for MPS, "eager" for CPU, None for CUDA
+        """
+        self.device_type = "cpu"
+        self.eval_mode = False
+        self.training = True  # Will be False after eval() called
+
+        # Store AMPLIFY-specific kwargs for test verification
+        self.trust_remote_code = kwargs.get("trust_remote_code", False)
+        self.attn_implementation = kwargs.get("attn_implementation")
+
+        # Mock config with AMPLIFY's hidden size
+        class MockConfig:
+            hidden_size = 960  # AMPLIFY dimension (not 1280)
+
+        self.config = MockConfig()
+
+    def to(self, device: str) -> "MockAMPLIFYModel":
+        """Mock device assignment."""
+        self.device_type = device
+        return self
+
+    def eval(self) -> "MockAMPLIFYModel":
+        """Mock eval mode (no gradient computation)."""
+        self.eval_mode = True
+        self.training = False
+        return self
+
+    def __call__(
+        self,
+        input_ids: torch.Tensor,
+        attention_mask: torch.Tensor,
+        output_hidden_states: bool = False,
+    ) -> Any:
+        """
+        Mock forward pass (returns random 960-d embeddings).
+
+        Args:
+            input_ids: Token IDs (batch_size, seq_len)
+            attention_mask: Attention mask (batch_size, seq_len)
+            output_hidden_states: If True, return hidden states
+
+        Returns:
+            MockOutput with .hidden_states attribute (960-d)
+        """
+        batch_size = input_ids.shape[0]
+        seq_len = input_ids.shape[1]
+
+        # Mock hidden states: (batch_size, seq_len, 960) - AMPLIFY dimension
+        hidden_states = torch.rand(batch_size, seq_len, 960)
+
+        class MockOutput:
+            def __init__(self, hidden_states: torch.Tensor) -> None:
+                # Return tuple of layers (we only populate the last layer)
+                self.hidden_states = (None, hidden_states)
+
+        return MockOutput(hidden_states)
+
+
 def create_mock_embeddings(
     n_samples: int = 10, embedding_dim: int = 1280, seed: int = 42
 ) -> np.ndarray:

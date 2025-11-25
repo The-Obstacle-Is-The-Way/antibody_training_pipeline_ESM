@@ -1,0 +1,22 @@
+# AMPLIFY 350M Model Configuration
+#
+# CRITICAL WARNING: AMPLIFY has a padding/batching bug requiring batch_size=1
+# Source: https://www.nature.com/articles/s41598-025-05674-x
+#
+# Usage:
+#   uv run antibody-train model=amplify_350m
+#   uv run antibody-train model=amplify_350m hardware.device=mps
+#
+# Date: 2025-11-23
+
+name: chandar-lab/AMPLIFY_350M
+revision: 223e35e4e2074fadfdc1617f3451b14fa5ace1c8  # Pinned for reproducibility (2025-11-24)
+device: ${hardware.device}  # Inherits from hardware config
+
+# AMPLIFY-specific configuration
+model_type: amplify  # Triggers AMPLIFYEmbeddingExtractor in BinaryClassifier
+trust_remote_code: true  # Required for AMPLIFY (custom modeling code)
+batch_size: 1  # CRITICAL: Must be 1 due to padding bug (do not change!)
+
+# Note: Unlike ESM configs, we do NOT inherit batch_size from training.batch_size
+# because AMPLIFY MUST use batch_size=1 regardless of training config

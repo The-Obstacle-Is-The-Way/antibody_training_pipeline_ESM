@@ -14,8 +14,7 @@ from typing import TYPE_CHECKING, Any, Protocol, cast
 import numpy as np
 import pandas as pd
 
-# HuggingFace datasets library lacks complete type stubs
-# See: https://github.com/huggingface/datasets/issues/3426
+# HuggingFace datasets library (type stubs incomplete across versions)
 from datasets import load_dataset  # type: ignore[attr-defined]
 
 if TYPE_CHECKING:
