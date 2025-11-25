@@ -20,5 +20,24 @@
   "solver": "lbfgs",
   "class_weight": null,
   "max_iter": 1000,
-  "random_state": 42
+  "random_state": 42,
+  "training_metrics": {
+    "accuracy": 0.7428884026258206,
+    "precision": 0.75,
+    "recall": 0.7515923566878981,
+    "f1": 0.750795334040297,
+    "roc_auc": 0.8344188676894174,
+    "confusion_matrix": [
+      [
+        325,
+        118
+      ],
+      [
+        117,
+        354
+      ]
+    ],
+    "dataset_name": "Training",
+    "n_samples": 914.0
+  }
 }
