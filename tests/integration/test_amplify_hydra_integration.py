@@ -33,7 +33,9 @@ def test_amplify_loads_via_hydra(mock_transformers_model: Any) -> None:
         assert cfg.model.model_type == "amplify"
         assert cfg.model.batch_size == 1
         assert cfg.model.trust_remote_code is True
-        assert cfg.model.revision == "main"
+        assert (
+            cfg.model.revision == "223e35e4e2074fadfdc1617f3451b14fa5ace1c8"
+        )  # Pinned
         assert cfg.model.device == cfg.hardware.device  # Interpolated
 
 

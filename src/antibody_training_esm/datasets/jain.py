@@ -33,7 +33,7 @@ Reference:
 
 import logging
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 import pandas as pd
 import pandera.pandas as pa
@@ -233,8 +233,7 @@ class JainDataset(AntibodyDataset):
         if stage == "full":
             # Use preprocessing schema (allows NaN labels) for full stage
             try:
-                validated_df = get_jain_preprocessing_schema().validate(df, lazy=False)
-                df = cast(pd.DataFrame, validated_df)
+                df = get_jain_preprocessing_schema().validate(df, lazy=False)
             except SchemaError as e:
                 raise ValueError(
                     f"Schema validation failed for JainDataset (stage='full'):\n{e}"

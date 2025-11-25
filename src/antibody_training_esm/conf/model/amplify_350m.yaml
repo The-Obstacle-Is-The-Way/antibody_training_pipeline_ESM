@@ -10,7 +10,7 @@
 # Date: 2025-11-23
 
 name: chandar-lab/AMPLIFY_350M
-revision: main
+revision: 223e35e4e2074fadfdc1617f3451b14fa5ace1c8  # Pinned for reproducibility (2025-11-24)
 device: ${hardware.device}  # Inherits from hardware config
 
 # AMPLIFY-specific configuration

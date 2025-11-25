@@ -48,6 +48,13 @@ class AMPLIFYEmbeddingExtractor:
         3. Forces batch_size=1 (padding bug causes non-reproducible embeddings)
         4. Returns 960-d embeddings (vs ESM's 1280-d)
 
+    Security Advisory:
+        trust_remote_code=True executes arbitrary Python code from HuggingFace.
+        This is REQUIRED for AMPLIFY (custom attention layers). Only use:
+        - With pinned revision (commit SHA, not 'main' branch)
+        - In trusted environments (not public-facing APIs)
+        - After reviewing chandar-lab/AMPLIFY_350M modeling_amplify.py
+
     Example:
         >>> extractor = AMPLIFYEmbeddingExtractor(
         ...     model_name="chandar-lab/AMPLIFY_350M",

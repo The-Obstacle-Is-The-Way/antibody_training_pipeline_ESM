@@ -14,9 +14,8 @@ from typing import TYPE_CHECKING, Any, Protocol, cast
 import numpy as np
 import pandas as pd
 
-# HuggingFace datasets library lacks complete type stubs
-# See: https://github.com/huggingface/datasets/issues/3426
-from datasets import load_dataset  # type: ignore[attr-defined]
+# HuggingFace datasets library
+from datasets import load_dataset
 
 if TYPE_CHECKING:
     from antibody_training_esm.models.config import TrainingPipelineConfig
