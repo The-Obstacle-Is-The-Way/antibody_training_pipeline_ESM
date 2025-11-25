@@ -35,6 +35,31 @@ from .config import (
 logger = logging.getLogger(__name__)
 
 
+def _check_xformers_availability() -> None:
+    """
+    Verify xformers is available before attempting to load AMPLIFY.
+
+    AMPLIFY's HuggingFace code has a hard 'import xformers' at module load time,
+    even when using alternative attention implementations (SDPA, eager).
+    xformers only compiles on NVIDIA CUDA systems.
+
+    Raises:
+        RuntimeError: If xformers is unavailable with clear, actionable message.
+    """
+    try:
+        import xformers  # noqa: F401
+    except ImportError:
+        raise RuntimeError(
+            "AMPLIFY 350M requires 'xformers' which is only available on NVIDIA GPUs.\n\n"
+            "Options:\n"
+            "  1. Use ESM model instead: uv run antibody-train model=esm1v\n"
+            "  2. Run on a machine with NVIDIA GPU + CUDA\n"
+            "  3. Use Docker with GPU support: ./scripts/docker_gpu_launcher.sh\n\n"
+            "This is an upstream limitation of chandar-lab/AMPLIFY_350M.\n"
+            "See: https://github.com/Clarity-Digital-Twin/antibody_training_pipeline_ESM/issues/24"
+        ) from None  # Clean traceback - no need to show ImportError chain
+
+
 class AMPLIFYEmbeddingExtractor:
     """
     Extract AMPLIFY 350M embeddings for protein sequences.
@@ -84,8 +109,12 @@ class AMPLIFYEmbeddingExtractor:
             revision: HuggingFace model revision (commit SHA or branch name)
 
         Raises:
+            RuntimeError: If xformers is unavailable (AMPLIFY upstream requirement)
             ImportError: If transformers library not installed
         """
+        # Fail fast: Check xformers before expensive model download
+        _check_xformers_availability()
+
         self.model_name = model_name
         self.device = device
         self.max_length = max_length

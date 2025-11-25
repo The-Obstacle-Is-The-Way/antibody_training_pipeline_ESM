@@ -68,6 +68,8 @@ def mock_transformers_model(
         - ESM-1v/ESM-2: 1280-d embeddings
         - AMPLIFY: 960-d embeddings
 
+    Also mocks xformers availability check for AMPLIFY tests (Issue #24).
+
     Usage:
         def test_something(mock_transformers_model):
             extractor = ESMEmbeddingExtractor(...)
@@ -82,7 +84,16 @@ def mock_transformers_model(
     Mocked methods:
         - transformers.AutoModel.from_pretrained()
         - transformers.AutoTokenizer.from_pretrained()
+        - xformers availability (for AMPLIFY tests)
     """
+    import sys
+    from unittest.mock import MagicMock
+
+    # Mock xformers module so AMPLIFY tests can run without NVIDIA GPU
+    # This simulates xformers being available (Issue #24 workaround for testing)
+    # Using monkeypatch.setitem ensures automatic cleanup after fixture scope
+    mock_xformers = MagicMock()
+    monkeypatch.setitem(sys.modules, "xformers", mock_xformers)
 
     # Mock model - detect AMPLIFY vs ESM based on model name
     def mock_automodel(*args: Any, **kwargs: Any) -> MockESMModel | MockAMPLIFYModel:

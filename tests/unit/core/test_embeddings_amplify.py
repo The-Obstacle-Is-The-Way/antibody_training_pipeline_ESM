@@ -199,3 +199,55 @@ def test_amplify_logs_progress_every_100_sequences(
     # Should log at 100
     assert "Processed 100/150" in caplog.text
     assert _embeddings.shape == (150, 960)
+
+
+# ============================================================================
+# xformers Availability Check Tests (Issue #24)
+# ============================================================================
+
+
+@pytest.mark.unit
+def test_amplify_raises_runtime_error_when_xformers_unavailable(
+    mock_transformers_model: Any,
+) -> None:
+    """Verify clear RuntimeError when xformers is unavailable (Issue #24)"""
+    import builtins
+    from unittest.mock import patch
+
+    from antibody_training_esm.core import embeddings_amplify
+
+    original_import = builtins.__import__
+
+    def mock_import(name: str, *args: Any, **kwargs: Any) -> Any:
+        if name == "xformers":
+            raise ImportError("No module named 'xformers'")
+        return original_import(name, *args, **kwargs)
+
+    with (
+        patch.object(builtins, "__import__", side_effect=mock_import),
+        pytest.raises(RuntimeError) as exc_info,
+    ):
+        embeddings_amplify._check_xformers_availability()
+
+    # Verify error message contains actionable information
+    error_msg = str(exc_info.value)
+    assert "xformers" in error_msg
+    assert "NVIDIA GPU" in error_msg
+    assert "ESM model instead" in error_msg  # Alternative option
+    assert "issues/24" in error_msg  # Link to issue
+
+
+@pytest.mark.unit
+def test_amplify_check_passes_when_xformers_available(
+    mock_transformers_model: Any,
+) -> None:
+    """Verify check passes silently when xformers is available"""
+    from unittest.mock import MagicMock, patch
+
+    from antibody_training_esm.core import embeddings_amplify
+
+    # Mock xformers as available
+    mock_xformers = MagicMock()
+    with patch.dict("sys.modules", {"xformers": mock_xformers}):
+        # Should not raise
+        embeddings_amplify._check_xformers_availability()
