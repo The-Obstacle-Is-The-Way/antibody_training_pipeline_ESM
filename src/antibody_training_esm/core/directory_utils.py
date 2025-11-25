@@ -62,7 +62,10 @@ def extract_classifier_shortname(classifier_config: dict[str, Any]) -> str:
     Returns:
         Short classifier identifier
     """
-    classifier_type = classifier_config.get("type", "unknown")
+    # Support both old ("type") and new Hydra/Pydantic ("strategy") config keys
+    classifier_type = classifier_config.get("strategy") or classifier_config.get(
+        "type", "unknown"
+    )
 
     # Map full names to short names
     shortname_map = {

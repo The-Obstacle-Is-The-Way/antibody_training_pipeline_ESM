@@ -109,6 +109,21 @@ def test_extract_classifier_shortname_missing_type() -> None:
 
 
 @pytest.mark.unit
+def test_extract_classifier_shortname_hydra_strategy_key() -> None:
+    """Verify Hydra/Pydantic 'strategy' key is supported (not just 'type')"""
+    # Hydra config uses "strategy" not "type"
+    config = {"strategy": "logistic_regression", "C": 1.0}
+    assert extract_classifier_shortname(config) == "logreg"
+
+
+@pytest.mark.unit
+def test_extract_classifier_shortname_strategy_takes_precedence() -> None:
+    """Verify 'strategy' key takes precedence over 'type' if both present"""
+    config = {"strategy": "xgboost", "type": "logistic_regression"}
+    assert extract_classifier_shortname(config) == "xgboost"
+
+
+@pytest.mark.unit
 def test_get_hierarchical_model_dir_esm1v_logreg() -> None:
     """Verify hierarchical model directory for ESM-1v + LogReg"""
     path = get_hierarchical_model_dir(
