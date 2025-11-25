@@ -112,7 +112,8 @@ class AMPLIFYEmbeddingExtractor:
             logger.info("Using eager attention for CPU")
 
         # Load model with AMPLIFY-specific flags
-        self.model = AutoModel.from_pretrained(
+        # Revision IS pinned via parameter (default: specific SHA in config)
+        self.model = AutoModel.from_pretrained(  # nosec B615
             model_name,
             trust_remote_code=True,  # REQUIRED for AMPLIFY
             attn_implementation=attn_impl,
@@ -122,7 +123,8 @@ class AMPLIFYEmbeddingExtractor:
         self.model.to(device)
         self.model.eval()
 
-        self.tokenizer = AutoTokenizer.from_pretrained(
+        # Revision IS pinned via parameter (default: specific SHA in config)
+        self.tokenizer = AutoTokenizer.from_pretrained(  # nosec B615
             model_name,
             trust_remote_code=True,  # REQUIRED for AMPLIFY
             revision=revision,
