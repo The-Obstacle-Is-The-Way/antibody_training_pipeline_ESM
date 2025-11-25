@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from omegaconf import DictConfig, OmegaConf
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class ModelConfig(BaseModel):
@@ -49,6 +49,29 @@ class ModelConfig(BaseModel):
         default=False,
         description="Allow executing remote code from HuggingFace (required for AMPLIFY)",
     )
+
+    @model_validator(mode="after")
+    def validate_amplify_constraints(self) -> "ModelConfig":
+        """
+        Enforce AMPLIFY-specific requirements at config validation time.
+
+        AMPLIFY has strict requirements due to a known padding/batching bug
+        (see https://www.nature.com/articles/s41598-025-05674-x):
+        - batch_size must be 1 (padding bug causes non-reproducible embeddings)
+        - trust_remote_code must be True (AMPLIFY uses custom HuggingFace code)
+        """
+        if self.model_type == "amplify":
+            if self.batch_size != 1:
+                raise ValueError(
+                    f"AMPLIFY models require batch_size=1 due to padding bug, got {self.batch_size}. "
+                    "See: https://www.nature.com/articles/s41598-025-05674-x"
+                )
+            if not self.trust_remote_code:
+                raise ValueError(
+                    "AMPLIFY models require trust_remote_code=True "
+                    "(AMPLIFY uses custom HuggingFace modeling code)"
+                )
+        return self
 
 
 class DataConfig(BaseModel):
