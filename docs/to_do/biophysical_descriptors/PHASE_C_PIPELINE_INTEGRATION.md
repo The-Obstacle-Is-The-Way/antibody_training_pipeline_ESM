@@ -86,19 +86,24 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
 
 ### 4.2 Configuration Updates (`src/antibody_training_esm/conf/config.yaml`)
 
+**NEW**: Create `features` config group (does not exist yet):
+
 ```yaml
-# config.yaml - add features section
+# config.yaml - add features section (NEW - currently no features config exists)
 features:
   use_biophysical: false  # Enable biophysical descriptors
   standardize_biophysical: true  # StandardScaler on biophysical features
 ```
+
+Existing config groups: `model/`, `classifier/`, `data/`, `hardware/`, `hydra/`
 
 ### 4.3 Caching Strategy
 
 Biophysical features are fast to compute (~0.1s for 1000 sequences), so caching is optional but nice-to-have:
 
 ```python
-# Cache path: experiments/cache/{dataset}_biophysical_{hash}.npy
+# Cache path: experiments/cache/{dataset}_biophysical_{hash}.pkl
+# (Matches existing ESM embedding cache format)
 ```
 
 ---
@@ -136,9 +141,11 @@ Biophysical features are fast to compute (~0.1s for 1000 sequences), so caching 
 ## 7. Scientific Validation
 
 After integration, compare on Jain test set:
-- **ESM-only**: ~71% accuracy (current baseline)
-- **Biophysical-only**: ~65% (Phase B establishes this)
-- **Hybrid (ESM + Bio)**: Target ≥71% (should not decrease)
+- **ESM-only**: ~66-67% accuracy (our current baseline: 66.28% test, 67.5% CV)
+- **Biophysical-only**: ~63-65% (Phase B: 63.18% CV, paper pI-only: 65.2%)
+- **Hybrid (ESM + Bio)**: Target ≥67% (should not decrease from ESM-only)
+
+**Note**: Novo reported 71% CV accuracy; our reproduction achieves 67.5% ± 8.9% which is within statistical variance. The goal is to match or exceed our own ESM baseline, not the reported 71%.
 
 If hybrid performs worse than ESM-only, the biophysical features may be adding noise. This would inform whether to keep the integration.
 
