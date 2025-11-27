@@ -10,9 +10,15 @@
 
 Reproduce the "Track B" baseline results from Sakhnini et al. 2025 using our Phase A `BiophysicalExtractor` (Biopython Trio).
 
-**Target Metrics (from Paper):**
-*   **Cross-Validation (Boughter)**: ~65.2% Accuracy (matching Theoretical pI performance).
-*   **Test (Jain)**: Establish a baseline (Paper doesn't explicitly list pI-only for Jain, but we need it for comparison).
+**Target Metrics (from Paper Table S2):**
+*   **Theoretical pI ALONE**: 65.2% Accuracy (single descriptor baseline)
+*   **3 Descriptors COMBINED**: Unknown - need to establish empirically
+    * Note: Paper's Table S2 excluded Charge@pH6/7.4 from "all descriptors" model due to correlation with pI
+    * Our 3-descriptor model may perform similarly to pI-only (~65%) due to high correlation
+
+**What We're Testing:**
+*   **Cross-Validation (Boughter)**: Expect ~64-67% range (pI-dominated)
+*   **Test (Jain)**: Establish baseline for comparison with ESM's ~71%
 
 ## 2. Implementation Strategy
 
