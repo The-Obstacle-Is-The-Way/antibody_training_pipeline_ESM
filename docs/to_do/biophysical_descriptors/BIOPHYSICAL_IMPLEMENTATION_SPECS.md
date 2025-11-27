@@ -165,9 +165,9 @@ The following require BioLuminate (~$5-20K/year):
 
 ## 8. Success Criteria
 
-- [ ] Phase A complete: BiophysicalExtractor with 3 Biopython descriptors
-- [ ] 10-fold CV on Boughter achieves ~65% accuracy (matching pI-only from paper)
-- [ ] Tests on Jain dataset documented
+- [x] Phase A complete: BiophysicalExtractor with 3 Biopython descriptors
+- [x] 10-fold CV on Boughter achieves ~65% accuracy (achieved: 63.18% ± 9.30%)
+- [x] Tests on Jain dataset documented (55.81% accuracy, 0.67 ROC-AUC)
 - [ ] Side-by-side comparison with ESM-1v (71%) documented
 - [ ] GitHub Issue #4 updated with results
 

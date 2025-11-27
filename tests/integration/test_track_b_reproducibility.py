@@ -72,9 +72,9 @@ class TestTrackBReproducibility:
         This verifies that the features are compatible with sklearn models.
         """
         sequences = sample_data["VH_sequence"].tolist()
-        labels = np.random.randint(
-            0, 2, size=len(sequences)
-        )  # Synthetic labels for testing flow
+        # Deterministic synthetic labels to guarantee both classes (avoids flaky test)
+        # Using alternating pattern ensures LogisticRegression always has 2 classes
+        labels = (np.arange(len(sequences)) % 2).astype(int)
 
         # 1. Extract
         X = extractor.extract_batch_features(sequences)

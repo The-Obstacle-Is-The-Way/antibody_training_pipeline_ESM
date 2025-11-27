@@ -17,7 +17,9 @@ This script:
 import argparse
 import json
 import logging
+import subprocess
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -39,11 +41,50 @@ logging.basicConfig(
 )
 logger = logging.getLogger("reproduce_track_b")
 
+# Script version for provenance tracking
+SCRIPT_VERSION = "1.0.0"
+
+
+def get_git_commit() -> str:
+    """
+    Get the current git commit hash for provenance tracking.
+
+    Returns:
+        Short git commit hash, or "unknown" if not in a git repo.
+    """
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=5,
+        )
+        return result.stdout.strip()
+    except (
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+        FileNotFoundError,
+    ):
+        return "unknown"
+
 
 def clean_dataset(df: pd.DataFrame, sequence_col: str = "VH_sequence") -> pd.DataFrame:
     """
     Clean dataset for biophysical extraction.
-    Removes sequences with 'X' (ambiguous) or empty sequences.
+
+    Removes sequences that cannot be processed by BiophysicalExtractor:
+    - Empty sequences (length 0)
+    - Sequences containing 'X' (ambiguous amino acids)
+
+    Note: Stop codons (*) are already filtered by BoughterDataset at load time.
+
+    Args:
+        df: DataFrame containing sequences to clean.
+        sequence_col: Name of the column containing amino acid sequences.
+
+    Returns:
+        Cleaned DataFrame with invalid sequences removed.
     """
     initial_len = len(df)
 
@@ -147,8 +188,15 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
     for name, coef in zip(feature_names, coefs, strict=True):
         logger.info(f"    {name}: {coef:.4f}")
 
-    # 5. Save Results
+    # 5. Save Results (with provenance metadata for reproducibility)
     results = {
+        # Provenance metadata
+        "provenance": {
+            "run_date": datetime.now(UTC).isoformat(),
+            "git_commit": get_git_commit(),
+            "script_version": SCRIPT_VERSION,
+        },
+        # Metrics
         "cv_accuracy_mean": float(mean_cv),
         "cv_accuracy_std": float(std_cv),
         "test_accuracy": float(test_acc),
@@ -185,7 +233,11 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run Track B Reproducibility Study")
-    parser.add_argument("--output-dir", default="results", help="Output directory")
+    parser.add_argument(
+        "--output-dir",
+        default="experiments/benchmarks",
+        help="Output directory for benchmark results (default: experiments/benchmarks)",
+    )
     args = parser.parse_args()
 
     run_reproducibility_study(args.output_dir)
