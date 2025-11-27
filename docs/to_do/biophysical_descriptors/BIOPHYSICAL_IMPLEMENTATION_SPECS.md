@@ -69,7 +69,7 @@ From Novo paper Table S1, marked with (*) = Biopython:
 
 ### 3.1 Target Structure
 
-```
+```text
 src/antibody_training_esm/
 ├── core/
 │   ├── embeddings.py          # ESM (existing)
@@ -159,8 +159,8 @@ class BiophysicalExtractor:
         # Clean and validate sequence
         seq = sequence.upper().strip().replace("*", "")
 
-        # Biopython valid amino acids (excludes B, J, O, U, Z)
-        valid_aas = set("ACDEFGHIKLMNPQRSTVWXY")
+        # Biopython valid amino acids (standard 20 only - excludes X, B, J, O, U, Z)
+        valid_aas = set("ACDEFGHIKLMNPQRSTVWY")
         invalid = set(seq) - valid_aas
         if invalid:
             raise ValueError(

@@ -59,7 +59,7 @@ class BiophysicalExtractor:
 
     # Valid amino acids for Biopython ProteinAnalysis
     # NOTE: Unlike ESM, Biopython does NOT support 'X' (ambiguous)
-    # Standard 20 amino acids + selenocysteine (U) which Biopython handles
+    # Standard 20 amino acids only
     VALID_AMINO_ACIDS: set[str] = set("ACDEFGHIKLMNPQRSTVWY")
 
     def __init__(self) -> None:

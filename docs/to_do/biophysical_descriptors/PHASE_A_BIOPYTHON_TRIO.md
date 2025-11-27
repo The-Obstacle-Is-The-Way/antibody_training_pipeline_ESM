@@ -65,7 +65,7 @@ uv run ruff check src/antibody_training_esm/core/biophysical.py
 
 ### Why pH 6 vs pH 7.4 Matters
 
-```
+```text
 Blood (pH 7.4)          Endosome (pH 6.0)
      │                        │
      ▼                        ▼
@@ -92,21 +92,20 @@ The **charge difference** between pH 6 and 7.4 affects:
 | File | Purpose |
 |------|---------|
 | `src/antibody_training_esm/core/biophysical.py` | Implementation |
-| `tests/unit/core/test_biophysical.py` | Unit tests |
-| `tests/fixtures/known_sequences.py` | Test sequences with known pI |
+| `tests/unit/core/test_biophysical.py` | Unit tests + test sequences (TRASTUZUMAB_VH, ACIDIC_SEQUENCE, etc.) |
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] `BiophysicalExtractor` class exists
-- [ ] `extract_features(sequence)` returns (3,) numpy array
-- [ ] `extract_batch_features(sequences)` returns (n, 3) numpy array
-- [ ] Feature order: [charge_pH6, charge_pH7.4, pI]
-- [ ] All 12+ unit tests pass
-- [ ] mypy strict passes
-- [ ] ruff passes
-- [ ] Coverage ≥ 90%
+- [x] `BiophysicalExtractor` class exists
+- [x] `extract_features(sequence)` returns (3,) numpy array
+- [x] `extract_batch_features(sequences)` returns (n, 3) numpy array
+- [x] Feature order: [charge_pH6, charge_pH7.4, pI]
+- [x] All 30 unit tests pass
+- [x] mypy strict passes
+- [x] ruff passes
+- [ ] Coverage ≥ 90% (currently 81.63%)
 
 ---
 

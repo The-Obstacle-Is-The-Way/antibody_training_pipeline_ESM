@@ -279,6 +279,28 @@ def test_rejects_empty_batch(extractor: BiophysicalExtractor) -> None:
         extractor.extract_batch_features([])
 
 
+@pytest.mark.unit
+def test_batch_rejects_invalid_sequence_with_index(
+    extractor: BiophysicalExtractor,
+) -> None:
+    """Verify batch extraction reports index of invalid sequence."""
+    sequences = [ACIDIC_SEQUENCE, "INVALIDXSEQ", BASIC_SEQUENCE]
+
+    with pytest.raises(ValueError, match="Invalid sequence at index 1"):
+        extractor.extract_batch_features(sequences)
+
+
+@pytest.mark.unit
+def test_batch_progress_logging(extractor: BiophysicalExtractor) -> None:
+    """Verify batch extraction handles 100+ sequences with progress logging."""
+    # Create 105 sequences to trigger progress logging at 100
+    sequences = [ACIDIC_SEQUENCE] * 105
+
+    features = extractor.extract_batch_features(sequences)
+
+    assert features.shape == (105, 3)
+
+
 # ============================================================================
 # Input Normalization Tests
 # ============================================================================
@@ -352,3 +374,5 @@ def test_long_sequence(extractor: BiophysicalExtractor) -> None:
     features = extractor.extract_features(long_sequence)
 
     assert features.shape == (3,)
+    assert not np.isnan(features).any(), "Features should not contain NaN"
+    assert not np.isinf(features).any(), "Features should not contain Inf"
