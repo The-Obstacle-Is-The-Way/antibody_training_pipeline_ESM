@@ -164,20 +164,13 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
         )
 
         # Phase C: Optional biophysical feature extraction (Sakhnini et al. 2025)
+        # NOTE: No StandardScaler used - matches Novo Nordisk methodology exactly
         if config.features.use_biophysical:
-            from sklearn.preprocessing import StandardScaler
-
             from antibody_training_esm.core.biophysical import BiophysicalExtractor
 
             logger.info("Extracting biophysical features (Phase C hybrid mode)...")
             bio_extractor = BiophysicalExtractor()
             X_bio = bio_extractor.extract_batch_features(X_train)
-
-            # Optional standardization
-            if config.features.standardize_biophysical:
-                logger.info("Standardizing biophysical features...")
-                scaler = StandardScaler()
-                X_bio = scaler.fit_transform(X_bio).astype(np.float32)
 
             # Concatenate: ESM (1280) + Biophysical (3) = 1283
             logger.info(

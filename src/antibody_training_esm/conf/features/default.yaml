@@ -2,4 +2,3 @@
 #
 # NOTE: Novo Nordisk paper does NOT use StandardScaler. We match their methodology.
 use_biophysical: false
-standardize_biophysical: false

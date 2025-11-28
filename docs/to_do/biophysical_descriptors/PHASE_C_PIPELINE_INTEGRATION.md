@@ -57,19 +57,15 @@ classifier.fit(X_hybrid, y)
 
 **Pros**: Simple, uses existing infrastructure, no architectural changes needed.
 
-### Important: StandardScaler NOT Used (Novo Methodology)
+### Important: No StandardScaler (Novo Methodology)
 
 **After reviewing the Sakhnini et al. 2025 paper, there is NO mention of StandardScaler
 for either ESM embeddings or biophysical descriptors.** Novo Nordisk feeds raw features
 directly to LogisticRegression.
 
-We match this methodology:
-- `standardize_biophysical: false` (default in `features/hybrid.yaml`)
+We match this methodology exactly:
 - ESM embeddings: NOT scaled (already normalized by model architecture)
 - Biophysical features: NOT scaled (raw charge and pI values)
-
-The option exists (`standardize_biophysical: true`) for experimentation, but the default
-matches Novo's approach. This also sidesteps scaler persistence issues for inference.
 
 ### Option B: Separate Biophysical Head (Future)
 
@@ -94,17 +90,11 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
     # X_train_embedded is ESM embeddings (n, 1280)
 
     # NEW: Optional biophysical features (after ESM embedding extraction)
+    # NOTE: No StandardScaler used - matches Novo Nordisk methodology exactly
     if config.features.use_biophysical:
         from antibody_training_esm.core.biophysical import BiophysicalExtractor
         bio_extractor = BiophysicalExtractor()
         X_bio = bio_extractor.extract_batch_features(X_train)  # X_train = sequences
-
-        # Optional: standardize biophysical features before concatenation
-        if config.features.standardize_biophysical:
-            from sklearn.preprocessing import StandardScaler
-            scaler = StandardScaler()
-            X_bio = scaler.fit_transform(X_bio)
-
         X_train_embedded = np.concatenate([X_train_embedded, X_bio], axis=1)
 ```
 
@@ -117,8 +107,7 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
 ```yaml
 # config.yaml - add features section (NEW - currently no features config exists)
 features:
-  use_biophysical: false  # Enable biophysical descriptors
-  standardize_biophysical: true  # StandardScaler on biophysical features
+  use_biophysical: false  # Enable biophysical descriptors (default: ESM-only)
 ```
 
 Existing config groups: `model/`, `classifier/`, `data/`, `hardware/`, `hydra/`

@@ -288,18 +288,12 @@ class FeaturesConfig(BaseModel):
     Phase C of Track B implementation (Sakhnini et al. 2025).
 
     NOTE: Novo Nordisk paper does NOT use StandardScaler for either ESM or
-    biophysical features. We match their methodology by defaulting
-    standardize_biophysical to False.
+    biophysical features. We match their methodology exactly - no scaling applied.
     """
 
     use_biophysical: bool = Field(
         default=False,
         description="Enable biophysical descriptor extraction (Charge@pH6, Charge@pH7.4, pI)",
-    )
-
-    standardize_biophysical: bool = Field(
-        default=False,
-        description="Apply StandardScaler to biophysical features (NOT used by Novo, off by default)",
     )
 
 

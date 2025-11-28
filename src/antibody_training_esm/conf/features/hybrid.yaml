@@ -7,9 +7,7 @@
 #   - Theoretical pI (#66)
 #
 # NOTE: Novo Nordisk paper does NOT use StandardScaler for either ESM or biophysical
-# features. We match their methodology by defaulting standardize_biophysical to false.
-# Set to true for experimentation only.
+# features. We match their methodology exactly - no scaling applied.
 #
 # Usage: uv run antibody-train features=hybrid
 use_biophysical: true
-standardize_biophysical: false
