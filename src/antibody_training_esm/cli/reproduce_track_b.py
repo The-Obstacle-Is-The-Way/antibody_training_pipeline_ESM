@@ -9,15 +9,22 @@ Target Metrics (from Paper Table S2):
 
 This script:
 1. Loads Boughter (Train) and Jain (Test) datasets
-2. extracts 3 biophysical descriptors: Charge@pH6, Charge@pH7.4, Theoretical pI
-3. Trains a Logistic Regression model (StandardScaler + LogReg)
+2. Extracts 3 biophysical descriptors: Charge@pH6, Charge@pH7.4, Theoretical pI
+3. Trains a Logistic Regression model with StandardScaler
 4. Evaluates using 10-fold CV and Hold-out Test
+
+NOTE ON STANDARDSCALER:
+The Novo Nordisk paper does NOT explicitly mention StandardScaler for any features.
+This script uses StandardScaler as a common ML practice for LogReg convergence.
+The Phase C hybrid pipeline (trainer.py) defaults to NO scaling to match Novo
+methodology exactly. The documented Phase B results (63.18% CV) were obtained
+WITH StandardScaler - removing it here would invalidate those benchmarks.
 """
 
 import argparse
 import json
 import logging
-import subprocess
+import subprocess  # nosec B404 - used for safe git provenance only
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -53,7 +60,7 @@ def get_git_commit() -> str:
         Short git commit hash, or "unknown" if not in a git repo.
     """
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603 B607 - safe hardcoded git command
             ["git", "rev-parse", "--short", "HEAD"],
             capture_output=True,
             text=True,
@@ -150,7 +157,9 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
     logger.info("\n3. Training & Cross-Validation...")
 
     # Pipeline: Scale -> LogReg
-    # Note: Paper uses simple LogReg. Scaling is essential for convergence.
+    # Note: StandardScaler used here for convergence, though Novo paper doesn't mention it.
+    # Phase C hybrid pipeline defaults to NO scaling to match Novo methodology exactly.
+    # See docstring for full explanation.
     pipeline = make_pipeline(
         StandardScaler(),
         LogisticRegression(random_state=42, max_iter=1000, class_weight="balanced"),

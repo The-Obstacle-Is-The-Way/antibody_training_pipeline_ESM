@@ -163,6 +163,23 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
             X_train, classifier.embedding_extractor, cache_dir, "train", logger
         )
 
+        # Phase C: Optional biophysical feature extraction (Sakhnini et al. 2025)
+        # NOTE: No StandardScaler used - matches Novo Nordisk methodology exactly
+        if config.features.use_biophysical:
+            from antibody_training_esm.core.biophysical import BiophysicalExtractor
+
+            logger.info("Extracting biophysical features (Phase C hybrid mode)...")
+            bio_extractor = BiophysicalExtractor()
+            X_bio = bio_extractor.extract_batch_features(X_train)
+
+            # Concatenate: ESM (1280) + Biophysical (3) = 1283
+            logger.info(
+                f"Concatenating features: ESM {X_train_embedded.shape} + "
+                f"Biophysical {X_bio.shape}"
+            )
+            X_train_embedded = np.concatenate([X_train_embedded, X_bio], axis=1)
+            logger.info(f"Hybrid feature shape: {X_train_embedded.shape}")
+
         # Convert labels to numpy array
         y_train_array: np.ndarray = np.array(y_train)
 

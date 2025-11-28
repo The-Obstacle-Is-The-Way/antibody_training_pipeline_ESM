@@ -32,11 +32,15 @@ This script will:
 1.  Load the **Boughter** dataset (Train) using `BoughterDataset`.
 2.  Load the **Jain** dataset (Test) using `JainDataset`.
 3.  Extract biophysical features (3-d vector) for all sequences using `BiophysicalExtractor`.
-4.  Standardize features (StandardScaler) - **Critical for Logistic Regression**.
-5.  Train `LogisticRegression` with 10-fold Cross-Validation on Boughter.
-6.  Train a final model on full Boughter and evaluate on Jain.
-7.  Save metrics to `experiments/benchmarks/track_b_baseline.json`.
-8.  Print a clean report comparing results to the Paper's claims.
+4.  Train `LogisticRegression` with 10-fold Cross-Validation on Boughter.
+5.  Train a final model on full Boughter and evaluate on Jain.
+6.  Save metrics to `experiments/benchmarks/track_b_baseline.json`.
+7.  Print a clean report comparing results to the Paper's claims.
+
+**Note on StandardScaler**: The Novo Nordisk paper does NOT mention StandardScaler
+for any features. While scaling is common ML practice for LogReg, we initially
+included it in the reproduce_track_b.py script. The hybrid pipeline (Phase C)
+defaults to NO scaling to match Novo methodology exactly.
 
 ### 2.2 Dependencies
 
