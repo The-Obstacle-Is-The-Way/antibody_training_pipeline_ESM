@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Unit Tests for BiophysicalExtractor
 
@@ -235,14 +234,14 @@ def test_batch_matches_single_extraction(extractor: BiophysicalExtractor) -> Non
 @pytest.mark.unit
 def test_rejects_empty_sequence(extractor: BiophysicalExtractor) -> None:
     """Verify extractor rejects empty sequences."""
-    with pytest.raises(ValueError, match="too short"):
+    with pytest.raises(ValueError, match="empty"):
         extractor.extract_features("")
 
 
 @pytest.mark.unit
 def test_rejects_whitespace_only(extractor: BiophysicalExtractor) -> None:
     """Verify extractor rejects whitespace-only sequences."""
-    with pytest.raises(ValueError, match="too short"):
+    with pytest.raises(ValueError, match="empty"):
         extractor.extract_features("   ")
 
 
@@ -333,12 +332,11 @@ def test_strips_whitespace(extractor: BiophysicalExtractor) -> None:
 
 
 @pytest.mark.unit
-def test_handles_stop_codon_asterisk(extractor: BiophysicalExtractor) -> None:
-    """Verify extractor strips stop codon asterisks."""
-    features_clean = extractor.extract_features(ACIDIC_SEQUENCE)
-    features_asterisk = extractor.extract_features(f"{ACIDIC_SEQUENCE}*")
-
-    np.testing.assert_array_equal(features_clean, features_asterisk)
+def test_rejects_stop_codon_asterisk(extractor: BiophysicalExtractor) -> None:
+    """Verify extractor fails fast on stop codon asterisks (no silent stripping)."""
+    # Stop codons should be filtered at the dataset level, not silently stripped
+    with pytest.raises(ValueError, match=r"Invalid amino acid.*\*"):
+        extractor.extract_features(f"{ACIDIC_SEQUENCE}*")
 
 
 # ============================================================================

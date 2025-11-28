@@ -93,20 +93,22 @@ class BiophysicalExtractor:
             'X' (ambiguous) amino acids because Biopython's ProteinAnalysis
             requires exact amino acid identities for charge/pI calculations.
         """
-        # Clean sequence
-        seq = sequence.upper().strip().replace("*", "")  # Remove stop codons
+        # Clean sequence (case and whitespace only - no silent mutation)
+        seq = sequence.upper().strip()
 
         # Validate sequence length
         if len(seq) < 1:
-            raise ValueError("Sequence too short (empty after cleaning)")
+            raise ValueError("Sequence is empty after stripping whitespace")
 
-        # Validate amino acids (strict - no 'X' allowed)
+        # Validate amino acids (strict - no 'X' or '*' allowed)
+        # Fail fast on invalid characters instead of silently stripping them
         invalid_chars = set(seq) - self.VALID_AMINO_ACIDS
         if invalid_chars:
             raise ValueError(
                 f"Invalid amino acid characters: {invalid_chars}. "
                 f"Biopython ProteinAnalysis requires standard 20 amino acids only. "
-                f"'X' (ambiguous) is NOT supported for biophysical calculations."
+                f"'X' (ambiguous) and '*' (stop codon) are NOT supported. "
+                f"Filter sequences at the dataset level before calling this extractor."
             )
 
         # Compute descriptors using Biopython

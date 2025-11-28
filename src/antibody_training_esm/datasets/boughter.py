@@ -189,6 +189,25 @@ class BoughterDataset(AntibodyDataset):
         if "sequence" not in df.columns and "VH_sequence" in df.columns:
             df["sequence"] = df["VH_sequence"]
 
+        # Filter out sequences with stop codons (*) which violate the schema (uppercase letters only)
+        if "sequence" in df.columns:
+            initial_len = len(df)
+            # Use raw string for regex to match literal *
+            df = df[~df["sequence"].str.contains(r"\*", regex=True, na=False)].copy()
+            dropped = initial_len - len(df)
+            if dropped > 0:
+                self.logger.info(
+                    f"  Removed {dropped} sequences containing stop codons (*)"
+                )
+
+        # Guard against empty dataset after filtering
+        if len(df) == 0:
+            raise ValueError(
+                "No valid sequences remaining after filtering. "
+                "All sequences were removed due to stop codons (*), empty sequences, "
+                "or other quality issues. Check upstream preprocessing pipeline."
+            )
+
         # Validate with Pandera
         df = self.validate_dataframe(df)
 
