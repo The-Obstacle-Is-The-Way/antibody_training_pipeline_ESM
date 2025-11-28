@@ -24,7 +24,7 @@ WITH StandardScaler - removing it here would invalidate those benchmarks.
 import argparse
 import json
 import logging
-import subprocess
+import subprocess  # nosec B404 - used for safe git provenance only
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -60,7 +60,7 @@ def get_git_commit() -> str:
         Short git commit hash, or "unknown" if not in a git repo.
     """
     try:
-        result = subprocess.run(
+        result = subprocess.run(  # nosec B603 B607 - safe hardcoded git command
             ["git", "rev-parse", "--short", "HEAD"],
             capture_output=True,
             text=True,
