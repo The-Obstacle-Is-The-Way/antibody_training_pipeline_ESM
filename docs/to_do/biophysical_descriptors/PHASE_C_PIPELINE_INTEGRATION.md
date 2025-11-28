@@ -1,7 +1,7 @@
 # Phase C: Pipeline Integration (Hybrid Model)
 
 **Date**: 2025-11-27
-**Status**: PENDING
+**Status**: IMPLEMENTED
 **Parent**: [BIOPHYSICAL_IMPLEMENTATION_SPECS.md](BIOPHYSICAL_IMPLEMENTATION_SPECS.md)
 
 ---
@@ -76,13 +76,25 @@ Add optional biophysical feature extraction to the training pipeline:
 def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
     # ... existing code ...
 
-    # NEW: Optional biophysical features
+    # X_train is list of sequences (strings)
+    # X_train_embedded is ESM embeddings (n, 1280)
+
+    # NEW: Optional biophysical features (after ESM embedding extraction)
     if config.features.use_biophysical:
         from antibody_training_esm.core.biophysical import BiophysicalExtractor
         bio_extractor = BiophysicalExtractor()
-        X_bio = bio_extractor.extract_batch_features(X_train)
+        X_bio = bio_extractor.extract_batch_features(X_train)  # X_train = sequences
+
+        # Optional: standardize biophysical features before concatenation
+        if config.features.standardize_biophysical:
+            from sklearn.preprocessing import StandardScaler
+            scaler = StandardScaler()
+            X_bio = scaler.fit_transform(X_bio)
+
         X_train_embedded = np.concatenate([X_train_embedded, X_bio], axis=1)
 ```
+
+**Note**: `X_train` contains raw sequences (list of strings), while `X_train_embedded` contains ESM embeddings. The biophysical extractor operates on sequences.
 
 ### 4.2 Configuration Updates (`src/antibody_training_esm/conf/config.yaml`)
 
@@ -129,12 +141,12 @@ Biophysical features are fast to compute (~0.1s for 1000 sequences), so caching 
 
 ## 6. Acceptance Criteria
 
-- [ ] `features.use_biophysical` config flag works
-- [ ] Feature concatenation produces correct shape (n, 1283)
-- [ ] Training works with hybrid features
-- [ ] Integration tests pass
-- [ ] Can run `uv run antibody-train features.use_biophysical=true`
-- [ ] Backward compatible (default: biophysical disabled)
+- [x] `features.use_biophysical` config flag works
+- [x] Feature concatenation produces correct shape (n, 1283)
+- [x] Training works with hybrid features
+- [x] Integration tests pass (12 tests in `test_hybrid_pipeline.py`)
+- [x] Can run `uv run antibody-train features=hybrid`
+- [x] Backward compatible (default: biophysical disabled)
 
 ---
 

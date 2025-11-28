@@ -280,6 +280,25 @@ class ExperimentConfig(BaseModel):
     )
 
 
+class FeaturesConfig(BaseModel):
+    """
+    Feature extraction configuration.
+
+    Controls whether to use biophysical descriptors alongside ESM embeddings.
+    Phase C of Track B implementation (Sakhnini et al. 2025).
+    """
+
+    use_biophysical: bool = Field(
+        default=False,
+        description="Enable biophysical descriptor extraction (Charge@pH6, Charge@pH7.4, pI)",
+    )
+
+    standardize_biophysical: bool = Field(
+        default=True,
+        description="Apply StandardScaler to biophysical features before concatenation",
+    )
+
+
 class TrainingPipelineConfig(BaseModel):
     """
     Root configuration for training pipeline.
@@ -292,6 +311,7 @@ class TrainingPipelineConfig(BaseModel):
     classifier: ClassifierConfig
     training: TrainingConfig
     experiment: ExperimentConfig
+    features: FeaturesConfig = Field(default_factory=FeaturesConfig)
 
     # Optional hardware config (added in config.yaml)
     hardware: dict[str, Any] | None = Field(

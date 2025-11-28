@@ -1,0 +1,3 @@
+# Feature extraction settings (default: ESM-only, no biophysical)
+use_biophysical: false
+standardize_biophysical: true
