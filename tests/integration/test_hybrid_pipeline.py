@@ -280,7 +280,10 @@ def test_features_config_default_disabled() -> None:
 
     config = FeaturesConfig()
     assert config.use_biophysical is False, "Default should have biophysical disabled"
-    assert config.standardize_biophysical is True, "Default should standardize"
+    # NOTE: Novo Nordisk does NOT use StandardScaler, so we default to False
+    assert config.standardize_biophysical is False, (
+        "Default should NOT standardize (matches Novo)"
+    )
 
 
 @pytest.mark.integration
@@ -324,6 +327,7 @@ def test_training_pipeline_config_includes_features() -> None:
         )
 
         assert config.features.use_biophysical is True
-        assert config.features.standardize_biophysical is True
+        # Default is False to match Novo methodology (no StandardScaler)
+        assert config.features.standardize_biophysical is False
     finally:
         temp_file.unlink()

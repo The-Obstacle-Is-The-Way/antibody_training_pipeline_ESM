@@ -286,6 +286,10 @@ class FeaturesConfig(BaseModel):
 
     Controls whether to use biophysical descriptors alongside ESM embeddings.
     Phase C of Track B implementation (Sakhnini et al. 2025).
+
+    NOTE: Novo Nordisk paper does NOT use StandardScaler for either ESM or
+    biophysical features. We match their methodology by defaulting
+    standardize_biophysical to False.
     """
 
     use_biophysical: bool = Field(
@@ -294,8 +298,8 @@ class FeaturesConfig(BaseModel):
     )
 
     standardize_biophysical: bool = Field(
-        default=True,
-        description="Apply StandardScaler to biophysical features before concatenation",
+        default=False,
+        description="Apply StandardScaler to biophysical features (NOT used by Novo, off by default)",
     )
 
 

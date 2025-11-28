@@ -57,6 +57,20 @@ classifier.fit(X_hybrid, y)
 
 **Pros**: Simple, uses existing infrastructure, no architectural changes needed.
 
+### Important: StandardScaler NOT Used (Novo Methodology)
+
+**After reviewing the Sakhnini et al. 2025 paper, there is NO mention of StandardScaler
+for either ESM embeddings or biophysical descriptors.** Novo Nordisk feeds raw features
+directly to LogisticRegression.
+
+We match this methodology:
+- `standardize_biophysical: false` (default in `features/hybrid.yaml`)
+- ESM embeddings: NOT scaled (already normalized by model architecture)
+- Biophysical features: NOT scaled (raw charge and pI values)
+
+The option exists (`standardize_biophysical: true`) for experimentation, but the default
+matches Novo's approach. This also sidesteps scaler persistence issues for inference.
+
 ### Option B: Separate Biophysical Head (Future)
 
 Train two separate models and ensemble predictions.

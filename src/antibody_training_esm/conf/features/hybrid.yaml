@@ -6,6 +6,10 @@
 #   - Charge at pH 7.4 (#22)
 #   - Theoretical pI (#66)
 #
+# NOTE: Novo Nordisk paper does NOT use StandardScaler for either ESM or biophysical
+# features. We match their methodology by defaulting standardize_biophysical to false.
+# Set to true for experimentation only.
+#
 # Usage: uv run antibody-train features=hybrid
 use_biophysical: true
-standardize_biophysical: true
+standardize_biophysical: false
