@@ -1,5 +1,7 @@
 # Boughter Dataset: Novo Replication Analysis
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 **Date:** 2025-11-04
 **Branch:** leroy-jenkins/full-send
 **Purpose:** Compare our Boughter preprocessing with Novo Nordisk's approach and address Hybri's concerns

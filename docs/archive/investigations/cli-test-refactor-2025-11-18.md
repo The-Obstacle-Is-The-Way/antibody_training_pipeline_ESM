@@ -1,5 +1,7 @@
 # CLI Test Refactoring - End-to-End Validation Report
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 **Date:** 2025-11-18
 **Refactoring:** `src/antibody_training_esm/cli/test.py` → `src/antibody_training_esm/cli/testing/` package
 **Status:** ✅ **VALIDATED - PRODUCTION READY**

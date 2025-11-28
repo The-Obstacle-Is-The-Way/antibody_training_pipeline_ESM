@@ -16,7 +16,7 @@ Experiments are archived here to:
 
 **Status:** ⚠️ ARCHIVED - Hypothesis disproven
 **Date:** November 4-6, 2025
-**Branch:** leroy-jenkins/full-send
+**Branch:** main
 
 **Hypothesis:** Removing ALL X amino acids (not just in CDRs) would better match Novo Nordisk's methodology and improve model performance.
 

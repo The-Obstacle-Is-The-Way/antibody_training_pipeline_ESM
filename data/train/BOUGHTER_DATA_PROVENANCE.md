@@ -2,8 +2,8 @@
 
 **Document Purpose:** This document traces the complete lineage of the Boughter dataset from original source through all processing stages to final training data.
 
-**Last Updated:** 2025-11-04
-**Branch:** leroy-jenkins/full-send
+**Last Updated:** 2025-11-28
+**Branch:** main
 
 ---
 

@@ -1,5 +1,7 @@
 # Phase E: Polish & Documentation
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 **Effort:** 2-3 hours
 **Risk:** LOW
 **Dependencies:** Phases A-D complete

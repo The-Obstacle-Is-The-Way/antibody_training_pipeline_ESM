@@ -318,10 +318,10 @@ ls tests/fixtures/mock_datasets/
 
 ### Main Branches
 
-- **`leroy-jenkins/full-send`**: Main development branch (production-ready code)
+- **`main`**: Main branch (production-ready code)
 - **`dev`**: Development branch (active work)
 
-**Branch Strategy:** Feature branches merge to `dev` → `dev` merges to `leroy-jenkins/full-send`
+**Branch Strategy:** Feature branches merge to `dev` → `dev` merges to `main`
 
 ---
 
@@ -415,5 +415,5 @@ Runs on all PRs and commits to main branches:
 
 ---
 
-**Last Updated:** 2025-11-18
-**Branch:** `leroy-jenkins/full-send`
+**Last Updated:** 2025-11-28
+**Branch:** `main`

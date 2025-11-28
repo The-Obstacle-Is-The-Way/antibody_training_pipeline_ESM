@@ -1,5 +1,7 @@
 # Repository Modernization Plan: 2025 Gold Standards
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 **Status:** 📋 Planning Phase - Ready for Senior Review
 
 **Created:** 2025-11-06

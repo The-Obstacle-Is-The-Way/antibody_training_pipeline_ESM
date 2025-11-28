@@ -1,5 +1,7 @@
 # Pydantic Integration Validation Dossier
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 **Date:** 2025-11-21
 **Branch:** `feat/pydantic-phase-4-artifacts` → `dev` → `leroy-jenkins/full-send`
 **Validation Type:** End-to-End Pipeline Integrity After Pydantic Phases 1-4

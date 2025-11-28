@@ -1,5 +1,7 @@
 # Archive
 
+> **Note:** Some documents in this archive reference `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 This directory contains **historical documentation** from the development process. These documents represent completed work, investigations, and planning efforts that provide context for past decisions.
 
 **Archive Policy:** Documents here are time-bound, completed, and serve as historical reference only. For current documentation, see the main `docs/` directory.

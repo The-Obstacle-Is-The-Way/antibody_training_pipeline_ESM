@@ -5,6 +5,8 @@
 > **For current pipeline documentation, see:** `data/test/harvey/README.md`
 >
 > This verification confirmed the cleanup was successful.
+>
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
 
 ---
 

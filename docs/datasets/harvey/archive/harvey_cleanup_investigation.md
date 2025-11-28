@@ -5,6 +5,8 @@
 > **For current pipeline documentation, see:** `data/test/harvey/README.md`
 >
 > Status warnings below are historical and do not reflect the current state.
+>
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
 
 ---
 

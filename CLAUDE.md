@@ -338,7 +338,7 @@ Standard fragments across all datasets:
 ## Git Workflow
 
 ### Main Branches
-- `leroy-jenkins/full-send`: Main development branch (production-ready code)
+- `main`: Main branch (production-ready code)
 - `dev`: Development branch (active work)
 
 ### Commit Conventions

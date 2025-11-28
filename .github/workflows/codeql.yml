@@ -3,11 +3,11 @@ name: CodeQL Security Analysis
 on:
   # Run on pushes to main branches
   push:
-    branches: [ leroy-jenkins/full-send, dev ]
+    branches: [ main, dev ]
 
   # Run on PRs
   pull_request:
-    branches: [ leroy-jenkins/full-send, dev ]
+    branches: [ main, dev ]
 
   # Weekly scheduled scan (Sunday 3am UTC - offset from other jobs)
   schedule:

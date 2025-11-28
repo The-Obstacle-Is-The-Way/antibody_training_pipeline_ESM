@@ -1,5 +1,7 @@
 # Technical Debt Cleanup - Phases Overview
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 **Last Updated:** 2025-11-20
 **Status:** All Phases Completed (A-E)
 **Total Effort Remaining:** 0h

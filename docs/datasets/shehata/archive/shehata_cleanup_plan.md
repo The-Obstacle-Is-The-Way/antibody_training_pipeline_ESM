@@ -5,6 +5,8 @@
 > **For current pipeline documentation, see:** `data/test/shehata/README.md`
 >
 > The cleanup described below is complete and all changes have been applied.
+>
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
 
 ---
 

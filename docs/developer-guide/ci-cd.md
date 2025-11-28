@@ -61,7 +61,7 @@ The repository has **5 CI/CD workflows** in `.github/workflows/`:
 
 ### Overview
 
-**Primary CI pipeline** that runs on every push and PR to `dev` or `leroy-jenkins/full-send`.
+**Primary CI pipeline** that runs on every push and PR to `dev` or `main`.
 
 **Total runtime:** ~20 minutes
 
@@ -319,8 +319,7 @@ The repository has **5 CI/CD workflows** in `.github/workflows/`:
 ### Protected Branches
 
 **Main branches with protection:**
-- `leroy-jenkins/full-send` (default branch)
-- `main` (if exists)
+- `main` (default branch)
 
 ### Required Checks
 
@@ -351,7 +350,7 @@ Before merging to protected branches, PRs must pass:
 2. Click **"Add branch protection rule"**
 3. Configure:
 
-   **Branch name pattern:** `leroy-jenkins/full-send`
+   **Branch name pattern:** `main`
 
    **Enable:**
    - ✅ Require a pull request before merging (1 approval)
@@ -381,8 +380,8 @@ Before merging to protected branches, PRs must pass:
 
 ```bash
 # Test 1: Try to push directly (should fail)
-git checkout leroy-jenkins/full-send
-git push origin leroy-jenkins/full-send
+git checkout main
+git push origin main
 # Expected: "Protected branch update failed"
 
 # Test 2: Create PR (should require checks)
@@ -747,5 +746,5 @@ gh workflow run benchmark.yml -f run_harvey=false
 
 ---
 
-**Last Updated:** 2025-11-18
-**Branch:** `leroy-jenkins/full-send`
+**Last Updated:** 2025-11-28
+**Branch:** `main`

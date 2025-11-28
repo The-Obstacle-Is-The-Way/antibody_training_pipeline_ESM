@@ -3,7 +3,7 @@ name: Deploy Documentation
 on:
   push:
     branches:
-      - leroy-jenkins/full-send  # Deploy on push to main branch
+      - main  # Deploy on push to main branch
   workflow_dispatch:  # Allow manual trigger
 
 permissions:

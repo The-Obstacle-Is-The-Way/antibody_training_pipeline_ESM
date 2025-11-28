@@ -1,5 +1,7 @@
 # Docker Cross-Platform Analysis (2025-11-23)
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 > **Comprehensive first-principles analysis of Docker GPU setup**
 >
 > **TL;DR:** ✅ **100% GUCCI BANGER STATUS** - The implementation is ELEGANT and CORRECT! 🔥

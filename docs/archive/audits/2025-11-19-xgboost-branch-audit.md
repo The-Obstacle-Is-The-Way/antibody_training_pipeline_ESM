@@ -1,5 +1,7 @@
 # XGBoost Branch Comprehensive Audit Report
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 **Date:** 2025-11-19
 **Branch:** `review/claude-xgboost`
 **Auditor:** Claude Code (Sonnet 4.5)

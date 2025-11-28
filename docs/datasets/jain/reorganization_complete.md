@@ -8,6 +8,8 @@
 > - **Current testing:** Use `uv run antibody-test` with `data/test/jain/fragments/VH_only_jain.csv`
 >
 > See `docs/datasets/jain/README.md` for current status.
+>
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
 
 **Date:** 2025-11-05
 **Branch:** leroy-jenkins/full-send

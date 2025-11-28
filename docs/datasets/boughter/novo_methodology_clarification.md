@@ -1,5 +1,7 @@
 # Boughter Dataset: Novo Nordisk Methodology Clarification
 
+> **Note:** This document references `leroy-jenkins/full-send` which was renamed to `main` on 2025-11-28.
+
 **Date:** 2025-11-04
 **Status:** ✅ **RESOLVED - No Contradiction Found**
 **Branch:** leroy-jenkins/boughter-clean
