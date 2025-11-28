@@ -1,0 +1,25 @@
+# CODEOWNERS - Automatic PR Review Assignment
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @The-Obstacle-Is-The-Way
+
+# Core ML pipeline - requires careful review
+/src/antibody_training_esm/core/ @The-Obstacle-Is-The-Way
+/src/antibody_training_esm/models/ @The-Obstacle-Is-The-Way
+
+# Dataset loaders - data integrity critical
+/src/antibody_training_esm/datasets/ @The-Obstacle-Is-The-Way
+/preprocessing/ @The-Obstacle-Is-The-Way
+
+# CI/CD and infrastructure
+/.github/ @The-Obstacle-Is-The-Way
+/Dockerfile* @The-Obstacle-Is-The-Way
+/docker-compose*.yml @The-Obstacle-Is-The-Way
+
+# Configuration
+/pyproject.toml @The-Obstacle-Is-The-Way
+/mkdocs.yml @The-Obstacle-Is-The-Way
+
+# Security-sensitive files
+/SECURITY.md @The-Obstacle-Is-The-Way
