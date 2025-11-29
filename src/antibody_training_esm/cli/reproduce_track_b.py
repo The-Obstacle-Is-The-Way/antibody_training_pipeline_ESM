@@ -219,14 +219,18 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
     }
 
     # Check if metrics changed before saving (ignore provenance for comparison)
+    # Also ensure legacy files without provenance get updated
     should_save = True
     if results_file.exists():
         with open(results_file) as f:
             existing = json.load(f)
+        # Check if provenance exists in the existing file (backfill legacy files)
+        existing_has_provenance = "provenance" in existing
         # Compare everything except provenance
         existing_metrics = {k: v for k, v in existing.items() if k != "provenance"}
         new_metrics = {k: v for k, v in results.items() if k != "provenance"}
-        if existing_metrics == new_metrics:
+        # Save if: (1) legacy file missing provenance, OR (2) metrics changed
+        if existing_has_provenance and existing_metrics == new_metrics:
             should_save = False
             logger.info(f"\nMetrics unchanged - skipping file update to {results_file}")
 

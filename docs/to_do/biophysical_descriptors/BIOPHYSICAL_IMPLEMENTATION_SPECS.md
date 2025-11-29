@@ -16,9 +16,10 @@
 
 **Scope**:
 - **Phase A**: 3 Biopython descriptors (FREE) - charge@pH6, charge@pH7.4, theoretical pI (✅ COMPLETED)
-- **Phase B**: Baseline Reproducibility Experiment (Next)
-- **Phase C**: Open-source extensions (peptides library) - optional extras
-- **Phase D**: Full 68 descriptors (BLOCKED until licensing resolved)
+- **Phase B**: Baseline Reproducibility Experiment (✅ COMPLETED)
+- **Phase C**: Hybrid Integration (~~DEPRECATED~~ - was scope creep, see Phase D)
+- **Phase D**: Hybrid Removal Cleanup (✅ COMPLETED)
+- **Future**: Full 68 descriptors (BLOCKED until Schrödinger licensing resolved)
 
 **Key Insight from Paper (Table S2)**:
 - `theoretical pI` alone achieves **65.2% accuracy** (single descriptor!)
@@ -150,7 +151,7 @@ experiments** for comparison. They are NEVER combined. The hybrid approach:
 
 ---
 
-## 7. Open-Source Extensions (Phase D - Optional)
+## 7. Future: Open-Source Extensions (Optional)
 
 If we want more descriptors WITHOUT Schrödinger, we can use `peptides` library:
 
@@ -165,7 +166,7 @@ If we want more descriptors WITHOUT Schrödinger, we can use `peptides` library:
 
 ---
 
-## 7. What We're NOT Implementing (Schrödinger-blocked)
+## 8. What We're NOT Implementing (Schrödinger-blocked)
 
 The following require BioLuminate (~$5-20K/year):
 
@@ -180,7 +181,7 @@ The following require BioLuminate (~$5-20K/year):
 
 ---
 
-## 8. Success Criteria
+## 9. Success Criteria
 
 - [x] Phase A complete: BiophysicalExtractor with 3 Biopython descriptors
 - [x] 10-fold CV on Boughter achieves ~65% accuracy (achieved: 63.18% ± 9.30%)
@@ -190,7 +191,7 @@ The following require BioLuminate (~$5-20K/year):
 
 ---
 
-## 9. References
+## 10. References
 
 - **Paper**: Sakhnini et al. 2025 - Table S1 (68 descriptors), Table S2 (importance ranking)
 - **GitHub Issue**: [#4](https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM/issues/4)
@@ -201,7 +202,7 @@ The following require BioLuminate (~$5-20K/year):
 
 ---
 
-## 10. Implementation Notes (Post-Review)
+## 11. Implementation Notes (Post-Review)
 
 **Senior Review**: APPROVED (2025-11-27)
 

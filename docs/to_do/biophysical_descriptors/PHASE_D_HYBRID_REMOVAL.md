@@ -105,19 +105,21 @@ After deleting both yaml files, the entire `conf/features/` directory can be rem
 
 **`src/antibody_training_esm/core/trainer.py`**:
 ```python
-# DELETE lines 166-181 (the hybrid concatenation block)
-# if config.features.use_biophysical:
-#     ...
+# DELETE the `if config.features.use_biophysical:` block that concatenates
+# biophysical features to ESM embeddings. Look for:
+#   - BiophysicalExtractor import
+#   - bio_extractor = BiophysicalExtractor()
+#   - np.concatenate([X_train_embedded, X_bio], axis=1)
 ```
 
 **`src/antibody_training_esm/models/config.py`**:
 ```python
-# DELETE the FeaturesConfig class (lines 283-297):
+# DELETE the FeaturesConfig class:
 class FeaturesConfig(BaseModel):
     """..."""
     use_biophysical: bool = Field(...)
 
-# DELETE the features field from TrainingPipelineConfig (line 312):
+# DELETE the `features` field from TrainingPipelineConfig:
 features: FeaturesConfig = Field(default_factory=FeaturesConfig)
 ```
 
