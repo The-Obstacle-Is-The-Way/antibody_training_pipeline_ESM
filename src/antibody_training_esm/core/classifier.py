@@ -1,12 +1,13 @@
 """
 Binary Classifier Module
 
-Professional binary classifier for antibody sequences using ESM-1V or AMPLIFY embeddings.
-Includes sklearn compatibility, assay-specific thresholds, and model serialization.
+Professional binary classifier for antibody sequences using ESM-1V, AMPLIFY, or biophysical
+embeddings. Includes sklearn compatibility, assay-specific thresholds, and model serialization.
 
 Supported model types:
     - "esm" (default): ESM-1v/ESM-2 models (facebook/esm1v_*, facebook/esm2_*)
     - "amplify": AMPLIFY 350M model (chandar-lab/AMPLIFY_350M)
+    - "biophysical": Biophysical feature extractor (3-descriptor Track B)
 """
 
 import logging
@@ -22,7 +23,7 @@ from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
 logger = logging.getLogger(__name__)
 
 # Supported model types for embedding extraction
-SUPPORTED_MODEL_TYPES = {"esm", "amplify"}
+SUPPORTED_MODEL_TYPES = {"esm", "amplify", "biophysical"}
 
 
 class EmbeddingExtractorProtocol(Protocol):
@@ -109,6 +110,18 @@ class BinaryClassifier:
                 params["model_name"],
                 params["device"],
                 batch_size,  # Will be forced to 1 by AMPLIFYEmbeddingExtractor
+                revision=revision,
+            )
+        elif model_type == "biophysical":
+            # Biophysical descriptors (Phase B)
+            from antibody_training_esm.core.embeddings_biophysical import (
+                BiophysicalEmbeddingExtractor,
+            )
+
+            self.embedding_extractor = BiophysicalEmbeddingExtractor(
+                params["model_name"],
+                params["device"],
+                batch_size,
                 revision=revision,
             )
         else:
@@ -221,6 +234,17 @@ class BinaryClassifier:
                 )
 
                 self.embedding_extractor = AMPLIFYEmbeddingExtractor(
+                    self.model_name,
+                    self.device,
+                    self.batch_size,
+                    revision=self.revision,
+                )
+            elif self._model_type == "biophysical":
+                from antibody_training_esm.core.embeddings_biophysical import (
+                    BiophysicalEmbeddingExtractor,
+                )
+
+                self.embedding_extractor = BiophysicalEmbeddingExtractor(
                     self.model_name,
                     self.device,
                     self.batch_size,
@@ -434,6 +458,14 @@ class BinaryClassifier:
             )
 
             self.embedding_extractor = AMPLIFYEmbeddingExtractor(
+                self.model_name, self.device, batch_size, revision=revision
+            )
+        elif model_type == "biophysical":
+            from antibody_training_esm.core.embeddings_biophysical import (
+                BiophysicalEmbeddingExtractor,
+            )
+
+            self.embedding_extractor = BiophysicalEmbeddingExtractor(
                 self.model_name, self.device, batch_size, revision=revision
             )
         else:

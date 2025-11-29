@@ -14,7 +14,10 @@ import numpy as np
 import yaml
 
 from antibody_training_esm.core.classifier import BinaryClassifier
-from antibody_training_esm.core.directory_utils import get_hierarchical_model_dir
+from antibody_training_esm.core.directory_utils import (
+    extract_model_shortname,
+    get_hierarchical_model_dir,
+)
 from antibody_training_esm.models.artifact import ModelArtifactMetadata
 
 if TYPE_CHECKING:
@@ -86,6 +89,7 @@ def save_model(
         base_save_dir = config.training.model_save_dir
         model_shortname = config.model.name
         classifier_config = config.classifier.model_dump()
+        classifier_strategy = config.classifier.strategy
         train_metrics = getattr(config, "train_metrics", None)
     else:
         if not config["training"]["save_model"]:
@@ -94,7 +98,18 @@ def save_model(
         base_save_dir = config["training"]["model_save_dir"]
         model_shortname = config["model"]["name"]
         classifier_config = config["classifier"]
+        classifier_strategy = config["classifier"].get(
+            "strategy", "logistic_regression"
+        )
         train_metrics = config.get("train_metrics")
+
+    # Auto-generate model_name if empty (e.g., "boughter_vh_biophysical_logreg")
+    if not model_name:
+        # Extract short names for readable filename
+        model_short = extract_model_shortname(model_shortname)
+        classifier_short = "logreg" if "logistic" in classifier_strategy else "xgboost"
+        model_name = f"boughter_vh_{model_short}_{classifier_short}"
+        logger.info(f"Auto-generated model_name: {model_name}")
 
     # Generate hierarchical directory path
     hierarchical_dir = get_hierarchical_model_dir(

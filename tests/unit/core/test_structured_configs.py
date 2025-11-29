@@ -133,7 +133,8 @@ def test_structured_config_preserves_yaml_values() -> None:
         cfg = compose(config_name="config")
 
         # Values from YAML should be preserved
-        assert cfg.training.model_name == "boughter_vh_esm1v_logreg"
+        # model_name defaults to "" (auto-generated at save time based on model type)
+        assert cfg.training.model_name == ""
         assert cfg.experiment.name == "novo_replication"
         assert cfg.model.name == "facebook/esm1v_t33_650M_UR90S_1"
 

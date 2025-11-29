@@ -1,0 +1,199 @@
+config:
+  batch_size: 32
+  data_paths:
+  - data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
+  device: mps
+  label_column: label
+  metrics:
+  - accuracy
+  - precision
+  - recall
+  - f1
+  - roc_auc
+  - pr_auc
+  model_paths:
+  - experiments/checkpoints/biophysical/logreg/boughter_vh_biophysical_logreg.pkl
+  output_dir: ./experiments/benchmarks
+  save_predictions: true
+  sequence_column: vh_sequence
+  threshold: null
+dataset: VH_only_jain_86_p5e_s2
+model: boughter_vh_biophysical_logreg
+results:
+  classification_report:
+    '0.0':
+      f1-score: 0.6041666666666666
+      precision: 0.7837837837837838
+      recall: 0.4915254237288136
+      support: 59.0
+    '1.0':
+      f1-score: 0.5
+      precision: 0.3877551020408163
+      recall: 0.7037037037037037
+      support: 27.0
+    accuracy: 0.5581395348837209
+    macro avg:
+      f1-score: 0.5520833333333333
+      precision: 0.5857694429123
+      recall: 0.5976145637162587
+      support: 86.0
+    weighted avg:
+      f1-score: 0.5714631782945736
+      precision: 0.6594491976551777
+      recall: 0.5581395348837209
+      support: 86.0
+  confusion_matrix: !!python/object/apply:numpy._core.multiarray._reconstruct
+    args:
+    - &id001 !!python/name:numpy.ndarray ''
+    - !!python/tuple
+      - 0
+    - !!binary |
+      Yg==
+    state: !!python/tuple
+    - 1
+    - !!python/tuple
+      - 2
+      - 2
+    - &id002 !!python/object/apply:numpy.dtype
+      args:
+      - i8
+      - false
+      - true
+      state: !!python/tuple
+      - 3
+      - <
+      - null
+      - null
+      - null
+      - -1
+      - -1
+      - 0
+    - false
+    - !!binary |
+      HQAAAAAAAAAeAAAAAAAAAAgAAAAAAAAAEwAAAAAAAAA=
+  metrics: !!python/object:antibody_training_esm.models.artifact.EvaluationMetrics
+    __dict__:
+      accuracy: 0.5581395348837209
+      confusion_matrix:
+      - - 29
+        - 30
+      - - 8
+        - 19
+      dataset_name: VH_only_jain_86_p5e_s2
+      f1: 0.5
+      n_samples: 86
+      precision: 0.3877551020408163
+      recall: 0.7037037037037037
+      roc_auc: 0.6716886377903328
+    __pydantic_extra__: null
+    __pydantic_fields_set__: !!set
+      accuracy: null
+      confusion_matrix: null
+      dataset_name: null
+      f1: null
+      n_samples: null
+      precision: null
+      recall: null
+      roc_auc: null
+    __pydantic_private__: null
+  predictions:
+    y_pred: !!python/object/apply:numpy._core.multiarray._reconstruct
+      args:
+      - *id001
+      - !!python/tuple
+        - 0
+      - !!binary |
+        Yg==
+      state: !!python/tuple
+      - 1
+      - !!python/tuple
+        - 86
+      - *id002
+      - false
+      - !!binary |
+        AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAB
+        AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAQAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAQAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAA
+        AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAAAAAAAAAAA
+        AQAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAB
+        AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAEA
+        AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAQAA
+        AAAAAAABAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAA==
+    y_proba: !!python/object/apply:numpy._core.multiarray._reconstruct
+      args:
+      - *id001
+      - !!python/tuple
+        - 0
+      - !!binary |
+        Yg==
+      state: !!python/tuple
+      - 1
+      - !!python/tuple
+        - 86
+      - &id003 !!python/object/apply:numpy.dtype
+        args:
+        - f8
+        - false
+        - true
+        state: !!python/tuple
+        - 3
+        - <
+        - null
+        - null
+        - null
+        - -1
+        - -1
+        - 0
+      - false
+      - !!binary |
+        oQR2ZSl9zT8Bkp6Hq1fQP+SZEmEQ/OM/K47Ybr0F4j+KlBZXjgXbP0QyQaKg7eM/gjb1UzgZ4T+2
+        Dc/NszflPz8S7occj9s/XZ0NXW7T5T/baYchyVLOPx0vIbRUtOQ/04QWpagO5T/jRdisa9XhP372
+        x9m1+9A/i7GCftXU0D9vSs7q3s/jP4nVGOZQm+M/j/a6ZIcgzT/zLeO6F2LhP5e/fnlp9eQ/e42V
+        U9/v5D9uSXEgyMvYP1TJQ8eRk9g/1gxi5cfjzT80pB259CvkPzrWAC2jT9E/crJilECQ4T92ymmP
+        sljaP3cjmojd8M4/suBSikZy5T/k7d0JDBHbP81o1vNbPc0/xbiZNURw4z+6udrqkVrSP9poCrY8
+        x9A/7979LdbR4T9i7Sp00CDlP6ktHUkExeU/tIQ4CfgB2z+Ny5ev1KrhP9A6v9+Wp+Q/KW/iTY5x
+        0z8jFrVIa5jkP1aY1tJgmtU/5OAsB4vi2j9eOPurllXPP4hfo1YayuE/RRJlWvIR5j8JK1LU7Ybj
+        PyMqa53u3to/ExHmx7Zczj8J7HbwiyzkP8X4m3A48OE/6bGwq9V14z9bkrLRc8PhP73HDpRTRtg/
+        SSfanlrU4T+aWdwsyF3RP+I3sRDjbeE/BSuP53070z/zGBowKvXlP9XosZZCZeU/6hRr7pAe5D/K
+        3ds1eJHhP3SuJ5l29eE/O2MACxKP0D9ZjlglmtXkP29bAlYnq9g/sgCrgI1f0T/ULR56sqPjP/nD
+        jB1+R+Q/AQu74hMQ5T9wEjN7cSvPP8dfiIPVHNs/TI9n7MOH0z8RbUO5IgzZP7szt8iN9eM/CLI7
+        rpQ84j9ZQ9oHGmThP+LcpjX0yeE/fpKBsgP45T+E5hmdHyrlP5PuWAHP3OE/sEMPQkuP0z+lDjEC
+        ukraPw==
+    y_true: !!python/object/apply:numpy._core.multiarray._reconstruct
+      args:
+      - *id001
+      - !!python/tuple
+        - 0
+      - !!binary |
+        Yg==
+      state: !!python/tuple
+      - 1
+      - !!python/tuple
+        - 86
+      - *id003
+      - false
+      - !!binary |
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8A
+        AAAAAADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAA
+        AAAAAPA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAAAAAAAAAAAAAAAADwPwAAAAAAAAAAAAAA
+        AAAA8D8AAAAAAAAAAAAAAAAAAPA/AAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AADwPwAAAAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAADwPwAAAAAAAPA/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAADwPwAAAAAAAPA/AAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAA8D8AAAAAAADwPwAAAAAAAAAAAAAAAAAAAAAAAAAAAADwPwAA
+        AAAAAAAAAAAAAAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPA/AAAA
+        AAAA8D8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAA==
+  test_scores:
+    accuracy: 0.5581395348837209
+    f1: 0.5
+    precision: 0.3877551020408163
+    recall: 0.7037037037037037
+    roc_auc: 0.6716886377903328

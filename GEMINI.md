@@ -73,6 +73,14 @@ uv run antibody-train hardware.device=cuda training.batch_size=32
 uv run antibody-train --multirun classifier.C=0.1,1.0,10.0
 ```
 
+### Mandatory Hydra Usage
+
+**All pipelines must use Hydra.** The project has two parallel prediction tracks:
+- **Track A (ESM):** `uv run antibody-train model=esm1v`
+- **Track B (Biophysical):** `uv run antibody-train model=biophysical`
+
+Never create standalone scripts with hardcoded configurations. Use the existing config group pattern in `conf/model/`.
+
 ### 4. Web Application (Gradio)
 
 Launch the interactive web interface for predictions.

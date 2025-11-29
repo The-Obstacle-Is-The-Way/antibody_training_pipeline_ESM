@@ -108,6 +108,7 @@ def perform_cross_validation(
         model_name = config.model.name
         device = resolve_device(config.model.device)
         batch_size = config.model.batch_size
+        model_type = config.model.model_type
 
         clf_params = config.classifier.model_dump()
     else:
@@ -126,6 +127,7 @@ def perform_cross_validation(
         batch_size = training_conf.get(
             "batch_size", model_cfg.get("batch_size", DEFAULT_BATCH_SIZE)
         )
+        model_type = model_cfg.get("model_type", "esm")
         clf_params = classifier_conf.copy()
 
     logger.info(f"Performing {cv_folds}-fold cross-validation")
@@ -141,6 +143,7 @@ def perform_cross_validation(
     cv_params["model_name"] = model_name
     cv_params["device"] = device
     cv_params["batch_size"] = batch_size
+    cv_params["model_type"] = model_type
 
     cv_classifier = BinaryClassifier(cv_params)
 

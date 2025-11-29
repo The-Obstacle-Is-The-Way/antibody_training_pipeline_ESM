@@ -221,6 +221,27 @@ tests/                       # Test suite
 - Config structure: `model`, `data`, `classifier`, `training`, `experiment`, `hardware`
 - HuggingFace model revisions pinned for reproducibility
 
+### CRITICAL: Hydra is Mandatory for All Pipelines
+
+**ALL training and inference pipelines MUST use Hydra configuration.** This includes:
+- Track A (ESM-1v embeddings)
+- Track B (Biophysical descriptors)
+- Any future feature extraction methods
+
+**DO NOT create standalone scripts with hardcoded paths.** Instead:
+1. Add config options to `conf/config.yaml` or create new config group in `conf/model/`
+2. Use Hydra's override system for flexibility
+3. Output to `experiments/` directory structure
+
+**Two Parallel Tracks (Novo Nordisk Paper):**
+
+| Track | Features | Command | Accuracy |
+|-------|----------|---------|----------|
+| A (ESM) | 1280-d embeddings | `antibody-train model=esm1v` | ~71% |
+| B (Biophysical) | 3 Biopython features | `antibody-train model=biophysical` | ~65% |
+
+Both tracks predict antibody polyreactivity. They are **separate experiments** for comparison, NOT combined.
+
 ### Dataset Organization
 - **Training data**: `data/train/{dataset}/canonical/*.csv`
 - **Test data**: `data/test/{dataset}/canonical/*.csv` or `fragments/*.csv`

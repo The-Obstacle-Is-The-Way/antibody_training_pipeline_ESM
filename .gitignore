@@ -142,6 +142,7 @@ experiments/runs/*
 experiments/checkpoints/*
 !experiments/checkpoints/esm1v/
 !experiments/checkpoints/esm2_650m/
+!experiments/checkpoints/biophysical/
 experiments/cache/*
 
 # Keep directory structure
@@ -170,3 +171,4 @@ coverage.json
 experiments/benchmarks/logs/
 experiments/benchmarks/*.log
 test.log
+training.log
