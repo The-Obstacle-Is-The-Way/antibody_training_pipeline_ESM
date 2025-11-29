@@ -2,6 +2,7 @@
 
 ## Project Structure & Module Organization
 - Core library in `src/antibody_training_esm/` with `core/` (training loop, models), `datasets/` (loading/preprocessing), `evaluation/`, and `cli/` entry points. Hydra configs live in `src/antibody_training_esm/conf/` (per model/data/classifier) and mirror CLI overrides.
+- **Hydra is mandatory** for all training/inference pipelines. Both Track A (ESM) and Track B (biophysical) must use the same config-driven infrastructure (`conf/model/`). No standalone scripts with hardcoded paths.
 - Data inputs and small artifacts are under `data/`; long-running experiment outputs land in `experiments/runs/` (Hydra multi-runs) and `dist/` (packaged builds). Keep checked-in fixtures in `tests/fixtures/`.
 - Documentation: user/developer guides in `docs/`, research notes in `docs/research/`, roadmap/status docs in the repo root.
 
