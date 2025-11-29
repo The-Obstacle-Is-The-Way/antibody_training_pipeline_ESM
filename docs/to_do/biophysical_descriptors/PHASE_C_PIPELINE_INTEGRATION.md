@@ -1,7 +1,12 @@
 # Phase C: Pipeline Integration (Hybrid Model)
 
+> **DEPRECATED (2025-11-28)**: This phase was a mistake. The Novo Nordisk paper
+> runs Track A (ESM) and Track B (biophysical) as **separate parallel experiments**,
+> never combined. This hybrid approach has no scientific justification and should
+> be removed. See [PHASE_D_HYBRID_REMOVAL.md](PHASE_D_HYBRID_REMOVAL.md) for cleanup plan.
+
 **Date**: 2025-11-27
-**Status**: IMPLEMENTED
+**Status**: ~~IMPLEMENTED~~ **DEPRECATED - PENDING REMOVAL**
 **Parent**: [BIOPHYSICAL_IMPLEMENTATION_SPECS.md](BIOPHYSICAL_IMPLEMENTATION_SPECS.md)
 
 ---

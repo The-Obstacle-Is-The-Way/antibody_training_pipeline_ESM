@@ -1,4 +1,9 @@
 {
+  "provenance": {
+    "run_date": "2025-11-29T00:10:35.585820+00:00",
+    "git_commit": "978df61",
+    "script_version": "1.0.0"
+  },
   "cv_accuracy_mean": 0.6318181818181817,
   "cv_accuracy_std": 0.046478368636902925,
   "test_accuracy": 0.5581395348837209,

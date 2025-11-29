@@ -13,12 +13,12 @@ This script:
 3. Trains a Logistic Regression model with StandardScaler
 4. Evaluates using 10-fold CV and Hold-out Test
 
-NOTE ON STANDARDSCALER:
-The Novo Nordisk paper does NOT explicitly mention StandardScaler for any features.
-This script uses StandardScaler as a common ML practice for LogReg convergence.
-The Phase C hybrid pipeline (trainer.py) defaults to NO scaling to match Novo
-methodology exactly. The documented Phase B results (63.18% CV) were obtained
-WITH StandardScaler - removing it here would invalidate those benchmarks.
+# NOTE ON STANDARDSCALER:
+# The Novo Nordisk paper does NOT explicitly mention StandardScaler for any features.
+# This script uses StandardScaler as a common ML practice for LogReg convergence.
+# The main pipeline (trainer.py) does not use scaling to match Novo
+# methodology exactly. The documented Phase B results (63.18% CV) were obtained
+# WITH StandardScaler - removing it here would invalidate those benchmarks.
 """
 
 import argparse
@@ -158,8 +158,8 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
 
     # Pipeline: Scale -> LogReg
     # Note: StandardScaler used here for convergence, though Novo paper doesn't mention it.
-    # Phase C hybrid pipeline defaults to NO scaling to match Novo methodology exactly.
-    # See docstring for full explanation.
+    # The main pipeline (trainer.py) does not use scaling to match Novo
+    # methodology exactly. The documented Phase B results (63.18% CV) were obtained
     pipeline = make_pipeline(
         StandardScaler(),
         LogisticRegression(random_state=42, max_iter=1000, class_weight="balanced"),
@@ -198,6 +198,7 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
         logger.info(f"    {name}: {coef:.4f}")
 
     # 5. Save Results (with provenance metadata for reproducibility)
+    # Only update file if metrics changed (avoid noisy git diffs from timestamp updates)
     results = {
         # Provenance metadata
         "provenance": {
@@ -217,10 +218,26 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
         "dataset_sizes": {"train": len(df_train), "test": len(df_test)},
     }
 
-    with open(results_file, "w") as f:
-        json.dump(results, f, indent=2)
+    # Check if metrics changed before saving (ignore provenance for comparison)
+    # Also ensure legacy files without provenance get updated
+    should_save = True
+    if results_file.exists():
+        with open(results_file) as f:
+            existing = json.load(f)
+        # Check if provenance exists in the existing file (backfill legacy files)
+        existing_has_provenance = "provenance" in existing
+        # Compare everything except provenance
+        existing_metrics = {k: v for k, v in existing.items() if k != "provenance"}
+        new_metrics = {k: v for k, v in results.items() if k != "provenance"}
+        # Save if: (1) legacy file missing provenance, OR (2) metrics changed
+        if existing_has_provenance and existing_metrics == new_metrics:
+            should_save = False
+            logger.info(f"\nMetrics unchanged - skipping file update to {results_file}")
 
-    logger.info(f"\nResults saved to {results_file}")
+    if should_save:
+        with open(results_file, "w") as f:
+            json.dump(results, f, indent=2)
+        logger.info(f"\nResults saved to {results_file}")
 
     # Validation against paper claims
     target_acc = 0.652
