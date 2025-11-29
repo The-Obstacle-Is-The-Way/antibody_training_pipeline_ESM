@@ -193,7 +193,7 @@ SUPPORTED_MODEL_TYPES = {"esm", "amplify"}
 SUPPORTED_MODEL_TYPES = {"esm", "amplify", "biophysical"}
 ```
 
-**Change 2**: Add factory branch in `__init__`
+**Change 2**: Add factory branch in `__init__` (around line 102-118)
 
 ```python
 # In __init__, after the amplify branch:
@@ -206,6 +206,76 @@ elif model_type == "biophysical":
         device=params["device"],
         batch_size=batch_size,
         revision=revision,
+    )
+```
+
+**Change 3**: Update `set_params` method (around line 218-235)
+
+⚠️ **CRITICAL**: The `set_params` method has hardcoded if/else defaulting to ESM.
+Without this fix, hyperparameter sweeps will silently replace BiophysicalEmbeddingExtractor with ESMEmbeddingExtractor.
+
+```python
+# In set_params, replace the if/else block for extractor recreation:
+if needs_extractor_reload:
+    logger.info(
+        f"Recreating embedding extractor: model_name={self.model_name}, "
+        f"device={self.device}, batch_size={self.batch_size}, model_type={self._model_type}"
+    )
+    if self._model_type == "amplify":
+        from antibody_training_esm.core.embeddings_amplify import (
+            AMPLIFYEmbeddingExtractor,
+        )
+        self.embedding_extractor = AMPLIFYEmbeddingExtractor(
+            self.model_name,
+            self.device,
+            self.batch_size,
+            revision=self.revision,
+        )
+    elif self._model_type == "biophysical":
+        from antibody_training_esm.core.embeddings_biophysical import (
+            BiophysicalEmbeddingExtractor,
+        )
+        self.embedding_extractor = BiophysicalEmbeddingExtractor(
+            self.model_name,
+            self.device,
+            self.batch_size,
+            revision=self.revision,
+        )
+    else:
+        # ESM (default)
+        self.embedding_extractor = ESMEmbeddingExtractor(
+            self.model_name,
+            self.device,
+            self.batch_size,
+            revision=self.revision,
+        )
+```
+
+**Change 4**: Update `__setstate__` method (around line 431-442)
+
+⚠️ **CRITICAL**: The `__setstate__` method has hardcoded if/else defaulting to ESM.
+Without this fix, loading a pickled biophysical model will silently recreate it with ESMEmbeddingExtractor, causing crashes.
+
+```python
+# In __setstate__, replace the if/else block for extractor recreation:
+if model_type == "amplify":
+    from antibody_training_esm.core.embeddings_amplify import (
+        AMPLIFYEmbeddingExtractor,
+    )
+    self.embedding_extractor = AMPLIFYEmbeddingExtractor(
+        self.model_name, self.device, batch_size, revision=revision
+    )
+elif model_type == "biophysical":
+    from antibody_training_esm.core.embeddings_biophysical import (
+        BiophysicalEmbeddingExtractor,
+    )
+    self.embedding_extractor = BiophysicalEmbeddingExtractor(
+        self.model_name, self.device, batch_size, revision=revision
+    )
+else:
+    # ESM (default)
+    self.embedding_extractor = ESMEmbeddingExtractor(
+        self.model_name, self.device, batch_size, revision=revision
     )
 ```
 

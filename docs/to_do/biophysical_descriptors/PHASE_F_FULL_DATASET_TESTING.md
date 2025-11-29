@@ -42,18 +42,52 @@ Track B tested on all three test datasets:
 
 ## 4. Commands (After Phase E)
 
+### 4.1 Training (via `antibody-train`)
+
 ```bash
-# Train on Boughter, test on Jain
+# Train on Boughter (always ELISA threshold 0.5 for training evaluation)
 uv run antibody-train model=biophysical data=boughter_jain
-
-# Train on Boughter, test on Harvey
-uv run antibody-train model=biophysical \
-    data.test_file=data/test/harvey/fragments/VHH_only.csv
-
-# Train on Boughter, test on Shehata
-uv run antibody-train model=biophysical \
-    data.test_file=data/test/shehata/fragments/VH_VL.csv
 ```
+
+**Note**: `antibody-train` evaluates on training data using default threshold 0.5.
+This is correct because Boughter uses ELISA assay.
+
+### 4.2 Testing on Different Datasets (via `antibody-test`)
+
+⚠️ **IMPORTANT**: Use `antibody-test` CLI for test set evaluation - it auto-detects assay thresholds!
+
+```bash
+# Test on Jain (ELISA → auto-detects threshold 0.5)
+uv run antibody-test \
+    --model experiments/checkpoints/biophysical/logreg/boughter_vh_biophysical_logreg.pkl \
+    --dataset jain
+
+# Test on Harvey (PSR → auto-detects threshold 0.5495)
+uv run antibody-test \
+    --model experiments/checkpoints/biophysical/logreg/boughter_vh_biophysical_logreg.pkl \
+    --dataset harvey
+
+# Test on Shehata (PSR → auto-detects threshold 0.5495)
+uv run antibody-test \
+    --model experiments/checkpoints/biophysical/logreg/boughter_vh_biophysical_logreg.pkl \
+    --dataset shehata
+```
+
+### 4.3 Threshold Auto-Detection
+
+The `antibody-test` CLI has built-in threshold auto-detection (`cli/testing/evaluation.py`):
+
+```python
+def detect_assay_type(dataset_name: str) -> str | None:
+    # PSR-based datasets (Harvey, Shehata) → 0.5495
+    if any(marker in dataset_lower for marker in ["harvey", "shehata"]):
+        return "PSR"
+    # ELISA-based datasets (Boughter, Jain) → 0.5
+    if any(marker in dataset_lower for marker in ["boughter", "jain"]):
+        return "ELISA"
+```
+
+This ensures Novo parity thresholds are applied automatically without manual override.
 
 ---
 
