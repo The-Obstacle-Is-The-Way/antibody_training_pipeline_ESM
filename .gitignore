@@ -170,11 +170,5 @@ coverage.json
 # Benchmark test logs (auto-generated)
 experiments/benchmarks/logs/
 experiments/benchmarks/*.log
-
-# Large benchmark artifacts (regenerable, keep confusion matrices only)
-experiments/benchmarks/**/predictions_*.csv
-experiments/benchmarks/**/detailed_results_*.yaml
-experiments/benchmarks/predictions_*.csv
-experiments/benchmarks/detailed_results_*.yaml
 test.log
 training.log
