@@ -1,12 +1,13 @@
 """
 Binary Classifier Module
 
-Professional binary classifier for antibody sequences using ESM-1V or AMPLIFY embeddings.
-Includes sklearn compatibility, assay-specific thresholds, and model serialization.
+Professional binary classifier for antibody sequences using ESM-1V, AMPLIFY, or biophysical
+embeddings. Includes sklearn compatibility, assay-specific thresholds, and model serialization.
 
 Supported model types:
     - "esm" (default): ESM-1v/ESM-2 models (facebook/esm1v_*, facebook/esm2_*)
     - "amplify": AMPLIFY 350M model (chandar-lab/AMPLIFY_350M)
+    - "biophysical": Biophysical feature extractor (3-descriptor Track B)
 """
 
 import logging

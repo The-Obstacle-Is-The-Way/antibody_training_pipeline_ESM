@@ -23,6 +23,7 @@ def extractor() -> BiophysicalEmbeddingExtractor:
     )
 
 
+@pytest.mark.unit
 def test_initialization(extractor: BiophysicalEmbeddingExtractor) -> None:
     assert extractor.model_name == "biophysical"
     assert extractor.device == "cpu"
@@ -31,6 +32,7 @@ def test_initialization(extractor: BiophysicalEmbeddingExtractor) -> None:
     assert extractor.max_length == sys.maxsize
 
 
+@pytest.mark.unit
 def test_embed_sequence_returns_correct_shape(
     extractor: BiophysicalEmbeddingExtractor,
 ) -> None:
@@ -49,6 +51,7 @@ def test_embed_sequence_returns_correct_shape(
         mock_extract.assert_called_once_with(seq)
 
 
+@pytest.mark.unit
 def test_extract_batch_embeddings_returns_correct_shape(
     extractor: BiophysicalEmbeddingExtractor,
 ) -> None:
@@ -68,6 +71,7 @@ def test_extract_batch_embeddings_returns_correct_shape(
         mock_extract_batch.assert_called_once_with(seqs)
 
 
+@pytest.mark.unit
 def test_integration_with_biophysical_extractor(
     extractor: BiophysicalEmbeddingExtractor,
 ) -> None:
@@ -78,6 +82,7 @@ def test_integration_with_biophysical_extractor(
     assert not np.isnan(embedding).any()
 
 
+@pytest.mark.unit
 def test_integration_batch_with_biophysical_extractor(
     extractor: BiophysicalEmbeddingExtractor,
 ) -> None:

@@ -1,9 +1,9 @@
 # Phase F: Full Dataset Testing for Track B
 
 **Date**: 2025-11-28
-**Status**: PENDING
+**Status**: COMPLETED
 **Depends On**: Phase E (Hydra Integration)
-**Blocked By**: Phase E must be completed first
+**Blocked By**: None (Phase E completed)
 
 ---
 
@@ -123,7 +123,7 @@ For reference, Track A (ESM-1v) results from Novo parity:
 
 After Phase E + F, Track B outputs should mirror Track A:
 
-```
+```text
 experiments/
 ├── checkpoints/
 │   ├── esm1v/                    # Track A

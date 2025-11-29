@@ -177,3 +177,6 @@ def test_biophysical_filtering_logic(tmp_path: Path) -> None:
         assert len(passed_sequences) == 4
         assert "GHIXK" not in passed_sequences
         assert "MN*QR" not in passed_sequences
+        # Verify valid sequences are retained
+        assert passed_sequences.count("ACDEF") == 2
+        assert passed_sequences.count("STVWY") == 2

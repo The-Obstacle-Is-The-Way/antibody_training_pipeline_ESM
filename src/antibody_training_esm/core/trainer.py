@@ -125,8 +125,9 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
 
         logger.info(f"Loaded {len(X_train)} training samples")
 
-        # Phase B (Biophysical) Filtering: Remove sequences with ambiguous AAs ('X')
-        # Biopython cannot handle 'X', unlike ESM. We must filter X and y together.
+        # Phase B (Biophysical) filtering: remove sequences with ambiguous AAs ('X')
+        # and stop codons ('*'). Biopython cannot handle these, unlike ESM.
+        # Filter X and y together to keep labels aligned.
         if config.model.model_type == "biophysical":
             valid_indices = [
                 i for i, seq in enumerate(X_train) if "X" not in seq and "*" not in seq
