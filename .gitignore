@@ -170,4 +170,4 @@ coverage.json
 # Benchmark test logs (auto-generated)
 experiments/benchmarks/logs/
 experiments/benchmarks/*.log
-test.log
+test.logtraining.log
