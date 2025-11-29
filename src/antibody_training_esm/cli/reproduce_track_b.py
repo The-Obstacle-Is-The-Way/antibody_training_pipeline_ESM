@@ -198,6 +198,7 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
         logger.info(f"    {name}: {coef:.4f}")
 
     # 5. Save Results (with provenance metadata for reproducibility)
+    # Only update file if metrics changed (avoid noisy git diffs from timestamp updates)
     results = {
         # Provenance metadata
         "provenance": {
@@ -217,10 +218,22 @@ def run_reproducibility_study(output_dir: str = "experiments/benchmarks") -> Non
         "dataset_sizes": {"train": len(df_train), "test": len(df_test)},
     }
 
-    with open(results_file, "w") as f:
-        json.dump(results, f, indent=2)
+    # Check if metrics changed before saving (ignore provenance for comparison)
+    should_save = True
+    if results_file.exists():
+        with open(results_file) as f:
+            existing = json.load(f)
+        # Compare everything except provenance
+        existing_metrics = {k: v for k, v in existing.items() if k != "provenance"}
+        new_metrics = {k: v for k, v in results.items() if k != "provenance"}
+        if existing_metrics == new_metrics:
+            should_save = False
+            logger.info(f"\nMetrics unchanged - skipping file update to {results_file}")
 
-    logger.info(f"\nResults saved to {results_file}")
+    if should_save:
+        with open(results_file, "w") as f:
+            json.dump(results, f, indent=2)
+        logger.info(f"\nResults saved to {results_file}")
 
     # Validation against paper claims
     target_acc = 0.652
