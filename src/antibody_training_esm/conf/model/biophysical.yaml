@@ -1,0 +1,16 @@
+# Track B: Biophysical Descriptors (Biopython Trio)
+# Implements Table S1 #21, #22, #66 from Sakhnini et al. 2025
+#
+# Features:
+#   - Charge at pH 6.0 (endosome)
+#   - Charge at pH 7.4 (blood)
+#   - Theoretical pI (isoelectric point)
+#
+# Usage: uv run antibody-train model=biophysical
+
+name: biophysical
+device: cpu              # Biopython is CPU-only (no GPU acceleration)
+batch_size: 1            # Not batched like neural net models
+model_type: biophysical
+revision: "1.0.0"        # BiophysicalExtractor version for cache invalidation
+trust_remote_code: false

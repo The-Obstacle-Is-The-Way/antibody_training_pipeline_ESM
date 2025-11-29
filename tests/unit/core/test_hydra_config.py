@@ -61,7 +61,8 @@ def test_config_loads() -> None:
             "roc_auc",
         ]
         assert cfg.training.save_model is True
-        assert cfg.training.model_name == "boughter_vh_esm1v_logreg"
+        # model_name defaults to empty string (auto-generated at save time based on model type)
+        assert cfg.training.model_name == ""
         assert cfg.training.batch_size == 8
 
         # Verify hardware config

@@ -81,36 +81,64 @@ class ModelTester:
             hasattr(model, "embedding_extractor")
             and model.embedding_extractor.device != self.config.device
         ):
-            self.logger.warning(
-                f"Device mismatch: model trained on {model.embedding_extractor.device}, "
-                f"test config specifies {self.config.device}. Recreating extractor..."
-            )
+            # Check model type to avoid forcing CPU-only models to GPU
+            model_type = getattr(model, "_model_type", "esm")
+            if model_type == "biophysical":
+                self.logger.warning(
+                    f"Device mismatch for biophysical model: trained on {model.embedding_extractor.device}, "
+                    f"test config specifies {self.config.device}. "
+                    "Ignoring mismatch as biophysical models are CPU-only."
+                )
+                # Do NOT recreate extractor for biophysical models
+            else:
+                self.logger.warning(
+                    f"Device mismatch: model trained on {model.embedding_extractor.device}, "
+                    f"test config specifies {self.config.device}. Recreating extractor..."
+                )
 
-            # CRITICAL: Explicit cleanup to prevent semaphore leaks (P0 bug fix)
-            old_device = str(model.embedding_extractor.device)
-            old_extractor = model.embedding_extractor
+                # CRITICAL: Explicit cleanup to prevent semaphore leaks (P0 bug fix)
+                old_device = str(model.embedding_extractor.device)
+                old_extractor = model.embedding_extractor
 
-            # Delete old extractor before creating new one
-            del model.embedding_extractor
-            del old_extractor
+                # Delete old extractor before creating new one
+                del model.embedding_extractor
+                del old_extractor
 
-            # Clear device-specific GPU cache
-            if old_device.startswith("cuda"):
-                torch.cuda.empty_cache()
-            elif old_device.startswith("mps"):
-                torch.mps.empty_cache()
+                # Clear device-specific GPU cache
+                if old_device.startswith("cuda"):
+                    torch.cuda.empty_cache()
+                elif old_device.startswith("mps"):
+                    torch.mps.empty_cache()
 
-            self.logger.info(f"Cleaned up old extractor on {old_device}")
+                self.logger.info(f"Cleaned up old extractor on {old_device}")
 
-            # NOW create new extractor (no leak)
-            batch_size = getattr(model, "batch_size", DEFAULT_BATCH_SIZE)
-            revision = getattr(model, "revision", "main")
-            model.embedding_extractor = ESMEmbeddingExtractor(
-                model.model_name, self.config.device, batch_size, revision=revision
-            )
-            model.device = self.config.device
+                # NOW create new extractor (no leak)
+                batch_size = getattr(model, "batch_size", DEFAULT_BATCH_SIZE)
+                revision = getattr(model, "revision", "main")
 
-            self.logger.info(f"Created new extractor on {self.config.device}")
+                # Recreate using the correct class based on model type
+                if model_type == "amplify":
+                    from antibody_training_esm.core.embeddings_amplify import (
+                        AMPLIFYEmbeddingExtractor,
+                    )
+
+                    model.embedding_extractor = AMPLIFYEmbeddingExtractor(
+                        model.model_name,
+                        self.config.device,
+                        batch_size,
+                        revision=revision,
+                    )
+                else:
+                    # ESM (default)
+                    model.embedding_extractor = ESMEmbeddingExtractor(
+                        model.model_name,
+                        self.config.device,
+                        batch_size,
+                        revision=revision,
+                    )
+
+                model.device = self.config.device
+                self.logger.info(f"Created new extractor on {self.config.device}")
 
         # Update batch_size if different from config
         if (

@@ -125,6 +125,22 @@ def train_pipeline(cfg: DictConfig) -> dict[str, Any]:
 
         logger.info(f"Loaded {len(X_train)} training samples")
 
+        # Phase B (Biophysical) Filtering: Remove sequences with ambiguous AAs ('X')
+        # Biopython cannot handle 'X', unlike ESM. We must filter X and y together.
+        if config.model.model_type == "biophysical":
+            valid_indices = [
+                i for i, seq in enumerate(X_train) if "X" not in seq and "*" not in seq
+            ]
+            dropped_count = len(X_train) - len(valid_indices)
+            if dropped_count > 0:
+                logger.warning(
+                    f"Biophysical model requires strict amino acids. "
+                    f"Dropping {dropped_count} sequences containing 'X' or '*'."
+                )
+                X_train = [X_train[i] for i in valid_indices]
+                y_train = [y_train[i] for i in valid_indices]
+                logger.info(f"Remaining samples after filtering: {len(X_train)}")
+
         # Resolve device (handles auto + explicit availability validation)
         device = resolve_device(config.model.device)
         config.model.device = cast(

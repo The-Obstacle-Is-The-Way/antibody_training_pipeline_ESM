@@ -40,7 +40,7 @@ class ModelConfig(BaseModel):
         description="Batch size for embedding extraction (AMPLIFY requires 1)",
     )
 
-    model_type: Literal["esm", "amplify"] = Field(
+    model_type: Literal["esm", "amplify", "biophysical"] = Field(
         default="esm",
         description="Model type: 'esm' for ESM-1v/ESM-2, 'amplify' for AMPLIFY 350M",
     )
@@ -219,9 +219,9 @@ class TrainingConfig(BaseModel):
     )
 
     model_name: str = Field(
-        ...,
-        min_length=1,
-        description="Name for saved model file (e.g., boughter_vh_esm1v_logreg)",
+        default="",
+        description="Name for saved model file (e.g., boughter_vh_esm1v_logreg). "
+        "If empty, a name will be generated based on model and classifier types.",
     )
 
     log_level: Literal["DEBUG", "INFO", "WARNING", "ERROR"] = Field(
