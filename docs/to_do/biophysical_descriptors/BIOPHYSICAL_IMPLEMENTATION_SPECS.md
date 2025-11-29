@@ -121,15 +121,32 @@ We will implement a standalone script `src/antibody_training_esm/cli/reproduce_t
 
 ---
 
-## 6. Phase C: Pipeline Integration (Hybrid Model)
+## 6. Phase C: Pipeline Integration (Hybrid Model) - DEPRECATED
 
-**Objective**: Integrate descriptors into the main PyTorch pipeline (ESM + Biophysical).
+> **DEPRECATED (2025-11-28)**: This phase was a mistake. See Phase D for removal plan.
+
+**Objective**: ~~Integrate descriptors into the main PyTorch pipeline (ESM + Biophysical).~~
 **Spec File**: `docs/to_do/biophysical_descriptors/PHASE_C_PIPELINE_INTEGRATION.md`
 
+**Why Deprecated**:
+The Novo Nordisk paper runs Track A (ESM) and Track B (biophysical) as **separate parallel
+experiments** for comparison. They are NEVER combined. The hybrid approach:
+- Has no corresponding result in the paper to validate against
+- Is scientifically questionable (3 features into 1280 is noise)
+- Was scope creep without first-principles verification
+
+---
+
+## 6.1 Phase D: Hybrid Removal (Cleanup)
+
+**Objective**: Remove the hybrid (ESM + Biophysical) code added in Phase C.
+**Spec File**: `docs/to_do/biophysical_descriptors/PHASE_D_HYBRID_REMOVAL.md`
+
 **Key Tasks**:
-1. Update `Dataset` classes to yield biophysical features (lazily cached).
-2. Update `BinaryClassifier` to accept auxiliary input (concatenation).
-3. Update Hydra config to toggle `use_biophysical_descriptors`.
+1. Delete `features/hybrid.yaml` and `test_hybrid_pipeline.py`
+2. Remove concatenation logic from `trainer.py`
+3. Simplify or remove `features` config group
+4. Verify Track A and Track B still work independently
 
 ---
 
