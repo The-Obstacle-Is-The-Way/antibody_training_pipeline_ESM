@@ -2,7 +2,6 @@ defaults:
   - model: esm1v
   - classifier: logreg
   - data: boughter_jain
-  - features: default
   - hardware: default
   - hydra: default
   - _self_

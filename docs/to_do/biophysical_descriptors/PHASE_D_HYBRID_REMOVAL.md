@@ -1,7 +1,7 @@
 # Phase D: Hybrid Model Removal (Scope Creep Cleanup)
 
 **Date**: 2025-11-28
-**Status**: PENDING
+**Status**: COMPLETED
 **Parent**: [BIOPHYSICAL_IMPLEMENTATION_SPECS.md](BIOPHYSICAL_IMPLEMENTATION_SPECS.md)
 
 ---
@@ -135,8 +135,7 @@ defaults:
 
 **`src/antibody_training_esm/cli/reproduce_track_b.py`**:
 ```python
-# UPDATE comments that reference "Phase C hybrid pipeline" (lines 19-21, 161)
-# These are just documentation comments - update to remove Phase C references
+# UPDATE comments that reference "Phase C hybrid pipeline"
 # Example: "The Phase C hybrid pipeline (trainer.py) defaults to NO scaling"
 # Change to: "The main pipeline (trainer.py) does not use scaling"
 ```
@@ -198,16 +197,3 @@ grep -r "use_biophysical" src/
 - [ ] Track B (`reproduce_track_b.py`) works unchanged
 - [ ] No grep hits for "use_biophysical" in `src/` (except boughter.py false positive)
 - [ ] Phase C spec marked as DEPRECATED (already done)
-
----
-
-## 9. Priority
-
-**P1 - Technical Debt Cleanup**
-
-This should be done before any new feature work to maintain codebase integrity.
-
----
-
-**Author**: Claude Code (Opus 4.5)
-**Reviewed by**: Human (caught the scope creep)
