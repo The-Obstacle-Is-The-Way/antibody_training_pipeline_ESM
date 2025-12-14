@@ -250,7 +250,7 @@ merged = vh_train.merge(vl_train, on='id', suffixes=('_vh', '_vl'))
 Boughter CT, Borowska MT, Guthmiller JJ, Bendelac A, Wilson PC, Roux B, Adams EJ. Biochemical Patterns of Antibody Polyreactivity Revealed Through a Bioinformatics-Based Analysis of CDR Loops. *eLife* 9:e61393 (2020). DOI: 10.7554/eLife.61393
 
 **Novo Nordisk Methodology:**
-Sakhnini A et al. Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *bioRxiv* (2025, pending publication).
+Sakhnini, L.I. et al. Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *bioRxiv* (2025). DOI: 10.1101/2025.04.28.650927
 
 ### Data Subsets
 

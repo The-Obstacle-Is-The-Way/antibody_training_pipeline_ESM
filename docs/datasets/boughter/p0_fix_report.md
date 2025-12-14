@@ -325,7 +325,7 @@ python3 tests/test_boughter_embedding_compatibility.py
 
 - **Boughter Paper:** Boughter et al. 2020, eLife 9:e61393
 - **Official Repo:** https://github.com/ctboughter/AIMS_manuscripts
-- **Novo Nordisk Paper:** Sakhnini et al. 2025, bioRxiv (pending)
+- **Novo Nordisk Paper:** Sakhnini et al. 2025, bioRxiv (https://doi.org/10.1101/2025.04.28.650927)
 - **ANARCI:** Dunbar & Deane 2016, Bioinformatics
 - **riot_na Library:** v4.0.5 (ANARCI Python wrapper)
 - **ESM-1v Model:** facebook/esm1v_t33_650M_UR90S_1

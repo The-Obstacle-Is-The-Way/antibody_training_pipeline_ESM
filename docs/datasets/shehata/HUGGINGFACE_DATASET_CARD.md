@@ -45,7 +45,8 @@ dataset_info:
 ## Dataset Description
 
 - **Homepage:** [Hugging Science Organization](https://huggingface.co/hugging-science)
-- **Repository:** [CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM](https://github.com/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM)
+- **Repository (this implementation):** [The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM](https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM)
+- **Upstream:** [ludocomito/antibody_training_pipeline_ESM](https://github.com/ludocomito/antibody_training_pipeline_ESM)
 - **Paper (Original Dataset):** [Shehata et al. 2019, Cell Reports](https://doi.org/10.1016/j.celrep.2019.08.056)
 - **Paper (Preprocessing Methodology):** [Sakhnini et al. 2025, bioRxiv](https://doi.org/10.1101/2025.04.28.650927)
 - **Point of Contact:** [Hugging Science](https://huggingface.co/hugging-science)
@@ -137,9 +138,10 @@ From Shehata et al. 2019:
 
 | Stage | Description | Sequences |
 |-------|-------------|-----------|
-| 1. Excel Extraction | Extract from mmc2.xlsx Supplementary Table S1 | 398 |
-| 2. ANARCI Annotation | Annotate using ANARCI with IMGT numbering | 398 → 398 (100%) |
-| 3. Gap Removal | Use `sequence_aa` not `sequence_alignment_aa` | (no change) |
+| 1. Excel Extraction | Extract from `shehata-mmc2.xlsx` Supplementary Table S1 | 402 |
+| 2. Row Filtering | Remove entries with missing PSR or incomplete pairing | 402 → 398 |
+| 3. ANARCI Annotation | Annotate using ANARCI with IMGT numbering | 398 → 398 (100%) |
+| 4. Gap Removal | Use `sequence_aa` not `sequence_alignment_aa` | (no change) |
 
 **100% Success Rate:** All 398 sequences were successfully annotated by ANARCI.
 
@@ -227,7 +229,7 @@ Due to severe class imbalance, prioritize these metrics over accuracy:
 
 ### Licensing Information
 
-This dataset is released under **CC-BY-4.0** license. The original data from Shehata et al. 2019 was published as supplementary material in Cell Reports.
+Shehata et al. (2019) is published under **CC-BY-4.0** (per the DOI landing page). The raw source files in this repository are the Cell Reports supplementary spreadsheets; please retain upstream attribution/citations.
 
 ### Citation Information
 

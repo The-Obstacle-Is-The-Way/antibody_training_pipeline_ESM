@@ -88,8 +88,8 @@ Shehata L, Thaventhiran JED, Engelhardt KR, et al. (2019). "Affinity Maturation 
 DOI: 10.1016/j.celrep.2019.08.056
 
 **Methodology Source:**
-Sakhnini A, et al. (2025). "Antibody Non-Specificity Prediction using Protein Language Models and Biophysical Features." *Cell*.
-DOI: 10.1016/j.cell.2024.12.025
+Sakhnini, L.I., et al. (2025). "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." *bioRxiv*.
+DOI: 10.1101/2025.04.28.650927
 
 ---
 

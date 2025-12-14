@@ -56,7 +56,7 @@ python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 - `label=0` (specific): PSR < 98.24th percentile → 391 antibodies
 - `label=1` (non-specific): PSR ≥ 98.24th percentile → 7 antibodies
 
-**Methodology source:** Sakhnini A, et al. (2025). "Antibody Non-Specificity Prediction using Protein Language Models and Biophysical Features." *Cell*. DOI: 10.1016/j.cell.2024.12.025
+**Methodology source:** Sakhnini, L.I., et al. (2025). "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." *bioRxiv*. DOI: 10.1101/2025.04.28.650927
 
 ---
 

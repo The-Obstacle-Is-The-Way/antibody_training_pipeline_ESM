@@ -6,17 +6,17 @@
 
 ## Files
 
-### Main Data (Harvey et al. 2022, Mason et al. 2021)
+### Main Data (Harvey et al. 2022)
 
 **high_polyreactivity_high_throughput.csv**
 - 71,772 nanobodies + header = 71,773 lines
 - Label: 1 (high polyreactivity)
-- Source: Novo Nordisk high-throughput screening
+- Source: Harvey et al. 2022 deep sequencing (high PSR pool)
 
 **low_polyreactivity_high_throughput.csv**
 - 69,702 nanobodies + header = 69,703 lines
 - Label: 0 (low polyreactivity)
-- Source: Novo Nordisk high-throughput screening
+- Source: Harvey et al. 2022 deep sequencing (low PSR pool)
 
 **low_throughput_polyspecificity_scores_w_exp.csv** (optional)
 - 48 nanobodies + header = 49 lines
@@ -68,13 +68,13 @@ python3 preprocessing/harvey/step1_convert_raw_csvs.py
 - `label=0` (low polyreactivity) → 69,702 nanobodies from low_polyreactivity CSV
 - `label=1` (high polyreactivity) → 71,772 nanobodies from high_polyreactivity CSV
 
-**Methodology:** Novo Nordisk high-throughput polyreactivity screening (Mason et al. 2021, Harvey et al. 2022)
+**Methodology:** FACS sorting with PSR assay + deep sequencing (Harvey et al. 2022)
 
 ---
 
 ## Data Provenance
 
-- **Source:** Novo Nordisk / Harvey et al. 2022 supplementary data
+- **Source:** `debbiemarkslab/nanobody-polyreactivity` (Harvey et al. 2022)
 - **Original location:** `reference_repos/harvey_official_repo/backend/app/experiments/`
 - **Copied to:** `data/test/harvey/raw/` (for self-contained dataset structure)
 - **Date copied:** 2025-11-05
@@ -91,11 +91,8 @@ python3 preprocessing/harvey/step1_convert_raw_csvs.py
 
 **Dataset Source:**
 
-Harvey, E.P., et al. (2022). "A biophysical basis for mucophilic antigen binding." *Journal of Experimental Medicine* 219(3):e20211671.
-DOI: 10.1084/jem.20211671
-
-Mason, D.M., et al. (2021). "Optimization of therapeutic antibodies by predicting antigen specificity from antibody sequence via deep learning." *Nature Biomedical Engineering* 5:600-612.
-DOI: 10.1038/s41551-021-00699-9
+Harvey, E.P., et al. (2022). "An in silico method to assess antibody fragment polyreactivity." *Nature Communications* 13, 7554.
+DOI: 10.1038/s41467-022-35276-4
 
 ---
 

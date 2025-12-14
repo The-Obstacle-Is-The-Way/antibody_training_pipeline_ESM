@@ -259,16 +259,18 @@ If you use this pipeline in your research, please cite:
 ```bibtex
 @article{sakhnini2025prediction,
   title={Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters},
-  author={Sakhnini, et al.},
-  journal={TBD},
-  year={2025}
+  author={Sakhnini, Laila I. and Beltrame, Ludovica and Fulle, Simone and Sormanni, Pietro and Henriksen, Anette and Lorenzen, Nikolai and Vendruscolo, Michele and Granata, Daniele},
+  journal={bioRxiv},
+  year={2025},
+  doi={10.1101/2025.04.28.650927},
+  url={https://www.biorxiv.org/content/10.1101/2025.04.28.650927v1}
 }
 ```
 
 **Datasets:**
 - **Boughter:** Boughter et al. (2020) - Training set
 - **Jain:** Jain et al. (2017) - Novo parity benchmark
-- **Harvey:** Harvey et al. (2022) / Mason et al. (2021) - Nanobodies
+- **Harvey:** Harvey et al. (2022) - Nanobodies
 - **Shehata:** Shehata et al. (2019) - PSR validation
 
 See [CITATIONS.md](../CITATIONS.md) for full references.
