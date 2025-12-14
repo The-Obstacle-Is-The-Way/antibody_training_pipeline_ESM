@@ -183,6 +183,50 @@ def save_model(
     return saved_paths
 
 
+def load_model_from_xgb(xgb_path: str, json_path: str) -> BinaryClassifier:
+    """
+    Load model from XGBoost native .xgb format (P2.2 fix)
+
+    Args:
+        xgb_path: Path to .xgb file
+        json_path: Path to .json file with metadata
+
+    Returns:
+        Reconstructed BinaryClassifier instance with XGBoost strategy
+
+    Notes:
+        This function enables loading XGBoost models saved in native format
+        (pickle-free). Requires the accompanying JSON metadata file.
+    """
+    from xgboost import XGBClassifier
+
+    # Load metadata (Pydantic validates)
+    with open(json_path) as f:
+        metadata_dict = json.load(f)
+
+    metadata = ModelArtifactMetadata.model_validate(metadata_dict)
+
+    # Construct BinaryClassifier from metadata
+    params = metadata.to_classifier_params()
+    # Ensure strategy is xgboost
+    params["strategy"] = "xgboost"
+    params["type"] = "xgboost"
+    classifier = BinaryClassifier(params)
+
+    # Load XGBoost model and replace the inner classifier
+    xgb_model = XGBClassifier()
+    xgb_model.load_model(xgb_path)
+
+    # Replace the inner XGBClassifier in the strategy
+    # XGBoostStrategy wraps XGBClassifier in self.classifier
+    # Cast to Any because ClassifierStrategy protocol doesn't expose .classifier
+    inner_strategy = cast(Any, classifier.classifier)
+    inner_strategy.classifier = xgb_model
+    classifier.is_fitted = True
+
+    return classifier
+
+
 def load_model_from_npz(npz_path: str, json_path: str) -> BinaryClassifier:
     """
     Load model from NPZ+JSON format (production deployment)

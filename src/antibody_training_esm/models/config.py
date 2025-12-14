@@ -86,9 +86,9 @@ class DataConfig(BaseModel):
         description="Path to training CSV (must contain 'sequence' and 'label' columns)",
     )
 
-    test_file: Path = Field(
-        ...,
-        description="Path to test CSV",
+    test_file: Path | None = Field(
+        default=None,
+        description="Path to test CSV (optional, use antibody-test for evaluation)",
     )
 
     embeddings_cache_dir: Path = Field(
@@ -96,11 +96,19 @@ class DataConfig(BaseModel):
         description="Directory for cached ESM embeddings",
     )
 
-    @field_validator("train_file", "test_file")
+    @field_validator("train_file")
     @classmethod
-    def validate_file_exists(cls, v: Path) -> Path:
-        """Ensure file exists at config load time."""
+    def validate_train_file_exists(cls, v: Path) -> Path:
+        """Ensure train file exists at config load time."""
         if not v.exists():
+            raise FileNotFoundError(f"Data file not found: {v}")
+        return v
+
+    @field_validator("test_file")
+    @classmethod
+    def validate_test_file_exists(cls, v: Path | None) -> Path | None:
+        """Ensure test file exists if provided (P2.4 fix: now optional)."""
+        if v is not None and not v.exists():
             raise FileNotFoundError(f"Data file not found: {v}")
         return v
 
@@ -119,10 +127,35 @@ class ClassifierConfig(BaseModel):
     Supports both LogisticRegression and XGBoost strategies.
     """
 
+    model_config = {"populate_by_name": True}
+
     strategy: Literal["logistic_regression", "xgboost"] = Field(
         default="logistic_regression",
         description="Classification strategy",
+        validation_alias="type",  # P1.1 fix: Accept 'type' from Hydra YAML
     )
+
+    @model_validator(mode="before")
+    @classmethod
+    def unify_type_and_strategy(cls, data: Any) -> Any:
+        """
+        Handle both 'type' and 'strategy' fields consistently.
+
+        P1.1 fix: Hydra YAMLs use 'type:', Pydantic expects 'strategy'.
+        This validator ensures they're unified and conflicts are detected.
+        """
+        if isinstance(data, dict):
+            # If both are present, they must match
+            if "type" in data and "strategy" in data:
+                if data["type"] != data["strategy"]:
+                    raise ValueError(
+                        f"Conflicting classifier config: type='{data['type']}' "
+                        f"but strategy='{data['strategy']}'. Use only one."
+                    )
+            # Map 'type' to 'strategy' if only 'type' is present
+            elif "type" in data and "strategy" not in data:
+                data["strategy"] = data["type"]
+        return data
 
     # LogisticRegression params (ignored if strategy=xgboost)
     C: float | None = Field(

@@ -168,10 +168,14 @@ def test_get_or_create_embeddings_recomputes_on_hash_mismatch(
     revision = "main"
     max_length = 1024
 
-    # Create cached embeddings with WRONG hash (NEW format includes model metadata)
-    sequences_str = "|".join(sequences)
-    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    # Create cached embeddings with WRONG hash (P2.3 fix: streaming hash computation)
+    # Compute hash using streaming method (same as get_or_create_embeddings)
+    hasher = hashlib.sha256()
+    hasher.update(f"{model_name}|{revision}|{max_length}|".encode())
+    for seq in sequences:
+        hasher.update(seq.encode())
+        hasher.update(b"|")
+    sequences_hash = hasher.hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     # NEW: Cache data with correct model metadata but WRONG hash
@@ -232,10 +236,13 @@ def test_get_or_create_embeddings_recomputes_on_invalid_cache_format(
     revision = "main"
     max_length = 1024
 
-    # Create cache file with INVALID format (list instead of dict)
-    sequences_str = "|".join(sequences)
-    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    # Create cache file with INVALID format (P2.3 fix: streaming hash computation)
+    hasher = hashlib.sha256()
+    hasher.update(f"{model_name}|{revision}|{max_length}|".encode())
+    for seq in sequences:
+        hasher.update(seq.encode())
+        hasher.update(b"|")
+    sequences_hash = hasher.hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     # Create INVALID cache: list instead of dict
@@ -287,10 +294,13 @@ def test_get_or_create_embeddings_recomputes_on_missing_embeddings_key(
     revision = "main"
     max_length = 1024
 
-    # Create cache file
-    sequences_str = "|".join(sequences)
-    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    # Create cache file (P2.3 fix: streaming hash computation)
+    hasher = hashlib.sha256()
+    hasher.update(f"{model_name}|{revision}|{max_length}|".encode())
+    for seq in sequences:
+        hasher.update(seq.encode())
+        hasher.update(b"|")
+    sequences_hash = hasher.hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     # Create CORRUPT cache: missing "embeddings" key
@@ -348,9 +358,13 @@ def test_get_or_create_embeddings_recomputes_on_missing_sequences_hash_key(
     revision = "main"
     max_length = 1024
 
-    sequences_str = "|".join(sequences)
-    cache_key_components = f"{model_name}|{revision}|{max_length}|{sequences_str}"
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    # P2.3 fix: streaming hash computation
+    hasher = hashlib.sha256()
+    hasher.update(f"{model_name}|{revision}|{max_length}|".encode())
+    for seq in sequences:
+        hasher.update(seq.encode())
+        hasher.update(b"|")
+    sequences_hash = hasher.hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     # Create CORRUPT cache: missing "sequences_hash" key
@@ -413,10 +427,15 @@ def test_get_or_create_embeddings_recomputes_on_model_name_mismatch(
     revision = "main"
     max_length = 1024
 
-    # CRITICAL FIX: Calculate hash using CURRENT model (what get_or_create_embeddings will use)
-    sequences_str = "|".join(sequences)
-    cache_key_components = f"{current_model_name}|{revision}|{max_length}|{sequences_str}"  # ← CURRENT model!
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    # CRITICAL FIX: Calculate hash using CURRENT model (P2.3 fix: streaming hash)
+    hasher = hashlib.sha256()
+    hasher.update(
+        f"{current_model_name}|{revision}|{max_length}|".encode()
+    )  # ← CURRENT model!
+    for seq in sequences:
+        hasher.update(seq.encode())
+        hasher.update(b"|")
+    sequences_hash = hasher.hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     # Cache data has MISMATCHED model_name (old model inside)
@@ -474,10 +493,15 @@ def test_get_or_create_embeddings_recomputes_on_revision_mismatch(
     current_revision = "commit-abc123"  # New revision (current extractor)
     max_length = 1024
 
-    # CRITICAL FIX: Calculate hash using CURRENT revision
-    sequences_str = "|".join(sequences)
-    cache_key_components = f"{model_name}|{current_revision}|{max_length}|{sequences_str}"  # ← CURRENT revision!
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    # CRITICAL FIX: Calculate hash using CURRENT revision (P2.3 fix: streaming hash)
+    hasher = hashlib.sha256()
+    hasher.update(
+        f"{model_name}|{current_revision}|{max_length}|".encode()
+    )  # ← CURRENT revision!
+    for seq in sequences:
+        hasher.update(seq.encode())
+        hasher.update(b"|")
+    sequences_hash = hasher.hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     # Cache data has MISMATCHED revision
@@ -533,10 +557,15 @@ def test_get_or_create_embeddings_recomputes_on_max_length_mismatch(
     cached_max_length = 1024  # Old max_length (inside cache data)
     current_max_length = 512  # New max_length (current extractor)
 
-    # CRITICAL FIX: Calculate hash using CURRENT max_length
-    sequences_str = "|".join(sequences)
-    cache_key_components = f"{model_name}|{revision}|{current_max_length}|{sequences_str}"  # ← CURRENT max_length!
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+    # CRITICAL FIX: Calculate hash using CURRENT max_length (P2.3 fix: streaming hash)
+    hasher = hashlib.sha256()
+    hasher.update(
+        f"{model_name}|{revision}|{current_max_length}|".encode()
+    )  # ← CURRENT max_length!
+    for seq in sequences:
+        hasher.update(seq.encode())
+        hasher.update(b"|")
+    sequences_hash = hasher.hexdigest()[:12]
     cache_file = Path(cache_path) / f"test_dataset_{sequences_hash}_embeddings.pkl"
 
     # Cache data has MISMATCHED max_length
