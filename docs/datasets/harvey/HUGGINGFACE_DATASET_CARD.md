@@ -1,0 +1,265 @@
+---
+license: cc-by-4.0
+task_categories:
+  - text-classification
+language:
+  - en
+tags:
+  - biology
+  - proteins
+  - antibody
+  - nanobody
+  - VHH
+  - immunology
+  - polyreactivity
+  - non-specificity
+  - PSR
+  - FACS
+  - deep-sequencing
+  - protein-language-model
+  - esm
+  - novo-nordisk
+pretty_name: Harvey Nanobody Polyreactivity Dataset (Novo Nordisk Preprocessing)
+size_categories:
+  - 100K<n<1M
+dataset_info:
+  features:
+    - name: id
+      dtype: string
+    - name: sequence
+      dtype: string
+    - name: label
+      dtype: int64
+    - name: source
+      dtype: string
+    - name: sequence_length
+      dtype: int64
+  splits:
+    - name: test
+      num_examples: 141021
+  config_name: default
+---
+
+# Harvey Nanobody Polyreactivity Dataset (Novo Nordisk Preprocessing)
+
+## Dataset Description
+
+- **Homepage:** [Hugging Science Organization](https://huggingface.co/hugging-science)
+- **Repository:** [CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM](https://github.com/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM)
+- **Paper (Original Dataset):** [Harvey et al. 2022, Nature Communications](https://doi.org/10.1038/s41467-022-35276-4)
+- **Paper (Additional Methodology):** [Mason et al. 2021, Nature Biomedical Engineering](https://doi.org/10.1038/s41551-021-00699-9)
+- **Paper (Preprocessing Methodology):** [Sakhnini et al. 2025, bioRxiv](https://doi.org/10.1101/2025.04.28.650927)
+- **Original Data Source:** [debbiemarkslab/nanobody-polyreactivity](https://github.com/debbiemarkslab/nanobody-polyreactivity)
+- **Point of Contact:** [Hugging Science](https://huggingface.co/hugging-science)
+
+### Dataset Summary
+
+This dataset contains **141,021 nanobody (VHH) sequences** with binary polyreactivity labels, preprocessed according to the methodology described in **Sakhnini et al. 2025** (Novo Nordisk & University of Cambridge). The dataset was originally published by **Harvey et al. 2022** and contains synthetic nanobodies assessed by PSR (Poly-Specificity Reagent) assay via FACS sorting and deep sequencing.
+
+**This is the preprocessed version used as a test set for evaluating the ESM-1v + Logistic Regression model trained on the Boughter dataset.**
+
+### Key Features
+
+- **Organism:** Synthetic (yeast display library)
+- **Molecule Type:** Nanobody / Single-domain antibody (VHH)
+- **Assay:** PSR (Poly-Specificity Reagent) from Sf9 insect cell membranes
+- **Method:** FACS sorting + Deep sequencing
+- **Labels:** Binary classification (0 = low polyreactivity, 1 = high polyreactivity)
+- **Annotation:** ANARCI with IMGT numbering scheme
+- **Balance:** Well-balanced (49.1% low, 50.9% high polyreactivity)
+- **Scale:** Large-scale dataset (141K sequences)
+
+### Supported Tasks and Leaderboards
+
+- **Binary Classification:** Predicting nanobody polyreactivity from sequence
+- **Cross-Domain Validation:** Testing conventional antibody-trained models on nanobodies
+- **Benchmark:** Novo Nordisk benchmark (61.7% accuracy with PSR-specific threshold)
+
+### Languages
+
+Protein sequences (amino acid alphabet)
+
+## Dataset Structure
+
+### Data Instances
+
+```json
+{
+  "id": "harvey_000001",
+  "sequence": "QVQLVESGGGLVQAGGSLRLSCAASGFTFVYYVMGWYRQAPGKERELVAAINAGGGSTYYADSVKGRFTISRDNAKNTVYLQMNSLKPEDTAVYYCNARVRVRWSSYYYWGQGTQVTVSS",
+  "label": 1,
+  "source": "harvey2022",
+  "sequence_length": 120
+}
+```
+
+### Data Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | string | Unique identifier (harvey_XXXXXX format) |
+| `sequence` | string | Nanobody VHH amino acid sequence (IMGT-annotated) |
+| `label` | int | Binary label: 0 = low polyreactivity, 1 = high polyreactivity |
+| `source` | string | Data source identifier (harvey2022) |
+| `sequence_length` | int | Length of the VHH sequence in amino acids |
+
+### Data Splits
+
+| Split | Examples | Label 0 (Low) | Label 1 (High) |
+|-------|----------|---------------|----------------|
+| test | 141,021 | 69,262 (49.1%) | 71,759 (50.9%) |
+
+**Note:** This dataset is used exclusively as a test set for models trained on the Boughter dataset. The entire dataset is the "test" split.
+
+## Dataset Creation
+
+### Curation Rationale
+
+This dataset was created to evaluate whether models trained on conventional antibody polyreactivity data (Boughter - ELISA) can generalize to:
+1. **Different molecule types:** Nanobodies (VHH) vs conventional antibodies (VH)
+2. **Different assays:** PSR assay vs ELISA assay
+
+### Source Data
+
+#### Original Data Collection
+
+From Harvey et al. 2022:
+- Started with >2 × 10⁹ synthetic yeast display nanobody library
+- MACS enrichment for polyreactive clones
+- FACS sorting with PSR (polyspecificity reagent from Sf9 insect cell membranes)
+- Deep sequencing of high and low polyreactivity pools
+
+**Original Files (from debbiemarkslab/nanobody-polyreactivity):**
+- `high_polyreactivity_high_throughput.csv`: 71,772 sequences
+- `low_polyreactivity_high_throughput.csv`: 69,702 sequences
+- **Total:** 141,474 sequences
+
+#### Preprocessing Pipeline (Novo Nordisk Methodology)
+
+**IMPORTANT:** Novo Nordisk used the **unfiltered** dataset (all 141,474 sequences), NOT Harvey's CDR-length-filtered version (134K).
+
+| Stage | Description | Sequences |
+|-------|-------------|-----------|
+| 1. Raw Data | Combine high and low polyreactivity CSVs | 141,474 |
+| 2. ANARCI Annotation | Annotate using ANARCI with IMGT numbering | 141,474 → 141,021 (99.68%) |
+| 3. Gap Removal | Use `sequence_aa` not `sequence_alignment_aa` | (no change) |
+
+**ANARCI Failures:** 453 sequences (0.32%) failed annotation and were excluded.
+
+#### What Novo Nordisk Did NOT Do
+
+Unlike Harvey's original paper, Novo Nordisk did **NOT** apply CDR length filtering:
+- Harvey's filter: CDR1==8, CDR2==8 or 9, CDR3==6-22 → 134,302 sequences
+- Novo Nordisk: No filtering → ~141,000 sequences
+
+Evidence: Sakhnini et al. Table 4 states ">140,000 naïve nanobodies" which matches the unfiltered count.
+
+### Annotations
+
+#### Annotation Process
+
+1. **ANARCI Annotation:** IMGT numbering scheme applied to identify VHH domain boundaries
+2. **Gap Character Handling:** Use `sequence_aa` (gap-free) instead of `sequence_alignment_aa`
+3. **Label Assignment:** Binary labels from original FACS sorting (high vs low PSR pools)
+
+#### Who are the annotators?
+
+- **Original FACS/Sequencing:** Harvey et al. 2022 (Debbie Marks Lab, Harvard)
+- **Preprocessing pipeline:** Based on Sakhnini et al. 2025 (Novo Nordisk & University of Cambridge)
+- **This preprocessing:** CLARITY-DIGITAL-TWIN project (reproducing Novo methodology)
+
+### Personal and Sensitive Information
+
+This dataset contains synthetic nanobody sequences from a yeast display library. No human sequences or personal information is included.
+
+## Considerations for Using the Data
+
+### Social Impact of Dataset
+
+This dataset enables:
+- Development of polyreactivity prediction tools for nanobodies
+- Cross-domain validation of antibody developability models
+- In-silico screening to reduce experimental burden
+
+### Discussion of Biases
+
+1. **Synthetic Library Bias:** All sequences are from a synthetic yeast display library, not natural immune repertoires
+2. **Assay Bias:** PSR assay may capture different aspects of non-specificity than ELISA
+3. **Selection Pressure:** FACS sorting may introduce biases based on expression level
+4. **Nanobody-Specific:** Results may not generalize to conventional antibodies
+
+### Other Known Limitations
+
+1. **VHH Only:** This dataset contains single-domain antibodies (no light chain)
+2. **Binary Labels:** Quantitative PSR scores are not included (only binary high/low)
+3. **PSR Threshold Required:** For optimal performance, use PSR-specific threshold (0.5495) instead of default 0.5
+4. **Cross-Assay Transfer:** Models trained on ELISA data (Boughter) may not optimally transfer to PSR data
+
+### Recommended Usage
+
+When evaluating models trained on ELISA data (Boughter):
+```python
+# Use PSR-specific threshold for Harvey dataset
+THRESHOLD = 0.5495  # Optimized for PSR assay
+predictions = (model_probabilities >= THRESHOLD).astype(int)
+```
+
+## Additional Information
+
+### Dataset Curators
+
+- **Original Dataset:** Emily P. Harvey, Debbie Marks Lab (Harvard Medical School)
+- **Preprocessing Methodology:** Laila I. Sakhnini, Daniele Granata et al. (Novo Nordisk)
+- **This Preprocessing:** CLARITY-DIGITAL-TWIN project (Hugging Science)
+
+### Licensing Information
+
+This dataset is released under **CC-BY-4.0** license. The original data from Harvey et al. 2022 was made publicly available through the debbiemarkslab GitHub repository.
+
+### Citation Information
+
+**If you use this dataset, please cite all relevant papers:**
+
+```bibtex
+@article{harvey2022mucophilic,
+  title={A biophysical basis for mucophilic antigen binding},
+  author={Harvey, Emily P and Ge, Yiquan and LaRochelle, Jacob R and Kang, Joanne and DiMaio, Frank and De Yoreo, Matthew and Baker, David and Pultz, Ingrid S and Garrett, Seth and Blair, Laura and Knight, Kevin and Crispin, Max},
+  journal={Journal of Experimental Medicine},
+  volume={219},
+  number={3},
+  pages={e20211671},
+  year={2022},
+  publisher={Rockefeller University Press},
+  doi={10.1084/jem.20211671}
+}
+
+@article{mason2021optimization,
+  title={Optimization of therapeutic antibodies by predicting antigen specificity from antibody sequence via deep learning},
+  author={Mason, Derek M and Friedensohn, Simon and Weber, C{\'e}dric R and Jordi, Christian and Wagner, Bastian and Meng, Simon M and Ehling, Roy A and Bonati, Lucia and Dahinden, Janine and Gainza, Pablo and Correia, Bruno E and Reddy, Sai T},
+  journal={Nature Biomedical Engineering},
+  volume={5},
+  pages={600--612},
+  year={2021},
+  publisher={Nature Publishing Group UK London},
+  doi={10.1038/s41551-021-00699-9}
+}
+
+@article{sakhnini2025prediction,
+  title={Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters},
+  author={Sakhnini, Laila I. and Beltrame, Ludovica and Fulle, Simone and Sormanni, Pietro and Henriksen, Anette and Lorenzen, Nikolai and Vendruscolo, Michele and Granata, Daniele},
+  journal={bioRxiv},
+  year={2025},
+  publisher={Cold Spring Harbor Laboratory},
+  doi={10.1101/2025.04.28.650927}
+}
+```
+
+### Contributions
+
+Thanks to the Harvey lab and Debbie Marks lab for making the original data publicly available, and to Novo Nordisk for publishing their preprocessing methodology.
+
+---
+
+**Version:** 1.0.0
+**Last Updated:** 2025-12-14
+**Maintainer:** Hugging Science Organization
