@@ -60,7 +60,7 @@ This dataset contains **398 human antibody heavy chain variable domain (VH) sequ
 - **Organism:** Human (*Homo sapiens*)
 - **Molecule Type:** Antibody heavy chain variable domain (VH)
 - **Source:** Human B cells from healthy donors (IgG memory, IgM memory, Naïve, LLPCs)
-- **Assay:** PSR (Poly-Specificity Reagent) flow cytometry
+- **Assay:** PSR (Poly-Specificity Reagent) flow cytometry (CHO cell membrane/cytosolic proteins)
 - **Labels:** Binary classification (0 = low PSR, 1 = high PSR)
 - **Annotation:** ANARCI with IMGT numbering scheme
 - **Balance:** Highly imbalanced (98.2% low PSR, 1.8% high PSR)
@@ -99,7 +99,7 @@ Protein sequences (amino acid alphabet)
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | string | Antibody identifier (ADI-XXXXX format from Adimab) |
-| `sequence` | string | Antibody VH amino acid sequence (IMGT-annotated) |
+| `sequence` | string | Antibody VH amino acid sequence (gap-free; ANARCI/IMGT-validated) |
 | `label` | int | Binary label: 0 = low PSR, 1 = high PSR |
 | `psr_score` | float | Continuous PSR score from flow cytometry |
 | `b_cell_subset` | string | B cell subset origin (IgG memory, IgM memory, Naïve, LLPCs) |
@@ -137,17 +137,37 @@ From Shehata et al. 2019:
 | Stage | Description | Sequences |
 |-------|-------------|-----------|
 | 1. Excel Extraction | Extract from `shehata-mmc2.xlsx` Supplementary Table S1 | 402 |
-| 2. Row Filtering | Remove entries with missing PSR or incomplete pairing | 402 → 398 |
-| 3. ANARCI Annotation | Annotate using ANARCI with IMGT numbering | 398 → 398 (100%) |
-| 4. Gap Removal | Use `sequence_aa` not `sequence_alignment_aa` | (no change) |
+| 2. Drop Non-sequence Rows | Drop legend/metadata rows without VH/VL sequences | 402 → 400 |
+| 3. Drop Missing PSR | Drop antibodies without numeric PSR scores | 400 → 398 |
+| 4. ANARCI Annotation | Annotate using ANARCI with IMGT numbering | 398 → 398 (100%) |
+| 5. Gap Removal | Use `sequence_aa` not `sequence_alignment_aa` | (no change) |
 
 **100% Success Rate:** All 398 sequences were successfully annotated by ANARCI.
 
+### Novo Nordisk Methodology Verification
+
+This dataset's preprocessing was cross-referenced against Sakhnini et al. (2025) Section 4.1:
+
+| Metric | Novo Paper (Section 4.1) | This Dataset | Status |
+|--------|--------------------------|--------------|--------|
+| Dataset Size | "398 antibodies" | 398 sequences | ✅ EXACT MATCH |
+| Non-specific Count | "7 out of 398 antibodies characterised as non-specific only" | 7 (1.8%) | ✅ EXACT MATCH |
+| Annotation Method | "ANARCI following the IMGT numbering scheme" | ANARCI/IMGT | ✅ MATCH |
+| Source | Shehata et al. 2019 | Cell Reports Supplementary Table S1 | ✅ MATCH |
+
+**Verification Notes:**
+- The exact counts (398 total, 7 non-specific) match the Novo paper precisely
+- Labels are derived from PSR scores using the same threshold methodology
+- No additional filtering was applied beyond ANARCI annotation
+
 #### Binary Label Assignment
 
-PSR scores were converted to binary labels based on the distribution:
-- **Low PSR (label=0):** 391 antibodies (98.2%)
-- **High PSR (label=1):** 7 antibodies (1.8%)
+PSR scores were converted to binary labels following Shehata et al. (2019) high-polyreactivity threshold:
+
+- **Low/no PSR (label=0):** `psr_score ≤ 0.33` → 391 antibodies (98.2%)
+- **High PSR (label=1):** `psr_score > 0.33` → 7 antibodies (1.8%)
+
+For parity with Sakhnini et al. (2025), the conversion script computes a cutoff at the top 7/398 antibodies (98.24th percentile); in this dataset that is equivalent to `psr_score > 0.33`.
 
 ### Annotations
 
@@ -195,7 +215,6 @@ This dataset enables:
 1. **VH Only:** This dataset contains only heavy chain sequences; light chain (VL) is available separately
 2. **Small Size:** 398 sequences limits statistical power
 3. **Extreme Imbalance:** Standard accuracy metrics may be misleading
-4. **Prediction Threshold Calibration:** For reproducing Sakhnini et al. (2025) results on PSR datasets, use a probability decision threshold of 0.5495 (instead of 0.5)
 
 ### Recommended Usage
 
@@ -208,6 +227,19 @@ predictions = (model_probabilities >= THRESHOLD).astype(int)
 # Use appropriate metrics for imbalanced data
 from sklearn.metrics import f1_score, roc_auc_score, balanced_accuracy_score
 ```
+
+### Note on Inference Threshold (0.5495)
+
+**IMPORTANT:** The 0.5495 threshold is for **model inference/evaluation only**, NOT preprocessing.
+
+- **What it is:** A decision threshold for binarizing model prediction probabilities during evaluation
+- **What it is NOT:** A preprocessing parameter - the data (sequences, labels) is unaffected
+- **Why it exists:** Empirically determined to better reproduce Sakhnini et al. (2025) Fig. S14C results when evaluating ELISA-trained models on PSR test data
+- **Not in the paper:** This threshold value is not described in Sakhnini et al. (2025); it is derived via threshold sweep in this repository for parity against reported results
+- **Standard threshold:** 0.5 (binary classification default)
+- **PSR-calibrated threshold:** 0.5495 (determined via threshold sweep to match Novo's reported accuracy)
+
+This threshold adjustment compensates for the cross-assay domain shift between ELISA (training) and PSR (testing) data.
 
 ### Recommended Metrics
 

@@ -8,14 +8,14 @@
 
 ### Main Data (Shehata et al. 2019 Cell Reports)
 
-**Citation:** Shehata L, Thaventhiran JED, Engelhardt KR, et al. (2019). "Affinity Maturation Enhances Antibody Specificity but Compromises Conformational Stability." *Cell Reports* 28(13):3300-3308.e4. DOI: 10.1016/j.celrep.2019.08.056
+**Citation:** Shehata, L. et al. (2019). "Affinity maturation enhances antibody specificity but compromises conformational stability." *Cell Reports* 28(13):3300-3308.e4. DOI: 10.1016/j.celrep.2019.08.056
 
 - `shehata-mmc2.xlsx` - **Supplementary Table S1: Antibody Sequences and Properties**
-  - 402 rows (398 antibodies used after filtering)
+  - 402 rows total (398 antibodies + 2 legend/metadata rows + 2 antibodies missing PSR)
   - Paired VH and VL sequences
   - PSR (Polyspecific Reagent) scores
   - Biophysical properties (Tm, charge, pI, etc.)
-  - **Note:** 4 sequences removed during processing (incomplete pairing or missing PSR)
+  - **Note:** 4 rows removed during processing (2 non-sequence rows; 2 antibodies missing PSR scores)
 
 ### Unused Files (Archived for Provenance)
 
@@ -42,21 +42,24 @@ python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 1. Read Excel file (402 rows)
 2. Extract VH and VL sequences
 3. Extract PSR scores
-4. Filter out 4 sequences with missing data
-5. Apply PSR threshold (98.24th percentile) for binary labels
-6. Save 398 antibodies to CSV
+4. Drop 2 non-sequence legend/metadata rows
+5. Drop 2 antibodies without numeric PSR scores
+6. Binarize PSR scores into low/high labels (top 7/398 = 98.24th percentile; equivalent here to `psr_score > 0.33`)
+7. Save 398 antibodies to CSV
 
 ---
 
-## Label Assignment (Sakhnini 2025 Methodology)
+## Label Assignment (Shehata 2019; benchmarked in Sakhnini 2025)
 
-**Threshold:** 98.24th percentile of PSR score distribution
+**Threshold:** High polyreactivity (label=1) corresponds to `psr_score > 0.33` (Shehata et al. 2019). The conversion script computes a cutoff at the 98.24th percentile to enforce exactly 7/398 non-specific antibodies (Sakhnini et al. 2025); in this dataset that is equivalent to `> 0.33`.
 
 **Binary labels:**
-- `label=0` (specific): PSR < 98.24th percentile → 391 antibodies
-- `label=1` (non-specific): PSR ≥ 98.24th percentile → 7 antibodies
+- `label=0` (specific): PSR ≤ 0.33 → 391 antibodies
+- `label=1` (non-specific): PSR > 0.33 → 7 antibodies
 
-**Methodology source:** Sakhnini, L.I., et al. (2025). "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." *bioRxiv*. DOI: 10.1101/2025.04.28.650927
+**Methodology sources:**
+- Shehata, L. et al. (2019). *Cell Reports*. Defines high polyreactivity as PSR > 0.33.
+- Sakhnini, L.I. et al. (2025). *bioRxiv*. Uses this dataset as a PSR test set and reports 7/398 as non-specific.
 
 ---
 

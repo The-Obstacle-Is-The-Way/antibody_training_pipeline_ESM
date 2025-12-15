@@ -13,31 +13,31 @@ Converted and filtered datasets, reproducible from raw sources.
 **Source:** Converted from `raw/shehata-mmc2.xlsx` (402 rows) → 398 antibodies
 
 **Columns:**
-- `antibody_id` - Unique identifier
-- `VH` - Heavy chain variable region sequence
-- `VL` - Light chain variable region sequence
-- `PSR` - Polyspecific Reagent score (continuous)
-- `label` - Binary non-specificity label (0=specific, 1=non-specific)
-- Additional biophysical properties (Tm, charge, pI, etc.)
+- `id` - Antibody identifier (`Clone name` in the supplementary table)
+- `heavy_seq` - Heavy chain variable region amino acid sequence (VH, gap-free)
+- `light_seq` - Light chain variable region amino acid sequence (VL, gap-free)
+- `label` - Binary label (0 = low PSR/specific, 1 = high PSR/non-specific)
+- `psr_score` - Continuous PSR score (flow cytometry; normalized 0–1)
+- `b_cell_subset` - B cell subset (IgG memory, IgM memory, Naïve, LLPCs)
+- `source` - Data source identifier (`shehata2019`)
 
 **Rows:** 398 antibodies + 1 header = 399 lines
 
-**Filtering:** 4 sequences removed from original 402 due to:
-- Incomplete VH/VL pairing
-- Missing PSR scores
-- Data quality issues
+**Filtering:** 4 rows removed from the original 402:
+- 2 legend/metadata rows without VH/VL sequences
+- 2 antibodies missing PSR scores
 
 ---
 
 ## Label Assignment
 
-**Threshold:** 98.24th percentile of PSR score distribution
+**Threshold:** High polyreactivity (label=1) corresponds to `psr_score > 0.33` (Shehata et al. 2019). The conversion script computes a cutoff at the 98.24th percentile to enforce exactly 7/398 non-specific antibodies (Sakhnini et al. 2025); in this dataset that is equivalent to `> 0.33`.
 
 **Binary classification:**
-- `label=0` (specific): PSR < 98.24th percentile → **391 antibodies** (98.2%)
-- `label=1` (non-specific): PSR ≥ 98.24th percentile → **7 antibodies** (1.8%)
+- `label=0` (specific): PSR ≤ 0.33 → **391 antibodies** (98.2%)
+- `label=1` (non-specific): PSR > 0.33 → **7 antibodies** (1.8%)
 
-**Methodology:** Sakhnini et al. 2025 (bioRxiv, DOI: [10.1101/2025.04.28.650927](https://doi.org/10.1101/2025.04.28.650927)) - stringent threshold for non-specificity prediction
+**Benchmark alignment:** Sakhnini et al. (2025) treat 7/398 as non-specific in their PSR benchmark; this binarization matches that count while following Shehata et al. (2019) high-polyreactivity definition (`psr_score > 0.33`).
 
 **Note:** Highly imbalanced dataset. Use stratified sampling for training/validation splits.
 
@@ -54,12 +54,12 @@ python3 preprocessing/shehata/step1_convert_excel_to_csv.py
 ```
 
 **Processing steps:**
-1. Read Excel file (sheet: "Table S1")
+1. Read Excel file (Sheet1; Supplementary Table S1)
 2. Extract VH, VL, PSR, and metadata columns
-3. Filter out 4 sequences with incomplete data
-4. Calculate 98.24th percentile threshold
-5. Assign binary labels (0/1)
-6. Save to CSV
+3. Drop non-sequence legend/metadata rows
+4. Drop antibodies without numeric PSR scores
+5. Assign binary labels (0/1) from PSR scores
+6. Save to CSV (398 antibodies)
 
 ---
 
@@ -74,8 +74,7 @@ python3 scripts/validation/validate_shehata_conversion.py
 **Checks:**
 - Row count: 398 antibodies
 - Label distribution: 391 specific, 7 non-specific
-- No missing values in VH/VL/PSR columns
-- PSR threshold correctly applied
+- No missing values in `heavy_seq`, `light_seq`, or `psr_score`
 - Sequence format validation
 
 ---

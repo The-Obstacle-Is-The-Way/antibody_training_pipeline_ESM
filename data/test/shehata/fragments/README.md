@@ -42,7 +42,7 @@ Region-specific extracts for ablation studies and targeted model training.
 - `L-FWRs_shehata.csv` - All light chain frameworks (L-FWR1 + L-FWR2 + L-FWR3 + L-FWR4)
 - `All-CDRs_shehata.csv` - All CDRs from both chains (H-CDRs + L-CDRs)
 - `All-FWRs_shehata.csv` - All frameworks from both chains (H-FWRs + L-FWRs)
-- `VH_VL_shehata.csv` - Same as Full_shehata.csv (alias)
+- `VH+VL_shehata.csv` - Paired variable domains (VH concatenated with VL; same sequences as `Full_shehata.csv`)
 
 ---
 
@@ -159,14 +159,15 @@ python3 tests/test_shehata_embedding_compatibility.py
 All fragment CSVs have the same schema:
 
 ```
-antibody_id,sequence,label,PSR,[optional metadata]
+id,sequence,label,psr_score,b_cell_subset,source
 ```
 
-- `antibody_id` - Unique identifier
-- `sequence` - Fragment-specific amino acid sequence
-- `label` - Binary non-specificity label (0=specific, 1=non-specific)
-- `PSR` - Polyspecific Reagent score
-- `[optional metadata]` - Additional columns from source data
+- `id` - Antibody identifier (`Clone name` in the supplementary table)
+- `sequence` - Fragment-specific amino acid sequence (gap-free)
+- `label` - Binary label (0 = low PSR/specific, 1 = high PSR/non-specific)
+- `psr_score` - Continuous PSR score (flow cytometry; normalized 0–1)
+- `b_cell_subset` - B cell subset (IgG memory, IgM memory, Naïve, LLPCs)
+- `source` - Data source identifier (`shehata2019`)
 
 ---
 
