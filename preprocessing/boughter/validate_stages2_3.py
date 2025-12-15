@@ -25,7 +25,7 @@ Outputs:
     - Console validation report for each fragment
     - Summary statistics
 
-Reference: See docs/boughter/boughter_data_sources.md for Stages 2+3 methodology
+Reference: See docs/datasets/boughter/data_sources.md for Stages 2+3 methodology
 """
 
 from __future__ import annotations

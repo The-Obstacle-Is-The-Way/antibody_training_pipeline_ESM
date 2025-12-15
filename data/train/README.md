@@ -27,15 +27,15 @@ This directory contains all training datasets for the antibody non-specificity c
 ## Directory Structure
 
 ```
-data/train/
-├── README.md (this file)
-├── BOUGHTER_DATA_PROVENANCE.md
-└── boughter/
-    ├── raw/ - Original DNA FASTA files
-    ├── processed/ - Stage 1: Translated proteins
-    ├── annotated/ - Stages 2+3: ANARCI fragments
-    ├── canonical/ - Authoritative training file (914 sequences, production)
-    └── (strict QC experiment archived in experiments/strict_qc_2025-11-04/)
+	data/train/
+	├── README.md (this file)
+	├── BOUGHTER_DATA_PROVENANCE.md
+	└── boughter/
+	    ├── raw/ - Original DNA FASTA files
+	    ├── processed/ - Stage 1: Translated proteins
+	    ├── annotated/ - Stages 2+3: ANARCI fragments
+	    ├── canonical/ - Authoritative training file (914 sequences, production)
+	    └── (strict QC experiment evaluated; see docs/datasets/boughter/novo_methodology_clarification.md)
 ```
 
 ---

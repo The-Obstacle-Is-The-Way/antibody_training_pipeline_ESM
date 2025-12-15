@@ -2,8 +2,6 @@
 license: cc-by-4.0
 task_categories:
   - text-classification
-language:
-  - en
 tags:
   - biology
   - proteins
@@ -61,7 +59,7 @@ This dataset contains **398 human antibody heavy chain variable domain (VH) sequ
 
 - **Organism:** Human (*Homo sapiens*)
 - **Molecule Type:** Antibody heavy chain variable domain (VH)
-- **Source:** Human B cells (IgG memory, IgM memory, Naive, Plasmablast)
+- **Source:** Human B cells from healthy donors (IgG memory, IgM memory, Naïve, LLPCs)
 - **Assay:** PSR (Poly-Specificity Reagent) flow cytometry
 - **Labels:** Binary classification (0 = low PSR, 1 = high PSR)
 - **Annotation:** ANARCI with IMGT numbering scheme
@@ -75,7 +73,7 @@ This dataset is **highly imbalanced** with only 7 high-PSR sequences out of 398 
 
 - **Binary Classification:** Predicting antibody PSR from sequence
 - **Cross-Assay Transfer Learning:** Testing ELISA-trained models on PSR data
-- **Benchmark:** Novo Nordisk benchmark (58.8% accuracy with PSR-specific threshold)
+- **Benchmark:** Sakhnini et al. 2025 Fig. S14C (58.8% accuracy)
 
 ### Languages
 
@@ -104,7 +102,7 @@ Protein sequences (amino acid alphabet)
 | `sequence` | string | Antibody VH amino acid sequence (IMGT-annotated) |
 | `label` | int | Binary label: 0 = low PSR, 1 = high PSR |
 | `psr_score` | float | Continuous PSR score from flow cytometry |
-| `b_cell_subset` | string | B cell subset origin (IgG memory, IgM memory, Naive, Plasmablast) |
+| `b_cell_subset` | string | B cell subset origin (IgG memory, IgM memory, Naïve, LLPCs) |
 | `source` | string | Data source identifier (shehata2019) |
 
 ### Data Splits
@@ -126,8 +124,8 @@ This dataset was created to study the relationship between antibody affinity mat
 #### Original Data Collection
 
 From Shehata et al. 2019:
-- **Source:** Human peripheral blood B cells
-- **Subsets:** IgG memory, IgM memory, Naive, Plasmablast
+- **Source:** Human B cells from healthy donors (LLPCs from bone marrow; naïve and memory B cells from peripheral blood)
+- **Subsets:** IgG memory, IgM memory, Naïve, LLPCs (long-lived plasma cells)
 - **Assay:** PSR (Poly-Specificity Reagent) flow cytometry
 - **Study Focus:** How affinity maturation affects antibody specificity
 
@@ -173,7 +171,7 @@ From the original paper acknowledgments:
 
 ### Personal and Sensitive Information
 
-This dataset contains human-derived antibody sequences. However, these are B cell receptor sequences from peripheral blood samples, which do not constitute personally identifiable information. The original study was conducted with appropriate ethical oversight.
+This dataset contains human-derived antibody sequences. However, these are B cell receptor sequences from healthy donor samples, which do not constitute personally identifiable information. The original study was conducted with appropriate ethical oversight.
 
 ## Considerations for Using the Data
 
@@ -197,14 +195,14 @@ This dataset enables:
 1. **VH Only:** This dataset contains only heavy chain sequences; light chain (VL) is available separately
 2. **Small Size:** 398 sequences limits statistical power
 3. **Extreme Imbalance:** Standard accuracy metrics may be misleading
-4. **PSR Threshold Required:** For optimal performance, use PSR-specific threshold (0.5495) instead of default 0.5
+4. **Prediction Threshold Calibration:** For reproducing Sakhnini et al. (2025) results on PSR datasets, use a probability decision threshold of 0.5495 (instead of 0.5)
 
 ### Recommended Usage
 
 When evaluating models trained on ELISA data (Boughter):
 ```python
-# Use PSR-specific threshold for Shehata dataset
-THRESHOLD = 0.5495  # Optimized for PSR assay
+# For reproducing Sakhnini et al. (2025) Fig. S14C, binarize model probabilities with:
+THRESHOLD = 0.5495  # decision threshold on predicted P(non-specific)
 predictions = (model_probabilities >= THRESHOLD).astype(int)
 
 # Use appropriate metrics for imbalanced data
@@ -233,7 +231,7 @@ Shehata et al. (2019) is published under **CC-BY-4.0** (per the DOI landing page
 
 ### Citation Information
 
-**If you use this dataset, please cite both the original paper and the preprocessing methodology:**
+**If you use this dataset, please cite the original paper, the Novo Nordisk methodology paper, and ANARCI (used for IMGT numbering):**
 
 ```bibtex
 @article{shehata2019affinity,
@@ -255,6 +253,17 @@ Shehata et al. (2019) is published under **CC-BY-4.0** (per the DOI landing page
   year={2025},
   publisher={Cold Spring Harbor Laboratory},
   doi={10.1101/2025.04.28.650927}
+}
+
+@article{dunbar2016anarci,
+  title={ANARCI: antigen receptor numbering and receptor classification},
+  author={Dunbar, James and Deane, Charlotte M},
+  journal={Bioinformatics},
+  volume={32},
+  number={2},
+  pages={298--300},
+  year={2016},
+  doi={10.1093/bioinformatics/btv552}
 }
 ```
 

@@ -127,7 +127,7 @@ EVQLVESGGGVVQPGRSLRLSCAASGFTFDRYGMHWIRQAPGKGLECVALISFDGSHK-YADSVKGRFTISRDNSRNTLY
 - Paper achieved successful embeddings → must have used gap-free field
 
 **First Principles Validation:**
-✅ Validated in `docs/shehata/P0_BLOCKER_FIRST_PRINCIPLES_VALIDATION.md`:
+✅ Validated in `docs/datasets/shehata/archive/p0_blocker_first_principles_validation.md`:
 - Code logic confirms `-` character fails validation (model.py:33-37)
 - Actual files verified to have gaps (13 VH, 4 VL, 17 Full)
 - Runtime behavior tested and confirmed
@@ -301,7 +301,7 @@ Next highest (labeled specific):
 
 ### ⚠️ Phase 2 Completion Report Contradiction
 
-**File:** `docs/shehata/shehata_phase2_completion_report.md:90-122`
+**File:** `docs/datasets/shehata/shehata_phase2_completion_report.md:90-122`
 
 **Claim:**
 > "✅ **All fragment lengths match expected antibody structure**"
@@ -342,7 +342,7 @@ Next highest (labeled specific):
    - Prevent regression
 
 3. **Update completion report**
-   - **File:** `docs/shehata/shehata_phase2_completion_report.md`
+   - **File:** `docs/datasets/shehata/shehata_phase2_completion_report.md`
    - Remove "✅ validated" claims until post-fix
    - Add note about P0 blocker discovered and fixed
    - Update validation checklist to include gap detection

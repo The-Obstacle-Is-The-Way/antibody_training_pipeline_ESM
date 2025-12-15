@@ -1,7 +1,7 @@
 # Harvey Dataset Preprocessing Pipeline
 
 **Source:** Harvey et al. (2022) - Nanobody polyreactivity dataset
-**Test Set:** 141,474 nanobody sequences (VHH only)
+**Test Set:** 141,474 raw/processed nanobody sequences (141,021 ANARCI-validated; VHH only)
 
 ---
 
@@ -88,7 +88,9 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 
 ## Dataset Statistics
 
-- **Total sequences:** 141,474 nanobodies
+- **Total sequences (processed/harvey.csv):** 141,474 nanobodies
+- **Successfully annotated (fragments/*.csv):** 141,021 nanobodies (99.68%)
+- **ANARCI failures:** 453 sequences (`data/test/harvey/fragments/failed_sequences.txt`)
 - **High polyreactivity:** 71,772 (label=1)
 - **Low polyreactivity:** 69,702 (label=0)
 - **Sequence type:** VHH only (nanobodies, no light chain)
@@ -107,9 +109,12 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 
 ## References
 
-- **Harvey et al. (2022):** [Citation needed - add when available]
-- **Sakhnini et al. (2025):** Prediction of Antibody Non-Specificity using Protein Language Models
-- **ANARCI:** IMGT numbering scheme for antibody annotation
+- Harvey, E.P. et al. (2022). An in silico method to assess antibody fragment polyreactivity. *Nature Communications*.
+  DOI: 10.1038/s41467-022-35276-4
+- Sakhnini, L.I. et al. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical
+  Parameters. *bioRxiv*. DOI: 10.1101/2025.04.28.650927
+- Dunbar, J. and Deane, C.M. (2016). ANARCI: antigen receptor numbering and receptor classification. *Bioinformatics*.
+  DOI: 10.1093/bioinformatics/btv552
 
 ---
 

@@ -28,7 +28,7 @@ Final curated datasets for reproducible benchmarking against Novo Nordisk result
 
 ---
 
-### 2. `VH_only_jain_test_PARITY_86.csv` (OLD Reverse-Engineered)
+### 2. `archive/VH_only_jain_test_PARITY_86.csv` (OLD Reverse-Engineered)
 
 - **Method:** ELISA filter → VH length outlier removal (3 antibodies) → borderline removals (5 antibodies)
 - **Script:** Legacy `preprocessing/process_jain.py` (removed; see git history)
@@ -74,7 +74,7 @@ import pickle
 df = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
 
 # Load model
-with open('models/boughter_vh_esm1v_logreg.pkl', 'rb') as f:
+with open('experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl', 'rb') as f:
     classifier = pickle.load(f)
 
 # Test
@@ -94,7 +94,7 @@ print(cm)
 
 ```python
 # For guaranteed deterministic results
-df = pd.read_csv('data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv')
+df = pd.read_csv('data/test/jain/canonical/archive/VH_only_jain_test_PARITY_86.csv')
 
 # Same testing procedure...
 # Expected: [[40, 19], [10, 17]] (always deterministic)
@@ -127,8 +127,8 @@ To verify parity:
 python3 preprocessing/jain/test_novo_parity.py
 
 # Test OLD method
-python3 test.py --model models/boughter_vh_esm1v_logreg.pkl \
-  --data data/test/jain/canonical/VH_only_jain_test_PARITY_86.csv
+uv run antibody-test --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
+  --data data/test/jain/canonical/archive/VH_only_jain_test_PARITY_86.csv
 ```
 
 Both should give [[40, 19], [10, 17]], 66.28% accuracy.

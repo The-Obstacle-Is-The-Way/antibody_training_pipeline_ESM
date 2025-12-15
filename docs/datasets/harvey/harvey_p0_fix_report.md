@@ -217,8 +217,8 @@ Both datasets had the **EXACT SAME P0 BLOCKER** - here's the parallel:
 8. ✅ `data/test/harvey/fragments/H-FWRs_harvey.csv` - Already gap-free
 
 ### Documentation
-9. ✅ `docs/harvey/HARVEY_P0_FIX_REPORT.md` - This report
-10. ⬜ `docs/harvey/harvey_data_sources.md` - Needs update to correct ZYMScott misinformation
+9. ✅ `docs/datasets/harvey/harvey_p0_fix_report.md` - This report
+10. ⬜ `docs/datasets/harvey/harvey_data_sources.md` - Needs update to correct ZYMScott misinformation
 
 ---
 

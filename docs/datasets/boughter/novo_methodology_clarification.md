@@ -222,7 +222,7 @@ total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 - ✅ Retrained model (Stage 4 strict QC)
 - ❌ Result: 66.55% vs 67.5% (NO improvement)
 
-**Conclusion:** The 62 sequences were valid training data, not noise. ESM embeddings already handle ambiguous positions well. This experiment has been archived in `experiments/strict_qc_2025-11-04/`.
+**Conclusion:** The 62 sequences were valid training data, not noise. ESM embeddings already handle ambiguous positions well. This experiment is documented here; artifacts are not checked in to this repo snapshot.
 
 ---
 
@@ -266,7 +266,7 @@ total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 - ✅ Tested filtering 62 sequences with X at position 0 → strict QC (852 sequences)
 - ✅ Result: 66.55% vs 67.5% (NO improvement, statistically equivalent)
 - ✅ Conclusion: 62 sequences were valid training data, not noise
-- ✅ Experiment archived: `experiments/strict_qc_2025-11-04/`
+- ✅ Experiment documented (artifacts not checked in to this repo snapshot)
 
 ---
 

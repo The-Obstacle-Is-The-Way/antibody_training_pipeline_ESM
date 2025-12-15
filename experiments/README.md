@@ -34,32 +34,17 @@ Experiments are archived here to:
 - Hypothesis disproven: stricter QC did not improve performance
 - Production model externally validated instead:
   - Jain (HIC retention): 66.28% accuracy ✅
-  - Shehata (PSR assay): 52.26% accuracy ✅
+  - Shehata (PSR assay): 58.29% accuracy ✅ (PSR decision threshold 0.5495; baseline 0.5 = 52.5%)
+  - Harvey (PSR assay, nanobodies): 61.33% accuracy ✅ (PSR decision threshold 0.5495)
 - Experiment archived, production model deployed
 
 **Key learning:** The 62 sequences with X in frameworks were valid training data, not noise. ESM embeddings already handle ambiguous positions effectively.
 
-**See:** `strict_qc_2025-11-04/EXPERIMENT_README.md` for complete details
+**Details:** The strict QC experiment is documented in:
+- `docs/datasets/boughter/novo_methodology_clarification.md`
+- `docs/datasets/boughter/complete_history.md`
 
-**Contents:**
-```
-strict_qc_2025-11-04/
-├── EXPERIMENT_README.md           # Complete experimental report
-├── preprocessing/
-│   ├── stage4_additional_qc.py    # Stage 4 filtering implementation
-│   └── validate_stage4.py         # Validation script
-├── data/strict_qc/
-│   └── [16 fragment CSV files]    # 852-914 sequences (fragment-dependent)
-├── configs/
-│   └── config_strict_qc.yaml      # Experimental training config
-└── docs/
-    ├── BOUGHTER_ADDITIONAL_QC_PLAN.md
-    ├── TRAINING_READINESS_CHECK.md
-    ├── AUDIT_CORRECTIONS_APPLIED.md
-    ├── STALE_REFERENCES_FIX_SUMMARY.md
-    ├── TRAIN_DATASETS_ORGANIZATION_PLAN.md
-    └── PLAN_AUDIT_SUMMARY.md
-```
+Experiment artifacts are not checked in to this repo snapshot.
 
 ---
 

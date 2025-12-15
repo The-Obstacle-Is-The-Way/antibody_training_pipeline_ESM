@@ -28,7 +28,7 @@
 
 Please audit `preprocessing/harvey/step2_extract_fragments.py` against the following specifications:
 
-1. **Does it follow the methodology in `docs/harvey_preprocessing_implementation_plan.md`?**
+1. **Does it follow the methodology in `docs/datasets/harvey/harvey_preprocessing_implementation_plan.md`?**
 2. **Does it match the codebase style of `preprocessing/shehata/step2_extract_fragments.py`?**
 3. **Are there any bugs, edge cases, or issues?**
 4. **Will it correctly process 141,474 nanobody sequences?**
@@ -211,9 +211,9 @@ Harvey script should be **similar to** `preprocessing/shehata/step2_extract_frag
 
 ## References
 
-- **Implementation plan:** `docs/harvey_preprocessing_implementation_plan.md`
-- **Data sources:** `docs/harvey_data_sources.md`
-- **Cleaning log:** `docs/harvey_data_cleaning_log.md`
+- **Implementation plan:** `docs/datasets/harvey/harvey_preprocessing_implementation_plan.md`
+- **Data sources:** `docs/datasets/harvey/harvey_data_sources.md`
+- **Cleaning log:** `docs/datasets/harvey/archive/harvey_data_cleaning_log.md`
 - **Template script:** `preprocessing/shehata/step2_extract_fragments.py`
 - **Sakhnini et al. 2025:** Table 4 (Harvey dataset specs)
 

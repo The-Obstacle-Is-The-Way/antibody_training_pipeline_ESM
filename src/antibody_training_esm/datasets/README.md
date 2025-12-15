@@ -95,7 +95,7 @@ print(f"Loaded {len(df)} sequences")
 - **Fragments**: `data/test/harvey/fragments/`
 - **Preprocessing**: `preprocessing/harvey/step2_extract_fragments.py`
 - **Characteristics**:
-  - 141,474 nanobody sequences (VHH only)
+  - 141,474 nanobody sequences in raw/processed; 141,021 in ANARCI-validated fragment exports (VHH only)
   - 6 fragment types (nanobody-specific)
   - IMGT position extraction
 
@@ -104,7 +104,7 @@ print(f"Loaded {len(df)} sequences")
 - **Fragments**: `data/test/shehata/fragments/`
 - **Preprocessing**: `preprocessing/shehata/step2_extract_fragments.py`
 - **Characteristics**:
-  - 398 HIV antibodies
+  - 398 human B cell-derived antibodies (healthy donors)
   - PSR threshold-based labeling (98.24th percentile)
   - 16 fragment types (VH + VL)
 

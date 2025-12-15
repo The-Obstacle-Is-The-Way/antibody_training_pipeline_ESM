@@ -1,9 +1,7 @@
 ---
-license: cc-by-4.0
+license: mit
 task_categories:
   - text-classification
-language:
-  - en
 tags:
   - biology
   - proteins
@@ -43,7 +41,7 @@ dataset_info:
 
 ### Dataset Summary
 
-This dataset contains **914 antibody heavy chain variable domain (VH) sequences** with binary polyreactivity labels, preprocessed according to the methodology described in **Sakhnini et al. 2025** (Novo Nordisk & University of Cambridge). The dataset was originally published by **Boughter et al. 2020** and contains mouse antibodies with ELISA-based polyreactivity measurements against a 7-antigen panel.
+This dataset contains **914 antibody heavy chain variable domain (VH) sequences** with binary polyreactivity labels, preprocessed according to the methodology described in **Sakhnini et al. 2025** (Novo Nordisk & University of Cambridge). The dataset was originally published by **Boughter et al. 2020** and contains mouse antibodies with ELISA-based polyreactivity measurements against a panel of 4–7 antigens (commonly described as: DNA, insulin, LPS, flagellin, albumin, cardiolipin, KLH).
 
 **This is the preprocessed version used for training the ESM-1v + Logistic Regression model that predicts antibody non-specificity.**
 
@@ -51,7 +49,7 @@ This dataset contains **914 antibody heavy chain variable domain (VH) sequences*
 
 - **Organism:** Mouse (*Mus musculus*)
 - **Molecule Type:** Antibody heavy chain variable domain (VH)
-- **Assay:** ELISA polyreactivity panel (7 antigens: DNA, insulin, LPS, flagellin, albumin, cardiolipin, KLH)
+- **Assay:** ELISA polyreactivity panel (4–7 antigens: DNA, insulin, LPS, flagellin, albumin, cardiolipin, KLH)
 - **Labels:** Binary classification (0 = specific, 1 = non-specific/polyreactive)
 - **Annotation:** ANARCI with IMGT numbering scheme
 - **Balance:** Well-balanced (48.5% specific, 51.5% non-specific)
@@ -124,7 +122,7 @@ The following preprocessing was applied according to Sakhnini et al. 2025:
 
 #### ELISA Polyreactivity Panel
 
-Antibodies were tested against 7 biochemically diverse antigens:
+Antibodies were tested against a panel of up to 7 biochemically diverse antigens:
 - DNA (negatively charged)
 - Insulin (negatively charged)
 - LPS (lipopolysaccharide - amphipathic)
@@ -188,11 +186,11 @@ This dataset enables development of computational tools to predict antibody deve
 
 ### Licensing Information
 
-Boughter et al. (2020) is published under **CC-BY-4.0** (per the DOI landing page). The raw source files are also distributed via the `ctboughter/AIMS_manuscripts` GitHub repository (MIT license for the repository). This Hugging Face export follows **CC-BY-4.0** terms; please retain upstream attribution/citations.
+Boughter et al. (2020) is published under **CC-BY-4.0** (per the DOI landing page). The raw source files in this repository were copied from `ctboughter/AIMS_manuscripts` (repository license: MIT). This Hugging Face export is distributed under the **MIT license**; please retain upstream attribution/citations (paper + repository).
 
 ### Citation Information
 
-**If you use this dataset, please cite both the original paper and the preprocessing methodology:**
+**If you use this dataset, please cite the original paper, the Novo Nordisk methodology paper, and ANARCI (used for IMGT numbering):**
 
 ```bibtex
 @article{boughter2020biochemical,
@@ -213,6 +211,17 @@ Boughter et al. (2020) is published under **CC-BY-4.0** (per the DOI landing pag
   year={2025},
   publisher={Cold Spring Harbor Laboratory},
   doi={10.1101/2025.04.28.650927}
+}
+
+@article{dunbar2016anarci,
+  title={ANARCI: antigen receptor numbering and receptor classification},
+  author={Dunbar, James and Deane, Charlotte M},
+  journal={Bioinformatics},
+  volume={32},
+  number={2},
+  pages={298--300},
+  year={2016},
+  doi={10.1093/bioinformatics/btv552}
 }
 ```
 

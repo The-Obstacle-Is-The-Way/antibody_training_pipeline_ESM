@@ -1,7 +1,7 @@
 """
 Shehata Dataset Loader
 
-Loads preprocessed Shehata HIV antibody polyreactivity dataset.
+Loads preprocessed Shehata antibody polyreactivity dataset (PSR assay).
 
 IMPORTANT: This module is for LOADING preprocessed data, not for running
 the preprocessing pipeline. The preprocessing scripts that CREATE the data
@@ -9,9 +9,9 @@ are in: preprocessing/shehata/step2_extract_fragments.py
 
 Dataset characteristics:
 - Full antibodies (VH + VL)
-- 398 HIV-specific antibodies from 8 donors
-- Binary classification based on PSR (Polyreactivity Screening Reagent) scores
-- B cell subset metadata (memory, naive, plasmablast)
+- 398 human antibodies (VH + VL) from healthy donor B cell subsets
+- Binary labels derived from PSR (polyspecificity reagent) scores
+- B cell subset metadata (IgG memory, IgM memory, Naïve, LLPCs)
 - 16 fragment types (full antibody)
 
 Source:
@@ -40,17 +40,20 @@ SHEHATA_OUTPUT_DIR = settings.SHEHATA_OUTPUT_DIR
 
 class ShehataDataset(AntibodyDataset):
     """
-    Loader for Shehata HIV antibody dataset.
+    Loader for Shehata antibody dataset.
 
     This class provides an interface to LOAD preprocessed Shehata dataset files.
     It does NOT run the preprocessing pipeline - use preprocessing/shehata/step2_extract_fragments.py for that.
 
-    The Shehata dataset contains HIV-specific antibodies from 8 donors, with PSR scores
-    measuring polyreactivity. The paper reports 7/398 (1.76%) as non-specific,
-    corresponding to the 98.24th percentile threshold.
+    The Shehata dataset contains human B cell-derived antibodies with PSR scores measuring
+    polyreactivity across B cell subsets (IgG memory, IgM memory, Naïve, LLPCs).
+
+    Sakhnini et al. (2025) treat 7/398 (1.76%) as non-specific in their benchmark
+    (Fig. S14C); by default this loader uses the corresponding 98.24th percentile
+    threshold when binarizing PSR scores.
     """
 
-    # Default PSR threshold (98.24th percentile based on paper: 7/398 non-specific)
+    # Default PSR threshold (98.24th percentile; 7/398 non-specific in Sakhnini et al. 2025 benchmark)
     DEFAULT_PSR_PERCENTILE = 0.9824
 
     def __init__(
@@ -92,8 +95,8 @@ class ShehataDataset(AntibodyDataset):
         """
         Calculate PSR score threshold for binary classification.
 
-        Based on paper: "7 out of 398 antibodies characterised as non-specific"
-        This is 1.76% = 98.24th percentile
+        Based on Sakhnini et al. (2025) benchmark treating 7/398 antibodies as non-specific.
+        This is 1.76% = 98.24th percentile.
 
         Args:
             psr_scores: Series of PSR scores (numeric)
@@ -117,7 +120,7 @@ class ShehataDataset(AntibodyDataset):
         self.logger.info(f"\n  PSR = 0: {(psr_scores == 0).sum()} antibodies")
         self.logger.info(f"  PSR > 0: {(psr_scores > 0).sum()} antibodies")
         self.logger.info(
-            "\n  Paper reports: 7/398 non-specific (~1.76%, 98.24th percentile)"
+            "\n  Benchmark target (Sakhnini et al. 2025): 7/398 non-specific (~1.76%, 98.24th percentile)"
         )
         self.logger.info(f"  Calculated threshold: {threshold:.4f}")
 

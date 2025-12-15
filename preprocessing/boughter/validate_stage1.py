@@ -24,7 +24,7 @@ Outputs:
     - Console report with validation results
     - data/train/boughter/annotated/validation_report.txt
 
-Reference: See docs/boughter/boughter_data_sources.md for Stage 1 methodology
+Reference: See docs/datasets/boughter/data_sources.md for Stage 1 methodology
 """
 
 from __future__ import annotations

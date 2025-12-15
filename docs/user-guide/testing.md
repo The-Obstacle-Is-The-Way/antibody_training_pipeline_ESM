@@ -563,7 +563,7 @@ Compare performance of different models on same test set:
 uv run antibody-test \
   --model \
     experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-    experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_logreg.pkl \
+    experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_650m_logreg.pkl \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
@@ -573,7 +573,7 @@ uv run antibody-test \
 # test_config_compare.yaml
 model_paths:
   - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
-  - "experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_logreg.pkl"
+  - "experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_650m_logreg.pkl"
 
 data_paths:
   - "data/test/jain/fragments/VH_only_jain.csv"

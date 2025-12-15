@@ -9,7 +9,7 @@ are in: preprocessing/harvey/step2_extract_fragments.py
 
 Dataset characteristics:
 - Nanobodies (VHH only, no light chain)
-- High-throughput screen data (141,474 sequences)
+- High-throughput screen data (141,474 sequences; 141,021 ANARCI-validated fragment exports)
 - Binary classification: high/low polyreactivity
 - IMGT-numbered positions in raw data
 - 6 fragment types (VHH-specific)
@@ -19,7 +19,7 @@ Source:
 - data/test/harvey/raw/low_polyreactivity_high_throughput.csv
 
 Reference:
-- Harvey et al., Engineering highly expressed antibodies for nanobody discovery platforms
+- Harvey et al., "An in silico method to assess antibody fragment polyreactivity" (Nature Communications, 2022)
 """
 
 import logging

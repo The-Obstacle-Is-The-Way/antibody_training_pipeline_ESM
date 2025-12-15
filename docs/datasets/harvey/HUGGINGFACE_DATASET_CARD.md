@@ -1,9 +1,7 @@
 ---
-license: cc-by-4.0
+license: mit
 task_categories:
   - text-classification
-language:
-  - en
 tags:
   - biology
   - proteins
@@ -73,7 +71,7 @@ This dataset contains **141,021 nanobody (VHH) sequences** with binary polyreact
 
 - **Binary Classification:** Predicting nanobody polyreactivity from sequence
 - **Cross-Domain Validation:** Testing conventional antibody-trained models on nanobodies
-- **Benchmark:** Novo Nordisk benchmark (61.7% accuracy with PSR-specific threshold)
+- **Benchmark:** Sakhnini et al. 2025 Fig. S14E (61.7% accuracy)
 
 ### Languages
 
@@ -192,15 +190,15 @@ This dataset enables:
 
 1. **VHH Only:** This dataset contains single-domain antibodies (no light chain)
 2. **Binary Labels:** Quantitative PSR scores are not included (only binary high/low)
-3. **PSR Threshold Required:** For optimal performance, use PSR-specific threshold (0.5495) instead of default 0.5
+3. **Prediction Threshold Calibration:** For reproducing Sakhnini et al. (2025) results on PSR datasets, use a probability decision threshold of 0.5495 (instead of 0.5)
 4. **Cross-Assay Transfer:** Models trained on ELISA data (Boughter) may not optimally transfer to PSR data
 
 ### Recommended Usage
 
 When evaluating models trained on ELISA data (Boughter):
 ```python
-# Use PSR-specific threshold for Harvey dataset
-THRESHOLD = 0.5495  # Optimized for PSR assay
+# For reproducing Sakhnini et al. (2025) Fig. S14E, binarize model probabilities with:
+THRESHOLD = 0.5495  # decision threshold on predicted P(non-specific)
 predictions = (model_probabilities >= THRESHOLD).astype(int)
 ```
 
@@ -214,11 +212,11 @@ predictions = (model_probabilities >= THRESHOLD).astype(int)
 
 ### Licensing Information
 
-Harvey et al. (2022) is published under **CC-BY-4.0** (per the DOI landing page). The official data/code release is available via `debbiemarkslab/nanobody-polyreactivity` (repository license: MIT). This Hugging Face export follows **CC-BY-4.0** terms; please retain upstream attribution/citations.
+Harvey et al. (2022) is published under **CC-BY-4.0** (per the DOI landing page). The raw source files in this repository were copied from `debbiemarkslab/nanobody-polyreactivity` (repository license: MIT). This Hugging Face export is distributed under the **MIT license**; please retain upstream attribution/citations (paper + repository).
 
 ### Citation Information
 
-**If you use this dataset, please cite all relevant papers:**
+**If you use this dataset, please cite the original paper, the Novo Nordisk methodology paper, and ANARCI (used for IMGT numbering):**
 
 ```bibtex
 @article{harvey2022in_silico,
@@ -240,6 +238,17 @@ Harvey et al. (2022) is published under **CC-BY-4.0** (per the DOI landing page)
   year={2025},
   publisher={Cold Spring Harbor Laboratory},
   doi={10.1101/2025.04.28.650927}
+}
+
+@article{dunbar2016anarci,
+  title={ANARCI: antigen receptor numbering and receptor classification},
+  author={Dunbar, James and Deane, Charlotte M},
+  journal={Bioinformatics},
+  volume={32},
+  number={2},
+  pages={298--300},
+  year={2016},
+  doi={10.1093/bioinformatics/btv552}
 }
 ```
 

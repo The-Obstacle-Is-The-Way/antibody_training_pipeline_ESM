@@ -90,7 +90,7 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 grep -c '\-' data/test/harvey/fragments/*.csv | grep -v ':0'
 ```
 
-**See:** `docs/harvey/HARVEY_P0_FIX_REPORT.md` for complete history
+**See:** `docs/datasets/harvey/harvey_p0_fix_report.md` for complete history
 
 ---
 

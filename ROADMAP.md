@@ -77,20 +77,15 @@ antibody-test --model experiments/checkpoints/model.pkl --data data/test/jain/ca
 ### Current Models
 
 **Trained and benchmarked:**
-- `experiments/checkpoints/boughter_vh_esm1v_logreg.{pkl,npz,json}` (Novo baseline)
-- `experiments/checkpoints/boughter_vh_esm2_650m_logreg.{pkl,npz,json}` (ESM2 comparison)
+- `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.{pkl,npz,config.json}` (Novo baseline)
+- `experiments/checkpoints/esm2_650m/logreg/boughter_vh_esm2_650m_logreg.{pkl,npz,config.json}` (ESM2 comparison)
 
-**Test results organized hierarchically:**
+**Test results are written to:**
 ```
 experiments/benchmarks/
-├── esm1v/logreg/
-│   ├── harvey/
-│   ├── jain/
-│   └── shehata/
-└── esm2_650m/logreg/
-    ├── VHH_only_harvey/
-    ├── VH_only_jain_test_PARITY_86/
-    └── VH_only_shehata/
+├── confusion_matrix_*.png
+├── predictions_*.csv
+└── detailed_results_*.yaml
 ```
 
 ---

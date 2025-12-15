@@ -153,8 +153,8 @@ grep -c '\-' data/test/harvey/fragments/*.csv | grep -v ':0'
 - `processed/README.md` - CSV conversion and label assignment
 - `fragments/README.md` - Fragment extraction methodology
 - `canonical/README.md` - Why canonical/ is empty for Harvey
-- `docs/harvey/` - Complete documentation
-- `docs/harvey/HARVEY_P0_FIX_REPORT.md` - Gap character fix history
+- `docs/datasets/harvey/` - Complete documentation
+- `docs/datasets/harvey/harvey_p0_fix_report.md` - Gap character fix history
 
 ---
 

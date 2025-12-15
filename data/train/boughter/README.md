@@ -10,7 +10,7 @@ This directory contains processed antibody sequences from the Boughter et al. 20
 **Reference Implementation:** Sakhnini et al. (2025) - Novo Nordisk antibody non-specificity prediction
 **Total Antibodies:** 1,171 (raw) → 1,065 (after ANARCI + Boughter QC) → 914 (training subset, PRODUCTION)
 
-**Experimental Strict QC:** Archived in `experiments/strict_qc_2025-11-04/` (never validated)
+**Experimental Strict QC:** Tested (852 sequences) and showed no improvement vs production; see `docs/datasets/boughter/novo_methodology_clarification.md`
 
 **Assay:** ELISA polyreactivity against 4-7 diverse antigens (DNA, insulin, LPS, flagellin, albumin, cardiolipin, KLH)
 **Classification:** Binary (0 flags = specific, 4+ flags = non-specific; 1-3 flags excluded from training)
@@ -31,11 +31,12 @@ This directory contains processed antibody sequences from the Boughter et al. 20
 
 **Use Case:** Production model training (VALIDATED)
 - Jain test: 66.28% accuracy ✅
-- Shehata test: 52.26% accuracy ✅
+- Shehata test: 58.29% accuracy ✅ (PSR decision threshold 0.5495; baseline 0.5 = 52.5%)
+- Harvey test: 61.33% accuracy ✅ (PSR decision threshold 0.5495)
 
 **Source:** Boughter et al. 2020, seq_loader.py lines 10-33
 
-**Note:** An experimental "strict QC" variant (852 sequences) was created but never validated. It has been archived in `experiments/strict_qc_2025-11-04/` for provenance.
+**Note:** An experimental "strict QC" variant (852 sequences) was created and tested but did not improve performance; see `docs/datasets/boughter/novo_methodology_clarification.md` for details.
 
 ---
 
@@ -79,7 +80,7 @@ annotated/{fragment}_boughter.csv         # All sequences (1,065) with full meta
 canonical/VH_only_boughter_training.csv   # Training export (914 sequences, flattened [sequence, label] only)
 ```
 
-**Archived (experimental):** `experiments/strict_qc_2025-11-04/data/strict_qc/*_strict_qc.csv` (never validated)
+**Archived (experimental):** Strict QC artifacts are not checked in to this repo snapshot; see `docs/datasets/boughter/novo_methodology_clarification.md`.
 
 ---
 
@@ -125,9 +126,10 @@ Filter to training subset (include_in_training == True)
    ↓ Export: data/train/boughter/canonical/VH_only_boughter_training.csv
    ↓    914 sequences (0 and 4+ ELISA flags only)
    ↓
-✅ PRODUCTION MODEL: models/boughter_vh_esm1v_logreg.pkl
+✅ PRODUCTION MODEL: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
    └─ Validated on Jain: 66.28% accuracy
-   └─ Validated on Shehata: 52.26% accuracy
+   └─ Validated on Shehata: 58.29% accuracy (PSR decision threshold 0.5495)
+   └─ Validated on Harvey: 61.33% accuracy (PSR decision threshold 0.5495)
 ```
 
 **Validation:**
@@ -135,7 +137,7 @@ Filter to training subset (include_in_training == True)
 - `preprocessing/boughter/validate_stages2_3.py` - Stages 2+3 validation
 
 **Archived Experiment:**
-- Stage 4 strict QC (852 sequences) archived in `experiments/strict_qc_2025-11-04/` (never validated)
+- Stage 4 strict QC (852 sequences) was tested but did not improve performance; see `docs/datasets/boughter/novo_methodology_clarification.md`
 
 ---
 
@@ -145,10 +147,10 @@ Filter to training subset (include_in_training == True)
 ```python
 import pandas as pd
 
-# Use pre-exported training file (914 sequences, validated)
-df_train = pd.read_csv('data/train/boughter/canonical/VH_only_boughter_training.csv')
-# Columns: sequence, label (flattened for ML)
-# Used for: models/boughter_vh_esm1v_logreg.pkl (validated on Jain/Shehata)
+	# Use pre-exported training file (914 sequences, validated)
+	df_train = pd.read_csv('data/train/boughter/canonical/VH_only_boughter_training.csv')
+	# Columns: sequence, label (flattened for ML)
+	# Used for: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl (validated on Jain/Shehata/Harvey)
 ```
 
 ### For Full Metadata Access
@@ -233,11 +235,11 @@ merged = vh_train.merge(vl_train, on='id', suffixes=('_vh', '_vl'))
 ## Documentation
 
 **Complete methodology:**
-- `BOUGHTER_ADDITIONAL_QC_PLAN.md` - Stage 4 implementation plan
-- `docs/boughter/BOUGHTER_NOVO_METHODOLOGY_CLARIFICATION.md` - Novo methodology analysis
-- `docs/boughter/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md` - Replication strategy
-- `docs/boughter/boughter_data_sources.md` - Data source specification
-- `docs/boughter/cdr_boundary_first_principles_audit.md` - CDR boundary validation
+- `docs/datasets/boughter/complete_history.md` - Complete processing history (including strict QC evaluation)
+- `docs/datasets/boughter/novo_methodology_clarification.md` - Novo methodology analysis
+- `docs/datasets/boughter/archive/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md` - Replication strategy
+- `docs/datasets/boughter/data_sources.md` - Data source specification
+- `docs/datasets/boughter/cdr_boundary_first_principles_audit.md` - CDR boundary validation
 - `data/train/BOUGHTER_DATA_PROVENANCE.md` - Full pipeline documentation
 
 ---

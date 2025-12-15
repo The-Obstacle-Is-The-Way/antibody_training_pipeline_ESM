@@ -65,7 +65,7 @@ def process_harvey_dataset(csv_path: str) -> pd.DataFrame:
         failure_log = HARVEY_FRAGMENTS_DIR / "failed_sequences.txt"
         failure_log.parent.mkdir(parents=True, exist_ok=True)
         with open(failure_log, "w") as f:
-            f.write("\n".join(failures))
+            f.write("\n".join(failures) + "\n")
         logger.info(f"  All failed IDs written to: {failure_log}")
 
     return df_annotated
