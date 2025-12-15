@@ -24,7 +24,7 @@
 Phase 2 had a P0 blocker that has since been resolved:
 - Gap characters were re-introduced in VH/VL/Full fragment files
 - 13 VH, 4 VL, 17 Full sequences were affected
-- See `docs/shehata/archive/shehata_blocker_analysis.md` for historical details
+- See `docs/datasets/shehata/archive/shehata_blocker_analysis.md` for historical details
 - **Resolution:** All fragments are now gap-free (validated 2025-11-06)
 
 **Both phases are now complete** - base `shehata.csv` and all fragments are gap-free.

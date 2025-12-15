@@ -24,7 +24,7 @@ Novo Nordisk Flagging Strategy:
     - 1-3 flags: Mildly polyreactive (exclude from training)
     - 4+ flags: Non-specific (label=1, include in training)
 
-Reference: See docs/boughter/boughter_data_sources.md for methodology
+Reference: See docs/datasets/boughter/data_sources.md for methodology
 """
 
 from __future__ import annotations

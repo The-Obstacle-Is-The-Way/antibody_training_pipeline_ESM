@@ -424,8 +424,10 @@ uv run antibody-test \
 **Dataset Papers:**
 - Boughter, C.T., et al. (2020). Biochemical patterns of antibody polyreactivity. *eLife* 9:e61393.
 - Jain et al. (2017). Biophysical properties of clinical-stage antibodies. *PNAS* 114:944-949.
-- Harvey et al. (2022). *Nanobodies* (check reference)
-- Shehata et al. (2019). *PSR assay paper* (check reference)
+- Harvey, E.P., et al. (2022). An in silico method to assess antibody fragment polyreactivity. *Nature Communications*
+  13, 7554. DOI: 10.1038/s41467-022-35276-4
+- Shehata, L., et al. (2019). Affinity maturation enhances antibody specificity but compromises conformational stability.
+  *Cell Reports* 28(13), 3300-3308.e4. DOI: 10.1016/j.celrep.2019.08.056
 
 **Model:**
 - Meier, J., et al. (2021). ESM-1v language model. *PNAS* 118:e2016239118.

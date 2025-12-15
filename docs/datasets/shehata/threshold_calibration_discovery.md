@@ -348,7 +348,7 @@ If we use Shehata's threshold (0.5495) on Jain:
 - ~~**`analyze_thresholds.py`**~~ - Threshold optimization script (DELETED - experimental, purpose fulfilled)
 - **`test_assay_specific_thresholds.py`** - Demonstration and validation
 - **`docs/research/assay-thresholds.md`** - Comprehensive user-facing documentation (production doc)
-- **`docs/shehata/threshold_calibration_discovery.md`** - This technical note
+- **`docs/datasets/shehata/threshold_calibration_discovery.md`** - This technical note
 
 ---
 

@@ -89,7 +89,7 @@ Tingwan Sun and Yingda Xu from Adimab contributed to the PSR measurements in thi
 - Reference implementation for comparison
 - ESM-1v embeddings + LogisticRegression methodology
 - Benchmark target: 66-71% CV accuracy on Jain dataset
-- Training on Boughter (>1000 sequences), testing on Jain (137 clinical antibodies), Shehata (398 antibodies), Harvey (140k nanobodies)
+- Training on Boughter (914 VH sequences after Novo filtering), testing on Jain (86-antibody parity subset of the original 137), Shehata (398 antibodies), Harvey (141,021 VHH sequences after ANARCI)
 
 **Key Findings:**
 - Heavy variable domain (VH) achieves highest predictability for non-specificity
@@ -124,8 +124,8 @@ This repository demonstrates:
    - Evaluated on Jain benchmark (86 antibodies)
 
 2. **Cross-Assay Transfer Learning:** Model trained on Boughter ELISA generalizes to:
-   - Shehata PSR assay: 52.51% accuracy (398 antibodies)
-   - Harvey PSR assay: 59.09% accuracy, 75.38% ROC-AUC (141k nanobodies)
+   - Shehata PSR assay: 58.29% accuracy (398 antibodies; PSR decision threshold 0.5495, baseline 0.5 = 52.5%)
+   - Harvey PSR assay: 61.33% accuracy (141,021 nanobodies; PSR decision threshold 0.5495)
 
 3. **Methodology Transparency:** Full preprocessing pipeline and training code provided
 

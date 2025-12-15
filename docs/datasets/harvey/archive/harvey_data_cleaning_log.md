@@ -431,9 +431,9 @@ scripts/download_harvey_dataset.py          (Download from HuggingFace)
 
 ### Documentation
 ```
-docs/harvey_data_sources.md                 (Provenance & literature references)
-docs/harvey_preprocessing_implementation_plan.md  (Processing methodology)
-docs/harvey_data_cleaning_log.md            (This file - discovery timeline)
+docs/datasets/harvey/harvey_data_sources.md                 (Provenance & literature references)
+docs/datasets/harvey/harvey_preprocessing_implementation_plan.md  (Processing methodology)
+docs/datasets/harvey/archive/harvey_data_cleaning_log.md            (This file - discovery timeline)
 ```
 
 ---

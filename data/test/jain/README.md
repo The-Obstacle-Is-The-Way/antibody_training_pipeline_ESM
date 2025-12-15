@@ -31,7 +31,7 @@ import pickle
 df = pd.read_csv('data/test/jain/canonical/jain_86_novo_parity.csv')
 
 # Load model
-with open('models/boughter_vh_esm1v_logreg.pkl', 'rb') as f:
+with open('experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl', 'rb') as f:
     classifier = pickle.load(f)
 
 # Test

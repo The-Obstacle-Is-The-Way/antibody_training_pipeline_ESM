@@ -86,7 +86,7 @@ DOI: https://doi.org/10.1073/pnas.1616408114
 - **Position 118:** Framework 4 anchor residue (W or F, 99% conserved)
 - **Resolution:** We use ANARCI + IMGT numbering (excludes position 118), matching Novo methodology
 
-**Documentation:** See `docs/boughter/BOUGHTER_NOVO_METHODOLOGY_CLARIFICATION.md`
+**Documentation:** See `docs/datasets/boughter/novo_methodology_clarification.md`
 
 ### Jain Dataset: No 118 Position Issue
 - **Why?** Jain sequences come from PNAS supplementary files (SD02) as **raw VH/VL amino acid sequences**
@@ -411,7 +411,7 @@ data/test/jain/  (OLD STRUCTURE - NO LONGER EXISTS)
 
 **Production Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` (914 sequences)
 - CV accuracy: 67.5% ± 8.9%
-- **Externally validated:** Jain 66.28%, Shehata 52.26% ✅
+- **Externally validated:** Jain 66.28% (ELISA threshold 0.5), Shehata 58.29% (PSR decision threshold 0.5495) ✅
 
 ### Which Jain File to Test On?
 

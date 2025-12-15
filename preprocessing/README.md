@@ -27,7 +27,7 @@ python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 
 **Directory:** `preprocessing/harvey/`
 **Purpose:** Test set for nanobody polyreactivity (VHH only)
-**Size:** 141,474 nanobody sequences
+**Size:** 141,474 raw/processed sequences (141,021 ANARCI-validated)
 **Pipeline:** 2-step (Combine CSVs → Extract fragments)
 
 **Quick Start:**

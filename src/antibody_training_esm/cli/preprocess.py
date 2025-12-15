@@ -68,7 +68,7 @@ scripts maintain bit-for-bit parity with published methods.
 
         print("\nFor more information:")
         print("  • See src/antibody_training_esm/datasets/README.md")
-        print("  • See docs/boughter/boughter_data_sources.md (dataset-specific)")
+        print("  • See docs/datasets/boughter/data_sources.md (dataset-specific)")
 
         return 0
 

@@ -246,20 +246,20 @@ df = pd.read_csv("data/test/shehata/VH_only_shehata.csv")
 df = pd.read_csv("data/test/shehata/fragments/VH_only_shehata.csv")
 ```
 
-### Shehata-Specific Docs (7 files in docs/shehata/)
+### Shehata-Specific Docs (7 files in docs/datasets/shehata/)
 
 **Update all references in:**
-1. `docs/shehata/shehata_preprocessing_implementation_plan.md`
-2. `docs/shehata/shehata_data_sources.md`
-3. `docs/shehata/shehata_phase2_completion_report.md`
-4. `docs/shehata/shehata_conversion_verification_report.md`
-5. `docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md`
-6. `docs/shehata/P0_BLOCKER_FIRST_PRINCIPLES_VALIDATION.md`
-7. `docs/shehata/shehata_preprocessing_implementation_plan.md`
+1. `docs/datasets/shehata/shehata_preprocessing_implementation_plan.md`
+2. `docs/datasets/shehata/shehata_data_sources.md`
+3. `docs/datasets/shehata/shehata_phase2_completion_report.md`
+4. `docs/datasets/shehata/archive/shehata_conversion_verification_report.md`
+5. `docs/datasets/shehata/archive/shehata_blocker_analysis.md`
+6. `docs/datasets/shehata/archive/p0_blocker_first_principles_validation.md`
+7. `docs/datasets/shehata/shehata_preprocessing_implementation_plan.md`
 
 **Pattern (apply to all 7 files):**
 ```bash
-# Find and replace across all docs/shehata/ files:
+# Find and replace across all docs/datasets/shehata/ files:
 data/test/shehata.csv → data/test/shehata/processed/shehata.csv
 data/test/shehata/*.csv → data/test/shehata/fragments/*.csv
 data/test/shehata/VH_only → data/test/shehata/fragments/VH_only
@@ -270,18 +270,18 @@ data/test/mmc2.xlsx → data/test/shehata/raw/shehata-mmc2.xlsx
 
 **Update references to root-level scripts:**
 
-**File:** `docs/harvey_data_cleaning_log.md` (7 references)
+**File:** `docs/datasets/harvey/archive/harvey_data_cleaning_log.md` (7 references)
 ```bash
 scripts/convert_harvey_csvs.py → preprocessing/harvey/step1_convert_raw_csvs.py
 scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 ```
 
-**File:** `docs/harvey_data_sources.md` (3 references)
+**File:** `docs/datasets/harvey/harvey_data_sources.md` (3 references)
 ```bash
 scripts/convert_harvey_csvs.py → preprocessing/harvey/step1_convert_raw_csvs.py
 ```
 
-**File:** `docs/harvey/harvey_script_status.md` (3 references)
+**File:** `docs/datasets/harvey/harvey_script_status.md` (3 references)
 ```bash
 scripts/validate_fragments.py → scripts/validation/validate_fragments.py
 ```
@@ -482,15 +482,15 @@ grep -rn "scripts/validate_fragments" docs/ --include="*.md" | grep -v "validati
 - [ ] `docs/COMPLETE_VALIDATION_RESULTS.md` (1 line)
 - [ ] `docs/BENCHMARK_TEST_RESULTS.md` (1 line)
 - [ ] `docs/research/assay-thresholds.md` (1 line)
-- [ ] `docs/shehata/shehata_preprocessing_implementation_plan.md`
-- [ ] `docs/shehata/shehata_data_sources.md`
-- [ ] `docs/shehata/shehata_phase2_completion_report.md`
-- [ ] `docs/shehata/shehata_conversion_verification_report.md`
-- [ ] `docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md`
-- [ ] `docs/shehata/P0_BLOCKER_FIRST_PRINCIPLES_VALIDATION.md`
-- [ ] `docs/harvey_data_cleaning_log.md` (7 refs)
-- [ ] `docs/harvey_data_sources.md` (3 refs)
-- [ ] `docs/harvey/harvey_script_status.md` (3 refs)
+- [ ] `docs/datasets/shehata/shehata_preprocessing_implementation_plan.md`
+- [ ] `docs/datasets/shehata/shehata_data_sources.md`
+- [ ] `docs/datasets/shehata/shehata_phase2_completion_report.md`
+- [ ] `docs/datasets/shehata/archive/shehata_conversion_verification_report.md`
+- [ ] `docs/datasets/shehata/archive/shehata_blocker_analysis.md`
+- [ ] `docs/datasets/shehata/archive/p0_blocker_first_principles_validation.md`
+- [ ] `docs/datasets/harvey/archive/harvey_data_cleaning_log.md` (7 refs)
+- [ ] `docs/datasets/harvey/harvey_data_sources.md` (3 refs)
+- [ ] `docs/datasets/harvey/harvey_script_status.md` (3 refs)
 
 ---
 

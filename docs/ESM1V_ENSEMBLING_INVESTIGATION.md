@@ -338,7 +338,7 @@ Novo's random seed may have resulted in CV folds that were slightly more favorab
 ### 3. Preprocessing Differences
 
 **Potential differences**:
-- CDR-H3 position 118 inclusion/exclusion (documented in `docs/boughter/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`)
+- CDR-H3 position 118 inclusion/exclusion (documented in `docs/datasets/boughter/archive/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md`)
 - Exact ANARCI version used
 - Sequence filtering thresholds
 

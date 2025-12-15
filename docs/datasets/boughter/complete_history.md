@@ -187,7 +187,7 @@ Stage 2+3: ANARCI annotation + Boughter QC
 
 ### QC Level 2: Strict QC (Industry Standard)
 
-An experimental Stage 4 strict QC filtering was tested but archived due to lack of improvement over production model. All details have been moved to `experiments/strict_qc_2025-11-04/`.
+An experimental Stage 4 strict QC filtering was tested but did not improve over the 914-sequence production model (66.55% vs 67.5% CV accuracy; not statistically significant). The experiment is documented in this history and in `docs/datasets/boughter/novo_methodology_clarification.md`; artifacts are not checked in to this repo snapshot.
 
 ---
 
@@ -304,11 +304,7 @@ data/train/boughter/
 
 ### Archived Experimental Files
 
-**Location:** `experiments/strict_qc_2025-11-04/data/strict_qc/`
-
-An experimental strict QC filtering (852-914 sequences) was tested but archived due to lack of improvement over production model.
-
-**See:** `experiments/strict_qc_2025-11-04/EXPERIMENT_README.md`
+An experimental strict QC filtering (852-914 sequences) was tested but did not improve over the production model. Artifacts are not checked in to this repo snapshot; see `docs/datasets/boughter/novo_methodology_clarification.md` for the results and rationale.
 
 ---
 
@@ -335,7 +331,7 @@ An experimental strict QC filtering (852-914 sequences) was tested but archived 
 
 A 852-sequence strict QC model was trained but did NOT improve performance over the 914-sequence production model (66.55% vs 67.5% CV accuracy, not statistically significant).
 
-**See:** `experiments/strict_qc_2025-11-04/EXPERIMENT_README.md` for complete experimental details.
+**See:** `docs/datasets/boughter/novo_methodology_clarification.md` for the strict QC results and rationale (artifacts are not checked in to this repo snapshot).
 
 ---
 
@@ -404,7 +400,7 @@ Boughter:      [58.6% =========== 67.5% ============ 76.4%]
 
 ---
 
-_Removed: Old "Alternative" section - strict_qc experiment archived in `experiments/strict_qc_2025-11-04/`_
+_Removed: Old "Alternative" section - strict_qc experiment documented in `docs/datasets/boughter/novo_methodology_clarification.md`_
 
 ---
 
@@ -437,9 +433,7 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 - Stage 2+3: `preprocessing/boughter/validate_stages2_3.py`
 
 **Archived Experimental Work:**
-- Strict QC data: `experiments/strict_qc_2025-11-04/data/strict_qc/` (852-914 seqs)
-- Stage 4 script: `experiments/strict_qc_2025-11-04/preprocessing/stage4_additional_qc.py`
-- Experiment details: `experiments/strict_qc_2025-11-04/EXPERIMENT_README.md`
+- Strict QC experiment: documented in `docs/datasets/boughter/novo_methodology_clarification.md` (artifacts not checked in to this repo snapshot)
 
 ---
 
@@ -482,7 +476,7 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 ⚠️ **Experimental Strict QC (852 sequences)** - Archived (no improvement)
    - CV accuracy: 66.55% ± 7.07% (NOT better than production)
    - Never externally validated
-   - Archived: `experiments/strict_qc_2025-11-04/`
+   - Documented in `docs/datasets/boughter/novo_methodology_clarification.md` (artifacts not checked in to this repo snapshot)
 
 **Key findings:**
 - 118 position issue resolved (exclude position 118, use ANARCI + IMGT)

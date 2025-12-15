@@ -33,12 +33,12 @@ Harvey preprocessing script has been created, audited, and executed. Processing 
 - ✅ Created `preprocessing/harvey/step2_extract_fragments.py` (250 lines)
 - ✅ Based on `process_shehata.py` template
 - ✅ Adapted for nanobodies (VHH only, no light chain)
-- ✅ Follows `docs/harvey_preprocessing_implementation_plan.md` specifications
+- ✅ Follows `docs/datasets/harvey/harvey_preprocessing_implementation_plan.md` specifications
 
 ### 2. External Audit
 - ✅ Launched independent Sonnet agent for verification
 - ✅ Audit found 2 critical issues + 4 minor issues
-- ✅ All issues documented in `docs/harvey_script_audit_request.md`
+- ✅ All issues documented in `docs/datasets/harvey/archive/harvey_script_audit_request.md`
 
 ### 3. Fixes Applied
 
@@ -185,10 +185,10 @@ After execution, verify:
 
 ## References
 
-- **Implementation plan:** `docs/harvey_preprocessing_implementation_plan.md`
-- **Audit request:** `docs/harvey_script_audit_request.md`
-- **Data sources:** `docs/harvey_data_sources.md`
-- **Cleaning log:** `docs/harvey_data_cleaning_log.md`
+- **Implementation plan:** `docs/datasets/harvey/harvey_preprocessing_implementation_plan.md`
+- **Audit request:** `docs/datasets/harvey/archive/harvey_script_audit_request.md`
+- **Data sources:** `docs/datasets/harvey/harvey_data_sources.md`
+- **Cleaning log:** `docs/datasets/harvey/archive/harvey_data_cleaning_log.md`
 - **Template:** `preprocessing/shehata/step2_extract_fragments.py`
 - **Input data:** `data/test/harvey/processed/harvey.csv` (141,474 rows)
 

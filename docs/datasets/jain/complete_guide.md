@@ -284,7 +284,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 **Training:**
 - Date: Nov 2, 2025
 - Training data: 914 sequences (Boughter QC methodology)
-- **Externally validated:** ✅ Jain 66.28%, Shehata 52.26%
+- **Externally validated:** ✅ Jain 66.28% (ELISA threshold 0.5), Shehata 58.29% (PSR decision threshold 0.5495)
 
 **Results on Jain (86 antibodies):**
 - Confusion matrix: [[40, 19], [10, 17]] ✅ Exact Novo parity
@@ -293,7 +293,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 
 **Use for:** Production deployments and Novo parity benchmarking ⭐
 
-**Note:** An experimental strict QC model (852 sequences) was tested but archived due to lack of improvement. See `experiments/strict_qc_2025-11-04/` for details.
+**Note:** An experimental strict QC model (852 sequences) was tested but did not improve performance; see `docs/datasets/boughter/novo_methodology_clarification.md`.
 
 ---
 

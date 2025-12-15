@@ -86,14 +86,13 @@ def main() -> int:
     print("=" * 60)
 
     # Load trained model
-    model_path = "models/boughter_vh_esm1v_logreg.pkl"
+    model_path = "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
     print(f"\nLoading trained model from {model_path}...")
     with open(model_path, "rb") as f:
         model = pickle.load(f)
     print("  Model loaded successfully!")
 
     novo_jain = np.array([[40, 19], [10, 17]])  # 66.28% accuracy (Novo benchmark)
-    # Note: Shehata is an external test set with expected performance, not a Novo benchmark
     novo_shehata = np.array([[229, 162], [2, 5]])  # ~58.8% accuracy (expected)
 
     # Test Jain with ELISA threshold (default 0.5)

@@ -241,12 +241,13 @@ data:
 
 ### Pipeline Documentation
 
-Detailed documentation available in `docs/boughter/`:
+Detailed documentation available in `docs/datasets/boughter/`:
 
-- `boughter_data_sources.md` - Complete methodology and requirements
-- `BOUGHTER_P0_FIX_REPORT.md` - CDR boundary validation
-- `boughter_processing_implementation.md` - Implementation details
-- `boughter_processing_status.md` - Processing status and validation
+- `docs/datasets/boughter/data_sources.md` - Complete methodology and requirements
+- `docs/datasets/boughter/p0_fix_report.md` - CDR boundary validation
+- `docs/datasets/boughter/cdr_boundary_first_principles_audit.md` - CDR boundary audit (IMGT boundaries)
+- `docs/datasets/boughter/archive/boughter_processing_status.md` - Processing status and validation
+- `docs/datasets/boughter/archive/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md` - Novo parity replication notes
 
 ---
 

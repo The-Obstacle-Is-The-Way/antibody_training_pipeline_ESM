@@ -270,7 +270,7 @@ Follows `preprocessing/process_boughter.py` pattern:
    - Standardized format
    - Ready for model inference
 
-3. **`docs/shehata/shehata_phase2_completion_report.md`** (THIS FILE)
+3. **`docs/datasets/shehata/shehata_phase2_completion_report.md`** (THIS FILE)
    - Phase 2 completion documentation
    - Comprehensive validation results
 
@@ -278,11 +278,11 @@ Follows `preprocessing/process_boughter.py` pattern:
 
 **Note:** The documentation updates mentioned in the original version of this file were completed during the November 2025 cleanup:
 
-1. **`docs/shehata/shehata_preprocessing_implementation_plan.md`**
+1. **`docs/datasets/shehata/shehata_preprocessing_implementation_plan.md`**
    - Status updated to "Complete - Both Phase 1 and Phase 2 fully operational" (2025-11-06)
    - Marked all checklist items as complete
 
-2. **`docs/shehata/archive/shehata_conversion_verification_report.md`**
+2. **`docs/datasets/shehata/archive/shehata_conversion_verification_report.md`**
    - Archived as historical document (2025-11-06)
    - P0 blocker warning updated to show resolution
 

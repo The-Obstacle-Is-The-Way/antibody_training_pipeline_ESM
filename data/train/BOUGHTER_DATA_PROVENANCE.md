@@ -112,10 +112,7 @@ data/train/
     │   ├── VH_only_boughter_training.csv │  (914 sequences: 443 specific, 471 non-specific)
     │   └── README.md                     ← Training file documentation
     │
-    └── (strict QC experiment archived)   ← See experiments/strict_qc_2025-11-04/
-        ├── data/strict_qc/*.csv          │  (16 experimental fragment files)
-        ├── preprocessing/stage4_*.py     │  (Stage 4 scripts)
-        └── EXPERIMENT_README.md          ← Experimental hypothesis & results
+    └── (strict QC experiment evaluated; artifacts not checked in) ← See docs/datasets/boughter/novo_methodology_clarification.md
 ```
 
 ---
@@ -180,7 +177,7 @@ Training Set: 948 sequences (461 specific + 487 non-specific)
 Excluded:     169 sequences (mild polyreactivity)
 ```
 
-**Reference:** See `docs/boughter/boughter_data_sources.md` for detailed Novo Nordisk methodology
+**Reference:** See `docs/datasets/boughter/data_sources.md` for detailed Novo Nordisk methodology
 
 ---
 
@@ -438,8 +435,8 @@ data/train/boughter/canonical/VH_only_boughter_training.csv  (914 sequences)
 
 **For detailed processing methodology, see:**
 - `preprocessing/boughter/README.md` - Pipeline documentation
-- `docs/boughter/boughter_data_sources.md` - Novo Nordisk methodology
-- `BOUGHTER_PREPROCESSING_REORGANIZATION_PLAN.md` - Reorganization plan
+- `docs/datasets/boughter/data_sources.md` - Novo Nordisk methodology
+- `docs/datasets/boughter/complete_history.md` - Processing history and reorganization notes
 
 ---
 

@@ -147,4 +147,4 @@ grep -c '\-' data/test/shehata/fragments/*.csv | grep -v ':0'
 - `processed/README.md` - CSV conversion and filtering
 - `fragments/README.md` - Fragment extraction methodology
 - `canonical/README.md` - Why canonical/ is empty for Shehata
-- `docs/shehata/` - Complete documentation
+- `docs/datasets/shehata/` - Complete documentation

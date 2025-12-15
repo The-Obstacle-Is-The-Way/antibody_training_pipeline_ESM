@@ -33,7 +33,7 @@ Results Summary:
     Stage 3 output: 1,065 sequences (95.9% retention after QC, 45 filtered)
     Training data:  914 sequences (443 specific + 471 non-specific, 151 excluded)
 
-Reference: See docs/boughter/boughter_data_sources.md for complete methodology
+Reference: See docs/datasets/boughter/data_sources.md for complete methodology
 """
 
 from __future__ import annotations

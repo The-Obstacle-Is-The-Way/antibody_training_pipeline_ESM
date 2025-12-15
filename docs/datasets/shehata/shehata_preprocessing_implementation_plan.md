@@ -409,9 +409,9 @@ anarci or riot_na      # CDR annotation (Phase 2 only)
 ### Historical Checklists (Archived):
 
 For historical context on the implementation process, see:
-- `docs/shehata/archive/shehata_conversion_verification_report.md` (Phase 1 verification)
-- `docs/shehata/archive/p0_blocker_first_principles_validation.md` (P0 gap blocker analysis)
-- `docs/shehata/archive/shehata_cleanup_plan.md` (Dataset reorganization)
+- `docs/datasets/shehata/archive/shehata_conversion_verification_report.md` (Phase 1 verification)
+- `docs/datasets/shehata/archive/p0_blocker_first_principles_validation.md` (P0 gap blocker analysis)
+- `docs/datasets/shehata/archive/shehata_cleanup_plan.md` (Dataset reorganization)
 
 **Current Status:** Pipeline fully operational and ready for model training/testing.
 

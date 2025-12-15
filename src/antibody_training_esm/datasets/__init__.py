@@ -10,7 +10,7 @@ This module provides:
 - AntibodyDataset: Abstract base class for all dataset loaders
 - JainDataset: Jain 2017 therapeutic antibody dataset loader
 - HarveyDataset: Harvey nanobody polyreactivity dataset loader
-- ShehataDataset: Shehata HIV antibody dataset loader
+- ShehataDataset: Shehata antibody PSR dataset loader
 - BoughterDataset: Boughter mouse antibody dataset loader
 
 Each dataset class:

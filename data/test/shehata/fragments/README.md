@@ -87,7 +87,7 @@ f"full_seq_{chain}": annotation.sequence_aa
 grep -c '\-' data/test/shehata/fragments/*.csv | grep -v ':0'
 ```
 
-**See:** `docs/shehata/SHEHATA_BLOCKER_ANALYSIS.md` for complete history
+**See:** `docs/datasets/shehata/archive/shehata_blocker_analysis.md` for complete history
 
 ---
 
