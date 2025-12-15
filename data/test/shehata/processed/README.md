@@ -37,7 +37,7 @@ Converted and filtered datasets, reproducible from raw sources.
 - `label=0` (specific): PSR < 98.24th percentile → **391 antibodies** (98.2%)
 - `label=1` (non-specific): PSR ≥ 98.24th percentile → **7 antibodies** (1.8%)
 
-**Methodology:** Sakhnini et al. 2025 (bioRxiv, https://doi.org/10.1101/2025.04.28.650927) - stringent threshold for non-specificity prediction
+**Methodology:** Sakhnini et al. 2025 (bioRxiv, DOI: [10.1101/2025.04.28.650927](https://doi.org/10.1101/2025.04.28.650927)) - stringent threshold for non-specificity prediction
 
 **Note:** Highly imbalanced dataset. Use stratified sampling for training/validation splits.
 

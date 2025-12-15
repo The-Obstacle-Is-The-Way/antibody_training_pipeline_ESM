@@ -151,9 +151,9 @@ docs/datasets/boughter/
 ## References
 
 ### Primary Papers
-- **Boughter et al. (2020)** - "Biochemical patterns of antibody polyreactivity revealed through a bioinformatics-based analysis of CDR loops." *eLife* 9:e61393. DOI: https://doi.org/10.7554/eLife.61393
+- **Boughter et al. (2020)** - "Biochemical patterns of antibody polyreactivity revealed through a bioinformatics-based analysis of CDR loops." *eLife* 9:e61393. DOI: [10.7554/eLife.61393](https://doi.org/10.7554/eLife.61393)
 
-- **Sakhnini et al. (2025)** - "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." *bioRxiv*. DOI: https://doi.org/10.1101/2025.04.28.650927
+- **Sakhnini et al. (2025)** - "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." *bioRxiv*. DOI: [10.1101/2025.04.28.650927](https://doi.org/10.1101/2025.04.28.650927)
 
 ### Supporting Papers
 - **Harvey et al. (2022)** - Validation of CDR2 variable lengths

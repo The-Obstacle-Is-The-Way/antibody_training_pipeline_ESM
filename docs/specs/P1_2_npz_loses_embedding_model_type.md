@@ -14,7 +14,7 @@ When saving a model trained with `model=biophysical` or `model=amplify_350m` to 
 
 ### Data Flow Breakdown
 
-```
+```text
 SAVE PATH:
 1. BinaryClassifier has _model_type = "biophysical"
 2. ModelArtifactMetadata.from_classifier() extracts params

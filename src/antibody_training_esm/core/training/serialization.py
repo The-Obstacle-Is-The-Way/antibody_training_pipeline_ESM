@@ -217,6 +217,13 @@ def load_model_from_xgb(xgb_path: str, json_path: str) -> BinaryClassifier:
     xgb_model = XGBClassifier()
     xgb_model.load_model(xgb_path)
 
+    # Apply hyperparameters from metadata to the loaded model
+    # load_model() only restores Booster state (trees/weights), NOT Python-level hyperparams
+    xgb_valid_params = xgb_model.get_params().keys()
+    xgb_params_to_apply = {k: v for k, v in params.items() if k in xgb_valid_params}
+    if xgb_params_to_apply:
+        xgb_model.set_params(**xgb_params_to_apply)
+
     # Replace the inner XGBClassifier in the strategy
     # XGBoostStrategy wraps XGBClassifier in self.classifier
     # Cast to Any because ClassifierStrategy protocol doesn't expose .classifier
