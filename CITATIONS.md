@@ -45,10 +45,7 @@ Per email communication from Maximiliano Vásquez (Adimab), the per-antigen ELIS
 ### 3. Harvey et al. 2022 - Large-Scale Nanobody Dataset
 
 **Full Citation (Primary Dataset):**
-> Harvey, E.P., Ge, Y., LaRochelle, J.R., Kang, J., DiMaio, F., De Yoreo, M., Baker, D., Pultz, I.S., Garrett, S., Blair, L., Knight, K., & Crispin, M. (2022). A biophysical basis for mucophilic antigen binding. *Journal of Experimental Medicine*, 219(3), e20211671. https://rupress.org/jem/article/219/3/e20211671/212228/A-biophysical-basis-for-mucophilic-antigen-binding
-
-**Additional Citation (Methodology):**
-> Mason, D.M., Friedensohn, S., Weber, C.R., Jordi, C., Wagner, B., Meng, S.M., Ehling, R.A., Bonati, L., Dahinden, J., Gainza, P., Correia, B.E., & Reddy, S.T. (2021). Optimization of therapeutic antibodies by predicting antigen specificity from antibody sequence via deep learning. *Nature Biomedical Engineering*, 5, 600-612. https://doi.org/10.1038/s41551-021-00699-9
+> Harvey, E.P., Shin, J.-E., Skiba, M.A., Nemeth, G.R., Hurley, J.D., Wellner, A., Shaw, A.Y., Miranda, V.G., Min, J.K., Liu, C.C., Marks, D.S., & Kruse, A.C. (2022). An in silico method to assess antibody fragment polyreactivity. *Nature Communications*, 13(1), 7554. https://doi.org/10.1038/s41467-022-35276-4
 
 **Usage in this repository:**
 - Large-scale cross-assay validation dataset
@@ -140,7 +137,7 @@ This repository demonstrates:
 |---------|------|--------|-----------------|------|
 | **Boughter (Training)** | Train LogisticRegression | Boughter et al. 2020 eLife | Boughter, Adams (U. Chicago) | 914 sequences |
 | **Jain (Test)** | Novo parity benchmark | Jain et al. 2017 PNAS | **T. Sun, Y. Xu** (Adimab) - Per-antigen ELISA | 86 antibodies |
-| **Harvey (Test)** | Cross-assay validation (nanobodies) | Harvey et al. 2022 JEM, Mason et al. 2021 | Harvey, Mason, Reddy (HMS/MIT/ETH) | 141k VHH |
+| **Harvey (Test)** | Cross-assay validation (nanobodies) | Harvey et al. 2022 Nat Commun | Harvey, Marks, Kruse (Marks Lab) | 141k VHH |
 | **Shehata (Test)** | Cross-assay validation (PSR) | Shehata et al. 2019 Cell Reports | **T. Sun, Y. Xu** (Adimab) - PSR | 398 antibodies |
 
 ---
@@ -193,27 +190,16 @@ Researchers seeking access to the same per-antigen ELISA data should contact the
   doi={10.1073/pnas.1616408114}
 }
 
-@article{harvey2022mucophilic,
-  title={A biophysical basis for mucophilic antigen binding},
-  author={Harvey, Emily P and Ge, Yiquan and LaRochelle, Jacob R and Kang, Joanne and DiMaio, Frank and De Yoreo, Matthew and Baker, David and Pultz, Ingrid S and Garrett, Seth and Blair, Laura and Knight, Kevin and Crispin, Max},
-  journal={Journal of Experimental Medicine},
-  volume={219},
-  number={3},
-  pages={e20211671},
+@article{harvey2022in_silico,
+  title={An in silico method to assess antibody fragment polyreactivity},
+  author={Harvey, Edward P. and Shin, Jung-Eun and Skiba, Meredith A. and Nemeth, Genevieve R. and Hurley, Joseph D. and Wellner, Alon and Shaw, Ada Y. and Miranda, Victor G. and Min, Joseph K. and Liu, Chang C. and Marks, Debora S. and Kruse, Andrew C.},
+  journal={Nature Communications},
+  volume={13},
+  number={1},
+  pages={7554},
   year={2022},
-  publisher={Rockefeller University Press},
-  doi={10.1084/jem.20211671}
-}
-
-@article{mason2021optimization,
-  title={Optimization of therapeutic antibodies by predicting antigen specificity from antibody sequence via deep learning},
-  author={Mason, Derek M and Friedensohn, Simon and Weber, Cédric R and Jordi, Christian and Wagner, Bastian and Meng, Simon M and Ehling, Roy A and Bonati, Lucia and Dahinden, Janine and Gainza, Pablo and Correia, Bruno E and Reddy, Sai T},
-  journal={Nature Biomedical Engineering},
-  volume={5},
-  pages={600--612},
-  year={2021},
-  publisher={Nature Publishing Group UK London},
-  doi={10.1038/s41551-021-00699-9}
+  publisher={Springer Science and Business Media LLC},
+  doi={10.1038/s41467-022-35276-4}
 }
 
 @article{shehata2019affinity,

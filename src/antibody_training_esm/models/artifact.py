@@ -10,7 +10,7 @@ This module defines the schema for:
 from typing import Any, Literal
 
 import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class ModelArtifactMetadata(BaseModel):
@@ -68,6 +68,33 @@ class ModelArtifactMetadata(BaseModel):
         description="Device used during training",
     )
 
+    # P1.2 fix: Track embedding extractor type for proper reconstruction
+    embedding_model_type: Literal["esm", "amplify", "biophysical"] = Field(
+        default="esm",
+        description="Type of embedding extractor (esm, amplify, or biophysical)",
+    )
+
+    @field_validator("embedding_model_type", mode="before")
+    @classmethod
+    def infer_embedding_model_type(cls, v: str | None, info: Any) -> str:
+        """
+        Infer embedding_model_type from model_name for backward compatibility.
+
+        P1.2 fix: Old JSON files won't have this field. Infer from model_name.
+        """
+        if v is not None:
+            return v
+
+        # Try to infer from model_name in the data being validated
+        data = info.data if hasattr(info, "data") else {}
+        model_name = data.get("model_name", "") or data.get("esm_model", "")
+
+        if "biophysical" in model_name.lower():
+            return "biophysical"
+        elif "amplify" in model_name.lower():
+            return "amplify"
+        return "esm"  # Default for old files
+
     # Legacy flat fields (LogReg only, for backward compatibility)
     C: float | None = Field(
         default=None,
@@ -122,6 +149,9 @@ class ModelArtifactMetadata(BaseModel):
         strategy_config = classifier.classifier.to_dict()
         classifier_type = strategy_config.get("type", "logistic_regression")
 
+        # P1.2 fix: Extract embedding_model_type from classifier
+        embedding_model_type = getattr(classifier, "_model_type", "esm")
+
         metadata_dict = {
             # Model architecture
             "model_name": classifier.model_name,
@@ -134,6 +164,8 @@ class ModelArtifactMetadata(BaseModel):
             "esm_revision": classifier.revision,
             "batch_size": classifier.batch_size,
             "device": classifier.device,
+            # P1.2 fix: Persist embedding extractor type
+            "embedding_model_type": embedding_model_type,
         }
 
         # Add legacy flat fields for LogReg (backward compat)
@@ -164,6 +196,8 @@ class ModelArtifactMetadata(BaseModel):
             "device": self.device,
             "batch_size": self.batch_size,
             "revision": self.esm_revision,
+            # P1.2 fix: Include model_type for proper embedder reconstruction
+            "model_type": self.embedding_model_type,
             # Classifier params
             **self.classifier,
         }

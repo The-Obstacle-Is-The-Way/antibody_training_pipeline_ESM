@@ -98,18 +98,24 @@ def get_or_create_embeddings(
     # (os.path supports Path in 3.6+, but for safety/consistency with type hint)
     cache_path_str = str(cache_path)
 
-    # Create a hash that includes model metadata to prevent cache collisions
-    # between different backbones (ESM-1v, ESM2, AntiBERTa, etc.)
-    sequences_str = "|".join(sequences)
-    cache_key_components = (
+    # P2.3 fix: Use streaming hash to avoid creating giant string in memory
+    # For large datasets (100k+ sequences), joining all sequences into one
+    # string can consume 10s of MB and cause memory pressure.
+    hasher = hashlib.sha256()
+
+    # Hash model metadata first
+    hasher.update(
         f"{embedding_extractor.model_name}|"
         f"{embedding_extractor.revision}|"
-        f"{embedding_extractor.max_length}|"
-        f"{sequences_str}"
+        f"{embedding_extractor.max_length}|".encode()
     )
-    # Use SHA-256 (non-cryptographic usage) to satisfy security scanners and
-    # prevent weak-hash findings while keeping deterministic cache keys.
-    sequences_hash = hashlib.sha256(cache_key_components.encode()).hexdigest()[:12]
+
+    # Stream sequences through hash (no giant string!)
+    for seq in sequences:
+        hasher.update(seq.encode())
+        hasher.update(b"|")  # Separator
+
+    sequences_hash = hasher.hexdigest()[:12]
     cache_file = os.path.join(
         cache_path_str, f"{dataset_name}_{sequences_hash}_embeddings.pkl"
     )

@@ -222,7 +222,7 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 
 ### Harvey (Nanobody Test Set)
 
-**Source:** Harvey et al. (2022) / Mason et al. (2021) - 141,021 nanobody sequences, PSR assay
+**Source:** Harvey et al. (2022) - 141,021 nanobody sequences, PSR assay
 
 **Preprocessing Steps:**
 

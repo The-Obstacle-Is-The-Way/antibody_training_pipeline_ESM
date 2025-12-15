@@ -1,7 +1,7 @@
 # Boughter Dataset Processing Requirements - Novo Nordisk Implementation
 
 ## Document Purpose
-This document specifies the exact requirements for processing the Boughter 2020 dataset according to the Novo Nordisk methodology described in Sakhnini et al. 2025 (doi: pending). All requirements are sourced directly from published papers without assumptions.
+This document specifies the exact requirements for processing the Boughter 2020 dataset according to the Novo Nordisk methodology described in Sakhnini et al. 2025 (DOI: [10.1101/2025.04.28.650927](https://doi.org/10.1101/2025.04.28.650927)). All requirements are sourced directly from published papers without assumptions.
 
 ---
 
@@ -270,7 +270,7 @@ From Sakhnini et al. 2025:
 
 **Primary Sources**:
 1. Boughter CT et al. (2020) "Biochemical patterns of antibody polyreactivity revealed through a bioinformatics-based analysis of CDR loops." eLife 9:e61393
-2. Sakhnini LI et al. (2025) "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." (Journal pending)
+2. Sakhnini LI et al. (2025) "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." bioRxiv. DOI: [10.1101/2025.04.28.650927](https://doi.org/10.1101/2025.04.28.650927)
 
 **Data Source**:
 - GitHub: ctboughter/AIMS_manuscripts
