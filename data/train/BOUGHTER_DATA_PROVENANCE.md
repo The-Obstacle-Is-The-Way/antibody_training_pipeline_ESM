@@ -348,7 +348,7 @@ DOI: [10.1126/science.aan6619](https://doi.org/10.1126/science.aan6619)
 **Sakhnini et al. (2025)**
 *"Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters"*
 **(Novo Nordisk flagging strategy)**
-DOI: pending
+DOI: [10.1101/2025.04.28.650927](https://doi.org/10.1101/2025.04.28.650927)
 
 ---
 

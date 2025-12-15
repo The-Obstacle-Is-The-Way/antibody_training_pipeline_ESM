@@ -15,7 +15,10 @@ from antibody_training_esm.core.classifier import (
 from antibody_training_esm.core.config import DEFAULT_BATCH_SIZE
 from antibody_training_esm.core.device import resolve_device
 from antibody_training_esm.core.embeddings import ESMEmbeddingExtractor
-from antibody_training_esm.core.training.serialization import load_model_from_npz
+from antibody_training_esm.core.training.serialization import (
+    load_model_from_npz,
+    load_model_from_xgb,
+)
 from antibody_training_esm.models.prediction import (
     AssayType,
     PredictionRequest,
@@ -67,12 +70,13 @@ class Predictor:
         Supports:
         1. Legacy Pickle (.pkl): Loaded via joblib.
         2. Production NPZ (.npz): Loaded via load_model_from_npz using accompanying JSON config.
+        3. XGBoost native (.xgb): Loaded via load_model_from_xgb (P2.2 fix).
         """
         if self._classifier is None:
             path_obj = Path(self.classifier_path)
 
             if path_obj.suffix == ".npz":
-                # NPZ loading path
+                # NPZ loading path (LogisticRegression)
                 if self.config_path:
                     json_path = Path(self.config_path)
                 else:
@@ -88,6 +92,24 @@ class Predictor:
 
                 logger.info(f"Loading model from NPZ: {path_obj} (Config: {json_path})")
                 self._classifier = load_model_from_npz(str(path_obj), str(json_path))
+
+            elif path_obj.suffix == ".xgb":
+                # P2.2 fix: XGBoost native format loading
+                if self.config_path:
+                    json_path = Path(self.config_path)
+                else:
+                    # Infer JSON path: model.xgb -> model_config.json
+                    json_path = path_obj.with_name(f"{path_obj.stem}_config.json")
+
+                if not json_path.exists():
+                    raise FileNotFoundError(
+                        f"JSON config not found at {json_path}. "
+                        "For .xgb models, a corresponding JSON config is required. "
+                        "Specify it explicitly with config_path if the naming convention differs."
+                    )
+
+                logger.info(f"Loading model from XGB: {path_obj} (Config: {json_path})")
+                self._classifier = load_model_from_xgb(str(path_obj), str(json_path))
 
             else:
                 # Legacy/Pickle loading path
@@ -138,6 +160,19 @@ class Predictor:
                             device=self.device,
                             batch_size=batch_size,
                             revision=revision,
+                        )
+                    elif model_type == "biophysical":
+                        # P2.1 fix: Handle biophysical model type
+                        from antibody_training_esm.core.embeddings_biophysical import (
+                            BiophysicalEmbeddingExtractor,
+                        )
+
+                        # BiophysicalEmbeddingExtractor uses positional args
+                        embedder = BiophysicalEmbeddingExtractor(
+                            self.model_name,  # _model_name
+                            self.device,  # _device
+                            batch_size,  # _batch_size
+                            revision,  # revision
                         )
                     else:
                         embedder = ESMEmbeddingExtractor(

@@ -45,9 +45,9 @@ dataset_info:
 ## Dataset Description
 
 - **Homepage:** [Hugging Science Organization](https://huggingface.co/hugging-science)
-- **Repository:** [CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM](https://github.com/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM)
+- **Repository (this implementation):** [The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM](https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM)
+- **Upstream:** [ludocomito/antibody_training_pipeline_ESM](https://github.com/ludocomito/antibody_training_pipeline_ESM)
 - **Paper (Original Dataset):** [Harvey et al. 2022, Nature Communications](https://doi.org/10.1038/s41467-022-35276-4)
-- **Paper (Additional Methodology):** [Mason et al. 2021, Nature Biomedical Engineering](https://doi.org/10.1038/s41551-021-00699-9)
 - **Paper (Preprocessing Methodology):** [Sakhnini et al. 2025, bioRxiv](https://doi.org/10.1101/2025.04.28.650927)
 - **Original Data Source:** [debbiemarkslab/nanobody-polyreactivity](https://github.com/debbiemarkslab/nanobody-polyreactivity)
 - **Point of Contact:** [Hugging Science](https://huggingface.co/hugging-science)
@@ -214,34 +214,23 @@ predictions = (model_probabilities >= THRESHOLD).astype(int)
 
 ### Licensing Information
 
-This dataset is released under **CC-BY-4.0** license. The original data from Harvey et al. 2022 was made publicly available through the debbiemarkslab GitHub repository.
+Harvey et al. (2022) is published under **CC-BY-4.0** (per the DOI landing page). The official data/code release is available via `debbiemarkslab/nanobody-polyreactivity` (repository license: MIT). This Hugging Face export follows **CC-BY-4.0** terms; please retain upstream attribution/citations.
 
 ### Citation Information
 
 **If you use this dataset, please cite all relevant papers:**
 
 ```bibtex
-@article{harvey2022mucophilic,
-  title={A biophysical basis for mucophilic antigen binding},
-  author={Harvey, Emily P and Ge, Yiquan and LaRochelle, Jacob R and Kang, Joanne and DiMaio, Frank and De Yoreo, Matthew and Baker, David and Pultz, Ingrid S and Garrett, Seth and Blair, Laura and Knight, Kevin and Crispin, Max},
-  journal={Journal of Experimental Medicine},
-  volume={219},
-  number={3},
-  pages={e20211671},
+@article{harvey2022in_silico,
+  title={An in silico method to assess antibody fragment polyreactivity},
+  author={Harvey, Edward P. and Shin, Jung-Eun and Skiba, Meredith A. and Nemeth, Genevieve R. and Hurley, Joseph D. and Wellner, Alon and Shaw, Ada Y. and Miranda, Victor G. and Min, Joseph K. and Liu, Chang C. and Marks, Debora S. and Kruse, Andrew C.},
+  journal={Nature Communications},
+  volume={13},
+  number={1},
+  pages={7554},
   year={2022},
-  publisher={Rockefeller University Press},
-  doi={10.1084/jem.20211671}
-}
-
-@article{mason2021optimization,
-  title={Optimization of therapeutic antibodies by predicting antigen specificity from antibody sequence via deep learning},
-  author={Mason, Derek M and Friedensohn, Simon and Weber, C{\'e}dric R and Jordi, Christian and Wagner, Bastian and Meng, Simon M and Ehling, Roy A and Bonati, Lucia and Dahinden, Janine and Gainza, Pablo and Correia, Bruno E and Reddy, Sai T},
-  journal={Nature Biomedical Engineering},
-  volume={5},
-  pages={600--612},
-  year={2021},
-  publisher={Nature Publishing Group UK London},
-  doi={10.1038/s41551-021-00699-9}
+  publisher={Springer Science and Business Media LLC},
+  doi={10.1038/s41467-022-35276-4}
 }
 
 @article{sakhnini2025prediction,

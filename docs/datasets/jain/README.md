@@ -137,7 +137,7 @@ Step 3: Fragment Extraction (ANARCI/IMGT)
 ### Primary Papers
 - **Jain et al. (2017)** - "Biophysical properties of the clinical-stage antibody landscape." *PNAS* 114(5):944-949. DOI: https://doi.org/10.1073/pnas.1616408114
 
-- **Sakhnini et al. (2025)** - "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." *Cell* 188(1):112-123. DOI: https://doi.org/10.1016/j.cell.2024.12.025
+- **Sakhnini et al. (2025)** - "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." *bioRxiv*. DOI: https://doi.org/10.1101/2025.04.28.650927
 
 ---
 

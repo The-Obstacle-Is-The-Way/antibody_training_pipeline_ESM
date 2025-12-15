@@ -419,7 +419,7 @@ uv run antibody-test \
 ## References
 
 **Primary Paper:**
-- Sakhnini, L.I., et al. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *Cell* (in press). DOI: 10.1016/j.cell.2024.12.025
+- Sakhnini, L.I., et al. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *bioRxiv*. DOI: 10.1101/2025.04.28.650927
 
 **Dataset Papers:**
 - Boughter, C.T., et al. (2020). Biochemical patterns of antibody polyreactivity. *eLife* 9:e61393.

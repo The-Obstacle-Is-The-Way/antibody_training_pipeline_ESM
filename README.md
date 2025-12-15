@@ -377,7 +377,7 @@ This pipeline uses four antibody datasets for training and evaluation:
 
 ## Harvey Dataset (Test - Nanobodies)
 
-**Source:** Harvey et al. (2022) / Mason et al. (2021)
+**Source:** Harvey et al. (2022)
 **Size:** 141,021 nanobody sequences
 **Assay:** PSR (polyspecific reagent) assay
 **Usage:** Large-scale nanobody test set
@@ -425,7 +425,7 @@ This repository uses training and test datasets from multiple published studies:
 
 - **Training**: Boughter et al. 2020 (914 VH sequences, ELISA polyreactivity)
 - **Test**: Jain et al. 2017 (86 clinical antibodies, per-antigen ELISA from Adimab)
-- **Test**: Harvey et al. 2022 / Mason et al. 2021 (141k nanobodies, PSR assay)
+- **Test**: Harvey et al. 2022 (141k nanobodies, PSR assay)
 - **Test**: Shehata et al. 2019 (398 antibodies, PSR cross-assay validation)
 
 **For complete citations, BibTeX entries, and data attribution details**, see [`CITATIONS.md`](CITATIONS.md).

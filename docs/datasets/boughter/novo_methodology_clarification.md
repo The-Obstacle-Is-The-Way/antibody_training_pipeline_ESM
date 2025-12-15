@@ -236,7 +236,7 @@ total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 
 ### Papers
 - **Boughter et al. 2020:** Boughter CT et al., eLife 9:e61393 (https://doi.org/10.7554/eLife.61393)
-- **Sakhnini et al. 2025:** Sakhnini A et al., bioRxiv (Novo Nordisk paper, pending publication)
+- **Sakhnini et al. 2025:** Sakhnini, L.I. et al., bioRxiv (https://doi.org/10.1101/2025.04.28.650927)
 - **IMGT:** Lefranc MP et al. 2003, Dev Comp Immunol 27:55-77
 
 ### Our Documentation

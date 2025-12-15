@@ -2,7 +2,7 @@
 
 **Last Updated:** 2025-11-18
 **Status:** ✅ VERIFIED - Close to Novo (66.28% accuracy; FP/TP swap of two antibodies)
-**Paper:** Sakhnini et al. 2025, *Cell*, DOI: 10.1016/j.cell.2024.12.025
+**Paper:** Sakhnini et al. 2025, *bioRxiv*, DOI: 10.1101/2025.04.28.650927
 
 ---
 
@@ -318,7 +318,7 @@ The Novo paper describes **Track B** - biophysical descriptor-based models:
 ## References
 
 **Primary Paper:**
-- Sakhnini, L.I., et al. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *Cell* (in press). DOI: 10.1016/j.cell.2024.12.025
+- Sakhnini, L.I., et al. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *bioRxiv*. DOI: 10.1101/2025.04.28.650927
 
 **Original Dataset:**
 - Boughter, C.T., et al. (2020). Biochemical patterns of antibody polyreactivity revealed through a bioinformatics-based analysis of CDR loops. *eLife* 9:e61393.

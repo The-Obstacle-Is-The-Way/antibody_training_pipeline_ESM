@@ -88,16 +88,13 @@ fragments/*.csv (141,021 - 453 ANARCI failures)
 
 **Dataset Source:**
 
-Harvey, E.P., et al. (2022). "A biophysical basis for mucophilic antigen binding." *Journal of Experimental Medicine* 219(3):e20211671.
-DOI: 10.1084/jem.20211671
-
-Mason, D.M., et al. (2021). "Optimization of therapeutic antibodies by predicting antigen specificity from antibody sequence via deep learning." *Nature Biomedical Engineering* 5:600-612.
-DOI: 10.1038/s41551-021-00699-9
+Harvey, E.P., et al. (2022). "An in silico method to assess antibody fragment polyreactivity." *Nature Communications* 13, 7554.
+DOI: 10.1038/s41467-022-35276-4
 
 **Methodology Source:**
 
-Sakhnini, A., et al. (2025). "Antibody Non-Specificity Prediction using Protein Language Models and Biophysical Features." *Cell*.
-DOI: 10.1016/j.cell.2024.12.025
+Sakhnini, L.I., et al. (2025). "Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters." *bioRxiv*.
+DOI: 10.1101/2025.04.28.650927
 
 ---
 

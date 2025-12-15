@@ -371,7 +371,7 @@ True    Spec    17945     51317      (69,262 specific)
 ## References
 
 **Primary Paper:**
-- Sakhnini, L.I. et al. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *Cell* (in press). DOI: 10.1016/j.cell.2024.12.025
+- Sakhnini, L.I. et al. (2025). Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. *bioRxiv*. DOI: 10.1101/2025.04.28.650927
 
 **Dataset Papers:**
 - Jain, T. et al. (2017). Biophysical properties of the clinical-stage antibody landscape. *PNAS*, 114(5), 944-949.

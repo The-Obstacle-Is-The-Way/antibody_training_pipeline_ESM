@@ -35,7 +35,8 @@ dataset_info:
 ## Dataset Description
 
 - **Homepage:** [Hugging Science Organization](https://huggingface.co/hugging-science)
-- **Repository:** [CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM](https://github.com/CLARITY-DIGITAL-TWIN/antibody_training_pipeline_ESM)
+- **Repository (this implementation):** [The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM](https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM)
+- **Upstream:** [ludocomito/antibody_training_pipeline_ESM](https://github.com/ludocomito/antibody_training_pipeline_ESM)
 - **Paper (Original Dataset):** [Boughter et al. 2020, eLife](https://doi.org/10.7554/eLife.61393)
 - **Paper (Preprocessing Methodology):** [Sakhnini et al. 2025, bioRxiv](https://doi.org/10.1101/2025.04.28.650927)
 - **Point of Contact:** [Hugging Science](https://huggingface.co/hugging-science)
@@ -187,7 +188,7 @@ This dataset enables development of computational tools to predict antibody deve
 
 ### Licensing Information
 
-This dataset is released under **CC-BY-4.0** license. The original data from Boughter et al. 2020 was made publicly available through their GitHub repository.
+Boughter et al. (2020) is published under **CC-BY-4.0** (per the DOI landing page). The raw source files are also distributed via the `ctboughter/AIMS_manuscripts` GitHub repository (MIT license for the repository). This Hugging Face export follows **CC-BY-4.0** terms; please retain upstream attribution/citations.
 
 ### Citation Information
 
