@@ -511,7 +511,7 @@ grep -rn "scripts/validate_fragments" docs/ --include="*.md" | grep -v "validati
 ## Citation (Correct)
 
 **Dataset Source:**
-Shehata L, Thaventhiran JED, Engelhardt KR, et al. (2019). "Affinity Maturation Enhances Antibody Specificity but Compromises Conformational Stability." *Cell Reports* 28(13):3300-3308.e4.
+Shehata, L. et al. (2019). "Affinity maturation enhances antibody specificity but compromises conformational stability." *Cell Reports* 28(13):3300-3308.e4.
 DOI: 10.1016/j.celrep.2019.08.056
 
 **Methodology Source:**

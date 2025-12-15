@@ -58,7 +58,7 @@ This dataset contains **141,021 nanobody (VHH) sequences** with binary polyreact
 
 ### Key Features
 
-- **Organism:** Synthetic (yeast display library)
+- **Organism:** Synthetic camelid (nanobody) library (yeast display)
 - **Molecule Type:** Nanobody / Single-domain antibody (VHH)
 - **Assay:** PSR (Poly-Specificity Reagent) from Sf9 insect cell membranes
 - **Method:** FACS sorting + Deep sequencing
@@ -96,7 +96,7 @@ Protein sequences (amino acid alphabet)
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | string | Unique identifier (harvey_XXXXXX format) |
-| `sequence` | string | Nanobody VHH amino acid sequence (IMGT-annotated) |
+| `sequence` | string | Nanobody VHH amino acid sequence (gap-free; ANARCI/IMGT-validated) |
 | `label` | int | Binary label: 0 = low polyreactivity, 1 = high polyreactivity |
 | `source` | string | Data source identifier (harvey2022) |
 | `sequence_length` | int | Length of the VHH sequence in amino acids |
@@ -134,7 +134,7 @@ From Harvey et al. 2022:
 
 #### Preprocessing Pipeline (Novo Nordisk Methodology)
 
-**IMPORTANT:** Novo Nordisk used the **unfiltered** dataset (all 141,474 sequences), NOT Harvey's CDR-length-filtered version (134K).
+**IMPORTANT:** Sakhnini et al. (2025) describe using the **unfiltered** Harvey dataset (>140,000 nanobodies), not the CDR-length-filtered subset (~134K) used in Harvey et al.'s published one-hot predictor. This export starts from the full official repository release (141,474 sequences).
 
 | Stage | Description | Sequences |
 |-------|-------------|-----------|
@@ -144,13 +144,32 @@ From Harvey et al. 2022:
 
 **ANARCI Failures:** 453 sequences (0.32%) failed annotation and were excluded.
 
-#### What Novo Nordisk Did NOT Do
+#### CDR Length Filtering
 
-Unlike Harvey's original paper, Novo Nordisk did **NOT** apply CDR length filtering:
-- Harvey's filter: CDR1==8, CDR2==8 or 9, CDR3==6-22 → 134,302 sequences
-- Novo Nordisk: No filtering → ~141,000 sequences
+Harvey et al.'s published predictor uses a CDR length filter:
+- CDR1==8, CDR2==8 or 9, CDR3==6-22 → 134,302 sequences
 
-Evidence: Sakhnini et al. Table 4 states ">140,000 naïve nanobodies" which matches the unfiltered count.
+Sakhnini et al. (2025) describe using ">140 000 naïve nanobodies" and do not mention applying this filter. Accordingly, this export does not apply it:
+- No CDR-length filter → 141,474 raw sequences → 141,021 after ANARCI
+
+Evidence: Sakhnini et al. (2025) Section 4.1 ("Data sources") describes the Harvey dataset as ">140 000 naïve nanobodies", consistent with using the unfiltered data.
+
+### Novo Nordisk Methodology Verification
+
+This dataset's preprocessing was cross-referenced against Sakhnini et al. (2025) Section 4.1:
+
+| Metric | Novo Paper (Section 4.1) | This Dataset | Status |
+|--------|--------------------------|--------------|--------|
+| Dataset Size | ">140,000 naïve nanobodies" | 141,021 sequences | ✅ MATCH |
+| Annotation Method | "ANARCI following the IMGT numbering scheme" | ANARCI/IMGT | ✅ MATCH |
+| Source | Harvey et al. 2022 | debbiemarkslab/nanobody-polyreactivity | ✅ MATCH |
+| ANARCI Failures | Not explicitly stated | 453 (0.32%) | Documented |
+
+**Verification Notes:**
+- The paper states ">140,000" which is consistent with our 141,021 post-ANARCI count
+- Labels are directly from the original Harvey et al. 2022 FACS sorting (high/low PSR pools)
+- No additional filtering was applied beyond ANARCI annotation
+- Note: Sakhnini et al. Fig. S14E confusion matrix totals 141,559 nanobodies, suggesting their preprocessing snapshot may differ slightly from the official upstream data used here (141,474 raw → 141,021 ANARCI-validated)
 
 ### Annotations
 
@@ -190,8 +209,7 @@ This dataset enables:
 
 1. **VHH Only:** This dataset contains single-domain antibodies (no light chain)
 2. **Binary Labels:** Quantitative PSR scores are not included (only binary high/low)
-3. **Prediction Threshold Calibration:** For reproducing Sakhnini et al. (2025) results on PSR datasets, use a probability decision threshold of 0.5495 (instead of 0.5)
-4. **Cross-Assay Transfer:** Models trained on ELISA data (Boughter) may not optimally transfer to PSR data
+3. **Cross-Assay Transfer:** Models trained on ELISA data (Boughter) may not optimally transfer to PSR data
 
 ### Recommended Usage
 
@@ -201,6 +219,19 @@ When evaluating models trained on ELISA data (Boughter):
 THRESHOLD = 0.5495  # decision threshold on predicted P(non-specific)
 predictions = (model_probabilities >= THRESHOLD).astype(int)
 ```
+
+### Note on Inference Threshold (0.5495)
+
+**IMPORTANT:** The 0.5495 threshold is for **model inference/evaluation only**, NOT preprocessing.
+
+- **What it is:** A decision threshold for binarizing model prediction probabilities during evaluation
+- **What it is NOT:** A preprocessing parameter - the data (sequences, labels) is unaffected
+- **Why it exists:** Empirically determined to better reproduce Sakhnini et al. (2025) Fig. S14E results when evaluating ELISA-trained models on PSR test data
+- **Not in the paper:** This threshold value is not described in Sakhnini et al. (2025); it is derived via threshold sweep in this repository for parity against reported results
+- **Standard threshold:** 0.5 (binary classification default)
+- **PSR-calibrated threshold:** 0.5495 (determined via threshold sweep to match Novo's reported accuracy)
+
+This threshold adjustment compensates for the cross-assay domain shift between ELISA (training) and PSR (testing) data.
 
 ## Additional Information
 

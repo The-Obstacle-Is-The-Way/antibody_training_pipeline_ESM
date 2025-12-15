@@ -63,7 +63,7 @@ processed/shehata.csv (398 antibodies, 4 removed)
 fragments/*.csv (16 fragment types)
 ```
 
-**Removed:** 4 sequences with incomplete pairing or missing PSR data
+**Removed:** 4 rows during conversion (2 non-sequence legend/metadata rows + 2 antibodies missing PSR scores)
 
 ---
 
@@ -72,10 +72,10 @@ fragments/*.csv (16 fragment types)
 **Binary classification:** 0 = specific, 1 = non-specific
 
 **Label distribution:**
-- 391 specific (label=0, PSR < 98.24th percentile)
-- 7 non-specific (label=1, PSR ≥ 98.24th percentile)
+- 391 specific (label=0, PSR ≤ 0.33)
+- 7 non-specific (label=1, PSR > 0.33)
 
-**Threshold:** 98.24th percentile of PSR score (stringent cutoff from Sakhnini 2025)
+**Threshold:** High polyreactivity (label=1) corresponds to `psr_score > 0.33` (Shehata et al. 2019). The conversion script computes a cutoff at the top 7/398 (98.24th percentile) to match Sakhnini et al. (2025); in this dataset that is equivalent to `> 0.33`.
 
 **Highly imbalanced:** 98.2% specific, 1.8% non-specific
 
@@ -84,7 +84,7 @@ fragments/*.csv (16 fragment types)
 ## Citations
 
 **Dataset Source:**
-Shehata L, Thaventhiran JED, Engelhardt KR, et al. (2019). "Affinity Maturation Enhances Antibody Specificity but Compromises Conformational Stability." *Cell Reports* 28(13):3300-3308.e4.
+Shehata, L. et al. (2019). "Affinity maturation enhances antibody specificity but compromises conformational stability." *Cell Reports* 28(13):3300-3308.e4.
 DOI: 10.1016/j.celrep.2019.08.056
 
 **Methodology Source:**
