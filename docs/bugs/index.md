@@ -36,6 +36,61 @@ This doc captures potential bugs and high-risk issues found during a codebase au
 
 ---
 
+## Research — Active Investigations
+
+### R1 — Jain Parity Reverse Engineering (59/27 vs Novo's 57/29)
+
+> **Research Spec:** [jain_parity_reverse_engineering.md](./jain_parity_reverse_engineering.md)
+> **Data Inventory:** [jain_parity_data_inventory.md](./jain_parity_data_inventory.md)
+
+#### Problem
+Our P5e-S2 preprocessing produces 59 specific / 27 non-specific, but Novo's Figure S14A shows 57 specific / 29 non-specific. We are off by 2 antibodies.
+
+| Metric | Ours | Novo | Delta |
+|--------|------|------|-------|
+| Confusion Matrix | `[[40, 19], [10, 17]]` | `[[40, 17], [10, 19]]` | FP/TP differ by 2 |
+| Accuracy | 66.28% | 68.6% | -2.32pp |
+| Label Split | 59/27 | 57/29 | ±2 |
+
+#### Key Insight
+TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 2 specific antibodies that Novo classifies as non-specific.
+
+#### Research Goals
+1. Identify the unknown QC step Novo uses to get from ~116 to 86 antibodies
+2. Find which 2 antibodies need reclassification (specific → non-specific)
+3. Validate that the solution is biologically principled (not cherry-picking)
+
+#### Data Inventory (from [jain_parity_data_inventory.md](./jain_parity_data_inventory.md))
+
+| Stage | Count | Specific | Non-Specific | File |
+|-------|-------|----------|--------------|------|
+| After ELISA 1-3 removal | 116 | 94 | 22 | `jain_ELISA_ONLY_116.csv` |
+| After reclassification (5) | 116 | 89 | 27 | (computed) |
+| After removal (30) — **OURS** | 86 | 59 | 27 | `jain_86_novo_parity.csv` |
+| **NOVO TARGET** | 86 | **57** | **29** | Figure S14A |
+
+#### Experimental Phases
+1. **Phase 1:** Data preparation — ✅ Complete (see data inventory)
+2. **Phase 2:** Systematic permutation search — test all C(59,2) = 1,711 pairs
+3. **Phase 3:** Biological validation — evaluate plausibility of candidate pairs
+4. **Phase 4:** Alternative strategies — test different ranking/removal methods
+
+#### Branch Strategy
+- **Stable reference:** `investigate/jain-parity-verification` (current)
+- **Experiments:** Create `experiment/jain-parity-permutations` for testing
+
+#### Status
+- [x] Document the discrepancy (GitHub Issue #33)
+- [x] Create research spec with hypotheses and experimental protocol
+- [x] Create data inventory with all 89 specific antibodies and biophysical data
+- [ ] Commit stable investigation branch
+- [ ] Create experiment branch for permutation testing
+- [ ] Execute Phase 2: Permutation search
+- [ ] Execute Phase 3: Biological validation
+- [ ] Update preprocessing pipeline with correct methodology
+
+---
+
 ## P1 — High
 
 ### P1.1 — Hydra classifier selection mismatch (`classifier.type` vs `classifier.strategy`)
