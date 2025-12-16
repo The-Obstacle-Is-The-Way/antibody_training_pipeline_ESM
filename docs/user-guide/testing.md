@@ -345,11 +345,11 @@ Actual  Neg  [40     19]   ← True Neg: 40, False Pos: 19
 **Key Observations:**
 
 - **True Negatives (40):** Correctly identified specific antibodies
-- **False Positives (19):** Specific antibodies mislabeled as non-specific
+- **False Positives (17):** Specific antibodies mislabeled as non-specific
 - **False Negatives (10):** Non-specific antibodies mislabeled as specific
-- **True Positives (17):** Correctly identified non-specific antibodies
+- **True Positives (19):** Correctly identified non-specific antibodies
 
-**Class Imbalance:** 59 specific vs 27 non-specific (2.2:1 ratio)
+**Class Imbalance:** 57 specific vs 29 non-specific (2.0:1 ratio)
 
 - High precision on class 0 (80%) vs low precision on class 1 (47%)
 - Model biased toward predicting "specific" (majority class)

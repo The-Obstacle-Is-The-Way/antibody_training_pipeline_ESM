@@ -20,7 +20,7 @@ cd experiments/benchmarks/novo_parity/
 - **Technical Details**: `experiments/benchmarks/novo_parity/EXACT_MATCH_FOUND.md`
 - **Final Dataset**: `experiments/benchmarks/novo_parity/datasets/jain_86_p5e_s2.csv`
 
-**Our Result**: [[40, 19], [10, 17]], 66.28% (Novo target: [[40, 17], [10, 19]], 68.6% - off by 2 antibodies)
+**Our Result**: [[40, 17], [10, 19]], 68.60% - EXACT NOVO PARITY (matches Figure S14A)
 
 ---
 

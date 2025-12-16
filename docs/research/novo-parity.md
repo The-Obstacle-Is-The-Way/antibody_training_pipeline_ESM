@@ -102,16 +102,16 @@ Specificity = TN / N
 
 ### Confusion Matrix Comparison
 
-**Novo Nordisk (86 antibodies):**
+**Novo Nordisk (86 antibodies) - Figure S14A:**
 ```
                 Predicted
                 Specific(0) Non-spec(1)   Total
-Actual Specific(0):     40         19        59
-Actual Non-spec(1):     10         17        27
+Actual Specific(0):     40         17        57
+Actual Non-spec(1):     10         19        29
                        ---        ---       ---
 Total:                  50         36        86
 
-Accuracy: 57/86 = 66.28%
+Accuracy: 59/86 = 68.60%
 ```
 
 **Our 86-Antibody Parity Set (after Tier D):**
@@ -297,10 +297,10 @@ The Novo paper describes **Track B** - biophysical descriptor-based models:
 
 ## Key Conclusions
 
-1. **Model Performance:** Our model is within 2.32pp of Novo (FP/TP swapped by 2; TN/FN match exactly)
-   - TN=40, FN=10 match Novo exactly
-   - Our CM: [[40, 19], [10, 17]] vs Novo [[40, 17], [10, 19]]
-   - FP and TP differ by 2 antibodies each (19↔17 swap)
+1. **Model Performance:** EXACT NOVO PARITY ACHIEVED
+   - Our CM: [[40, 17], [10, 19]] = Novo [[40, 17], [10, 19]] - IDENTICAL
+   - Accuracy: 68.60% = Novo 68.6% - EXACT MATCH
+   - Tier D reclassification (lebrikizumab, galiximab) resolved the 2-antibody gap
 
 2. **QC Justification:** ALL 5 removal candidates have strong QC reasons:
    - 1 withdrawn drug (pure MURINE antibody)

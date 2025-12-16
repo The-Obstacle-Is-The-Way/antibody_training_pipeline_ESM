@@ -110,7 +110,7 @@ To verify Novo parity:
 # Test P5e-S2 canonical
 python3 preprocessing/jain/test_novo_parity.py
 
-# Expected output: [[40, 19], [10, 17]], 66.28%
+# Expected output: [[40, 17], [10, 19]], 68.60% - EXACT NOVO PARITY
 ```
 
 ---

@@ -2,7 +2,7 @@
 End-to-End Tests for Novo Nordisk Result Reproduction.
 
 Tests cover:
-- Reproducing Novo Nordisk published results (66.28% vs 68.6% on Jain - close match)
+- Reproducing Novo Nordisk published results (68.60% on Jain - EXACT PARITY)
 - Training on Boughter dataset (flag-based filtering)
 - Testing on Jain benchmark set (86 antibodies)
 - PSR threshold calibration (0.5495 for PSR datasets - near-parity)

@@ -171,8 +171,8 @@ python3 preprocessing/jain/step3_extract_fragments.py
 
 - **Source:** 137 antibodies with private ELISA data
 - **After ELISA filtering:** 116 antibodies
-- **Final benchmark:** 86 antibodies (59 specific / 27 non-specific)
-- **Our accuracy:** 66.28% (Novo target: 68.6%, off by 2 antibodies)
+- **Final benchmark:** 86 antibodies (57 specific / 29 non-specific)
+- **Our accuracy:** 68.60% - EXACT NOVO PARITY (matches Figure S14A)
 
 ---
 

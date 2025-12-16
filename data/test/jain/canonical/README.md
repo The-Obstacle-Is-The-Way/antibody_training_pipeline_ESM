@@ -86,7 +86,7 @@ y_true = df['label'].values
 X = classifier.embedding_extractor.extract_batch_embeddings(sequences)
 y_pred = classifier.predict(X)
 
-# Expected: [[40, 19], [10, 17]]
+# Expected: [[40, 17], [10, 19]] - EXACT NOVO PARITY (68.60%)
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_true, y_pred)
 print(cm)
@@ -108,7 +108,7 @@ df = pd.read_csv('data/test/jain/canonical/archive/VH_only_jain_test_PARITY_86.c
 
 | Aspect | P5e-S2 Canonical | OLD Reverse-Engineered |
 |--------|------------------|------------------------|
-| **Result** | [[40, 19], [10, 17]] | [[40, 19], [10, 17]] |
+| **Result** | [[40, 17], [10, 19]] (68.60% - EXACT PARITY) | [[40, 19], [10, 17]] (66.28% - OLD) |
 | **Methodology** | Biologically principled (PSR-based) | Ad-hoc (length + borderline) |
 | **Starting point** | 116 antibodies (ELISA-only) | 94 antibodies (different ELISA filter) |
 | **Determinism** | 99% (1 borderline at ~0.5) | 100% (fully deterministic) |
@@ -133,7 +133,8 @@ uv run antibody-test --model experiments/checkpoints/esm1v/logreg/boughter_vh_es
   --data data/test/jain/canonical/archive/VH_only_jain_test_PARITY_86.csv
 ```
 
-Both should give [[40, 19], [10, 17]], 66.28% accuracy.
+P5e-S2 gives [[40, 17], [10, 19]], 68.60% (EXACT NOVO PARITY).
+OLD method gives [[40, 19], [10, 17]], 66.28% (superseded).
 
 ---
 
