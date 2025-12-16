@@ -4,7 +4,7 @@
 **Priority:** P1 (High) — Core benchmark produces incorrect results
 **GitHub Issue:** [#33](https://github.com/Clarity-Digital-Twin/antibody_training_pipeline_ESM/issues/33)
 **Created:** 2025-12-15
-**Last Updated:** 2025-12-15
+**Last Updated:** 2025-12-16
 
 ---
 
@@ -155,6 +155,79 @@ The discrepancy could come from:
 **Experiment:**
 1. Identify the 2 specific antibodies that, when flipped to non-specific, produce [[40, 17], [10, 19]]
 2. Check if these antibodies have any documented issues (aggregation, immunogenicity, etc.)
+
+---
+
+## VALIDATED NARROWED STRATEGY (2025-12-16)
+
+> **Status:** ✅ ALL CLAIMS VALIDATED FROM FIRST PRINCIPLES
+> **Source:** External agent deep-analysis + independent verification
+
+### Key Discovery: Only 8 Flagged Specifics
+
+Of the 59 antibodies labeled specific in our dataset, **only 8 have non-ELISA developability flags** (total_flags > 0). This dramatically narrows our search space:
+
+| Antibody | total_flags | flag_self_interaction | flag_chromatography | flag_stability | HIC |
+|----------|-------------|----------------------|---------------------|----------------|-----|
+| **nimotuzumab** | 1 | 0 | 1 | 0 | **25.000** |
+| lebrikizumab | 1 | 0 | 1 | 0 | 12.381 |
+| gemtuzumab | 1 | 0 | 1 | 0 | 12.259 |
+| galiximab | 1 | 0 | 1 | 0 | 12.198 |
+| bevacizumab | 2 | 0 | 1 | 1 | 11.772 |
+| lampalizumab | 1 | 0 | 0 | 1 | 9.250 |
+| otelixizumab | 1 | 0 | 0 | 1 | 9.082 |
+| **bapineuzumab** | 1 | **1** | 0 | 0 | 8.855 |
+
+### Search Space Reduction
+
+| Strategy | Pairs to Test | Reduction |
+|----------|---------------|-----------|
+| Brute force (all 59 specific) | C(59,2) = 1,711 | Baseline |
+| Flagged specifics only | C(8,2) = 28 | **61x smaller** |
+| Prime candidates first | 1 | **1,711x smaller** |
+
+### Prime Candidate Pair: bapineuzumab + nimotuzumab
+
+These two antibodies are **unique outliers** among the 59 specific:
+
+#### 1. bapineuzumab
+
+- **Evidence:** ONLY antibody with `flag_self_interaction=1` among 59 specific
+- **Biological justification:** Self-interaction assays directly measure non-specific binding behavior — this is literally what "non-specificity" means
+- **Additional red flag:** Documented VH FR3 sequence conflict in `jain_sd02.csv`: "Conflicting literature sequences in FR3 of VH - AKNTLYLQMNSLRAEDTAV vs. AKNSLYLQMNSLRAEDTAL"
+- **Clinical context:** Phase 3 failure for Alzheimer's disease
+
+#### 2. nimotuzumab
+
+- **Evidence:** HIC = 25.0 while dataset mean = 10.17, std = 1.89
+- **Statistical significance:** **7.8 sigma outlier** (z-score = 7.84)
+- **Biological justification:** HIC (Hydrophobic Interaction Chromatography) measures hydrophobicity, which is a primary driver of polyreactivity and non-specific binding
+- **Flag:** `flag_chromatography=1`
+
+### Why This Is Biologically Principled
+
+Both candidates meet the "blind selection" criterion:
+
+1. **bapineuzumab:** A researcher filtering for developability would flag any antibody with self-interaction issues, regardless of ELISA results
+2. **nimotuzumab:** A 7.8 sigma outlier in HIC would be flagged by any standard QC process as having extreme hydrophobicity
+
+Neither requires knowing the confusion matrix outcome to justify reclassification.
+
+### Updated Experimental Protocol
+
+**Phase 2A: Test Prime Candidates First**
+1. Reclassify bapineuzumab + nimotuzumab (specific → non-specific)
+2. Run inference with ESM-1v VH LogReg model
+3. Check if confusion matrix matches `[[40, 17], [10, 19]]`
+
+**Phase 2B: If Prime Fails, Test All 8 Flagged**
+1. Test all C(8,2) = 28 pairs from the flagged specifics
+2. Record which pairs produce exact match
+3. Rank by biological plausibility
+
+**Phase 2C: If Flagged Fails, Full Search**
+1. Fall back to C(59,2) = 1,711 brute force
+2. Filter results by biological plausibility
 
 ---
 
@@ -315,15 +388,34 @@ Experiments should be implemented in:
 
 ---
 
-## Appendix B: Candidate Antibodies for Additional Reclassification
+## Appendix B: The 8 Flagged Specific Antibodies (Validated 2025-12-16)
 
-*To be populated during Phase 1 data preparation*
+These are the ONLY 8 antibodies among the 59 specific that have non-ELISA developability flags:
 
-Candidates should have:
-- PSR between 0.2-0.4 (below our threshold but elevated)
-- Model prediction probability between 0.4-0.5 (borderline)
-- Any documented clinical/developmental issues
-- Biophysical outliers (extreme HIC, AC-SINS, etc.)
+| Rank | Antibody | total_flags | self_int | chrom | stab | HIC | Rationale |
+|------|----------|-------------|----------|-------|------|-----|-----------|
+| **1** | **nimotuzumab** | 1 | 0 | 1 | 0 | **25.000** | 7.8σ HIC outlier |
+| **2** | **bapineuzumab** | 1 | **1** | 0 | 0 | 8.855 | ONLY self-interaction flag |
+| 3 | lebrikizumab | 1 | 0 | 1 | 0 | 12.381 | High HIC |
+| 4 | gemtuzumab | 1 | 0 | 1 | 0 | 12.259 | High HIC |
+| 5 | galiximab | 1 | 0 | 1 | 0 | 12.198 | High HIC |
+| 6 | bevacizumab | 2 | 0 | 1 | 1 | 11.772 | Most flags (2) |
+| 7 | lampalizumab | 1 | 0 | 0 | 1 | 9.250 | Stability flag |
+| 8 | otelixizumab | 1 | 0 | 0 | 1 | 9.082 | Stability flag |
+
+### Statistical Context
+
+- **HIC distribution:** mean = 10.17, std = 1.89
+- **nimotuzumab z-score:** (25.0 - 10.17) / 1.89 = **7.84** (extreme outlier)
+- **Self-interaction flags in 59 specific:** 1 (bapineuzumab only)
+
+### Why These 8 Matter
+
+The remaining 51 specific antibodies have `total_flags=0`, meaning they passed ALL non-ELISA developability screens. If Novo reclassified 2 additional antibodies, they would most likely come from this flagged set because:
+
+1. These antibodies already have documented developability concerns
+2. Reclassification based on existing flags is "blind" to confusion matrix outcomes
+3. Any standard QC process would flag these before the 51 "clean" antibodies
 
 ---
 

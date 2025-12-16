@@ -69,11 +69,20 @@ TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 
 | After removal (30) — **OURS** | 86 | 59 | 27 | `jain_86_novo_parity.csv` |
 | **NOVO TARGET** | 86 | **57** | **29** | Figure S14A |
 
-#### Experimental Phases
+#### Validated Narrowed Strategy (2025-12-16)
+
+**Key Discovery:** Only 8 of the 59 specific antibodies have non-ELISA developability flags. This reduces the search space from C(59,2)=1,711 to C(8,2)=28 pairs.
+
+**Prime Candidates:**
+1. **bapineuzumab** — ONLY self-interaction flag among 59 specific
+2. **nimotuzumab** — HIC=25.0 (7.8σ outlier, z-score=7.84)
+
+#### Updated Experimental Phases
 1. **Phase 1:** Data preparation — ✅ Complete (see data inventory)
-2. **Phase 2:** Systematic permutation search — test all C(59,2) = 1,711 pairs
-3. **Phase 3:** Biological validation — evaluate plausibility of candidate pairs
-4. **Phase 4:** Alternative strategies — test different ranking/removal methods
+2. **Phase 2A:** Test prime candidates (bapineuzumab + nimotuzumab) — **1 test**
+3. **Phase 2B:** Test all 8 flagged specifics — **C(8,2) = 28 pairs**
+4. **Phase 2C:** Full search if needed — C(59,2) = 1,711 pairs
+5. **Phase 3:** Biological validation of matches
 
 #### Branch Strategy
 - **Stable reference:** `investigate/jain-parity-verification` (current)
@@ -83,9 +92,10 @@ TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 
 - [x] Document the discrepancy (GitHub Issue #33)
 - [x] Create research spec with hypotheses and experimental protocol
 - [x] Create data inventory with all 89 specific antibodies and biophysical data
-- [ ] Commit stable investigation branch
-- [ ] Create experiment branch for permutation testing
-- [ ] Execute Phase 2: Permutation search
+- [x] Validate narrowed strategy (external agent analysis + first-principles verification)
+- [x] Identify prime candidates: bapineuzumab (self-interaction), nimotuzumab (7.8σ HIC)
+- [ ] Execute Phase 2A: Test prime candidates
+- [ ] Execute Phase 2B: Test all 28 flagged pairs (if 2A fails)
 - [ ] Execute Phase 3: Biological validation
 - [ ] Update preprocessing pipeline with correct methodology
 
