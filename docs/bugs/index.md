@@ -100,13 +100,26 @@ TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 
 - [x] Execute Phase 3: Biological validation — ✅ All candidates have developability flags
 - [ ] Update preprocessing pipeline with correct methodology
 
-#### Solution (2025-12-16)
-**3 matching pairs produce exact Novo parity:**
-1. lebrikizumab + galiximab (recommended)
-2. lebrikizumab + otelixizumab
-3. galiximab + otelixizumab
+#### Solution (2025-12-16) — ⏳ PENDING SENIOR REVIEW
 
-All three antibodies have chromatography/stability flags AND are predicted as non-specific by the model.
+**3 matching pairs produce exact Novo parity:**
+
+| Pair | Confusion Matrix | Accuracy |
+|------|------------------|----------|
+| lebrikizumab + galiximab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
+| lebrikizumab + otelixizumab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
+| galiximab + otelixizumab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
+
+**Why these work:**
+- All three are predicted as NON-SPECIFIC by model (P > 0.5)
+- All three have PUBLIC developability flags (chromatography or stability from SD03)
+- Reclassifying them converts False Positives → True Positives
+
+**Data sources:**
+- Chromatography/stability flags: **PUBLIC** (`jain-pnas.1616408114.sd03.xlsx`)
+- ELISA flags: **PRIVATE** (`Private_Jain2017_ELISA_indiv.xlsx`)
+
+**See full details:** [jain_parity_reverse_engineering.md](./jain_parity_reverse_engineering.md#-solution-found-2025-12-16)
 
 ---
 
