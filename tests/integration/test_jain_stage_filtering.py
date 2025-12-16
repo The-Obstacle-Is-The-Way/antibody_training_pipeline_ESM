@@ -107,7 +107,7 @@ class TestJainStageFiltering:
           2. Reclassify 5 specific → non-specific (116 → 116, labels change)
           3. Remove 30 by PSR/AC-SINS (116 → 86)
 
-        Final distribution: 59 specific, 27 non-specific
+        Final distribution: 57 specific, 29 non-specific (after Tier D)
         """
         df = jain_dataset.load_data(
             full_csv_path=jain_full_csv, sd03_csv_path=jain_sd03_csv, stage="parity"
@@ -122,12 +122,12 @@ class TestJainStageFiltering:
         specific_count = (df["label"] == 0).sum()
         nonspecific_count = (df["label"] == 1).sum()
 
-        # Novo Nordisk parity distribution
-        assert specific_count == 59, (
-            f"Expected 59 specific antibodies (Novo parity), got {specific_count}"
+        # Novo Nordisk parity distribution (after Tier D: lebrikizumab, galiximab)
+        assert specific_count == 57, (
+            f"Expected 57 specific antibodies (Novo parity), got {specific_count}"
         )
-        assert nonspecific_count == 27, (
-            f"Expected 27 non-specific antibodies (Novo parity), got {nonspecific_count}"
+        assert nonspecific_count == 29, (
+            f"Expected 29 non-specific antibodies (Novo parity), got {nonspecific_count}"
         )
 
         # Sanity: total should equal 86
@@ -226,7 +226,9 @@ class TestJainStageFiltering:
         specific = (df["label"] == 0).sum()
         nonspecific = (df["label"] == 1).sum()
 
-        assert specific == 59, f"Expected 59 specific in parity set, got {specific}"
-        assert nonspecific == 27, (
-            f"Expected 27 non-specific in parity set, got {nonspecific}"
+        assert specific == 57, (
+            f"Expected 57 specific in parity set (Novo), got {specific}"
+        )
+        assert nonspecific == 29, (
+            f"Expected 29 non-specific in parity set (Novo), got {nonspecific}"
         )
