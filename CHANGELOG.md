@@ -95,9 +95,9 @@ Install with: `uv sync --all-extras`
 - ✅ All preprocessing pipelines validated (Boughter, Jain, Harvey, Shehata)
 - ✅ Data integrity checksums verified (no corruption)
 - ✅ Full training pipeline smoke test passed (66.84% ± 8.69% 10-fold CV)
-- ✅ **Novo parity maintained:**
-  - Jain: 66.28% accuracy (exact parity)
-  - Shehata: 58.29% accuracy (exact parity)
+- ✅ **Benchmark performance:**
+  - Jain: 66.28% accuracy (close to Novo 68.6%)
+  - Shehata: 58.29% accuracy (close to Novo 58.8%)
 - ✅ Type safety: mypy --strict clean (148 files)
 - ✅ Code quality: ruff format + ruff check clean
 
