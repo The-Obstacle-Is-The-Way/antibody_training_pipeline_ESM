@@ -26,7 +26,7 @@ A **two-stage computational pipeline** that:
 1. **ESM-1v Protein Language Model** → Converts antibody sequences to 1280-dimensional embeddings
 2. **Logistic Regression Classifier** → Maps embeddings to binary predictions (specific/non-specific)
 
-**Key Achievement:** Reproduces Novo Nordisk's published results with **exact parity** (66.28% accuracy on Jain benchmark).
+**Key Achievement:** Closely reproduces Novo Nordisk's published results (66.28% vs 68.6% on Jain benchmark).
 
 ---
 
