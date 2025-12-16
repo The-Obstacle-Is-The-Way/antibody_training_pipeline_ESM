@@ -33,7 +33,7 @@ EOF
 # Test with config ONLY (--config ignores --model/--data if provided)
 uv run antibody-test --config configs/test_jain_parity.yaml
 
-Expected: [[40, 19], [10, 17]], 66.28% accuracy (EXACT Novo parity)
+Expected: [[40, 19], [10, 17]], 66.28% (Novo target: [[40, 17], [10, 19]], 68.6%)
 ```
 
 **METHOD 2 - Fragment File (137 antibodies, NOT parity subset):**
@@ -155,7 +155,7 @@ Remove 5 borderline antibodies
 **File (FOR GENERAL TESTING):** `data/test/jain/fragments/VH_only_jain.csv` (137 antibodies, standardized columns)
 **DEPRECATED:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (deprecated - use VH_only_jain_86_p5e_s2.csv)
 
-**Result (86-antibody parity):** [[40, 19], [10, 17]] ✅ **EXACT Novo match**
+**Our result (86-antibody set):** [[40, 19], [10, 17]] (Novo target: [[40, 17], [10, 19]])
 
 **Characteristics:**
 - ✅ P5e-S2 methodology (PSR reclassification + removal)
@@ -190,7 +190,7 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 
 **File:** `data/test/jain/fragments/VH_only_jain_86_p5e_s2.csv`
 
-**Result:** [[40, 19], [10, 17]] ✅ **Also achieves parity**
+**Our result:** [[40, 19], [10, 17]] (close to Novo target [[40, 17], [10, 19]])
 
 **Characteristics:**
 - ✅ Biologically principled (PSR measures polyreactivity)
@@ -230,8 +230,8 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 - For probabilities near 0.5, prediction can flip
 
 **Impact:**
-- When nimotuzumab flips: [[39, 20], [10, 17]] (off by 1)
-- When nimotuzumab correct: [[40, 19], [10, 17]] (exact parity)
+- When nimotuzumab flips: [[39, 20], [10, 17]] (off by 1 from our baseline)
+- When nimotuzumab correct: [[40, 19], [10, 17]] (our baseline result)
 
 **Solutions:**
 
@@ -287,11 +287,10 @@ REMOVE 30 specific by PSR + AC-SINS tiebreaker
 - **Externally validated:** ✅ Jain 66.28% (ELISA threshold 0.5), Shehata 58.29% (PSR decision threshold 0.5495)
 
 **Results on Jain (86 antibodies):**
-- Confusion matrix: [[40, 19], [10, 17]] ✅ Exact Novo parity
-- Accuracy: 66.28%
+- Our CM: [[40, 19], [10, 17]], 66.28% (Novo target: [[40, 17], [10, 19]], 68.6%)
 - Use fragments/VH_only_jain.csv for testing
 
-**Use for:** Production deployments and Novo parity benchmarking ⭐
+**Use for:** Production deployments and Jain benchmarking ⭐
 
 **Note:** An experimental strict QC model (852 sequences) was tested but did not improve performance; see `docs/datasets/boughter/novo_methodology_clarification.md`.
 
@@ -356,7 +355,7 @@ EOF
 # Run parity test (--config ONLY, no --model/--data)
 uv run antibody-test --config configs/test_jain_parity.yaml
 
-# Expected: [[40, 19], [10, 17]], 66.28% (EXACT parity)
+# Expected: [[40, 19], [10, 17]], 66.28% (Novo target: [[40, 17], [10, 19]], 68.6%)
 ```
 
 ### Task 2: Compare 86-antibody Parity vs 137-antibody Full Set
@@ -364,7 +363,7 @@ uv run antibody-test --config configs/test_jain_parity.yaml
 ```bash
 # Test 1: Parity subset (86 antibodies) - use config with canonical file
 uv run antibody-test --config configs/test_jain_parity.yaml
-# Expected: [[40, 19], [10, 17]] (66.28% - Novo parity)
+# Expected: [[40, 19], [10, 17]] (66.28% - close to Novo 68.6%)
 
 # Test 2: Full dataset (137 antibodies) - use fragment file directly
 uv run antibody-test \
@@ -429,8 +428,8 @@ A: `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, MUST us
 Fragment file `VH_only_jain.csv` has 137 antibodies (not the 86-antibody parity subset).
 DEPRECATED: ~~`VH_only_jain_test_PARITY_86.csv`~~ (deprecated - wrong column name, use VH_only_jain_86_p5e_s2.csv)
 
-**Q: Does P5e-S2 achieve Novo parity or not?**
-A: Yes! But one antibody (nimotuzumab) has probability ≈0.5 and can flip. Use stored predictions for exact reproducibility.
+**Q: Does P5e-S2 achieve exact Novo parity?**
+A: Close but not exact. Our result [[40, 19], [10, 17]] differs from Novo [[40, 17], [10, 19]] by 2 antibodies in FP/TP. TN=40 and FN=10 match exactly.
 
 **Q: What's the difference between experiments/ and data/test/?**
 A: experiments/ = full research workspace with rich metadata. data/test/ = clean production files for benchmarking.
@@ -439,13 +438,13 @@ A: experiments/ = full research workspace with rich metadata. data/test/ = clean
 A: Different feature engineering approaches (VH-only, CDRs, FWRs, etc.) and different QC methodologies. Historical cleanup plans are archived; canonical files are listed above.
 
 **Q: Which model should I use?**
-A: `boughter_vh_esm1v_logreg.pkl` (OLD, 914 training) for Novo parity. NEW model (859) is more accurate but doesn't match Novo.
+A: `boughter_vh_esm1v_logreg.pkl` (914 training) for Jain benchmarking. This achieves 66.28% (close to Novo's 68.6%).
 
 ---
 
 ## Additional Documentation
 
-- **Experiment Logs:** `experiments/benchmarks/novo_parity/EXACT_MATCH_FOUND.md` (archive branch)
+- **Experiment Logs:** See `experiments/benchmarks/` and archive branch for historical research
 - **Historical Investigations:** See `docs/archive/investigations/` (no active cleanup plan required)
 
 ---

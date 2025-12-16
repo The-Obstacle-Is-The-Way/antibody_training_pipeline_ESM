@@ -113,7 +113,7 @@ Step 3: Fragment Extraction (ANARCI/IMGT)
 - **Raw input:** 137 antibodies with private ELISA data
 - **ELISA filtering:** 116 antibodies (excludes ELISA 1-3 flags)
 - **P5e-S2 parity:** 86 antibodies (59 specific / 27 non-specific)
-- **Novo parity:** 66.28% accuracy, confusion matrix [[40,19],[10,17]] - **EXACT MATCH**
+- **Our result:** 66.28% accuracy, CM [[40,19],[10,17]] vs Novo [[40,17],[10,19]] (off by 2 abs)
 
 ### Label Distribution (ELISA-based SSOT)
 - **Specific (0):** 94 antibodies
