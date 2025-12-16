@@ -1,7 +1,9 @@
-name: E2E Benchmarking & Novo Parity
+name: E2E Benchmarking Suite
 
 # Expensive tests - NOT on every PR
 # Run weekly or manually to validate reproducibility
+# Note: Our Jain benchmark result is [[40,19],[10,17]] (66.28%)
+# Novo's actual target is [[40,17],[10,19]] (68.6%) - we're off by 2 antibodies
 on:
   # Weekly schedule (Sunday 2am UTC)
   schedule:
@@ -27,7 +29,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Full E2E Novo Parity Suite
+  # Full E2E Benchmark Suite
   # Runs ALL benchmarks including expensive Harvey (141k sequences)
   e2e-full:
     name: Full E2E Suite (Boughter, Jain, Shehata, Harvey)
@@ -111,7 +113,7 @@ jobs:
           const issue = await github.rest.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            title: '🚨 E2E Benchmark Failure - Novo Parity Lost',
+            title: '🚨 E2E Benchmark Failure - Regression Detected',
             body: `## E2E Benchmark Failed
 
             The weekly E2E benchmark suite has failed.
@@ -123,7 +125,7 @@ jobs:
 
             ### Investigation Required
 
-            - [ ] Check if Jain confusion matrix still matches [[40, 19], [10, 17]]
+            - [ ] Check if Jain confusion matrix still matches our expected [[40, 19], [10, 17]]
             - [ ] Verify Shehata accuracy ~58.8% with threshold=0.5495
             - [ ] Check Harvey performance (61.5-61.7% on 141k sequences)
             - [ ] Review test logs for errors
@@ -262,7 +264,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Validated Benchmarks" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Boughter (10-fold CV, 67-71% accuracy)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Jain ([[40,19],[10,17]], 66.28% accuracy)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Jain (our result: [[40,19],[10,17]], 66.28%)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Shehata (58.8% with PSR threshold)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Harvey (61.5-61.7% on 141k sequences)" >> $GITHUB_STEP_SUMMARY
         else

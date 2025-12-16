@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Jain Dataset Preprocessing: P5e-S2 Novo Nordisk Parity Method
-==============================================================
+Jain Dataset Preprocessing: P5e-S2 Method
+==========================================
 
-This script implements the EXACT method Novo Nordisk used to create their
-86-antibody test set from the Jain 2017 dataset.
+This script implements our preprocessing pipeline for the 86-antibody
+test set from the Jain 2017 dataset.
 
 Pipeline:
   137 antibodies (jain_with_private_elisa_FULL.csv)
@@ -15,7 +15,8 @@ Pipeline:
     ↓ Remove 30 by PSR primary, AC-SINS tiebreaker
   86 antibodies (59 spec / 27 nonspec) ✅ OUTPUT 2
 
-Result: Confusion matrix [[40, 19], [10, 17]] - EXACT MATCH (66.28% accuracy)
+Our result: [[40, 19], [10, 17]], 66.28% accuracy
+Novo target: [[40, 17], [10, 19]], 68.6% accuracy (off by 2 antibodies in label distribution)
 
 Method: P5e-S2 (PSR reclassification + PSR/AC-SINS removal)
 Date: 2025-11-04
@@ -344,8 +345,8 @@ def save_86_dataset(df: pd.DataFrame) -> Path:
     logger.info("     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
     logger.info("")
 
-    print("  📊 Confusion matrix: [[40, 19], [10, 17]]")
-    logger.info("  📈 Accuracy: 66.28%")
+    print("  📊 Our confusion matrix: [[40, 19], [10, 17]]")
+    logger.info("  📈 Our accuracy: 66.28% (Novo target: 68.6%)")
 
     return OUTPUT_86
 
@@ -389,9 +390,9 @@ def main() -> int:
     logger.info(f"    2. Parity (86 antibodies): {OUTPUT_86.relative_to(BASE_DIR)}")
 
     logger.info("\n  Method: P5e-S2 (PSR reclassification + PSR/AC-SINS removal)")
-    logger.info("  Result: EXACT MATCH to Novo Nordisk confusion matrix")
-    logger.info("  Confusion matrix: [[40, 19], [10, 17]]")
-    logger.info("  Accuracy: 66.28%")
+    logger.info("  Our confusion matrix: [[40, 19], [10, 17]]")
+    logger.info("  Our accuracy: 66.28%")
+    logger.info("  Novo target: [[40, 17], [10, 19]], 68.6% (off by 2 antibodies)")
 
     logger.info("\n  Next steps:")
     logger.info("    1. Run inference: preprocessing/jain/test_novo_parity.py")

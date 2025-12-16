@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Verify Novo Nordisk Parity on Jain Test Set (86 antibodies)
+Test Model on Jain 86-Antibody Benchmark
 
-This script demonstrates that our model achieves EXACT parity with Novo:
-- Confusion Matrix: [[40, 19], [10, 17]] (cell-for-cell match)
-- Accuracy: 66.28% (57/86) (exact match)
+This script tests our model against the Novo Nordisk benchmark:
+- Our result: [[40, 19], [10, 17]], 66.28% accuracy (57/86)
+- Novo target: [[40, 17], [10, 19]], 68.6% accuracy (59/86)
+- Difference: Off by 2 antibodies in label distribution
 
 Usage:
     # Test default model (esm1v + logreg)
@@ -30,10 +31,6 @@ import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-from antibody_training_esm.datasets.jain import (
-    NOVO_PARITY_EXPECTED_CORRECT,
-    NOVO_PARITY_TOTAL,
-)
 from preprocessing.logging_config import setup_logger
 from preprocessing.paths import CHECKPOINTS_DIR, JAIN_86_PARITY_CSV
 
@@ -155,31 +152,35 @@ def main() -> None:
     )
     logger.info("")
 
-    logger.info("NOVO Confusion Matrix (Expected):")
+    logger.info("NOVO Confusion Matrix (Target - Figure S14A):")
     logger.info("              Predicted")
     logger.info("              Specific(0) Non-spec(1)   Total")
-    logger.info("Actual Specific(0):     40         19        59")
-    logger.info("Actual Non-spec(1):     10         17        27")
+    logger.info("Actual Specific(0):     40         17        57")
+    logger.info("Actual Non-spec(1):     10         19        29")
     logger.info("                       ---        ---       ---")
     logger.info("Total:                  50         36        86")
     print()
 
-    # Check for exact match
-    novo_cm = np.array([[40, 19], [10, 17]])
-    novo_accuracy = NOVO_PARITY_EXPECTED_CORRECT / NOVO_PARITY_TOTAL
+    # Compare with Novo Nordisk target
+    # Novo's actual target: [[40, 17], [10, 19]], 59/86 = 68.6%
+    # Our result: [[40, 19], [10, 17]], 57/86 = 66.28%
+    novo_cm = np.array([[40, 17], [10, 19]])  # Novo's ACTUAL target (not our result)
+    novo_accuracy = 59 / 86  # 68.6% - Novo's actual accuracy
 
     if np.array_equal(cm, novo_cm):
         logger.info("✅✅ PERFECT MATCH! Confusion matrix is IDENTICAL to Novo!")
     else:
-        logger.warning("Confusion matrix differs from Novo:")
+        logger.info("Confusion matrix differs from Novo target:")
         diff = cm - novo_cm
-        logger.info(f"   Difference matrix: {diff}")
+        logger.info(f"   Our CM: [[{cm[0, 0]}, {cm[0, 1]}], [{cm[1, 0]}, {cm[1, 1]}]]")
+        logger.info("   Novo target: [[40, 17], [10, 19]]")
+        logger.info(f"   Difference: {diff}")
 
     if abs(accuracy - novo_accuracy) < 0.0001:
         logger.info("✅✅ PERFECT MATCH! Accuracy is IDENTICAL to Novo!")
     else:
-        logger.warning(
-            "Accuracy differs: Ours={accuracy:.4f}, Novo={novo_accuracy:.4f}"
+        logger.info(
+            f"Accuracy differs: Ours={accuracy:.4f} (66.28%), Novo target={novo_accuracy:.4f} (68.6%)"
         )
 
     print()
@@ -200,19 +201,19 @@ def main() -> None:
     logger.info("COMPARISON WITH NOVO NORDISK BENCHMARK")
     logger.info("=" * 80)
     logger.info("")
-    print("| Metric              | Ours       | Novo       | Match      |")
-    logger.info("|---------------------|------------|------------|------------|")
+    print("| Metric              | Ours       | Novo Target | Match      |")
+    logger.info("|---------------------|------------|-------------|------------|")
     logger.info(
-        f"| Accuracy            | {accuracy:.4f}     | 0.6628     | {'✅ YES' if abs(accuracy - 0.6628) < 0.0001 else '❌ NO'} |"
+        f"| Accuracy            | {accuracy:.4f}     | 0.6860      | {'✅ YES' if abs(accuracy - novo_accuracy) < 0.0001 else '❌ NO'} |"
     )
     logger.info(
-        f"| Confusion Matrix    | [[{cm[0, 0]},{cm[0, 1]}],[{cm[1, 0]},{cm[1, 1]}]] | [[40,19],[10,17]] | {'✅ YES' if np.array_equal(cm, novo_cm) else '❌ NO'} |"
+        f"| Confusion Matrix    | [[{cm[0, 0]},{cm[0, 1]}],[{cm[1, 0]},{cm[1, 1]}]] | [[40,17],[10,19]] | {'✅ YES' if np.array_equal(cm, novo_cm) else '❌ NO'} |"
     )
     print(
-        f"| Non-spec FN         | {cm[0, 1]:2d}         | 19         | {'✅ YES' if cm[0, 1] == 19 else '❌ NO'} |"
+        f"| FP (False Positives)| {cm[0, 1]:2d}         | 17          | {'✅ YES' if cm[0, 1] == 17 else '❌ NO'} |"
     )
     print(
-        f"| Non-spec TP         | {cm[1, 1]:2d}         | 17         | {'✅ YES' if cm[1, 1] == 17 else '❌ NO'} |"
+        f"| TP (True Positives) | {cm[1, 1]:2d}         | 19          | {'✅ YES' if cm[1, 1] == 19 else '❌ NO'} |"
     )
     print()
 
@@ -232,15 +233,18 @@ def main() -> None:
     logger.info("  89 specific / 27 non-specific")
     logger.info("  ↓ Remove 30 specific by PSR/AC-SINS sorting")
     logger.info("")
-    logger.info("jain_86_novo_parity.csv (86 antibodies) ✅ NOVO PARITY")
-    logger.info("  59 specific / 27 non-specific")
+    logger.info("jain_86_novo_parity.csv (86 antibodies) - OUR BENCHMARK SET")
+    logger.info("  59 specific / 27 non-specific (our split)")
+    logger.info("  Note: Novo uses 57 specific / 29 non-specific")
     print()
     print("=" * 80)
 
     if np.array_equal(cm, novo_cm) and abs(accuracy - novo_accuracy) < 0.0001:
         logger.info("🎉 SUCCESS! EXACT NOVO PARITY ACHIEVED! 🎉")
     else:
-        logger.warning("Parity not achieved - see differences above")
+        logger.info(
+            "Benchmark complete. Our result differs from Novo target (off by 2 antibodies)."
+        )
 
     print("=" * 80)
 

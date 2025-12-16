@@ -11,7 +11,8 @@ Dataset characteristics:
 - Full antibodies (VH + VL)
 - 137 FDA-approved/clinical-stage therapeutics
 - Multi-stage filtering with biophysical parameters
-- Novo Nordisk parity requirements (86 antibodies, [[40, 19], [10, 17]])
+- 86-antibody benchmark (our result: [[40, 19], [10, 17]], 66.28% accuracy)
+- Novo Nordisk target: [[40, 17], [10, 19]], 68.6% accuracy (off by 2 antibodies)
 - 16 fragment types (full antibody)
 
 Processing Pipeline:
@@ -21,7 +22,8 @@ Processing Pipeline:
     ↓ Reclassify 5 spec→nonspec (PSR>0.4, Tm, clinical)
   89 spec / 27 nonspec
     ↓ Remove 30 by PSR/AC-SINS ranking
-  86 antibodies (59 spec / 27 nonspec) - NOVO PARITY
+  86 antibodies (59 spec / 27 nonspec) - OUR BENCHMARK SET
+  Note: Novo Nordisk uses 57 spec / 29 nonspec label distribution
 
 Source:
 - data/test/jain/processed/jain_with_private_elisa_FULL.csv
@@ -52,13 +54,15 @@ JAIN_OUTPUT_DIR = settings.JAIN_OUTPUT_DIR
 JAIN_SD03_CSV = settings.JAIN_SD03_CSV
 
 
-# Novo Nordisk Parity Constants (from Sakhnini et al. 2025)
-# Paper benchmark: 86 antibodies with [[40, 19], [10, 17]] confusion matrix
-NOVO_PARITY_SPECIFIC_COUNT = 59  # Specific antibodies in parity set
-NOVO_PARITY_NONSPECIFIC_COUNT = 27  # Non-specific antibodies in parity set
-NOVO_PARITY_TOTAL = 86  # Total parity set size (59 + 27)
-NOVO_PARITY_EXPECTED_CORRECT = 57  # Expected correct predictions (40 + 17)
-NOVO_PARITY_ACCURACY = 66.28  # Expected accuracy (57/86 = 0.6628)
+# Jain 86-Antibody Benchmark Constants
+# NOTE: These are OUR values, not Novo Nordisk's target.
+# Our result: [[40, 19], [10, 17]], 57/86 = 66.28% accuracy
+# Novo target: [[40, 17], [10, 19]], 59/86 = 68.6% accuracy (off by 2 antibodies)
+NOVO_PARITY_SPECIFIC_COUNT = 59  # Specific antibodies in OUR benchmark set
+NOVO_PARITY_NONSPECIFIC_COUNT = 27  # Non-specific antibodies in OUR benchmark set
+NOVO_PARITY_TOTAL = 86  # Total benchmark set size (59 + 27)
+NOVO_PARITY_EXPECTED_CORRECT = 57  # OUR correct predictions (40 + 17)
+NOVO_PARITY_ACCURACY = 66.28  # OUR accuracy (57/86 = 0.6628)
 
 
 class JainDataset(AntibodyDataset):

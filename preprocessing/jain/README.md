@@ -102,7 +102,8 @@ label: 0.0 = specific, 1.0 = non-specific
 
 **Note:** Column is `vh_sequence` (not `sequence`) for JainDataset compatibility.
 
-**Result:** Confusion matrix [[40, 19], [10, 17]] - **EXACT MATCH** (66.28% accuracy)
+**Our result:** Confusion matrix [[40, 19], [10, 17]], 66.28% accuracy
+**Novo target:** Confusion matrix [[40, 17], [10, 19]], 68.6% accuracy (off by 2 antibodies)
 
 **Method:** P5e-S2 (PSR reclassification + PSR/AC-SINS removal)
 
@@ -169,7 +170,7 @@ python3 preprocessing/jain/step3_extract_fragments.py
 - **Source:** 137 antibodies with private ELISA data
 - **After ELISA filtering:** 116 antibodies
 - **Final benchmark:** 86 antibodies (59 specific / 27 non-specific)
-- **Novo parity:** 66.28% accuracy (EXACT match)
+- **Our accuracy:** 66.28% (Novo target: 68.6%, off by 2 antibodies)
 
 ---
 

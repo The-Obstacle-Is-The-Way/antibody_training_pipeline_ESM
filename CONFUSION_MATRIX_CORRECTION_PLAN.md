@@ -92,6 +92,7 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 
 | File | Lines | What's Wrong | Fix |
 |------|-------|--------------|-----|
+| `preprocessing/README.md` | 43-47 | Jain labeled "Novo Parity" (59/27 split) | Clarify this is our current split; Novo is 57/29 |
 | `preprocessing/jain/step2_preprocess_p5e_s2.py` | 18 | "EXACT MATCH" claim | Remove false claim |
 | `preprocessing/jain/step2_preprocess_p5e_s2.py` | 347, 393 | Prints wrong Novo matrix | Update to correct Novo target |
 | `preprocessing/jain/test_novo_parity.py` | 6-7 | Claims exact match | Update to "approximate" |
@@ -120,6 +121,7 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 |------|-------|-------|
 | `docs/README.md` | 23 | "EXACT MATCH" claim |
 | `docs/overview.md` | 29, 108, 201, 202, 215 | Multiple wrong claims |
+| `docs/index.md` | 118 | Jain row claims "Novo Nordisk exact parity benchmark" |
 | `docs/research/novo-parity.md` | 4, 12, 14, 78, 114, 126, 187, 188, 302 | **PRIMARY PARITY DOC** - many fixes needed |
 | `docs/research/methodology.md` | 18, 171, 173, 320, 324 | Wrong Novo numbers |
 | `docs/research/assay-thresholds.md` | 30, 136, 170, 171, 230 | Mixed - some correct, some wrong |
@@ -150,6 +152,8 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 | `docs/user-guide/getting-started.md` | 86-87, 128 |
 | `docs/user-guide/training.md` | 113, 293-294, 310 |
 | `docs/user-guide/testing.md` | 270, 296, 300 |
+| `docs/user-guide/inference.md` | 262 |
+| `docs/user-guide/preprocessing.md` | 219, 516-518 |
 | `docs/developer-guide/ci-cd.md` | 290-291 |
 
 **Priority: MEDIUM**
@@ -162,6 +166,7 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 |------|-------|
 | `data/test/jain/README.md` | 44, 59, 72, 113 |
 | `data/test/jain/canonical/README.md` | 13, 35, 87, 100, 109, 134 |
+| `data/test/jain/fragments/README.md` | 60-70 |
 | `data/train/boughter/README.md` | 33, 130 |
 
 **Priority: MEDIUM**
@@ -172,6 +177,8 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 
 | File | Lines | Notes |
 |------|-------|-------|
+| `README.md` | 372 | Jain described as "Novo Nordisk exact parity validation" |
+| `mkdocs.yml` | 143, 148 | Docs nav labels: "Jain (Novo Parity)" / "Novo Parity Analysis" |
 | `CHANGELOG.md` | 812 | Historical - just note wrong |
 | `CITATIONS.md` | ~18, ~122 | References |
 | `ROADMAP.md` | ~21 | Achievement claim |
@@ -256,7 +263,7 @@ These files contain actual measured values, NOT documentation claims:
 - `experiments/**/*.yaml` - Benchmark results (actual measurements)
 - Any file containing actual model outputs
 
-Only modify **documentation** (*.md), **source code** (*.py), and **CI config** (*.yml in .github/).
+Only modify **documentation** (*.md), **source code** (*.py), **docs config** (`mkdocs.yml`), and **CI config** (*.yml/*.yaml in .github/).
 
 ---
 
@@ -291,9 +298,14 @@ NOTE:   57/86 is OUR correct prediction count
 
 ### Pattern 5: Claims to Remove/Modify
 ```
-REMOVE: "EXACT MATCH" / "exact match"
-REMOVE: "Cell-for-cell identical"
-REMOVE: "EXACT Novo parity" / "exact parity"
+REMOVE/REPHRASE (Jain Novo-parity claims only):
+- "EXACT MATCH" / "exact match"
+- "Cell-for-cell identical"
+- "EXACT Novo parity" / "exact parity"
+
+KEEP when "EXACT MATCH" refers to literal validation (not Jain parity), e.g.:
+- Dataset size/count verification (e.g., "398 antibodies" exact match)
+- Test run counts (pytest results)
 REPLACE WITH: "close to Novo parity (off by 2 antibodies in label distribution)"
              or "approximate parity"
 ```
@@ -307,6 +319,7 @@ REPLACE WITH: "close to Novo parity (off by 2 antibodies in label distribution)"
 - [ ] `src/antibody_training_esm/models/artifact.py`
 
 ### Phase 2: Critical Preprocessing
+- [ ] `preprocessing/README.md`
 - [ ] `preprocessing/jain/step2_preprocess_p5e_s2.py`
 - [ ] `preprocessing/jain/test_novo_parity.py`
 - [ ] `preprocessing/jain/README.md`
@@ -321,6 +334,7 @@ REPLACE WITH: "close to Novo parity (off by 2 antibodies in label distribution)"
 - [ ] `docs/research/assay-thresholds.md` (careful - some lines correct)
 - [ ] `docs/overview.md`
 - [ ] `docs/README.md`
+- [ ] `docs/index.md`
 
 ### Phase 5: Jain Dataset Docs
 - [ ] `docs/datasets/jain/complete_guide.md`
@@ -336,9 +350,12 @@ REPLACE WITH: "close to Novo parity (off by 2 antibodies in label distribution)"
 ### Phase 7: Data READMEs
 - [ ] `data/test/jain/README.md`
 - [ ] `data/test/jain/canonical/README.md`
+- [ ] `data/test/jain/fragments/README.md`
 - [ ] `data/train/boughter/README.md`
 
 ### Phase 8: Root Documentation
+- [ ] `README.md`
+- [ ] `mkdocs.yml`
 - [ ] `CHANGELOG.md`
 - [ ] `CITATIONS.md`
 - [ ] `ROADMAP.md`
@@ -373,14 +390,15 @@ After all fixes, run these commands from repo root:
 # Should return ZERO matches (our matrix claimed as Novo's)
 grep -rE "\[\[40,?\s*19\],?\s*\[10,?\s*17\]\].*[Nn]ovo|[Nn]ovo.*\[\[40,?\s*19\],?\s*\[10,?\s*17\]\]" \
   --include="*.md" --include="*.py" --include="*.yml" --include="*.yaml" \
-  . 2>/dev/null | grep -v "^Binary"
+  . 2>/dev/null
 ```
 
 ### 2. No "EXACT MATCH" claims remain
 ```bash
-# Should return ZERO matches (except possibly CHANGELOG.md historical entry)
-grep -rE "EXACT MATCH|exact match|Cell-for-cell identical" \
-  --include="*.md" --include="*.py" --include="*.yml" \
+# Should return ZERO matches for "exact match/parity" language tied to Jain Novo parity
+grep -rE "(EXACT MATCH|exact match|Cell-for-cell identical|exact parity).*(Jain|confusion matrix|\[\[40|66\.28)|\
+(Jain|confusion matrix|\[\[40|66\.28).*(EXACT MATCH|exact match|Cell-for-cell identical|exact parity)" \
+  --include="*.md" --include="*.py" --include="*.yml" --include="*.yaml" \
   . 2>/dev/null | grep -v CHANGELOG.md | grep -v CONFUSION_MATRIX_CORRECTION_PLAN
 ```
 
