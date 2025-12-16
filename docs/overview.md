@@ -99,13 +99,13 @@ This enables **ablation studies** to determine which antibody regions drive non-
 
 Different experimental assays require different decision thresholds:
 - **ELISA assays:** Threshold = 0.5 (Boughter, Jain datasets)
-- **PSR assays:** Threshold = 0.5495 (Harvey, Shehata datasets - Novo Nordisk exact parity)
+- **PSR assays:** Threshold = 0.5495 (Harvey, Shehata datasets - near-parity with Novo)
 
 The classifier automatically applies the correct threshold based on assay type.
 
 ### 4. **Reproducibility & Validation**
 
-- **Novo Parity:** Reproduces Novo Nordisk's exact confusion matrix [[40, 19], [10, 17]] on Jain dataset
+- **Jain Benchmark:** 66.28% accuracy on Jain (Novo target: 68.6%, off by 2 antibodies)
 - **10-fold CV:** Stratified cross-validation on training set (67-71% accuracy)
 - **Embedding Caching:** SHA-256-keyed cache prevents expensive re-computation
 - **Config-Driven:** YAML configs for reproducible experiments

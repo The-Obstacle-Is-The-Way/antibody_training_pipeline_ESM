@@ -45,7 +45,7 @@ We had 4 different test files (137 → 94 → 91 → 86 antibodies) depending on
 **Key Findings:**
 - ✅ Jain processing is **100% complete and correct**
 - ✅ Decision matrix was reverse-engineered from Jain 2017 paper
-- ✅ Novo parity achieved (66.28% accuracy, [[40,19],[10,17]] confusion matrix)
+- ✅ Close to Novo benchmark (66.28% vs 68.6%, CM [[40,19],[10,17]] vs Novo [[40,17],[10,19]])
 - ✅ 118 position issue was **Boughter**, not Jain
 - ✅ All test files validated and documented
 

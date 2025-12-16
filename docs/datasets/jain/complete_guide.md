@@ -89,14 +89,14 @@ All located in `data/test/jain/`:
 | `VH_only_jain_test_QC_REMOVED.csv` | 91 | ❌ REMOVED (obsolete) |
 | `VH_only_jain_test_PARITY_86.csv` | 86 | ⚠️ DEPRECATED (use VH_only_jain_86_p5e_s2.csv instead) |
 
-### Novo Parity Datasets (86 antibodies - THE GOAL)
+### Jain 86-Antibody Benchmark Datasets
 
-| File | Method | Result | Use For |
+| File | Method | Our Result | Use For |
 |------|--------|--------|---------|
 | ~~`VH_only_jain_test_PARITY_86.csv`~~ | ⚠️ DEPRECATED (wrong column name) | [[40,19],[10,17]] | Use VH_only_jain_86_p5e_s2.csv |
-| `VH_only_jain_86_p5e_s2.csv` | P5e-S2 canonical (with `vh_sequence` column) | [[40,19],[10,17]] ✅ | **RECOMMENDED** for Novo parity |
-| `VH_only_jain.csv` (fragments/) | Full 137-antibody dataset | Different results (137 rows) | General testing, NOT parity |
-| `jain_86_novo_parity.csv` | P5e-S2 (full metadata) | [[40,19],[10,17]] ✅* | Full biophysical data |
+| `VH_only_jain_86_p5e_s2.csv` | P5e-S2 canonical (with `vh_sequence` column) | [[40,19],[10,17]] | **RECOMMENDED** for benchmarking |
+| `VH_only_jain.csv` (fragments/) | Full 137-antibody dataset | Different results (137 rows) | General testing |
+| `jain_86_novo_parity.csv` | P5e-S2 (full metadata) | [[40,19],[10,17]]* | Full biophysical data |
 | `VH_only_jain_86_p5e_s4.csv` | P5e-S4 (Tm-based) | [[39,20],[10,17]] ❌ | Research only |
 | `jain_86_elisa_1.3.csv` | ELISA threshold exp | Experimental | Threshold testing |
 
