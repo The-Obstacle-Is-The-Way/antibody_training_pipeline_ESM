@@ -12,7 +12,7 @@ Dataset characteristics:
 - 137 FDA-approved/clinical-stage therapeutics
 - Multi-stage filtering with biophysical parameters
 - 86-antibody benchmark (our result: [[40, 19], [10, 17]], 66.28% accuracy)
-- Novo Nordisk target: [[40, 17], [10, 19]], 68.6% accuracy (off by 2 antibodies)
+- Novo Nordisk target (Figure S14A): [[40, 17], [10, 19]], 68.6% accuracy (off by 2 antibodies)
 - 16 fragment types (full antibody)
 
 Processing Pipeline:
@@ -54,15 +54,21 @@ JAIN_OUTPUT_DIR = settings.JAIN_OUTPUT_DIR
 JAIN_SD03_CSV = settings.JAIN_SD03_CSV
 
 
-# Jain 86-Antibody Benchmark Constants
-# NOTE: These are OUR values, not Novo Nordisk's target.
+# Jain 86-antibody benchmark constants (our current artifact).
 # Our result: [[40, 19], [10, 17]], 57/86 = 66.28% accuracy
-# Novo target: [[40, 17], [10, 19]], 59/86 = 68.6% accuracy (off by 2 antibodies)
-NOVO_PARITY_SPECIFIC_COUNT = 59  # Specific antibodies in OUR benchmark set
-NOVO_PARITY_NONSPECIFIC_COUNT = 27  # Non-specific antibodies in OUR benchmark set
-NOVO_PARITY_TOTAL = 86  # Total benchmark set size (59 + 27)
-NOVO_PARITY_EXPECTED_CORRECT = 57  # OUR correct predictions (40 + 17)
-NOVO_PARITY_ACCURACY = 66.28  # OUR accuracy (57/86 = 0.6628)
+# Novo target (Figure S14A): [[40, 17], [10, 19]], 59/86 = 68.6% accuracy
+JAIN_86_BENCHMARK_SPECIFIC_COUNT = 59
+JAIN_86_BENCHMARK_NONSPECIFIC_COUNT = 27
+JAIN_86_BENCHMARK_TOTAL = 86
+JAIN_86_BENCHMARK_EXPECTED_CORRECT = 57
+JAIN_86_BENCHMARK_ACCURACY = 66.28  # 57/86 = 0.6628
+
+# Backwards-compatible aliases (kept for older docs/tests that import these names).
+NOVO_PARITY_SPECIFIC_COUNT = JAIN_86_BENCHMARK_SPECIFIC_COUNT
+NOVO_PARITY_NONSPECIFIC_COUNT = JAIN_86_BENCHMARK_NONSPECIFIC_COUNT
+NOVO_PARITY_TOTAL = JAIN_86_BENCHMARK_TOTAL
+NOVO_PARITY_EXPECTED_CORRECT = JAIN_86_BENCHMARK_EXPECTED_CORRECT
+NOVO_PARITY_ACCURACY = JAIN_86_BENCHMARK_ACCURACY
 
 
 class JainDataset(AntibodyDataset):
@@ -73,10 +79,11 @@ class JainDataset(AntibodyDataset):
     It does NOT run the preprocessing pipeline - use preprocessing/jain/step2_preprocess_p5e_s2.py for that.
 
     The Jain dataset contains FDA-approved and clinical-stage therapeutic antibodies
-    with complex multi-stage filtering to achieve Novo Nordisk parity.
+    with complex multi-stage filtering used to construct our 86-antibody benchmark
+    set (close to, but not an exact match of, the Novo Nordisk Figure S14A target).
     """
 
-    # P5e-S2 Method Constants (Novo Nordisk parity)
+    # P5e-S2 Method Constants (parity attempt vs Novo benchmark)
     PSR_THRESHOLD = 0.4
 
     # Reclassification tiers
@@ -131,7 +138,7 @@ class JainDataset(AntibodyDataset):
             stage: Which processing stage to load:
                    "full" - 137 antibodies (raw)
                    "ssot" - 116 antibodies (ELISA-filtered)
-                   "parity" - 86 antibodies (Novo parity)
+                   "parity" - 86-antibody benchmark set (our current artifact; not exact Novo)
 
         Returns:
             DataFrame with columns: id, VH_sequence, VL_sequence, label, elisa_flags, psr, ac_sins, hic, fab_tm
@@ -355,7 +362,7 @@ class JainDataset(AntibodyDataset):
         )
 
         # Keep bottom 59 specific + all 27 non-specific
-        specific_keep = specific_sorted.tail(NOVO_PARITY_SPECIFIC_COUNT)
+        specific_keep = specific_sorted.tail(JAIN_86_BENCHMARK_SPECIFIC_COUNT)
         df_86 = pd.concat([specific_keep, nonspecific], ignore_index=True)
 
         # Sort by id for consistency
@@ -367,10 +374,10 @@ class JainDataset(AntibodyDataset):
         self.logger.info("\nRemoved 30 specific by PSR/AC-SINS:")
         self.logger.info(f"  Final: {len(df_86)} antibodies")
         self.logger.info(
-            f"  Specific: {spec_count} (expected {NOVO_PARITY_SPECIFIC_COUNT})"
+            f"  Specific: {spec_count} (expected {JAIN_86_BENCHMARK_SPECIFIC_COUNT})"
         )
         self.logger.info(
-            f"  Non-specific: {nonspec_count} (expected {NOVO_PARITY_NONSPECIFIC_COUNT})"
+            f"  Non-specific: {nonspec_count} (expected {JAIN_86_BENCHMARK_NONSPECIFIC_COUNT})"
         )
 
         return df_86
@@ -400,7 +407,7 @@ def load_jain_data(
 
     Example:
         >>> from antibody_training_esm.datasets.jain import load_jain_data
-        >>> df = load_jain_data(stage="parity")  # 86 antibodies (Novo parity)
+        >>> df = load_jain_data(stage="parity")  # 86-antibody benchmark set
         >>> print(f"Loaded {len(df)} sequences")
     """
     dataset = JainDataset()

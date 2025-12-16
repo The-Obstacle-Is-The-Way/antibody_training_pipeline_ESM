@@ -44,6 +44,7 @@ Documentation throughout the codebase claims "EXACT MATCH" to Novo Nordisk's con
 - "EXACT MATCH" → "close match (off by 2 antibodies)"
 - "Cell-for-cell identical" → REMOVE
 - "exact parity" → "approximate parity"
+- "Novo parity benchmark/validation" (for Jain) → "Jain 86-antibody benchmark (close to Novo target; off by 2 labels)"
 
 ### DO NOT CHANGE (Our actual results):
 - Files reporting OUR result as `[[40, 19], [10, 17]]` (that's accurate)
@@ -82,6 +83,8 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 | `src/antibody_training_esm/datasets/jain.py` | 14 | Claims Novo is `[[40, 19], [10, 17]]` | Change to `[[40, 17], [10, 19]]` + note it's target |
 | `src/antibody_training_esm/datasets/jain.py` | 56 | Comment claims Novo benchmark | Update comment |
 | `src/antibody_training_esm/datasets/jain.py` | 57-61 | Constants claim Novo's values | These are OUR values - rename/clarify |
+| `src/antibody_training_esm/datasets/README.md` | 89 | Jain described as "(Novo parity)" | Clarify as 137→116→86 benchmark set (close to Novo target; off by 2 labels) |
+| `tests/unit/datasets/test_jain.py` | 566 | Test docstring says "Novo Nordisk parity requirements" | Clarify as our current benchmark artifact vs Novo target |
 | `src/antibody_training_esm/models/artifact.py` | 285, 290 | Example uses our values as "expected" | Clarify these are OUR results |
 
 **Priority: HIGH**
@@ -93,12 +96,13 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 | File | Lines | What's Wrong | Fix |
 |------|-------|--------------|-----|
 | `preprocessing/README.md` | 43-47 | Jain labeled "Novo Parity" (59/27 split) | Clarify this is our current split; Novo is 57/29 |
+| `preprocessing/paths.py` | 35 | Comment labels Jain as "Novo parity benchmark" | Clarify as Jain benchmark set for Novo comparison |
 | `preprocessing/jain/step2_preprocess_p5e_s2.py` | 18 | "EXACT MATCH" claim | Remove false claim |
 | `preprocessing/jain/step2_preprocess_p5e_s2.py` | 347, 393 | Prints wrong Novo matrix | Update to correct Novo target |
 | `preprocessing/jain/test_novo_parity.py` | 6-7 | Claims exact match | Update to "approximate" |
 | `preprocessing/jain/test_novo_parity.py` | 168 | `novo_cm = [[40, 19], [10, 17]]` | Change to correct Novo: `[[40, 17], [10, 19]]` |
 | `preprocessing/jain/test_novo_parity.py` | 206, 209 | Compares to wrong target | Update comparison |
-| `preprocessing/jain/README.md` | 105, 172 | "EXACT MATCH" claims | Update |
+| `preprocessing/jain/README.md` | 4, 105, 172 | "Novo parity"/"EXACT" language | Clarify as benchmark set (close match; off by 2 labels) |
 
 **Priority: HIGH**
 
@@ -153,8 +157,10 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 | `docs/user-guide/training.md` | 113, 293-294, 310 |
 | `docs/user-guide/testing.md` | 270, 296, 300 |
 | `docs/user-guide/inference.md` | 262 |
-| `docs/user-guide/preprocessing.md` | 219, 516-518 |
-| `docs/developer-guide/ci-cd.md` | 290-291 |
+| `docs/user-guide/preprocessing.md` | 69, 219, 516-518 |
+| `docs/developer-guide/ci-cd.md` | 39, 273, 290-291, 657 |
+| `docs/developer-guide/architecture.md` | 101 |
+| `docs/developer-guide/development-workflow.md` | 199 |
 
 **Priority: MEDIUM**
 
@@ -164,7 +170,7 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 
 | File | Lines |
 |------|-------|
-| `data/test/jain/README.md` | 44, 59, 72, 113 |
+| `data/test/jain/README.md` | 13, 24, 44, 59, 72, 107, 113 |
 | `data/test/jain/canonical/README.md` | 13, 35, 87, 100, 109, 134 |
 | `data/test/jain/fragments/README.md` | 60-70 |
 | `data/train/boughter/README.md` | 33, 130 |
@@ -179,9 +185,10 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 |------|-------|-------|
 | `README.md` | 372 | Jain described as "Novo Nordisk exact parity validation" |
 | `mkdocs.yml` | 143, 148 | Docs nav labels: "Jain (Novo Parity)" / "Novo Parity Analysis" |
-| `CHANGELOG.md` | 812 | Historical - just note wrong |
-| `CITATIONS.md` | ~18, ~122 | References |
-| `ROADMAP.md` | ~21 | Achievement claim |
+| `CHANGELOG.md` | 99, 812 | "exact parity" claims |
+| `CITATIONS.md` | 18, 32, 40, 122, 139 | "Novo parity" + achievement claims |
+| `ROADMAP.md` | 19-23, 35 | "Exact parity" + "Novo parity benchmark" claims |
+| `CLAUDE.md` | 111, 181 | Jain described as "Novo parity" |
 
 **Priority: MEDIUM**
 
@@ -194,6 +201,7 @@ This is a data artifact issue, not a documentation issue. Note for future: this 
 | `docs/implementation/CODE_QUALITY_FIX_PLAN_2025-11-22.md` | 155, 160, 185 |
 | `docs/implementation/PYDANTIC_PHASE_4_ARTIFACTS_METRICS.md` | 283, 288 |
 | `docs/implementation/VALIDATION_PLAN.md` | 226, 242, 320, 410, 435-437, 477, 507 |
+| `docs/implementation/JAIN_NAN_LABELS_INVESTIGATION.md` | 8, 15 |
 
 **Priority: LOW**
 
@@ -310,16 +318,30 @@ REPLACE WITH: "close to Novo parity (off by 2 antibodies in label distribution)"
              or "approximate parity"
 ```
 
+### Pattern 6: Jain "Novo parity" naming
+```
+REMOVE/REPHRASE (Jain-only wording that implies parity achieved):
+- "Novo parity benchmark"
+- "Novo Nordisk parity validation"
+- "Novo parity achieved/confirmed"
+
+REPLACE WITH:
+- "Jain 86-antibody benchmark (close to Novo target; off by 2 labels)"
+```
+
 ---
 
 ## EXECUTION PLAN
 
 ### Phase 1: Critical Source Code
 - [ ] `src/antibody_training_esm/datasets/jain.py`
+- [ ] `src/antibody_training_esm/datasets/README.md`
+- [ ] `tests/unit/datasets/test_jain.py`
 - [ ] `src/antibody_training_esm/models/artifact.py`
 
 ### Phase 2: Critical Preprocessing
 - [ ] `preprocessing/README.md`
+- [ ] `preprocessing/paths.py`
 - [ ] `preprocessing/jain/step2_preprocess_p5e_s2.py`
 - [ ] `preprocessing/jain/test_novo_parity.py`
 - [ ] `preprocessing/jain/README.md`
@@ -345,7 +367,7 @@ REPLACE WITH: "close to Novo parity (off by 2 antibodies in label distribution)"
 
 ### Phase 6: User/Developer Guides
 - [ ] `docs/user-guide/*`
-- [ ] `docs/developer-guide/ci-cd.md`
+- [ ] `docs/developer-guide/*`
 
 ### Phase 7: Data READMEs
 - [ ] `data/test/jain/README.md`

@@ -27,7 +27,7 @@ RETIRED METHODOLOGY NOTICE:
 ---------------------------
 The previous 94→86 methodology (QC_REMOVALS = 8 antibodies) has been RETIRED.
 That approach used VH length outliers + biology/clinical removals and did NOT
-match Novo Nordisk's exact method.
+match the Novo Nordisk Figure S14A benchmark target.
 
 For historical reference, see: preprocessing/process_jain_OLD_94to86.py.bak
 """
@@ -72,7 +72,9 @@ ALL_RECLASSIFIED = TIER_A_PSR + [TIER_B_EXTREME_TM, TIER_C_CLINICAL]
 def load_data() -> pd.DataFrame:
     """Load 137-antibody FULL dataset with all metadata"""
     logger.info("=" * 80)
-    logger.info("Jain Dataset Preprocessing: P5e-S2 Novo Nordisk Parity Method")
+    logger.info(
+        "Jain Dataset Preprocessing: P5e-S2 Benchmark Construction (Parity Attempt)"
+    )
     logger.info("=" * 80)
     logger.info("\nStep 0: Loading data...")
 
@@ -94,8 +96,8 @@ def step1_remove_elisa_1to3(df: pd.DataFrame) -> pd.DataFrame:
     Step 1: Remove ELISA 1-3 (mild aggregators) → 116 antibodies (SSOT)
 
     ELISA flags 1-3 indicate mild to moderate aggregation in ELISA assays.
-    Novo Nordisk filtered these out as they don't represent strong enough
-    polyreactivity signal for training.
+    In our reverse-engineered pipeline, we filter these out to construct the
+    116-antibody SSOT stage used in downstream selection steps.
     """
     logger.info("\n" + "=" * 80)
     logger.info("STEP 1: Remove ELISA 1-3 (mild aggregators)")
@@ -321,7 +323,7 @@ def step4_remove_30_by_psr_acsins(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def save_86_dataset(df: pd.DataFrame) -> Path:
-    """Save final 86-antibody Novo parity dataset"""
+    """Save final 86-antibody benchmark dataset (our current artifact)."""
     logger.info("\n" + "=" * 80)
     logger.info("SAVING OUTPUTS")
     print("=" * 80)
@@ -396,7 +398,7 @@ def main() -> int:
 
     logger.info("\n  Next steps:")
     logger.info("    1. Run inference: preprocessing/jain/test_novo_parity.py")
-    logger.info("    2. Verify confusion matrix matches Novo exactly")
+    logger.info("    2. Compare confusion matrix to Novo target (Figure S14A)")
     logger.info("    3. Document any findings")
 
     print("\n" + "=" * 80)

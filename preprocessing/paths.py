@@ -32,7 +32,7 @@ BOUGHTER_TRAINING_SUBSET = BOUGHTER_CANONICAL_DIR / "VH_only_boughter_training.c
 BOUGHTER_CANONICAL_CSV = settings.BOUGHTER_CANONICAL_CSV
 
 # ============================================================================
-# Jain (test set - Novo parity benchmark)
+# Jain (test set - benchmark for Novo comparison)
 # ============================================================================
 JAIN_DIR = settings.JAIN_DIR
 JAIN_RAW_DIR = settings.JAIN_RAW_DIR

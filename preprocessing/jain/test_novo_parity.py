@@ -39,7 +39,7 @@ logger = setup_logger(__name__)
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Verify Novo Nordisk parity on the Jain 86-antibody benchmark.",
+        description="Verify Jain 86-antibody benchmark performance vs Novo target (Figure S14A).",
     )
     parser.add_argument(
         "--model",
@@ -99,7 +99,7 @@ def main() -> None:
     logger.info(f"   - Classifier: {classifier.classifier.__class__.__name__}")
     logger.info("")
 
-    # Load Novo parity test set (86 antibodies)
+    # Load Jain 86-antibody benchmark set
     logger.info(f"Loading test set: {JAIN_86_PARITY_CSV}")
     df = pd.read_csv(JAIN_86_PARITY_CSV)
     logger.info(f"Test set loaded: {len(df)} antibodies")

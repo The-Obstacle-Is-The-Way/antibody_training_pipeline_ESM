@@ -86,7 +86,7 @@ print(f"Loaded {len(df)} sequences")
 - **Fragments**: `data/test/jain/fragments/`
 - **Preprocessing**: `preprocessing/jain/step2_preprocess_p5e_s2.py`
 - **Characteristics**:
-  - 137 → 116 → 86 antibodies (Novo parity)
+  - 137 → 116 → 86 antibodies (benchmark set; close to Novo target, off by 2 labels)
   - PSR/AC-SINS filtering
   - 16 fragment types (VH + VL)
 

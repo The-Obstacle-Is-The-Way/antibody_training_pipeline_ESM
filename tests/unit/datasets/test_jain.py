@@ -563,7 +563,7 @@ def test_full_jain_dataset_workflow(jain_sample_csv: Path, tmp_path: Path) -> No
 
 @pytest.mark.unit
 def test_jain_constants_match_novo_parity() -> None:
-    """Verify Jain constants match Novo Nordisk parity requirements"""
+    """Verify Jain constants match the P5e-S2 benchmark configuration."""
     # Arrange & Act
     dataset = JainDataset()
 
