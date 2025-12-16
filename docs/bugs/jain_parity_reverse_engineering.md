@@ -1,10 +1,31 @@
 # Jain Parity Reverse Engineering — Research Spec
 
-**Status:** OPEN (Research Required)
+**Status:** ✅ SOLVED (2025-12-16)
 **Priority:** P1 (High) — Core benchmark produces incorrect results
 **GitHub Issue:** [#33](https://github.com/Clarity-Digital-Twin/antibody_training_pipeline_ESM/issues/33)
 **Created:** 2025-12-15
 **Last Updated:** 2025-12-16
+
+---
+
+## ✅ SOLUTION FOUND
+
+> **See full findings:** `experiments/benchmarks/novo_parity/results/FINDINGS.md`
+
+**3 matching pairs identified** that produce exact Novo parity:
+
+| Pair | Confusion Matrix | Accuracy |
+|------|------------------|----------|
+| lebrikizumab + galiximab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
+| lebrikizumab + otelixizumab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
+| galiximab + otelixizumab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
+
+**Why these work:** All three antibodies are:
+1. Predicted as NON-SPECIFIC by the model (P > 0.5)
+2. Have non-ELISA developability flags (chromatography or stability)
+3. Meet the "blind selection" criterion — would be flagged regardless of outcome
+
+**Recommended:** Reclassify lebrikizumab + galiximab (both chromatography-flagged, consistent criterion)
 
 ---
 

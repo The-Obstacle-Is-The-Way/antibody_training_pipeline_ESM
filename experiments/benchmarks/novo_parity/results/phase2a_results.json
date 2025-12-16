@@ -1,0 +1,37 @@
+{
+  "candidates": [
+    "bapineuzumab",
+    "nimotuzumab"
+  ],
+  "confusion_matrix_ours": [
+    [
+      38,
+      19
+    ],
+    [
+      12,
+      17
+    ]
+  ],
+  "confusion_matrix_novo": [
+    [
+      40,
+      17
+    ],
+    [
+      10,
+      19
+    ]
+  ],
+  "accuracy_ours": 0.6395348837209303,
+  "accuracy_novo": 0.686046511627907,
+  "match": false,
+  "original_split": {
+    "specific": 59,
+    "non_specific": 27
+  },
+  "modified_split": {
+    "specific": 57,
+    "non_specific": 29
+  }
+}

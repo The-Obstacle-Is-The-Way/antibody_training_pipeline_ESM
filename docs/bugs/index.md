@@ -38,10 +38,11 @@ This doc captures potential bugs and high-risk issues found during a codebase au
 
 ## Research — Active Investigations
 
-### R1 — Jain Parity Reverse Engineering (59/27 vs Novo's 57/29)
+### R1 — Jain Parity Reverse Engineering (59/27 vs Novo's 57/29) — ✅ SOLVED
 
 > **Research Spec:** [jain_parity_reverse_engineering.md](./jain_parity_reverse_engineering.md)
 > **Data Inventory:** [jain_parity_data_inventory.md](./jain_parity_data_inventory.md)
+> **Findings:** `experiments/benchmarks/novo_parity/results/FINDINGS.md`
 
 #### Problem
 Our P5e-S2 preprocessing produces 59 specific / 27 non-specific, but Novo's Figure S14A shows 57 specific / 29 non-specific. We are off by 2 antibodies.
@@ -94,10 +95,18 @@ TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 
 - [x] Create data inventory with all 89 specific antibodies and biophysical data
 - [x] Validate narrowed strategy (external agent analysis + first-principles verification)
 - [x] Identify prime candidates: bapineuzumab (self-interaction), nimotuzumab (7.8σ HIC)
-- [ ] Execute Phase 2A: Test prime candidates
-- [ ] Execute Phase 2B: Test all 28 flagged pairs (if 2A fails)
-- [ ] Execute Phase 3: Biological validation
+- [x] Execute Phase 2A: Test prime candidates — ❌ No match (both predicted as specific)
+- [x] Execute Phase 2B: Test all 28 flagged pairs — ✅ **3 MATCHING PAIRS FOUND**
+- [x] Execute Phase 3: Biological validation — ✅ All candidates have developability flags
 - [ ] Update preprocessing pipeline with correct methodology
+
+#### Solution (2025-12-16)
+**3 matching pairs produce exact Novo parity:**
+1. lebrikizumab + galiximab (recommended)
+2. lebrikizumab + otelixizumab
+3. galiximab + otelixizumab
+
+All three antibodies have chromatography/stability flags AND are predicted as non-specific by the model.
 
 ---
 
