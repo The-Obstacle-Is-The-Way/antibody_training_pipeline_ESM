@@ -110,7 +110,7 @@ uv run antibody-test \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
-**Expected Accuracy:** ~66.28% (Novo Nordisk exact parity)
+**Expected Accuracy:** ~66.28% (close to Novo's 68.6% - off by 2 antibodies)
 
 ---
 
@@ -307,7 +307,7 @@ Actual  Neg     [40     19]   ← True Neg: 40, False Pos: 19
 
 - CV accuracy (71%) vs Test accuracy (66%) - **Expected!**
 - Cross-dataset generalization is challenging (different assays, antibody sources)
-- Novo Nordisk reported 66.28% - we achieve **exact parity**
+- Novo Nordisk reported 68.6% - we achieve **66.28%** (close, off by 2 antibodies)
 
 ---
 

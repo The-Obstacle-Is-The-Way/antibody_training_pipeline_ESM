@@ -809,8 +809,8 @@ First public release of the antibody non-specificity prediction pipeline impleme
 
 All preprocessing scripts, model training, and evaluation procedures are fully reproducible and validated against the Sakhnini et al. (2025) paper benchmarks:
 
-- Jain confusion matrix: [[40, 19], [10, 17]] (66.28% accuracy)
-- Shehata PSR threshold: 0.5495 (Novo Nordisk exact parity)
+- Jain confusion matrix: [[40, 19], [10, 17]] (66.28% vs Novo's 68.6% - close match)
+- Shehata PSR threshold: 0.5495 (Novo Nordisk's PSR threshold - near-parity)
 - Harvey nanobody accuracy: 61.5-61.7% on 141k sequences
 - Boughter 10-fold CV: 67-71% accuracy
 

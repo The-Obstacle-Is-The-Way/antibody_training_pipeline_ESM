@@ -134,7 +134,7 @@ class ClassifierStrategy(Protocol):
         Notes:
             Used by BinaryClassifier for threshold-based prediction:
             - ELISA assay: threshold = 0.5
-            - PSR assay: threshold = 0.5495 (Novo Nordisk exact parity)
+            - PSR assay: threshold = 0.5495 (Novo Nordisk's PSR threshold)
 
         Examples:
             >>> X_test = np.random.rand(20, 1280)

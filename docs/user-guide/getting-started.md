@@ -125,15 +125,15 @@ These metrics estimate how well the model generalizes to unseen data.
 
 ### Test Set Performance (Jain Dataset)
 
-**Accuracy: 66.28%** - Matches Novo Nordisk's exact parity result
+**Accuracy: 66.28%** - Close to Novo's 68.6% (off by 2 antibodies)
 
-**Confusion Matrix:**
+**Our Confusion Matrix:**
 ```
 [[40, 19],   ← True Negatives: 40, False Positives: 19
  [10, 17]]   ← False Negatives: 10, True Positives: 17
 ```
 
-This exact matrix validates that our implementation matches the original paper methodology.
+**Novo's Target (Figure S14A):** [[40, 17], [10, 19]] - TN/FN match exactly; FP/TP swapped by 2.
 
 ---
 

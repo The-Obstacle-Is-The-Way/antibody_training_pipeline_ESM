@@ -247,7 +247,7 @@ Standard fragments across all datasets:
 ### Assay-Specific Thresholds
 
 - **ELISA** (Boughter, Jain): threshold = 0.5 (standard)
-- **PSR** (Harvey, Shehata): threshold = 0.5495 (Novo Nordisk exact parity)
+- **PSR** (Harvey, Shehata): threshold = 0.5495 (Novo Nordisk's PSR threshold - near-parity)
 - Thresholds configured in `BinaryClassifier.ASSAY_THRESHOLDS`
 
 ---

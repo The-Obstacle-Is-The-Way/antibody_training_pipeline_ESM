@@ -259,7 +259,7 @@ uv run antibody-predict \
 ```bash
 uv run antibody-predict \
     assay_type="PSR" \
-    ...  # Uses threshold = 0.5495 (Novo Nordisk exact parity)
+    ...  # Uses threshold = 0.5495 (Novo Nordisk's PSR threshold)
 ```
 
 ### Threshold Tuning for Precision/Recall Trade-offs
