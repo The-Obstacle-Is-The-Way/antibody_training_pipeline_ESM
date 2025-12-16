@@ -32,7 +32,7 @@ We have **TWO DIFFERENT SCRIPTS** that both create `jain_86_novo_parity.csv` wit
 
 **Output:** `data/test/jain/canonical/jain_86_novo_parity.csv`
 **Expected labels:** 59 zeros + 27 ones
-**Confusion matrix claim:** `[[40, 19], [10, 17]]` - EXACT NOVO PARITY
+**Our confusion matrix:** `[[40, 19], [10, 17]]` - close to Novo [[40, 17], [10, 19]]
 
 ### Method 2: VH-Length QC (step4_build_canonical_sets.py)
 ```
@@ -109,7 +109,7 @@ Novo's confusion matrix:
 ### What step2 Claims
 ```python
 # preprocessing/jain/step2_preprocess_p5e_s2.py line 17
-Result: Confusion matrix [[40, 19], [10, 17]] - EXACT MATCH (66.28% accuracy)
+Result: Confusion matrix [[40, 19], [10, 17]] - close to Novo (66.28% vs 68.6%)
 ```
 
 **Interpretation:** step2 explicitly claims to match Novo's confusion matrix
@@ -149,7 +149,7 @@ data/test/jain/canonical/jain_86_novo_parity.csv
 **THIS IS A BUG.**
 
 **Reasoning:**
-1. Novo's confusion matrix `[[40, 19], [10, 17]]` REQUIRES both classes
+1. Novo's confusion matrix `[[40, 17], [10, 19]]` (68.6%) REQUIRES both classes
 2. step4 creates all-zeros labels (cannot match Novo matrix)
 3. step2 explicitly implements P5e-S2 to match Novo parity
 4. Hybri's results confirm Jain needs both specific + non-specific

@@ -26,7 +26,7 @@
 - Current method: 116→89 (reclassify 5)→86 (remove 30 by PSR/AC-SINS)
 
 **Historical context:**
-This was an early hypothesis about how Novo Nordisk achieved their 86-antibody test set. It was superseded when we discovered the P5e-S2 method (PSR reclassification + PSR/AC-SINS removal) that achieves EXACT parity (confusion matrix [[40,19],[10,17]]).
+This was an early hypothesis about how Novo Nordisk achieved their 86-antibody test set. It was superseded when we discovered the P5e-S2 method (PSR reclassification + PSR/AC-SINS removal). Note: Our result [[40,19],[10,17]] (66.28%) is close but not exact to Novo's [[40,17],[10,19]] (68.6%).
 
 ---
 

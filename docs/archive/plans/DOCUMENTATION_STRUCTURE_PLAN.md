@@ -445,7 +445,7 @@ datasets/
 
 3. **`assay-thresholds.md`** (KEEP)
    - ELISA vs PSR thresholds
-   - Novo Nordisk exact parity (0.5495)
+   - Novo Nordisk PSR threshold (0.5495) - near-parity on Harvey/Shehata
    - **Source:** `docs/research/assay-thresholds.md`
 
 4. **`benchmark-results.md`** (CONSOLIDATE from 2 docs)

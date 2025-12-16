@@ -1,9 +1,10 @@
 # Complete Jain Test Set QC Removals (94 → 86 Antibodies)
 
 **Date:** 2025-11-02
-**Final Status:** ✅ NOVO PARITY ACHIEVED
-**Confusion Matrix:** [[40, 19], [10, 17]] - Exact match to Novo
-**Accuracy:** 66.28% (57/86) - Exact match to Novo
+**Final Status:** ✅ CLOSE TO NOVO (off by 2 antibodies)
+**Our Confusion Matrix:** [[40, 19], [10, 17]] - 66.28%
+**Novo Target (Figure S14A):** [[40, 17], [10, 19]] - 68.6%
+**Note:** TN=40, FN=10 match exactly; FP/TP swapped by 2
 
 ---
 
@@ -152,10 +153,10 @@
 - **Accuracy:** 67.03% (61/91)
 - **Confusion Matrix:** [[44, 20], [10, 17]]
 
-### After Novo Parity Removal (86 antibodies - VERIFIED ✅):
-- **Accuracy:** 66.28% (57/86) - **EXACTLY matches Novo**
-- **Confusion Matrix:** [[40, 19], [10, 17]] - **Cell-for-cell identical to Novo**
-- **Non-specific performance:** IDENTICAL (10 FN, 17 TP)
+### After P5e-S2 Removal (86 antibodies):
+- **Our Accuracy:** 66.28% (57/86) - Close to Novo's 68.6%
+- **Our Confusion Matrix:** [[40, 19], [10, 17]]
+- **Novo Target (Figure S14A):** [[40, 17], [10, 19]] - TN/FN match; FP/TP off by 2
 
 ### Detailed Classification Report (86-antibody parity set):
 ```

@@ -63,7 +63,7 @@ ASSAY_THRESHOLDS = {
 # AFTER:
 ASSAY_THRESHOLDS = {
     "ELISA": 0.5,
-    # PSR threshold for prediction (Novo Nordisk exact parity)
+    # PSR threshold for prediction (Novo Nordisk's PSR threshold - near-parity)
     # This is the threshold used at INFERENCE TIME for Harvey/Shehata datasets
     # to classify antibodies based on PSR assay predictions.
     #

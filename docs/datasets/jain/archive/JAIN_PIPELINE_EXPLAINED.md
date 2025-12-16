@@ -109,7 +109,7 @@ data/test/jain/canonical/jain_86_novo_parity.csv
 
 **step2 output (CORRECT):**
 - 59 specific + 27 non-specific
-- Can match Novo confusion matrix [[40, 19], [10, 17]]
+- Achieves [[40, 19], [10, 17]] (close to Novo's [[40, 17], [10, 19]])
 
 **step4 output (WRONG):**
 - 86 all-specific (hardcoded label=0)
@@ -296,7 +296,7 @@ IMPORTANT: step4 is OPTIONAL and creates VH-only test sets.
 - **Delete lines 175-189 from step4** so it only creates VH-only files and stops overwriting step2.
 
 **What does step2 do?**
-- **Creates the CORRECT Novo parity dataset** with 59 specific + 27 non-specific antibodies that can match the confusion matrix [[40, 19], [10, 17]].
+- **Creates the benchmark dataset** with 59 specific + 27 non-specific antibodies (achieves [[40, 19], [10, 17]], close to Novo's [[40, 17], [10, 19]]).
 
 ---
 
