@@ -40,6 +40,7 @@ This doc captures potential bugs and high-risk issues found during a codebase au
 
 ### R1 — Jain Parity Reverse Engineering (59/27 vs Novo's 57/29) — ✅ SOLVED
 
+> **Decision:** [jain_parity_decision.md](./jain_parity_decision.md) — **Triple agent consensus: lebrikizumab + galiximab**
 > **Research Spec:** [jain_parity_reverse_engineering.md](./jain_parity_reverse_engineering.md)
 > **Data Inventory:** [jain_parity_data_inventory.md](./jain_parity_data_inventory.md)
 > **Findings:** `experiments/benchmarks/novo_parity/results/FINDINGS.md`
@@ -102,24 +103,33 @@ TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 
 
 #### Solution (2025-12-16) — ⏳ PENDING SENIOR REVIEW
 
-**3 matching pairs produce exact Novo parity:**
+**Triple Agent Consensus:** lebrikizumab + galiximab
 
-| Pair | Confusion Matrix | Accuracy |
-|------|------------------|----------|
-| lebrikizumab + galiximab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
-| lebrikizumab + otelixizumab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
-| galiximab + otelixizumab | `[[40, 17], [10, 19]]` | 68.60% ✅ |
+Three independent AI agents (Google DeepThink, ChatGPT, Claude) analyzed which pair Novo most likely used. All three converged on the same answer with the same reasoning: **chromatography (HIC) is a single coherent mechanism that directly measures "stickiness"/non-specificity**.
 
-**Why these work:**
-- All three are predicted as NON-SPECIFIC by model (P > 0.5)
-- All three have PUBLIC developability flags (chromatography or stability from SD03)
-- Reclassifying them converts False Positives → True Positives
+| Agent | Recommendation | Confidence |
+|-------|---------------|------------|
+| Google DeepThink | lebrikizumab + galiximab | High |
+| ChatGPT | lebrikizumab + galiximab | Medium |
+| Claude | lebrikizumab + galiximab | High |
 
-**Data sources:**
-- Chromatography/stability flags: **PUBLIC** (`jain-pnas.1616408114.sd03.xlsx`)
-- ELISA flags: **PRIVATE** (`Private_Jain2017_ELISA_indiv.xlsx`)
+**3 matching pairs found (all produce exact Novo parity):**
 
-**See full details:** [jain_parity_reverse_engineering.md](./jain_parity_reverse_engineering.md#-solution-found-2025-12-16)
+| Pair | Confusion Matrix | Flag Types | Status |
+|------|------------------|------------|--------|
+| **lebrikizumab + galiximab** | `[[40, 17], [10, 19]]` | chrom + chrom | **SELECTED** |
+| lebrikizumab + otelixizumab | `[[40, 17], [10, 19]]` | chrom + stability | Alternative |
+| galiximab + otelixizumab | `[[40, 17], [10, 19]]` | chrom + stability | Alternative |
+
+**Why lebrikizumab + galiximab:**
+- Both have chromatography flags (HIC > 11.7 threshold)
+- Single mechanism = methodologically consistent rule
+- Jain 2017 treats HIC/SMAC as coherent "stickiness" cluster
+- No mixing of unrelated flag types
+
+**Caveat:** This is reverse-engineering, not paper-stated methodology. Other pairs preserved as alternatives.
+
+**See full details:** [jain_parity_decision.md](./jain_parity_decision.md)
 
 ---
 
