@@ -14,7 +14,7 @@ We successfully replicated the Novo Nordisk methodology (Sakhnini et al. 2025) a
 |---------|------|------|--------------|---------------|-----|--------|
 | **Boughter** | Training (10-fold CV) | 914 | **67.5% ± 8.9%** | 71% | -3.5% | ✅ **Excellent** |
 | **Harvey** | Test (Nanobodies) | 141,021 | **61.33%** (PSR 0.5495) | 61.7% | **-0.37pp** | ✅ **Near-parity** |
-| **Jain** | Test (Clinical) | 86 | **66.28%** | 68.6% | -2.32pp | ✅ **Validated (parity set)** |
+| **Jain** | Test (Clinical) | 86 | **66.28%** | 68.6% | -2.32pp | ✅ **Close match** (off by 2 abs) |
 | **Shehata** | Test (B-cell) | 398 | **58.29%** (auto PSR=0.5495) | 58.8% | -0.51pp | ⭐ **Near-parity** |
 
 **Key Changes:** PSR threshold auto-detection implemented and validated. Shehata: 58.29% (within 0.51pp). Harvey: 61.33% (within 0.37pp). Both achieve near-parity with Novo benchmarks.

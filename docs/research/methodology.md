@@ -15,7 +15,7 @@ We successfully replicated the Novo Nordisk antibody non-specificity prediction 
 | **Boughter** (Training, 10-fold CV) | **67.5% ± 8.9%** | 71% | -3.5% | ✅ **Excellent** |
 | **Harvey** (141k nanobodies) | **61.33%** (PSR 0.5495) | 61.7% | **-0.37pp** | ✅ **Near-parity** |
 | **Shehata** (398 B-cell) | **58.29%** (auto PSR=0.5495) | 58.8% | -0.51pp | ⭐ **Near-parity** |
-| **Jain** (86 clinical) | **66.28%** | 68.6% | -2.32pp | ✅ **Validated (parity set)** |
+| **Jain** (86 clinical) | **66.28%** | 68.6% | -2.32pp | ✅ **Close match** (off by 2 abs) |
 
 **Key Achievements:** Both PSR datasets achieve near-parity - Shehata: **0.51pp** gap, Harvey: **0.37pp** gap (both with auto PSR threshold 0.5495).
 
@@ -169,11 +169,11 @@ Performance Metrics (accuracy, sensitivity, specificity)
 
 **Results:**
 - Accuracy: **66.28%** (57/86 correct)
-- Novo: **68.6%**
-- Confusion matrix: **[[40, 19], [10, 17]]**
-- Gap: **-2.32pp**; non-specific row matches Novo (10 FN, 17 TP), FP/TP differ by two samples
+- Novo target: **68.6%** (Figure S14A: [[40, 17], [10, 19]])
+- Our confusion matrix: **[[40, 19], [10, 17]]**
+- Gap: **-2.32pp**; TN=40 and FN=10 match Novo; FP/TP swapped by 2 antibodies
 
-**Analysis:** Achieved near parity by:
+**Analysis:** Achieved close (not exact) parity by:
 1. Identifying 5 antibodies removed by Novo (murine/chimeric origin, clinical QC)
 2. Matching QC criteria (see `novo-parity.md` for details)
 3. Validating model equivalence on non-specific predictions with minor FP/TP swap
@@ -317,11 +317,11 @@ ASSAY_THRESHOLDS = {
 - F1-score (specific): 0.70
 
 **Jain (Clinical Antibodies - 86 set):**
-- Accuracy: 66.28% (57/86)
+- Accuracy: 66.28% (57/86) - Novo target: 68.6%
 - Precision (specific): 0.80
 - Recall (specific): 0.68
 - F1-score (specific): 0.73
-- **Confusion matrix: [[40, 19], [10, 17]]** - Matches TN/FN; FP/TP differ by two antibodies
+- **Our CM: [[40, 19], [10, 17]]** vs Novo [[40, 17], [10, 19]] - TN/FN match; FP/TP swapped by 2
 
 **Harvey (Nanobodies - 141k):**
 - Accuracy: **61.33%** (PSR 0.5495 auto-detected)

@@ -11,8 +11,8 @@
 We achieved a very close replication of Novo Nordisk's benchmark performance on the Jain test set:
 - **Our result:** 66.28% accuracy on 86 antibodies
 - **Novo's result:** 68.6% accuracy on 86 antibodies
-- **Confusion matrix:** [[40, 19], [10, 17]] - **matches TN/FN; FP/TP differ by two antibodies**
-- **Non-specific performance:** PERFECT match on the rare class row (10 FN, 17 TP)
+- **Our confusion matrix:** [[40, 19], [10, 17]] - TN/FN match Novo; FP/TP swapped by 2
+- **Novo target (Figure S14A):** [[40, 17], [10, 19]] - 68.6% accuracy
 
 The 5-antibody difference between our initial 91-antibody set and Novo's 86 was resolved through:
 1. Model confidence analysis (lowest decision margins)
@@ -183,13 +183,14 @@ Non-specific       0.47      0.63      0.54        27
 - Accuracy: 67.03% (61/91)
 - Confusion Matrix: [[44, 20], [10, 17]]
 
-**After Removal (86 antibodies - VERIFIED ✅):**
-- **Accuracy: 66.28% (57/86)** - Close to Novo (68.6% target; FP/TP swap of two antibodies)
-- **Confusion Matrix: [[40, 19], [10, 17]]** - Cell-for-cell identical
+**After Removal (86 antibodies - our benchmark set):**
+- **Accuracy: 66.28% (57/86)** - Close to Novo target (68.6%, off by 2 antibodies)
+- **Confusion Matrix: [[40, 19], [10, 17]]** - TN matches; FP/TP differ by 2
+- **Novo target (Figure S14A):** [[40, 17], [10, 19]] - 68.6% accuracy
 - **Test Date:** 2025-11-02
 - **Model:** boughter_vh_esm1v_logreg.pkl (no StandardScaler)
 
-**Key Insight:** Non-specific row (10 FN, 17 TP) is **IDENTICAL** in both datasets, demonstrating model equivalence.
+**Key Insight:** TN=40 and FN=10 match Novo exactly; FP and TP are swapped by 2 antibodies (19↔17).
 
 ---
 
@@ -297,10 +298,10 @@ The Novo paper describes **Track B** - biophysical descriptor-based models:
 
 ## Key Conclusions
 
-1. **Model Performance:** Our model is within 2.32pp of Novo (FP/TP swap of two antibodies; TN/FN rows match)
-   - Non-specific predictions are IDENTICAL
-   - Overall performance matches (66.28% accuracy)
-   - Confusion matrix matches cell-for-cell
+1. **Model Performance:** Our model is within 2.32pp of Novo (FP/TP swapped by 2; TN/FN match exactly)
+   - TN=40, FN=10 match Novo exactly
+   - Our CM: [[40, 19], [10, 17]] vs Novo [[40, 17], [10, 19]]
+   - FP and TP differ by 2 antibodies each (19↔17 swap)
 
 2. **QC Justification:** ALL 5 removal candidates have strong QC reasons:
    - 1 withdrawn drug (pure MURINE antibody)
