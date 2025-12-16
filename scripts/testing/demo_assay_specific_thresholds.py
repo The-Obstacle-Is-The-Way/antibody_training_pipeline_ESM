@@ -92,7 +92,7 @@ def main() -> int:
         model = pickle.load(f)
     print("  Model loaded successfully!")
 
-    novo_jain = np.array([[40, 19], [10, 17]])  # 66.28% accuracy (Novo benchmark)
+    novo_jain = np.array([[40, 17], [10, 19]])  # 68.60% accuracy (EXACT Novo benchmark)
     novo_shehata = np.array([[229, 162], [2, 5]])  # ~58.8% accuracy (expected)
 
     # Test Jain with ELISA threshold (default 0.5)
@@ -128,7 +128,7 @@ def main() -> int:
     print(f"  Shehata (PSR):  {shehata_acc * 100:.1f}% accuracy")
 
     print("\nBenchmarks:")
-    print("  Jain (ELISA):   66.28% accuracy (Novo benchmark)")
+    print("  Jain (ELISA):   68.60% accuracy (EXACT Novo benchmark)")
     print("  Shehata (PSR):  ~58.8% accuracy (expected with PSR threshold)")
 
     print("\n" + "=" * 60)

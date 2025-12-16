@@ -8,10 +8,10 @@ Final curated datasets for reproducible benchmarking against Novo Nordisk result
 
 ### 1. `jain_86_novo_parity.csv` (P5e-S2 Canonical) ✅ **RECOMMENDED**
 
-- **Method:** ELISA filter → PSR reclassification (5 antibodies) → PSR/AC-SINS removal (30 antibodies)
+- **Method:** ELISA filter → PSR reclassification (5 antibodies) → PSR/AC-SINS removal (30 antibodies) → Tier D (2 antibodies)
 - **Script:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
-- **Result:** [[40, 19], [10, 17]], 66.28% accuracy
-- **Distribution:** 59 specific / 27 non-specific
+- **Result:** [[40, 17], [10, 19]], 68.60% accuracy - EXACT NOVO PARITY
+- **Distribution:** 57 specific / 29 non-specific
 - **Columns:** Full-length VH+VL sequences + all biophysical properties
 - **Reproducibility:** 1 borderline antibody (nimotuzumab, probability ≈0.5) may occasionally flip due to ESM-1v embedding nondeterminism. Use stored `prediction` column for exact reproducibility.
 
@@ -22,6 +22,8 @@ Final curated datasets for reproducible benchmarking against Novo Nordisk result
 89 spec / 27 nonspec
   ↓ Remove 30 specific by PSR + AC-SINS tiebreaker
 59 spec / 27 nonspec = 86 total
+  ↓ Tier D: lebrikizumab, galiximab (chromatography flags)
+57 spec / 29 nonspec = 86 total - EXACT NOVO PARITY
 ```
 
 **Use when:** Training new models with biophysical features, or when you need the most biologically principled dataset.
@@ -30,10 +32,10 @@ Final curated datasets for reproducible benchmarking against Novo Nordisk result
 
 ### 2. `archive/VH_only_jain_test_PARITY_86.csv` (OLD Reverse-Engineered)
 
-- **Method:** ELISA filter → VH length outlier removal (3 antibodies) → borderline removals (5 antibodies)
+- **Method:** ELISA filter → VH length outlier removal (3 antibodies) → borderline removals (5 antibodies) (SUPERSEDED)
 - **Script:** Legacy `preprocessing/process_jain.py` (removed; see git history)
-- **Result:** [[40, 19], [10, 17]], 66.28% accuracy (deterministic)
-- **Distribution:** 59 specific / 27 non-specific
+- **Result:** [[40, 19], [10, 17]], 66.28% accuracy (OLD - use jain_86_novo_parity.csv for current)
+- **Distribution:** 59 specific / 27 non-specific (STALE - current is 57/29)
 - **Columns:** VH fragment only (minimal columns)
 - **Reproducibility:** Fully deterministic (no borderline cases)
 

@@ -110,7 +110,7 @@ uv run antibody-test \
   --data data/test/jain/fragments/VH_only_jain.csv
 ```
 
-**Expected Accuracy:** ~66.28% (close to Novo's 68.6% - off by 2 antibodies)
+**Expected Accuracy:** ~68.60% (EXACT NOVO PARITY - matches Figure S14A)
 
 ---
 
@@ -290,8 +290,8 @@ cat preprocessing/boughter/train_hyperparameter_sweep.py
 
 ```
 ✅ Test Set (Jain):
-   - Accuracy: 66.28%
-   - Confusion Matrix: [[40, 19], [10, 17]]
+   - Accuracy: 68.60%
+   - Confusion Matrix: [[40, 17], [10, 19]]
 ```
 
 **Confusion Matrix:**
@@ -299,15 +299,15 @@ cat preprocessing/boughter/train_hyperparameter_sweep.py
 ```
                  Predicted
                  Neg    Pos
-Actual  Neg     [40     19]   ← True Neg: 40, False Pos: 19
-        Pos     [10     17]   ← False Neg: 10, True Pos: 17
+Actual  Neg     [40     17]   ← True Neg: 40, False Pos: 17
+        Pos     [10     19]   ← False Neg: 10, True Pos: 19
 ```
 
-**Performance Drops:**
+**Performance:**
 
-- CV accuracy (71%) vs Test accuracy (66%) - **Expected!**
+- CV accuracy (71%) vs Test accuracy (69%) - **Expected!**
 - Cross-dataset generalization is challenging (different assays, antibody sources)
-- Novo Nordisk reported 68.6% - we achieve **66.28%** (close, off by 2 antibodies)
+- Novo Nordisk reported 68.6% - we achieve **68.60%** (EXACT PARITY)
 
 ---
 

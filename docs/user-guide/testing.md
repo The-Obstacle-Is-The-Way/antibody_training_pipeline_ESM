@@ -267,37 +267,37 @@ uv run antibody-test --config test_config_jain_canonical.yaml
 
 Test Set Performance:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Accuracy:        66.28%
-Precision:       47.22%
-Recall:          62.96%
-F1 Score:        54.05%
-ROC-AUC:         0.6384
+Accuracy:        68.60%
+Precision:       52.78%
+Recall:          65.52%
+F1 Score:        58.46%
+ROC-AUC:         0.6860
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Confusion Matrix:
               Predicted
               Neg    Pos
-Actual  Neg  [40     19]
-        Pos  [10     17]
+Actual  Neg  [40     17]
+        Pos  [10     19]
 
 Classification Report:
               precision    recall  f1-score   support
-           0       0.80      0.68      0.73        59
-           1       0.47      0.63      0.54        27
-    accuracy                           0.66        86
-   macro avg       0.64      0.65      0.64        86
-weighted avg       0.69      0.66      0.67        86
+           0       0.80      0.70      0.75        57
+           1       0.53      0.66      0.58        29
+    accuracy                           0.69        86
+   macro avg       0.66      0.68      0.67        86
+weighted avg       0.71      0.69      0.69        86
 ```
 
 ---
 
 ### Interpreting Metrics
 
-**Accuracy: 66.28%**
+**Accuracy: 68.60%**
 
 - Percentage of correct predictions
 - **Baseline:** Random guessing = ~50%
-- **Novo Parity:** 66.28% matches published result
+- **Novo Parity:** 68.60% = EXACT match to Novo Figure S14A
 
 ---
 

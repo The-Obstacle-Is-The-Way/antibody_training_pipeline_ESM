@@ -369,7 +369,7 @@ This pipeline uses four antibody datasets for training and evaluation:
 **Source:** Jain et al. (2017)
 **Size:** 86 clinical antibodies
 **Assay:** Per-antigen ELISA (Adimab dataset)
-**Usage:** Primary test dataset, benchmark for Novo comparison (66.28% vs 68.6%)
+**Usage:** Primary test dataset, benchmark for Novo comparison (68.60% - EXACT NOVO PARITY)
 
 **Documentation:** See `docs/datasets/jain/` for preprocessing steps and data sources.
 

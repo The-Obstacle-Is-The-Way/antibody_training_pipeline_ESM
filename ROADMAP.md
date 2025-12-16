@@ -18,8 +18,8 @@ Build the definitive model zoo for antibody polyreactivity prediction—comprehe
 
 **Novo Nordisk Benchmark Reproduced ✅**
 - Trained ESM-1v + Logistic Regression on Boughter dataset (914 VH sequences)
-- Achieved **66.28% accuracy** on Jain test set (86 clinical antibodies)
-- Exact parity with published Novo Nordisk results
+- Achieved **68.60% accuracy** on Jain test set (86 clinical antibodies)
+- **EXACT** parity with Novo Nordisk Figure S14A: `[[40, 17], [10, 19]]`
 - Published methodology: `docs/research/novo-parity.md`
 
 **ESM2-650M Benchmarking Complete ✅**

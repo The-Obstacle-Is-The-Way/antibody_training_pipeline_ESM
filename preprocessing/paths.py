@@ -115,7 +115,7 @@ def get_dataset_path(dataset: str, stage: str) -> Path:
         >>> get_dataset_path("jain", "raw")
         PosixPath('.../data/test/jain/raw')
     """
-    dataset_map = {
+    dataset_map: dict[str, dict[str, Path]] = {
         "boughter": {
             "raw": BOUGHTER_RAW_DIR,
             "processed": BOUGHTER_PROCESSED_DIR,

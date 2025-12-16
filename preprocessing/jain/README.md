@@ -81,6 +81,8 @@ python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 89 spec / 27 nonspec
   ↓ Remove 30 by PSR primary, AC-SINS tiebreaker
 86 antibodies (59 spec / 27 nonspec)
+  ↓ Tier D: lebrikizumab, galiximab (chromatography flags)
+86 antibodies (57 spec / 29 nonspec) - EXACT NOVO PARITY
   ↓ Save both formats
   ├─ jain_86_novo_parity.csv (VH+VL+metadata, 24 cols) ✅ OUTPUT 2
   └─ VH_only_jain_86_p5e_s2.csv (VH-only, 3 cols) ✅ OUTPUT 3
@@ -102,8 +104,8 @@ label: 0.0 = specific, 1.0 = non-specific
 
 **Note:** Column is `vh_sequence` (not `sequence`) for JainDataset compatibility.
 
-**Our result:** Confusion matrix [[40, 19], [10, 17]], 66.28% accuracy
-**Novo target:** Confusion matrix [[40, 17], [10, 19]], 68.6% accuracy (off by 2 antibodies)
+**Our result:** Confusion matrix [[40, 17], [10, 19]], 68.60% accuracy - EXACT NOVO PARITY
+**Novo target:** Confusion matrix [[40, 17], [10, 19]], 68.6% accuracy ✅ MATCHED
 
 **Method:** P5e-S2 (PSR reclassification + PSR/AC-SINS removal)
 

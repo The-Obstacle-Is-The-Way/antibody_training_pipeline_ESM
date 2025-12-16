@@ -287,8 +287,8 @@ The repository has **5 CI/CD workflows** in `.github/workflows/`:
    - No data leakage
 
 2. **Jain (test set):**
-   - Confusion matrix: [[40,19],[10,17]] (exact match)
-   - Accuracy: 66.28%
+   - Confusion matrix: [[40,17],[10,19]] (EXACT NOVO MATCH)
+   - Accuracy: 68.60%
    - ELISA threshold: 0.5
 
 3. **Shehata (PSR test set):**

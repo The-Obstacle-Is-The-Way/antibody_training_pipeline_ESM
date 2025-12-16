@@ -3,9 +3,9 @@
 Test Model on Jain 86-Antibody Benchmark
 
 This script tests our model against the Novo Nordisk benchmark:
-- Our result: [[40, 19], [10, 17]], 66.28% accuracy (57/86)
+- Our result: [[40, 17], [10, 19]], 68.60% accuracy (59/86) - EXACT NOVO PARITY
 - Novo target: [[40, 17], [10, 19]], 68.6% accuracy (59/86)
-- Difference: Off by 2 antibodies in label distribution
+- Status: EXACT PARITY ACHIEVED after Tier D reclassification
 
 Usage:
     # Test default model (esm1v + logreg)

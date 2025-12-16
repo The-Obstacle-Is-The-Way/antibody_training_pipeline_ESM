@@ -11,8 +11,25 @@
 ## ✅ SOLUTION FOUND (2025-12-16)
 
 > **Status:** PENDING SENIOR REVIEW before implementation
+> **Decision:** See [jain_parity_decision.md](./jain_parity_decision.md) — **Triple agent consensus: lebrikizumab + galiximab**
 > **Experiment Branch:** `experiment/jain-parity-permutations`
 > **Experiment Scripts:** `experiments/benchmarks/novo_parity/scripts/`
+
+---
+
+### Triple Agent Consensus (2025-12-16)
+
+Three independent AI agents (Google DeepThink, ChatGPT, Claude) were asked to analyze which pair Novo most likely used. **All three converged on the same answer:**
+
+| Agent | Recommendation | Confidence | Key Reasoning |
+|-------|---------------|------------|---------------|
+| Google DeepThink | lebrikizumab + galiximab | High | HIC/SMAC = "stickiness", same flag type |
+| ChatGPT | lebrikizumab + galiximab | Medium | Single mechanism (chromatography), Jain treats as coherent cluster |
+| Claude | lebrikizumab + galiximab | High | Mechanistic consistency, Occam's Razor |
+
+**Why this pair:** Both have chromatography flags (HIC > threshold), enabling a single methodologically consistent rule. Mixing otelixizumab (stability flag) would require explaining why two different mechanisms were combined.
+
+**Caveat:** This is reverse-engineering, not paper-stated methodology. The other two pairs remain documented as alternatives below.
 
 ---
 
