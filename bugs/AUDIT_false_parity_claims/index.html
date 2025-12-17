@@ -1,0 +1,2715 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Machine learning pipeline to predict antibody non-specificity using ESM protein language models">
+      
+      
+        <meta name="author" content="The Obstacle Is The Way">
+      
+      
+        <link rel="canonical" href="https://the-obstacle-is-the-way.github.io/antibody_training_pipeline_ESM/bugs/AUDIT_false_parity_claims/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Audit: False Parity Claims - Antibody Non-Specificity Prediction Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#audit-false-parity-claims" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Antibody Non-Specificity Prediction Pipeline" class="md-header__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Antibody Non-Specificity Prediction Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Audit: False Parity Claims
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../user-guide/training/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../datasets/boughter/" class="md-tabs__link">
+          
+  
+  
+  Datasets
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../research/novo-parity/" class="md-tabs__link">
+          
+  
+  
+  Research
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../developer-guide/architecture/" class="md-tabs__link">
+          
+  
+  
+  Developer Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/core/trainer/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../archive/migrations" class="md-tabs__link">
+          
+  
+  
+  Archive
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Antibody Non-Specificity Prediction Pipeline" class="md-nav__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Antibody Non-Specificity Prediction Pipeline
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Making Predictions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../user-guide/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter (Training)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain (Clinical)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey (Nanobodies)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../datasets/shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata (PSR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/novo-parity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain Benchmark Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/assay-thresholds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assay Thresholds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/benchmark-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../research/model-zoo-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Zoo Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer-guide/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer-guide/development-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer-guide/testing-strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer-guide/ci-cd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer-guide/type-checking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type Checking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer-guide/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer-guide/preprocessing-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/core/trainer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/core/embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/core/classifier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classifier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/core/prediction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prediction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/datasets/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/datasets/boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/datasets/jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/datasets/harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/datasets/shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/cli/train/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Train
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/cli/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/cli/predict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predict
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/cli/preprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocess
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/cli/app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App (Gradio)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../archive/migrations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../archive/investigations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../archive/plans" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plans
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="audit-false-parity-claims">Audit: False Parity Claims<a class="headerlink" href="#audit-false-parity-claims" title="Permanent link">&para;</a></h1>
+<p><strong>Date:</strong> 2025-12-16
+<strong>Auditor:</strong> Claude (Phase 0 Execution)
+<strong>Status:</strong> ✅ ALL PHASES COMPLETE (Audit + Remediation)</p>
+<blockquote>
+<p><strong>Note:</strong> This audit identified 38 files with stale/false parity claims. All have been fixed in commits <code>43294d1</code> through <code>92744d5</code>. Exact Novo parity achieved: <code>[[40, 17], [10, 19]]</code>, 68.60%.</p>
+</blockquote>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Count</th>
+<th>To Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>High visibility docs</td>
+<td>15</td>
+<td>15</td>
+</tr>
+<tr>
+<td>Medium visibility docs</td>
+<td>12</td>
+<td>12</td>
+</tr>
+<tr>
+<td>Low visibility (code/tests)</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td>Baseline/CI files</td>
+<td>3</td>
+<td>3</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>38</strong></td>
+<td><strong>38</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> Many files contain ACCURATE statements (e.g., "66.28% vs Novo 68.6%") that correctly document the gap. Only FALSE claims need fixing.</p>
+<hr />
+<h2 id="classification-guide">Classification Guide<a class="headerlink" href="#classification-guide" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>FALSE CLAIM</strong> - States we achieved Novo parity when we didn't (e.g., "matches Novo")</li>
+<li><strong>STALE VALUE</strong> - Uses old values (59/27, 66.28%, [[40,19],[10,17]]) as "our result"</li>
+<li><strong>ACCURATE</strong> - Correctly documents the gap (no fix needed)</li>
+</ul>
+<hr />
+<h2 id="high-visibility-fix-first">High Visibility (Fix First)<a class="headerlink" href="#high-visibility-fix-first" title="Permanent link">&para;</a></h2>
+<h3 id="1-citationsmd122">1. CITATIONS.md:122<a class="headerlink" href="#1-citationsmd122" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> FALSE CLAIM - "66.28% accuracy on Jain test set (matches Novo's 66% reported performance)"</li>
+<li><strong>Fix:</strong> Update to 68.60% and note parity achieved after Tier D</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="2-docsoverviewmd29">2. docs/overview.md:29<a class="headerlink" href="#2-docsoverviewmd29" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "66.28% vs 68.6% on Jain benchmark"</li>
+<li><strong>Fix:</strong> Update to "68.60% on Jain benchmark (exact Novo parity)"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="3-docsoverviewmd108">3. docs/overview.md:108<a class="headerlink" href="#3-docsoverviewmd108" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "66.28% accuracy on Jain (Novo target: 68.6%, off by 2 antibodies)"</li>
+<li><strong>Fix:</strong> Update to "68.60% accuracy (exact Novo parity)"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="4-docsoverviewmd215">4. docs/overview.md:215<a class="headerlink" href="#4-docsoverviewmd215" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "66.28% | Novo parity ✅"</li>
+<li><strong>Fix:</strong> Update to "68.60% | Novo parity ✅ (EXACT)"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="5-docsuser-guidetestingmd270296300">5. docs/user-guide/testing.md:270,296,300<a class="headerlink" href="#5-docsuser-guidetestingmd270296300" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims 66.28%</li>
+<li><strong>Fix:</strong> Update to 68.60%</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="6-docsuser-guidetrainingmd113293310">6. docs/user-guide/training.md:113,293,310<a class="headerlink" href="#6-docsuser-guidetrainingmd113293310" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims 66.28%, "off by 2 antibodies"</li>
+<li><strong>Fix:</strong> Update to 68.60%, remove "off by 2"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="7-docsuser-guidegetting-startedmd86-87128">7. docs/user-guide/getting-started.md:86-87,128<a class="headerlink" href="#7-docsuser-guidegetting-startedmd86-87128" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims 66.28%, [[40,19],[10,17]]</li>
+<li><strong>Fix:</strong> Update to 68.60%, [[40,17],[10,19]]</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="8-docsindexmd118">8. docs/index.md:118<a class="headerlink" href="#8-docsindexmd118" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "66.28% vs Novo 68.6%"</li>
+<li><strong>Fix:</strong> Update to "68.60% (exact Novo parity)"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="9-docsresearchnovo-paritymd4121478114126187-189">9. docs/research/novo-parity.md:4,12,14,78,114,126,187-189<a class="headerlink" href="#9-docsresearchnovo-paritymd4121478114126187-189" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Multiple references to 66.28%, [[40,19],[10,17]]</li>
+<li><strong>Fix:</strong> Update all to 68.60%, [[40,17],[10,19]], note Tier D remediation</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="10-docsresearchmethodologymd18171-173320-324">10. docs/research/methodology.md:18,171-173,320-324<a class="headerlink" href="#10-docsresearchmethodologymd18171-173320-324" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims 66.28%, [[40,19],[10,17]]</li>
+<li><strong>Fix:</strong> Update to 68.60%, [[40,17],[10,19]]</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="11-docsresearchbenchmark-resultsmd176171-7681251">11. docs/research/benchmark-results.md:17,61,71-76,81,251<a class="headerlink" href="#11-docsresearchbenchmark-resultsmd176171-7681251" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims 66.28%, [[40,19],[10,17]]</li>
+<li><strong>Fix:</strong> Update to 68.60%, [[40,17],[10,19]]</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="12-docsresearchassay-thresholdsmd30136170-171">12. docs/research/assay-thresholds.md:30,136,170-171<a class="headerlink" href="#12-docsresearchassay-thresholdsmd30136170-171" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims 66.28%</li>
+<li><strong>Fix:</strong> Update to 68.60%</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="13-readmemd372">13. README.md:372<a class="headerlink" href="#13-readmemd372" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "66.28% vs 68.6%"</li>
+<li><strong>Fix:</strong> Update to "68.60% (exact Novo parity)"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="14-docsreadmemd23">14. docs/README.md:23<a class="headerlink" href="#14-docsreadmemd23" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "[[40,19],[10,17]], 66.28%"</li>
+<li><strong>Fix:</strong> Update to "[[40,17],[10,19]], 68.60%"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="15-roadmapmd21">15. ROADMAP.md:21<a class="headerlink" href="#15-roadmapmd21" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "66.28% accuracy"</li>
+<li><strong>Fix:</strong> Update to "68.60% accuracy"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<hr />
+<h2 id="medium-visibility">Medium Visibility<a class="headerlink" href="#medium-visibility" title="Permanent link">&para;</a></h2>
+<h3 id="16-docsdeveloper-guideci-cdmd290-291">16. docs/developer-guide/ci-cd.md:290-291<a class="headerlink" href="#16-docsdeveloper-guideci-cdmd290-291" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "66.28%", "[[40,19],[10,17]]"</li>
+<li><strong>Fix:</strong> Update to 68.60%, [[40,17],[10,19]]</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="17-docsdatasetsjaincomplete_guidemd-multiple-lines">17. docs/datasets/jain/complete_guide.md (multiple lines)<a class="headerlink" href="#17-docsdatasetsjaincomplete_guidemd-multiple-lines" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims 66.28%, 59/27, [[40,19],[10,17]]</li>
+<li><strong>Fix:</strong> Update to 68.60%, 57/29, [[40,17],[10,19]]</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="18-docsdatasetsjaincomplete_historymd-multiple-lines">18. docs/datasets/jain/complete_history.md (multiple lines)<a class="headerlink" href="#18-docsdatasetsjaincomplete_historymd-multiple-lines" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> FALSE CLAIM - "66.28% accuracy, exact confusion matrix match"</li>
+<li><strong>Fix:</strong> Update to 68.60%, note Tier D remediation</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="19-docsdatasetsjainreadmemd115-116">19. docs/datasets/jain/README.md:115-116<a class="headerlink" href="#19-docsdatasetsjainreadmemd115-116" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "59 specific / 27 non-specific"</li>
+<li><strong>Fix:</strong> Update to "57 specific / 29 non-specific"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="20-docsdatasetsjainreorganization_completemd104-105274">20. docs/datasets/jain/reorganization_complete.md:104-105,274<a class="headerlink" href="#20-docsdatasetsjainreorganization_completemd104-105274" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims [[40,19],[10,17]], 66.28%</li>
+<li><strong>Fix:</strong> Update to [[40,17],[10,19]], 68.60%</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="21-datatestjainreadmemd4459-6072-73113">21. data/test/jain/README.md:44,59-60,72-73,113<a class="headerlink" href="#21-datatestjainreadmemd4459-6072-73113" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims [[40,19],[10,17]], 66.28%, 59/27</li>
+<li><strong>Fix:</strong> Update to [[40,17],[10,19]], 68.60%, 57/29</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="22-datatestjaincanonicalreadmemd13-142435-3687100109134">22. data/test/jain/canonical/README.md:13-14,24,35-36,87,100,109,134<a class="headerlink" href="#22-datatestjaincanonicalreadmemd13-142435-3687100109134" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims [[40,19],[10,17]], 66.28%, 59/27</li>
+<li><strong>Fix:</strong> Update to [[40,17],[10,19]], 68.60%, 57/29</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="23-preprocessingjainreadmemd83105-106172-173">23. preprocessing/jain/README.md:83,105-106,172-173<a class="headerlink" href="#23-preprocessingjainreadmemd83105-106172-173" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - Claims 59/27, 66.28%</li>
+<li><strong>Fix:</strong> Update to 57/29, 68.60%</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="24-claudemd">24. CLAUDE.md<a class="headerlink" href="#24-claudemd" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> References "Novo parity" without noting Tier D</li>
+<li><strong>Fix:</strong> Add note about Tier D remediation</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="25-geminimd98">25. GEMINI.md:98<a class="headerlink" href="#25-geminimd98" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> May need update for parity context</li>
+<li><strong>Fix:</strong> Review and update if needed</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="26-scriptstestingdemo_assay_specific_thresholdspy95131">26. scripts/testing/demo_assay_specific_thresholds.py:95,131<a class="headerlink" href="#26-scriptstestingdemo_assay_specific_thresholdspy95131" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - novo_jain = [[40,19],[10,17]]</li>
+<li><strong>Fix:</strong> Update to [[40,17],[10,19]]</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="27-docsuser-guidepreprocessingmd219">27. docs/user-guide/preprocessing.md:219<a class="headerlink" href="#27-docsuser-guidepreprocessingmd219" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Issue:</strong> STALE - "66.28% vs their 68.6%"</li>
+<li><strong>Fix:</strong> Update to "68.60% (exact Novo parity)"</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<hr />
+<h2 id="low-visibility-codetests">Low Visibility (Code/Tests)<a class="headerlink" href="#low-visibility-codetests" title="Permanent link">&para;</a></h2>
+<h3 id="28-srcantibody_training_esmdatasetsjainpy">28. src/antibody_training_esm/datasets/jain.py<a class="headerlink" href="#28-srcantibody_training_esmdatasetsjainpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lines:</strong> 14-15, 25, 58, 64, 350, 353, 364</li>
+<li><strong>Issue:</strong> STALE - Constants encode 59/27, 66.28%</li>
+<li><strong>Fix:</strong> Update to 57/29, 68.60%</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="29-preprocessingjainstep2_preprocess_p5e_s2py">29. preprocessing/jain/step2_preprocess_p5e_s2.py<a class="headerlink" href="#29-preprocessingjainstep2_preprocess_p5e_s2py" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lines:</strong> 16-19, 197, 255, 269-270, 299, 316-319, 338, 347, 350-351, 395-397</li>
+<li><strong>Issue:</strong> STALE - Asserts 59/27, prints [[40,19],[10,17]]</li>
+<li><strong>Fix:</strong> Add Tier D step, update to 57/29</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="30-preprocessingjaintest_novo_paritypy">30. preprocessing/jain/test_novo_parity.py<a class="headerlink" href="#30-preprocessingjaintest_novo_paritypy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lines:</strong> 6-7, 165-168, 176, 183, 210, 233, 237, 243</li>
+<li><strong>Issue:</strong> Comments reference old values</li>
+<li><strong>Fix:</strong> Update comments to reflect Tier D</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="31-testsintegrationtest_jain_stage_filteringpy">31. tests/integration/test_jain_stage_filtering.py<a class="headerlink" href="#31-testsintegrationtest_jain_stage_filteringpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lines:</strong> 110, 127, 130, 229, 231</li>
+<li><strong>Issue:</strong> STALE - Asserts 59/27</li>
+<li><strong>Fix:</strong> Update to 57/29</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="32-testsunitdatasetstest_jainpy">32. tests/unit/datasets/test_jain.py<a class="headerlink" href="#32-testsunitdatasetstest_jainpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lines:</strong> 433, 456</li>
+<li><strong>Issue:</strong> May need update if Tier D changes step4 behavior</li>
+<li><strong>Fix:</strong> Review after Phase 1 implementation</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<hr />
+<h2 id="baselineci-files">Baseline/CI Files<a class="headerlink" href="#baselineci-files" title="Permanent link">&para;</a></h2>
+<h3 id="33-githubworkflowsbenchmarkyml">33. .github/workflows/benchmark.yml<a class="headerlink" href="#33-githubworkflowsbenchmarkyml" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Lines:</strong> 5-6, 128, 267</li>
+<li><strong>Issue:</strong> STALE - Comments reference [[40,19],[10,17]], 66.28%</li>
+<li><strong>Fix:</strong> Update to [[40,17],[10,19]], 68.60%</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="34-validationbaselinemodel_outputsbaseline_metricstxt">34. validation/baseline/model_outputs/baseline_metrics.txt<a class="headerlink" href="#34-validationbaselinemodel_outputsbaseline_metricstxt" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Line:</strong> 7</li>
+<li><strong>Issue:</strong> STALE - Contains "accuracy: 0.6628"</li>
+<li><strong>Fix:</strong> Regenerate after Phase 2 or mark as historical</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<h3 id="35-validationbaselinechecksumsjain_preprocessedmd5">35. validation/baseline/checksums/jain_preprocessed.md5<a class="headerlink" href="#35-validationbaselinechecksumsjain_preprocessedmd5" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>All lines</strong></li>
+<li><strong>Issue:</strong> STALE - Checksums will change after artifact regeneration</li>
+<li><strong>Fix:</strong> Regenerate after Phase 2</li>
+<li><strong>Status:</strong> [x] Fixed</li>
+</ul>
+<hr />
+<h2 id="files-that-are-accurate-no-fix-needed">Files That Are ACCURATE (No Fix Needed)<a class="headerlink" href="#files-that-are-accurate-no-fix-needed" title="Permanent link">&para;</a></h2>
+<p>These files correctly document the gap or are in <code>docs/bugs/</code> SSOT:</p>
+<ul>
+<li><code>docs/bugs/*.md</code> - SSOT for remediation (intentionally documents old values)</li>
+<li><code>experiments/benchmarks/novo_parity/</code> - Research artifacts documenting the investigation</li>
+<li><code>CHANGELOG.md</code> - Historical record (should document the fix, not alter history)</li>
+<li>Files that explicitly state "66.28% vs Novo 68.6%" as a comparison (not a claim of parity)</li>
+</ul>
+<hr />
+<h2 id="estimated-effort">Estimated Effort<a class="headerlink" href="#estimated-effort" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Files</th>
+<th>Estimated Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Phase 1 (Code)</td>
+<td>5</td>
+<td>30 min</td>
+</tr>
+<tr>
+<td>Phase 2 (Artifacts)</td>
+<td>3</td>
+<td>5 min</td>
+</tr>
+<tr>
+<td>Phase 3 (Verify)</td>
+<td>1</td>
+<td>10 min</td>
+</tr>
+<tr>
+<td>Phase 4 (Docs)</td>
+<td>30</td>
+<td>2 hours</td>
+</tr>
+<tr>
+<td>Phase 5 (Audit)</td>
+<td>-</td>
+<td>15 min</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>38</strong></td>
+<td><strong>~3 hours</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="sign-off">Sign-Off<a class="headerlink" href="#sign-off" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Phase 0 (Audit):        ✅ COMPLETE - 38 files identified
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>Phase 1 (Preprocessing): ✅ COMPLETE - Tier D implemented
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Phase 2 (Artifacts):     ✅ COMPLETE - CSVs regenerated with 57/29
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>Phase 3 (Verification):  ✅ COMPLETE - [[40,17],[10,19]] confirmed
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>Phase 4 (Documentation): ✅ COMPLETE - All 38 files updated
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>Phase 5 (Final Audit):   ✅ COMPLETE - CI/baselines fixed
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>Auditor: Claude
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>Date: 2025-12-16
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>Files Fixed: 38
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>Result: EXACT NOVO PARITY ACHIEVED
+</span></code></pre></div>
+<hr />
+<p><strong>End of Audit &amp; Remediation</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 The Obstacle Is The Way
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

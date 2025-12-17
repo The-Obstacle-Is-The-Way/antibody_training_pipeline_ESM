@@ -1,0 +1,2762 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Machine learning pipeline to predict antibody non-specificity using ESM protein language models">
+      
+      
+        <meta name="author" content="The Obstacle Is The Way">
+      
+      
+        <link rel="canonical" href="https://the-obstacle-is-the-way.github.io/antibody_training_pipeline_ESM/datasets/shehata/archive/shehata_blocker_analysis/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Shehata blocker analysis - Antibody Non-Specificity Prediction Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#shehata-dataset-p0-p4-blocker-analysis-historical" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="Antibody Non-Specificity Prediction Pipeline" class="md-header__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Antibody Non-Specificity Prediction Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Shehata blocker analysis
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../user-guide/training/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../boughter/" class="md-tabs__link">
+          
+  
+  
+  Datasets
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../research/novo-parity/" class="md-tabs__link">
+          
+  
+  
+  Research
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../developer-guide/architecture/" class="md-tabs__link">
+          
+  
+  
+  Developer Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../api/core/trainer/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../archive/migrations" class="md-tabs__link">
+          
+  
+  
+  Archive
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Antibody Non-Specificity Prediction Pipeline" class="md-nav__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Antibody Non-Specificity Prediction Pipeline
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Making Predictions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter (Training)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain (Clinical)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey (Nanobodies)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata (PSR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/novo-parity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain Benchmark Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/assay-thresholds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assay Thresholds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/benchmark-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/model-zoo-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Zoo Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/development-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/testing-strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/ci-cd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/type-checking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type Checking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/preprocessing-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/core/trainer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/core/embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/core/classifier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classifier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/core/prediction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prediction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/train/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Train
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/predict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predict
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/preprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocess
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App (Gradio)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/migrations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/investigations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/plans" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plans
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<blockquote>
+<p><strong>⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup</strong></p>
+<p>This document describes the P0 blocker analysis from 2025-11-02 during Shehata Phase 2 development.</p>
+<p><strong>For current pipeline documentation, see:</strong> <code>data/test/shehata/README.md</code></p>
+<p>The issues described below have been resolved. All fragments are now gap-free and validated.</p>
+</blockquote>
+<hr />
+<h1 id="shehata-dataset-p0-p4-blocker-analysis-historical">Shehata Dataset P0-P4 Blocker Analysis (HISTORICAL)<a class="headerlink" href="#shehata-dataset-p0-p4-blocker-analysis-historical" title="Permanent link">&para;</a></h1>
+<p><strong>Date:</strong> 2025-11-02 (Analysis) | 2025-11-02 (RESOLVED)
+<strong>Analyst:</strong> Claude Code
+<strong>Context:</strong> Deep review before potential Discord criticism of "vibe coding"
+<strong>Validation:</strong> First principles validation documented in <code>P0_BLOCKER_FIRST_PRINCIPLES_VALIDATION.md</code>
+<strong>Resolution Status:</strong> ✅ <strong>P0 BLOCKER RESOLVED</strong></p>
+<hr />
+<h2 id="resolution-2025-11-02">🎉 RESOLUTION (2025-11-02)<a class="headerlink" href="#resolution-2025-11-02" title="Permanent link">&para;</a></h2>
+<p><strong>P0 BLOCKER FIXED AND VALIDATED</strong></p>
+<p><strong>Fix Applied:</strong>
+- <strong>File:</strong> <code>preprocessing/shehata/step2_extract_fragments.py:63</code>
+- <strong>Change:</strong> <code>annotation.sequence_alignment_aa</code> → <code>annotation.sequence_aa</code>
+- <strong>Result:</strong> All 16 fragment CSVs regenerated gap-free</p>
+<p><strong>Validation Results:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>✅ VH_only_shehata.csv: 0 gaps (was 13)
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>✅ VL_only_shehata.csv: 0 gaps (was 4)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>✅ Full_shehata.csv: 0 gaps (was 17)
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>✅ VH+VL_shehata.csv: 0 gaps (was 17)
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>✅ All CDR/FWR files: 0 gaps (unchanged)
+</span></code></pre></div></p>
+<p><strong>Regression Prevention:</strong>
+- Enhanced <code>scripts/validation/validate_shehata_conversion.py</code> with gap detection
+- Automatic validation runs on all 16 fragment CSVs
+- Prevents P0 blocker from re-occurring</p>
+<p><strong>End-to-End Validation:</strong>
+Created <code>test_shehata_embedding_compatibility.py</code> - comprehensive test suite:
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>python3<span class="w"> </span>test_shehata_embedding_compatibility.py
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="c1"># ✅ ALL TESTS PASSED</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1">#   - Gap Character Detection: PASS</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1">#   - Amino Acid Validation: PASS (1194 sequences)</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="c1">#   - Previously Affected Sequences: PASS (13 VH, 4 VL)</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1">#   - ESM Model Validation Simulation: PASS</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1">#   - Data Integrity: PASS (16 files, 398 rows each)</span>
+</span></code></pre></div></p>
+<p><strong>Status:</strong> ✅ Phase 2 fragments READY for ESM embedding (validated end-to-end)</p>
+<hr />
+<h2 id="executive-summary-original-analysis">Executive Summary (Original Analysis)<a class="headerlink" href="#executive-summary-original-analysis" title="Permanent link">&para;</a></h2>
+<p><strong>CRITICAL P0 BLOCKER CONFIRMED:</strong> Gap characters in fragment sequences will cause ESM embedding failures.</p>
+<p><strong>Status (BEFORE FIX):</strong>
+- ✅ Phase 1 conversion: CORRECT (gaps removed from base CSV)
+- ❌ Phase 2 fragments: <strong>BROKEN</strong> (gaps present in VH/VL/Full fragment files)</p>
+<p><strong>Status (AFTER FIX):</strong>
+- ✅ Phase 1 conversion: CORRECT
+- ✅ Phase 2 fragments: <strong>FIXED</strong> (all gaps removed, validated)</p>
+<p><strong>Validation Status:</strong> ✅ Bug confirmed real (not hallucinated) via:
+- Code inspection (model.py validation logic)
+- Runtime behavior testing
+- Actual file verification
+- Paper methodology cross-reference
+- Domain knowledge verification</p>
+<hr />
+<h2 id="p0-blockers-critical-breaks-functionality">P0 BLOCKERS (CRITICAL - BREAKS FUNCTIONALITY)<a class="headerlink" href="#p0-blockers-critical-breaks-functionality" title="Permanent link">&para;</a></h2>
+<h3 id="p0-1-gap-characters-in-fragment-sequences">P0-1: Gap Characters in Fragment Sequences<a class="headerlink" href="#p0-1-gap-characters-in-fragment-sequences" title="Permanent link">&para;</a></h3>
+<p><strong>Issue:</strong> VH, VL, and Full fragment CSVs contain IMGT gap characters ("-") that will break ESM-1v embedding.</p>
+<p><strong>Accurate Evidence (Verified 2025-11-02):</strong>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1"># Gap counts in fragment files:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>VH_only_shehata.csv:<span class="w"> </span><span class="m">13</span><span class="w"> </span>sequences<span class="w"> </span>with<span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="w"> </span>gaps<span class="w"> </span><span class="o">(</span>NOT<span class="w"> </span><span class="m">7</span><span class="o">)</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>VL_only_shehata.csv:<span class="w"> </span><span class="m">4</span><span class="w"> </span>sequences<span class="w"> </span>with<span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="w"> </span>gaps<span class="w"> </span><span class="o">(</span>NOT<span class="w"> </span><span class="m">1</span><span class="o">)</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>Full_shehata.csv:<span class="w"> </span><span class="m">17</span><span class="w"> </span>sequences<span class="w"> </span>with<span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="w"> </span>gaps<span class="w"> </span><span class="o">(</span>NOT<span class="w"> </span><span class="m">8</span><span class="o">)</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>VH+VL_shehata.csv:<span class="w"> </span><span class="m">17</span><span class="w"> </span>sequences<span class="w"> </span>with<span class="w"> </span><span class="s2">&quot;-&quot;</span><span class="w"> </span>gaps
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="c1"># Affected antibody IDs:</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>VH<span class="w"> </span>gaps<span class="w"> </span><span class="o">(</span><span class="m">13</span><span class="o">)</span>:<span class="w"> </span>ADI-47173,<span class="w"> </span>ADI-47060,<span class="w"> </span>ADI-45440,<span class="w"> </span>ADI-47105,<span class="w"> </span>ADI-47224,
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">              </span>ADI-47140,<span class="w"> </span>ADI-45389,<span class="w"> </span>ADI-47169,<span class="w"> </span>ADI-47071,<span class="w"> </span>ADI-47107,
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">              </span>ADI-47267,<span class="w"> </span>ADI-47246,<span class="w"> </span>ADI-47141
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>VL<span class="w"> </span>gaps<span class="w"> </span><span class="o">(</span><span class="m">4</span><span class="o">)</span>:<span class="w"> </span>ADI-47223,<span class="w"> </span>ADI-47114,<span class="w"> </span>ADI-47163,<span class="w"> </span>ADI-47211
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>Full<span class="w"> </span>gaps<span class="w"> </span><span class="o">(</span><span class="m">17</span><span class="o">)</span>:<span class="w"> </span>All<span class="w"> </span>VH<span class="w"> </span>gaps<span class="w"> </span>+<span class="w"> </span>all<span class="w"> </span>VL<span class="w"> </span>gaps<span class="w"> </span><span class="o">(</span>union<span class="o">)</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="c1"># Example (ADI-47173 VH):</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>EVQLVESGGGVVQPGRSLRLSCAASGFTFDRYGMHWIRQAPGKGLECVALISFDGSHK-YADSVKGRFTISRDNSRNTLY...
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">                                                           </span>^
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">                                                        </span>GAP<span class="w"> </span>CHAR
+</span></code></pre></div></p>
+<p><strong>Root Cause (Verified):</strong>
+- <strong>File:</strong> <code>preprocessing/shehata/step2_extract_fragments.py:63</code>
+- <strong>Issue:</strong> Uses <code>annotation.sequence_alignment_aa</code> (IMGT-aligned with gaps)
+- <strong>Should use:</strong> <code>annotation.sequence_aa</code> (raw sequence without gaps)</p>
+<p><strong>Impact:</strong>
+- <strong>Runtime:</strong> ESM-1v validation at <code>model.py:36</code> raises <code>ValueError: "Invalid amino acid characters in sequence"</code>
+- <strong>Behavior:</strong> Logs warning, replaces with placeholder "M", returns garbage embeddings
+- <strong>Result:</strong> Silent failure → 17 incorrect embeddings → wrong model results
+- <strong>Paper reproduction:</strong> IMPOSSIBLE with current implementation</p>
+<p><strong>Severity:</strong> P0 (breaks core functionality, produces incorrect results)</p>
+<p><strong>Why Paper Must Use Gap-Free Sequences:</strong>
+- Paper methodology (Sakhnini et al. 2025): "sequences were annotated in the CDRs using ANARCI following the IMGT numbering scheme. Following this, 16 different antibody fragment sequences were assembled and embedded by... ESM 1v"
+- ESM-1v tokenizer requires valid amino acids only: <code>"ACDEFGHIKLMNPQRSTVWYX"</code>
+- IMGT gaps ("-") are NOT valid amino acids
+- Paper achieved successful embeddings → must have used gap-free field</p>
+<p><strong>First Principles Validation:</strong>
+✅ Validated in <code>docs/datasets/shehata/archive/p0_blocker_first_principles_validation.md</code>:
+- Code logic confirms <code>-</code> character fails validation (model.py:33-37)
+- Actual files verified to have gaps (13 VH, 4 VL, 17 Full)
+- Runtime behavior tested and confirmed
+- Not a hallucination - reproducible bug with clear evidence</p>
+<p><strong>Fix Required:</strong>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># File: preprocessing/shehata/step2_extract_fragments.py</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="c1"># Line: 63</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="c1"># Current (BROKEN):</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="sa">f</span><span class="s2">&quot;full_seq_</span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">annotation</span><span class="o">.</span><span class="n">sequence_alignment_aa</span>  <span class="c1"># IMGT-aligned WITH gaps</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="c1"># Change to:</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="sa">f</span><span class="s2">&quot;full_seq_</span><span class="si">{</span><span class="n">chain</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">annotation</span><span class="o">.</span><span class="n">sequence_aa</span>  <span class="c1"># Raw sequence WITHOUT gaps</span>
+</span></code></pre></div></p>
+<p><strong>Verification Status:</strong>
+✅ CDR/FWR fragments have 0 gaps (correct - individual regions don't have internal gaps)
+❌ Full-length sequences (VH, VL, Full, VH+VL) have gaps (broken)</p>
+<hr />
+<h2 id="p1-blockers-high-severity-incorrect-results">P1 BLOCKERS (HIGH SEVERITY - INCORRECT RESULTS)<a class="headerlink" href="#p1-blockers-high-severity-incorrect-results" title="Permanent link">&para;</a></h2>
+<h3 id="p1-1-psr-threshold-verification">P1-1: PSR Threshold Verification<a class="headerlink" href="#p1-1-psr-threshold-verification" title="Permanent link">&para;</a></h3>
+<p><strong>Issue:</strong> Binary labels use 98.24<sup>th</sup> percentile threshold (0.31002), but paper doesn't explicitly state this value.</p>
+<p><strong>Evidence (Verified 2025-11-02):</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Paper states: &quot;7 out of 398 antibodies characterised as non-specific&quot;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>Our threshold: 0.31002 PSR (98.24th percentile)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Result: 7 labeled as non-specific ✓
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>Top 7 PSR scores (all labeled non-specific):
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>  ADI-45498: PSR=0.710695, label=1
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>  ADI-45499: PSR=0.710238, label=1
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>  ADI-47276: PSR=0.567043, label=1
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>  ADI-47265: PSR=0.487817, label=1
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>  ADI-45435: PSR=0.457177, label=1
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>  ADI-47275: PSR=0.418042, label=1
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>  ADI-45433: PSR=0.364564, label=1
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>Next highest (labeled specific):
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>  8th: PSR=0.310024 (just below threshold)
+</span></code></pre></div></p>
+<p><strong>Current Status:</strong>
+✅ Threshold produces correct count (7/398)
+✅ Top 7 PSR scores match non-specific labels
+✅ Clean separation at 98.24<sup>th</sup> percentile
+⚠️ Threshold value not explicitly confirmed from paper</p>
+<p><strong>Risk:</strong>
+- If paper used different threshold with same count, labels might differ
+- Need to verify these exact 7 antibodies match paper's non-specific set</p>
+<p><strong>Severity:</strong> P1 (labels likely correct, but need confirmation)</p>
+<p><strong>Mitigation:</strong>
+- Threshold documented: <code>preprocessing/shehata/step1_convert_excel_to_csv.py:163</code>
+- Check paper supplement for non-specific antibody IDs
+- If IDs match, threshold is validated
+- If IDs differ, adjust threshold to match paper's exact cutoff</p>
+<hr />
+<h2 id="p2-blockers-moderate-methodology-concerns">P2 BLOCKERS (MODERATE - METHODOLOGY CONCERNS)<a class="headerlink" href="#p2-blockers-moderate-methodology-concerns" title="Permanent link">&para;</a></h2>
+<h3 id="p2-1-re-annotation-vs-provided-cdr-annotations">P2-1: Re-annotation vs Provided CDR Annotations<a class="headerlink" href="#p2-1-re-annotation-vs-provided-cdr-annotations" title="Permanent link">&para;</a></h3>
+<p><strong>Issue:</strong> mmc2.xlsx contains pre-annotated CDR regions, but we re-annotate with ANARCI.</p>
+<p><strong>Justification:</strong>
+- Ensures consistency with other datasets (Jain, Harvey, Boughter)
+- Uses same riot_na version (4.0.5) across all datasets
+- IMGT scheme consistent</p>
+<p><strong>Risk:</strong>
+- Annotations might differ slightly from paper's
+- If paper used their Excel CDRs directly, results could vary</p>
+<p><strong>Severity:</strong> P2 (methodology consistency)</p>
+<p><strong>Mitigation Done:</strong>
+- Documented choice in code
+- 100% annotation success rate (398/398)
+- Fragment lengths match expected ranges</p>
+<hr />
+<h2 id="p3-blockers-low-minor-issues">P3 BLOCKERS (LOW - MINOR ISSUES)<a class="headerlink" href="#p3-blockers-low-minor-issues" title="Permanent link">&para;</a></h2>
+<h3 id="p3-1-dataset-location-test_datasets-vs-train_datasets">P3-1: Dataset Location (test_datasets vs train_datasets)<a class="headerlink" href="#p3-1-dataset-location-test_datasets-vs-train_datasets" title="Permanent link">&para;</a></h3>
+<p><strong>Issue:</strong> Shehata is in <code>data/test/</code> (correct per paper - external test set only).</p>
+<p><strong>Evidence from paper:</strong></p>
+<blockquote>
+<p>"the most balanced dataset (i.e. Boughter one) was selected for training of ML models, while the remaining three (i.e. Jain, Shehata and Harvey) were used for testing."</p>
+</blockquote>
+<p><strong>Status:</strong> ✅ CORRECT location</p>
+<p><strong>Severity:</strong> P3 (documentation clarity)</p>
+<hr />
+<h2 id="p4-blockers-informational-nice-to-have">P4 BLOCKERS (INFORMATIONAL - NICE TO HAVE)<a class="headerlink" href="#p4-blockers-informational-nice-to-have" title="Permanent link">&para;</a></h2>
+<h3 id="p4-1-missing-validation-against-paper-statistics">P4-1: Missing Validation Against Paper Statistics<a class="headerlink" href="#p4-1-missing-validation-against-paper-statistics" title="Permanent link">&para;</a></h3>
+<p><strong>Issue:</strong> No verification that our extracted CDR lengths match paper's reported statistics.</p>
+<p><strong>What We Have:</strong>
+- Fragment length ranges documented
+- All 398 antibodies processed
+- 16 fragment types created</p>
+<p><strong>What's Missing:</strong>
+- Cross-check CDR3 length distribution with paper Figure/Table
+- Verify mean fragment lengths
+- Compare PSR score distribution shape</p>
+<p><strong>Severity:</strong> P4 (nice to have for confidence)</p>
+<hr />
+<h2 id="non-issues-investigated-confirmed-correct">Non-Issues (Investigated, Confirmed Correct)<a class="headerlink" href="#non-issues-investigated-confirmed-correct" title="Permanent link">&para;</a></h2>
+<h3 id="sequence-sanitization-in-phase-1">✅ Sequence Sanitization in Phase 1<a class="headerlink" href="#sequence-sanitization-in-phase-1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>convert_shehata_excel_to_csv.py</code> correctly removes gaps</li>
+<li>shehata.csv has clean sequences</li>
+<li>No gaps in base CSV ✓</li>
+</ul>
+<h3 id="label-distribution">✅ Label Distribution<a class="headerlink" href="#label-distribution" title="Permanent link">&para;</a></h3>
+<ul>
+<li>391 specific (98.2%)</li>
+<li>7 non-specific (1.8%)</li>
+<li>Matches paper ✓</li>
+</ul>
+<h3 id="b-cell-subset-distribution">✅ B Cell Subset Distribution<a class="headerlink" href="#b-cell-subset-distribution" title="Permanent link">&para;</a></h3>
+<ul>
+<li>All subsets present</li>
+<li>Correct column preservation ✓</li>
+</ul>
+<h3 id="fragment-count">✅ Fragment Count<a class="headerlink" href="#fragment-count" title="Permanent link">&para;</a></h3>
+<ul>
+<li>16 fragment types created</li>
+<li>All match paper methodology ✓</li>
+</ul>
+<h3 id="integration-compatibility">✅ Integration Compatibility<a class="headerlink" href="#integration-compatibility" title="Permanent link">&para;</a></h3>
+<ul>
+<li>CSV format correct</li>
+<li>Column names standardized</li>
+<li>Compatible with data.load_local_data() ✓</li>
+</ul>
+<hr />
+<h2 id="comparison-with-novo-paper-requirements">Comparison with Novo Paper Requirements<a class="headerlink" href="#comparison-with-novo-paper-requirements" title="Permanent link">&para;</a></h2>
+<p><strong>From Sakhnini et al. 2025 Methods 4.3:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Our Implementation</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ANARCI annotation</td>
+<td>✅ riot_na 4.0.5</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td>IMGT numbering</td>
+<td>✅ IMGT scheme</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td>16 fragment types</td>
+<td>✅ All created</td>
+<td>PASS</td>
+</tr>
+<tr>
+<td>ESM-1v embedding</td>
+<td>❌ Will fail (gaps)</td>
+<td><strong>FAIL</strong></td>
+</tr>
+<tr>
+<td>Mean pooling</td>
+<td>N/A (in data.py)</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>External test set</td>
+<td>✅ data/test/</td>
+<td>PASS</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="documentation-contradictions">Documentation Contradictions<a class="headerlink" href="#documentation-contradictions" title="Permanent link">&para;</a></h2>
+<h3 id="phase-2-completion-report-contradiction">⚠️ Phase 2 Completion Report Contradiction<a class="headerlink" href="#phase-2-completion-report-contradiction" title="Permanent link">&para;</a></h3>
+<p><strong>File:</strong> <code>docs/datasets/shehata/shehata_phase2_completion_report.md:90-122</code></p>
+<p><strong>Claim:</strong></p>
+<blockquote>
+<p>"✅ <strong>All fragment lengths match expected antibody structure</strong>"
+"✅ <strong>All fragments preserve original label distribution</strong>"
+"✅ <strong>All fragment files validated</strong>"
+"- <strong>No missing sequences:</strong> ✓"</p>
+</blockquote>
+<p><strong>Reality:</strong>
+❌ Fragment files contain gap characters (13 VH, 4 VL, 17 Full)
+❌ Sequences will fail ESM validation
+❌ Phase 2 NOT fully validated</p>
+<p><strong>Resolution:</strong>
+- This blocker analysis supersedes completion report
+- Completion report must be updated post-fix
+- Add gap detection to validation checklist</p>
+<hr />
+<h2 id="action-items">Action Items<a class="headerlink" href="#action-items" title="Permanent link">&para;</a></h2>
+<h3 id="urgent-p0">URGENT (P0):<a class="headerlink" href="#urgent-p0" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Fix gap characters in fragment sequences</strong></li>
+<li><strong>File:</strong> <code>preprocessing/shehata/step2_extract_fragments.py</code></li>
+<li><strong>Change line 63:</strong>
+     <div class="language-python highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># FROM: f&quot;full_seq_{chain}&quot;: annotation.sequence_alignment_aa</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># TO:   f&quot;full_seq_{chain}&quot;: annotation.sequence_aa</span>
+</span></code></pre></div></li>
+<li>Re-run fragment extraction: <code>python3 preprocessing/shehata/step2_extract_fragments.py</code></li>
+<li>Validate all gaps removed: <code>grep -c '\-' data/test/shehata/fragments/*.csv</code> (should be 0)</li>
+<li>
+<p>Test ESM embedding on all 17 previously-affected sequences</p>
+</li>
+<li>
+<p><strong>Add gap detection to validation</strong></p>
+</li>
+<li><strong>File:</strong> <code>scripts/validation/validate_shehata_conversion.py</code></li>
+<li>Add fragment-level validation function</li>
+<li>Assert no <code>-</code> characters in any fragment CSV</li>
+<li>
+<p>Prevent regression</p>
+</li>
+<li>
+<p><strong>Update completion report</strong></p>
+</li>
+<li><strong>File:</strong> <code>docs/datasets/shehata/shehata_phase2_completion_report.md</code></li>
+<li>Remove "✅ validated" claims until post-fix</li>
+<li>Add note about P0 blocker discovered and fixed</li>
+<li>Update validation checklist to include gap detection</li>
+</ol>
+<h3 id="high-priority-p1">HIGH PRIORITY (P1):<a class="headerlink" href="#high-priority-p1" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Verify PSR threshold against paper</strong></li>
+<li>Check paper supplement for non-specific antibody IDs</li>
+<li>Compare: ADI-45498, ADI-45499, ADI-47276, ADI-47265, ADI-45435, ADI-47275, ADI-45433</li>
+<li>If mismatch, adjust threshold to match paper's exact antibodies</li>
+<li>Document verification in data sources doc</li>
+</ol>
+<h3 id="medium-priority-p2">MEDIUM PRIORITY (P2):<a class="headerlink" href="#medium-priority-p2" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Validate re-annotation choice</strong></li>
+<li>Spot-check CDR boundaries vs Excel annotations</li>
+<li>Document any differences</li>
+<li>Confirm consistency justification</li>
+</ol>
+<h3 id="low-priority-p3-p4">LOW PRIORITY (P3-P4):<a class="headerlink" href="#low-priority-p3-p4" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Statistical validation</strong></li>
+<li>Compare fragment length distributions with paper</li>
+<li>Verify PSR score distribution shape</li>
+<li>Cross-reference metadata</li>
+</ol>
+<hr />
+<h2 id="testing-checklist-post-fix">Testing Checklist Post-Fix<a class="headerlink" href="#testing-checklist-post-fix" title="Permanent link">&para;</a></h2>
+<h3 id="phase-1-gap-character-elimination">Phase 1: Gap Character Elimination<a class="headerlink" href="#phase-1-gap-character-elimination" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> No <code>-</code> characters in VH_only_shehata.csv (was 13, should be 0)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> No <code>-</code> characters in VL_only_shehata.csv (was 4, should be 0)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> No <code>-</code> characters in Full_shehata.csv (was 17, should be 0)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> No <code>-</code> characters in VH+VL_shehata.csv (was 17, should be 0)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> All CDR/FWR files remain gap-free (already correct)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Validation script <code>scripts/validation/validate_shehata_conversion.py</code> updated with gap checks</li>
+</ul>
+<h3 id="phase-2-esm-embedding-compatibility">Phase 2: ESM Embedding Compatibility<a class="headerlink" href="#phase-2-esm-embedding-compatibility" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Load all 17 previously-affected sequences</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> ESM embedding works without errors/warnings</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> No placeholder "M" sequences generated</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> No zero embeddings returned</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verify embedding dimensions (1280 for ESM-1v)</li>
+</ul>
+<h3 id="phase-3-data-integrity">Phase 3: Data Integrity<a class="headerlink" href="#phase-3-data-integrity" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Label distribution: 391 specific / 7 non-specific maintained</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> All 398 sequences present in all 16 files</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Sequence lengths match expected ranges (documented in completion report)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> PSR scores preserved correctly</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> B cell subset metadata intact</li>
+</ul>
+<h3 id="phase-4-integration-testing">Phase 4: Integration Testing<a class="headerlink" href="#phase-4-integration-testing" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Test load with <code>data.load_local_data()</code> on all 16 fragment types</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Spot-check 10 sequences against mmc2.xlsx</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Compare with paper Figure 3C-D statistics (if available)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Run through existing model (if available)</li>
+</ul>
+<h3 id="phase-5-documentation">Phase 5: Documentation<a class="headerlink" href="#phase-5-documentation" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Update <code>shehata_phase2_completion_report.md</code> with fix notes</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Mark P0 blocker as resolved in this document</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Add gap detection to standard validation checklist</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Document lessons learned for Harvey/Boughter preprocessing</li>
+</ul>
+<hr />
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p><strong>PRIMARY BLOCKER:</strong> Gap characters in fragment sequences (P0)
+<strong>ROOT CAUSE:</strong> Using <code>annotation.sequence_alignment_aa</code> instead of <code>annotation.sequence_aa</code>
+<strong>VALIDATION:</strong> ✅ Confirmed real bug (not hallucinated) via first principles analysis
+<strong>AFFECTED SEQUENCES:</strong> 13 VH, 4 VL, 17 Full (specific IDs documented above)
+<strong>CONFIDENCE:</strong> High - clear technical error with one-line fix
+<strong>RISK TO DISCORD CRITICISM:</strong> <strong>ELIMINATED after fix + validation</strong></p>
+<p><strong>Current State:</strong> ❌ Phase 2 fragments BROKEN (will fail ESM embedding)
+<strong>Post-Fix State:</strong> ✅ Phase 2 fragments READY (ESM-compatible, paper-reproducible)</p>
+<p><strong>IMPORTANT:</strong> This analysis supersedes <code>shehata_phase2_completion_report.md</code> until fix is applied and validated.</p>
+<p>After fixing P0, implementation will be:
+- Technically sound ✓
+- Discord criticism-proof ✓
+- Paper-reproducible ✓
+- Production-ready ✓</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 The Obstacle Is The Way
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow", "toc.integrate"], "search": "../../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

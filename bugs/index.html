@@ -1,0 +1,2826 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Machine learning pipeline to predict antibody non-specificity using ESM protein language models">
+      
+      
+        <meta name="author" content="The Obstacle Is The Way">
+      
+      
+        <link rel="canonical" href="https://the-obstacle-is-the-way.github.io/antibody_training_pipeline_ESM/bugs/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Bug Backlog (Audit) — 2025-12-14 - Antibody Non-Specificity Prediction Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#bug-backlog-audit-2025-12-14" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Antibody Non-Specificity Prediction Pipeline" class="md-header__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Antibody Non-Specificity Prediction Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Bug Backlog (Audit) — 2025-12-14
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../user-guide/training/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../datasets/boughter/" class="md-tabs__link">
+          
+  
+  
+  Datasets
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../research/novo-parity/" class="md-tabs__link">
+          
+  
+  
+  Research
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../developer-guide/architecture/" class="md-tabs__link">
+          
+  
+  
+  Developer Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../api/core/trainer/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../archive/migrations" class="md-tabs__link">
+          
+  
+  
+  Archive
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Antibody Non-Specificity Prediction Pipeline" class="md-nav__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Antibody Non-Specificity Prediction Pipeline
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Making Predictions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-guide/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter (Training)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain (Clinical)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey (Nanobodies)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../datasets/shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata (PSR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/novo-parity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain Benchmark Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/assay-thresholds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assay Thresholds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/benchmark-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../research/model-zoo-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Zoo Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/development-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/testing-strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/ci-cd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/type-checking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type Checking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/preprocessing-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../developer-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/core/trainer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/core/embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/core/classifier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classifier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/core/prediction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prediction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/datasets/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/datasets/boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/datasets/jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/datasets/harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/datasets/shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/cli/train/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Train
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/cli/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/cli/predict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predict
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/cli/preprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocess
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/cli/app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App (Gradio)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../archive/migrations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../archive/investigations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../archive/plans" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plans
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="bug-backlog-audit-2025-12-14">Bug Backlog (Audit) — 2025-12-14<a class="headerlink" href="#bug-backlog-audit-2025-12-14" title="Permanent link">&para;</a></h1>
+<p>This doc captures potential bugs and high-risk issues found during a codebase audit.</p>
+<blockquote>
+<p><strong>All P1/P2 bugs have been validated from first principles and have TDD specs.</strong>
+See: <a href="../specs/"><code>docs/specs/index.md</code></a></p>
+</blockquote>
+<h2 id="priority-scale">Priority Scale<a class="headerlink" href="#priority-scale" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>P0</strong>: Critical — data loss, security issue in default usage, or core pipeline unusable.</li>
+<li><strong>P1</strong>: High — major feature broken or produces incorrect results silently.</li>
+<li><strong>P2</strong>: Medium — edge-case crashes, incomplete "end-to-end" flows, significant perf traps.</li>
+<li><strong>P3</strong>: Low — papercuts, doc drift, non-default footguns.</li>
+<li><strong>P4</strong>: Trivial — cleanup, warning noise, minor refactors.</li>
+</ul>
+<h2 id="audit-snapshot-what-was-run">Audit Snapshot (What Was Run)<a class="headerlink" href="#audit-snapshot-what-was-run" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>make lint</code>, <code>make typecheck</code>, <code>make test</code> (fast suite): ✅ pass</li>
+<li><code>make test-e2e</code> (env-gated): ✅ pass (some expected skips)</li>
+<li><code>make docs-build</code>: ✅ builds, many warnings</li>
+<li><code>uv run bandit -r src/antibody_training_esm</code>: ✅ no findings, but warning noise</li>
+</ul>
+<h2 id="validation-status-2025-12-14">Validation Status (2025-12-14)<a class="headerlink" href="#validation-status-2025-12-14" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Bug</th>
+<th>Validation</th>
+<th>Spec</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1.1</td>
+<td>✅ CONFIRMED by code review</td>
+<td><a href="../specs/P1_1_classifier_type_vs_strategy/">Spec</a></td>
+</tr>
+<tr>
+<td>P1.2</td>
+<td>✅ CONFIRMED by code review</td>
+<td><a href="../specs/P1_2_npz_loses_embedding_model_type/">Spec</a></td>
+</tr>
+<tr>
+<td>P2.1-P2.4</td>
+<td>✅ ALL CONFIRMED</td>
+<td><a href="../specs/P2_prediction_and_cache_bugs/">Spec</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="p0-critical">P0 — Critical<a class="headerlink" href="#p0-critical" title="Permanent link">&para;</a></h2>
+<ul>
+<li>None found during this pass (tests + typecheck passed).</li>
+</ul>
+<hr />
+<h2 id="research-active-investigations">Research — Active Investigations<a class="headerlink" href="#research-active-investigations" title="Permanent link">&para;</a></h2>
+<h3 id="r1-jain-parity-reverse-engineering-solved-implemented">R1 — Jain Parity Reverse Engineering — ✅ SOLVED (implemented)<a class="headerlink" href="#r1-jain-parity-reverse-engineering-solved-implemented" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Decision:</strong> <a href="jain_parity_decision/">jain_parity_decision.md</a> — <strong>Triple agent consensus: lebrikizumab + galiximab</strong>
+<strong>Research Spec:</strong> <a href="jain_parity_reverse_engineering/">jain_parity_reverse_engineering.md</a>
+<strong>Data Inventory:</strong> <a href="jain_parity_data_inventory/">jain_parity_data_inventory.md</a>
+<strong>Findings:</strong> <code>experiments/benchmarks/novo_parity/results/FINDINGS.md</code></p>
+</blockquote>
+<h4 id="problem">Problem<a class="headerlink" href="#problem" title="Permanent link">&para;</a></h4>
+<p>Before Tier D remediation, our P5e-S2 preprocessing produced 59 specific / 27 non-specific. Novo's Figure S14A shows 57 specific / 29 non-specific. Tier D remediation (lebrikizumab + galiximab) fixes the label split and achieves exact Novo parity.</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Ours (pre-Tier D)</th>
+<th>Ours (Tier D, current)</th>
+<th>Novo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Confusion Matrix</td>
+<td><code>[[40, 19], [10, 17]]</code></td>
+<td><code>[[40, 17], [10, 19]]</code></td>
+<td><code>[[40, 17], [10, 19]]</code></td>
+</tr>
+<tr>
+<td>Accuracy</td>
+<td>66.28%</td>
+<td>68.60%</td>
+<td>68.6%</td>
+</tr>
+<tr>
+<td>Label Split</td>
+<td>59/27</td>
+<td>57/29</td>
+<td>57/29</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-insight">Key Insight<a class="headerlink" href="#key-insight" title="Permanent link">&para;</a></h4>
+<p>TN=40 and FN=10 match exactly. The discrepancy was entirely in FP/TP — 2 antibodies needed reclassification from specific → non-specific.</p>
+<h4 id="research-goals">Research Goals<a class="headerlink" href="#research-goals" title="Permanent link">&para;</a></h4>
+<ol>
+<li>Identify the unknown QC step Novo uses to get from ~116 to 86 antibodies</li>
+<li>Find which 2 antibodies need reclassification (specific → non-specific)</li>
+<li>Validate that the solution is biologically principled (not cherry-picking)</li>
+</ol>
+<h4 id="data-inventory-from-jain_parity_data_inventorymd">Data Inventory (from <a href="jain_parity_data_inventory/">jain_parity_data_inventory.md</a>)<a class="headerlink" href="#data-inventory-from-jain_parity_data_inventorymd" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Count</th>
+<th>Specific</th>
+<th>Non-Specific</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>After ELISA 1-3 removal</td>
+<td>116</td>
+<td>94</td>
+<td>22</td>
+<td><code>jain_ELISA_ONLY_116.csv</code></td>
+</tr>
+<tr>
+<td>After reclassification (5)</td>
+<td>116</td>
+<td>89</td>
+<td>27</td>
+<td>(computed)</td>
+</tr>
+<tr>
+<td>After removal (30) — <strong>selection</strong></td>
+<td>86</td>
+<td>59</td>
+<td>27</td>
+<td>(computed)</td>
+</tr>
+<tr>
+<td>After Tier D (2 label flips) — <strong>current</strong></td>
+<td>86</td>
+<td><strong>57</strong></td>
+<td><strong>29</strong></td>
+<td><code>jain_86_novo_parity.csv</code></td>
+</tr>
+<tr>
+<td><strong>NOVO TARGET</strong></td>
+<td>86</td>
+<td><strong>57</strong></td>
+<td><strong>29</strong></td>
+<td>Figure S14A</td>
+</tr>
+</tbody>
+</table>
+<h4 id="validated-narrowed-strategy-2025-12-16">Validated Narrowed Strategy (2025-12-16)<a class="headerlink" href="#validated-narrowed-strategy-2025-12-16" title="Permanent link">&para;</a></h4>
+<p><strong>Key Discovery:</strong> Only 8 of the 59 specific antibodies have non-ELISA developability flags. This reduces the search space from C(59,2)=1,711 to C(8,2)=28 pairs.</p>
+<p><strong>Prime Candidates:</strong>
+1. <strong>bapineuzumab</strong> — ONLY self-interaction flag among 59 specific
+2. <strong>nimotuzumab</strong> — HIC=25.0 (7.8σ outlier, z-score=7.84)</p>
+<h4 id="updated-experimental-phases">Updated Experimental Phases<a class="headerlink" href="#updated-experimental-phases" title="Permanent link">&para;</a></h4>
+<ol>
+<li><strong>Phase 1:</strong> Data preparation — ✅ Complete (see data inventory)</li>
+<li><strong>Phase 2A:</strong> Test prime candidates (bapineuzumab + nimotuzumab) — <strong>1 test</strong></li>
+<li><strong>Phase 2B:</strong> Test all 8 flagged specifics — <strong>C(8,2) = 28 pairs</strong></li>
+<li><strong>Phase 2C:</strong> Full search if needed — C(59,2) = 1,711 pairs</li>
+<li><strong>Phase 3:</strong> Biological validation of matches</li>
+</ol>
+<h4 id="branch-strategy">Branch Strategy<a class="headerlink" href="#branch-strategy" title="Permanent link">&para;</a></h4>
+<ul>
+<li><strong>Stable reference:</strong> <code>investigate/jain-parity-verification</code> (current)</li>
+<li><strong>Experiments:</strong> Create <code>experiment/jain-parity-permutations</code> for testing</li>
+</ul>
+<h4 id="status">Status<a class="headerlink" href="#status" title="Permanent link">&para;</a></h4>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Document the discrepancy (GitHub Issue #33)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Create research spec with hypotheses and experimental protocol</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Create data inventory with all 89 specific antibodies and biophysical data</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Validate narrowed strategy (external agent analysis + first-principles verification)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Identify prime candidates: bapineuzumab (self-interaction), nimotuzumab (7.8σ HIC)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Execute Phase 2A: Test prime candidates — ❌ No match (both predicted as specific)</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Execute Phase 2B: Test all 28 flagged pairs — ✅ <strong>3 MATCHING PAIRS FOUND</strong></li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Execute Phase 3: Biological validation — ✅ All candidates have developability flags</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Update preprocessing + artifacts + docs (Tier D)</li>
+</ul>
+<h4 id="solution-2025-12-16-implemented">Solution (2025-12-16) — ✅ IMPLEMENTED<a class="headerlink" href="#solution-2025-12-16-implemented" title="Permanent link">&para;</a></h4>
+<p><strong>Triple Agent Consensus:</strong> lebrikizumab + galiximab</p>
+<p>Three independent AI agents (Google DeepThink, ChatGPT, Claude) analyzed which pair Novo most likely used. All three converged on the same answer with the same reasoning: <strong>chromatography (HIC) is a single coherent mechanism that directly measures "stickiness"/non-specificity</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Recommendation</th>
+<th>Confidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Google DeepThink</td>
+<td>lebrikizumab + galiximab</td>
+<td>High</td>
+</tr>
+<tr>
+<td>ChatGPT</td>
+<td>lebrikizumab + galiximab</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Claude</td>
+<td>lebrikizumab + galiximab</td>
+<td>High</td>
+</tr>
+</tbody>
+</table>
+<p><strong>3 matching pairs found (all produce exact Novo parity):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Pair</th>
+<th>Confusion Matrix</th>
+<th>Flag Types</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>lebrikizumab + galiximab</strong></td>
+<td><code>[[40, 17], [10, 19]]</code></td>
+<td>chrom + chrom</td>
+<td><strong>SELECTED</strong></td>
+</tr>
+<tr>
+<td>lebrikizumab + otelixizumab</td>
+<td><code>[[40, 17], [10, 19]]</code></td>
+<td>chrom + stability</td>
+<td>Alternative</td>
+</tr>
+<tr>
+<td>galiximab + otelixizumab</td>
+<td><code>[[40, 17], [10, 19]]</code></td>
+<td>chrom + stability</td>
+<td>Alternative</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why lebrikizumab + galiximab:</strong>
+- Both have chromatography flags (HIC &gt; 11.7 threshold)
+- Single mechanism = methodologically consistent rule
+- Jain 2017 treats HIC/SMAC as coherent "stickiness" cluster
+- No mixing of unrelated flag types</p>
+<p><strong>Caveat:</strong> This is reverse-engineering, not paper-stated methodology. Other pairs preserved as alternatives.</p>
+<p><strong>See full details:</strong> <a href="jain_parity_decision/">jain_parity_decision.md</a></p>
+<hr />
+<h2 id="p1-high">P1 — High<a class="headerlink" href="#p1-high" title="Permanent link">&para;</a></h2>
+<h3 id="p11-hydra-classifier-selection-mismatch-classifiertype-vs-classifierstrategy">P1.1 — Hydra classifier selection mismatch (<code>classifier.type</code> vs <code>classifier.strategy</code>)<a class="headerlink" href="#p11-hydra-classifier-selection-mismatch-classifiertype-vs-classifierstrategy" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Spec:</strong> <a href="../specs/P1_1_classifier_type_vs_strategy/">P1_1_classifier_type_vs_strategy.md</a></p>
+</blockquote>
+<h4 id="impact">Impact<a class="headerlink" href="#impact" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>classifier=xgboost</code> appears to work (configs exist), but the training pipeline can silently fall back to Logistic Regression.</li>
+<li>This is especially dangerous because it looks "successful" while training the wrong model.</li>
+</ul>
+<h4 id="evidence">Evidence<a class="headerlink" href="#evidence" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Hydra configs use <code>type: ...</code> (e.g. <code>src/antibody_training_esm/conf/classifier/xgboost.yaml</code>).</li>
+<li>Pydantic schema expects <code>classifier.strategy</code> (<code>src/antibody_training_esm/models/config.py</code>).</li>
+<li>Trainer passes <code>strategy=...</code> into <code>BinaryClassifier(...)</code> (<code>src/antibody_training_esm/core/trainer.py</code>).</li>
+<li>Factory only switches on <code>config["type"]</code> (<code>src/antibody_training_esm/core/classifier_factory.py</code>).</li>
+<li>Repo-level comment claims this works: <code>pyproject.toml</code> under <code>[project.scripts]</code>.</li>
+</ul>
+<h4 id="likely-symptom-repro">Likely Symptom / Repro<a class="headerlink" href="#likely-symptom-repro" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Run training with <code>classifier=xgboost</code> and inspect saved artifacts: you'd expect a <code>.xgb</code> to be created (XGBoost), but you'll get LogReg-style artifacts (e.g. <code>.npz</code>) and/or LogReg logs.</li>
+</ul>
+<h4 id="suggested-fix">Suggested Fix<a class="headerlink" href="#suggested-fix" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Unify on <strong>one</strong> key for classifier selection across Hydra + Pydantic + factory:</li>
+<li>Option A (minimal): treat <code>classifier.type</code> as the source of truth and add a Pydantic alias so <code>strategy</code> and <code>type</code> both work.</li>
+<li>Option B: rename YAML configs to <code>strategy:</code> and teach <code>create_classifier(...)</code> to check <code>strategy</code> too.</li>
+<li>Add an integration test that composes Hydra config with <code>classifier=xgboost</code> and asserts the trained strategy is XGBoost.</li>
+</ul>
+<hr />
+<h3 id="p12-npzjson-production-load-path-loses-embedding-model-type-breaks-amplifybiophysical">P1.2 — NPZ+JSON "production" load path loses embedding model type (breaks AMPLIFY/biophysical)<a class="headerlink" href="#p12-npzjson-production-load-path-loses-embedding-model-type-breaks-amplifybiophysical" title="Permanent link">&para;</a></h3>
+<blockquote>
+<p><strong>Spec:</strong> <a href="../specs/P1_2_npz_loses_embedding_model_type/">P1_2_npz_loses_embedding_model_type.md</a></p>
+</blockquote>
+<h4 id="impact_1">Impact<a class="headerlink" href="#impact_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>.npz</code> + <code>*_config.json</code> artifacts cannot be reliably loaded for non-ESM backbones:</li>
+<li><strong>biophysical</strong>: will attempt to load a HuggingFace model named <code>"biophysical"</code> (fails).</li>
+<li><strong>AMPLIFY</strong>: will reconstruct as ESM by default (feature-dimension mismatch or wrong model).</li>
+</ul>
+<h4 id="evidence_1">Evidence<a class="headerlink" href="#evidence_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>ModelArtifactMetadata.from_classifier(...)</code> does <strong>not</strong> persist the embedding extractor type (<code>esm</code>/<code>amplify</code>/<code>biophysical</code>) (<code>src/antibody_training_esm/models/artifact.py</code>).</li>
+<li><code>ModelArtifactMetadata.to_classifier_params()</code> reconstructs a <code>BinaryClassifier(...)</code> without passing <code>model_type</code>, so <code>BinaryClassifier</code> defaults to <code>"esm"</code> (<code>src/antibody_training_esm/models/artifact.py</code>, <code>src/antibody_training_esm/core/classifier.py</code>).</li>
+<li><code>load_model_from_npz(...)</code> depends on <code>metadata.to_classifier_params()</code> (<code>src/antibody_training_esm/core/training/serialization.py</code>).</li>
+</ul>
+<h4 id="likely-symptom-repro_1">Likely Symptom / Repro<a class="headerlink" href="#likely-symptom-repro_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Train a biophysical model, then try to predict using the <code>.npz</code> path:</li>
+<li><code>uv run antibody-predict classifier.path=.../model.npz classifier.config_path=.../model_config.json model=biophysical</code></li>
+<li>Expected: uses biophysical features; Actual: tries to load ESM from HF or crashes.</li>
+</ul>
+<h4 id="suggested-fix_1">Suggested Fix<a class="headerlink" href="#suggested-fix_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Extend metadata to include a dedicated field for the embedding extractor type (e.g. <code>embedding_model_type: Literal["esm","amplify","biophysical"]</code>) and round-trip it through <code>to_classifier_params()</code>.</li>
+<li>Add regression tests that:</li>
+<li>Save + load NPZ for <code>model=biophysical</code> and <code>model=amplify_350m</code>.</li>
+<li>Assert the reconstructed classifier uses the right embedding extractor and predicts without feature-dim mismatch.</li>
+</ul>
+<hr />
+<h2 id="p2-medium">P2 — Medium<a class="headerlink" href="#p2-medium" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p><strong>All P2 specs:</strong> <a href="../specs/P2_prediction_and_cache_bugs/">P2_prediction_and_cache_bugs.md</a></p>
+</blockquote>
+<h3 id="p21-predictorembedder-recreation-ignores-biophysical-models">P2.1 — <code>Predictor.embedder</code> recreation ignores biophysical models<a class="headerlink" href="#p21-predictorembedder-recreation-ignores-biophysical-models" title="Permanent link">&para;</a></h3>
+<h4 id="impact_2">Impact<a class="headerlink" href="#impact_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li>If a biophysical classifier is loaded and the device is overridden/mismatched, the embedder "recreate" path can incorrectly instantiate an <code>ESMEmbeddingExtractor</code> instead of a biophysical extractor.</li>
+</ul>
+<h4 id="evidence_2">Evidence<a class="headerlink" href="#evidence_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Embedder recreation handles <code>"amplify"</code> explicitly, otherwise defaults to ESM; no <code>"biophysical"</code> branch (<code>src/antibody_training_esm/core/prediction.py</code>).</li>
+</ul>
+<h4 id="suggested-fix_2">Suggested Fix<a class="headerlink" href="#suggested-fix_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Add a biophysical branch that rebuilds <code>BiophysicalEmbeddingExtractor</code>, or skip recreation entirely for biophysical.</li>
+</ul>
+<hr />
+<h3 id="p22-predictor-does-not-support-pickle-free-xgboost-artifacts-xgb-json">P2.2 — Predictor does not support pickle-free XGBoost artifacts (<code>.xgb</code> + JSON)<a class="headerlink" href="#p22-predictor-does-not-support-pickle-free-xgboost-artifacts-xgb-json" title="Permanent link">&para;</a></h3>
+<h4 id="impact_3">Impact<a class="headerlink" href="#impact_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Training can serialize XGBoost to <code>.xgb</code> (pickle-free), but inference can't load it without using the pickle fallback.</li>
+</ul>
+<h4 id="evidence_3">Evidence<a class="headerlink" href="#evidence_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Training writes <code>.xgb</code> for XGBoost (<code>src/antibody_training_esm/core/training/serialization.py</code>).</li>
+<li><code>Predictor.classifier</code> only supports <code>.npz</code> (+ JSON) or pickle/joblib, not <code>.xgb</code> (<code>src/antibody_training_esm/core/prediction.py</code>).</li>
+</ul>
+<h4 id="suggested-fix_3">Suggested Fix<a class="headerlink" href="#suggested-fix_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Add a <code>load_model_from_xgb(...)</code> path (similar to NPZ) and teach <code>Predictor</code> to recognize <code>.xgb</code>.</li>
+</ul>
+<hr />
+<h3 id="p23-embedding-cache-key-builds-a-giant-string-of-all-sequences-perfmemory-risk">P2.3 — Embedding cache key builds a giant string of all sequences (perf/memory risk)<a class="headerlink" href="#p23-embedding-cache-key-builds-a-giant-string-of-all-sequences-perfmemory-risk" title="Permanent link">&para;</a></h3>
+<h4 id="impact_4">Impact<a class="headerlink" href="#impact_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>sequences_str = "|".join(sequences)</code> scales with total dataset length; for large datasets this can be slow and memory-intensive (and can blow up for 100k+ sequences).</li>
+</ul>
+<h4 id="evidence_4">Evidence<a class="headerlink" href="#evidence_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Cache key construction concatenates the full corpus (<code>src/antibody_training_esm/core/training/cache.py</code>).</li>
+</ul>
+<h4 id="suggested-fix_4">Suggested Fix<a class="headerlink" href="#suggested-fix_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Hash incrementally (streaming) instead of joining into one huge string.</li>
+</ul>
+<hr />
+<h3 id="p24-training-pipeline-doesnt-use-datatest_file-docs-imply-test-set-evaluation">P2.4 — Training pipeline doesn’t use <code>data.test_file</code> (docs imply test-set evaluation)<a class="headerlink" href="#p24-training-pipeline-doesnt-use-datatest_file-docs-imply-test-set-evaluation" title="Permanent link">&para;</a></h3>
+<h4 id="impact_5">Impact<a class="headerlink" href="#impact_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>TrainingPipelineConfig</code> requires <code>test_file</code>, and docs show "Test Set (Jain)" metrics as part of training output, but training currently only loads/evaluates training data + CV.</li>
+</ul>
+<h4 id="evidence_5">Evidence<a class="headerlink" href="#evidence_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>train_pipeline(...)</code> only calls <code>load_data(config)</code> (train) and never loads <code>config.data.test_file</code> (<code>src/antibody_training_esm/core/trainer.py</code>).</li>
+<li>Training docs describe test-set metrics in "Training Output" (<code>docs/user-guide/training.md</code>).</li>
+</ul>
+<h4 id="suggested-fix_5">Suggested Fix<a class="headerlink" href="#suggested-fix_5" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Either:</li>
+<li>Implement test-set evaluation inside <code>train_pipeline(...)</code>, or</li>
+<li>Update docs/config schema to make it clear testing is a separate CLI (<code>antibody-test</code>) and <code>test_file</code> isn’t required for training.</li>
+</ul>
+<hr />
+<h2 id="p3-low">P3 — Low<a class="headerlink" href="#p3-low" title="Permanent link">&para;</a></h2>
+<h3 id="p31-default-model-revisions-are-unpinned-revision-main">P3.1 — Default model revisions are unpinned (<code>revision: main</code>)<a class="headerlink" href="#p31-default-model-revisions-are-unpinned-revision-main" title="Permanent link">&para;</a></h3>
+<h4 id="impact_6">Impact<a class="headerlink" href="#impact_6" title="Permanent link">&para;</a></h4>
+<ul>
+<li>"Same config" may not reproduce the same embeddings/results over time if upstream model cards change.</li>
+</ul>
+<h4 id="evidence_6">Evidence<a class="headerlink" href="#evidence_6" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>revision: main</code> in default ESM configs (<code>src/antibody_training_esm/conf/model/esm1v.yaml</code>, <code>src/antibody_training_esm/conf/model/esm2_650m.yaml</code>).</li>
+</ul>
+<h4 id="suggested-fix_6">Suggested Fix<a class="headerlink" href="#suggested-fix_6" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Pin to known-good SHAs (like AMPLIFY config does), or document that ESM defaults are not pinned.</li>
+</ul>
+<hr />
+<h3 id="p32-mkdocs-build-produces-many-warnings-broken-links-nav-drift">P3.2 — MkDocs build produces many warnings (broken links + nav drift)<a class="headerlink" href="#p32-mkdocs-build-produces-many-warnings-broken-links-nav-drift" title="Permanent link">&para;</a></h3>
+<h4 id="impact_7">Impact<a class="headerlink" href="#impact_7" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Docs build succeeds, but link integrity is noisy; broken links reduce usability and can hide real doc regressions.</li>
+</ul>
+<h4 id="evidence_7">Evidence<a class="headerlink" href="#evidence_7" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>make docs-build</code> emits many warnings about missing targets and pages not included in nav.</li>
+</ul>
+<h4 id="suggested-fix_7">Suggested Fix<a class="headerlink" href="#suggested-fix_7" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Decide which docs should be in nav vs archive-only, then fix/convert problematic relative links (often needs absolute repo links).</li>
+</ul>
+<hr />
+<h3 id="p33-antibody-preprocess-cli-is-a-stub-not-end-to-end">P3.3 — <code>antibody-preprocess</code> CLI is a stub (not end-to-end)<a class="headerlink" href="#p33-antibody-preprocess-cli-is-a-stub-not-end-to-end" title="Permanent link">&para;</a></h3>
+<h4 id="impact_8">Impact<a class="headerlink" href="#impact_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Users may assume preprocessing is supported via CLI, but it only prints guidance.</li>
+</ul>
+<h4 id="evidence_8">Evidence<a class="headerlink" href="#evidence_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li>CLI explicitly states it is not implemented (<code>src/antibody_training_esm/cli/preprocess.py</code>).</li>
+</ul>
+<h4 id="suggested-fix_8">Suggested Fix<a class="headerlink" href="#suggested-fix_8" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Either implement a Hydra-driven preprocess pipeline (preferred per repo guidelines), or rename/reframe the CLI to avoid implying functionality.</li>
+</ul>
+<hr />
+<h2 id="p4-trivial-cleanup">P4 — Trivial / Cleanup<a class="headerlink" href="#p4-trivial-cleanup" title="Permanent link">&para;</a></h2>
+<h3 id="p41-bandit-nosec-annotations-generate-warning-noise">P4.1 — Bandit <code># nosec ...</code> annotations generate warning noise<a class="headerlink" href="#p41-bandit-nosec-annotations-generate-warning-noise" title="Permanent link">&para;</a></h3>
+<h4 id="impact_9">Impact<a class="headerlink" href="#impact_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>bandit</code> run is noisy due to <code># nosec</code> comments that include extra words; this can mask real findings in CI output.</li>
+</ul>
+<h4 id="evidence_9">Evidence<a class="headerlink" href="#evidence_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>uv run bandit -r src/antibody_training_esm</code> warns about "Test in comment: ...".</li>
+</ul>
+<h4 id="suggested-fix_9">Suggested Fix<a class="headerlink" href="#suggested-fix_9" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Standardize to <code># nosec: B615</code> (or <code># nosec B615</code>) with no extra tokens.</li>
+</ul>
+<hr />
+<h3 id="p42-e2e-skip-reasons-appear-stalemisleading">P4.2 — E2E skip reasons appear stale/misleading<a class="headerlink" href="#p42-e2e-skip-reasons-appear-stalemisleading" title="Permanent link">&para;</a></h3>
+<h4 id="impact_10">Impact<a class="headerlink" href="#impact_10" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Skipped tests mention "trainer not implemented" even though trainer exists; this can confuse future debugging.</li>
+</ul>
+<h4 id="evidence_10">Evidence<a class="headerlink" href="#evidence_10" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>make test-e2e</code> shows skip reasons in <code>tests/e2e/test_train_pipeline.py</code>.</li>
+</ul>
+<h4 id="suggested-fix_10">Suggested Fix<a class="headerlink" href="#suggested-fix_10" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Update skip conditions/messages to match current pipeline status and gating env vars.</li>
+</ul>
+<hr />
+<h3 id="p43-predictor-uses-__code__-introspection-to-detect-assay_type">P4.3 — <code>Predictor</code> uses <code>.__code__</code> introspection to detect <code>assay_type</code><a class="headerlink" href="#p43-predictor-uses-__code__-introspection-to-detect-assay_type" title="Permanent link">&para;</a></h3>
+<h4 id="impact_11">Impact<a class="headerlink" href="#impact_11" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Works for pure-Python callables, but can break for non-Python implementations of <code>predict</code> (future-proofing issue).</li>
+</ul>
+<h4 id="evidence_11">Evidence<a class="headerlink" href="#evidence_11" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>src/antibody_training_esm/core/prediction.py</code> checks <code>self.classifier.predict.__code__.co_varnames</code>.</li>
+</ul>
+<h4 id="suggested-fix_11">Suggested Fix<a class="headerlink" href="#suggested-fix_11" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Use <code>inspect.signature(...)</code> with a try/except, or just try calling with <code>assay_type</code> and fall back on <code>TypeError</code>.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 The Obstacle Is The Way
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

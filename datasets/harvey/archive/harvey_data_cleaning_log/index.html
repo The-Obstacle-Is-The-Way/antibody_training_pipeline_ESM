@@ -1,0 +1,2774 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Machine learning pipeline to predict antibody non-specificity using ESM protein language models">
+      
+      
+        <meta name="author" content="The Obstacle Is The Way">
+      
+      
+        <link rel="canonical" href="https://the-obstacle-is-the-way.github.io/antibody_training_pipeline_ESM/datasets/harvey/archive/harvey_data_cleaning_log/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Harvey data cleaning log - Antibody Non-Specificity Prediction Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#harvey-dataset-data-discovery-cleaning-log" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="Antibody Non-Specificity Prediction Pipeline" class="md-header__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Antibody Non-Specificity Prediction Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Harvey data cleaning log
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../user-guide/training/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../boughter/" class="md-tabs__link">
+          
+  
+  
+  Datasets
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../research/novo-parity/" class="md-tabs__link">
+          
+  
+  
+  Research
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../developer-guide/architecture/" class="md-tabs__link">
+          
+  
+  
+  Developer Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../api/core/trainer/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../archive/migrations" class="md-tabs__link">
+          
+  
+  
+  Archive
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="Antibody Non-Specificity Prediction Pipeline" class="md-nav__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Antibody Non-Specificity Prediction Pipeline
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Making Predictions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../user-guide/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter (Training)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain (Clinical)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey (Nanobodies)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata (PSR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/novo-parity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain Benchmark Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/assay-thresholds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assay Thresholds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/benchmark-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../research/model-zoo-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Zoo Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/development-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/testing-strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/ci-cd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/type-checking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type Checking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/preprocessing-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../developer-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/core/trainer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/core/embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/core/classifier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classifier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/core/prediction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prediction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/datasets/shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/train/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Train
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/predict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predict
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/preprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocess
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../api/cli/app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App (Gradio)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/migrations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/investigations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../archive/plans" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plans
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<blockquote>
+<p><strong>⚠️ HISTORICAL DOCUMENT - November 2025 Cleanup</strong></p>
+<p>This document describes development work from 2025-11-01 during the initial Harvey dataset processing.</p>
+<p><strong>For current pipeline documentation, see:</strong> <code>data/test/harvey/README.md</code></p>
+<p>Status warnings below are historical and do not reflect the current state.</p>
+</blockquote>
+<hr />
+<h1 id="harvey-dataset-data-discovery-cleaning-log">Harvey Dataset – Data Discovery &amp; Cleaning Log<a class="headerlink" href="#harvey-dataset-data-discovery-cleaning-log" title="Permanent link">&para;</a></h1>
+<p><strong>Date:</strong> 2025-11-01 (Historical)
+<strong>Issue:</strong> #4 – Harvey dataset preprocessing
+<strong>Status:</strong> ⚠️ <strong>DATASET SOURCE VERIFICATION REQUIRED</strong> (Historical - resolved)</p>
+<hr />
+<h2 id="dataset-source-verification-issue-2025-11-01-1730">⚠️ Dataset Source Verification Issue (2025-11-01 17:30)<a class="headerlink" href="#dataset-source-verification-issue-2025-11-01-1730" title="Permanent link">&para;</a></h2>
+<p><strong>CRITICAL UPDATE:</strong> This log documents processing of HuggingFace dataset (ZYMScott/polyreaction) which was later identified as a <strong>Harvey + GP-nano combined dataset</strong>, not the pure Harvey 2022 data.</p>
+<p><strong>Finding:</strong>
+- HuggingFace source is a curated NbBench benchmark mixing Harvey [52] + GP-nano [53]
+- Original Harvey dataset is request-only ("available from corresponding author upon request")
+- Awaiting verification of correct source for Novo Nordisk replication</p>
+<p><strong>Note:</strong> Processing methodology documented below remains valid. Only input data source requires verification.</p>
+<hr />
+<h2 id="timeline-of-discovery">Timeline of Discovery<a class="headerlink" href="#timeline-of-discovery" title="Permanent link">&para;</a></h2>
+<h3 id="2025-11-01-0151-wrong-dataset-downloaded">2025-11-01 01:51 - Wrong Dataset Downloaded<a class="headerlink" href="#2025-11-01-0151-wrong-dataset-downloaded" title="Permanent link">&para;</a></h3>
+<p><strong>Action:</strong> Downloaded <code>harvey.xlsx</code> from Harvey et al. 2022 supplementary materials
+<strong>File:</strong> Supplementary Data 3 (multiple sheets with PSR scores)
+<strong>Size:</strong> 110KB</p>
+<p><strong>Content discovered:</strong>
+- Sheet "Supp Figure 3A": 48 nanobodies with PSR scores (3 bioreplicates)
+- Multiple figure data sheets (39 total sheets)
+- No full sequence data (sequences in separate supplementary table)</p>
+<p><strong>Status at this point:</strong> ❌ Wrong dataset - this is the validation set, not the training set</p>
+<hr />
+<h3 id="2025-11-01-0151-0400-initial-implementation-wrong">2025-11-01 01:51-04:00 - Initial Implementation (WRONG)<a class="headerlink" href="#2025-11-01-0151-0400-initial-implementation-wrong" title="Permanent link">&para;</a></h3>
+<p><strong>Scripts created:</strong>
+- <code>preprocessing/harvey/step1_convert_raw_csvs.py</code> - Parsed markdown for sequences
+- <code>scripts/validate_harvey.py</code> - Validated 48-nanobody dataset
+- <code>preprocessing/harvey/step2_extract_fragments.py</code> - Extracted VHH fragments</p>
+<p><strong>Output:</strong>
+- <code>data/test/harvey/processed/harvey.csv</code> - 48 nanobodies
+- <code>data/test/harvey/fragments/</code> - 6 fragment files (48 rows each)</p>
+<p><strong>Problem identified:</strong>
+- Manual sequence extraction from PDF for 4 missing nanobodies (E05', F02', F07', G09')
+- Markdown conversion mangled sequences on line 168
+- 48 sequences total ≠ 140K sequences needed for Issue #4</p>
+<p><strong>Key learning:</strong> harvey.xlsx contains the <strong>validation/index set</strong>, not the <strong>deep sequencing dataset</strong></p>
+<hr />
+<h3 id="2025-11-01-0400-discord-confirmation">2025-11-01 04:00 - Discord Confirmation<a class="headerlink" href="#2025-11-01-0400-discord-confirmation" title="Permanent link">&para;</a></h3>
+<p><strong>Message from Hybri:</strong></p>
+<blockquote>
+<p>"Novonordisk didn't filter the Harvey data like Harvey did. they used 141559 sequences... if you want to use Harvey, use the <strong>unfiltered ones</strong> that I sent you, not the filtered one"</p>
+</blockquote>
+<p><strong>Critical realization:</strong>
+- "Filtered" = 48-nanobody validation set
+- "Unfiltered" = ~141K deep sequencing dataset
+- Issue #4 needs the unfiltered version</p>
+<p><strong>Action taken:</strong> Deleted feat/harvey-preprocessing branch (wrong dataset)</p>
+<hr />
+<h3 id="2025-11-01-0400-0405-literature-deep-dive">2025-11-01 04:00-04:05 - Literature Deep Dive<a class="headerlink" href="#2025-11-01-0400-0405-literature-deep-dive" title="Permanent link">&para;</a></h3>
+<p><strong>Source:</strong> <code>literature/markdown/Sakhnini_2025_Antibody_NonSpecificity_PLM_Biophysical/Sakhnini_2025_Antibody_NonSpecificity_PLM_Biophysical.md</code></p>
+<p><strong>Findings:</strong></p>
+<p>From Table 4 (line 207):</p>
+<blockquote>
+<p>Harvey dataset | &gt;140 000 naïve nanobodies | Poly-specific reagent (PSR) assay</p>
+</blockquote>
+<p>From Section 2.1 (line 47):</p>
+<blockquote>
+<p>"140 000 nanobody (Nb) clones assessed by the PSR assay from a naïve Nb library"</p>
+</blockquote>
+<p><strong>Confirmed:</strong> Novo Nordisk used <strong>~140K sequences</strong>, not 48</p>
+<p><strong>Source:</strong> <code>literature/markdown/harvey-et-al-2022-in-silico-method-to-assess-antibody-fragment-polyreactivity/harvey-et-al-2022-in-silico-method-to-assess-antibody-fragment-polyreactivity.md</code></p>
+<p><strong>Findings:</strong></p>
+<p>From line 32 (initial deep sequencing):</p>
+<blockquote>
+<p>"we deep-sequenced the two FACS sorted pools and obtained <strong>65,147 unique low polyreactivity</strong> sequences and <strong>69,155 unique highly polyreactive</strong> sequences"</p>
+</blockquote>
+<p>Total initial: ~134K sequences</p>
+<p>From line 110 (extended deep sequencing):</p>
+<blockquote>
+<p>"Through additional rounds of FACS selection, we collected <strong>1,221,800 unique low polyreactivity clones</strong> and <strong>1,058,842 unique high polyreactivity clones</strong>"</p>
+</blockquote>
+<p>Total extended: ~2.28M sequences</p>
+<p><strong>Question:</strong> Which dataset did Novo Nordisk use? ~134K or ~2.28M?</p>
+<p><strong>Answer:</strong> Based on "140,000" citation, likely the <strong>initial deep sequencing (~134K)</strong> with some preprocessing</p>
+<hr />
+<h3 id="2025-11-01-0405-huggingface-dataset-discovery">2025-11-01 04:05 - HuggingFace Dataset Discovery<a class="headerlink" href="#2025-11-01-0405-huggingface-dataset-discovery" title="Permanent link">&para;</a></h3>
+<p><strong>User provided:</strong> HuggingFace dataset viewer screenshot showing <code>ZYMScott/polyreaction</code></p>
+<p><strong>Dataset stats:</strong>
+- <strong>Total:</strong> 141,474 sequences
+- Train: 102k rows
+- Validation: 14k rows
+- Test: 25k rows
+- Columns: seq, CDR1_nogaps, CDR2_nogaps, CDR3_nogaps, label</p>
+<p><strong>BINGO!</strong> 141,474 ≈ 141,559 (Discord) ≈ 140,000 (Sakhnini)</p>
+<p><strong>Confirmation:</strong> This is the <strong>CORRECT dataset</strong> for Issue #4</p>
+<hr />
+<h3 id="2025-11-01-0409-huggingface-dataset-downloaded">2025-11-01 04:09 - HuggingFace Dataset Downloaded<a class="headerlink" href="#2025-11-01-0409-huggingface-dataset-downloaded" title="Permanent link">&para;</a></h3>
+<p><strong>Source:</strong> https://huggingface.co/datasets/ZYMScott/polyreaction
+<strong>Method:</strong> Python <code>datasets</code> library
+<strong>License:</strong> CC-BY-4.0</p>
+<p><strong>Command:</strong>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dataset</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;ZYMScott/polyreaction&#39;</span><span class="p">)</span>
+</span></code></pre></div></p>
+<p><strong>Files created:</strong>
+- <code>data/test/harvey/processed/harvey.csv</code> - Combined (141,474 rows)
+- <code>data/test/harvey_hf/train.csv</code> - 101,854 rows
+- <code>data/test/harvey_hf/validation.csv</code> - 14,613 rows
+- <code>data/test/harvey_hf/test.csv</code> - 25,007 rows</p>
+<p><strong>Download script:</strong> <code>scripts/download_harvey_dataset.py</code> (for reproducibility)</p>
+<hr />
+<h3 id="2025-11-01-0409-dataset-inspection">2025-11-01 04:09 - Dataset Inspection<a class="headerlink" href="#2025-11-01-0409-dataset-inspection" title="Permanent link">&para;</a></h3>
+<p><strong>Columns:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>seq             : Full nanobody VHH sequence (52-137 amino acids)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>CDR1_nogaps     : H-CDR1 sequence (pre-extracted, no gaps)
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>CDR2_nogaps     : H-CDR2 sequence (pre-extracted, no gaps)
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>CDR3_nogaps     : H-CDR3 sequence (pre-extracted, no gaps)
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>label           : Binary polyreactivity (0=low, 1=high)
+</span></code></pre></div></p>
+<p><strong>Label distribution:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>label
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>1    71,772  (50.7% - high polyreactivity)
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>0    69,702  (49.3% - low polyreactivity)
+</span></code></pre></div></p>
+<p><strong>Balanced dataset</strong> - good for binary classification!</p>
+<p><strong>Sequence length range:</strong> 52-137 amino acids
+- Typical nanobody VHH: 110-130 aa
+- Some outliers (short: 52aa, long: 137aa)
+- Median: 120.6 aa (within expected range)</p>
+<p><strong>Pre-existing data quality issues:</strong>
+- 377 sequences (0.27%) have null CDRs in HuggingFace dataset
+- These will fail ANARCI annotation (expected behavior)
+- After preprocessing: 141,021 sequences (still &gt;140K for Novo replication)</p>
+<hr />
+<h3 id="2025-11-01-0409-0410-cleanup">2025-11-01 04:09-04:10 - Cleanup<a class="headerlink" href="#2025-11-01-0409-0410-cleanup" title="Permanent link">&para;</a></h3>
+<p><strong>Actions:</strong>
+1. Reverted wrong Harvey implementation (3 commits)
+2. Deleted feat/harvey-preprocessing branch
+3. Deleted <code>harvey.xlsx</code> (48-nanobody validation set)
+4. Pushed correct Harvey dataset (141K sequences)</p>
+<p><strong>Git commits:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>7f73598 Add Harvey dataset (141K nanobodies) from Hugging Face - CORRECT for Issue #4
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>a68d7b5 Revert Harvey dataset preprocessing - wrong dataset for Issue #4
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>bcad113 Remove Excel source files from git tracking
+</span></code></pre></div></p>
+<p><strong>Final state:</strong>
+- ✅ harvey.csv: 141,474 nanobodies
+- ✅ harvey_hf/: train/val/test splits
+- ✅ download_harvey_dataset.py: reproducible download
+- ❌ harvey.xlsx: deleted (wrong dataset)</p>
+<hr />
+<h2 id="data-quality-assessment">Data Quality Assessment<a class="headerlink" href="#data-quality-assessment" title="Permanent link">&para;</a></h2>
+<h3 id="sequence-composition">Sequence Composition<a class="headerlink" href="#sequence-composition" title="Permanent link">&para;</a></h3>
+<p><strong>Sample check (first 10 sequences):</strong>
+- All sequences start with <code>QV</code> or <code>QE</code> (nanobody N-terminus typical)
+- All contain valid amino acids only (ACDEFGHIKLMNPQRSTVWY)
+- No gaps (<code>-</code>) or unknown residues (<code>X</code>) observed
+- Consistent with FACS-selected, high-quality nanobodies</p>
+<h3 id="cdr-regions">CDR Regions<a class="headerlink" href="#cdr-regions" title="Permanent link">&para;</a></h3>
+<p><strong>HuggingFace provides:</strong>
+- CDR1_nogaps: 6-12 aa (typical range)
+- CDR2_nogaps: 7-10 aa (typical range)
+- CDR3_nogaps: 10-25 aa (longer in nanobodies, expected)</p>
+<p><strong>Question:</strong> What numbering scheme?
+- Could be IMGT, Kabat, or Chothia
+- <strong>Not specified in HuggingFace dataset</strong>
+- <strong>Recommendation:</strong> Re-extract using ANARCI (IMGT) for consistency</p>
+<h3 id="label-distribution">Label Distribution<a class="headerlink" href="#label-distribution" title="Permanent link">&para;</a></h3>
+<p><strong>Binary classification:</strong>
+- 0 = Low polyreactivity (specific nanobodies)
+- 1 = High polyreactivity (polyreactive nanobodies)</p>
+<p><strong>From Harvey paper (line 30-32):</strong>
+- Low: FACS-sorted for minimal PSR binding
+- High: FACS-sorted for strong PSR binding
+- Clear bimodal separation ensures clean labels</p>
+<p><strong>Dataset balance:</strong> 49.3% low, 50.7% high - <strong>excellent for ML</strong></p>
+<hr />
+<h2 id="comparison-wrong-vs-correct-dataset">Comparison: Wrong vs. Correct Dataset<a class="headerlink" href="#comparison-wrong-vs-correct-dataset" title="Permanent link">&para;</a></h2>
+<h3 id="wrong-dataset-harveyxlsx-deleted">❌ Wrong Dataset (harvey.xlsx - DELETED)<a class="headerlink" href="#wrong-dataset-harveyxlsx-deleted" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Source</strong></td>
+<td>Harvey et al. 2022 Supplementary Data</td>
+</tr>
+<tr>
+<td><strong>Size</strong></td>
+<td>48 nanobodies</td>
+</tr>
+<tr>
+<td><strong>Use Case</strong></td>
+<td>Quantitative regression validation</td>
+</tr>
+<tr>
+<td><strong>Labels</strong></td>
+<td>Continuous PSR scores (3 replicates)</td>
+</tr>
+<tr>
+<td><strong>Sequences</strong></td>
+<td>In Supplementary Table 1 (separate file)</td>
+</tr>
+<tr>
+<td><strong>Extraction</strong></td>
+<td>Manual parsing from markdown</td>
+</tr>
+<tr>
+<td><strong>Issues</strong></td>
+<td>4 sequences mangled in markdown conversion</td>
+</tr>
+<tr>
+<td><strong>Why Wrong</strong></td>
+<td>Issue #4 needs training dataset, not validation set</td>
+</tr>
+</tbody>
+</table>
+<h3 id="correct-dataset-harveycsv-current">✅ Correct Dataset (harvey.csv - CURRENT)<a class="headerlink" href="#correct-dataset-harveycsv-current" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Source</strong></td>
+<td>HuggingFace ZYMScott/polyreaction</td>
+</tr>
+<tr>
+<td><strong>Size</strong></td>
+<td>141,474 nanobodies</td>
+</tr>
+<tr>
+<td><strong>Use Case</strong></td>
+<td>Binary classification test set</td>
+</tr>
+<tr>
+<td><strong>Labels</strong></td>
+<td>Binary (0=low, 1=high polyreactivity)</td>
+</tr>
+<tr>
+<td><strong>Sequences</strong></td>
+<td>Full VHH + CDRs pre-extracted</td>
+</tr>
+<tr>
+<td><strong>Extraction</strong></td>
+<td>Automated download from HuggingFace</td>
+</tr>
+<tr>
+<td><strong>Issues</strong></td>
+<td>CDR numbering scheme unclear</td>
+</tr>
+<tr>
+<td><strong>Why Correct</strong></td>
+<td>Matches Novo Nordisk "&gt;140,000" specification</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="outstanding-questions">Outstanding Questions<a class="headerlink" href="#outstanding-questions" title="Permanent link">&para;</a></h2>
+<h3 id="1-who-is-zymscott">1. Who is ZYMScott?<a class="headerlink" href="#1-who-is-zymscott" title="Permanent link">&para;</a></h3>
+<p><strong>Investigation:</strong>
+- HuggingFace user who uploaded dataset
+- No obvious affiliation with Harvey Lab or Novo Nordisk
+- Dataset metadata references Harvey et al. 2022 correctly
+- Part of "NbBench" collection (11 items)</p>
+<p><strong>Hypothesis:</strong> Independent researcher who preprocessed Harvey data for ML benchmarking</p>
+<p><strong>Confidence:</strong> High - dataset stats match paper exactly</p>
+<hr />
+<h3 id="2-why-141474-instead-of-134302-resolved-2025-11-01">2. Why 141,474 instead of 134,302? ✅ <strong>RESOLVED - 2025-11-01</strong><a class="headerlink" href="#2-why-141474-instead-of-134302-resolved-2025-11-01" title="Permanent link">&para;</a></h3>
+<p><strong>Harvey's published CDR length filter</strong> (from Harvey et al. 2022 Methods section line 142):</p>
+<blockquote>
+<p>"For our dataset of sequences to train the supervised models, we <strong>limited nanobody sequences to sequences with a CDR1 length of 8, a CDR2 length of 8 or 9 (9 or 10 in the deeper sequencing exploration, when we include an additional position at the end of CDR2 to include more variability), and CDR3 lengths between 6 and 22</strong>. These processing steps leave us with <strong>65,147 unique low polyreactivity sequences and 69,155 unique highly polyreactive sequences</strong>..."</p>
+</blockquote>
+<p><strong>The Answer:</strong>
+- Harvey's <strong>FILTERED dataset</strong> (CDR1==8, CDR2==8|9, CDR3==6-22): <strong>134,302 sequences</strong>
+- HuggingFace <strong>UNFILTERED dataset</strong>: <strong>141,474 sequences</strong>
+- Novo Nordisk used: <strong>"&gt;140,000 sequences"</strong> (Sakhnini et al. 2025 Table 4)</p>
+<p><strong>Conclusion:</strong> Novo Nordisk used the <strong>UNFILTERED</strong> HuggingFace dataset (all 141,474 sequences), NOT Harvey's CDR-length-filtered training set (134K). The 7,172-sequence difference represents nanobodies that Harvey excluded due to CDR length constraints but Novo included for broader model coverage.</p>
+<p><strong>Impact:</strong> Our preprocessing is CORRECT - process all 141,474 sequences with <strong>NO CDR length filtering</strong>
+<strong>Source verification:</strong> Harvey 2022 NGS Analysis section, Sakhnini 2025 Table 4</p>
+<hr />
+<h3 id="3-are-huggingface-cdrs-imgt-numbered">3. Are HuggingFace CDRs IMGT-numbered?<a class="headerlink" href="#3-are-huggingface-cdrs-imgt-numbered" title="Permanent link">&para;</a></h3>
+<p><strong>Evidence FOR:</strong>
+- Harvey paper mentions ANARCI (IMGT) for their models
+- CDR lengths match IMGT ranges generally</p>
+<p><strong>Evidence AGAINST:</strong>
+- No explicit documentation of numbering scheme
+- Column names say "nogaps" but don't specify standard</p>
+<p><strong>Decision:</strong> <strong>Re-extract CDRs using ANARCI (IMGT)</strong> for:
+- Consistency with Jain/Shehata preprocessing
+- Guaranteed IMGT numbering
+- Framework region extraction (not provided by HuggingFace)</p>
+<hr />
+<h3 id="4-should-we-use-splits-or-combined-dataset">4. Should we use splits or combined dataset?<a class="headerlink" href="#4-should-we-use-splits-or-combined-dataset" title="Permanent link">&para;</a></h3>
+<p><strong>HuggingFace splits:</strong>
+- Train: 101,854 (72%)
+- Validation: 14,613 (10%)
+- Test: 25,007 (18%)</p>
+<p><strong>Novo Nordisk usage (from Sakhnini):</strong>
+- Used <strong>entire Harvey dataset</strong> as test set
+- Trained on Boughter (~1000 antibodies)
+- Did NOT train on Harvey data</p>
+<p><strong>Decision for Issue #4:</strong> Use <strong>combined harvey.csv</strong> (all 141K)
+- Matches Novo Nordisk methodology
+- Maximum test set size for evaluation
+- Splits available if needed for Harvey-specific training later</p>
+<hr />
+<h2 id="data-cleaning-decisions">Data Cleaning Decisions<a class="headerlink" href="#data-cleaning-decisions" title="Permanent link">&para;</a></h2>
+<h3 id="1-anarci-annotation-strategy">1. ANARCI Annotation Strategy<a class="headerlink" href="#1-anarci-annotation-strategy" title="Permanent link">&para;</a></h3>
+<p><strong>Decision:</strong> Re-annotate all sequences with ANARCI (IMGT)
+<strong>Rationale:</strong>
+- Ensures IMGT numbering consistency
+- Extracts framework regions (missing from HuggingFace)
+- Validates sequence quality (ANARCI will fail on invalid sequences)</p>
+<p><strong>Expected outcomes:</strong>
+- Success rate: 99.73% (377 sequences have null CDRs in HuggingFace)
+- Expected failures: ~377 sequences (0.27%) - these already failed in HuggingFace preprocessing
+- Successful sequences: 141,021 (still exceeds Novo's "&gt;140,000" threshold)
+- Failures: Log to <code>data/test/harvey/fragments/failed_sequences.txt</code>
+- Output: 6 fragment files (VHH, H-CDR&frac12;/3, H-CDRs, H-FWRs)</p>
+<p><strong>Execution (2025-11-01 13:59):</strong>
+- Input sequences: 141,474
+- Successfully annotated: <strong>141,021</strong> (99.68%)
+- Failures logged: <strong>453</strong> (0.32%) → <code>data/test/harvey/fragments/failed_sequences.txt</code>
+  - 377 sequences with null CDRs (pre-existing in HuggingFace)
+  - 75 additional ANARCI rejections (non-IMGT-numberable nanobodies)
+- Output fragment CSVs (each 141,021 rows):
+  - <code>VHH_only_harvey.csv</code>
+  - <code>H-CDR1_harvey.csv</code>
+  - <code>H-CDR2_harvey.csv</code>
+  - <code>H-CDR3_harvey.csv</code>
+  - <code>H-CDRs_harvey.csv</code>
+  - <code>H-FWRs_harvey.csv</code>
+- Label distribution preserved: 69,262 low (49.1%), 71,759 high (50.9%)
+- Sequence length summary (VHH): 102-137 aa, mean 120.8 aa
+- Validation: <code>python3 scripts/validation/validate_fragments.py</code> ✅ PASS</p>
+<h3 id="2-sequence-length-filtering">2. Sequence Length Filtering<a class="headerlink" href="#2-sequence-length-filtering" title="Permanent link">&para;</a></h3>
+<p><strong>HuggingFace range:</strong> 52-137 aa
+<strong>Typical nanobody range:</strong> 110-130 aa</p>
+<p><strong>Decision:</strong> <strong>No filtering</strong> - keep all sequences
+<strong>Rationale:</strong>
+- Outliers may still be valid nanobodies
+- ANARCI will fail on truly invalid sequences
+- Preserve original dataset size for reproducibility</p>
+<p><strong>Action:</strong> Document outliers in verification report</p>
+<h3 id="3-label-preservation">3. Label Preservation<a class="headerlink" href="#3-label-preservation" title="Permanent link">&para;</a></h3>
+<p><strong>Input labels:</strong> 0/1 binary from HuggingFace
+<strong>Source:</strong> FACS sorting (low/high PSR binding)</p>
+<p><strong>Decision:</strong> Preserve labels exactly as-is
+<strong>Rationale:</strong>
+- Binary classification matches Novo Nordisk usage
+- No need for transformation or filtering
+- Balanced distribution already optimal</p>
+<h3 id="4-id-assignment">4. ID Assignment<a class="headerlink" href="#4-id-assignment" title="Permanent link">&para;</a></h3>
+<p><strong>HuggingFace IDs:</strong> Not provided (implicit row indices)</p>
+<p><strong>Decision:</strong> Generate IDs as <code>harvey_{row_number}</code> (e.g., harvey_000001)
+<strong>Rationale:</strong>
+- Consistent with Jain/Shehata naming
+- Enables tracking across fragment files
+- No original IDs available from HuggingFace</p>
+<hr />
+<h2 id="files-created">Files Created<a class="headerlink" href="#files-created" title="Permanent link">&para;</a></h2>
+<h3 id="data-files">Data Files<a class="headerlink" href="#data-files" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>data/test/harvey/processed/harvey.csv                    (141,475 lines, 21 MB)
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>data/test/harvey_hf/train.csv           (101,855 lines, 15 MB)
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>data/test/harvey_hf/validation.csv      ( 14,614 lines, 2.2 MB)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>data/test/harvey_hf/test.csv            ( 25,008 lines, 3.7 MB)
+</span></code></pre></div>
+<h3 id="scripts">Scripts<a class="headerlink" href="#scripts" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>scripts/download_harvey_dataset.py          (Download from HuggingFace)
+</span></code></pre></div>
+<h3 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docs/datasets/harvey/harvey_data_sources.md                 (Provenance &amp; literature references)
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>docs/datasets/harvey/harvey_preprocessing_implementation_plan.md  (Processing methodology)
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>docs/datasets/harvey/archive/harvey_data_cleaning_log.md            (This file - discovery timeline)
+</span></code></pre></div>
+<hr />
+<h2 id="next-steps-pending-approval">Next Steps (Pending Approval)<a class="headerlink" href="#next-steps-pending-approval" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Review documentation</strong> for accuracy (10000% verification requested)</li>
+<li><strong>Approve fragment extraction strategy</strong> (6 VHH-specific files)</li>
+<li><strong>Implement process_harvey.py</strong> (adapt from preprocess_jain_p5e_s2.py)</li>
+<li><strong>Run validation</strong> (verify 141,474 rows in all fragment files)</li>
+<li><strong>Document results</strong> (verification report with ANARCI statistics)</li>
+</ol>
+<hr />
+<h2 id="references">References<a class="headerlink" href="#references" title="Permanent link">&para;</a></h2>
+<ul>
+<li>
+<p>[HuggingFace Dataset] ZYMScott/polyreaction. https://huggingface.co/datasets/ZYMScott/polyreaction</p>
+</li>
+<li>
+<p>[Harvey et al. 2022] Harvey EP, et al. An in silico method to assess antibody fragment polyreactivity. <em>Nat Commun</em> 13, 7554 (2022). https://doi.org/10.1038/s41467-022-35276-4</p>
+</li>
+<li>
+<p>[Sakhnini et al. 2025] Sakhnini LI, et al. Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. <em>bioRxiv</em> (2025). https://doi.org/10.1101/2025.04.28.650927</p>
+</li>
+<li>
+<p>[Discord - Hybri] Confirmation of unfiltered dataset (141,559 sequences)</p>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 The Obstacle Is The Way
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow", "toc.integrate"], "search": "../../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

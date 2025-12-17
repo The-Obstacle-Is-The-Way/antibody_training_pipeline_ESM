@@ -1,0 +1,2747 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Machine learning pipeline to predict antibody non-specificity using ESM protein language models">
+      
+      
+        <meta name="author" content="The Obstacle Is The Way">
+      
+      
+        <link rel="canonical" href="https://the-obstacle-is-the-way.github.io/antibody_training_pipeline_ESM/datasets/boughter/complete_history/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>Boughter Dataset: Complete History & Final Processing Documentation - Antibody Non-Specificity Prediction Pipeline</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.618322db.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#boughter-dataset-complete-history-final-processing-documentation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Antibody Non-Specificity Prediction Pipeline" class="md-header__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Antibody Non-Specificity Prediction Pipeline
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Boughter Dataset: Complete History &amp; Final Processing Documentation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../overview/" class="md-tabs__link">
+          
+  
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../user-guide/training/" class="md-tabs__link">
+          
+  
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+  Datasets
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../research/novo-parity/" class="md-tabs__link">
+          
+  
+  
+  Research
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../developer-guide/architecture/" class="md-tabs__link">
+          
+  
+  
+  Developer Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../api/core/trainer/" class="md-tabs__link">
+          
+  
+  
+  API Reference
+
+        </a>
+      </li>
+    
+  
+
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../archive/migrations" class="md-tabs__link">
+          
+  
+  
+  Archive
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Antibody Non-Specificity Prediction Pipeline" class="md-nav__button md-logo" aria-label="Antibody Non-Specificity Prediction Pipeline" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Antibody Non-Specificity Prediction Pipeline
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    antibody_training_pipeline_ESM
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quick Start
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    User Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/training/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Training Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Models
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/inference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Making Predictions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user-guide/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter (Training)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain (Clinical)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey (Nanobodies)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata (PSR)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Research
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Research
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../research/novo-parity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain Benchmark Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../research/methodology/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Methodology
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../research/assay-thresholds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Assay Thresholds
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../research/benchmark-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Benchmark Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../research/model-zoo-roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Model Zoo Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developer Guide
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Developer Guide
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/development-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/testing-strategy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/ci-cd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CI/CD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/type-checking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Type Checking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/preprocessing-internals/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Internals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../developer-guide/docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    API Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_1" id="__nav_7_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Core
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/core/trainer/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trainer
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/core/embeddings/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Embeddings
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/core/classifier/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Classifier
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/core/prediction/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prediction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_2" id="__nav_7_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Datasets
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Datasets
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/datasets/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/datasets/boughter/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Boughter
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/datasets/jain/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Jain
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/datasets/harvey/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Harvey
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/datasets/shehata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Shehata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_3" id="__nav_7_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CLI
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    CLI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/cli/train/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Train
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/cli/test/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Test
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/cli/predict/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predict
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/cli/preprocess/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocess
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../api/cli/app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App (Gradio)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Archive
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Archive
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../archive/migrations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Migrations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../archive/investigations" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../archive/plans" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plans
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="boughter-dataset-complete-history-final-processing-documentation">Boughter Dataset: Complete History &amp; Final Processing Documentation<a class="headerlink" href="#boughter-dataset-complete-history-final-processing-documentation" title="Permanent link">&para;</a></h1>
+<p><strong>Date:</strong> 2025-11-04 (Last Updated: 2025-11-18)
+<strong>Status:</strong> ✅ <strong>COMPLETE - Production Model Validated and Deployed</strong>
+<strong>Purpose:</strong> Comprehensive reference for Boughter dataset structure, QC levels, and file selection</p>
+<hr />
+<h2 id="production-status">✅ PRODUCTION STATUS<a class="headerlink" href="#production-status" title="Permanent link">&para;</a></h2>
+<p><strong>Model:</strong> <code>experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl</code>
+<strong>Training Data:</strong> 914 sequences (Boughter QC, 0 and 4+ flags)
+<strong>CV Accuracy:</strong> 67.5% ± 8.9% (10-fold)
+<strong>External Validation:</strong> Jain 68.60% (exact parity) | Shehata 58.29% | Harvey 61.33%
+<strong>Status:</strong> ✅ <strong>Production-ready, externally validated</strong></p>
+<blockquote>
+<p><strong>💡 Note:</strong> For current preprocessing pipeline implementation, see <a href="../../../preprocessing/boughter/README.md"><code>preprocessing/boughter/README.md</code></a> (SINGLE SOURCE OF TRUTH).
+This document provides historical context, QC level comparisons, and decision rationale.</p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="#executive-summary">Executive Summary</a></li>
+<li><a href="#dataset-origin--purpose">Dataset Origin &amp; Purpose</a></li>
+<li><a href="#the-118-position-issue-resolved">The 118 Position Issue (RESOLVED)</a></li>
+<li><a href="#two-qc-levels-explained">Two QC Levels Explained</a></li>
+<li><a href="#the-62-sequences-with-x">The 62 Sequences with X</a></li>
+<li><a href="#production-training-files">Production Training Files</a></li>
+<li><a href="#production-model-performance">Production Model Performance</a></li>
+<li><a href="#recommendations-for-training">Recommendations for Training</a></li>
+</ol>
+<hr />
+<h2 id="executive-summary">Executive Summary<a class="headerlink" href="#executive-summary" title="Permanent link">&para;</a></h2>
+<p><strong>TL;DR:</strong> Boughter dataset processing is 100% complete with two validated QC levels. The 118 position issue was resolved (use ANARCI + IMGT, exclude position 118). We removed 62 sequences with X in frameworks for strict QC, but this did NOT improve CV accuracy (66.55% vs 67.5%, statistically equivalent).</p>
+<p><strong>Key Findings:</strong>
+- ✅ Novo methodology fully replicated (ANARCI + IMGT + Boughter QC filters)
+- ✅ Two QC levels available: Boughter QC (914 seqs) and Strict QC (852 seqs)
+- ✅ 118 position issue resolved (excludes position 118, Framework 4 anchor)
+- ✅ Strict QC validated: removes X in frameworks but doesn't improve performance
+- ✅ Both models trained and ready for testing</p>
+<hr />
+<h2 id="dataset-origin-purpose">Dataset Origin &amp; Purpose<a class="headerlink" href="#dataset-origin-purpose" title="Permanent link">&para;</a></h2>
+<h3 id="paper-reference">Paper Reference<a class="headerlink" href="#paper-reference" title="Permanent link">&para;</a></h3>
+<p><strong>Boughter CT et al. (2020)</strong>
+"Biochemical patterns of antibody polyreactivity revealed through a bioinformatics-based analysis of CDR loops"
+<em>eLife</em> 9:e61393
+DOI: https://doi.org/10.7554/eLife.61393</p>
+<h3 id="what-is-the-boughter-dataset">What is the Boughter Dataset?<a class="headerlink" href="#what-is-the-boughter-dataset" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>1,171 antibodies</strong> from 6 diverse sources (mouse IgA, flu, HIV, gut)</li>
+<li><strong>ELISA polyreactivity</strong> against 4-7 diverse antigens (DNA, insulin, LPS, flagellin, albumin, cardiolipin, KLH)</li>
+<li><strong>Binary labels:</strong> 0 flags (specific) vs 4+ flags (non-specific), exclude 1-3 flags (mildly polyreactive)</li>
+<li><strong>Training set:</strong> Used by Novo Nordisk to train polyreactivity prediction models</li>
+</ul>
+<h3 id="dataset-composition-from-boughter-et-al-2020-table-1">Dataset Composition (from Boughter et al. 2020 Table 1)<a class="headerlink" href="#dataset-composition-from-boughter-et-al-2020-table-1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Subset</th>
+<th>Polyreactive</th>
+<th>Non-Polyreactive</th>
+<th>Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mouse IgA</td>
+<td>205</td>
+<td>240</td>
+<td>445</td>
+</tr>
+<tr>
+<td>HIV reactive</td>
+<td>172</td>
+<td>124</td>
+<td>296</td>
+</tr>
+<tr>
+<td>Influenza reactive</td>
+<td>152</td>
+<td>160</td>
+<td>312</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td><strong>529</strong></td>
+<td><strong>524</strong></td>
+<td><strong>1,053</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="six-boughter-subsets">Six Boughter Subsets<a class="headerlink" href="#six-boughter-subsets" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>flu</strong> (Influenza): 379 sequences</li>
+<li><strong>hiv_nat</strong> (HIV NAT): 134 sequences</li>
+<li><strong>hiv_cntrl</strong> (HIV control): 50 sequences</li>
+<li><strong>hiv_plos</strong> (HIV PLOS): 52 sequences</li>
+<li><strong>gut_hiv</strong> (gut HIV): 75 sequences</li>
+<li><strong>mouse_iga</strong> (mouse IgA): 481 sequences
+<strong>Total raw:</strong> 1,171 sequences</li>
+</ol>
+<hr />
+<h2 id="the-118-position-issue-resolved">The 118 Position Issue (RESOLVED)<a class="headerlink" href="#the-118-position-issue-resolved" title="Permanent link">&para;</a></h2>
+<h3 id="what-was-the-problem">What Was the Problem?<a class="headerlink" href="#what-was-the-problem" title="Permanent link">&para;</a></h3>
+<p><strong>Boughter's methodology (GetCDRs_AA.ipynb):</strong>
+- Tool: IgBLAST + custom parsing
+- CDR-H3: positions <strong>105-118</strong> (includes position 118)
+- Source: Extracted from <code>.dat</code> files using custom scripts</p>
+<p><strong>IMGT standard (ANARCI):</strong>
+- Tool: ANARCI (official IMGT implementation)
+- CDR-H3: positions <strong>105-117</strong> (excludes position 118)
+- Position 118: Framework 4 anchor residue (W or F, 99% conserved)</p>
+<p><strong>Apparent contradiction in Novo's paper:</strong></p>
+<blockquote>
+<p>"the Boughter dataset was parsed into three groups as previously done in [44]"</p>
+<p>BUT ALSO:</p>
+<p>"The primary sequences were annotated in the CDRs using ANARCI following the IMGT numbering scheme"</p>
+</blockquote>
+<p><strong>How can you use "Boughter's methodology" AND "ANARCI/IMGT"? These give different CDR-H3 boundaries!</strong></p>
+<h3 id="the-resolution">The Resolution<a class="headerlink" href="#the-resolution" title="Permanent link">&para;</a></h3>
+<p><strong>Key insight:</strong> "Boughter's methodology" refers to <strong>QC filtering and flagging</strong>, NOT CDR extraction!</p>
+<p>From Boughter's actual source code (<code>seq_loader.py</code> lines 10-33):
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Remove X&#39;s in sequences</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">total_abs2</span> <span class="o">=</span> <span class="n">total_abs1</span><span class="p">[</span><span class="o">~</span><span class="n">total_abs1</span><span class="p">[</span><span class="s1">&#39;cdrL1_aa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)]</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">total_abs3</span> <span class="o">=</span> <span class="n">total_abs2</span><span class="p">[</span><span class="o">~</span><span class="n">total_abs2</span><span class="p">[</span><span class="s1">&#39;cdrL2_aa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)]</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># ... repeat for all 6 CDRs</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Remove empty CDRs</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">if</span> <span class="n">any_cdr</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span> <span class="n">delete_sequence</span>
+</span></code></pre></div></p>
+<p><strong>Boughter's QC code:</strong>
+- ✅ Filters X in CDRs only (L1, L2, L3, H1, H2, H3)
+- ✅ Filters empty CDRs
+- ✅ <strong>Agnostic to CDR extraction method!</strong> (operates on already-extracted CDRs)</p>
+<p><strong>Therefore, Novo's pipeline:</strong>
+1. Use ANARCI + IMGT to extract CDRs (excludes position 118) ← Annotation method
+2. Apply Boughter's QC filters on those CDRs (X check, empty check) ← "As previously done in [44]"
+3. Apply Boughter's flagging (0 and 4+ flags only) ← "As previously done in [44]"</p>
+<p><strong>No contradiction!</strong> 🎯</p>
+<h3 id="our-implementation">Our Implementation<a class="headerlink" href="#our-implementation" title="Permanent link">&para;</a></h3>
+<p>✅ <strong>We use ANARCI + IMGT</strong> (CDR-H3: positions 105-117, excludes position 118)
+✅ <strong>We apply Boughter-style QC</strong> (X in CDRs, empty CDRs)
+✅ <strong>We use Boughter-style flagging</strong> (0 and 4+ flags only, exclude 1-3)</p>
+<p><strong>Result:</strong> Exact match to Novo's stated methodology</p>
+<p><strong>Documentation:</strong> <code>docs/datasets/boughter/novo_methodology_clarification.md</code></p>
+<hr />
+<h2 id="two-qc-levels-explained">Two QC Levels Explained<a class="headerlink" href="#two-qc-levels-explained" title="Permanent link">&para;</a></h2>
+<h3 id="qc-level-1-boughter-qc-standard">QC Level 1: Boughter QC (Standard)<a class="headerlink" href="#qc-level-1-boughter-qc-standard" title="Permanent link">&para;</a></h3>
+<p><strong>What it includes:</strong>
+- ✅ X filtering <strong>in CDRs only</strong> (L1, L2, L3, H1, H2, H3)
+- ✅ Empty CDR filtering
+- ✅ ANARCI annotation failures
+- ✅ Flagging strategy (0 and 4+ flags only, exclude 1-3)</p>
+<p><strong>What it does NOT include:</strong>
+- ❌ X filtering in frameworks (FWR1, FWR2, FWR3, FWR4)
+- ❌ Non-standard AA filtering (B, Z, J, U, O)</p>
+<p><strong>Pipeline:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>Raw DNA FASTA (6 subsets, 1,171 sequences)
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>   ↓
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>Stage 1: DNA → Protein translation
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>   ↓ preprocessing/boughter/stage1_dna_translation.py
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>   ↓ Output: data/train/boughter/processed/boughter.csv (1,171 sequences)
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>   ↓
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>Stage 2+3: ANARCI annotation + Boughter QC
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>   ↓ preprocessing/boughter/stage2_stage3_annotation_qc.py
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>   ↓ QC: X in CDRs only, empty CDRs, ANARCI failures
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>   ↓ Outputs: 16 fragment CSVs (1,065 sequences each)
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>   ↓    *_boughter.csv (all flags, has include_in_training column)
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>   ↓
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>   ↓ Filter to training subset (include_in_training == True)
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>       VH_only_boughter_training.csv (914 sequences, flattened export)
+</span></code></pre></div></p>
+<p><strong>Sequence counts:</strong>
+- Raw: 1,171 sequences
+- After ANARCI + Boughter QC: 1,065 sequences (-106, -9.0%)
+- Training subset (0 and 4+ flags): 914 sequences (-151 more, -14.2% of 1,065)</p>
+<p><strong>Files:</strong>
+- <code>data/train/boughter/annotated/VH_only_boughter.csv</code> (1,065 sequences, all flags)
+- <code>data/train/boughter/canonical/VH_only_boughter_training.csv</code> (914 sequences, training only)</p>
+<p><strong>Use case:</strong> Exact replication of Boughter's published methodology</p>
+<hr />
+<h3 id="qc-level-2-strict-qc-industry-standard">QC Level 2: Strict QC (Industry Standard)<a class="headerlink" href="#qc-level-2-strict-qc-industry-standard" title="Permanent link">&para;</a></h3>
+<p>An experimental Stage 4 strict QC filtering was tested but did not improve over the 914-sequence production model (66.55% vs 67.5% CV accuracy; not statistically significant). The experiment is documented in this history and in <code>docs/datasets/boughter/novo_methodology_clarification.md</code>; artifacts are not checked in to this repo snapshot.</p>
+<hr />
+<h2 id="the-62-sequences-with-x">The 62 Sequences with X<a class="headerlink" href="#the-62-sequences-with-x" title="Permanent link">&para;</a></h2>
+<h3 id="what-we-discovered">What We Discovered<a class="headerlink" href="#what-we-discovered" title="Permanent link">&para;</a></h3>
+<p><strong>QC Audit (2025-11-04):</strong>
+- Script: <code>preprocessing/boughter/audit_training_qc.py</code>
+- Finding: <strong>62 sequences</strong> in the training set (914 sequences) have X amino acid</p>
+<p><strong>Where is X located?</strong>
+- <strong>46 sequences:</strong> X at position 0 (start of VH - Framework 1)
+- <strong>16 sequences:</strong> X at other positions in frameworks</p>
+<p><strong>Example sequence with X at position 0:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>XVQLVQSGAEVTKPGSSVKVSCEASGGTFSSRAISWVRQAPGQGLEFMGG...
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>^
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>Position 0 - should be E, Q, or D (ambiguous translation)
+</span></code></pre></div></p>
+<h3 id="why-did-boughters-qc-miss-these">Why Did Boughter's QC Miss These?<a class="headerlink" href="#why-did-boughters-qc-miss-these" title="Permanent link">&para;</a></h3>
+<p><strong>From Boughter's <code>seq_loader.py</code> (lines 10-16):</strong>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Remove X&#39;s in sequences... Should actually get a count of these at some point...</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">total_abs</span> <span class="o">=</span> <span class="n">total_abs</span><span class="p">[</span><span class="o">~</span><span class="n">total_abs</span><span class="p">[</span><span class="s1">&#39;cdrH1_aa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)]</span>  <span class="c1"># CDR-H1</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">total_abs</span> <span class="o">=</span> <span class="n">total_abs</span><span class="p">[</span><span class="o">~</span><span class="n">total_abs</span><span class="p">[</span><span class="s1">&#39;cdrH2_aa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)]</span>  <span class="c1"># CDR-H2</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">total_abs</span> <span class="o">=</span> <span class="n">total_abs</span><span class="p">[</span><span class="o">~</span><span class="n">total_abs</span><span class="p">[</span><span class="s1">&#39;cdrH3_aa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)]</span>  <span class="c1"># CDR-H3</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="c1"># Does NOT check full VH sequence!</span>
+</span></code></pre></div></p>
+<p><strong>Key insight:</strong> Boughter only checks for X <strong>in CDR columns</strong>, not in the full VH sequence!</p>
+<p><strong>Position 0 is in Framework 1</strong> (not in any CDR), so these sequences <strong>passed</strong> Boughter's QC filter.</p>
+<h3 id="why-did-we-remove-these-in-strict-qc">Why Did We Remove These in Strict QC?<a class="headerlink" href="#why-did-we-remove-these-in-strict-qc" title="Permanent link">&para;</a></h3>
+<p><strong>Industry standard practice:</strong>
+- Filter X <strong>anywhere</strong> in sequence (not just CDRs)
+- X = ambiguous amino acid (translation ambiguity or sequencing error)
+- ESM models can handle X, but it represents noise/uncertainty
+- Professional QC practice in pharma/biotech</p>
+<p><strong>Hypothesis (WRONG):</strong>
+- We expected: Remove noisy sequences → higher CV accuracy
+- Reality: 66.55% vs 67.5% (slight decrease, statistically equivalent)</p>
+<p><strong>Conclusion:</strong> The 62 sequences with X were <strong>NOT noise</strong> - they were valid training data! ESM embeddings already handle ambiguous positions well.</p>
+<hr />
+<h2 id="production-training-files">Production Training Files<a class="headerlink" href="#production-training-files" title="Permanent link">&para;</a></h2>
+<h3 id="file-inventory">File Inventory<a class="headerlink" href="#file-inventory" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>data/train/boughter/
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>├── canonical/
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>│   └── VH_only_boughter_training.csv         # 914 sequences (PRODUCTION)
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>├── annotated/
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>│   ├── VH_only_boughter.csv                  # 1,065 sequences (all flags)
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>│   ├── H-CDR3_boughter.csv                   # 1,065 sequences (all flags)
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>│   ├── Full_boughter.csv                     # 1,065 sequences (all flags)
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>│   └── ... (13 more fragment CSVs)
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>└── processed/
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    └── boughter.csv                          # 1,117 translated sequences
+</span></code></pre></div>
+<h3 id="production-training-file">Production Training File<a class="headerlink" href="#production-training-file" title="Permanent link">&para;</a></h3>
+<p><strong>File:</strong> <code>data/train/boughter/canonical/VH_only_boughter_training.csv</code></p>
+<p><strong>Sequences:</strong> 914 (training subset: 0 and 4+ ELISA flags only)</p>
+<p><strong>Columns:</strong>
+- <code>sequence</code>: VH amino acid sequence
+- <code>label</code>: Binary (0 = specific, 1 = non-specific)</p>
+<p><strong>QC level:</strong> Boughter QC (X in CDRs only, empty CDRs)</p>
+<p><strong>Label distribution:</strong>
+- Label 0 (specific, 0 flags): 457 sequences (50.0%)
+- Label 1 (non-specific, 4+ flags): 457 sequences (50.0%)</p>
+<p><strong>Model:</strong> <code>experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl</code></p>
+<p><strong>Performance:</strong>
+- CV accuracy: 67.5% ± 8.9% (10-fold)
+- External validation:
+  - Jain (HIC retention): 68.60% accuracy ✅ (exact parity)
+  - Shehata (PSR assay, PSR threshold=0.5495): 58.29% accuracy ✅ (2025-11-18 run)</p>
+<p><strong>Status:</strong> ✅ PRODUCTION - Externally validated and ready for deployment</p>
+<hr />
+<h3 id="fragment-files-multi-fragment-analysis">Fragment Files (Multi-Fragment Analysis)<a class="headerlink" href="#fragment-files-multi-fragment-analysis" title="Permanent link">&para;</a></h3>
+<p><strong>Files:</strong> <code>data/train/boughter/annotated/*_boughter.csv</code> (16 files)</p>
+<p><strong>Fragments available:</strong>
+- Variable domains: VH_only, VL_only, VH+VL, Full
+- Heavy chain CDRs: H-CDR1, H-CDR2, H-CDR3, H-CDRs, H-FWRs
+- Light chain CDRs: L-CDR1, L-CDR2, L-CDR3, L-CDRs, L-FWRs
+- Combined: All-CDRs, All-FWRs</p>
+<p><strong>Sequences:</strong> 1,065 (all flags, includes <code>include_in_training</code> column)</p>
+<p><strong>Use case:</strong> Multi-fragment analysis, fragment-specific training</p>
+<hr />
+<h3 id="archived-experimental-files">Archived Experimental Files<a class="headerlink" href="#archived-experimental-files" title="Permanent link">&para;</a></h3>
+<p>An experimental strict QC filtering (852-914 sequences) was tested but did not improve over the production model. Artifacts are not checked in to this repo snapshot; see <code>docs/datasets/boughter/novo_methodology_clarification.md</code> for the results and rationale.</p>
+<hr />
+<h2 id="production-model-performance">Production Model Performance<a class="headerlink" href="#production-model-performance" title="Permanent link">&para;</a></h2>
+<h3 id="boughter-qc-914-sequences">Boughter QC (914 sequences)<a class="headerlink" href="#boughter-qc-914-sequences" title="Permanent link">&para;</a></h3>
+<p><strong>Model:</strong> <code>experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl</code></p>
+<p><strong>Cross-Validation (10-fold):</strong>
+- Accuracy: <strong>67.5% ± 8.9%</strong>
+- F1 Score: Not reported
+- ROC AUC: Not reported</p>
+<p><strong>Training time:</strong> ~1.5 minutes (embeddings cached)</p>
+<p><strong>File used:</strong> <code>data/train/boughter/canonical/VH_only_boughter_training.csv</code></p>
+<p><strong>Status:</strong> ✅ Baseline model, matches Boughter methodology</p>
+<hr />
+<h3 id="historical-note-archived-strict-qc-experiment">Historical Note: Archived Strict QC Experiment<a class="headerlink" href="#historical-note-archived-strict-qc-experiment" title="Permanent link">&para;</a></h3>
+<p>A 852-sequence strict QC model was trained but did NOT improve performance over the 914-sequence production model (66.55% vs 67.5% CV accuracy, not statistically significant).</p>
+<p><strong>See:</strong> <code>docs/datasets/boughter/novo_methodology_clarification.md</code> for the strict QC results and rationale (artifacts are not checked in to this repo snapshot).</p>
+<hr />
+<h3 id="comparison-summary">Comparison Summary<a class="headerlink" href="#comparison-summary" title="Permanent link">&para;</a></h3>
+<p><strong>CV Accuracy:</strong>
+- Boughter QC: 67.5% ± 8.9% (margin of error: ±8.9%)
+- Strict QC: 66.55% ± 7.07% (margin of error: ±7.07%)</p>
+<p><strong>Confidence intervals:</strong>
+- Boughter QC: [58.6%, 76.4%] (95% CI)
+- Strict QC: [59.48%, 73.62%] (95% CI)</p>
+<p><strong>Overlap analysis:</strong>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>Strict QC:  [59.48% ========== 66.55% ========== 73.62%]
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>Boughter:      [58.6% =========== 67.5% ============ 76.4%]
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>                     ^^^^^^^^^^ HUGE OVERLAP ^^^^^^^^^^
+</span></code></pre></div></p>
+<p><strong>Statistical significance:</strong> ❌ <strong>NOT significant</strong> - confidence intervals overlap massively</p>
+<p><strong>Conclusion:</strong> The two models perform <strong>identically</strong> within measurement error. Strict QC didn't help, but it also didn't hurt.</p>
+<hr />
+<h3 id="hypothesis-analysis">Hypothesis Analysis<a class="headerlink" href="#hypothesis-analysis" title="Permanent link">&para;</a></h3>
+<p><strong>Original hypothesis:</strong>
+- Remove 62 sequences with X in frameworks
+- These are "noisy" sequences with ambiguous translations
+- Removing noise → higher CV accuracy → match Novo's 71%</p>
+<p><strong>Reality:</strong>
+- Removed 62 sequences with X in frameworks
+- CV accuracy decreased slightly: 67.5% → 66.55%
+- <strong>NOT statistically significant</strong> (within margin of error)
+- Did NOT reach Novo's 71%</p>
+<p><strong>Why the hypothesis was wrong:</strong>
+1. <strong>ESM handles ambiguity well:</strong> ESM embeddings already account for positional uncertainty
+2. <strong>X wasn't noise:</strong> The 62 sequences were valid training data, not errors
+3. <strong>Less data hurts:</strong> Smaller training set (852 vs 914) = less data to learn from
+4. <strong>Frameworks matter:</strong> X in Framework 1 (position 0) may carry biological information</p>
+<p><strong>Key insight:</strong> Boughter's CDR-only X filtering was actually appropriate! Framework positions with X are still informative for polyreactivity prediction.</p>
+<hr />
+<h2 id="recommendations-for-training">Recommendations for Training<a class="headerlink" href="#recommendations-for-training" title="Permanent link">&para;</a></h2>
+<h3 id="primary-recommendation-use-boughter-qc-914-sequences">Primary Recommendation: Use Boughter QC (914 sequences)<a class="headerlink" href="#primary-recommendation-use-boughter-qc-914-sequences" title="Permanent link">&para;</a></h3>
+<p><strong>File:</strong> <code>data/train/boughter/canonical/VH_only_boughter_training.csv</code></p>
+<p><strong>Why?</strong>
+1. ✅ <strong>Better CV accuracy</strong> (67.5% vs 66.55%, though not statistically significant)
+2. ✅ <strong>More training data</strong> (914 vs 852 sequences)
+3. ✅ <strong>Matches Novo methodology</strong> (ANARCI + IMGT + Boughter QC)
+4. ✅ <strong>Validated approach</strong> (from published paper)
+5. ✅ <strong>Simpler pipeline</strong> (no Stage 4 needed)</p>
+<p><strong>Model:</strong> <code>experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl</code></p>
+<p><strong>Expected Jain test accuracy:</strong> ~66% (generalization to clinical antibodies)</p>
+<hr />
+<p><em>Removed: Old "Alternative" section - strict_qc experiment documented in <code>docs/datasets/boughter/novo_methodology_clarification.md</code></em></p>
+<hr />
+<p><em>Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section above</em></p>
+<hr />
+<h2 id="file-locations-quick-reference">File Locations Quick Reference<a class="headerlink" href="#file-locations-quick-reference" title="Permanent link">&para;</a></h2>
+<p><strong>Documentation:</strong>
+- This file: <code>complete_history.md</code>
+- Novo methodology: <code>docs/datasets/boughter/novo_methodology_clarification.md</code>
+- Replication analysis: <code>docs/datasets/boughter/archive/BOUGHTER_NOVO_REPLICATION_ANALYSIS.md</code>
+- Data sources: <code>docs/datasets/boughter/data_sources.md</code>
+- CDR boundary audit: <code>docs/datasets/boughter/cdr_boundary_first_principles_audit.md</code></p>
+<p><strong>Training Data (Production):</strong>
+- Production: <code>data/train/boughter/canonical/VH_only_boughter_training.csv</code> (914 seqs) ⭐ <strong>VALIDATED</strong>
+- Fragment CSVs: <code>data/train/boughter/annotated/*_boughter.csv</code> (16 files, 1,065 seqs each)</p>
+<p><strong>Trained Models:</strong>
+- Production: <code>experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl</code> ⭐ <strong>VALIDATED</strong> (Jain 68.60%, Shehata 58.29%)</p>
+<p><strong>Preprocessing Scripts:</strong>
+- Stage 1: <code>preprocessing/boughter/stage1_dna_translation.py</code>
+- Stage 2+3: <code>preprocessing/boughter/stage2_stage3_annotation_qc.py</code></p>
+<p><strong>Validation Scripts:</strong>
+- Stage 1: <code>preprocessing/boughter/validate_stage1.py</code>
+- Stage 2+3: <code>preprocessing/boughter/validate_stages2_3.py</code></p>
+<p><strong>Archived Experimental Work:</strong>
+- Strict QC experiment: documented in <code>docs/datasets/boughter/novo_methodology_clarification.md</code> (artifacts not checked in to this repo snapshot)</p>
+<hr />
+<h2 id="glossary">Glossary<a class="headerlink" href="#glossary" title="Permanent link">&para;</a></h2>
+<p><strong>Boughter QC (Production):</strong> CDR-only X filtering + empty CDR removal + ANARCI failures (914 training sequences, externally validated)</p>
+<p><strong>118 Position Issue:</strong> Ambiguity about whether to include position 118 in CDR-H3 (resolved: exclude it, use IMGT standard)</p>
+<p><strong>Position 118:</strong> Framework 4 anchor residue (W or F, 99% conserved) - NOT part of CDR-H3 by IMGT standard</p>
+<p><strong>ANARCI:</strong> Antibody Numbering And Receptor Classification tool - official IMGT implementation</p>
+<p><strong>IMGT Numbering:</strong> International ImMunoGeneTics standardized antibody numbering scheme</p>
+<p><strong>CDR-H3:</strong> Complementarity-Determining Region 3 of heavy chain (positions 105-117 in IMGT, most variable region)</p>
+<p><strong>Framework (FWR):</strong> Conserved regions between CDRs (FWR1, FWR2, FWR3, FWR4)</p>
+<p><strong>X Amino Acid:</strong> Ambiguous amino acid (translation ambiguity or sequencing error)</p>
+<p><strong>Flagging:</strong> 0-7 scale indicating number of polyreactive antigens bound (0 = specific, 4+ = non-specific, 1-3 = excluded)</p>
+<p><strong>Margin of Error:</strong> ±2×std, 95% confidence interval for CV accuracy</p>
+<hr />
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p><strong>Boughter dataset processing complete and externally validated:</strong></p>
+<p>✅ <strong>Production Model (914 sequences)</strong> - Validated and ready for deployment
+   - CV accuracy: 67.5% ± 8.9%
+   - External validation:
+     - Jain (HIC retention): 68.60% accuracy ✅ (exact parity)
+    - Shehata (PSR assay, PSR threshold=0.5495): 58.29% accuracy ✅ (2025-11-18 run)
+   - Model: <code>experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl</code>
+   - Pipeline: Stages 1-2-3 (ANARCI + IMGT + Boughter QC)</p>
+<p>⚠️ <strong>Experimental Strict QC (852 sequences)</strong> - Archived (no improvement)
+   - CV accuracy: 66.55% ± 7.07% (NOT better than production)
+   - Never externally validated
+   - Documented in <code>docs/datasets/boughter/novo_methodology_clarification.md</code> (artifacts not checked in to this repo snapshot)</p>
+<p><strong>Key findings:</strong>
+- 118 position issue resolved (exclude position 118, use ANARCI + IMGT)
+- 62 sequences with X tested: removing them did NOT improve performance
+- Production model externally validated with strong results
+- Ready for deployment</p>
+<p><strong>For production use:</strong> <code>experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl</code> (914 sequences) ⭐</p>
+<p><strong>For external testing:</strong> Use Jain or Shehata test datasets (validated)</p>
+<hr />
+<p><strong>Document Status:</strong>
+- <strong>Version:</strong> 3.0 (Final production status)
+- <strong>Date:</strong> 2025-11-18
+- <strong>Status:</strong> ✅ <strong>COMPLETE - Production model validated and deployed</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2025 The Obstacle Is The Way
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        
+<div class="md-social">
+  
+    
+    
+    
+    
+      
+      
+    
+    <a href="https://github.com/The-Obstacle-Is-The-Way/antibody_training_pipeline_ESM" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.instant", "navigation.tracking", "navigation.tabs", "navigation.sections", "navigation.expand", "navigation.top", "search.suggest", "search.highlight", "content.code.copy", "content.code.annotate", "toc.follow", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+        <script src="../../../javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
