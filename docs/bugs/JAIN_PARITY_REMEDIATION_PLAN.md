@@ -28,7 +28,7 @@ This document outlines the remediation plan for fixing the Jain parity discrepan
 
 ### Option A: Bottom-Up (Scripts → Artifacts → Docs)
 
-```
+```text
 Phase 1: Fix preprocessing scripts
 Phase 2: Regenerate artifacts
 Phase 3: Verify with inference
@@ -47,7 +47,7 @@ Phase 5: Final audit
 
 ### Option B: Audit-First with Parallel Workstreams
 
-```
+```text
 Phase 0: Comprehensive audit (find ALL issues)
 Phase 1A: Fix preprocessing scripts (parallel)
 Phase 1B: Draft doc fixes (parallel, don't apply)
@@ -68,7 +68,7 @@ Phase 5: Final audit
 
 ### Option C: Risk-Based (High-Visibility First)
 
-```
+```text
 Phase 1: Fix README and user-facing docs (stop the bleeding)
 Phase 2: Fix preprocessing scripts
 Phase 3: Regenerate artifacts
@@ -87,7 +87,7 @@ Phase 6: Final audit
 
 ### Option D: Single-Pass Atomic (All-at-Once)
 
-```
+```text
 Phase 1: Audit everything
 Phase 2: Prepare all fixes (scripts, docs) without applying
 Phase 3: Apply everything atomically
@@ -139,7 +139,7 @@ Phase 6: Final audit
 - Severity rating (high/medium/low visibility)
 
 **Search Patterns:**
-```
+```text
 # Claims of parity
 "novo parity", "exact parity", "68.6%", "68.60%"
 "[[40, 17], [10, 19]]" (in docs claiming we match this)
@@ -284,7 +284,7 @@ assert accuracy == 59/86  # 0.686046...
 ## Commit Strategy
 
 ### Branch Structure
-```
+```text
 main
 └── fix/jain-parity-remediation
     ├── Phase 1 commit: Fix preprocessing script
@@ -294,7 +294,7 @@ main
 ```
 
 ### Commit Messages
-```
+```text
 fix(preprocessing): add Tier D reclassification for lebrikizumab + galiximab
 
 Reclassifies lebrikizumab and galiximab from specific to non-specific
@@ -356,7 +356,3 @@ The remediation is complete when:
 - Research Spec: [jain_parity_reverse_engineering.md](./jain_parity_reverse_engineering.md)
 - Data Inventory: [jain_parity_data_inventory.md](./jain_parity_data_inventory.md)
 - GitHub Issue: #33
-
----
-
-**End of Remediation Plan**
