@@ -42,6 +42,10 @@ find experiments -name "*jain*" -type f
 > **AUDITOR NOTE (2025-12-16):** These two additional baseline files will become inconsistent after Jain label updates and should be updated (or explicitly treated as historical):
 > - `validation/baseline/checksums/jain_preprocessed.md5`
 > - `validation/baseline/model_outputs/baseline_metrics.txt`
+>
+> **DECISION (2025-12-16):** Option A selected — Baselines regenerated to reflect 68.60% parity.
+> - [x] `jain_preprocessed.md5` updated with new checksums (commit 92744d5)
+> - [x] `baseline_metrics.txt` updated: accuracy 0.6628 → 0.6860 (commit 92744d5)
 
 ---
 
