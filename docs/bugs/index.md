@@ -38,7 +38,7 @@ This doc captures potential bugs and high-risk issues found during a codebase au
 
 ## Research — Active Investigations
 
-### R1 — Jain Parity Reverse Engineering (59/27 vs Novo's 57/29) — ✅ SOLVED
+### R1 — Jain Parity Reverse Engineering — ✅ SOLVED (implemented)
 
 > **Decision:** [jain_parity_decision.md](./jain_parity_decision.md) — **Triple agent consensus: lebrikizumab + galiximab**
 > **Research Spec:** [jain_parity_reverse_engineering.md](./jain_parity_reverse_engineering.md)
@@ -46,16 +46,16 @@ This doc captures potential bugs and high-risk issues found during a codebase au
 > **Findings:** `experiments/benchmarks/novo_parity/results/FINDINGS.md`
 
 #### Problem
-Our P5e-S2 preprocessing produces 59 specific / 27 non-specific, but Novo's Figure S14A shows 57 specific / 29 non-specific. We are off by 2 antibodies.
+Before Tier D remediation, our P5e-S2 preprocessing produced 59 specific / 27 non-specific. Novo's Figure S14A shows 57 specific / 29 non-specific. Tier D remediation (lebrikizumab + galiximab) fixes the label split and achieves exact Novo parity.
 
-| Metric | Ours | Novo | Delta |
-|--------|------|------|-------|
-| Confusion Matrix | `[[40, 19], [10, 17]]` | `[[40, 17], [10, 19]]` | FP/TP differ by 2 |
-| Accuracy | 66.28% | 68.6% | -2.32pp |
-| Label Split | 59/27 | 57/29 | ±2 |
+| Metric | Ours (pre-Tier D) | Ours (Tier D, current) | Novo |
+|--------|-------------------|------------------------|------|
+| Confusion Matrix | `[[40, 19], [10, 17]]` | `[[40, 17], [10, 19]]` | `[[40, 17], [10, 19]]` |
+| Accuracy | 66.28% | 68.60% | 68.6% |
+| Label Split | 59/27 | 57/29 | 57/29 |
 
 #### Key Insight
-TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 2 specific antibodies that Novo classifies as non-specific.
+TN=40 and FN=10 match exactly. The discrepancy was entirely in FP/TP — 2 antibodies needed reclassification from specific → non-specific.
 
 #### Research Goals
 1. Identify the unknown QC step Novo uses to get from ~116 to 86 antibodies
@@ -68,7 +68,8 @@ TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 
 |-------|-------|----------|--------------|------|
 | After ELISA 1-3 removal | 116 | 94 | 22 | `jain_ELISA_ONLY_116.csv` |
 | After reclassification (5) | 116 | 89 | 27 | (computed) |
-| After removal (30) — **OURS** | 86 | 59 | 27 | `jain_86_novo_parity.csv` |
+| After removal (30) — **selection** | 86 | 59 | 27 | (computed) |
+| After Tier D (2 label flips) — **current** | 86 | **57** | **29** | `jain_86_novo_parity.csv` |
 | **NOVO TARGET** | 86 | **57** | **29** | Figure S14A |
 
 #### Validated Narrowed Strategy (2025-12-16)
@@ -99,9 +100,9 @@ TN=40 and FN=10 match exactly. The discrepancy is entirely in FP/TP — we have 
 - [x] Execute Phase 2A: Test prime candidates — ❌ No match (both predicted as specific)
 - [x] Execute Phase 2B: Test all 28 flagged pairs — ✅ **3 MATCHING PAIRS FOUND**
 - [x] Execute Phase 3: Biological validation — ✅ All candidates have developability flags
-- [ ] Update preprocessing pipeline with correct methodology
+- [x] Update preprocessing + artifacts + docs (Tier D)
 
-#### Solution (2025-12-16) — ⏳ PENDING SENIOR REVIEW
+#### Solution (2025-12-16) — ✅ IMPLEMENTED
 
 **Triple Agent Consensus:** lebrikizumab + galiximab
 
@@ -327,4 +328,3 @@ Three independent AI agents (Google DeepThink, ChatGPT, Claude) analyzed which p
 
 #### Suggested Fix
 - Use `inspect.signature(...)` with a try/except, or just try calling with `assay_type` and fall back on `TypeError`.
-

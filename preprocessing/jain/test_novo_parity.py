@@ -234,8 +234,9 @@ def main() -> None:
     logger.info("  ↓ Remove 30 specific by PSR/AC-SINS sorting")
     logger.info("")
     logger.info("jain_86_novo_parity.csv (86 antibodies) - OUR BENCHMARK SET")
-    logger.info("  59 specific / 27 non-specific (our split)")
-    logger.info("  Note: Novo uses 57 specific / 29 non-specific")
+    logger.info("  Selection (step4): 59 specific / 27 non-specific")
+    logger.info("  Tier D (label flip): lebrikizumab, galiximab → non-specific")
+    logger.info("  Final: 57 specific / 29 non-specific (matches Novo S14A)")
     print()
     print("=" * 80)
 

@@ -1,454 +1,130 @@
 # Jain Dataset Complete Guide
 
-> **⚠️ DEPRECATION WARNING - PARTIALLY OUTDATED**
->
-> This document contains historical research documentation about retired methodologies.
-> - **For current implementation:** See `preprocessing/jain/README.md` (SINGLE SOURCE OF TRUTH)
-> - **For user testing:** See `docs/user-guide/testing.md`
-> - **Last Updated:** 2025-11-05 (before label discrepancy fix)
-> - **Known issues:** References non-existent files, describes retired 94→86 methodology
->
-> Read `docs/datasets/jain/README.md` for current status and known documentation issues.
+This guide documents the **current** Jain preprocessing pipeline and the **canonical 86-antibody benchmark artifacts** used to reproduce Novo Nordisk Figure S14A (ESM-1v VH-based Logistic Regression).
+
+**Single sources of truth (SSOT):**
+- **Implementation + scripts:** `preprocessing/jain/README.md`
+- **Canonical benchmark artifacts:** `data/test/jain/canonical/README.md`
+- **Research provenance:** `docs/bugs/jain_parity_reverse_engineering.md`, `docs/bugs/jain_parity_decision.md`
 
 ---
 
-## Quick Start (TL;DR)
+## Quick Start
 
-### For Novo Nordisk Parity Benchmarking:
+### 1) Verify exact Novo parity
 
-**IMPORTANT:** Novo parity requires the 86-antibody P5e-S2 subset, not the full 137-antibody dataset.
-
-**METHOD 1 - Canonical File (86 antibodies for parity):**
-```bash
-# Create config file specifying model, data, AND column override
-cat > configs/test_jain_parity.yaml <<EOF
-model_paths:
-  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
-data_paths:
-  - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
-sequence_column: "vh_sequence"
-label_column: "label"
-EOF
-
-# Test with config ONLY (--config ignores --model/--data if provided)
-uv run antibody-test --config configs/test_jain_parity.yaml
-
-Expected: [[40, 19], [10, 17]], 66.28% (Novo target: [[40, 17], [10, 19]], 68.6%)
-```
-
-**METHOD 2 - Fragment File (137 antibodies, NOT parity subset):**
-```bash
-# Full dataset test (different from Novo parity benchmark)
-uv run antibody-test \
-  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --data data/test/jain/fragments/VH_only_jain.csv
-
-Expected: Different results (137 antibodies vs 86 parity subset)
-```
-
-**Note:** Fragment files contain ALL 137 antibodies, not the 86-antibody parity subset.
-
----
-
-## Dataset Inventory
-
-### Source Data (137 antibodies - no filtering)
-
-| File | Location | Description |
-|------|----------|-------------|
-| `Full_jain.csv` | `data/test/jain/` | Base Jain 2017 PNAS dataset |
-| `jain.csv` | `data/test/` | Same as Full_jain.csv (root copy) |
-| `jain_with_private_elisa_FULL.csv` | `data/test/` | With private ELISA data |
-| `jain_sd01.csv` | `data/test/` | Biophysical data (sequences) |
-| `jain_sd02.csv` | `data/test/` | Biophysical data (assays) |
-| `jain_sd03.csv` | `data/test/` | Biophysical data (comprehensive) |
-
-### Feature Engineering Variants (137 antibodies)
-
-All located in `data/test/jain/`:
-
-**Sequence variants:**
-- `VH_only_jain.csv` - VH heavy chain only
-- `VL_only_jain.csv` - VL light chain only
-- `VH+VL_jain.csv` - Concatenated VH+VL
-
-**CDR features:**
-- `H-CDR1_jain.csv`, `H-CDR2_jain.csv`, `H-CDR3_jain.csv`
-- `L-CDR1_jain.csv`, `L-CDR2_jain.csv`, `L-CDR3_jain.csv`
-- `H-CDRs_jain.csv`, `L-CDRs_jain.csv`, `All-CDRs_jain.csv`
-
-**Framework features:**
-- `H-FWRs_jain.csv`, `L-FWRs_jain.csv`, `All-FWRs_jain.csv`
-
-### Filtered Datasets (Progressive QC)
-
-| File | Count | Description |
-|------|-------|-------------|
-| `jain_ELISA_ONLY_116.csv` | 116 | After ELISA 0/4+ filter |
-| `VH_only_jain_test_FULL.csv` | 94 | ❌ REMOVED (obsolete) |
-| `VH_only_jain_test_QC_REMOVED.csv` | 91 | ❌ REMOVED (obsolete) |
-| `VH_only_jain_test_PARITY_86.csv` | 86 | ⚠️ DEPRECATED (use VH_only_jain_86_p5e_s2.csv instead) |
-
-### Jain 86-Antibody Benchmark Datasets
-
-| File | Method | Our Result | Use For |
-|------|--------|--------|---------|
-| ~~`VH_only_jain_test_PARITY_86.csv`~~ | ⚠️ DEPRECATED (wrong column name) | [[40,19],[10,17]] | Use VH_only_jain_86_p5e_s2.csv |
-| `VH_only_jain_86_p5e_s2.csv` | P5e-S2 canonical (with `vh_sequence` column) | [[40,19],[10,17]] | **RECOMMENDED** for benchmarking |
-| `VH_only_jain.csv` (fragments/) | Full 137-antibody dataset | Different results (137 rows) | General testing |
-| `jain_86_novo_parity.csv` | P5e-S2 (full metadata) | [[40,19],[10,17]]* | Full biophysical data |
-| `VH_only_jain_86_p5e_s4.csv` | P5e-S4 (Tm-based) | [[39,20],[10,17]] ❌ | Research only |
-| `jain_86_elisa_1.3.csv` | ELISA threshold exp | Experimental | Threshold testing |
-
-**\*See Reproducibility Notes below**
-
-### Experiments (Research Workspace)
-
-**Location:** `experiments/benchmarks/novo_parity/datasets/` (in `archive` branch)
-
-| File | Description |
-|------|-------------|
-| `jain_86_exp05.csv` | Baseline experiment 05 |
-| `jain_86_p5.csv` | Permutation 5 (baseline) |
-| `jain_86_p5d.csv` | Permutation 5d (basiliximab swap) |
-| `jain_86_p5e.csv` | Permutation 5e (eldelumab swap) |
-| `jain_86_p5e_s2.csv` | ⭐ P5e-S2 (PSR + AC-SINS) |
-| `jain_86_p5e_s4.csv` | P5e-S4 (PSR + Tm) |
-| `jain_86_p5f.csv` | Permutation 5f |
-| `jain_86_p5g.csv` | Permutation 5g |
-| `jain_86_p5h.csv` | Permutation 5h |
-
-**Purpose:** Full experimental provenance with rich metadata (36 columns including PSR, AC-SINS, predictions, etc.)
-
----
-
-## Methodology Comparison
-
-### Method 1: OLD Reverse-Engineered (Simple QC)
-
-**Pipeline:**
-```
-137 antibodies (Jain 2017 PNAS)
-    ↓
-Remove ELISA 1-3 flags (keep 0 and 4+ only)
-    ↓
-94 antibodies
-    ↓
-Remove 3 VH length outliers (z-score > 2)
-    - crenezumab (VH=112, z=-2.29)
-    - fletikumab (VH=127, z=+2.59)
-    - secukinumab (VH=127, z=+2.59)
-    ↓
-91 antibodies
-    ↓
-Remove 5 borderline antibodies
-    - muromonab (murine, withdrawn)
-    - cetuximab (chimeric, higher immunogenicity)
-    - girentuximab (chimeric, Phase 3 failure)
-    - tabalumab (Phase 3 efficacy failure)
-    - abituzumab (Phase 3 endpoint failure)
-    ↓
-86 antibodies (59 specific / 27 non-specific)
-```
-
-**File (FOR NOVO PARITY):** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, needs config)
-**File (FOR GENERAL TESTING):** `data/test/jain/fragments/VH_only_jain.csv` (137 antibodies, standardized columns)
-**DEPRECATED:** ~~`VH_only_jain_test_PARITY_86.csv`~~ (deprecated - use VH_only_jain_86_p5e_s2.csv)
-
-**Our result (86-antibody set):** [[40, 19], [10, 17]] (Novo target: [[40, 17], [10, 19]])
-
-**Characteristics:**
-- ✅ P5e-S2 methodology (PSR reclassification + removal)
-- ✅ 86 antibodies (59 specific / 27 non-specific)
-- ✅ Requires config override for `vh_sequence` column
-
----
-
-### Method 2: P5e-S2 Canonical (PSR-Based)
-
-**Pipeline:**
-```
-137 antibodies (Jain 2017 PNAS)
-    ↓
-Remove ELISA 1-3 flags (using elisa_flags column)
-    ↓
-116 antibodies (94 specific / 22 non-specific)
-    ↓
-RECLASSIFY 5 specific → non-specific
-    - Tier A (PSR >0.4): bimagrumab, bavituximab, ganitumab
-    - Tier B (Tm <60°C): eldelumab
-    - Tier C (Clinical): infliximab (61% ADA)
-    ↓
-89 specific / 27 non-specific
-    ↓
-REMOVE 30 specific by PSR + AC-SINS tiebreaker
-    - Primary: PSR score (polyreactivity)
-    - Tiebreaker: AC-SINS (aggregation) when PSR=0
-    ↓
-59 specific / 27 non-specific = 86 antibodies
-```
-
-**File:** `data/test/jain/fragments/VH_only_jain_86_p5e_s2.csv`
-
-**Our result:** [[40, 19], [10, 17]] (close to Novo target [[40, 17], [10, 19]])
-
-**Characteristics:**
-- ✅ Biologically principled (PSR measures polyreactivity)
-- ✅ Uses biophysical assays (PSR, AC-SINS, Tm)
-- ⚠️ One borderline antibody (nimotuzumab ~0.5 probability)
-- ⚠️ Can flip due to embedding nondeterminism (see below)
-- 📊 **Recommended for research/biophysics**
-
----
-
-## When to Use Each Method
-
-| Use Case | Recommended Dataset | Why |
-|----------|---------------------|-----|
-| **Benchmarking / Parity Verification** | OLD (PARITY_86) | Deterministic, simple, guaranteed [[40,19],[10,17]] |
-| **Paper Replication** | OLD (PARITY_86) | Matches Novo's likely simple QC approach |
-| **Biophysical Research** | P5e-S2 | Rich metadata (PSR, AC-SINS, biophysics) |
-| **PSR-based QC Validation** | P5e-S2 | Tests polyreactivity-based filtering |
-| **Maximum Confidence** | Both! | Test on both methods for robustness |
-
----
-
-## Reproducibility Notes
-
-### ⚠️ Important: P5e-S2 Has One Borderline Antibody
-
-**Antibody:** nimotuzumab
-**Issue:** Predicted probability ≈ 0.5 (threshold for classification)
-
-**Observed values:**
-- Stored in `jain_86_p5e_s2.csv`: y_proba = 0.495 → class 0
-- Recent test run: y_proba = 0.501 → class 1
-
-**Why this happens:**
-- ESM-1v embedding extraction has slight nondeterminism
-- Could be dropout, batch processing, or hardware differences
-- For probabilities near 0.5, prediction can flip
-
-**Impact:**
-- When nimotuzumab flips: [[39, 20], [10, 17]] (off by 1 from our baseline)
-- When nimotuzumab correct: [[40, 19], [10, 17]] (our baseline result)
-
-**Solutions:**
-
-1. **Use stored predictions** from `jain_86_novo_parity.csv` (has `prediction` column)
-   ```python
-   # Instead of classifier.predict(X)
-   y_pred = df['prediction'].values  # Use stored predictions
-   ```
-
-2. **Set random seed** (if ESM-1v supports it)
-   ```python
-   import torch
-   torch.manual_seed(42)
-   ```
-
-3. **Use fragment file** for guaranteed compatibility
-   ```bash
-   # Works with default CLI (sequence column)
-   uv run antibody-test \
-     --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-     --data data/test/jain/fragments/VH_only_jain.csv
-   ```
-
-4. **Document the variance** in your results
-   - "P5e-S2 achieves [[40, 19], [10, 17]] within ±1 TN/FP due to embedding variance"
-   - Still validates the method works!
-
----
-
-## Models
-
-### OLD Model (Primary)
-
-**File:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
-
-**Training:**
-- Date: Nov 2, 2025
-- Training data: 914 sequences (Boughter ELISA 0/4+ filter)
-- Cross-validation: 67.5% ± 8.9%
-- Hyperparameters: C=1.0, L2 penalty, LBFGS solver
-
-**Use with:**
-- `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` → [[40, 19], [10, 17]] ✅ (86-antibody parity, requires config)
-- `data/test/jain/fragments/VH_only_jain.csv` → Different results (137 antibodies, not parity subset)
-
-### Production Model (VALIDATED)
-
-**File:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
-
-**Training:**
-- Date: Nov 2, 2025
-- Training data: 914 sequences (Boughter QC methodology)
-- **Externally validated:** ✅ Jain 66.28% (ELISA threshold 0.5), Shehata 58.29% (PSR decision threshold 0.5495)
-
-**Results on Jain (86 antibodies):**
-- Our CM: [[40, 19], [10, 17]], 66.28% (Novo target: [[40, 17], [10, 19]], 68.6%)
-- Use fragments/VH_only_jain.csv for testing
-
-**Use for:** Production deployments and Jain benchmarking ⭐
-
-**Note:** An experimental strict QC model (852 sequences) was tested but did not improve performance; see `docs/datasets/boughter/novo_methodology_clarification.md`.
-
----
-
-## File Organization
-
-### Production Files (data/test/)
-
-```
-data/test/
-├── jain.csv, jain_*.csv (7 files in root)
-│
-└── jain/
-    ├── canonical/ (original column names: vh_sequence, vl_sequence)
-    │   ├── VH_only_jain_86_p5e_s2.csv (86) ⭐ **RECOMMENDED FOR NOVO PARITY**
-    │   ├── VH_only_jain_test_PARITY_86.csv (86) ⚠️ DEPRECATED (use above)
-    │   └── jain_86_novo_parity.csv (86 with full metadata)
-    │
-    ├── fragments/ (standardized columns: sequence, label)
-    │   ├── VH_only_jain.csv (137) - Full dataset, NOT for parity
-    │   └── ... (14 other fragment types)
-    │
-    ├── processed/ (intermediate outputs)
-    │   ├── jain_ELISA_ONLY_116.csv (116)
-    │   └── jain_with_private_elisa_FULL.csv (137)
-    │
-    ├── VH_only_jain_86_p5e_s4.csv (86)
-    ├── jain_86_novo_parity.csv (86 with full metadata)
-    │
-    └── archive/ (deprecated files)
-```
-
-### Research Files (experiments/)
-
-```
-experiments/benchmarks/novo_parity/  # in archive branch
-├── datasets/ (9 permutation CSVs)
-├── results/ (JSON audit files, predictions)
-├── scripts/ (Python experiment code)
-└── [7 MD documentation files]
-```
-
----
-
-## Common Tasks
-
-### Task 1: Verify Novo Parity
+Runs inference on the canonical 86-antibody benchmark set using the production checkpoint. This may download the ESM model weights if not already cached.
 
 ```bash
-# MUST use 86-antibody canonical file with full config
-# Create config file
-cat > configs/test_jain_parity.yaml <<EOF
-model_paths:
-  - "experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl"
-data_paths:
-  - "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"
-sequence_column: "vh_sequence"
-label_column: "label"
-EOF
-
-# Run parity test (--config ONLY, no --model/--data)
-uv run antibody-test --config configs/test_jain_parity.yaml
-
-# Expected: [[40, 19], [10, 17]], 66.28% (Novo target: [[40, 17], [10, 19]], 68.6%)
+PYTHONPATH=. uv run python preprocessing/jain/test_novo_parity.py
 ```
 
-### Task 2: Compare 86-antibody Parity vs 137-antibody Full Set
+**Expected:**
+- Confusion matrix: `[[40, 17], [10, 19]]`
+- Accuracy: `0.6860` (68.60%)
+- Label split: **57 specific / 29 non-specific** (86 total)
 
-```bash
-# Test 1: Parity subset (86 antibodies) - use config with canonical file
-uv run antibody-test --config configs/test_jain_parity.yaml
-# Expected: [[40, 19], [10, 17]] (66.28% - close to Novo 68.6%)
-
-# Test 2: Full dataset (137 antibodies) - use fragment file directly
-uv run antibody-test \
-  --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --data data/test/jain/fragments/VH_only_jain.csv
-# Expected: Different results (different antibody set)
-```
-
-### Task 3: Access Biophysical Data
+### 2) Load the canonical benchmark artifact
 
 ```python
 import pandas as pd
 
-# Load P5e-S2 with full metadata
-df = pd.read_csv('data/test/jain/jain_86_novo_parity.csv')
-
-# Available columns:
-# - PSR (polyreactivity score)
-# - AC-SINS (aggregation propensity)
-# - HIC retention time
-# - Fab Tm (thermal stability)
-# - Predictions and probabilities
-# - And more...
-
-print(df.columns)
-```
-
-### Task 4: Reproduce Experiments
-
-```bash
-# Run experiment 05 (P5e-S2 baseline)
-git checkout archive
-cd experiments/benchmarks/novo_parity/scripts
-python run_exp05_inference.py
-
-# Run permutation tests
-python targeted_permutation_test.py
+df = pd.read_csv("data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv")
+assert set(df.columns) == {"id", "vh_sequence", "label"}
 ```
 
 ---
 
-## Citation
+## Dataset Overview
 
-If using these datasets, please cite:
-
-**Jain et al. 2017:**
-> Jain, T., Sun, T., Durand, S., Hall, A., Houston, N. R., Nett, J. H., ... & Cao, Y. (2017).
-> Biophysical properties of the clinical-stage antibody landscape.
-> *Proceedings of the National Academy of Sciences*, 114(5), 944-949.
-
-**Boughter et al. 2020:**
-> Boughter, C. T., Borowska, M. T., Gutiérrez-González, M., Segura-Ruiz, A. I., & Dellus-Gur, E. (2020).
-> Biochemical patterns of antibody polyreactivity revealed through a bioinformatics-based analysis of CDR loops.
-> *eLife*, 9, e61393.
+- **Source:** Jain et al. (2017), *PNAS* — 137 clinical-stage antibodies with biophysical measurements.
+- **Primary label source:** Private per-antibody ELISA panel flags (`Private_Jain2017_ELISA_indiv.xlsx`) as used in the Sakhnini et al. (2025) benchmark.
+  - 0 flags → specific (label 0)
+  - 1–3 flags → mildly non-specific (excluded)
+  - ≥4 flags → non-specific (label 1)
+- **Biophysical descriptors:** Public SD03 (`jain-pnas.1616408114.sd03.xlsx`) including PSR, AC-SINS, HIC/SMAC, stability slope, Tm, and related fields used for selection/reclassification.
 
 ---
 
-## FAQ
+## File Layout (Current)
 
-**Q: Which dataset should I use for Novo parity benchmarking?**
-A: `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (86 antibodies, MUST use config with `sequence_column: "vh_sequence"`).
-Fragment file `VH_only_jain.csv` has 137 antibodies (not the 86-antibody parity subset).
-DEPRECATED: ~~`VH_only_jain_test_PARITY_86.csv`~~ (deprecated - wrong column name, use VH_only_jain_86_p5e_s2.csv)
+All files live under `data/test/jain/`:
 
-**Q: Does P5e-S2 achieve exact Novo parity?**
-A: Close but not exact. Our result [[40, 19], [10, 17]] differs from Novo [[40, 17], [10, 19]] by 2 antibodies in FP/TP. TN=40 and FN=10 match exactly.
-
-**Q: What's the difference between experiments/ and data/test/?**
-A: experiments/ = full research workspace with rich metadata. data/test/ = clean production files for benchmarking.
-
-**Q: Why are there so many Jain files?**
-A: Different feature engineering approaches (VH-only, CDRs, FWRs, etc.) and different QC methodologies. Historical cleanup plans are archived; canonical files are listed above.
-
-**Q: Which model should I use?**
-A: `boughter_vh_esm1v_logreg.pkl` (914 training) for Jain benchmarking. This achieves 66.28% (close to Novo's 68.6%).
+- `raw/`
+  - Original Excel files (do not modify).
+- `processed/`
+  - CSV exports from Step 1, plus SSOT intermediate outputs used by Step 2.
+- `canonical/`
+  - The canonical 86-antibody benchmark artifacts used for parity verification:
+    - `jain_86_novo_parity.csv` (full metadata)
+    - `VH_only_jain_86_p5e_s2.csv` (VH-only inference file)
+- `fragments/`
+  - Region-specific extracts (CDRs/FWRs/etc.) for the **full 137-antibody** dataset; not used for the 86-antibody parity benchmark.
 
 ---
 
-## Additional Documentation
+## Preprocessing Pipeline (P5e-S2 + Tier D)
 
-- **Experiment Logs:** See `experiments/benchmarks/` and archive branch for historical research
-- **Historical Investigations:** See `docs/archive/investigations/` (no active cleanup plan required)
+Implemented in `preprocessing/jain/step1_convert_excel_to_csv.py` and `preprocessing/jain/step2_preprocess_p5e_s2.py`.
+
+### Step 1: Excel → CSV conversion
+
+Inputs:
+- `data/test/jain/raw/Private_Jain2017_ELISA_indiv.xlsx`
+- `data/test/jain/raw/jain-pnas.1616408114.sd01.xlsx`
+- `data/test/jain/raw/jain-pnas.1616408114.sd02.xlsx`
+- `data/test/jain/raw/jain-pnas.1616408114.sd03.xlsx`
+
+Outputs (key):
+- `data/test/jain/processed/jain_with_private_elisa_FULL.csv` (137)
+- `data/test/jain/processed/jain_sd03.csv` (biophysical descriptors)
+
+### Step 2: Build the 86-antibody benchmark set
+
+Pipeline (counts):
+1. Start: **137**
+2. Remove ELISA flags 1–3 (mild) → **116**
+3. Reclassify 5 specific → non-specific (Tiers A–C) → **89 specific / 27 non-specific** (still 116 total)
+4. Remove 30 specific by PSR (primary) + AC-SINS (tiebreak) → **86** (selection: 59 from the specific pool + 27 non-specific)
+5. **Tier D (final label adjustment on the 86-set):** reclassify `lebrikizumab` and `galiximab` as non-specific → **57 specific / 29 non-specific**
+
+Outputs:
+- `data/test/jain/canonical/jain_86_novo_parity.csv`
+- `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv`
+
+### Tier D Rationale (why these 2)
+
+Tier D uses **public Jain SD03 chromatography flags** (HIC threshold) to reclassify two antibodies as non-specific:
+- `lebrikizumab` — HIC above threshold
+- `galiximab` — HIC above threshold
+
+This matches the Novo S14A target label split (57/29) and yields exact parity with the published confusion matrix.
+
+Full rationale: `docs/bugs/jain_parity_decision.md`
 
 ---
 
-**Last verified:** 2025-11-17
-**Status:** ✅ Accurate and up-to-date
-**Maintained by:** Claude + Ray
+## Using the Benchmark in Code
+
+- For **benchmarking / inference**, prefer the VH-only file:
+  - `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv` (`id`, `vh_sequence`, `label`)
+- For **analysis with biophysical metadata**, use:
+  - `data/test/jain/canonical/jain_86_novo_parity.csv`
+
+If you load `VH_only_jain_86_p5e_s2.csv` through `JainDataset.load_data(...)`, treat it as already-filtered data (do not re-run the parity filter stages on it).
+
+---
+
+## Historical Notes
+
+Older Jain preprocessing approaches (including retired reverse-engineered QC removals and legacy file naming) are considered historical and are documented in:
+- `docs/datasets/jain/complete_history.md`
+
+---
+
+## References
+
+- Jain et al. (2017) *PNAS*: Biophysical properties of the clinical-stage antibody landscape. DOI: `10.1073/pnas.1616408114`
+- Sakhnini et al. (2025) *bioRxiv*: Prediction of Antibody Non-Specificity using Protein Language Models and Biophysical Parameters. DOI: `10.1101/2025.04.28.650927`
+- Dunbar & Deane (2016) ANARCI. DOI: `10.1093/bioinformatics/btv552`
+

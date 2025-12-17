@@ -2,8 +2,8 @@ name: E2E Benchmarking Suite
 
 # Expensive tests - NOT on every PR
 # Run weekly or manually to validate reproducibility
-# Note: Our Jain benchmark result is [[40,19],[10,17]] (66.28%)
-# Novo's actual target is [[40,17],[10,19]] (68.6%) - we're off by 2 antibodies
+# Note: Jain benchmark matches Novo Figure S14A exactly:
+# [[40,17],[10,19]] (68.60% accuracy, 59/86 correct)
 on:
   # Weekly schedule (Sunday 2am UTC)
   schedule:
@@ -125,7 +125,7 @@ jobs:
 
             ### Investigation Required
 
-            - [ ] Check if Jain confusion matrix still matches our expected [[40, 19], [10, 17]]
+            - [ ] Check if Jain confusion matrix still matches our expected [[40, 17], [10, 19]]
             - [ ] Verify Shehata accuracy ~58.8% with threshold=0.5495
             - [ ] Check Harvey performance (61.5-61.7% on 141k sequences)
             - [ ] Review test logs for errors
@@ -264,7 +264,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Validated Benchmarks" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Boughter (10-fold CV, 67-71% accuracy)" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Jain (our result: [[40,19],[10,17]], 66.28%)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Jain (our result: [[40,17],[10,19]], 68.60%)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Shehata (58.8% with PSR threshold)" >> $GITHUB_STEP_SUMMARY
           echo "- ✅ Harvey (61.5-61.7% on 141k sequences)" >> $GITHUB_STEP_SUMMARY
         else

@@ -217,7 +217,7 @@ Our preprocessing achieves exact Novo parity with 68.6% accuracy.
 
 ### ACCURATE STATEMENT (No Fix)
 ```markdown
-Novo reports 68.6% accuracy. Our current pipeline achieves 66.28%.
+Novo reports 68.6% accuracy. Before Tier D remediation, our pipeline achieved 66.28%.
 We are investigating the 2.32pp gap.
 ```
 

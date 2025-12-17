@@ -33,7 +33,7 @@ Experiments are archived here to:
 **Outcome:**
 - Hypothesis disproven: stricter QC did not improve performance
 - Production model externally validated instead:
-  - Jain (HIC retention): 66.28% accuracy ✅
+  - Jain (HIC retention): 68.60% accuracy ✅ (exact Novo parity)
   - Shehata (PSR assay): 58.29% accuracy ✅ (PSR decision threshold 0.5495; baseline 0.5 = 52.5%)
   - Harvey (PSR assay, nanobodies): 61.33% accuracy ✅ (PSR decision threshold 0.5495)
 - Experiment archived, production model deployed

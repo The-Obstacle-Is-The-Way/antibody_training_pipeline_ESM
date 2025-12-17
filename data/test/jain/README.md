@@ -64,17 +64,6 @@ print(cm)
 
 **Use when:** Training new models or need biologically principled methodology.
 
-### 2. OLD Reverse-Engineered (Alternative)
-
-**File:** `canonical/VH_only_jain_test_PARITY_86.csv`
-
-- **Method:** ELISA filter → VH length outliers → borderline removals (OLD - superseded by Tier D)
-- **Result:** [[40, 19], [10, 17]], 66.28% accuracy (OLD - use jain_86_novo_parity.csv for current)
-- **Distribution:** 59 specific / 27 non-specific (STALE - current is 57/29)
-- **Columns:** VH fragment only
-
-**Use when:** You need 100% deterministic reproducibility.
-
 ---
 
 ## Data Flow

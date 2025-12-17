@@ -22,7 +22,7 @@ Novo target: [[40, 17], [10, 19]], 68.6% accuracy ✅ MATCH
 
 Method: P5e-S2 + Tier D (PSR reclassification + PSR/AC-SINS removal + chromatography reclassification)
 Date: 2025-12-16 (Tier D remediation)
-Branch: fix/jain-parity-remediation
+Branch: experiment/jain-parity-permutations
 Status: CANONICAL - This is the authoritative preprocessing script
 
 Tier D Remediation (2025-12-16):
@@ -64,7 +64,7 @@ BASE_DIR = PROJECT_ROOT
 INPUT_137 = JAIN_FULL_CSV
 INPUT_SD03 = JAIN_SD03_CSV
 OUTPUT_116 = JAIN_ELISA_116_CSV
-OUTPUT_86 = JAIN_86_PARITY_CSV
+OUTPUT_86: Path = JAIN_86_PARITY_CSV
 OUTPUT_VH = JAIN_VH_ONLY_86_CSV
 
 # P5e-S2 Method Constants
@@ -92,7 +92,7 @@ def load_data() -> pd.DataFrame:
     """Load 137-antibody FULL dataset with all metadata"""
     logger.info("=" * 80)
     logger.info(
-        "Jain Dataset Preprocessing: P5e-S2 Benchmark Construction (Parity Attempt)"
+        "Jain Dataset Preprocessing: P5e-S2 Benchmark Construction (Exact Novo Parity)"
     )
     logger.info("=" * 80)
     logger.info("\nStep 0: Loading data...")

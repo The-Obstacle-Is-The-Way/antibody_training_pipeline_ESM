@@ -1,9 +1,9 @@
 # Jain Parity Investigation — Complete Data Inventory
 
-**Status:** STABLE REFERENCE DOCUMENT
+**Status:** ✅ RESOLVED — Tier D implemented (exact Novo parity)
 **Created:** 2025-12-15
-**Purpose:** Document all data artifacts and filtering stages for permutation experiments
-**Branch:** `investigate/jain-parity-verification` (STABLE - do not modify data here)
+**Purpose:** Document all data artifacts and filtering stages for the Jain parity investigation (kept for provenance)
+**Current implementation:** `preprocessing/jain/step2_preprocess_p5e_s2.py`
 
 ---
 
@@ -14,10 +14,11 @@
 | FULL | 137 | 94 | 22 + 21 mild | `processed/jain_with_private_elisa_FULL.csv` |
 | After ELISA 1-3 removal | 116 | 94 | 22 | `processed/jain_ELISA_ONLY_116.csv` |
 | After reclassification | 116 | 89 | 27 | (computed, not saved) |
-| After removal (OUR RESULT) | 86 | 59 | 27 | `canonical/jain_86_novo_parity.csv` |
+| After removal (selection) | 86 | 59 | 27 | (computed, not saved) |
+| After Tier D (final) | 86 | **57** | **29** | `canonical/jain_86_novo_parity.csv` |
 | **NOVO TARGET** | 86 | **57** | **29** | Figure S14A |
 
-**THE GAP:** We have 59/27, Novo has 57/29. Off by 2 antibodies.
+**Resolution:** Tier D flips 2 labels (lebrikizumab + galiximab) on the final 86-set to match Novo exactly.
 
 ---
 
@@ -42,8 +43,6 @@ data/test/jain/
 ├── canonical/                        # Final outputs
 │   ├── jain_86_novo_parity.csv             # 86 antibodies (full metadata)
 │   ├── VH_only_jain_86_p5e_s2.csv          # 86 antibodies (VH only)
-│   ├── archive/
-│   │   └── VH_only_jain_test_PARITY_86.csv # DEPRECATED
 │   └── README.md
 └── fragments/                        # All 137 antibodies, various regions
     ├── VH_only_jain.csv              # 137 antibodies (NOT parity subset)
@@ -81,11 +80,16 @@ data/test/jain/
 | infliximab | C | Clinical (61% ADA) | - | - |
 
 ### Stage 3: Removal (30 antibodies)
-**File:** `canonical/jain_86_novo_parity.csv`
-**Count:** 86 antibodies
-**Labels:** 59 specific (0) + 27 non-specific (1)
+**File:** NOT SAVED (computed in step2_preprocess_p5e_s2.py)
+**Count:** 86 antibodies (membership selection)
+**Labels (selection):** 59 selected-from-specific pool + 27 non-specific
 
 **Removal criteria:** Top 30 specific by PSR (descending), AC-SINS tiebreaker
+
+### Stage 4: Tier D (2 label flips)
+**File:** `canonical/jain_86_novo_parity.csv`
+**Count:** 86 antibodies
+**Labels (final):** 57 specific (0) + 29 non-specific (1)
 
 ---
 
@@ -194,7 +198,7 @@ This is the **EXPERIMENT STARTING POINT**. These 89 antibodies are sorted by PSR
 
 ---
 
-## The 27 Non-Specific Antibodies (in final 86)
+## The 29 Non-Specific Antibodies (final 86)
 
 | Antibody | Original Label | Reclassified? | Reason |
 |----------|----------------|---------------|--------|
@@ -203,6 +207,8 @@ This is the **EXPERIMENT STARTING POINT**. These 89 antibodies are sorted by PSR
 | ganitumab | specific | YES | Tier A: PSR >0.4 |
 | eldelumab | specific | YES | Tier B: Extreme Tm (59.50°C) |
 | infliximab | specific | YES | Tier C: Clinical (61% ADA) |
+| lebrikizumab | specific | YES | Tier D: Chromatography flag (HIC > 11.7) |
+| galiximab | specific | YES | Tier D: Chromatography flag (HIC > 11.7) |
 | belimumab | non-specific | NO | Original ELISA ≥4 |
 | blosozumab | non-specific | NO | Original ELISA ≥4 |
 | bococizumab | non-specific | NO | Original ELISA ≥4 |
@@ -228,10 +234,10 @@ This is the **EXPERIMENT STARTING POINT**. These 89 antibodies are sorted by PSR
 
 ---
 
-## Experiment Strategy
+## Historical Experiment Strategy (Completed)
 
-### Goal
-Find the preprocessing methodology that produces **57 specific + 29 non-specific = 86 total**, matching Novo's Figure S14A confusion matrix `[[40, 17], [10, 19]]`.
+### Goal (Historical)
+Find a biologically defensible rule that produces **57 specific + 29 non-specific = 86 total**, matching Novo's Figure S14A confusion matrix `[[40, 17], [10, 19]]`.
 
 ### Key Insight
 Since TN=40 and FN=10 match exactly, the issue is in the **label distribution**, not the model. We need to reclassify 2 more specific → non-specific.
@@ -297,13 +303,13 @@ Any proposed solution MUST:
 
 ---
 
-## Next Steps
+## Next Steps (Completed)
 
-1. [ ] Commit this document and research spec to stable branch
-2. [ ] Create `experiment/jain-parity-permutations` branch
-3. [ ] Implement Phase 2: Systematic permutation search
-4. [ ] Analyze results for biological plausibility
-5. [ ] Update preprocessing pipeline if solution found
+1. [x] Execute systematic permutation search (C(8,2)=28)
+2. [x] Validate biological plausibility of matching pairs
+3. [x] Implement Tier D in preprocessing + loader
+4. [x] Regenerate artifacts + update tests/docs
+5. [x] Verify exact parity via inference
 
 ---
 

@@ -1,7 +1,7 @@
 # Jain Dataset Preprocessing Pipeline
 
 **Source:** Jain et al. (2017) PNAS - Biophysical properties of clinical-stage antibodies
-**Test Set:** 86-antibody benchmark set (close to Novo Figure S14A; off by 2 labels)
+**Test Set:** 86-antibody benchmark set (exact Novo parity; Figure S14A)
 
 ---
 
@@ -54,7 +54,7 @@ python3 preprocessing/jain/step1_convert_excel_to_csv.py
 
 **Script:** `step2_preprocess_p5e_s2.py`
 
-**Purpose:** Apply P5e-S2 methodology to construct our 86-antibody benchmark set (close to the Novo Nordisk Figure S14A benchmark, but off by 2 labels).
+**Purpose:** Apply P5e-S2 + Tier D methodology to construct our 86-antibody benchmark set (exact Novo parity; Figure S14A).
 
 **Input:**
 - `data/test/jain/processed/jain_with_private_elisa_FULL.csv` (137 antibodies)
@@ -208,4 +208,4 @@ python3 preprocessing/jain/step3_extract_fragments.py
 ---
 
 **Last Updated:** 2025-12-16 (clarified Novo target vs our result)
-**Status:** ✅ Production Ready (Jain benchmark set; not exact Novo parity)
+**Status:** ✅ Production Ready (exact Novo parity achieved)

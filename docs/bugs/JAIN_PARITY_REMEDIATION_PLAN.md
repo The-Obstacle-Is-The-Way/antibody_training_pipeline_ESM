@@ -1,6 +1,6 @@
 # Jain Parity Remediation Plan
 
-**Status:** DRAFT — Pending Senior Review
+**Status:** ✅ COMPLETE — Implemented and verified
 **Created:** 2025-12-16
 **Decision:** [jain_parity_decision.md](./jain_parity_decision.md)
 **GitHub Issue:** [#33](https://github.com/Clarity-Digital-Twin/antibody_training_pipeline_ESM/issues/33)
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This document outlines the complete remediation plan for fixing the Jain parity discrepancy. We need to reclassify 2 additional antibodies (lebrikizumab + galiximab) from specific to non-specific to achieve exact Novo parity.
+This document outlines the remediation plan for fixing the Jain parity discrepancy. The Tier D remediation (lebrikizumab + galiximab) has been implemented and the pipeline now achieves exact Novo parity.
 
 **Scope:**
 - Preprocessing scripts

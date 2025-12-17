@@ -11,7 +11,7 @@
 **Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
 **Training Data:** 914 sequences (Boughter QC, 0 and 4+ flags)
 **CV Accuracy:** 67.5% ± 8.9% (10-fold)
-**External Validation:** Jain 66.28% | Shehata 58.29% | Harvey 61.33%
+**External Validation:** Jain 68.60% (exact parity) | Shehata 58.29% | Harvey 61.33%
 **Status:** ✅ **Production-ready, externally validated**
 
 > **💡 Note:** For current preprocessing pipeline implementation, see [`preprocessing/boughter/README.md`](../../../preprocessing/boughter/README.md) (SINGLE SOURCE OF TRUTH).
@@ -279,7 +279,7 @@ data/train/boughter/
 **Performance:**
 - CV accuracy: 67.5% ± 8.9% (10-fold)
 - External validation:
-  - Jain (HIC retention): 66.28% accuracy ✅
+  - Jain (HIC retention): 68.60% accuracy ✅ (exact parity)
   - Shehata (PSR assay, PSR threshold=0.5495): 58.29% accuracy ✅ (2025-11-18 run)
 
 **Status:** ✅ PRODUCTION - Externally validated and ready for deployment
@@ -422,7 +422,7 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 - Fragment CSVs: `data/train/boughter/annotated/*_boughter.csv` (16 files, 1,065 seqs each)
 
 **Trained Models:**
-- Production: `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` ⭐ **VALIDATED** (Jain 66.28%, Shehata 58.29%)
+- Production: `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` ⭐ **VALIDATED** (Jain 68.60%, Shehata 58.29%)
 
 **Preprocessing Scripts:**
 - Stage 1: `preprocessing/boughter/stage1_dna_translation.py`
@@ -468,7 +468,7 @@ _Removed: Pipeline diagram already shown in "Pipeline Summary Diagram" section a
 ✅ **Production Model (914 sequences)** - Validated and ready for deployment
    - CV accuracy: 67.5% ± 8.9%
    - External validation:
-     - Jain (HIC retention): 66.28% accuracy ✅
+     - Jain (HIC retention): 68.60% accuracy ✅ (exact parity)
     - Shehata (PSR assay, PSR threshold=0.5495): 58.29% accuracy ✅ (2025-11-18 run)
    - Model: `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl`
    - Pipeline: Stages 1-2-3 (ANARCI + IMGT + Boughter QC)

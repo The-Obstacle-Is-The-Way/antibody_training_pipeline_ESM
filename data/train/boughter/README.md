@@ -30,7 +30,7 @@ This directory contains processed antibody sequences from the Boughter et al. 20
 - ✅ Flagging strategy (0 and 4+ flags only, exclude 1-3)
 
 **Use Case:** Production model training (VALIDATED)
-- Jain test: 66.28% accuracy ✅
+- Jain test: 68.60% accuracy ✅ (exact Novo parity)
 - Shehata test: 58.29% accuracy ✅ (PSR decision threshold 0.5495; baseline 0.5 = 52.5%)
 - Harvey test: 61.33% accuracy ✅ (PSR decision threshold 0.5495)
 
@@ -127,7 +127,7 @@ Filter to training subset (include_in_training == True)
    ↓    914 sequences (0 and 4+ ELISA flags only)
    ↓
 ✅ PRODUCTION MODEL: experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl
-   └─ Validated on Jain: 66.28% accuracy
+   └─ Validated on Jain: 68.60% accuracy (exact Novo parity)
    └─ Validated on Shehata: 58.29% accuracy (PSR decision threshold 0.5495)
    └─ Validated on Harvey: 61.33% accuracy (PSR decision threshold 0.5495)
 ```

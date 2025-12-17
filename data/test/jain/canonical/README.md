@@ -30,40 +30,6 @@ Final curated datasets for reproducible benchmarking against Novo Nordisk result
 
 ---
 
-### 2. `archive/VH_only_jain_test_PARITY_86.csv` (OLD Reverse-Engineered)
-
-- **Method:** ELISA filter → VH length outlier removal (3 antibodies) → borderline removals (5 antibodies) (SUPERSEDED)
-- **Script:** Legacy `preprocessing/process_jain.py` (removed; see git history)
-- **Result:** [[40, 19], [10, 17]], 66.28% accuracy (OLD - use jain_86_novo_parity.csv for current)
-- **Distribution:** 59 specific / 27 non-specific (STALE - current is 57/29)
-- **Columns:** VH fragment only (minimal columns)
-- **Reproducibility:** Fully deterministic (no borderline cases)
-
-**Pipeline:**
-```
-94 antibodies (OLD ELISA filter - different from 116!)
-  ↓ Remove 3 VH length outliers (crenezumab, fletikumab, secukinumab)
-91 antibodies
-  ↓ Remove 5 borderline (muromonab, cetuximab, girentuximab, tabalumab, abituzumab)
-86 antibodies
-```
-
-**Use when:** You need guaranteed deterministic reproducibility or VH-only benchmarking.
-
----
-
-## Intermediate Datasets (OLD Method)
-
-- `VH_only_jain_test_FULL.csv` **(94 antibodies)** - After OLD ELISA filter
-  - Starting point for OLD reverse-engineered method
-  - VH fragment only
-
-- `VH_only_jain_test_QC_REMOVED.csv` **(91 antibodies)** - After VH length outlier removal
-  - Removed: crenezumab (VH=112), fletikumab (VH=127), secukinumab (VH=127)
-  - VH fragment only
-
----
-
 ## Usage Examples
 
 ### Recommended: P5e-S2 Canonical
@@ -92,32 +58,6 @@ cm = confusion_matrix(y_true, y_pred)
 print(cm)
 ```
 
-### Alternative: OLD Deterministic
-
-```python
-# For guaranteed deterministic results
-df = pd.read_csv('data/test/jain/canonical/archive/VH_only_jain_test_PARITY_86.csv')
-
-# Same testing procedure...
-# Expected: [[40, 19], [10, 17]] (always deterministic)
-```
-
----
-
-## Comparison: P5e-S2 vs OLD
-
-| Aspect | P5e-S2 Canonical | OLD Reverse-Engineered |
-|--------|------------------|------------------------|
-| **Result** | [[40, 17], [10, 19]] (68.60% - EXACT PARITY) | [[40, 19], [10, 17]] (66.28% - OLD) |
-| **Methodology** | Biologically principled (PSR-based) | Ad-hoc (length + borderline) |
-| **Starting point** | 116 antibodies (ELISA-only) | 94 antibodies (different ELISA filter) |
-| **Determinism** | 99% (1 borderline at ~0.5) | 100% (fully deterministic) |
-| **Antibody overlap** | 62/86 same (24 different) | 62/86 same (24 different) |
-| **Documentation** | Full provenance in experiments/ | Minimal documentation |
-| **Biophysical data** | Full (PSR, AC-SINS, HIC, Tm, etc.) | Minimal (VH only) |
-
-**Recommendation:** Use P5e-S2 for all new work. Use OLD only for exact reproducibility needs.
-
 ---
 
 ## Verification
@@ -127,15 +67,6 @@ To verify parity:
 ```bash
 # Test P5e-S2
 python3 preprocessing/jain/test_novo_parity.py
-
-# Test OLD method
-uv run antibody-test --model experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl \
-  --data data/test/jain/canonical/archive/VH_only_jain_test_PARITY_86.csv
 ```
 
 P5e-S2 gives [[40, 17], [10, 19]], 68.60% (EXACT NOVO PARITY).
-OLD method gives [[40, 19], [10, 17]], 66.28% (superseded).
-
----
-
-**See:** `JAIN_COMPLETE_GUIDE.md` (repo root) for complete methodology documentation

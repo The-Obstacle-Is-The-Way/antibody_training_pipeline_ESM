@@ -260,7 +260,7 @@ total_abs[~total_abs['cdrH3_aa'].str.contains("X")]  # CDR-H3
 - ✅ Boughter-style QC (like Novo)
 - ✅ Boughter-style flagging (like Novo)
 - ✅ Achieved 67.5% ± 8.9% CV accuracy (Novo: 71%, within std dev)
-- ✅ Externally validated: Jain 66.28%, Shehata 58.29% (PSR threshold=0.5495, 2025-11-18)
+- ✅ Externally validated: Jain 68.60% (exact parity), Shehata 58.29% (PSR threshold=0.5495, 2025-11-18)
 
 **Experimental validation (completed):**
 - ✅ Tested filtering 62 sequences with X at position 0 → strict QC (852 sequences)

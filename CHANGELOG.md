@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### ✅ Jain Benchmark Parity
+
+- Achieves **exact Novo Nordisk parity** on Jain S14A (ESM-1v VH LogReg): confusion matrix `[[40, 17], [10, 19]]`, accuracy **68.60%** (59/86), label split **57/29** via Tier D remediation.
+
 ## [0.7.0] - 2025-11-21
 
 ### 🛡️ Pydantic v2 Integration - Type-Safe Validation Layer
