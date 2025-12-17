@@ -115,7 +115,7 @@ This pipeline uses four antibody datasets for training and evaluation:
 | Dataset | Size | Assay | Usage |
 |---------|------|-------|-------|
 | **Boughter** | 914 VH sequences | ELISA | Primary training dataset |
-| **Jain** | 86 clinical antibodies | Per-antigen ELISA | Novo Nordisk exact parity benchmark |
+| **Jain** | 86 clinical antibodies | Per-antigen ELISA | Clinical antibody benchmark (68.60% - EXACT NOVO PARITY) |
 | **Harvey** | 141k nanobody sequences | PSR assay | Large-scale nanobody test set |
 | **Shehata** | 398 human antibodies | PSR assay | Cross-assay validation |
 

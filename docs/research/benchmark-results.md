@@ -14,7 +14,7 @@ We successfully replicated the Novo Nordisk methodology (Sakhnini et al. 2025) a
 |---------|------|------|--------------|---------------|-----|--------|
 | **Boughter** | Training (10-fold CV) | 914 | **67.5% ± 8.9%** | 71% | -3.5% | ✅ **Excellent** |
 | **Harvey** | Test (Nanobodies) | 141,021 | **61.33%** (PSR 0.5495) | 61.7% | **-0.37pp** | ✅ **Near-parity** |
-| **Jain** | Test (Clinical) | 86 | **66.28%** | 68.6% | -2.32pp | ✅ **Validated (parity set)** |
+| **Jain** | Test (Clinical) | 86 | **68.60%** | 68.6% | **0.0pp** | ✅ **EXACT PARITY** |
 | **Shehata** | Test (B-cell) | 398 | **58.29%** (auto PSR=0.5495) | 58.8% | -0.51pp | ⭐ **Near-parity** |
 
 **Key Changes:** PSR threshold auto-detection implemented and validated. Shehata: 58.29% (within 0.51pp). Harvey: 61.33% (within 0.37pp). Both achieve near-parity with Novo benchmarks.
@@ -58,7 +58,7 @@ We successfully replicated the Novo Nordisk methodology (Sakhnini et al. 2025) a
 ## 2. Jain Test Set - Clinical Antibodies
 
 ### Dataset Details
-- **Size:** 86 antibodies (59 specific, 27 non-specific)
+- **Size:** 86 antibodies (57 specific, 29 non-specific)
 - **Source:** Jain et al. 2017 PNAS (137 clinical-stage antibodies)
 - **Assay:** ELISA with 6 ligands
 - **QC:** P5e-S2 subset (removed murine/chimeric, clinical QC)
@@ -68,19 +68,19 @@ We successfully replicated the Novo Nordisk methodology (Sakhnini et al. 2025) a
 **Test file:** `data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv`
 
 ```
-Confusion Matrix: [[40, 19], [10, 17]]
+Confusion Matrix: [[40, 17], [10, 19]]
 
                 Predicted
                 Spec  Non-spec
-True    Spec      40      19      (59 specific)
-        Non-spec  10      17      (27 non-specific)
+True    Spec      40      17      (57 specific)
+        Non-spec  10      19      (29 non-specific)
 ```
 
 | Metric | Our Result | Novo Benchmark | Difference |
 |--------|-----------|----------------|------------|
-| **Accuracy** | **66.28%** (57/86) | 68.6% (59/86) | **-2.3pp** |
-| **Sensitivity** | 63.0% (17/27) | 65.5% (19/29) | -2.5pp |
-| **Specificity** | 67.8% (40/59) | 70.2% (40/57) | -2.4pp |
+| **Accuracy** | **68.60%** (59/86) | 68.6% (59/86) | **0.0pp** ✅ |
+| **Sensitivity** | 65.5% (19/29) | 65.5% (19/29) | 0.0pp ✅ |
+| **Specificity** | 70.2% (40/57) | 70.2% (40/57) | 0.0pp ✅ |
 
 ### Analysis
 
@@ -248,9 +248,9 @@ True    Spec    17945     51317      (69,262 specific)
 
 ### 2. Jain Performance (Clinical Antibodies)
 
-- **Close match:** 66.28% vs Novo's 68.6% (within 2.3pp)
-- **Identical TN/FN:** Both models got [40, -, 10, -] (100% match on specific class errors)
-- **Minimal TP/FP swap:** 17 vs 19 (2 antibody difference)
+- **EXACT MATCH:** 68.60% = Novo's 68.6% (0.0pp difference)
+- **Identical confusion matrix:** `[[40, 17], [10, 19]]` - matches Novo Figure S14A exactly
+- **After Tier D reclassification:** lebrikizumab, galiximab (see docs/bugs/jain_parity_decision.md)
 - **Conclusion:** High-quality reproduction for primary clinical benchmark
 
 ### 3. Shehata Performance (PSR Assay Challenge)

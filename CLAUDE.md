@@ -108,7 +108,7 @@ uv run antibody-test --model experiments/checkpoints/esm1v/logreg/boughter_vh_es
 python3 preprocessing/boughter/stage1_dna_translation.py
 python3 preprocessing/boughter/stage2_stage3_annotation_qc.py
 
-# Jain (test set - Novo parity benchmark)
+# Jain (test set - benchmark for Novo comparison)
 python3 preprocessing/jain/step1_convert_excel_to_csv.py
 python3 preprocessing/jain/step2_preprocess_p5e_s2.py
 
@@ -178,7 +178,7 @@ src/antibody_training_esm/    # Main package
 ├── datasets/                 # Dataset-specific loaders
 │   ├── base.py              # Abstract base class
 │   ├── boughter.py          # Training set
-│   ├── jain.py              # Test set (Novo parity)
+│   ├── jain.py              # Test set (clinical antibodies)
 │   ├── harvey.py            # Test set (nanobodies)
 │   └── shehata.py           # Test set (PSR assay)
 ├── cli/                      # Command-line interfaces
@@ -303,7 +303,7 @@ Standard fragments across all datasets:
 
 ### Assay-Specific Thresholds
 - **ELISA** (Boughter, Jain): threshold = 0.5 (standard)
-- **PSR** (Harvey, Shehata): threshold = 0.5495 (Novo Nordisk exact parity)
+- **PSR** (Harvey, Shehata): threshold = 0.5495 (Novo Nordisk's PSR threshold - near-parity)
 - Thresholds configured in `BinaryClassifier.ASSAY_THRESHOLDS`
 
 ## Security & Best Practices

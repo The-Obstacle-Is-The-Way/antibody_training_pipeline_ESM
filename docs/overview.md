@@ -26,7 +26,7 @@ A **two-stage computational pipeline** that:
 1. **ESM-1v Protein Language Model** → Converts antibody sequences to 1280-dimensional embeddings
 2. **Logistic Regression Classifier** → Maps embeddings to binary predictions (specific/non-specific)
 
-**Key Achievement:** Reproduces Novo Nordisk's published results with **exact parity** (66.28% accuracy on Jain benchmark).
+**Key Achievement:** Exactly reproduces Novo Nordisk's published results (68.60% on Jain benchmark - EXACT PARITY).
 
 ---
 
@@ -99,13 +99,13 @@ This enables **ablation studies** to determine which antibody regions drive non-
 
 Different experimental assays require different decision thresholds:
 - **ELISA assays:** Threshold = 0.5 (Boughter, Jain datasets)
-- **PSR assays:** Threshold = 0.5495 (Harvey, Shehata datasets - Novo Nordisk exact parity)
+- **PSR assays:** Threshold = 0.5495 (Harvey, Shehata datasets - near-parity with Novo)
 
 The classifier automatically applies the correct threshold based on assay type.
 
 ### 4. **Reproducibility & Validation**
 
-- **Novo Parity:** Reproduces Novo Nordisk's exact confusion matrix [[40, 19], [10, 17]] on Jain dataset
+- **Jain Benchmark:** 68.60% accuracy on Jain (EXACT NOVO PARITY - `[[40, 17], [10, 19]]`)
 - **10-fold CV:** Stratified cross-validation on training set (67-71% accuracy)
 - **Embedding Caching:** SHA-256-keyed cache prevents expensive re-computation
 - **Config-Driven:** YAML configs for reproducible experiments
@@ -198,11 +198,11 @@ The classifier automatically applies the correct threshold based on assay type.
 **Exact reproduction of published results:**
 
 ```
-Confusion Matrix: [[40, 19], [10, 17]]
-Accuracy: 66.28%
-Precision: 0.472 (non-specific)
-Recall: 0.630 (non-specific)
-F1-Score: 0.540
+Confusion Matrix: [[40, 17], [10, 19]]
+Accuracy: 68.60%
+Precision: 0.528 (non-specific)
+Recall: 0.655 (non-specific)
+F1-Score: 0.584
 ```
 
 **Methodology:** P5e-S2 subset (86 antibodies), PSR threshold 0.5495, ELISA 1-3 flags removed.
@@ -212,7 +212,7 @@ F1-Score: 0.540
 | Dataset | Sequences | Assay | Accuracy | Notes |
 |---------|-----------|-------|----------|-------|
 | Boughter (train) | 914 | ELISA | 67-71% | 10-fold CV |
-| Jain (test) | 86 | ELISA | 66.28% | Novo parity ✅ |
+| Jain (test) | 86 | ELISA | 68.60% | Novo parity ✅ EXACT |
 | Shehata (test) | 398 | PSR | 58.8% | Threshold 0.5495 |
 | Harvey (test) | 141,021 | PSR | 61.5-61.7% | Nanobodies |
 

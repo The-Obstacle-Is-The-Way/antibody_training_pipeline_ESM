@@ -454,9 +454,12 @@ def test_remove_30_by_psr_acsins_keeps_all_nonspecific() -> None:
 
     # Assert
     # Should have exactly 86 antibodies (59 spec + 27 nonspec)
+    # NOTE: This is SELECTION (step 4), before Tier D (step 5).
+    # Final distribution after Tier D is 57/29, but this test validates
+    # the intermediate selection step which correctly produces 59/27.
     assert len(df_86) == 86
-    assert (df_86["label"] == 0).sum() == 59  # Specific
-    assert (df_86["label"] == 1).sum() == 27  # Non-specific
+    assert (df_86["label"] == 0).sum() == 59  # Specific (pre-Tier D)
+    assert (df_86["label"] == 1).sum() == 27  # Non-specific (pre-Tier D)
 
 
 @pytest.mark.unit
@@ -563,7 +566,7 @@ def test_full_jain_dataset_workflow(jain_sample_csv: Path, tmp_path: Path) -> No
 
 @pytest.mark.unit
 def test_jain_constants_match_novo_parity() -> None:
-    """Verify Jain constants match Novo Nordisk parity requirements"""
+    """Verify Jain constants match the P5e-S2 benchmark configuration."""
     # Arrange & Act
     dataset = JainDataset()
 

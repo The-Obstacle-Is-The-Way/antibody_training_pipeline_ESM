@@ -31,53 +31,37 @@ Start here with this directory's documentation ↓
 
 ---
 
-#### 2. complete_guide.md ⚠️ **PARTIALLY OUTDATED**
-**Purpose:** Comprehensive guide to Jain dataset processing
-- **WARNING:** Contains sections describing RETIRED 94→86 methodology
-- Current sections on P5e-S2 method ARE accurate
-- Needs major rewrite to remove legacy VH length outlier references
+#### 2. complete_guide.md ✅ **ACCURATE**
+**Purpose:** Complete guide to the current preprocessing + canonical benchmark artifacts
+- Canonical 86-antibody benchmark (exact Novo parity)
+- File inventory and how to run verification
 
 **Read this if:** You want comprehensive context (but verify against preprocessing code)
 
 ---
 
-#### 3. complete_history.md ⚠️ **PARTIALLY OUTDATED**
+#### 3. complete_history.md ⚠️ **HISTORICAL**
 **Purpose:** Historical reference showing evolution of methodologies
-- **WARNING:** Describes multiple methodologies including RETIRED approaches
-- Contains valuable historical context
-- Distribution counts need updating (shows 67/27/40 instead of 94/22/21)
+- Contains valuable historical context and retired approaches
 
 **Read this if:** You need historical context on why we changed methodologies
 
 ---
 
-#### 4. reorganization_complete.md ⚠️ **PARTIALLY OUTDATED**
+#### 4. reorganization_complete.md ⚠️ **HISTORICAL**
 **Purpose:** File reorganization effort from 2025-11-05
 - Directory structure (raw/processed/canonical/fragments) is accurate
-- **NOTE:** Fragments were regenerated on 2025-11-06 (AFTER this reorg doc)
-- Verification section tests OLD methodology
+- Verification sections may reflect older baselines
 
 **Read this if:** You want to understand the file organization
 
 ---
 
-#### 5. data_sources.md ⚠️ **PARTIALLY OUTDATED**
+#### 5. jain_data_sources.md ✅ **ACCURATE**
 **Purpose:** Source file descriptions and data provenance
-- Source file info (SD01, SD02, SD03) is correct
-- **WARNING:** Claims we're missing private ELISA data (we HAVE it!)
-- **WARNING:** Describes flags_total methodology (RETIRED)
-- Needs major update to describe ELISA-only methodology
+- Describes the public SD files + private ELISA source used by the pipeline
 
-**Read this if:** You need to know where the raw data comes from (but verify methodology against code)
-
----
-
-### Archived Documentation
-
-See [`archive/README.md`](archive/README.md) for:
-- JAIN_QC_REMOVALS_COMPLETE.md (describes non-existent 94→86 VH length filtering)
-- JAIN_REPLICATION_PLAN.md (describes wrong 10-flag methodology)
-- jain_conversion_verification_report.md (describes retired flags_total system)
+**Read this if:** You need to know where the raw data comes from
 
 ---
 
@@ -97,6 +81,7 @@ Step 2: P5e-S2 Novo Parity Method
   ↓ preprocessing/jain/step2_preprocess_p5e_s2.py
     - Reclassify 5 specific→non-specific (PSR/Tm/clinical)
     - Remove 30 specific by PSR/AC-SINS sorting
+    - Tier D: flip 2 labels (lebrikizumab, galiximab)
   Output: data/test/jain/canonical/jain_86_novo_parity.csv (86 antibodies)
 
 Step 3: Fragment Extraction (ANARCI/IMGT)
@@ -112,8 +97,8 @@ Step 3: Fragment Extraction (ANARCI/IMGT)
 ### Pipeline Statistics
 - **Raw input:** 137 antibodies with private ELISA data
 - **ELISA filtering:** 116 antibodies (excludes ELISA 1-3 flags)
-- **P5e-S2 parity:** 86 antibodies (59 specific / 27 non-specific)
-- **Novo parity:** 66.28% accuracy, confusion matrix [[40,19],[10,17]] - **EXACT MATCH**
+- **P5e-S2 parity:** 86 antibodies (57 specific / 29 non-specific)
+- **Our result:** 68.60% accuracy, CM [[40,17],[10,19]] - EXACT NOVO PARITY
 
 ### Label Distribution (ELISA-based SSOT)
 - **Specific (0):** 94 antibodies
@@ -162,13 +147,8 @@ Step 3: Fragment Extraction (ANARCI/IMGT)
 
 ## Known Documentation Issues
 
-**High Priority (Needs Rewrite):**
-- `complete_guide.md` - Remove sections on 94→86 VH length filtering (doesn't exist)
-- `data_sources.md` - Remove "ELISA Data Limitation" section (we have private data!)
-
-**Medium Priority (Needs Updates):**
-- `complete_history.md` - Add warning banner about historical methodologies
-- `reorganization_complete.md` - Note that fragments were regenerated after reorg
+**Medium Priority (Historical cleanup):**
+- `complete_history.md` and `reorganization_complete.md` contain historical baselines and retired approaches
 
 **Low Priority (Keep As-Is):**
 - `label_discrepancy_findings.md` - Accurate historical bug report ✅

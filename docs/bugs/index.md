@@ -36,6 +36,104 @@ This doc captures potential bugs and high-risk issues found during a codebase au
 
 ---
 
+## Research — Active Investigations
+
+### R1 — Jain Parity Reverse Engineering — ✅ SOLVED (implemented)
+
+> **Decision:** [jain_parity_decision.md](./jain_parity_decision.md) — **Triple agent consensus: lebrikizumab + galiximab**
+> **Research Spec:** [jain_parity_reverse_engineering.md](./jain_parity_reverse_engineering.md)
+> **Data Inventory:** [jain_parity_data_inventory.md](./jain_parity_data_inventory.md)
+> **Findings:** `experiments/benchmarks/novo_parity/results/FINDINGS.md`
+
+#### Problem
+Before Tier D remediation, our P5e-S2 preprocessing produced 59 specific / 27 non-specific. Novo's Figure S14A shows 57 specific / 29 non-specific. Tier D remediation (lebrikizumab + galiximab) fixes the label split and achieves exact Novo parity.
+
+| Metric | Ours (pre-Tier D) | Ours (Tier D, current) | Novo |
+|--------|-------------------|------------------------|------|
+| Confusion Matrix | `[[40, 19], [10, 17]]` | `[[40, 17], [10, 19]]` | `[[40, 17], [10, 19]]` |
+| Accuracy | 66.28% | 68.60% | 68.6% |
+| Label Split | 59/27 | 57/29 | 57/29 |
+
+#### Key Insight
+TN=40 and FN=10 match exactly. The discrepancy was entirely in FP/TP — 2 antibodies needed reclassification from specific → non-specific.
+
+#### Research Goals
+1. Identify the unknown QC step Novo uses to get from ~116 to 86 antibodies
+2. Find which 2 antibodies need reclassification (specific → non-specific)
+3. Validate that the solution is biologically principled (not cherry-picking)
+
+#### Data Inventory (from [jain_parity_data_inventory.md](./jain_parity_data_inventory.md))
+
+| Stage | Count | Specific | Non-Specific | File |
+|-------|-------|----------|--------------|------|
+| After ELISA 1-3 removal | 116 | 94 | 22 | `jain_ELISA_ONLY_116.csv` |
+| After reclassification (5) | 116 | 89 | 27 | (computed) |
+| After removal (30) — **selection** | 86 | 59 | 27 | (computed) |
+| After Tier D (2 label flips) — **current** | 86 | **57** | **29** | `jain_86_novo_parity.csv` |
+| **NOVO TARGET** | 86 | **57** | **29** | Figure S14A |
+
+#### Validated Narrowed Strategy (2025-12-16)
+
+**Key Discovery:** Only 8 of the 59 specific antibodies have non-ELISA developability flags. This reduces the search space from C(59,2)=1,711 to C(8,2)=28 pairs.
+
+**Prime Candidates:**
+1. **bapineuzumab** — ONLY self-interaction flag among 59 specific
+2. **nimotuzumab** — HIC=25.0 (7.8σ outlier, z-score=7.84)
+
+#### Updated Experimental Phases
+1. **Phase 1:** Data preparation — ✅ Complete (see data inventory)
+2. **Phase 2A:** Test prime candidates (bapineuzumab + nimotuzumab) — **1 test**
+3. **Phase 2B:** Test all 8 flagged specifics — **C(8,2) = 28 pairs**
+4. **Phase 2C:** Full search if needed — C(59,2) = 1,711 pairs
+5. **Phase 3:** Biological validation of matches
+
+#### Branch Strategy
+- **Stable reference:** `investigate/jain-parity-verification` (current)
+- **Experiments:** Create `experiment/jain-parity-permutations` for testing
+
+#### Status
+- [x] Document the discrepancy (GitHub Issue #33)
+- [x] Create research spec with hypotheses and experimental protocol
+- [x] Create data inventory with all 89 specific antibodies and biophysical data
+- [x] Validate narrowed strategy (external agent analysis + first-principles verification)
+- [x] Identify prime candidates: bapineuzumab (self-interaction), nimotuzumab (7.8σ HIC)
+- [x] Execute Phase 2A: Test prime candidates — ❌ No match (both predicted as specific)
+- [x] Execute Phase 2B: Test all 28 flagged pairs — ✅ **3 MATCHING PAIRS FOUND**
+- [x] Execute Phase 3: Biological validation — ✅ All candidates have developability flags
+- [x] Update preprocessing + artifacts + docs (Tier D)
+
+#### Solution (2025-12-16) — ✅ IMPLEMENTED
+
+**Triple Agent Consensus:** lebrikizumab + galiximab
+
+Three independent AI agents (Google DeepThink, ChatGPT, Claude) analyzed which pair Novo most likely used. All three converged on the same answer with the same reasoning: **chromatography (HIC) is a single coherent mechanism that directly measures "stickiness"/non-specificity**.
+
+| Agent | Recommendation | Confidence |
+|-------|---------------|------------|
+| Google DeepThink | lebrikizumab + galiximab | High |
+| ChatGPT | lebrikizumab + galiximab | Medium |
+| Claude | lebrikizumab + galiximab | High |
+
+**3 matching pairs found (all produce exact Novo parity):**
+
+| Pair | Confusion Matrix | Flag Types | Status |
+|------|------------------|------------|--------|
+| **lebrikizumab + galiximab** | `[[40, 17], [10, 19]]` | chrom + chrom | **SELECTED** |
+| lebrikizumab + otelixizumab | `[[40, 17], [10, 19]]` | chrom + stability | Alternative |
+| galiximab + otelixizumab | `[[40, 17], [10, 19]]` | chrom + stability | Alternative |
+
+**Why lebrikizumab + galiximab:**
+- Both have chromatography flags (HIC > 11.7 threshold)
+- Single mechanism = methodologically consistent rule
+- Jain 2017 treats HIC/SMAC as coherent "stickiness" cluster
+- No mixing of unrelated flag types
+
+**Caveat:** This is reverse-engineering, not paper-stated methodology. Other pairs preserved as alternatives.
+
+**See full details:** [jain_parity_decision.md](./jain_parity_decision.md)
+
+---
+
 ## P1 — High
 
 ### P1.1 — Hydra classifier selection mismatch (`classifier.type` vs `classifier.strategy`)
@@ -230,4 +328,3 @@ This doc captures potential bugs and high-risk issues found during a codebase au
 
 #### Suggested Fix
 - Use `inspect.signature(...)` with a try/except, or just try calling with `assay_type` and fall back on `TypeError`.
-

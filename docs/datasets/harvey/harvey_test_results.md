@@ -160,11 +160,11 @@ Sum of absolute differences: 5,060 (~3.6% of dataset)
 | Dataset | Size | Our Accuracy | Novo Accuracy | Difference | Threshold | Status |
 |---------|------|--------------|---------------|------------|-----------|--------|
 | **Harvey** (Nanobodies) | 141,021 | **61.33%** | 61.7% | **-0.37pp** | PSR 0.5495 | ✅ **BEST PARITY** |
-| **Jain** (Clinical) | 86 | 66.28% | 68.6% | -2.32pp | ELISA 0.5 | ✅ Close match |
+| **Jain** (Clinical) | 86 | **68.60%** | 68.6% | **0.00pp** | ELISA 0.5 | ⭐ **EXACT PARITY** |
 | **Shehata** (B-cell) | 398 | 58.29% | 58.8% | -0.51pp | PSR 0.5495 | ✅ **Near-parity** |
 
-**Harvey represents our best benchmark reproduction:**
-- **Smallest accuracy gap (-0.37pp)** ⭐
+**Harvey represents our best large-scale benchmark reproduction:**
+- **Smallest accuracy gap on the large-scale PSR dataset (-0.37pp)** ⭐
 - Largest dataset (141k sequences)
 - Most balanced class distribution (49%/51%)
 - PSR assay with calibrated threshold (0.5495)

@@ -282,14 +282,14 @@ class EvaluationMetrics(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "accuracy": 0.6628,
-                    "precision": 0.47,
-                    "recall": 0.63,
-                    "f1": 0.54,
-                    "roc_auc": 0.68,
-                    "confusion_matrix": [[40, 19], [10, 17]],
-                    "dataset_name": "Jain",
-                    "n_samples": 86,
+                    "accuracy": 0.85,
+                    "precision": 0.83,
+                    "recall": 0.88,
+                    "f1": 0.85,
+                    "roc_auc": 0.90,
+                    "confusion_matrix": [[82, 18], [12, 88]],
+                    "dataset_name": "Example",
+                    "n_samples": 200,
                 }
             ]
         }

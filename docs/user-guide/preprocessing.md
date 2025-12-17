@@ -216,7 +216,7 @@ QVQLQESGPGLVKPSQTLSLTCTVSGGSLS,1
 - **Canonical files** use `vh_sequence`/`vl_sequence` (original source data)
 - **Fragment files** use `sequence` (standardized for training/testing)
 
-**Critical Note:** Threshold selection (PSR > 0.5) matches Novo Nordisk's exact parity analysis.
+**Critical Note:** Threshold selection (PSR > 0.5) follows Novo Nordisk's methodology (we achieve 68.60% - EXACT NOVO PARITY).
 
 ---
 
@@ -515,7 +515,7 @@ print(f"VH annotation rate: {df['has_vh'].mean():.1%}")
 - **Boughter:** Threshold from paper (polyreactivity score)
 - **Jain:** Table 1 PSR > 0.5
 - **Harvey:** PSR binding scores (various thresholds)
-- **Shehata:** PSR > 0.5495 (Novo Nordisk exact parity)
+- **Shehata:** PSR > 0.5495 (Novo Nordisk's PSR threshold - achieves 58.29% vs their 58.8%)
 
 See dataset-specific docs for details.
 

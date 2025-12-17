@@ -253,8 +253,8 @@ OUTPUT_VH = BASE_DIR / "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"  # 
 
     df_86.to_csv(OUTPUT_86, index=False)
     print(f"  ✅ Saved 86-antibody dataset → {OUTPUT_86.relative_to(BASE_DIR)}")
-    print(f"     Confusion matrix: [[40, 19], [10, 17]]")
-    print(f"     Accuracy: 66.28%")
+    print(f"     Confusion matrix: [[40, 17], [10, 19]]")
+    print(f"     Accuracy: 68.60%")
 ```
 
 **New:**
@@ -269,7 +269,7 @@ OUTPUT_VH = BASE_DIR / "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"  # 
     df_86.to_csv(OUTPUT_86, index=False)
     print(f"  ✅ Saved 86-antibody dataset → {OUTPUT_86.relative_to(BASE_DIR)}")
     print(f"     Format: VH+VL+metadata (24 columns)")
-    print(f"     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
+    print(f"     Labels: 57 specific (0.0) + 29 non-specific (1.0)")
     print()
 
     # Save VH-only benchmark version
@@ -278,11 +278,11 @@ OUTPUT_VH = BASE_DIR / "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"  # 
     df_vh.to_csv(OUTPUT_VH, index=False)
     print(f"  ✅ Saved VH-only benchmark → {OUTPUT_VH.relative_to(BASE_DIR)}")
     print(f"     Format: [id, vh_sequence, label] for model inference")
-    print(f"     Labels: 59 specific (0.0) + 27 non-specific (1.0)")
+    print(f"     Labels: 57 specific (0.0) + 29 non-specific (1.0)")
     print()
 
-    print(f"  📊 Confusion matrix: [[40, 19], [10, 17]]")
-    print(f"  📈 Accuracy: 66.28%")
+    print(f"  📊 Confusion matrix: [[40, 17], [10, 19]]")
+    print(f"  📈 Accuracy: 68.60%")
 ```
 
 ### Summary of Changes:
@@ -301,12 +301,12 @@ OUTPUT_VH = BASE_DIR / "data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv"  # 
 data/test/jain/canonical/
 ├── jain_86_novo_parity.csv (86 rows × 24 columns)
 │   Schema: ['id', 'vh_sequence', 'vl_sequence', 'label', 'elisa_flags', 'psr', ...]
-│   Labels: {0.0: 59, 1.0: 27}
+│   Labels: {0.0: 57, 1.0: 29}
 │   Purpose: Full canonical dataset with all metadata
 │
 └── VH_only_jain_86_p5e_s2.csv (86 rows × 3 columns) ⭐ NEW
     Schema: ['id', 'vh_sequence', 'label']
-    Labels: {0.0: 59, 1.0: 27}
+    Labels: {0.0: 57, 1.0: 29}
     Purpose: VH-only benchmark for model inference
     Compatible with: JainDataset.load_data()
 ```
@@ -322,14 +322,14 @@ SAVING OUTPUTS
 
   ✅ Saved 86-antibody dataset → data/test/jain/canonical/jain_86_novo_parity.csv
      Format: VH+VL+metadata (24 columns)
-     Labels: 59 specific (0.0) + 27 non-specific (1.0)
+     Labels: 57 specific (0.0) + 29 non-specific (1.0)
 
   ✅ Saved VH-only benchmark → data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv
      Format: [id, vh_sequence, label] for model inference
-     Labels: 59 specific (0.0) + 27 non-specific (1.0)
+     Labels: 57 specific (0.0) + 29 non-specific (1.0)
 
-  📊 Confusion matrix: [[40, 19], [10, 17]]
-  📈 Accuracy: 66.28%
+  📊 Confusion matrix: [[40, 17], [10, 19]]
+  📈 Accuracy: 68.60%
 ```
 
 ---
@@ -347,8 +347,8 @@ vh = pd.read_csv('data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv')
 # Verify schema
 assert list(vh.columns) == ['id', 'vh_sequence', 'label'], f"Wrong columns: {vh.columns.tolist()}"
 assert len(vh) == 86, f"Wrong row count: {len(vh)}"
-assert vh['label'].value_counts()[0.0] == 59, "Should have 59 specific"
-assert vh['label'].value_counts()[1.0] == 27, "Should have 27 non-specific"
+assert vh['label'].value_counts()[0.0] == 57, "Should have 57 specific"
+assert vh['label'].value_counts()[1.0] == 29, "Should have 29 non-specific"
 print("✓ Schema validation passed")
 ```
 
@@ -607,8 +607,8 @@ import pandas as pd
 df = pd.read_csv('data/test/jain/canonical/VH_only_jain_86_p5e_s2.csv')
 assert list(df.columns) == ['id', 'vh_sequence', 'label'], f'Wrong schema: {df.columns.tolist()}'
 assert len(df) == 86, f'Wrong row count: {len(df)}'
-assert df['label'].value_counts()[0.0] == 59, 'Should have 59 specific'
-assert df['label'].value_counts()[1.0] == 27, 'Should have 27 non-specific'
+assert df['label'].value_counts()[0.0] == 57, 'Should have 57 specific'
+assert df['label'].value_counts()[1.0] == 29, 'Should have 29 non-specific'
 print('✅ VH file schema correct!')
 "
 

@@ -525,7 +525,7 @@ def filter_quality_issues(df: pd.DataFrame) -> pd.DataFrame:
 
 **Implementation:** `preprocessing/boughter/stage2_stage3_annotation_qc.py` (ANARCI + IMGT)
 **Production Model:** `experiments/checkpoints/esm1v/logreg/boughter_vh_esm1v_logreg.pkl` ✅
-**Validation:** Jain 66.28%, Shehata 58.29% (PSR threshold=0.5495, 2025-11-18), Harvey 61.33%
+**Validation:** Jain 68.60% (exact parity), Shehata 58.29% (PSR threshold=0.5495, 2025-11-18), Harvey 61.33%
 
 ---
 

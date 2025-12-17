@@ -113,7 +113,7 @@ This matches Novo's description: "mean (average of all token vectors) was used"
 | **Boughter** (Training, 10-fold CV) | **67.5% ± 8.9%** | 71% | -3.5pp | Within variance |
 | **Harvey** (141k nanobodies) | **61.5%** | 61.7% | **-0.2pp** | ⭐ **Near-perfect parity** |
 | **Shehata** (398 B-cell) | **52.5%** | 58.8% | -6.3pp | Explainable (class imbalance) |
-| **Jain** (86 clinical) | **66.28%** | 68.6% | -2.3pp | Different methodology (documented) |
+| **Jain** (86 clinical) | **68.60%** | 68.6% | 0.0pp | ⭐ Exact parity achieved |
 
 **Source**: `docs/research/methodology.md`
 

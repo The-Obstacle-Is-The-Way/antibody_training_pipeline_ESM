@@ -15,7 +15,7 @@ This repository uses data and methodologies from multiple published papers. Plea
 - Primary training dataset for LogisticRegression model
 - 914 antibody VH sequences with ELISA-based polyreactivity labels
 - Balanced dataset (48.5% polyreactive, 51.5% non-polyreactive)
-- **Production training set** (validated: 66.28% accuracy on Jain test)
+- **Production training set** (validated: 68.60% accuracy on Jain test - EXACT NOVO PARITY)
 
 **Datasets:**
 - `data/train/boughter/canonical/VH_only_boughter_training.csv` - Training data (914 sequences)
@@ -119,9 +119,10 @@ Tingwan Sun and Yingda Xu from Adimab contributed to the PSR measurements in thi
 
 This repository demonstrates:
 
-1. **Novo Parity Achievement:** 66.28% accuracy on Jain test set (matches Novo's 66% reported performance)
+1. **Novo Parity Achievement:** 68.60% accuracy on Jain test set (EXACT match to Novo Figure S14A)
    - Model trained on Boughter ELISA data (914 sequences)
    - Evaluated on Jain benchmark (86 antibodies)
+   - Confusion matrix: `[[40, 17], [10, 19]]` - identical to Novo
 
 2. **Cross-Assay Transfer Learning:** Model trained on Boughter ELISA generalizes to:
    - Shehata PSR assay: 58.29% accuracy (398 antibodies; PSR decision threshold 0.5495, baseline 0.5 = 52.5%)

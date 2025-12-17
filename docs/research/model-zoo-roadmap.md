@@ -199,7 +199,7 @@ A model is considered **validated** when:
 ## 📝 Notes
 
 - **Priority Order**: ESM2 → alternative classifiers → cross-product
-- **Baseline Comparison**: Always compare to ESM1v/LogReg (66.28% Jain accuracy)
+- **Baseline Comparison**: Always compare to ESM1v/LogReg (68.60% Jain accuracy)
 - **Documentation**: Update `docs/research/model-zoo.md` as we expand
 - **Hydra Configs**: Keep configs modular and composable
 - **Directory Routing**: Ensure `directory_utils.py` handles new {model}/{classifier} paths

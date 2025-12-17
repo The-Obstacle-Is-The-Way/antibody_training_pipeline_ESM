@@ -140,12 +140,12 @@ nav:
 
   - Datasets:
     - Boughter (Training): datasets/boughter/README.md
-    - Jain (Novo Parity): datasets/jain/README.md
+    - Jain (Clinical): datasets/jain/README.md
     - Harvey (Nanobodies): datasets/harvey/README.md
     - Shehata (PSR): datasets/shehata/README.md
 
   - Research:
-    - Novo Parity Analysis: research/novo-parity.md
+    - Jain Benchmark Analysis: research/novo-parity.md
     - Methodology: research/methodology.md
     - Assay Thresholds: research/assay-thresholds.md
     - Benchmark Results: research/benchmark-results.md

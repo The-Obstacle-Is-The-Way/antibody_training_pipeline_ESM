@@ -1,0 +1,544 @@
+{
+  "novo_target": [
+    [
+      40,
+      17
+    ],
+    [
+      10,
+      19
+    ]
+  ],
+  "flagged_specifics": [
+    "nimotuzumab",
+    "lebrikizumab",
+    "gemtuzumab",
+    "galiximab",
+    "bevacizumab",
+    "lampalizumab",
+    "otelixizumab",
+    "bapineuzumab"
+  ],
+  "total_pairs_tested": 28,
+  "matches_found": 3,
+  "matching_pairs": [
+    [
+      "lebrikizumab",
+      "galiximab"
+    ],
+    [
+      "lebrikizumab",
+      "otelixizumab"
+    ],
+    [
+      "galiximab",
+      "otelixizumab"
+    ]
+  ],
+  "all_results": [
+    {
+      "pair": [
+        "nimotuzumab",
+        "lebrikizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "nimotuzumab",
+        "gemtuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "nimotuzumab",
+        "galiximab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "nimotuzumab",
+        "bevacizumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "nimotuzumab",
+        "lampalizumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "nimotuzumab",
+        "otelixizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "nimotuzumab",
+        "bapineuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "lebrikizumab",
+        "gemtuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "lebrikizumab",
+        "galiximab"
+      ],
+      "confusion_matrix": [
+        [
+          40,
+          17
+        ],
+        [
+          10,
+          19
+        ]
+      ],
+      "accuracy": 0.686046511627907,
+      "match": true
+    },
+    {
+      "pair": [
+        "lebrikizumab",
+        "bevacizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "lebrikizumab",
+        "lampalizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "lebrikizumab",
+        "otelixizumab"
+      ],
+      "confusion_matrix": [
+        [
+          40,
+          17
+        ],
+        [
+          10,
+          19
+        ]
+      ],
+      "accuracy": 0.686046511627907,
+      "match": true
+    },
+    {
+      "pair": [
+        "lebrikizumab",
+        "bapineuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "gemtuzumab",
+        "galiximab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "gemtuzumab",
+        "bevacizumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "gemtuzumab",
+        "lampalizumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "gemtuzumab",
+        "otelixizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "gemtuzumab",
+        "bapineuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "galiximab",
+        "bevacizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "galiximab",
+        "lampalizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "galiximab",
+        "otelixizumab"
+      ],
+      "confusion_matrix": [
+        [
+          40,
+          17
+        ],
+        [
+          10,
+          19
+        ]
+      ],
+      "accuracy": 0.686046511627907,
+      "match": true
+    },
+    {
+      "pair": [
+        "galiximab",
+        "bapineuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "bevacizumab",
+        "lampalizumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "bevacizumab",
+        "otelixizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "bevacizumab",
+        "bapineuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "lampalizumab",
+        "otelixizumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    },
+    {
+      "pair": [
+        "lampalizumab",
+        "bapineuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          38,
+          19
+        ],
+        [
+          12,
+          17
+        ]
+      ],
+      "accuracy": 0.6395348837209303,
+      "match": false
+    },
+    {
+      "pair": [
+        "otelixizumab",
+        "bapineuzumab"
+      ],
+      "confusion_matrix": [
+        [
+          39,
+          18
+        ],
+        [
+          11,
+          18
+        ]
+      ],
+      "accuracy": 0.6627906976744186,
+      "match": false
+    }
+  ]
+}

@@ -161,7 +161,7 @@ Biophysical features are fast to compute (~0.1s for 1000 sequences), so caching 
 ## 7. Scientific Validation
 
 After integration, compare on Jain test set:
-- **ESM-only**: ~66-67% accuracy (our current baseline: 66.28% test, 67.5% CV)
+- **ESM-only**: ~66-69% accuracy (our current baseline: 68.60% test, 67.5% CV)
 - **Biophysical-only**: ~63-65% (Phase B: 63.18% CV, paper pI-only: 65.2%)
 - **Hybrid (ESM + Bio)**: Target ≥67% (should not decrease from ESM-only)
 

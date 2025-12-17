@@ -2,10 +2,10 @@
 End-to-End Tests for Novo Nordisk Result Reproduction.
 
 Tests cover:
-- Reproducing Novo Nordisk published results (66-71% on Jain parity)
+- Reproducing Novo Nordisk published results (68.60% on Jain - EXACT PARITY)
 - Training on Boughter dataset (flag-based filtering)
-- Testing on Jain parity set (86 antibodies)
-- PSR threshold calibration (0.5495 for exact parity)
+- Testing on Jain benchmark set (86 antibodies)
+- PSR threshold calibration (0.5495 for PSR datasets - near-parity)
 - Cross-dataset generalization
 
 Testing philosophy:
@@ -158,10 +158,11 @@ def test_reproduce_novo_jain_accuracy_with_real_data(
 
 @pytest.mark.e2e
 def test_psr_threshold_calibration(mock_transformers_model: tuple[Any, Any]) -> None:
-    """Verify PSR threshold (0.5495) is correctly applied
+    """Verify PSR threshold (0.5495) is correctly applied.
 
-    Novo Nordisk calibrated threshold to 0.5495 for exact parity.
-    This test verifies the threshold is applied correctly.
+    Novo Nordisk calibrated threshold to 0.5495 for PSR assays (Harvey, Shehata).
+    This achieves near-parity on those datasets. This test verifies the threshold
+    is applied correctly.
     """
     # Arrange
     np.random.seed(42)

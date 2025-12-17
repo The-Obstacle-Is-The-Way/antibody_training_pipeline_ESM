@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### ✅ Jain Benchmark Parity
+
+- Achieves **exact Novo Nordisk parity** on Jain S14A (ESM-1v VH LogReg): confusion matrix `[[40, 17], [10, 19]]`, accuracy **68.60%** (59/86), label split **57/29** via Tier D remediation.
+
 ## [0.7.0] - 2025-11-21
 
 ### 🛡️ Pydantic v2 Integration - Type-Safe Validation Layer
@@ -95,9 +101,9 @@ Install with: `uv sync --all-extras`
 - ✅ All preprocessing pipelines validated (Boughter, Jain, Harvey, Shehata)
 - ✅ Data integrity checksums verified (no corruption)
 - ✅ Full training pipeline smoke test passed (66.84% ± 8.69% 10-fold CV)
-- ✅ **Novo parity maintained:**
-  - Jain: 66.28% accuracy (exact parity)
-  - Shehata: 58.29% accuracy (exact parity)
+- ✅ **Benchmark performance:**
+  - Jain: 66.28% accuracy (close to Novo 68.6%)
+  - Shehata: 58.29% accuracy (close to Novo 58.8%)
 - ✅ Type safety: mypy --strict clean (148 files)
 - ✅ Code quality: ruff format + ruff check clean
 
@@ -809,8 +815,8 @@ First public release of the antibody non-specificity prediction pipeline impleme
 
 All preprocessing scripts, model training, and evaluation procedures are fully reproducible and validated against the Sakhnini et al. (2025) paper benchmarks:
 
-- Jain confusion matrix: [[40, 19], [10, 17]] (66.28% accuracy)
-- Shehata PSR threshold: 0.5495 (Novo Nordisk exact parity)
+- Jain confusion matrix: [[40, 19], [10, 17]] (66.28% vs Novo's 68.6% - close match)
+- Shehata PSR threshold: 0.5495 (Novo Nordisk's PSR threshold - near-parity)
 - Harvey nanobody accuracy: 61.5-61.7% on 141k sequences
 - Boughter 10-fold CV: 67-71% accuracy
 

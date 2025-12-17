@@ -40,11 +40,11 @@ python3 preprocessing/harvey/step2_extract_fragments.py
 
 ---
 
-### 3. Jain (Test Set - Novo Parity)
+### 3. Jain (Test Set - Clinical Antibodies)
 
 **Directory:** `preprocessing/jain/`
-**Purpose:** Test set for clinical antibodies (Novo Nordisk benchmark)
-**Size:** 86 antibodies (59 specific / 27 non-specific)
+**Purpose:** Test set for clinical antibodies (comparison with Novo Nordisk benchmark)
+**Size:** 86 antibodies (57 specific / 29 non-specific; exact Novo parity)
 **Pipeline:** 2-step (Excel → CSV → P5e-S2 preprocessing)
 
 **Quick Start:**

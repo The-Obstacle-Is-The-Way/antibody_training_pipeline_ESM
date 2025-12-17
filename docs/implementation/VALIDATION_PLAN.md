@@ -223,7 +223,7 @@ uv run antibody-train \
 for run in batch_determinism_run1 batch_determinism_run2; do
   find ./experiments/runs -name "${run}*" -type f -name "training.log" -exec grep -h "Accuracy" {} \;
 done
-# Expected: Exact match (e.g., both 0.6628)
+# Expected: Exact match (e.g., both 0.6860)
 
 # Test 2: Batch size independence (different batch sizes, same results within tolerance)
 for bs in 4 8 16; do
@@ -239,7 +239,7 @@ done
 find ./experiments/runs -name "batch_independence_bs*" -type f -name "training.log" -exec grep -h "Accuracy" {} \;
 
 # Expected: All three runs produce same accuracy within ±0.5%
-# Example: bs4=0.6628, bs8=0.6628, bs16=0.6628 (identical or tiny variance)
+# Example: bs4=0.6860, bs8=0.6860, bs16=0.6860 (identical or tiny variance)
 ```
 
 **⚠️ If batch size affects results:** This indicates a bug in embedding extraction or batching logic. Must be fixed before production.
@@ -317,7 +317,7 @@ cat /tmp/production_run_metrics.txt
 ```
 
 **Expected metrics (within ±1% tolerance):**
-- **Jain**: 66.28% (Novo parity benchmark)
+- **Jain**: 68.60% (exact Novo parity benchmark)
 - **Shehata**: 58.29% (Novo parity benchmark)
 - **Harvey**: 61.33% (baseline)
 
@@ -407,7 +407,7 @@ EOF
 
 | Dataset | Metric | Benchmark Value | Source |
 |---------|--------|----------------|--------|
-| Jain | Accuracy | 66.28% | Novo Nordisk parity (docs/research/novo-parity.md) |
+| Jain | Accuracy | 68.60% | Novo Nordisk parity (Figure S14A) |
 | Shehata | Accuracy | 58.29% | Novo Nordisk parity (docs/datasets/shehata/threshold_calibration_discovery.md) |
 | Harvey | Accuracy | 61.33% | Baseline (validation/baseline/model_outputs/baseline_metrics.txt) |
 
@@ -432,9 +432,9 @@ echo "--------------|---------|-----------|---------|-------"
 
 # Jain
 jain_acc=$(grep "accuracy:" /tmp/benchmark_jain.txt | awk '{print $2}')
-jain_delta=$(python3 -c "print(f'{abs(${jain_acc:-0} - 0.6628):.4f}')")
-jain_status=$(python3 -c "print('✅ PASS' if abs(${jain_acc:-0} - 0.6628) < 0.01 else '❌ FAIL')")
-echo "Jain          | ${jain_acc} | 0.6628    | ${jain_delta} | ${jain_status}"
+jain_delta=$(python3 -c "print(f'{abs(${jain_acc:-0} - 0.6860):.4f}')")
+jain_status=$(python3 -c "print('✅ PASS' if abs(${jain_acc:-0} - 0.6860) < 0.01 else '❌ FAIL')")
+echo "Jain          | ${jain_acc} | 0.6860    | ${jain_delta} | ${jain_status}"
 
 # Shehata
 shehata_acc=$(grep "accuracy:" /tmp/benchmark_shehata.txt | awk '{print $2}')
@@ -474,7 +474,7 @@ shehata/processed/shehata.csv: 399 lines (398 antibodies)
 harvey/fragments/VHH_only_harvey.csv: 141,022 lines
 
 # Benchmark Metrics (Authoritative)
-Jain accuracy: 66.28% (Novo parity)
+Jain accuracy: 68.60% (exact Novo parity)
 Shehata accuracy: 58.29% (Novo parity)
 Harvey accuracy: 61.33% (baseline)
 
@@ -504,7 +504,7 @@ Phase 4 (Artifacts & Metrics): ✅ COMPLETE
 **Fix:** Ensure all check functions use `bool(series.all())` pattern (see `schemas/dataset.py`).
 
 ### Issue: Metrics don't match benchmarks
-**Symptoms:** Jain accuracy is 60% instead of 66.28%.
+**Symptoms:** Jain accuracy is 60% instead of 68.60%.
 
 **Possible causes:**
 1. Wrong dataset file (using wrong fragment or subset)

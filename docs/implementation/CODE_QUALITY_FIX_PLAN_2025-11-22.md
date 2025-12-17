@@ -144,7 +144,7 @@ These improve code quality significantly but aren't urgent.
 
 #### 4. Centralize Novo Parity Constants 📊 MEDIUM
 **Files:** `src/antibody_training_esm/datasets/jain.py:321,327,332,333` + `preprocessing/jain/`
-**Issue:** Scientific constants (59, 27, 86, 57) scattered without names
+**Issue:** Scientific constants (selection vs final benchmark) scattered without names
 **Priority:** P2
 **Effort:** 20 minutes
 **Fix:**
@@ -152,37 +152,50 @@ These improve code quality significantly but aren't urgent.
 Add to `src/antibody_training_esm/datasets/jain.py` (top of file, after imports):
 ```python
 # Novo Nordisk Parity Constants (from Sakhnini et al. 2025)
-# Paper benchmark: 86 antibodies with [[40, 19], [10, 17]] confusion matrix
-NOVO_PARITY_SPECIFIC_COUNT = 59      # Specific antibodies in parity set
-NOVO_PARITY_NONSPECIFIC_COUNT = 27   # Non-specific antibodies in parity set
-NOVO_PARITY_TOTAL = 86               # Total parity set size (59 + 27)
-NOVO_PARITY_EXPECTED_CORRECT = 57    # Expected correct predictions (40 + 17)
-NOVO_PARITY_ACCURACY = 66.28         # Expected accuracy (57/86 = 0.6628)
+# Figure S14A benchmark: 86 antibodies with confusion matrix [[40, 17], [10, 19]]
+NOVO_TARGET_CM = [[40, 17], [10, 19]]
+NOVO_TARGET_TOTAL = 86
+NOVO_TARGET_SPECIFIC_COUNT = 57      # Final label split (after Tier D)
+NOVO_TARGET_NONSPECIFIC_COUNT = 29
+NOVO_TARGET_EXPECTED_CORRECT = 59    # 40 + 19
+NOVO_TARGET_ACCURACY = NOVO_TARGET_EXPECTED_CORRECT / NOVO_TARGET_TOTAL  # 0.6860
+
+# Selection stage (before Tier D label flips; membership selection is unchanged)
+JAIN_86_SELECTION_SPECIFIC_COUNT = 59
+JAIN_86_SELECTION_NONSPECIFIC_COUNT = 27
 
 # Sanity checks
-assert NOVO_PARITY_SPECIFIC_COUNT + NOVO_PARITY_NONSPECIFIC_COUNT == NOVO_PARITY_TOTAL
-assert NOVO_PARITY_EXPECTED_CORRECT / NOVO_PARITY_TOTAL == NOVO_PARITY_ACCURACY
+assert NOVO_TARGET_SPECIFIC_COUNT + NOVO_TARGET_NONSPECIFIC_COUNT == NOVO_TARGET_TOTAL
+assert NOVO_TARGET_ACCURACY == NOVO_TARGET_EXPECTED_CORRECT / NOVO_TARGET_TOTAL
+assert (
+    JAIN_86_SELECTION_SPECIFIC_COUNT + JAIN_86_SELECTION_NONSPECIFIC_COUNT
+    == NOVO_TARGET_TOTAL
+)
 ```
 
 Update all usages in `jain.py`:
 ```python
 # Line 321:
-specific_keep = specific_sorted.tail(NOVO_PARITY_SPECIFIC_COUNT)
+specific_keep = specific_sorted.tail(JAIN_86_SELECTION_SPECIFIC_COUNT)
 
 # Line 327:
 df_86 = pd.concat([specific_keep, nonspecific], ignore_index=True)
-assert len(df_86) == NOVO_PARITY_TOTAL
+assert len(df_86) == NOVO_TARGET_TOTAL
 
 # Lines 332-333:
-self.logger.info(f"  Specific: {spec_count} (expected {NOVO_PARITY_SPECIFIC_COUNT})")
-self.logger.info(f"  Non-specific: {nonspec_count} (expected {NOVO_PARITY_NONSPECIFIC_COUNT})")
+self.logger.info(
+    f"  Specific (selection): {spec_count} (expected {JAIN_86_SELECTION_SPECIFIC_COUNT})"
+)
+self.logger.info(
+    f"  Non-specific (selection): {nonspec_count} (expected {JAIN_86_SELECTION_NONSPECIFIC_COUNT})"
+)
 ```
 
 Update `preprocessing/jain/test_novo_parity.py:165`:
 ```python
-from antibody_training_esm.datasets.jain import NOVO_PARITY_ACCURACY
+from antibody_training_esm.datasets.jain import NOVO_TARGET_ACCURACY
 
-novo_accuracy = NOVO_PARITY_ACCURACY  # 66.28% (was: 57/86)
+novo_accuracy = NOVO_TARGET_ACCURACY  # 0.6860 (59/86)
 ```
 
 **Impact:** Self-documenting scientific constants with provenance

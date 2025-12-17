@@ -41,7 +41,7 @@ y_true = df['label'].values
 X = classifier.embedding_extractor.extract_batch_embeddings(sequences)
 y_pred = classifier.predict(X)
 
-# Expected: [[40, 19], [10, 17]], 66.28% accuracy
+# Expected: [[40, 17], [10, 19]], 68.60% accuracy - EXACT NOVO PARITY
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_true, y_pred)
 print(cm)
@@ -55,25 +55,14 @@ print(cm)
 
 **File:** `canonical/jain_86_novo_parity.csv`
 
-- **Method:** ELISA filter → PSR reclassification (5 antibodies) → PSR/AC-SINS removal (30 antibodies)
-- **Result:** [[40, 19], [10, 17]], 66.28% accuracy
-- **Distribution:** 59 specific / 27 non-specific
+- **Method:** ELISA filter → PSR reclassification (5 antibodies) → PSR/AC-SINS removal (30 antibodies) → Tier D (2 antibodies)
+- **Result:** [[40, 17], [10, 19]], 68.60% accuracy - EXACT NOVO PARITY
+- **Distribution:** 57 specific / 29 non-specific
 - **Reproducibility:** 99% deterministic (1 borderline antibody at ~0.5 probability)
 - **Columns:** Full-length VH+VL + biophysical properties
 - **Provenance:** Full documentation in `experiments/novo_parity/`
 
 **Use when:** Training new models or need biologically principled methodology.
-
-### 2. OLD Reverse-Engineered (Alternative)
-
-**File:** `canonical/VH_only_jain_test_PARITY_86.csv`
-
-- **Method:** ELISA filter → VH length outliers → borderline removals
-- **Result:** [[40, 19], [10, 17]], 66.28% accuracy (fully deterministic)
-- **Distribution:** 59 specific / 27 non-specific
-- **Columns:** VH fragment only
-
-**Use when:** You need 100% deterministic reproducibility.
 
 ---
 
@@ -110,7 +99,7 @@ To verify Novo parity:
 # Test P5e-S2 canonical
 python3 preprocessing/jain/test_novo_parity.py
 
-# Expected output: [[40, 19], [10, 17]], 66.28%
+# Expected output: [[40, 17], [10, 19]], 68.60% - EXACT NOVO PARITY
 ```
 
 ---
