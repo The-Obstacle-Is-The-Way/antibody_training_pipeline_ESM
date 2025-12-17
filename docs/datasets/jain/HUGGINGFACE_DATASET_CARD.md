@@ -85,16 +85,13 @@ From Sakhnini et al. (2025), Section 4.1 and Table 2:
 
 The paper does NOT document how they go from 116 → 86 antibodies. We reverse-engineered this step:
 
-1. **Reclassify 5 antibodies** (specific → non-specific) based on:
+1. **Reclassify 7 antibodies** (specific → non-specific) based on:
    - Tier A: PSR > 0.4 (bimagrumab, bavituximab, ganitumab)
    - Tier B: Tm < 60°C (eldelumab)
    - Tier C: High clinical ADA rate (infliximab)
+   - Tier D: Chromatography flags (HIC > 11.7): lebrikizumab, galiximab
 
 2. **Remove 30 specific antibodies** with highest PSR scores (AC-SINS as tiebreaker)
-
-3. **Tier D (final adjustment):** Reclassify 2 more antibodies using **public chromatography flags** from Jain SD03:
-   - lebrikizumab: HIC = 12.38 (above 11.7 threshold)
-   - galiximab: HIC = 12.20 (above 11.7 threshold)
 
 **Result:** 57 specific + 29 non-specific = 86 antibodies → **EXACT PARITY**
 
@@ -159,7 +156,7 @@ From Jain et al. 2017:
 - `jain-pnas.1616408114.sd01.xlsx` — Antibody metadata
 - `jain-pnas.1616408114.sd02.xlsx` — VH and VL sequences
 - `jain-pnas.1616408114.sd03.xlsx` — Biophysical measurements (PSR, HIC, AC-SINS, etc.)
-- `Private_Jain2017_ELISA_indiv.xlsx` — Per-antibody ELISA flag data (provided by Novo, not in original paper)
+- `Private_Jain2017_ELISA_indiv.xlsx` — Per-antigen ELISA flag data (provided by Adimab: T. Sun, Y. Xu; not in original PNAS paper)
 
 #### Preprocessing Pipeline
 
@@ -167,11 +164,12 @@ From Jain et al. 2017:
 |-------|-------------|-------|
 | 1. Raw Data | Jain 2017 clinical antibodies | 137 |
 | 2. ELISA Filtering | Remove ELISA flags 1-3 (mild polyreactivity) | 137 → 116 |
-| 3. Reclassification | 5 specific → non-specific (Tiers A-C) | 94/22 → 89/27 |
-| 4. PSR/AC-SINS Removal | Remove 30 highest-PSR specific antibodies | 116 → 86 |
-| 5. Tier D Adjustment | Reclassify lebrikizumab + galiximab | 59/27 → 57/29 |
+| 3. Reclassification | 7 specific → non-specific (Tiers A-D) | 94/22 → 87/29 |
+| 4. PSR/AC-SINS Removal | Remove 30 highest-PSR specific antibodies | 87/29 → 57/29 |
 
 **Final:** 86 antibodies (57 specific, 29 non-specific)
+
+**Implementation note:** `preprocessing/jain/step2_preprocess_p5e_s2.py` applies Tier D after the PSR/AC-SINS removal step. This is equivalent because lebrikizumab and galiximab have PSR=0.0 and are not selected by the top-30 PSR/AC-SINS removal criterion.
 
 ### P5e-S2 + Tier D Method Details
 
@@ -184,9 +182,9 @@ Antibodies classified by ELISA flag count:
 
 Result: 137 → 116 antibodies
 
-#### Steps 3-4: P5e-S2 (Reverse-Engineered)
+#### Step 3: Reclassification (Reverse-Engineered)
 
-**Reclassification tiers (5 antibodies):**
+**Reclassification tiers (7 antibodies):**
 
 | Tier | Antibody | Criterion | Value |
 |------|----------|-----------|-------|
@@ -195,37 +193,31 @@ Result: 137 → 116 antibodies
 | A | ganitumab | PSR > 0.4 | 0.553 |
 | B | eldelumab | Tm < 60°C | 59.5°C |
 | C | infliximab | High ADA rate | 61% |
+| D | lebrikizumab | HIC > 11.7 | 12.38 |
+| D | galiximab | HIC > 11.7 | 12.20 |
 
-**Removal criterion:**
+**Tier D rationale:** Both antibodies have elevated HIC retention times (chromatography flags) from Jain SD03 public data. HIC measures surface hydrophobicity, which directly correlates with non-specific binding (“stickiness”).
+
+#### Step 4: PSR/AC-SINS Removal (Reverse-Engineered)
+
 Remove the 30 specific antibodies with highest PSR scores (AC-SINS as secondary sort).
 
-#### Step 5: Tier D (Chromatography-Based Adjustment)
-
-**Final reclassification (2 antibodies):**
-
-| Antibody | HIC (min) | Threshold | Decision |
-|----------|-----------|-----------|----------|
-| lebrikizumab | 12.38 | >11.7 | Reclassify to non-specific |
-| galiximab | 12.20 | >11.7 | Reclassify to non-specific |
-
-**Rationale:** Both antibodies have elevated HIC retention times (chromatography flags) from Jain SD03 public data. HIC measures surface hydrophobicity, which directly correlates with non-specific binding ("stickiness").
-
-This achieves the Novo target label distribution: **57 specific / 29 non-specific**.
+This yields the Novo target label distribution: **57 specific / 29 non-specific**.
 
 ### Annotations
 
 #### Annotation Process
 
-1. **ELISA Labels:** Binary labels from per-antibody ELISA flag counts (0 vs ≥4)
-2. **Reclassification:** Based on public biophysical data from Jain SD03
-3. **Tier D:** Chromatography-based adjustment using HIC threshold
+1. **ELISA Labels:** Binary labels from per-antigen ELISA flags aggregated as total flag count (0 vs ≥4)
+2. **Reclassification:** Based on public biophysical data from Jain SD03 (Tiers A-D)
+3. **PSR/AC-SINS Removal:** Remove 30 highest-PSR specific antibodies
 
 #### Who are the annotators?
 
-- **Original ELISA assays:** Jain et al. 2017 (Lilly Research Labs)
-- **Per-antibody ELISA data:** Provided by Novo Nordisk (not in original paper)
+- **Original ELISA assays:** Tingwan Sun and Yingda Xu (Adimab, LLC) — see Jain et al. 2017
+- **Per-antigen ELISA data:** Provided by Adimab (M. Vásquez, T. Sun, Y. Xu) with permission for open research use
 - **Preprocessing methodology:** Based on Sakhnini et al. 2025 (Novo Nordisk & University of Cambridge)
-- **Reverse-engineering & Tier D:** CLARITY-DIGITAL-TWIN project (reproducing Novo methodology)
+- **Reverse-engineering & Tier D:** [The-Obstacle-Is-The-Way](https://github.com/The-Obstacle-Is-The-Way) (reproducing Novo methodology)
 
 ### Personal and Sensitive Information
 
@@ -281,10 +273,10 @@ This dataset enables:
 
 ### Dataset Curators
 
-- **Original Dataset:** Tushar Jain et al. (Eli Lilly and Company)
-- **Per-antibody ELISA Data:** Novo Nordisk (private communication)
+- **Original Dataset:** Jain et al. 2017 (Adimab, LLC & MIT)
+- **Per-antigen ELISA Data:** Tingwan Sun, Yingda Xu, Maximiliano Vásquez (Adimab, LLC)
 - **Preprocessing Methodology:** Laila I. Sakhnini, Daniele Granata et al. (Novo Nordisk)
-- **Reverse-Engineering & This Preprocessing:** CLARITY-DIGITAL-TWIN project (Hugging Science)
+- **Reverse-Engineering & This Preprocessing:** [The-Obstacle-Is-The-Way](https://github.com/The-Obstacle-Is-The-Way) (Hugging Science)
 
 ### Licensing Information
 
@@ -297,7 +289,7 @@ Jain et al. (2017) is published in PNAS (open access). The biophysical data in S
 ```bibtex
 @article{jain2017biophysical,
   title={Biophysical properties of the clinical-stage antibody landscape},
-  author={Jain, Tushar and Sun, Tao and Duez, Stephanie and Bhattacharya, Sumana and Bhaumik, Anuprita and Branagan, Ann and Bhang, Hyoung-Goo and Tsai, Lawrence and Teerahan, Lisa and Kannan, Rajesh and others},
+  author={Jain, Tushar and Sun, Tingwan and Durand, St{\'e}phanie and Hall, Amy and Houston, Nga Rewa and Nett, Juergen H and Sharkey, Beth and Bobrowicz, Beata and Caffry, Isabelle and Yu, Yao and Cao, Yuan and Lynaugh, Heather and Brown, Michael and Baruah, Hemanta and Gray, Laura T and Krauland, Eric M and Xu, Yingda and V{\'a}squez, Maximiliano and Wittrup, K Dane},
   journal={Proceedings of the National Academy of Sciences},
   volume={114},
   number={5},
@@ -312,8 +304,10 @@ Jain et al. (2017) is published in PNAS (open access). The biophysical data in S
   author={Sakhnini, Laila I. and Beltrame, Ludovica and Fulle, Simone and Sormanni, Pietro and Henriksen, Anette and Lorenzen, Nikolai and Vendruscolo, Michele and Granata, Daniele},
   journal={bioRxiv},
   year={2025},
+  month={May},
   publisher={Cold Spring Harbor Laboratory},
-  doi={10.1101/2025.04.28.650927}
+  doi={10.1101/2025.04.28.650927},
+  url={https://www.biorxiv.org/content/10.1101/2025.04.28.650927v1}
 }
 ```
 
@@ -321,8 +315,9 @@ Jain et al. (2017) is published in PNAS (open access). The biophysical data in S
 
 Thanks to:
 - **Jain et al.** for publishing the original clinical antibody biophysical data
-- **Novo Nordisk** for providing per-antibody ELISA data and publishing their methodology
-- **CLARITY-DIGITAL-TWIN project** for reverse-engineering and documenting the complete preprocessing pipeline
+- **Adimab (T. Sun, Y. Xu, M. Vásquez)** for providing per-antigen ELISA data with permission for open research
+- **Novo Nordisk (Sakhnini et al.)** for publishing their methodology, enabling independent replication
+- **[The-Obstacle-Is-The-Way](https://github.com/The-Obstacle-Is-The-Way)** for reverse-engineering and documenting the complete preprocessing pipeline
 
 ---
 

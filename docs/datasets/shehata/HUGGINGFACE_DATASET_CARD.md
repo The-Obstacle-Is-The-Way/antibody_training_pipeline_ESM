@@ -187,7 +187,7 @@ From the original paper acknowledgments:
 
 - **Original PSR Assays:** Shehata et al. 2019 (Laura Walker Lab, Adimab collaborators)
 - **Preprocessing pipeline:** Based on Sakhnini et al. 2025 (Novo Nordisk & University of Cambridge)
-- **This preprocessing:** CLARITY-DIGITAL-TWIN project (reproducing Novo methodology)
+- **This preprocessing:** [The-Obstacle-Is-The-Way](https://github.com/The-Obstacle-Is-The-Way) (Hugging Science)
 
 ### Personal and Sensitive Information
 
@@ -255,7 +255,7 @@ Due to severe class imbalance, prioritize these metrics over accuracy:
 - **Original Dataset:** Laila Shehata, Laura M. Walker (Scripps Research, Adimab)
 - **PSR Measurements:** Tingwan Sun, Yingda Xu (Adimab, LLC)
 - **Preprocessing Methodology:** Laila I. Sakhnini, Daniele Granata et al. (Novo Nordisk)
-- **This Preprocessing:** CLARITY-DIGITAL-TWIN project (Hugging Science)
+- **This Preprocessing:** [The-Obstacle-Is-The-Way](https://github.com/The-Obstacle-Is-The-Way) (Hugging Science)
 
 ### Licensing Information
 
@@ -283,8 +283,10 @@ Shehata et al. (2019) is published under **CC-BY-4.0** (per the DOI landing page
   author={Sakhnini, Laila I. and Beltrame, Ludovica and Fulle, Simone and Sormanni, Pietro and Henriksen, Anette and Lorenzen, Nikolai and Vendruscolo, Michele and Granata, Daniele},
   journal={bioRxiv},
   year={2025},
+  month={May},
   publisher={Cold Spring Harbor Laboratory},
-  doi={10.1101/2025.04.28.650927}
+  doi={10.1101/2025.04.28.650927},
+  url={https://www.biorxiv.org/content/10.1101/2025.04.28.650927v1}
 }
 
 @article{dunbar2016anarci,
